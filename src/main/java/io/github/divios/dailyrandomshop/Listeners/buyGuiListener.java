@@ -30,15 +30,22 @@ public class buyGuiListener implements Listener {
 
 
         if(e.getSlot() == 35 && e.getRawSlot() == e.getSlot() && main.getConfig().getBoolean("enable-sell-gui")) {
+            if(!p.hasPermission("DailyRandomShop.sell")) {
+                p.sendMessage(main.config.PREFIX + main.config.MSG_NOT_PERMS);
+                return;
+            }
             p.openInventory(main.SellGui.createSellInv());
         }
 
         if ( !main.utils.IntegerListContains(dailyItemsSlots, e.getSlot()) ) return;
 
-        ItemStack item = inv.getItem(e.getSlot());
+        ItemStack item = e.getView().getTopInventory().getItem(e.getSlot());
 
-        p.openInventory(main.ConfirmGui.getGui(item));
-
+        if (main.getConfig().getBoolean("enable-confirm-gui")) p.openInventory(main.ConfirmGui.getGui(item));
+        else {
+            Double price = main.listMaterials.get(item.getType().toString())[0];
+            main.utils.giveItem(p, price, e.getView().getBottomInventory(), item);
+        }
     }
 
     @EventHandler

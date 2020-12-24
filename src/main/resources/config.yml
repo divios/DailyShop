@@ -16,6 +16,7 @@ buy-price-multiplier: 1
 sell-price-multiplier: 1
 
 enable-sell-gui: true
+enable-confirm-gui: true
 
 ### You can change how the GUIs are displayed here ###
 
@@ -70,5 +71,7 @@ message-buy-item: "&7You bought the item {item} for {price}"
 message-sell-item: "&7You sold all the items for {price}"
 message-not-enough-money: "&7Ey, You dont have enough money to buy this item!"
 message-inventory-full: "&7Ey, Your inventory is full!"
+message-invalid-item: "&7Ey, we don't accept that item on the market!"
 message-new-daily-items: "&7New items available on the Daily Shop!"
+message-not-perms: "&7Ey, you dont have permission to do this!"
 message-reload: "&7Reloaded all files"

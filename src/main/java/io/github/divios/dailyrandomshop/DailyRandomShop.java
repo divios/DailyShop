@@ -50,7 +50,7 @@ public final class DailyRandomShop extends JavaPlugin {
         int pluginId = 9721;
         Metrics metrics = new Metrics(this, pluginId);
 
-        if (!setupEconomy() ) {
+        if (!setupEconomy()) {
             log.severe(String.format("[%s] - Disabled due to no Vault dependency found!", getDescription().getName()));
             getServer().getPluginManager().disablePlugin(this);
             return;
@@ -63,7 +63,7 @@ public final class DailyRandomShop extends JavaPlugin {
             getServer().getPluginManager().disablePlugin(this);
         }
 
-        utils = new Utils();
+        utils = new Utils(this);
         BuyGui = new buyGui(this);
         SellGui = new sellGui(this);
         ConfirmGui = new confirmGui(this);
@@ -103,7 +103,7 @@ public final class DailyRandomShop extends JavaPlugin {
                     return;
                 }
                 time--;
-                if (time %60 == 0) {
+                if (time % 60 == 0) {
                     file.set("currentime.time", time);
                     try {
                         file.save(customFile);
@@ -121,7 +121,6 @@ public final class DailyRandomShop extends JavaPlugin {
         FileConfiguration file;
 
         saveDefaultConfig();
-        saveResource("items.yml", true);
         config = new Config(this);
 
         customFile = new File(getDataFolder(), "items.yml");
@@ -146,44 +145,44 @@ public final class DailyRandomShop extends JavaPlugin {
         listMaterials = new HashMap<String, Double[]>();
 
         file = YamlConfiguration.loadConfiguration(customFile);
-       for (String key: file.getKeys(false)) {
+        for (String key : file.getKeys(false)) {
 
-           try{
-               Material.valueOf(key.toUpperCase(Locale.ROOT));
-           }catch(IllegalArgumentException e) {
-               log.warning("The material " + key.toUpperCase(Locale.ROOT) + " doesnt exist on this version of minecraft, skipping material");
-               continue;
-           }
+            try {
+                Material.valueOf(key.toUpperCase(Locale.ROOT));
+            } catch (IllegalArgumentException e) {
+                log.warning("The material " + key.toUpperCase(Locale.ROOT) + " doesnt exist on this version of minecraft, skipping material");
+                continue;
+            }
 
-           Double buyPrice = Double.parseDouble(file.getString(key + ".buyPrice"));
-           Double sellPrice = Double.parseDouble(file.getString(key + ".sellPrice"));
+            Double buyPrice = Double.parseDouble(file.getString(key + ".buyPrice"));
+            Double sellPrice = Double.parseDouble(file.getString(key + ".sellPrice"));
 
-           if (buyPrice < 0  || sellPrice < 0 ) {
-               log.warning("Negative values on " + key + " , skipping item");
-               continue;
-           }
+            if (buyPrice < 0 || sellPrice < 0) {
+                log.warning("Negative values on " + key + " , skipping item");
+                continue;
+            }
 
-           Double[] prices = {buyPrice, sellPrice};
+            Double[] prices = {buyPrice, sellPrice};
 
-           listMaterials.put(key.toUpperCase(Locale.ROOT), prices);
+            listMaterials.put(key.toUpperCase(Locale.ROOT), prices);
 
-           //file.set(material + ".buyPrice", buyPrice);
-           //file.set(material + ".sellPrice", sellPrice);
+            //file.set(material + ".buyPrice", buyPrice);
+            //file.set(material + ".sellPrice", sellPrice);
 
-       }
+        }
 
-       if (listMaterials.isEmpty()) {
-           log.severe("items.yml is either empty, with negative values or materials not supported in this version, please check it");
-           getServer().getPluginManager().disablePlugin(this);
-       }
+        if (listMaterials.isEmpty()) {
+            log.severe("items.yml is either empty, with negative values or materials not supported in this version, please check it");
+            getServer().getPluginManager().disablePlugin(this);
+        }
 
-       // time data
+        // time data
         customFile = new File(getDataFolder(), "time.yml");
         file = YamlConfiguration.loadConfiguration(customFile);
 
         if (customFile.exists()) {
             time = Integer.parseInt(file.getString("currentime.time"));
-        }else time = 86400;
+        } else time = 86400;
 
         //file.save(customFile);
 
@@ -219,15 +218,16 @@ public final class DailyRandomShop extends JavaPlugin {
         List<String> commands = new ArrayList<>();
 
         if (args.length == 1) {
-            commands.add("renovate");
             commands.add("reload");
+            commands.add("renovate");
+            commands.add("sell");
             return commands;
         }
 
         return null;
     }
 
-    public void resetTime () {
+    public void resetTime() {
         time = getConfig().getInt("timer-duration");
     }
 

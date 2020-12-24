@@ -58,7 +58,9 @@ public class confirmGuiListener implements Listener {
         if (e.getSlot() == 22) {
             Double price = main.listMaterials.get(item.getType().toString())[0] * item.getAmount();
 
-            if (main.utils.inventoryFull(e.getView().getBottomInventory().getContents())) {
+            main.utils.giveItem(p, price, e.getView().getBottomInventory(), item);
+            return;
+            /*if (main.utils.inventoryFull(e.getView().getBottomInventory().getContents())) {
                 p.sendMessage(main.config.PREFIX + main.config.MSG_INVENTORY_FULL);
                 return;
             }
@@ -78,7 +80,7 @@ public class confirmGuiListener implements Listener {
             main.econ.withdrawPlayer(p, price);
             p.sendMessage(main.config.PREFIX + main.config.MSG_BUY_ITEM.replace("{price}", "" + price).replace("{item}", item.getType().toString()));
             p.openInventory(main.BuyGui.getGui());
-            return;
+            return; */
         }
 
         if (e.getView().getTopInventory().getItem(e.getSlot()) == null) return;

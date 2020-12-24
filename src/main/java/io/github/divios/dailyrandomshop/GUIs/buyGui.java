@@ -127,6 +127,7 @@ public class buyGui {
 
             lore.add(main.config.BUY_GUI_ITEMS_LORE.replaceAll("\\{price}", "" + main.listMaterials.get(item.getType().toString())[0]));
             meta.setLore(lore);
+            item.setItemMeta(meta);
 
             shop.setItem(i, item);
 

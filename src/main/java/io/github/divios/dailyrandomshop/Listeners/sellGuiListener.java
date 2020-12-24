@@ -74,7 +74,7 @@ public class sellGuiListener implements Listener {
                 main.listMaterials.get(e.getCurrentItem().getType().toString())[1] == 0)) {
 
             e.setCancelled(true);
-            p.sendMessage(ChatColor.GREEN + "Tienda > " + ChatColor.GRAY + "Ey! No aceptamos ese tipo de item");
+            p.sendMessage(main.config.PREFIX + main.config.MSG_INVALID_ITEM);
             return;
         }
 

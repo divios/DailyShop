@@ -11,7 +11,7 @@ public class Config {
         SELL_GUI_TITLE, SELL_PAINTING_NAME, SELL_ARROW_NAME, SELL_ITEM_NAME;
     public final List<String > BUY_GUI_PAINTING_LORE, BUY_GUI_ARROW_LORE, SELL_PAINTING_LORE, SELL_ARROW_LORE;
     public final String MSG_OPEN_SHOP, MSG_BUY_ITEM, MSG_SELL_ITEMS, MSG_NOT_ENOUGHT_MONEY, MSG_INVENTORY_FULL,
-            MSG_NEW_DAILY_ITEMS, MSG_RELOAD;
+            MSG_INVALID_ITEM , MSG_NOT_PERMS, MSG_NEW_DAILY_ITEMS, MSG_RELOAD;
 
     Config(DailyRandomShop main) {
 
@@ -21,6 +21,7 @@ public class Config {
         main.getConfig().addDefault("sell-price-multiplier", 1);
         main.getConfig().addDefault("sell-price-multiplier", 1);
         main.getConfig().addDefault("enable-sell-gui", true);
+        main.getConfig().addDefault("enable-confirm-gui", true);
 
         BUY_GUI_TITLE = ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("daily-shop-gui-name","&aDailyShop"));
         BUY_GUI_PAINTING_NAME = ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("daily-shop-gui-painting-name","&aWhat is this?"));
@@ -47,7 +48,9 @@ public class Config {
         MSG_SELL_ITEMS = ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("message-sell-item", "&7You sold all the items for {price}"));
         MSG_NOT_ENOUGHT_MONEY = ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("message-not-enough-money", "&7Ey! You dont have enough money to buy this item"));
         MSG_INVENTORY_FULL= ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("message-inventory-full", "&7Ey! Your inventory is full!"));
+        MSG_INVALID_ITEM = ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("message-invalid-item", "&7Ey, we don't accept that item on the market!"));
         MSG_NEW_DAILY_ITEMS = ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("message-new-daily-items", "&7New items available on the Daily Shop!"));
+        MSG_NOT_PERMS = ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("message-not-perms", "&7Ey, you dont have permission to do this!"));
         MSG_RELOAD = ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("message-reload", "&7Reloaded all files"));
     }
 
