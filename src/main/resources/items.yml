@@ -1,3 +1,10 @@
+#########################
+########   Items ########
+#########################
+
+# This represents all the items that 'll appear randomly on the shop!
+# Also the sell price is the price for selling that specific item,
+# put it to 0 if you want to prevent being able to sell it
 
 LEATHER_HELMET:
   buyPrice: 40.0

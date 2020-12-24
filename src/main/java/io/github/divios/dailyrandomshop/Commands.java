@@ -24,28 +24,40 @@ public class Commands implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String commandLabel, String[] args) {
 
-        Player player = (Player) sender;
+        if (args.length == 0) {
 
-        if (args.length == 0 && sender instanceof Player) {
+            if (!(sender instanceof Player) ) return true;
+
+            if(!(sender.hasPermission("DailyRandomShop.open" ))) {
+                sender.sendMessage(main.config.PREFIX + main.config.MSG_NOT_PERMS);
+                return true;
+            }
             sender.sendMessage(main.config.PREFIX + main.config.MSG_OPEN_SHOP);
-            player.openInventory(main.BuyGui.getGui());
+            Player p = (Player) sender;
+            p.openInventory(main.BuyGui.getGui());
         } else {
-            if (args[0].toLowerCase(Locale.ROOT).equals("renovate") && player.hasPermission("DailyRandomShop.renovate")) {
+            if (args[0].toLowerCase(Locale.ROOT).equals("renovate") && sender.hasPermission("DailyRandomShop.renovate")) {
                 main.BuyGui.createRandomItems();
                 main.resetTime();
-            } else if (args[0].toLowerCase(Locale.ROOT).equals("reload") && player.hasPermission("DailyRandomShop.reload")) {
+            } else if (args[0].toLowerCase(Locale.ROOT).equals("reload") && sender.hasPermission("DailyRandomShop.reload")) {
                 try {
-
                     main.reloadConfig();
-                    player.sendMessage(main.config.PREFIX + main.config.MSG_RELOAD);
+                    sender.sendMessage(main.config.PREFIX + main.config.MSG_RELOAD);
                     main.createConfig();
                     main.BuyGui.inicializeGui(true);
                     main.ConfirmGui = new confirmGui(main);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-            } else if (args[0].toLowerCase(Locale.ROOT).equals("confirmgui")) {
-                player.openInventory(main.ConfirmGui.getGui(new ItemStack(Material.ACACIA_BOAT)));
+            } else if (args[0].toLowerCase(Locale.ROOT).equals("sell") && (sender instanceof Player) &&
+                        main.getConfig().getBoolean("enable-sell-gui")){
+
+                if (!sender.hasPermission("DailyRandomShop.sell") ){
+                    sender.sendMessage(main.config.PREFIX + main.config.MSG_NOT_PERMS);
+                    return true;
+                }
+                Player p = (Player) sender;
+                p.openInventory(main.SellGui.createSellInv());
             }
         }
 
