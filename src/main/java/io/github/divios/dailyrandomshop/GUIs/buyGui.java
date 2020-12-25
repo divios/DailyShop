@@ -1,5 +1,6 @@
 package io.github.divios.dailyrandomshop.GUIs;
 
+import io.github.divios.dailyrandomshop.Utils.ConfigUtils;
 import io.github.divios.dailyrandomshop.DailyRandomShop;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -116,7 +117,7 @@ public class buyGui {
             n++;
         }
         main.getServer().broadcastMessage(main.config.PREFIX + main.config.MSG_NEW_DAILY_ITEMS);
-        main.resetTime();
+        ConfigUtils.resetTime(main);
     }
 
     public void updateRandomItems() {
