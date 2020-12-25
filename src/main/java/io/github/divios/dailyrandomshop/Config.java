@@ -13,7 +13,7 @@ public class Config {
     public final String MSG_OPEN_SHOP, MSG_BUY_ITEM, MSG_SELL_ITEMS, MSG_NOT_ENOUGHT_MONEY, MSG_INVENTORY_FULL,
             MSG_INVALID_ITEM , MSG_NOT_PERMS, MSG_NEW_DAILY_ITEMS, MSG_RELOAD;
 
-    Config(DailyRandomShop main) {
+    public Config(DailyRandomShop main) {
 
         PREFIX = ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("prefix", "&aDailyShop > "));
         main.getConfig().addDefault("timer-duration", 86400);
