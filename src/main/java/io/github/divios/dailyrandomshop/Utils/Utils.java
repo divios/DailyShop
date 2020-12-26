@@ -1,7 +1,9 @@
 package io.github.divios.dailyrandomshop.Utils;
 
+import de.tr7zw.changeme.nbtapi.NBTItem;
 import io.github.divios.dailyrandomshop.DailyRandomShop;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -57,10 +59,12 @@ public class Utils {
         int outcome = -1;
         if (main.utils.inventoryFull(bottominv.getContents())) {
             p.sendMessage(main.config.PREFIX + main.config.MSG_INVENTORY_FULL);
+            p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
             return outcome;
         }
         if (main.econ.getBalance(p) < price) {
             p.sendMessage(main.config.PREFIX + main.config.MSG_NOT_ENOUGHT_MONEY);
+            p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
             return outcome;
         }
         ItemStack aux = item.clone();
@@ -70,7 +74,7 @@ public class Utils {
         meta.setLore(lore);
         aux.setItemMeta(meta);
 
-
+        p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP,1, 1);
         p.getInventory().addItem(aux);
         main.econ.withdrawPlayer(p, price);
         p.sendMessage(main.config.PREFIX + main.config.MSG_BUY_ITEM.replace("{price}", "" + price).replace("{item}", item.getType().toString()));
@@ -79,5 +83,23 @@ public class Utils {
         return outcome;
     }
 
+    public ItemStack setItemAsFill(ItemStack item) {
+        NBTItem nbtItem = new NBTItem(item);
+        nbtItem.setString("FillGui", "isfill");
+        return nbtItem.getItem();
+    }
+
+    public ItemStack setItemAsDaily(ItemStack item) {
+        NBTItem nbtItem = new NBTItem(item);
+        nbtItem.setString("DailyItem", "isdaily");
+        return nbtItem.getItem();
+    }
+
+    public boolean isDailyItem(ItemStack item) {
+        if (item == null) return false;
+
+        NBTItem nbtItem = new NBTItem(item);
+        return nbtItem.hasKey("DailyItem");
+    }
 
 }

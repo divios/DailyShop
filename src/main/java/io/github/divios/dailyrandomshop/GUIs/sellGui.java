@@ -87,7 +87,7 @@ public class sellGui {
             }
 
             else{
-                item = XMaterial.GRAY_STAINED_GLASS_PANE.parseItem();
+                item = XMaterial.valueOf(main.config.SELL_GUI_PANE).parseItem();
                 meta = item.getItemMeta();
                 meta.setDisplayName(ChatColor.GREEN + "");
                 item.setItemMeta(meta);
@@ -123,10 +123,6 @@ public class sellGui {
             inv.setItem(31, item);
         }
         return price;
-    }
-
-    public ArrayList<Inventory> getInventories() {
-        return currentInventories;
     }
 
     public ArrayList<Integer> getDailyItemsSlots() {
