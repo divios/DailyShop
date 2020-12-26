@@ -2,6 +2,7 @@ package io.github.divios.dailyrandomshop.Listeners;
 
 import io.github.divios.dailyrandomshop.DailyRandomShop;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -50,6 +51,7 @@ public class confirmGuiListener implements Listener {
 
         if (e.getSlot() == 18) {
             p.openInventory(main.BuyGui.getGui());
+            p.playSound(p.getLocation(), Sound.BLOCK_DISPENSER_DISPENSE, 1, 1);
             return;
         }
 
@@ -91,6 +93,7 @@ public class confirmGuiListener implements Listener {
         else item.setAmount(item.getAmount() - aux[interactSlots.indexOf(e.getSlot())]);
 
         e.getView().getTopInventory().setItem(13, item);
+        p.playSound(p.getLocation(), Sound.BLOCK_DISPENSER_DISPENSE, 1, 1);
         main.ConfirmGui.updateGui(e.getView().getTopInventory());
         p.updateInventory();
 
