@@ -1,6 +1,7 @@
 package io.github.divios.dailyrandomshop;
 
 import io.github.divios.dailyrandomshop.Utils.ConfigUtils;
+import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -34,7 +35,7 @@ public class Commands implements CommandExecutor {
             p.openInventory(main.BuyGui.getGui());
         } else {
             if (args[0].toLowerCase(Locale.ROOT).equals("renovate") && sender.hasPermission("DailyRandomShop.renovate")) {
-                main.BuyGui.createRandomItems();
+                main.BuyGui.inicializeGui(true);
                 ConfigUtils.resetTime(main);
             } else if (args[0].toLowerCase(Locale.ROOT).equals("reload") && sender.hasPermission("DailyRandomShop.reload")) {
                 try {

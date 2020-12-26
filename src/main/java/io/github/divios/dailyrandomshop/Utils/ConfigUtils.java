@@ -2,13 +2,17 @@ package io.github.divios.dailyrandomshop.Utils;
 
 import io.github.divios.dailyrandomshop.Config;
 import io.github.divios.dailyrandomshop.DailyRandomShop;
+import io.github.divios.dailyrandomshop.Database.DataManager;
 import io.github.divios.dailyrandomshop.GUIs.confirmGui;
+import io.github.divios.dailyrandomshop.Tasks.UpdateTimer;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.*;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Locale;
 
@@ -42,13 +46,13 @@ public class ConfigUtils {
         }
 
         readItems(main);
+        createDB(main, reload);
+        UpdateTimer.initTimer(main, reload);
+        //readTimer(main); antiguo con yaml
         if(reload) {
-            readTimer(main);
-            main.BuyGui.inicializeGui(true);
+            main.BuyGui.inicializeGui(false);
             main.ConfirmGui = new confirmGui(main);
         }
-
-
     }
 
     static void readItems(DailyRandomShop main) {
@@ -92,51 +96,32 @@ public class ConfigUtils {
 
     }
 
-    static void readTimer(DailyRandomShop main) {
-        File customFile;
-        FileConfiguration file;
-
-        customFile = new File(main.getDataFolder(), "time.yml");
-        file =YamlConfiguration.loadConfiguration(customFile);
-
-        if(customFile.exists()) main.time = Integer.parseInt(file.getString("currentime.time"));
-        else main.time = main.getConfig().getInt("timer-duration");
-        initTimer(main);
-    }
-
-    static void initTimer(DailyRandomShop main) {
-
-        final File customFile = new File(main.getDataFolder(), "time.yml");
-        final FileConfiguration file = YamlConfiguration.loadConfiguration(customFile);
-
-        if (customFile.exists()) {
-            main.time = file.getInt("currentime.time");
-        } else resetTime(main);
-
-
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(main, new Runnable() {
-            @Override
-            public void run() {
-                if (main.time == 0) {
-                    main.BuyGui.createRandomItems();
-                    resetTime(main);
-                    return;
-                }
-                main.time--;
-                if (main.time % 60 == 0) {
-                    file.set("currentime.time", main.time);
-                    try {
-                        file.save(customFile);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }, 20L, 20L);
-    }
-
     public static void resetTime(DailyRandomShop main) {
         main.time = main.getConfig().getInt("timer-duration");
+    }
+
+    public static void createDB(DailyRandomShop main, boolean reload) throws IOException {
+        File file = new File(main.getDataFolder() + File.separator + main.getDescription().getName().toLowerCase() + ".db");
+
+        if (!file.exists()) {
+            file.createNewFile();
+            try {
+                main.dbManager.createTables();
+                ConfigUtils.resetTime(main);
+            } catch (SQLException throwables) {
+                main.getLogger().severe("Couldn't create db tables");
+                main.getServer().getPluginManager().disablePlugin(main);
+            }
+        }
+        else if (!reload){
+            try {
+                main.time = main.dbManager.getTimer();
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+                main.getLogger().warning("Couldn't read timer value from database, setting it to value on config");
+                ConfigUtils.resetTime(main);
+            }
+        }
     }
 
 }

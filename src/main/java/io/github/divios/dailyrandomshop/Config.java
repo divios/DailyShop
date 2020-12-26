@@ -1,7 +1,9 @@
 package io.github.divios.dailyrandomshop;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 
+import java.sql.BatchUpdateException;
 import java.util.List;
 
 public class Config {
@@ -12,6 +14,8 @@ public class Config {
     public final List<String > BUY_GUI_PAINTING_LORE, BUY_GUI_ARROW_LORE, SELL_PAINTING_LORE, SELL_ARROW_LORE;
     public final String MSG_OPEN_SHOP, MSG_BUY_ITEM, MSG_SELL_ITEMS, MSG_NOT_ENOUGHT_MONEY, MSG_INVENTORY_FULL,
             MSG_INVALID_ITEM , MSG_NOT_PERMS, MSG_NEW_DAILY_ITEMS, MSG_RELOAD;
+    public double N_DAILY_ITEMS;
+    public String BUY_GUI_PANE1, BUY_GUI_PANE2, SELL_GUI_PANE;
 
     public Config(DailyRandomShop main) {
 
@@ -22,6 +26,28 @@ public class Config {
         main.getConfig().addDefault("sell-price-multiplier", 1);
         main.getConfig().addDefault("enable-sell-gui", true);
         main.getConfig().addDefault("enable-confirm-gui", true);
+        N_DAILY_ITEMS = main.getConfig().getDouble("number-of-daily-items", 7);
+        if(N_DAILY_ITEMS < 0 || N_DAILY_ITEMS > 28) N_DAILY_ITEMS = 7.0;
+        BUY_GUI_PANE1 = main.getConfig().getString("daily-shop-pane1", "GREEN_STAINED_GLASS_PANE").toLowerCase();
+        try{
+            Material.valueOf(BUY_GUI_PANE1);
+        } catch (IllegalArgumentException e) {
+            BUY_GUI_PANE1 = "GREEN_STAINED_GLASS_PANE";
+        }
+
+        BUY_GUI_PANE2 = main.getConfig().getString("daily-shop-pane2", "LIME_STAINED_GLASS_PANE").toLowerCase();
+        try{
+            Material.valueOf(BUY_GUI_PANE2);
+        } catch (IllegalArgumentException e) {
+            BUY_GUI_PANE2 = "LIME_STAINED_GLASS_PANE";
+        }
+
+        SELL_GUI_PANE = main.getConfig().getString("sell-gui-pane", "GRAY_STAINED_GLASS_PANE").toLowerCase();
+        try{
+            Material.valueOf(SELL_GUI_PANE);
+        } catch (IllegalArgumentException e) {
+            SELL_GUI_PANE = "BLACK_STAINED_GLASS_PANE";
+        }
 
         BUY_GUI_TITLE = ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("daily-shop-gui-name","&aDailyShop"));
         BUY_GUI_PAINTING_NAME = ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("daily-shop-gui-painting-name","&aWhat is this?"));

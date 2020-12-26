@@ -6,7 +6,7 @@
 
     <groupId>io.github.divios</groupId>
     <artifactId>DailyRandomShop</artifactId>
-    <version>1.8.1-BETA</version>
+    <version>1.8.2-BETA</version>
     <packaging>jar</packaging>
 
     <name>DailyRandomShop</name>
@@ -34,6 +34,10 @@
                     </executions>
                     <configuration>
                         <relocations>
+                            <relocation>
+                                <pattern>de.tr7zw.changeme.nbtapi</pattern>
+                                <shadedPattern>io.github.divios.dailyrandomshop.Utils.Utils</shadedPattern>
+                            </relocation>
                             <relocation>
                                 <pattern>com.cryptomorin.xseries</pattern>
                                 <!-- Be sure to change the package below -->
@@ -80,6 +84,11 @@
             <url>https://repo.codemc.org/repository/maven-public</url>
         </repository>
         <repository>
+            <id>codemc-repo</id>
+            <url>https://repo.codemc.org/repository/maven-public/</url>
+            <layout>default</layout>
+        </repository>
+        <repository>
             <id>spigot-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
@@ -94,6 +103,11 @@
     </repositories>
 
     <dependencies>
+        <dependency>
+            <groupId>de.tr7zw</groupId>
+            <artifactId>item-nbt-api</artifactId>
+            <version>2.6.1</version>
+        </dependency>
         <dependency>
             <groupId>org.bstats</groupId>
             <artifactId>bstats-bukkit</artifactId>
