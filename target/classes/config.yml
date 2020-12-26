@@ -15,6 +15,8 @@ timer-duration: 86400
 buy-price-multiplier: 1
 sell-price-multiplier: 1
 
+number-of-daily-items: 7
+
 enable-sell-gui: true
 enable-confirm-gui: true
 
@@ -36,6 +38,9 @@ daily-items-lore: "&ePrice: &c{price}"
 daily-shop-to-sell-name: "&6Visit Market"
 daily-shop-to-sell-lore:
   - "&7Right Click to go to the market"
+# This is the buy Panes that surround the object
+daily-shop-pane1: GREEN_STAINED_GLASS_PANE
+daily-shop-pane2: LIME_STAINED_GLASS_PANE
 
 # The name of the confirm GUI
 confirm-gui-name: "&aConfirm Purchase"
@@ -64,6 +69,8 @@ sell-item-name: "&eTotal money: &c{price}"
 sell-to-daily-shop-name: "&6Return to daily shop"
 sell-to-daily-shop-lore:
   - "&7Right Click to go to the daily shop"
+# This is the pane on the edges of the sell gui
+sell-gui-pane: GRAY_STAINED_GLASS_PANE
 
 ### Messages ###
 message-open-shop: "&7Opening daily shop..."

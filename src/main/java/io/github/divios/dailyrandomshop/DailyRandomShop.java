@@ -4,6 +4,8 @@ import java.io.*;
 import java.util.*;
 import java.util.logging.Logger;
 
+import io.github.divios.dailyrandomshop.Database.DataManager;
+import io.github.divios.dailyrandomshop.Database.sqlite;
 import io.github.divios.dailyrandomshop.GUIs.buyGui;
 import io.github.divios.dailyrandomshop.GUIs.confirmGui;
 import io.github.divios.dailyrandomshop.GUIs.sellGui;
@@ -33,6 +35,8 @@ public final class DailyRandomShop extends JavaPlugin {
     public Utils utils;
     public Config config;
     public int time = 0;
+    public final sqlite db = new sqlite(this);
+    public final DataManager dbManager = new DataManager(db, this);
 
     @Override
     public void onDisable() {

@@ -5,6 +5,7 @@ import io.github.divios.dailyrandomshop.DailyRandomShop;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -21,12 +22,10 @@ public class sellGuiListener implements Listener {
 
     private ArrayList<Integer> dailyItemsSlots = new ArrayList<>();
     private final DailyRandomShop main;
-    private ArrayList<Inventory> invs;
     private final String name;
 
     public sellGuiListener(DailyRandomShop main, ArrayList<Integer> slots) {
         this.main = main;
-        invs = main.SellGui.getInventories();
         dailyItemsSlots = slots;
         name = main.config.SELL_GUI_TITLE;
     }
@@ -49,7 +48,7 @@ public class sellGuiListener implements Listener {
                         e.getView().getTopInventory().setItem(i, null); //clean inventory to prevent inventoryclose dup
                     }
                 }
-
+                p.playSound(p.getLocation(), Sound.BLOCK_DISPENSER_DISPENSE, 1, 1);
                 p.openInventory(main.BuyGui.getGui());
             }
             if (e.getSlot() == 31) {
@@ -61,10 +60,10 @@ public class sellGuiListener implements Listener {
                         ItemStack item = e.getView().getTopInventory().getItem(i);
                         e.getView().getTopInventory().remove(item);
                     }
-
+                    p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
                     p.closeInventory();
                     p.sendMessage(main.config.PREFIX + main.config.MSG_SELL_ITEMS.replace("{price}", "" + price));
-                }
+                } else p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
             }
             return;
         }
@@ -74,6 +73,7 @@ public class sellGuiListener implements Listener {
                 main.listMaterials.get(e.getCurrentItem().getType().toString())[1] == 0)) {
 
             e.setCancelled(true);
+            p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
             p.sendMessage(main.config.PREFIX + main.config.MSG_INVALID_ITEM);
             return;
         }
