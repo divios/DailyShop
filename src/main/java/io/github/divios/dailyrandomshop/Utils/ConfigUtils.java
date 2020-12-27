@@ -9,6 +9,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.HumanEntity;
+import org.bukkit.entity.Player;
 
 import java.io.*;
 import java.sql.SQLException;
@@ -66,7 +68,7 @@ public class ConfigUtils {
         for (String key : file.getKeys(false)) {
 
             try {
-                Material.valueOf(key.toUpperCase(Locale.ROOT));
+                Material.valueOf(key.toUpperCase());
             } catch (IllegalArgumentException e) {
                 main.getLogger().warning("The material " + key.toUpperCase(Locale.ROOT) + " doesnt exist on this version of minecraft, skipping material");
                 continue;
@@ -122,6 +124,20 @@ public class ConfigUtils {
                 ConfigUtils.resetTime(main);
             }
         }
+    }
+
+    public static void CloseAllInventories(DailyRandomShop main) {
+        for(HumanEntity h: main.BuyGui.getGui().getViewers()) {
+            Player p = (Player) h;
+            p.closeInventory();
+        }
+        /*for(Player p: main.getServer().getOnlinePlayers()) {
+            if(p.getOpenInventory().getTopInventory().getTitle().equals(main.config.CONFIRM_GUI_NAME)){
+                p.closeInventory();
+            }
+        }*/
+
+
     }
 
 }

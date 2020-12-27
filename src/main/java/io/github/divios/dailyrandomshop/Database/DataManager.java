@@ -88,15 +88,16 @@ public class DataManager {
         statement.executeUpdate();
         ByteArrayOutputStream str = new ByteArrayOutputStream();
         ObjectOutputStream data = new ObjectOutputStream(str);
+
         for (ItemStack item: items) {
-            String insertItem = "INSERT INTO " + "current_items (material, price) VALUES (?, ?)";
+
+            String insertItem = "INSERT INTO " + "current_items (material) VALUES (?)";
             statement = db.con.prepareStatement(insertItem);
             NBTCompound itemData = NBTItem.convertItemtoNBT(item);
 
             String base64 = Base64.getEncoder().encodeToString(itemData.toString().getBytes());
 
             statement.setString(1, base64);
-            statement.setDouble(2, main.listMaterials.get(item.getType().toString())[1]);
             statement.executeUpdate();
         }
 
@@ -118,10 +119,16 @@ public class DataManager {
         byte[] itemserial;
         while(result.next()) {
             itemserial = Base64.getDecoder().decode(result.getString("material"));
+            try {
+                string = new String(itemserial);
+                itemData = new NBTContainer(string);
+                item = NBTItem.convertNBTtoItem(itemData);
+                if (item == null || !main.listMaterials.containsKey(item.getType().toString())) continue;
 
-            string = new String(itemserial);
-            itemData = new NBTContainer(string);
-            item = NBTItem.convertNBTtoItem(itemData);
+            } catch (Exception e) {
+                main.getLogger().warning("A previous item registered on the db is now unsupported, skipping...");
+                continue;
+            }
             items.add(item);
         }
         return items;

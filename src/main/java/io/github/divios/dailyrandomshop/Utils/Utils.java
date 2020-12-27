@@ -59,12 +59,16 @@ public class Utils {
         int outcome = -1;
         if (main.utils.inventoryFull(bottominv.getContents())) {
             p.sendMessage(main.config.PREFIX + main.config.MSG_INVENTORY_FULL);
-            p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
+            try {
+                p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
+            } catch (NoSuchFieldError ignored) {}
             return outcome;
         }
         if (main.econ.getBalance(p) < price) {
             p.sendMessage(main.config.PREFIX + main.config.MSG_NOT_ENOUGHT_MONEY);
-            p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
+            try {
+                p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
+            } catch (NoSuchFieldError ignored) {}
             return outcome;
         }
         ItemStack aux = item.clone();
@@ -74,7 +78,9 @@ public class Utils {
         meta.setLore(lore);
         aux.setItemMeta(meta);
 
-        p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP,1, 1);
+        try {
+            p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
+        } catch (NoSuchFieldError ignored) {}
         p.getInventory().addItem(aux);
         main.econ.withdrawPlayer(p, price);
         p.sendMessage(main.config.PREFIX + main.config.MSG_BUY_ITEM.replace("{price}", "" + price).replace("{item}", item.getType().toString()));
