@@ -1,10 +1,12 @@
 package io.github.divios.dailyrandomshop;
 
 import io.github.divios.dailyrandomshop.Utils.ConfigUtils;
+import io.github.divios.dailyrandomshop.Utils.Utils;
 import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 
 import java.io.IOException;
@@ -39,6 +41,7 @@ public class Commands implements CommandExecutor {
                 ConfigUtils.resetTime(main);
             } else if (args[0].toLowerCase(Locale.ROOT).equals("reload") && sender.hasPermission("DailyRandomShop.reload")) {
                 try {
+                    //ConfigUtils.CloseAllInventories(main);
                     main.reloadConfig();
                     sender.sendMessage(main.config.PREFIX + main.config.MSG_RELOAD);
                     ConfigUtils.reloadConfig(main, true);
