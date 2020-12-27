@@ -3,15 +3,11 @@ package io.github.divios.dailyrandomshop.Listeners;
 import com.cryptomorin.xseries.XMaterial;
 import io.github.divios.dailyrandomshop.DailyRandomShop;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.event.inventory.InventoryDragEvent;
 
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
@@ -20,7 +16,7 @@ import java.util.ArrayList;
 
 public class sellGuiListener implements Listener {
 
-    private ArrayList<Integer> dailyItemsSlots = new ArrayList<>();
+    /*private ArrayList<Integer> dailyItemsSlots = new ArrayList<>();
     private final DailyRandomShop main;
     private final String name;
 
@@ -77,8 +73,8 @@ public class sellGuiListener implements Listener {
         }
 
         if (e.getCurrentItem() != null && e.getSlot() != e.getRawSlot() && e.getCurrentItem().getType() != XMaterial.AIR.parseMaterial()
-                && (!main.listMaterials.containsKey(e.getCurrentItem().getType().toString()) ||
-                main.listMaterials.get(e.getCurrentItem().getType().toString())[1] == 0)) {
+                && (!main.listItem.containsKey(e.getCurrentItem().getType().toString()) ||
+                main.listItem.get(e.getCurrentItem().getType().toString())[1] == 0)) {
 
             e.setCancelled(true);
             try {
@@ -111,6 +107,6 @@ public class sellGuiListener implements Listener {
             if (item != null) p.getInventory().addItem(item);
         }
 
-    }
+    }*/
 
 }

@@ -1,7 +1,6 @@
 package io.github.divios.dailyrandomshop.Listeners;
 
 import io.github.divios.dailyrandomshop.DailyRandomShop;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -11,7 +10,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
-import org.junit.Ignore;
 
 public class buyGuiListener implements Listener {
 
@@ -46,7 +44,7 @@ public class buyGuiListener implements Listener {
             }catch (NoSuchFieldError ignored) { }
 
 
-            p.openInventory(main.SellGui.createSellInv());
+            //p.openInventory(main.SellGui.createSellInv());
         }
 
         if (e.getCurrentItem() == null || e.getCurrentItem().getType() == Material.AIR) return;
@@ -64,7 +62,7 @@ public class buyGuiListener implements Listener {
 
         }
         else {
-            Double price = main.listMaterials.get(item.getType().toString())[0];
+            Double price = main.listItem.get(item);
             main.utils.giveItem(p, price, e.getView().getBottomInventory(), item);
         }
     }

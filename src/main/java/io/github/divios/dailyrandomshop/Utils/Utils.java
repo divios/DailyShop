@@ -9,9 +9,9 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 public class Utils {
     private final DailyRandomShop main;
@@ -45,10 +45,10 @@ public class Utils {
         return true;
     }
 
-    public Material getEntry(Map<String, Double[]> list, int index) {
+    public ItemStack getEntry(HashMap<ItemStack, Double> list, int index) {
         int i = 0;
-        for (String material: list.keySet()) {
-            if (index == i) return Material.valueOf(material);
+        for (ItemStack item: list.keySet()) {
+            if (index == i) return item;
             i++;
         }
         return null;
@@ -106,6 +106,30 @@ public class Utils {
 
         NBTItem nbtItem = new NBTItem(item);
         return nbtItem.hasKey("DailyItem");
+    }
+
+    public Double getItemPrice(HashMap<ItemStack, Double> items, ItemStack toCompare) {
+        Double price = null;
+        ItemStack toCompare2 = removePriceLore(toCompare);
+
+        for (Map.Entry<ItemStack, Double> item: items.entrySet()) {
+            ItemStack item2 = removePriceLore(item.getKey());
+            if (item2.isSimilar(toCompare2)) return item.getValue();
+        }
+
+        return price;
+    }
+
+    public ItemStack removePriceLore ( ItemStack item) {
+        ItemStack item2 = item.clone();
+        ItemMeta meta = null;
+        meta = item2.getItemMeta();
+        List<String> lore = meta.getLore();
+        lore.remove(lore.size() - 1);
+        meta.setLore(lore);
+        item2.setItemMeta(meta);
+
+        return item2;
     }
 
 }
