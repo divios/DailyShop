@@ -57,6 +57,7 @@ public class buyGui {
 
             meta = item.getItemMeta();
             meta.setDisplayName(ChatColor.GOLD + "");
+            item.setItemMeta(meta);
             shop.setItem(row+j, item);
         }
     }
@@ -71,6 +72,7 @@ public class buyGui {
             } else continue;
             meta = item.getItemMeta();
             meta.setDisplayName(ChatColor.GOLD + "");
+            item.setItemMeta(meta);
             shop.setItem(row+j, item);
         }
     }
@@ -105,6 +107,7 @@ public class buyGui {
             }
             meta = item.getItemMeta();
             meta.setDisplayName(ChatColor.GOLD + "");
+            item.setItemMeta(meta);
             shop.setItem(row+j, item);
         }
     }
@@ -144,7 +147,7 @@ public class buyGui {
             inserted.add(ran);
 
             Material material = main.utils.getEntry(listOfMaterials, ran);
-            ItemStack randomItem = main.utils.setItemAsDaily(new ItemStack(material));
+            ItemStack randomItem = main.utils.setItemAsDaily(XMaterial.valueOf(material.toString()).parseItem());
 
             ItemMeta meta = randomItem.getItemMeta();
             ArrayList<String> lore = new ArrayList<String>();
@@ -166,9 +169,8 @@ public class buyGui {
 
     public void saveDailyItems() {
         ArrayList<ItemStack> dailyItems = new ArrayList<>();
-        ItemStack item;
-        for(int i=0; i < (shop.getSize()) ; i++) {
-            item = shop.getItem(i);
+
+        for(ItemStack item : shop.getContents()) {
             if(item == null || !main.utils.isDailyItem(item)) continue;
             dailyItems.add(item);
         }
@@ -190,11 +192,13 @@ public class buyGui {
                 //main.getLogger().severe("Hubo un error al recuperar los items diarios, generando items aleatorios");
                 return;
             }
+            dailyItem.trimToSize();
 
             for(ItemStack item: dailyItem) {
                 if(shop.firstEmpty() == -1) break;
                 ItemMeta meta = item.getItemMeta();
                 ArrayList<String> lore = new ArrayList<String>();
+
 
                 lore.add(main.config.BUY_GUI_ITEMS_LORE.replaceAll("\\{price}", "" + main.listMaterials.get(item.getType().toString())[0]));
                 meta.setLore(lore);
@@ -203,10 +207,8 @@ public class buyGui {
                 shop.setItem(shop.firstEmpty(), item);
             }
 
-            saveDailyItems();
-
         } catch (Exception e) {
-            //main.getLogger().severe("Hubo un error al recuperar los items diarios, generando items aleatorios");
+            main.getLogger().severe("Hubo un error al recuperar los items diarios, generando items aleatorios");
             createRandomItems();
             e.printStackTrace();
         }

@@ -2,6 +2,7 @@ package io.github.divios.dailyrandomshop.Listeners;
 
 import io.github.divios.dailyrandomshop.DailyRandomShop;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -10,10 +11,10 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
+import org.junit.Ignore;
 
 public class buyGuiListener implements Listener {
 
-    private final int[] dailyItemsSlots = {11, 12, 13, 14, 15, 20, 21, 22, 23, 24};
     private DailyRandomShop main;
     private Inventory inv;
 
@@ -33,13 +34,22 @@ public class buyGuiListener implements Listener {
                 e.getRawSlot() == e.getSlot() && main.getConfig().getBoolean("enable-sell-gui")) {
 
             if(!p.hasPermission("DailyRandomShop.sell")) {
-                p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
+                try {
+                    p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
+                }catch (NoSuchFieldError ignored) { }
                 p.sendMessage(main.config.PREFIX + main.config.MSG_NOT_PERMS);
                 return;
             }
-            p.playSound(p.getLocation(), Sound.BLOCK_DISPENSER_DISPENSE, 1, 1);
+
+            try {
+                p.playSound(p.getLocation(), Sound.BLOCK_DISPENSER_DISPENSE, 0.5F, 1);
+            }catch (NoSuchFieldError ignored) { }
+
+
             p.openInventory(main.SellGui.createSellInv());
         }
+
+        if (e.getCurrentItem() == null || e.getCurrentItem().getType() == Material.AIR) return;
 
         if ( !main.utils.isDailyItem(e.getCurrentItem()) ) return;
 
@@ -47,7 +57,11 @@ public class buyGuiListener implements Listener {
 
         if (main.getConfig().getBoolean("enable-confirm-gui")) {
             p.openInventory(main.ConfirmGui.getGui(item));
-            p.playSound(p.getLocation(), Sound.BLOCK_DISPENSER_DISPENSE, 1, 1);
+
+            try {
+                p.playSound(p.getLocation(), Sound.BLOCK_DISPENSER_DISPENSE, 0.5F, 1);
+            }catch (NoSuchFieldError ignored) { }
+
         }
         else {
             Double price = main.listMaterials.get(item.getType().toString())[0];

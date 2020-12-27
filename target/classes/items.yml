@@ -193,7 +193,7 @@ RED_TERRACOTTA:
   buyPrice: 50.0
   sellPrice: 1.0
 ORANGE_TERRACOTTA:
-  buyPrice: 50.0
+  buyPrice: 70.0
   sellPrice: 1.0
 YELLOW_TERRACOTTA:
   buyPrice: 50.0

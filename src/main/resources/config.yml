@@ -15,6 +15,8 @@ timer-duration: 86400
 buy-price-multiplier: 1
 sell-price-multiplier: 1
 
+# The number of daily items on the shop, the minimum is 1 and the maximum is 28.
+# If none of them is provided it 'll default to 7
 number-of-daily-items: 7
 
 enable-sell-gui: true
