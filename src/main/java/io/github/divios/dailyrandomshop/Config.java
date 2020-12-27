@@ -1,5 +1,6 @@
 package io.github.divios.dailyrandomshop;
 
+import com.cryptomorin.xseries.XMaterial;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 
@@ -28,25 +29,28 @@ public class Config {
         main.getConfig().addDefault("enable-confirm-gui", true);
         N_DAILY_ITEMS = main.getConfig().getDouble("number-of-daily-items", 7);
         if(N_DAILY_ITEMS < 0 || N_DAILY_ITEMS > 28) N_DAILY_ITEMS = 7.0;
-        BUY_GUI_PANE1 = main.getConfig().getString("daily-shop-pane1", "GREEN_STAINED_GLASS_PANE").toLowerCase();
+        BUY_GUI_PANE1 = main.getConfig().getString("daily-shop-pane1", "GREEN_STAINED_GLASS_PANE").toUpperCase();
         try{
-            Material.valueOf(BUY_GUI_PANE1);
+            XMaterial.valueOf(BUY_GUI_PANE1);
         } catch (IllegalArgumentException e) {
+            main.getLogger().warning("daily-shop-pane1 is either an incompatible material or does not exist, setting it to default");
             BUY_GUI_PANE1 = "GREEN_STAINED_GLASS_PANE";
         }
 
-        BUY_GUI_PANE2 = main.getConfig().getString("daily-shop-pane2", "LIME_STAINED_GLASS_PANE").toLowerCase();
+        BUY_GUI_PANE2 = main.getConfig().getString("daily-shop-pane2", "LIME_STAINED_GLASS_PANE").toUpperCase();
         try{
-            Material.valueOf(BUY_GUI_PANE2);
+            XMaterial.valueOf(BUY_GUI_PANE2);
         } catch (IllegalArgumentException e) {
+            main.getLogger().warning("daily-shop-pane2 is either an incompatible material or does not exist, setting it to default");
             BUY_GUI_PANE2 = "LIME_STAINED_GLASS_PANE";
         }
 
-        SELL_GUI_PANE = main.getConfig().getString("sell-gui-pane", "GRAY_STAINED_GLASS_PANE").toLowerCase();
+        SELL_GUI_PANE = main.getConfig().getString("sell-gui-pane", "GRAY_STAINED_GLASS_PANE").toUpperCase();
         try{
-            Material.valueOf(SELL_GUI_PANE);
+            XMaterial.valueOf(SELL_GUI_PANE);
         } catch (IllegalArgumentException e) {
-            SELL_GUI_PANE = "BLACK_STAINED_GLASS_PANE";
+            main.getLogger().warning("sell-gui-pane is either an incompatible material or does not exist, setting it to default");
+            SELL_GUI_PANE = "GRAY_STAINED_GLASS_PANE";
         }
 
         BUY_GUI_TITLE = ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("daily-shop-gui-name","&aDailyShop"));

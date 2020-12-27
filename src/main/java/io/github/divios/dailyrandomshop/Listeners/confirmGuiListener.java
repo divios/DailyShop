@@ -51,38 +51,20 @@ public class confirmGuiListener implements Listener {
 
         if (e.getSlot() == 18) {
             p.openInventory(main.BuyGui.getGui());
-            p.playSound(p.getLocation(), Sound.BLOCK_DISPENSER_DISPENSE, 1, 1);
+            try {
+                p.playSound(p.getLocation(), Sound.BLOCK_DISPENSER_DISPENSE, 0.5F, 1);
+            } catch (NoSuchFieldError ignored) {}
             return;
         }
 
         ItemStack item = e.getView().getTopInventory().getItem(13);
+
 
         if (e.getSlot() == 22) {
             Double price = main.listMaterials.get(item.getType().toString())[0] * item.getAmount();
 
             main.utils.giveItem(p, price, e.getView().getBottomInventory(), item);
             return;
-            /*if (main.utils.inventoryFull(e.getView().getBottomInventory().getContents())) {
-                p.sendMessage(main.config.PREFIX + main.config.MSG_INVENTORY_FULL);
-                return;
-            }
-
-            if (main.econ.getBalance(p) < price) {
-                p.sendMessage(main.config.PREFIX + main.config.MSG_NOT_ENOUGHT_MONEY);
-                return;
-            }
-            ItemMeta meta = item.getItemMeta();
-            List<String> lore = meta.getLore();
-            lore.remove(lore.size() - 1);
-            meta.setLore(lore);
-            item.setItemMeta(meta);
-
-
-            p.getInventory().addItem(item);
-            main.econ.withdrawPlayer(p, price);
-            p.sendMessage(main.config.PREFIX + main.config.MSG_BUY_ITEM.replace("{price}", "" + price).replace("{item}", item.getType().toString()));
-            p.openInventory(main.BuyGui.getGui());
-            return; */
         }
 
         if (e.getView().getTopInventory().getItem(e.getSlot()) == null) return;
@@ -93,7 +75,9 @@ public class confirmGuiListener implements Listener {
         else item.setAmount(item.getAmount() - aux[interactSlots.indexOf(e.getSlot())]);
 
         e.getView().getTopInventory().setItem(13, item);
-        p.playSound(p.getLocation(), Sound.BLOCK_DISPENSER_DISPENSE, 1, 1);
+        try {
+            p.playSound(p.getLocation(), Sound.BLOCK_DISPENSER_DISPENSE, 0.5F, 1);
+        } catch (NoSuchFieldError ignored) {}
         main.ConfirmGui.updateGui(e.getView().getTopInventory());
         p.updateInventory();
 

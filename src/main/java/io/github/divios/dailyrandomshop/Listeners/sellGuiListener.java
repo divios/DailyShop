@@ -48,7 +48,9 @@ public class sellGuiListener implements Listener {
                         e.getView().getTopInventory().setItem(i, null); //clean inventory to prevent inventoryclose dup
                     }
                 }
-                p.playSound(p.getLocation(), Sound.BLOCK_DISPENSER_DISPENSE, 1, 1);
+                try {
+                    p.playSound(p.getLocation(), Sound.BLOCK_DISPENSER_DISPENSE, 0.5F, 1);
+                } catch (NoSuchFieldError ignored){}
                 p.openInventory(main.BuyGui.getGui());
             }
             if (e.getSlot() == 31) {
@@ -60,10 +62,16 @@ public class sellGuiListener implements Listener {
                         ItemStack item = e.getView().getTopInventory().getItem(i);
                         e.getView().getTopInventory().remove(item);
                     }
-                    p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
+                    try {
+                        p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
+                    } catch (NoSuchFieldError ignored){}
                     p.closeInventory();
                     p.sendMessage(main.config.PREFIX + main.config.MSG_SELL_ITEMS.replace("{price}", "" + price));
-                } else p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
+                } else {
+                    try {
+                        p.playSound(p.getLocation(), Sound.BLOCK_DISPENSER_DISPENSE, 0.5F, 1);
+                    }catch (NoSuchFieldError ignored) { }
+                }
             }
             return;
         }
@@ -73,7 +81,9 @@ public class sellGuiListener implements Listener {
                 main.listMaterials.get(e.getCurrentItem().getType().toString())[1] == 0)) {
 
             e.setCancelled(true);
-            p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
+            try {
+                p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
+            } catch (NoSuchFieldError ignored){}
             p.sendMessage(main.config.PREFIX + main.config.MSG_INVALID_ITEM);
             return;
         }
