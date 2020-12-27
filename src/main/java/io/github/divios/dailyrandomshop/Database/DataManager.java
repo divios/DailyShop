@@ -4,17 +4,12 @@ import de.tr7zw.changeme.nbtapi.NBTCompound;
 import de.tr7zw.changeme.nbtapi.NBTContainer;
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import io.github.divios.dailyrandomshop.DailyRandomShop;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Item;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.util.io.BukkitObjectInputStream;
-import org.bukkit.util.io.BukkitObjectOutputStream;
 
 import java.io.*;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Base64;
 
@@ -123,7 +118,7 @@ public class DataManager {
                 string = new String(itemserial);
                 itemData = new NBTContainer(string);
                 item = NBTItem.convertNBTtoItem(itemData);
-                if (item == null || !main.listMaterials.containsKey(item.getType().toString())) continue;
+                if (item == null || !main.listItem.containsKey(item)) continue;
 
             } catch (Exception e) {
                 main.getLogger().warning("A previous item registered on the db is now unsupported, skipping...");

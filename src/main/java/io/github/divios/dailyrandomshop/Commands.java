@@ -57,7 +57,7 @@ public class Commands implements CommandExecutor {
                     return true;
                 }
                 Player p = (Player) sender;
-                p.openInventory(main.SellGui.createSellInv());
+                //p.openInventory(main.SellGui.createSellInv());
             }
         }
 

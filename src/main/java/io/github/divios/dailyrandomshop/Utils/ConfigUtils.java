@@ -1,22 +1,26 @@
 package io.github.divios.dailyrandomshop.Utils;
 
+import de.tr7zw.changeme.nbtapi.NBTItem;
 import io.github.divios.dailyrandomshop.Config;
 import io.github.divios.dailyrandomshop.DailyRandomShop;
-import io.github.divios.dailyrandomshop.Database.DataManager;
 import io.github.divios.dailyrandomshop.GUIs.confirmGui;
 import io.github.divios.dailyrandomshop.Tasks.UpdateTimer;
-import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.enchantments.EnchantmentWrapper;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemFlag;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.io.*;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.HashMap;
-import java.util.Locale;
+import java.util.*;
 
 public class ConfigUtils {
 
@@ -62,41 +66,91 @@ public class ConfigUtils {
         File customFile = new File(main.getDataFolder(), "items.yml");
         FileConfiguration file;
 
-        main.listMaterials = new HashMap<String, Double[]>();
+        main.listItem = new HashMap<>();
 
         file = YamlConfiguration.loadConfiguration(customFile);
         for (String key : file.getKeys(false)) {
+            ItemStack item;
+            types type;
+            Material material;
+            Map<Enchantment, Integer> enchants = new HashMap<>();
 
             try {
-                Material.valueOf(key.toUpperCase());
-            } catch (IllegalArgumentException e) {
-                main.getLogger().warning("The material " + key.toUpperCase(Locale.ROOT) + " doesnt exist on this version of minecraft, skipping material");
+                type = types.valueOf(file.getString(key + ".type").toUpperCase());
+            } catch (NoSuchFieldError e){
+                main.getLogger().warning("The entry " + key + " has an error on the type field, skipping");
                 continue;
             }
 
-            Double buyPrice = Double.parseDouble(file.getString(key + ".buyPrice"));
-            Double sellPrice = Double.parseDouble(file.getString(key + ".sellPrice"));
-
-            if (buyPrice < 0 || sellPrice < 0) {
-                main.getLogger().warning("Negative values on " + key + " , skipping item");
+            try {
+                material = Material.valueOf(file.getString(key + ".material").toUpperCase());
+            } catch (NoSuchFieldError e){
+                main.getLogger().warning("The entry " + key + " has an error on the type material, skipping");
                 continue;
             }
 
-            Double[] prices = {buyPrice, sellPrice};
+            item = new ItemStack(material);
 
-            main.listMaterials.put(key.toUpperCase(Locale.ROOT), prices);
+            List<String> enchantss = file.getStringList(key+".enchantments");
 
-            //file.set(material + ".buyPrice", buyPrice);
-            //file.set(material + ".sellPrice", sellPrice);
+            for (String s: enchantss) {
+                main.getLogger().warning(s.split(":")[0]);
+                if (!enchantss.isEmpty() &&
+                        EnchantmentWrapper.getByKey(NamespacedKey.minecraft(s.split(":")[0].toLowerCase())) != null)  {
+                    enchants.put(EnchantmentWrapper.getByKey(NamespacedKey.minecraft(s.split(":")[0].toLowerCase())), Integer.parseInt(s.split(":")[1]));
+                }
+            }
+
+            if(!enchants.isEmpty()) {
+                try {
+                    item.addEnchantments(enchants);
+                } catch (IllegalArgumentException e){
+                    main.getLogger().warning("The entry " + key + " has an error on the type enchants, skipping");
+                    continue;
+                }
+            }
+
+            List<String> lore = file.getStringList(key + ".lore");
+            ItemMeta meta = item.getItemMeta();
+            if (!lore.isEmpty()) {
+                List<String> loreColor = new ArrayList<>();
+                for (String s: lore) {
+                    loreColor.add(ChatColor.translateAlternateColorCodes('&', s));
+                }
+                meta.setLore(loreColor);
+
+            }
+
+            String name = file.getString(key + ".name");
+            if (name != null) {
+                meta.setDisplayName(ChatColor.translateAlternateColorCodes('&',name));
+            }
+            meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+            item.setItemMeta(meta);
+
+            if (type == types.COMMAND) {
+                NBTItem nbti = new NBTItem(item);
+                nbti.setString("Command", file.getString(key + ".command"));
+                item = nbti.getItem();
+            }
+
+            if (file.getDouble(key + ".price") <= 0 ) {
+                main.getLogger().warning("Item on key " + key + " has to specify price and cannot be <= 0");
+                continue;
+            }
+
+            item = main.utils.setItemAsDaily(item);
+            main.listItem.put(item, file.getDouble(key + ".price"));
 
         }
 
-        if (main.listMaterials.isEmpty()) {
+        if (main.listItem.isEmpty()) {
             main.getLogger().severe("items.yml is either empty, with negative values or materials not supported in this version, please check it");
             main.getServer().getPluginManager().disablePlugin(main);
         }
 
     }
+
 
     public static void resetTime(DailyRandomShop main) {
         main.time = main.getConfig().getInt("timer-duration");

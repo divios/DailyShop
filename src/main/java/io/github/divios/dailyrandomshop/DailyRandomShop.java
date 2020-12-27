@@ -19,6 +19,7 @@ import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 
 import org.bstats.bukkit.Metrics;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -28,7 +29,7 @@ public final class DailyRandomShop extends JavaPlugin {
     public Economy econ = null;
     public Permission perms = null;
     public Chat chat = null;
-    public Map<String, Double[]> listMaterials;
+    public HashMap<ItemStack, Double> listItem;
     public buyGui BuyGui;
     public sellGui SellGui;
     public confirmGui ConfirmGui;
@@ -50,6 +51,8 @@ public final class DailyRandomShop extends JavaPlugin {
         int pluginId = 9721;
         Metrics metrics = new Metrics(this, pluginId);
 
+        utils = new Utils(this);
+
         if (!setupEconomy()) {
             log.severe(String.format("[%s] - Disabled due to no Vault dependency found!", getDescription().getName()));
             getServer().getPluginManager().disablePlugin(this);
@@ -63,16 +66,16 @@ public final class DailyRandomShop extends JavaPlugin {
             getServer().getPluginManager().disablePlugin(this);
         }
 
-        utils = new Utils(this);
+
         BuyGui = new buyGui(this);
-        SellGui = new sellGui(this);
+        //SellGui = new sellGui(this);
         ConfirmGui = new confirmGui(this);
 
         buyGuiListener buyguiListener = new buyGuiListener(this);
-        sellGuiListener sellguiListener = new sellGuiListener(this, SellGui.getDailyItemsSlots());
+        //sellGuiListener sellguiListener = new sellGuiListener(this, SellGui.getDailyItemsSlots());
         confirmGuiListener confirmguiListener = new confirmGuiListener(this);
         getServer().getPluginManager().registerEvents(buyguiListener, this);
-        getServer().getPluginManager().registerEvents(sellguiListener, this);
+        //getServer().getPluginManager().registerEvents(sellguiListener, this);
         getServer().getPluginManager().registerEvents(confirmguiListener, this);
 
         getCommand("rdShop").setExecutor(new Commands(this));
