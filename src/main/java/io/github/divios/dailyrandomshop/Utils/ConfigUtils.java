@@ -75,6 +75,7 @@ public class ConfigUtils {
             Material material;
             Map<Enchantment, Integer> enchants = new HashMap<>();
 
+
             try {
                 type = types.valueOf(file.getString(key + ".type").toUpperCase());
             } catch (NoSuchFieldError e){
@@ -91,10 +92,32 @@ public class ConfigUtils {
 
             item = new ItemStack(material);
 
-            List<String> enchantss = file.getStringList(key+".enchantments");
+            if (file.getString(key + ".nbtValues") != null) {
+
+                NBTItem nbtItem = new NBTItem(item);
+                List<String> nbtValues = Arrays.asList(file.getString(key + ".nbtValues").split(";"));
+
+                main.getLogger().warning(nbtValues.toString());
+                for(String s: nbtValues) {
+                    String nbtKey = s.split(":")[0];
+                    String nbtValue = s.split(":")[1];
+                    if(nbtValue.equals("null")) nbtValue = "";
+                    nbtItem.setString(nbtKey, nbtValue);
+                }
+                item = nbtItem.getItem();
+            }
+
+            if (file.getString(key + ".flags") != null) {
+                ItemMeta meta = item.getItemMeta();
+                for(String s: file.getString(key + ".flags").split(";")) {
+                    meta.addItemFlags(ItemFlag.valueOf(s));
+                }
+                item.setItemMeta(meta);
+            }
+
+            List<String> enchantss = file.getStringList(key + ".enchantments");
 
             for (String s: enchantss) {
-                main.getLogger().warning(s.split(":")[0]);
                 if (!enchantss.isEmpty() &&
                         EnchantmentWrapper.getByKey(NamespacedKey.minecraft(s.split(":")[0].toLowerCase())) != null)  {
                     enchants.put(EnchantmentWrapper.getByKey(NamespacedKey.minecraft(s.split(":")[0].toLowerCase())), Integer.parseInt(s.split(":")[1]));
@@ -103,9 +126,9 @@ public class ConfigUtils {
 
             if(!enchants.isEmpty()) {
                 try {
-                    item.addEnchantments(enchants);
+                    item.addUnsafeEnchantments(enchants);
                 } catch (IllegalArgumentException e){
-                    main.getLogger().warning("The entry " + key + " has an error on the type enchants, skipping");
+                    main.getLogger().warning(main.config.PREFIX + "The entry " + key + " has an error on the type enchants, skipping");
                     continue;
                 }
             }
@@ -122,20 +145,24 @@ public class ConfigUtils {
             }
 
             String name = file.getString(key + ".name");
-            if (name != null) {
+            if (name != null && !name.isEmpty()) {
+                main.getLogger().warning(name);
                 meta.setDisplayName(ChatColor.translateAlternateColorCodes('&',name));
             }
             meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
             item.setItemMeta(meta);
 
             if (type == types.COMMAND) {
-                NBTItem nbti = new NBTItem(item);
-                nbti.setString("Command", file.getString(key + ".command"));
-                item = nbti.getItem();
+                if (file.getStringList(key + ".commands") == null ||
+                        file.getStringList(key + ".commands").isEmpty()) {
+                    main.getLogger().warning(main.config.PREFIX + "Item on key " + key + " has to specify a command");
+                    continue;
+                }
+                item = main.utils.setItemAsCommand(item, file.getStringList(key + ".commands"));
             }
 
             if (file.getDouble(key + ".price") <= 0 ) {
-                main.getLogger().warning("Item on key " + key + " has to specify price and cannot be <= 0");
+                main.getLogger().warning(main.config.PREFIX + "Item on key " + key + " has to specify price and cannot be <= 0");
                 continue;
             }
 
@@ -145,12 +172,55 @@ public class ConfigUtils {
         }
 
         if (main.listItem.isEmpty()) {
-            main.getLogger().severe("items.yml is either empty, with negative values or materials not supported in this version, please check it");
+            main.getLogger().severe(main.config.PREFIX + "items.yml is either empty, with negative values or materials not supported in this version, please check it");
             main.getServer().getPluginManager().disablePlugin(main);
         }
 
     }
 
+    public static void migrateItemToConfig(DailyRandomShop main, ItemStack item, Double price) throws IOException {
+        File customFile = new File(main.getDataFolder(), "items.yml");
+        FileConfiguration file;
+
+        file = YamlConfiguration.loadConfiguration(customFile);
+        String key = "" + (main.listItem.size());
+
+        file.set(key + ".type", "item");
+
+        file.set(key + ".material", item.getType().toString());
+        file.set(key + ".name", item.getItemMeta().getDisplayName().replaceAll("§", "&"));
+
+        if(item.getItemMeta().hasLore()) {
+            List<String> lore = new ArrayList<>();
+            for (String s: item.getItemMeta().getLore()) {
+                lore.add(s.replaceAll("§", "&"));
+            }
+            file.set(key + ".lore", lore);
+        }
+        List<String> enchants = new ArrayList<>();
+        if(!item.getEnchantments().isEmpty()) {
+            for (Map.Entry<Enchantment, Integer> e: item.getEnchantments().entrySet()) {
+                enchants.add(e.getKey().getKey().getKey().toUpperCase().concat(":" + e.getValue()));
+            }
+            file.set(key + ".enchantments", enchants.toArray(new String[0]));
+        }
+        file.set(key + ".price", price);
+
+        String flags = "";
+        if(!item.getItemMeta().getItemFlags().isEmpty()) {
+            for (ItemFlag e: item.getItemMeta().getItemFlags()) {
+                flags = flags.concat(";" + e.toString());
+            }
+            file.set(key + ".flags", flags.substring(1));
+        }
+
+        String nbtValues = main.utils.getNBT(item);
+        if(!nbtValues.isEmpty()) {
+            file.set(key + ".nbtValues", "" + nbtValues);
+        }
+        file.save(customFile);
+
+    }
 
     public static void resetTime(DailyRandomShop main) {
         main.time = main.getConfig().getInt("timer-duration");
@@ -174,7 +244,7 @@ public class ConfigUtils {
                 main.time = main.dbManager.getTimer();
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
-                main.getLogger().warning("Couldn't read timer value from database, setting it to value on config");
+                main.getLogger().warning(main.config.PREFIX + "Couldn't read timer value from database, setting it to value on config");
                 ConfigUtils.resetTime(main);
             }
         }
