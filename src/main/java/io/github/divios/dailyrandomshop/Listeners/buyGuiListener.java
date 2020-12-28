@@ -53,6 +53,15 @@ public class buyGuiListener implements Listener {
 
         ItemStack item = e.getView().getTopInventory().getItem(e.getSlot());
 
+        if (main.utils.isCommandItem(item)) {
+
+            for (String s: main.utils.getItemCommand(item)) {
+                main.getServer().dispatchCommand(main.getServer().getConsoleSender(), s.replaceAll("%player%", p.getName()));
+            }
+            p.closeInventory();
+            return;
+        }
+
         if (main.getConfig().getBoolean("enable-confirm-gui")) {
             p.openInventory(main.ConfirmGui.getGui(item));
 

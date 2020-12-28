@@ -123,8 +123,9 @@ public class buyGui {
             else betweenrows(i);
         }
 
-        if (timer) createRandomItems();
-        else getDailyItems();
+        //if (timer)
+        createRandomItems();
+        //else getDailyItems();
     }
 
     public void createRandomItems() {
@@ -148,6 +149,7 @@ public class buyGui {
 
             ItemMeta meta = randomItem.getItemMeta();
             List<String> lore = meta.getLore();
+            if(lore == null) lore= new ArrayList<>();
 
             lore.add(main.config.BUY_GUI_ITEMS_LORE.replaceAll("\\{price}", "" + listOfMaterials.get(randomItem)));
             meta.setLore(lore);

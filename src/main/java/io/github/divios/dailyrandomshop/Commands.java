@@ -2,12 +2,14 @@ package io.github.divios.dailyrandomshop;
 
 import io.github.divios.dailyrandomshop.Utils.ConfigUtils;
 import io.github.divios.dailyrandomshop.Utils.Utils;
+import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.io.IOException;
 import java.util.Locale;
@@ -58,6 +60,29 @@ public class Commands implements CommandExecutor {
                 }
                 Player p = (Player) sender;
                 //p.openInventory(main.SellGui.createSellInv());
+            } else if (args[0].toLowerCase(Locale.ROOT).equals("adddailyitem")) {
+                Player p = (Player) sender;
+                ItemStack item = p.getInventory().getItemInMainHand();
+
+                if (item == null || item.getType() == Material.AIR) {
+                    p.sendMessage(main.config.PREFIX + main.config.MSG_ADD_DAILY_ITEM_ERROR_ITEM);
+                    return true;
+                }
+
+                if (args.length == 1) {
+                    p.sendMessage(main.config.PREFIX + main.config.MSG_ADD_DAILY_ITEM_ERROR_PRICE);
+                    return true;
+                }
+
+                item = main.utils.setItemAsDaily(item);
+                main.listItem.put(item, Double.parseDouble(args[1]));
+                try {
+                    ConfigUtils.migrateItemToConfig(main, item, Double.parseDouble(args[1]));
+                } catch (IOException e) {
+                    p.sendMessage(main.config.PREFIX + "Something went wrong while adding the item");
+                    e.printStackTrace();
+                }
+                p.sendMessage(main.config.PREFIX + "Added item successfully");
             }
         }
 
