@@ -74,6 +74,10 @@ sell-to-daily-shop-lore:
 # This is the pane on the edges of the sell gui
 sell-gui-pane: GRAY_STAINED_GLASS_PANE
 
+setting-gui-name: "&6&cSettings"
+
+anvil-menu-name: "&6&lSet price"
+
 ### Messages ###
 message-open-shop: "&7Opening daily shop..."
 message-buy-item: "&7You bought the item {item} for {price}"

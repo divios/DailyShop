@@ -1,6 +1,7 @@
 package io.github.divios.dailyrandomshop.Listeners;
 
 import io.github.divios.dailyrandomshop.DailyRandomShop;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -24,55 +25,80 @@ public class buyGuiListener implements Listener {
     @EventHandler
     public void onInventoryClick(final InventoryClickEvent e) {
         Player p = (Player) e.getWhoClicked();
-        if ( !(e.getView().getTitle().equals(main.config.BUY_GUI_TITLE)) ) return;
+        if (!(e.getView().getTitle().equals(main.config.BUY_GUI_TITLE + ChatColor.GOLD))) return;
 
         e.setCancelled(true);
 
-        if(e.getSlot() == (e.getView().getTopInventory().getSize() - 1) &&
+        if (e.getSlot() == (e.getView().getTopInventory().getSize() - 1) &&
                 e.getRawSlot() == e.getSlot() && main.getConfig().getBoolean("enable-sell-gui")) {
 
-            if(!p.hasPermission("DailyRandomShop.sell")) {
+            if (!p.hasPermission("DailyRandomShop.sell")) {
                 try {
                     p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
-                }catch (NoSuchFieldError ignored) { }
+                } catch (NoSuchFieldError ignored) {
+                }
                 p.sendMessage(main.config.PREFIX + main.config.MSG_NOT_PERMS);
                 return;
             }
 
             try {
                 p.playSound(p.getLocation(), Sound.BLOCK_DISPENSER_DISPENSE, 0.5F, 1);
-            }catch (NoSuchFieldError ignored) { }
+            } catch (NoSuchFieldError ignored) {}
 
-
-            //p.openInventory(main.SellGui.createSellInv());
+            p.openInventory(main.SellGui.createSellInv());
+            return;
         }
 
         if (e.getCurrentItem() == null || e.getCurrentItem().getType() == Material.AIR) return;
 
-        if ( !main.utils.isDailyItem(e.getCurrentItem()) ) return;
+        if (!main.utils.isDailyItem(e.getCurrentItem())) return;
 
-        ItemStack item = e.getView().getTopInventory().getItem(e.getSlot());
+        ItemStack item = e.getView().getTopInventory().getItem(e.getSlot()).clone();
+        item.setAmount(1);
 
         if (main.utils.isCommandItem(item)) {
 
-            for (String s: main.utils.getItemCommand(item)) {
+            Double price = main.utils.getItemPrice(main.listDailyItems, item, true);
+            if (main.econ.getBalance(p) < price) {
+                p.sendMessage(main.config.PREFIX + main.config.MSG_NOT_ENOUGH_MONEY);
+                try {
+                    p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
+                } catch (NoSuchFieldError ignored) {}
+                finally { return; }
+            }
+
+            for (String s : main.utils.getItemCommand(item)) {
                 main.getServer().dispatchCommand(main.getServer().getConsoleSender(), s.replaceAll("%player%", p.getName()));
             }
             p.closeInventory();
+            try {
+                p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 0.5F, 1);
+            } catch (NoSuchFieldError ignored) {
+            }
+
+            if (main.utils.isItemAmount(item)) main.utils.processItemAmount(item, e.getSlot());
             return;
         }
 
-        if (main.getConfig().getBoolean("enable-confirm-gui")) {
+        if (main.getConfig().getBoolean("enable-confirm-gui") && !main.utils.isItemAmount(item)) {
             p.openInventory(main.ConfirmGui.getGui(item));
 
             try {
                 p.playSound(p.getLocation(), Sound.BLOCK_DISPENSER_DISPENSE, 0.5F, 1);
-            }catch (NoSuchFieldError ignored) { }
+            } catch (NoSuchFieldError ignored) {
+            }
 
-        }
-        else {
-            Double price = main.listItem.get(item);
+        } else {
+
+            Double price = main.utils.getItemPrice(main.listDailyItems, item, true);
+
+            if (main.utils.isItemAmount(item) && main.econ.getBalance(p) >= price &&
+                !main.utils.inventoryFull(p)) {
+                main.utils.processItemAmount(e.getView().getTopInventory().getItem(e.getSlot()), e.getSlot());
+            }
+
             main.utils.giveItem(p, price, e.getView().getBottomInventory(), item);
+
         }
     }
 

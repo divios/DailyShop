@@ -11,7 +11,7 @@ public class Config {
 
     public final String PREFIX, BUY_GUI_TITLE, BUY_GUI_PAINTING_NAME, BUY_GUI_ARROW_NAME, BUY_GUI_ITEMS_LORE,
         CONFIRM_GUI_NAME, CONFIRM_GUI_ADD_PANE, CONFIRM_GUI_REMOVE_PANE, CONFIRM_GUI_CONFIRM_PANE, CONFIRM_GUI_RETURN_NAME,
-        SELL_GUI_TITLE, SELL_PAINTING_NAME, SELL_ARROW_NAME, SELL_ITEM_NAME;
+        SELL_GUI_TITLE, SELL_PAINTING_NAME, SELL_ARROW_NAME, SELL_ITEM_NAME, SETTINGS_GUI_TITLE, ANVIL_GUI_TITLE;
     public final List<String > BUY_GUI_PAINTING_LORE, BUY_GUI_ARROW_LORE, SELL_PAINTING_LORE, SELL_ARROW_LORE;
     public final String MSG_OPEN_SHOP, MSG_BUY_ITEM, MSG_SELL_ITEMS, MSG_NOT_ENOUGH_MONEY, MSG_INVENTORY_FULL,
             MSG_INVALID_ITEM , MSG_NOT_PERMS, MSG_ADD_DAILY_ITEM_ERROR_ITEM, MSG_ADD_DAILY_ITEM_ERROR_PRICE,
@@ -73,6 +73,10 @@ public class Config {
         SELL_ITEM_NAME = ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("sell-item-name"));
         SELL_ARROW_NAME = ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("sell-to-daily-shop-name","&6Return to daily shop"));
         SELL_ARROW_LORE = main.getConfig().getStringList("sell-to-daily-shop-lore");
+
+        SETTINGS_GUI_TITLE = ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("settings-gui-name", "&6&lSettings"));
+
+        ANVIL_GUI_TITLE = ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("anvil-gui-name", "&6&lSet price"));
 
         MSG_OPEN_SHOP = ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("message-open-shop", "&7Opening daily shop..."));
         MSG_BUY_ITEM = ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("message-buy-item", "&7You bought the item {item} for {price}"));

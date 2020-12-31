@@ -1,13 +1,12 @@
 package io.github.divios.dailyrandomshop.Utils;
 
+import com.cryptomorin.xseries.XEnchantment;
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import io.github.divios.dailyrandomshop.Config;
 import io.github.divios.dailyrandomshop.DailyRandomShop;
 import io.github.divios.dailyrandomshop.GUIs.confirmGui;
 import io.github.divios.dailyrandomshop.Tasks.UpdateTimer;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
+import org.bukkit.*;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
@@ -17,6 +16,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.*;
 import java.sql.SQLException;
@@ -53,7 +56,16 @@ public class ConfigUtils {
 
         readItems(main);
         createDB(main, reload);
+        new BukkitRunnable() {
+            @Override
+            public void run () {
+                // do stuff
+            }
+        }.runTaskLater(main, 5);
+
         UpdateTimer.initTimer(main, reload);
+        main.getLogger().info("Loaded " + main.listDailyItems.size() + " daily items");
+        main.getLogger().info("Loaded " + main.listSellItems.size() + " sell items");
         //readTimer(main); antiguo con yaml
         if(reload) {
             main.BuyGui.inicializeGui(false);
@@ -66,7 +78,12 @@ public class ConfigUtils {
         File customFile = new File(main.getDataFolder(), "items.yml");
         FileConfiguration file;
 
-        main.listItem = new HashMap<>();
+        main.listDailyItems = new HashMap<>();
+        try {
+            main.listSellItems = main.dbManager.getSellItems();
+        } catch (Exception e) {
+            main.listSellItems = new HashMap<>();
+        }
 
         file = YamlConfiguration.loadConfiguration(customFile);
         for (String key : file.getKeys(false)) {
@@ -79,25 +96,24 @@ public class ConfigUtils {
             try {
                 type = types.valueOf(file.getString(key + ".type").toUpperCase());
             } catch (NoSuchFieldError e){
-                main.getLogger().warning("The entry " + key + " has an error on the type field, skipping");
+                main.getLogger().warning("The entry " + key + " has an error on the value field, skipping");
                 continue;
             }
 
             try {
                 material = Material.valueOf(file.getString(key + ".material").toUpperCase());
-            } catch (NoSuchFieldError e){
-                main.getLogger().warning("The entry " + key + " has an error on the type material, skipping");
+            } catch (IllegalArgumentException e){
+                main.getLogger().warning("The entry " + key + " has an error on the value material, skipping");
                 continue;
             }
 
             item = new ItemStack(material);
 
-            if (file.getString(key + ".nbtValues") != null) {
+            if (!file.getStringList(key + ".nbtValues").isEmpty()) {
 
                 NBTItem nbtItem = new NBTItem(item);
-                List<String> nbtValues = Arrays.asList(file.getString(key + ".nbtValues").split(";"));
+                List<String> nbtValues = file.getStringList(key + ".nbtValues");
 
-                main.getLogger().warning(nbtValues.toString());
                 for(String s: nbtValues) {
                     String nbtKey = s.split(":")[0];
                     String nbtValue = s.split(":")[1];
@@ -106,29 +122,49 @@ public class ConfigUtils {
                 }
                 item = nbtItem.getItem();
             }
+            item = main.utils.setItemAsDaily(item);
 
-            if (file.getString(key + ".flags") != null) {
-                ItemMeta meta = item.getItemMeta();
-                for(String s: file.getString(key + ".flags").split(";")) {
-                    meta.addItemFlags(ItemFlag.valueOf(s));
+            if (file.getInt(key + ".amount") != 0) {
+                int amount = file.getInt(key + ".amount");
+                if (amount <= 0) {
+                    main.getLogger().warning("The entry " + key + " has an error on the value amount, skipping");
+                } else {
+                    item = main.utils.setItemAsAmount(item);
+                    item.setAmount(amount);
                 }
-                item.setItemMeta(meta);
+            }
+
+            if (!file.getStringList(key + ".flags").isEmpty()) {
+                ItemMeta meta = item.getItemMeta();
+                try {
+                    for (String s : file.getStringList(key + ".flags")) {
+                        meta.addItemFlags(ItemFlag.valueOf(s));
+                    }
+                    item.setItemMeta(meta);
+                } catch (IllegalArgumentException e) {
+                    main.getLogger().warning("The entry " + key + " has an error on the flag, skipping");
+                    continue;
+                }
             }
 
             List<String> enchantss = file.getStringList(key + ".enchantments");
+            try {
+                for (String s : enchantss) {
+                    if (!enchantss.isEmpty() || Enchantment.getByName(s.split(":")[0]) != null) {
 
-            for (String s: enchantss) {
-                if (!enchantss.isEmpty() &&
-                        EnchantmentWrapper.getByKey(NamespacedKey.minecraft(s.split(":")[0].toLowerCase())) != null)  {
-                    enchants.put(EnchantmentWrapper.getByKey(NamespacedKey.minecraft(s.split(":")[0].toLowerCase())), Integer.parseInt(s.split(":")[1]));
+                        enchants.put(Enchantment.getByName(s.split(":")[0]), Integer.parseInt(s.split(":")[1]));
+                    }
                 }
+            } catch (IllegalArgumentException e) {
+                main.getLogger().warning("Item on key " + key + " has an error on the value enchants, skipping");
+                continue;
             }
 
             if(!enchants.isEmpty()) {
                 try {
                     item.addUnsafeEnchantments(enchants);
-                } catch (IllegalArgumentException e){
-                    main.getLogger().warning(main.config.PREFIX + "The entry " + key + " has an error on the type enchants, skipping");
+                } catch (Exception e){
+                    main.getLogger().warning("The entry " + key + " has an error on the value enchants, skipping");
                     continue;
                 }
             }
@@ -146,7 +182,6 @@ public class ConfigUtils {
 
             String name = file.getString(key + ".name");
             if (name != null && !name.isEmpty()) {
-                main.getLogger().warning(name);
                 meta.setDisplayName(ChatColor.translateAlternateColorCodes('&',name));
             }
             meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
@@ -155,24 +190,46 @@ public class ConfigUtils {
             if (type == types.COMMAND) {
                 if (file.getStringList(key + ".commands") == null ||
                         file.getStringList(key + ".commands").isEmpty()) {
-                    main.getLogger().warning(main.config.PREFIX + "Item on key " + key + " has to specify a command");
+                    main.getLogger().warning("Item on key " + key + " has to specify a command");
                     continue;
                 }
                 item = main.utils.setItemAsCommand(item, file.getStringList(key + ".commands"));
             }
 
             if (file.getDouble(key + ".price") <= 0 ) {
-                main.getLogger().warning(main.config.PREFIX + "Item on key " + key + " has to specify price and cannot be <= 0");
+                main.getLogger().warning("Item on key " + key + " has to specify price and cannot be <= 0");
                 continue;
             }
 
-            item = main.utils.setItemAsDaily(item);
-            main.listItem.put(item, file.getDouble(key + ".price"));
+            if (item.getType().toString().equalsIgnoreCase("POTION") ||
+                    item.getType().toString().equalsIgnoreCase("SPLASH_POTION") ) {
+                PotionMeta pmetaitem = (PotionMeta) item.getItemMeta();
+                String[] effect;
+                String[] color = file.getString(key + ".color").split(",");
+                try {
+                    for (String s : file.getStringList(key + ".effects")) {
+
+                        effect = s.split(",");
+
+                        pmetaitem.addCustomEffect(new PotionEffect(PotionEffectType.getByName(effect[0]), Integer.parseInt(effect[1]), Integer.parseInt(effect[2])), true);
+                        try {
+                            pmetaitem.setColor(Color.fromRGB(Integer.parseInt(color[0]), Integer.parseInt(color[1]), Integer.parseInt(color[2])));
+                        } catch (NoSuchMethodError Ignored) {}
+                    }
+                } catch (Exception e) {
+                    main.getLogger().warning("Item on key " + key + " has invalid effects");
+                    continue;
+                }
+                item.setItemMeta(pmetaitem);
+            }
+
+
+            main.listDailyItems.put(item, file.getDouble(key + ".price"));
 
         }
 
-        if (main.listItem.isEmpty()) {
-            main.getLogger().severe(main.config.PREFIX + "items.yml is either empty, with negative values or materials not supported in this version, please check it");
+        if (main.listDailyItems.isEmpty()) {
+            main.getLogger().severe("items.yml is either empty, with negative values or materials not supported in this version, please check it");
             main.getServer().getPluginManager().disablePlugin(main);
         }
 
@@ -183,13 +240,14 @@ public class ConfigUtils {
         FileConfiguration file;
 
         file = YamlConfiguration.loadConfiguration(customFile);
-        String key = "" + (main.listItem.size());
+        String key = "" + main.listDailyItems.size();
 
         file.set(key + ".type", "item");
 
         file.set(key + ".material", item.getType().toString());
-        file.set(key + ".name", item.getItemMeta().getDisplayName().replaceAll("§", "&"));
-
+        if(item.getItemMeta().getDisplayName() != null) {
+            file.set(key + ".name", item.getItemMeta().getDisplayName().replaceAll("§", "&"));
+        }
         if(item.getItemMeta().hasLore()) {
             List<String> lore = new ArrayList<>();
             for (String s: item.getItemMeta().getLore()) {
@@ -206,20 +264,19 @@ public class ConfigUtils {
         }
         file.set(key + ".price", price);
 
-        String flags = "";
+        List<String> flags = new ArrayList<>();
         if(!item.getItemMeta().getItemFlags().isEmpty()) {
             for (ItemFlag e: item.getItemMeta().getItemFlags()) {
-                flags = flags.concat(";" + e.toString());
+                flags.add(e.toString());
             }
-            file.set(key + ".flags", flags.substring(1));
+            file.set(key + ".flags", flags);
         }
 
-        String nbtValues = main.utils.getNBT(item);
+        List<String> nbtValues = main.utils.getNBT(item);
         if(!nbtValues.isEmpty()) {
-            file.set(key + ".nbtValues", "" + nbtValues);
+            file.set(key + ".nbtValues", nbtValues);
         }
         file.save(customFile);
-
     }
 
     public static void resetTime(DailyRandomShop main) {
@@ -243,8 +300,8 @@ public class ConfigUtils {
             try {
                 main.time = main.dbManager.getTimer();
             } catch (SQLException throwables) {
-                throwables.printStackTrace();
-                main.getLogger().warning(main.config.PREFIX + "Couldn't read timer value from database, setting it to value on config");
+                //throwables.printStackTrace();
+                main.getLogger().warning("Couldn't read timer value from database, setting it to value on config");
                 ConfigUtils.resetTime(main);
             }
         }
@@ -261,7 +318,22 @@ public class ConfigUtils {
             }
         }*/
 
+    }
 
+    public static int getAvariableSlot(DailyRandomShop main) {
+        File customFile = new File(main.getDataFolder(), "items.yml");
+        FileConfiguration file;
+        int slot = -1;
+        file = YamlConfiguration.loadConfiguration(customFile);
+
+        List<String> keysOrdened = new ArrayList<>();
+        file = YamlConfiguration.loadConfiguration(customFile);
+
+        for(String key: file.getKeys(false)) {
+
+        }
+
+        return slot;
     }
 
 }

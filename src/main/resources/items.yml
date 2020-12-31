@@ -2,29 +2,107 @@
 ########   Items ########
 #########################
 
-# This represents all the items that 'll appear randomly on the shop!
-# Also the sell price is the price for selling that specific item,
-# put it to 0 if you want to prevent being able to sell it
+#  Configuration Basics
+#=========================================================
+#
+# This note will help you understand the basic functions and configuration of the items.yml on DailyRandomShop
+#
 
-1:
-  type: command
-  material: IRON_HELMET
-  name: "&cExample item command"
-  lore:
-    - "&7Buy this item to run"
-    - "&7a command"
-  commands:
-    - "broadcast hello %player%"
-    - "broadcast hola %player%"
-  price: 40.0
-2:
+# Type: (required)
+# For now there are 2 values, item and command.
+#
+# The item value allows to buy that specific item on the daily shop, you can specify name, lore, enchantments,
+# nbtValues and flags. This 'll be cover lately
+#
+# The command value allows you to specify commands to run when that item is bought, see example 4
+
+# Material: (required)
+# The material of the item, it has to be a valid material, see https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html to check
+# the material available. NOTE: be careful with the version you are using, the materials may change.
+#
+# There is an special case, if you want to create a potion, set the material to POTION and add a color and effects. The color value is
+# required and is in RGB format (red, green, blue) , but the effects are optional. See https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/potion/PotionEffectType.html
+# for available effects. See example 2 for more details
+
+# Name: (optional)
+# The custom name of the item
+
+# Lore: (optional)
+# Custom lore of the item
+
+# Material: (required)
+# The material of the item, it has to be a valid material, see https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html to check
+# the material available. NOTE: be careful with the version you are using, the materials may change.
+
+# Amount: (optional)
+# This 'll make the shop run out of stock of this specific item. See example 5 for more details
+
+# Enchantments: (optional)
+# Enchantments to be applied to the item. The format is type:level. You can apply every possible enchant regardless of the item, for
+# example it is possible to apply FIRE_RESISTANCE to a sword. Check https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/enchantments/Enchantment.html
+# for available enchantments. See example 1 for more details
+
+# Flags: (optional)
+# This are special values for the item, initially is use for items added via command, but you can use it too, for example HIDE_ENCHANTS
+# 'll hide the enchants of the item. For more information https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/inventory/ItemFlag.html.
+# See example 3 for more details
+
+# nbtValues: (optional)
+# This are special values for the item, initially is use for items added via command, but you can use it too if you know the nbt values
+# that is using the specific plugin, but i strongly recommend to added this items via command
+
+'1':
   type: item
-  material: iron_sword
-  name: "&6&lSword of the Hero"
+  material: IRON_SWORD
+  name: '&6&lSword of the Hero'
   lore:
-    - "&7The sword of a fallen hero"
+    - '&7The sword of a fallen hero'
   enchantments:
     - FIRE_ASPECT:2
-    - SHARPNESS:5
     - SWEEPING_EDGE:3
-  price: 10000
+  price: 1000
+'2':
+  type: item
+  material: POTION
+  name: '&c&lPotion of Ragnarok'
+  lore:
+    - '&7A strange potion, smells weird..'
+  color: 25,25,25
+  effects:
+    - POISON,300,1
+    - FIRE_RESISTANCE,200,3
+  price: 300.0
+'3':
+  type: item
+  material: DIAMOND_AXE
+  name: '&c&lRagnar axe'
+  lore:
+    - '&7A legendary axe once'
+    - '&7wielded by Ragnar'
+  enchantments:
+    - FIRE_ASPECT:2
+    - SWEEPING_EDGE:3
+  price: 5000.0
+  flags:
+    - HIDE_ENCHANTS
+'4':
+  type: command
+  material: IRON_HELMET
+  name: '&cExample item command'
+  lore:
+    - '&7Buy this item to run'
+    - '&7a command'
+  commands:
+    - broadcast hello %player%
+    - broadcast hola %player%
+  price: 1000.0
+'5':
+  type: item
+  material: GRASS
+  name: '&aSpecial Item'
+  lore:
+    - '&7This item is in high demand'
+    - '&7and ''ll run out of stock'
+  amount: 4
+  price: 1.0
+

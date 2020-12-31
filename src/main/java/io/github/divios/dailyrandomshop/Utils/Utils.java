@@ -1,10 +1,12 @@
 package io.github.divios.dailyrandomshop.Utils;
 
+import com.cryptomorin.xseries.XMaterial;
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import de.tr7zw.changeme.nbtapi.NBTList;
 import io.github.divios.dailyrandomshop.DailyRandomShop;
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -34,10 +36,12 @@ public class Utils {
         return minValue + (int)(Math.random() * ((maxValue - minValue) + 1));
     }
 
-    public boolean inventoryFull(ItemStack[] inventory) {
+    public boolean inventoryFull(Player p) {
 
-        for (ItemStack i: inventory) {
-            if (i == null) {
+        for (int i = 0; i < 36; i++) {
+
+            if (p.getInventory().getItem(i) == null ||
+                    p.getInventory().getItem(i).getType() == Material.AIR) {
                 return false;
             }
         }
@@ -47,7 +51,7 @@ public class Utils {
     public ItemStack getEntry(HashMap<ItemStack, Double> list, int index) {
         int i = 0;
         for (ItemStack item: list.keySet()) {
-            if (index == i) return item;
+            if (index == i) return item.clone();
             i++;
         }
         return null;
@@ -56,20 +60,26 @@ public class Utils {
     public int giveItem(Player p, Double price, Inventory bottominv, ItemStack item) {
 
         int outcome = -1;
-        if (main.utils.inventoryFull(bottominv.getContents())) {
+
+        if (main.utils.inventoryFull(p)) {
             p.sendMessage(main.config.PREFIX + main.config.MSG_INVENTORY_FULL);
             try {
                 p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
+
             } catch (NoSuchFieldError ignored) {}
-            return outcome;
+            finally { return outcome; }
+
         }
+
         if (main.econ.getBalance(p) < price) {
             p.sendMessage(main.config.PREFIX + main.config.MSG_NOT_ENOUGH_MONEY);
             try {
                 p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
+                return outcome;
             } catch (NoSuchFieldError ignored) {}
-            return outcome;
+            finally { return outcome; }
         }
+
         ItemStack aux = item.clone();
         ItemMeta meta = aux.getItemMeta();
         List<String> lore = meta.getLore();
@@ -94,6 +104,29 @@ public class Utils {
         return nbtItem.getItem();
     }
 
+    public ItemStack setItemAsAmount(ItemStack item) {
+        NBTItem nbtItem = new NBTItem(item);
+        nbtItem.setString("setAmount", "amnt");
+        return nbtItem.getItem();
+    }
+
+    public boolean isItemAmount(ItemStack item) {
+        if (item == null) return false;
+
+        NBTItem nbtItem = new NBTItem(item);
+        return nbtItem.hasKey("setAmount");
+    }
+
+    public void processItemAmount(ItemStack item, int slot) {
+        if(item.getAmount() == 1) {
+            item = XMaterial.RED_STAINED_GLASS_PANE.parseItem();
+
+        } else item.setAmount(item.getAmount() - 1);
+
+        main.BuyGui.getGui().setItem(slot, item);
+
+    }
+
     public ItemStack setItemAsDaily(ItemStack item) {
         NBTItem nbtItem = new NBTItem(item);
         nbtItem.setString("DailyItem", "isdaily");
@@ -107,27 +140,23 @@ public class Utils {
         return nbtItem.hasKey("DailyItem");
     }
 
-    public String getNBT(ItemStack item) {
+    public List<String> getNBT(ItemStack item) {
         NBTItem nbtItem = new NBTItem(item);
-        String nbtValues = "";
+        List<String> nbtValues = new ArrayList<>();
 
         if(nbtItem.getKeys() == null || nbtItem.getKeys().isEmpty()) return nbtValues;
-
-        main.getLogger().warning(nbtItem.getKeys().toString());
 
         for (String key: nbtItem.getKeys()) {
             if(key.equals("Command") || key.equals("DailyItem")) {
                 continue;
             }
             String value = nbtItem.getString(key);
-            main.getLogger().warning(value);
-            if(value.isEmpty()) value = "null";
+            if(value.isEmpty()) continue;
 
-            nbtValues = nbtValues.concat(";" + key);
-            nbtValues = nbtValues.concat(":" + value);
+            nbtValues.add(key.concat(":" + value));
 
         }
-        if(!nbtValues.isEmpty()) nbtValues = nbtValues.substring(1);
+
         return nbtValues;
     }
 
@@ -153,24 +182,20 @@ public class Utils {
     public List<String> getItemCommand(ItemStack item) {
 
         NBTItem NBTitem = new NBTItem(item);
-        List<String> commands = new ArrayList<>();
         String rawCommands = NBTitem.getString("Command");
 
-        for (String s: rawCommands.split(";")) {
-            main.getLogger().severe(s);
-            commands.add(s);
-        }
-
-        return commands;
+        return new ArrayList<>(Arrays.asList(rawCommands.split(";")));
     }
 
-    public Double getItemPrice(HashMap<ItemStack, Double> items, ItemStack toCompare) {
-        Double price = null;
-        ItemStack toCompare2 = removePriceLore(toCompare);
+    public Double getItemPrice(HashMap<ItemStack, Double> items, ItemStack toCompare, boolean lore) {
+        Double price = 0.0;
+        ItemStack toCompare2 = null;
+        if (lore) toCompare2 =  removePriceLore(toCompare);
+        else toCompare2 = toCompare.clone();
 
         for (Map.Entry<ItemStack, Double> item: items.entrySet()) {
-            ItemStack item2 = removePriceLore(item.getKey());
-            if (item2.isSimilar(toCompare2)) return item.getValue();
+            //ItemStack item2 = removePriceLore(item.getKey());
+            if (item.getKey().isSimilar(toCompare2)) return item.getValue();
         }
 
         return price;
@@ -180,12 +205,25 @@ public class Utils {
         ItemStack item2 = item.clone();
         ItemMeta meta = null;
         meta = item2.getItemMeta();
-        List<String> lore = meta.getLore();
-        lore.remove(lore.size() - 1);
-        meta.setLore(lore);
+
+        if(meta.hasLore()) {
+            List<String> lore = meta.getLore();
+            lore.remove(lore.size() - 1);
+            meta.setLore(lore);
+        }
         item2.setItemMeta(meta);
 
         return item2;
     }
+
+    public ItemStack getBuyItem(ItemStack item) {
+        for( Map.Entry<ItemStack, Double> s: main.listDailyItems.entrySet()) {
+            if (s.getKey().isSimilar(item)) return s.getKey().clone();
+        }
+        return null;
+    }
+
+
+
 
 }

@@ -1,6 +1,7 @@
 package io.github.divios.dailyrandomshop.Listeners;
 
 import io.github.divios.dailyrandomshop.DailyRandomShop;
+import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -35,7 +36,7 @@ public class confirmGuiListener implements Listener {
     public void onInventoryClick(final InventoryClickEvent e) {
 
 
-        if (!(e.getView().getTitle().equals(main.config.CONFIRM_GUI_NAME))) {
+        if (!(e.getView().getTitle().equals(main.config.CONFIRM_GUI_NAME + ChatColor.GREEN))) {
             return;
         }
 
@@ -59,7 +60,7 @@ public class confirmGuiListener implements Listener {
 
 
         if (e.getSlot() == 22) {
-            Double price = main.utils.getItemPrice(main.listItem, item) * item.getAmount();
+            Double price = main.utils.getItemPrice(main.listDailyItems, item, true) * item.getAmount();
 
             main.utils.giveItem(p, price, e.getView().getBottomInventory(), item);
             return;
