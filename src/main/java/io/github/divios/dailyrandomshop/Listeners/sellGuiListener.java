@@ -3,6 +3,7 @@ package io.github.divios.dailyrandomshop.Listeners;
 import com.cryptomorin.xseries.XMaterial;
 import io.github.divios.dailyrandomshop.DailyRandomShop;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -16,7 +17,7 @@ import java.util.ArrayList;
 
 public class sellGuiListener implements Listener {
 
-    /*private ArrayList<Integer> dailyItemsSlots = new ArrayList<>();
+    private ArrayList<Integer> dailyItemsSlots = new ArrayList<>();
     private final DailyRandomShop main;
     private final String name;
 
@@ -28,15 +29,20 @@ public class sellGuiListener implements Listener {
 
     @EventHandler
     public void onInventoryClick(final InventoryClickEvent e) {
-        if (!e.getView().getTitle().equals(name)) {
+        if (!e.getView().getTitle().equals(name + ChatColor.RED)) {
             return;
         }
         Player p = (Player) e.getWhoClicked();
 
-        if (e.getSlot() == e.getRawSlot() && !dailyItemsSlots.contains(e.getSlot())) {
+        if (e.getSlot() == e.getRawSlot() && !dailyItemsSlots.contains(e.getSlot())) { //si damos al inventario de arriba
             e.setCancelled(true);
-            if (e.getSlot() == 27) {
-
+            if (e.getSlot() == 27) { //Boton atras
+                if (!p.hasPermission("DailyRandomShop.open")) {
+                    try {
+                        p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 0.5F, 1);
+                    } catch (Exception ignored) {}
+                    return;
+                }
                 for(int i: dailyItemsSlots) { //recover items
                     ItemStack item = e.getView().getTopInventory().getItem(i);
                     if (item != null) {
@@ -49,7 +55,7 @@ public class sellGuiListener implements Listener {
                 } catch (NoSuchFieldError ignored){}
                 p.openInventory(main.BuyGui.getGui());
             }
-            if (e.getSlot() == 31) {
+            if (e.getSlot() == 31) { //Boton de confirmar
                 double price = main.SellGui.calculatePrice(e.getView().getTopInventory());
                 if (price != 0) {
                     main.econ.depositPlayer(p, price);
@@ -65,16 +71,16 @@ public class sellGuiListener implements Listener {
                     p.sendMessage(main.config.PREFIX + main.config.MSG_SELL_ITEMS.replace("{price}", "" + price));
                 } else {
                     try {
-                        p.playSound(p.getLocation(), Sound.BLOCK_DISPENSER_DISPENSE, 0.5F, 1);
+                        p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 0.5F, 1);
                     }catch (NoSuchFieldError ignored) { }
                 }
             }
             return;
         }
 
+        //A partir de aqui es si estamos añadiendo un item
         if (e.getCurrentItem() != null && e.getSlot() != e.getRawSlot() && e.getCurrentItem().getType() != XMaterial.AIR.parseMaterial()
-                && (!main.listItem.containsKey(e.getCurrentItem().getType().toString()) ||
-                main.listItem.get(e.getCurrentItem().getType().toString())[1] == 0)) {
+                && (main.utils.getItemPrice(main.listSellItems, e.getCurrentItem(), false) == 0.0) ) {
 
             e.setCancelled(true);
             try {
@@ -83,7 +89,6 @@ public class sellGuiListener implements Listener {
             p.sendMessage(main.config.PREFIX + main.config.MSG_INVALID_ITEM);
             return;
         }
-
 
         Bukkit.getScheduler().runTaskLater(main, () -> {
 
@@ -107,6 +112,6 @@ public class sellGuiListener implements Listener {
             if (item != null) p.getInventory().addItem(item);
         }
 
-    }*/
+    }
 
 }

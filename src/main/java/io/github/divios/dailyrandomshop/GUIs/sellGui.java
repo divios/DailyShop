@@ -15,16 +15,16 @@ import java.util.List;
 
 public class sellGui {
 
-    /*private final DailyRandomShop main;
+    private final DailyRandomShop main;
     private final int[] fillSlots = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 17, 18, 26,
             27, 28, 29, 30, 31, 32, 33, 34, 35};
     private final ArrayList<Integer> dailyItemsSlots = new ArrayList<>();
-    private HashMap<ItemStack, Integer> listMaterials;
+    private HashMap<ItemStack, Double> listMaterials;
     private ArrayList<Inventory> currentInventories= new ArrayList<>();
 
     public sellGui(DailyRandomShop main) {
         this.main = main;
-        listMaterials = main.listItem;
+        listMaterials = main.listSellItems;
         dailyItemsSlots.add(10);
         dailyItemsSlots.add(11);
         dailyItemsSlots.add(12);
@@ -42,7 +42,7 @@ public class sellGui {
     }
 
     public Inventory createSellInv() {
-        Inventory sellGui = Bukkit.createInventory(null, 36, main.config.SELL_GUI_TITLE);
+        Inventory sellGui = Bukkit.createInventory(null, 36, main.config.SELL_GUI_TITLE + ChatColor.RED);
         ItemStack item;
         ItemMeta meta;
         for (int i : fillSlots) {
@@ -104,8 +104,7 @@ public class sellGui {
 
         for( int i : dailyItemsSlots) {
             if (inv.getItem(i) == null) continue;
-            String material = inv.getItem(i).getType().toString();
-            price += main.listItem.get(material)[1] * inv.getItem(i).getAmount();
+            price += main.utils.getItemPrice(listMaterials, inv.getItem(i), false) * inv.getItem(i).getAmount();
         }
         price = (double) Math.round(price * 100.0) / 100;
         if (price == 0) {
@@ -126,5 +125,5 @@ public class sellGui {
 
     public ArrayList<Integer> getDailyItemsSlots() {
         return dailyItemsSlots;
-    }*/
+    }
 }

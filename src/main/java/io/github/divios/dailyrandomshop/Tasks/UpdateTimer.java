@@ -21,11 +21,11 @@ public class UpdateTimer {
                     return;
                 }
                 main.time--;
-                if (main.time % 360 == 0) {
+                if (main.time % 180 == 0) {
                     try {
                         main.dbManager.updateTimer(main.time);
-                    } catch (SQLException e) {
-                        main.getLogger().warning("Couldn't save time on database");
+                    } catch (SQLException Ignore) {
+
                     }
                 }
             }

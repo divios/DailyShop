@@ -15,10 +15,12 @@ public class TabComplete implements TabCompleter {
         List<String> commands = new ArrayList<>();
 
         if (args.length == 1) {
-            commands.add("reload");
-            commands.add("renovate");
-            commands.add("sell");
-            commands.add("addDailyItem");
+            if( sender.hasPermission("DailyRandomShop.reload")) commands.add("reload");
+            if( sender.hasPermission("DailyRandomShop.renovate")) commands.add("renovate");
+            if( sender.hasPermission("DailyRandomShop.sell")) commands.add("sell");
+            if( sender.hasPermission("DailyRandomShop.addDailyItem")) commands.add("addDailyItem");
+            if( sender.hasPermission("DailyRandomShop.addSellItem")) commands.add("addSellItem");
+            if( sender.hasPermission("DailyRandomShop.settings")) commands.add("Settings");
             return commands;
         }
 

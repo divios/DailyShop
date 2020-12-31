@@ -20,7 +20,6 @@ public class buyGui {
     private Inventory shop;
     private final DailyRandomShop main;
 
-
     public buyGui(DailyRandomShop main) {
         this.main = main;
         inicializeGui(false);
@@ -115,7 +114,7 @@ public class buyGui {
         int rows = (int) Math.ceil(dailyRows + 2);
         if (rows == 2) rows = 3;
 
-        shop = Bukkit.createInventory(null, (rows * 9) , main.config.BUY_GUI_TITLE);
+        shop = Bukkit.createInventory(null, (rows * 9) , main.config.BUY_GUI_TITLE + ChatColor.GOLD);
 
         for ( int i=0; i < rows; i++) {
             if (i == 0) firstRow(i);
@@ -129,7 +128,7 @@ public class buyGui {
     }
 
     public void createRandomItems() {
-        HashMap<ItemStack, Double> listOfMaterials = main.listItem;
+        HashMap<ItemStack, Double> listOfMaterials = main.listDailyItems;
         ArrayList<Integer> inserted = new ArrayList<>();
         int n = 0;
         while (n < main.getConfig().getInt("number-of-daily-items")) {
@@ -145,7 +144,7 @@ public class buyGui {
             }
             inserted.add(ran);
 
-            ItemStack randomItem = main.utils.getEntry(main.listItem, ran);
+            ItemStack randomItem = main.utils.getEntry(main.listDailyItems, ran);
 
             ItemMeta meta = randomItem.getItemMeta();
             List<String> lore = meta.getLore();
@@ -175,7 +174,7 @@ public class buyGui {
         }
         if(!dailyItems.isEmpty()) {
             try {
-                main.dbManager.updateCurrentItems(dailyItems);
+                main.dbManager.updateCurrentItems();
             } catch (Exception throwables) {
                 main.getLogger().severe("Couldn't save current daily items on database");
                 throwables.printStackTrace();
@@ -199,7 +198,7 @@ public class buyGui {
                 ArrayList<String> lore = new ArrayList<String>();
 
 
-                lore.add(main.config.BUY_GUI_ITEMS_LORE.replaceAll("\\{price}", "" + main.listItem.get(item)));
+                lore.add(main.config.BUY_GUI_ITEMS_LORE.replaceAll("\\{price}", "" + main.listDailyItems.get(item)));
                 meta.setLore(lore);
 
                 item.setItemMeta(meta);

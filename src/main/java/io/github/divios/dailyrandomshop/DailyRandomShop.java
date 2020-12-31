@@ -6,12 +6,8 @@ import java.util.logging.Logger;
 
 import io.github.divios.dailyrandomshop.Database.DataManager;
 import io.github.divios.dailyrandomshop.Database.sqlite;
-import io.github.divios.dailyrandomshop.GUIs.buyGui;
-import io.github.divios.dailyrandomshop.GUIs.confirmGui;
-import io.github.divios.dailyrandomshop.GUIs.sellGui;
-import io.github.divios.dailyrandomshop.Listeners.buyGuiListener;
-import io.github.divios.dailyrandomshop.Listeners.confirmGuiListener;
-import io.github.divios.dailyrandomshop.Listeners.sellGuiListener;
+import io.github.divios.dailyrandomshop.GUIs.*;
+import io.github.divios.dailyrandomshop.Listeners.*;
 import io.github.divios.dailyrandomshop.Utils.ConfigUtils;
 import io.github.divios.dailyrandomshop.Utils.Utils;
 import net.milkbowl.vault.chat.Chat;
@@ -29,10 +25,12 @@ public final class DailyRandomShop extends JavaPlugin {
     public Economy econ = null;
     public Permission perms = null;
     public Chat chat = null;
-    public HashMap<ItemStack, Double> listItem;
+    public HashMap<ItemStack, Double> listDailyItems, listSellItems;
     public buyGui BuyGui;
     public sellGui SellGui;
     public confirmGui ConfirmGui;
+    public sellGuiSettings settings;
+
     public Utils utils;
     public Config config;
     public int time = 0;
@@ -68,18 +66,22 @@ public final class DailyRandomShop extends JavaPlugin {
 
 
         BuyGui = new buyGui(this);
-        //SellGui = new sellGui(this);
+        SellGui = new sellGui(this);
         ConfirmGui = new confirmGui(this);
+        settings = new sellGuiSettings(this);
 
         buyGuiListener buyguiListener = new buyGuiListener(this);
-        //sellGuiListener sellguiListener = new sellGuiListener(this, SellGui.getDailyItemsSlots());
+        sellGuiListener sellguiListener = new sellGuiListener(this, SellGui.getDailyItemsSlots());
         confirmGuiListener confirmguiListener = new confirmGuiListener(this);
         getServer().getPluginManager().registerEvents(buyguiListener, this);
-        //getServer().getPluginManager().registerEvents(sellguiListener, this);
+        getServer().getPluginManager().registerEvents(sellguiListener, this);
         getServer().getPluginManager().registerEvents(confirmguiListener, this);
+        getServer().getPluginManager().registerEvents(new sellGuiSettingsListener(this), this);
 
         getCommand("rdShop").setExecutor(new Commands(this));
         getCommand("rdShop").setTabCompleter(new TabComplete());
+
+
         //setupPermissions();
         //setupChat();
 
