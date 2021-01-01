@@ -35,7 +35,6 @@ public class confirmGuiListener implements Listener {
     @EventHandler
     public void onInventoryClick(final InventoryClickEvent e) {
 
-
         if (!(e.getView().getTitle().equals(main.config.CONFIRM_GUI_NAME + ChatColor.GREEN))) {
             return;
         }

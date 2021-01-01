@@ -10,7 +10,6 @@ import org.bukkit.*;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.enchantments.EnchantmentWrapper;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
@@ -19,7 +18,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.*;
 import java.sql.SQLException;
@@ -54,16 +52,11 @@ public class ConfigUtils {
             }
         }
 
-        readItems(main);
         createDB(main, reload);
-        new BukkitRunnable() {
-            @Override
-            public void run () {
-                // do stuff
-            }
-        }.runTaskLater(main, 5);
+        readItems(main);
 
         UpdateTimer.initTimer(main, reload);
+
         main.getLogger().info("Loaded " + main.listDailyItems.size() + " daily items");
         main.getLogger().info("Loaded " + main.listSellItems.size() + " sell items");
         //readTimer(main); antiguo con yaml
@@ -78,12 +71,8 @@ public class ConfigUtils {
         File customFile = new File(main.getDataFolder(), "items.yml");
         FileConfiguration file;
 
-        main.listDailyItems = new HashMap<>();
-        try {
-            main.listSellItems = main.dbManager.getSellItems();
-        } catch (Exception e) {
-            main.listSellItems = new HashMap<>();
-        }
+        main.listDailyItems = new LinkedHashMap<>();
+        main.listSellItems = main.dbManager.getSellItems();
 
         file = YamlConfiguration.loadConfiguration(customFile);
         for (String key : file.getKeys(false)) {
@@ -284,7 +273,7 @@ public class ConfigUtils {
     }
 
     public static void createDB(DailyRandomShop main, boolean reload) throws IOException {
-        File file = new File(main.getDataFolder() + File.separator + main.getDescription().getName().toLowerCase() + ".db");
+        File file = new File(main.getDataFolder(),  main.getDescription().getName().toLowerCase() + ".db");
 
         if (!file.exists()) {
             file.createNewFile();
@@ -296,14 +285,12 @@ public class ConfigUtils {
                 main.getServer().getPluginManager().disablePlugin(main);
             }
         }
-        else if (!reload){
-            try {
-                main.time = main.dbManager.getTimer();
-            } catch (SQLException throwables) {
-                //throwables.printStackTrace();
-                main.getLogger().warning("Couldn't read timer value from database, setting it to value on config");
-                ConfigUtils.resetTime(main);
-            }
+
+        if (!reload){
+                int time = main.dbManager.getTimer();
+
+                if (time == -1) ConfigUtils.resetTime(main);
+                else main.time = time;
         }
     }
 
