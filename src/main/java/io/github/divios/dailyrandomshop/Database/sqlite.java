@@ -18,8 +18,8 @@ public class sqlite {
 
     public sqlite(DailyRandomShop main) {
         this.main = main;
-        connectionString = "jdbc:sqlite:" + main.getDataFolder() +
-                File.separator + main.getDescription().getName().toLowerCase() + ".db";
+        connectionString = "jdbc:sqlite:" + main.getDataFolder() + File.separator +
+                main.getDescription().getName().toLowerCase() + ".db";
 
         try {
             Class.forName("org.sqlite.JDBC"); // This is required to put here for Spigot 1.10 and below to force class load

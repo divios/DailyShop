@@ -6,7 +6,7 @@
 
     <groupId>io.github.divios</groupId>
     <artifactId>DailyRandomShop</artifactId>
-    <version>1.11.2-BETA</version>
+    <version>1.11.3-BETA</version>
     <packaging>jar</packaging>
 
     <name>DailyRandomShop</name>

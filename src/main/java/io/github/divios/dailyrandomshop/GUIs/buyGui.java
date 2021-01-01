@@ -122,9 +122,8 @@ public class buyGui {
             else betweenrows(i);
         }
 
-        //if (timer)
-        createRandomItems();
-        //else getDailyItems();
+        if (timer) createRandomItems();
+        else getDailyItems();
     }
 
     public void createRandomItems() {
@@ -173,12 +172,7 @@ public class buyGui {
             dailyItems.add(item);
         }
         if(!dailyItems.isEmpty()) {
-            try {
-                main.dbManager.updateCurrentItems();
-            } catch (Exception throwables) {
-                main.getLogger().severe("Couldn't save current daily items on database");
-                throwables.printStackTrace();
-            }
+            main.dbManager.updateCurrentItems();
         }
     }
 

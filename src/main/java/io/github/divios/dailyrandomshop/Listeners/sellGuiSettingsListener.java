@@ -14,8 +14,6 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.io.IOException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,7 +25,7 @@ public class sellGuiSettingsListener implements Listener {
 
     public sellGuiSettingsListener(DailyRandomShop main) {
         this.main = main;
-        name = main.config.SETTINGS_GUI_TITLE;
+        name = main.config.SELL_SETTINGS_TITLE;
         reservedSlots.add(45);
         reservedSlots.add(46);
         reservedSlots.add(47);
@@ -50,17 +48,17 @@ public class sellGuiSettingsListener implements Listener {
         Player p = (Player) e.getWhoClicked();
 
         if(e.getSlot() == e.getRawSlot() && e.getSlot() == 49) {
-            p.closeInventory();
+            p.openInventory(main.Settings.getGUI());
         }
 
         if (e.getSlot() == e.getRawSlot() && e.getSlot() == 45 &&
             e.getCurrentItem() != null) {
-            p.openInventory(main.settings.processNextGui(e.getView().getTopInventory(), -1));
+            p.openInventory(main.SellGuiSettings.processNextGui(e.getView().getTopInventory(), -1));
         }
 
         if (e.getSlot() == e.getRawSlot() && e.getSlot() == 53 &&
                 e.getCurrentItem() != null) {
-            p.openInventory(main.settings.processNextGui(e.getView().getTopInventory(), 1));
+            p.openInventory(main.SellGuiSettings.processNextGui(e.getView().getTopInventory(), 1));
         }
 
         if(e.getCurrentItem() == null || e.getCurrentItem().getType() == Material.AIR ||
@@ -76,16 +74,16 @@ public class sellGuiSettingsListener implements Listener {
             meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
             rightItem.setItemMeta(meta);
             new AnvilGUI.Builder()
-                    .onClose(player -> {                                        //called when the inventory is closing
-                        player.openInventory(e.getInventory());
+                    .onClose(player -> {
+                        player.closeInventory();
                     })
                     .onComplete((player, text) -> {                             //called when the inventory output slot is clicked
                         try {
                             Double price = Double.parseDouble(text);
                             main.listSellItems.replace(item, price);
                             main.dbManager.updateSellItems();
-                            main.settings = new sellGuiSettings(main);
-                            p.openInventory(main.settings.invs.get(0));
+                            main.SellGuiSettings = new sellGuiSettings(main);
+                            p.openInventory(main.SellGuiSettings.invs.get(0));
                             return AnvilGUI.Response.close();
                         }catch (Exception err) {
                             return AnvilGUI.Response.text("Error");
@@ -101,9 +99,9 @@ public class sellGuiSettingsListener implements Listener {
         else if (e.isLeftClick()) {
             main.listSellItems.remove(item);
             p.sendMessage(main.config.PREFIX + ChatColor.GRAY + "Removed item successfully");
-            main.settings = new sellGuiSettings(main);
+            main.SellGuiSettings = new sellGuiSettings(main);
             if(main.listSellItems.isEmpty()) p.closeInventory();
-            else p.openInventory(main.settings.invs.get(0));
+            else p.openInventory(main.SellGuiSettings.invs.get(0));
             try {
                 main.dbManager.updateSellItems();
             } catch (Exception ignored) { }

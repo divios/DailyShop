@@ -11,8 +11,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.IOException;
-import java.sql.SQLException;
-import java.util.Locale;
 
 
 public class Commands implements CommandExecutor {
@@ -133,15 +131,13 @@ public class Commands implements CommandExecutor {
                     p.sendMessage(main.config.PREFIX + main.config.MSG_ADD_DAILY_ITEM_ERROR_PRICE);
                     return true;
                 }
-                try {
+
                 main.listSellItems.put(item, Double.parseDouble(args[1]));
                 p.sendMessage(main.config.PREFIX + "Item added successfully");
-                main.settings = new sellGuiSettings(main);
+                main.SellGuiSettings = new sellGuiSettings(main);
 
-                    main.dbManager.updateSellItems();
-                } catch (Exception e) {
-                    p.sendMessage(main.config.PREFIX + "Something went wrong while adding the item");
-                }
+                main.dbManager.updateSellItems();
+
 
             } else if (args[0].equalsIgnoreCase("settings") && sender instanceof Player) {
 
@@ -150,12 +146,8 @@ public class Commands implements CommandExecutor {
                     return true;
                 }
                 Player p = (Player) sender;
-                if(main.listSellItems.isEmpty()) {
-                    p.sendMessage(main.config.PREFIX + ChatColor.GRAY + "There are not items registered for sale, you can one with /rdshop addSellItem");
-                    return true;
-                }
 
-                p.openInventory(main.settings.invs.get(0));
+                p.openInventory(main.Settings.getGUI());
             }
 
         }

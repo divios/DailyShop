@@ -46,7 +46,7 @@ public class sellGuiSettings {
         double nD = main.listSellItems.size() / 44F;
         int n = (int) Math.ceil(nD);
 
-        GUI = Bukkit.createInventory(null, 54, main.config.SETTINGS_GUI_TITLE + ChatColor.BOLD);
+        GUI = Bukkit.createInventory(null, 54, main.config.SELL_SETTINGS_TITLE + ChatColor.BOLD);
         GUI.setItem(49, exit);
 
         for(int i = 0; i<n; i++) {
@@ -61,7 +61,7 @@ public class sellGuiSettings {
 
     public Inventory createGUI(int page, int pos) {
         int slot = 0;
-        Inventory returnGui = Bukkit.createInventory(null, 54, main.config.SETTINGS_GUI_TITLE + ChatColor.BOLD);
+        Inventory returnGui = Bukkit.createInventory(null, 54, main.config.SELL_SETTINGS_TITLE + ChatColor.BOLD);
         returnGui.setContents(GUI.getContents());
         if(pos == 0 && main.listSellItems.size() > 44) returnGui.setItem(53, next);
         if(pos == 1) {
@@ -102,6 +102,10 @@ public class sellGuiSettings {
         lore.add(ChatColor.GOLD + "" + ChatColor.BOLD + "Left click: " + ChatColor.GRAY + "Remove item");
         meta.setLore(lore);
         item.setItemMeta(meta);
+    }
+
+    public Inventory getFirstGui() {
+        return invs.get(0);
     }
 
 }
