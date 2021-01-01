@@ -6,19 +6,15 @@ import java.util.logging.Logger;
 
 import io.github.divios.dailyrandomshop.Database.DataManager;
 import io.github.divios.dailyrandomshop.Database.sqlite;
-import io.github.divios.dailyrandomshop.GUIs.buyGui;
-import io.github.divios.dailyrandomshop.GUIs.confirmGui;
-import io.github.divios.dailyrandomshop.GUIs.sellGui;
-import io.github.divios.dailyrandomshop.Listeners.buyGuiListener;
-import io.github.divios.dailyrandomshop.Listeners.confirmGuiListener;
-import io.github.divios.dailyrandomshop.Listeners.sellGuiListener;
-import io.github.divios.dailyrandomshop.Utils.ConfigUtils;
-import io.github.divios.dailyrandomshop.Utils.Utils;
+import io.github.divios.dailyrandomshop.GUIs.*;
+import io.github.divios.dailyrandomshop.Listeners.*;
+import io.github.divios.dailyrandomshop.Utils.*;
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 
 import org.bstats.bukkit.Metrics;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -28,15 +24,21 @@ public final class DailyRandomShop extends JavaPlugin {
     public Economy econ = null;
     public Permission perms = null;
     public Chat chat = null;
-    public Map<String, Double[]> listMaterials;
+    public LinkedHashMap<ItemStack, Double> listDailyItems, listSellItems;
     public buyGui BuyGui;
     public sellGui SellGui;
     public confirmGui ConfirmGui;
+    public sellGuiSettings SellGuiSettings;
+    public settings Settings;
+
     public Utils utils;
     public Config config;
     public int time = 0;
-    public final sqlite db = new sqlite(this);
-    public final DataManager dbManager = new DataManager(db, this);
+    public sqlite db = new sqlite(this);
+    public DataManager dbManager = new DataManager(db, this);
+
+    public DailyRandomShop() {
+    }
 
     @Override
     public void onDisable() {
@@ -49,6 +51,8 @@ public final class DailyRandomShop extends JavaPlugin {
 
         int pluginId = 9721;
         Metrics metrics = new Metrics(this, pluginId);
+
+        utils = new Utils(this);
 
         if (!setupEconomy()) {
             log.severe(String.format("[%s] - Disabled due to no Vault dependency found!", getDescription().getName()));
@@ -63,10 +67,12 @@ public final class DailyRandomShop extends JavaPlugin {
             getServer().getPluginManager().disablePlugin(this);
         }
 
-        utils = new Utils(this);
+
         BuyGui = new buyGui(this);
         SellGui = new sellGui(this);
         ConfirmGui = new confirmGui(this);
+        SellGuiSettings = new sellGuiSettings(this);
+        Settings = new settings(this);
 
         buyGuiListener buyguiListener = new buyGuiListener(this);
         sellGuiListener sellguiListener = new sellGuiListener(this, SellGui.getDailyItemsSlots());
@@ -74,9 +80,13 @@ public final class DailyRandomShop extends JavaPlugin {
         getServer().getPluginManager().registerEvents(buyguiListener, this);
         getServer().getPluginManager().registerEvents(sellguiListener, this);
         getServer().getPluginManager().registerEvents(confirmguiListener, this);
+        getServer().getPluginManager().registerEvents(new sellGuiSettingsListener(this), this);
+        getServer().getPluginManager().registerEvents(new settingListener(this), this);
 
         getCommand("rdShop").setExecutor(new Commands(this));
         getCommand("rdShop").setTabCompleter(new TabComplete());
+
+
         //setupPermissions();
         //setupChat();
 

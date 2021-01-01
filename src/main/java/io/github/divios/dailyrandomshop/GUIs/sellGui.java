@@ -2,7 +2,6 @@ package io.github.divios.dailyrandomshop.GUIs;
 
 import com.cryptomorin.xseries.XMaterial;
 import io.github.divios.dailyrandomshop.DailyRandomShop;
-import net.milkbowl.vault.chat.Chat;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -11,8 +10,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class sellGui {
 
@@ -20,12 +19,12 @@ public class sellGui {
     private final int[] fillSlots = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 17, 18, 26,
             27, 28, 29, 30, 31, 32, 33, 34, 35};
     private final ArrayList<Integer> dailyItemsSlots = new ArrayList<>();
-    private Map<String, Double[]> listMaterials;
+    private HashMap<ItemStack, Double> listMaterials;
     private ArrayList<Inventory> currentInventories= new ArrayList<>();
 
     public sellGui(DailyRandomShop main) {
         this.main = main;
-        listMaterials = main.listMaterials;
+        listMaterials = main.listSellItems;
         dailyItemsSlots.add(10);
         dailyItemsSlots.add(11);
         dailyItemsSlots.add(12);
@@ -43,7 +42,7 @@ public class sellGui {
     }
 
     public Inventory createSellInv() {
-        Inventory sellGui = Bukkit.createInventory(null, 36, main.config.SELL_GUI_TITLE);
+        Inventory sellGui = Bukkit.createInventory(null, 36, main.config.SELL_GUI_TITLE + ChatColor.RED);
         ItemStack item;
         ItemMeta meta;
         for (int i : fillSlots) {
@@ -105,8 +104,7 @@ public class sellGui {
 
         for( int i : dailyItemsSlots) {
             if (inv.getItem(i) == null) continue;
-            String material = inv.getItem(i).getType().toString();
-            price += main.listMaterials.get(material)[1] * inv.getItem(i).getAmount();
+            price += main.utils.getItemPrice(listMaterials, inv.getItem(i), false) * inv.getItem(i).getAmount();
         }
         price = (double) Math.round(price * 100.0) / 100;
         if (price == 0) {
