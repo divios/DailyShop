@@ -1,14 +1,13 @@
 package io.github.divios.dailyrandomshop.Listeners;
 
 import io.github.divios.dailyrandomshop.DailyRandomShop;
-import org.bukkit.Material;
+import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,8 +35,7 @@ public class confirmGuiListener implements Listener {
     @EventHandler
     public void onInventoryClick(final InventoryClickEvent e) {
 
-
-        if (!(e.getView().getTitle().equals(main.config.CONFIRM_GUI_NAME))) {
+        if (!(e.getView().getTitle().equals(main.config.CONFIRM_GUI_NAME + ChatColor.GREEN))) {
             return;
         }
 
@@ -61,7 +59,7 @@ public class confirmGuiListener implements Listener {
 
 
         if (e.getSlot() == 22) {
-            Double price = main.listMaterials.get(item.getType().toString())[0] * item.getAmount();
+            Double price = main.utils.getItemPrice(main.listDailyItems, item, true) * item.getAmount();
 
             main.utils.giveItem(p, price, e.getView().getBottomInventory(), item);
             return;

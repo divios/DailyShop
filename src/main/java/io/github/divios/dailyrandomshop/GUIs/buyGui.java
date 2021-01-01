@@ -1,6 +1,5 @@
 package io.github.divios.dailyrandomshop.GUIs;
 
-import de.tr7zw.changeme.nbtapi.NBTItem;
 import io.github.divios.dailyrandomshop.Utils.ConfigUtils;
 import io.github.divios.dailyrandomshop.DailyRandomShop;
 import org.bukkit.Bukkit;
@@ -12,17 +11,14 @@ import org.bukkit.inventory.meta.ItemMeta;
 import com.cryptomorin.xseries.XMaterial;
 
 
-import java.io.IOException;
-import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class buyGui {
 
     private Inventory shop;
     private final DailyRandomShop main;
-
 
     public buyGui(DailyRandomShop main) {
         this.main = main;
@@ -118,7 +114,7 @@ public class buyGui {
         int rows = (int) Math.ceil(dailyRows + 2);
         if (rows == 2) rows = 3;
 
-        shop = Bukkit.createInventory(null, (rows * 9) , main.config.BUY_GUI_TITLE);
+        shop = Bukkit.createInventory(null, (rows * 9) , main.config.BUY_GUI_TITLE + ChatColor.GOLD);
 
         for ( int i=0; i < rows; i++) {
             if (i == 0) firstRow(i);
@@ -131,7 +127,7 @@ public class buyGui {
     }
 
     public void createRandomItems() {
-        Map<String, Double[]> listOfMaterials = main.listMaterials;
+        HashMap<ItemStack, Double> listOfMaterials = main.listDailyItems;
         ArrayList<Integer> inserted = new ArrayList<>();
         int n = 0;
         while (n < main.getConfig().getInt("number-of-daily-items")) {
@@ -141,18 +137,19 @@ public class buyGui {
             if (listOfMaterials.size() == inserted.size()) break; //make sure to break infinite loop if happens
 
             int ran = main.utils.randomValue(0, listOfMaterials.size() - 1);
+
             if (!inserted.isEmpty() && inserted.contains(ran)) {
                 continue;
             }
             inserted.add(ran);
 
-            Material material = main.utils.getEntry(listOfMaterials, ran);
-            ItemStack randomItem = main.utils.setItemAsDaily(XMaterial.valueOf(material.toString()).parseItem());
+            ItemStack randomItem = main.utils.getEntry(main.listDailyItems, ran);
 
             ItemMeta meta = randomItem.getItemMeta();
-            ArrayList<String> lore = new ArrayList<String>();
+            List<String> lore = meta.getLore();
+            if(lore == null) lore= new ArrayList<>();
 
-            lore.add(main.config.BUY_GUI_ITEMS_LORE.replaceAll("\\{price}", "" + listOfMaterials.get(material.toString())[0]));
+            lore.add(main.config.BUY_GUI_ITEMS_LORE.replaceAll("\\{price}", "" + listOfMaterials.get(randomItem)));
             meta.setLore(lore);
 
             randomItem.setItemMeta(meta);
@@ -175,12 +172,7 @@ public class buyGui {
             dailyItems.add(item);
         }
         if(!dailyItems.isEmpty()) {
-            try {
-                main.dbManager.updateCurrentItems(dailyItems);
-            } catch (Exception throwables) {
-                main.getLogger().severe("Couldn't save current daily items on database");
-                throwables.printStackTrace();
-            }
+            main.dbManager.updateCurrentItems();
         }
     }
 
@@ -200,7 +192,7 @@ public class buyGui {
                 ArrayList<String> lore = new ArrayList<String>();
 
 
-                lore.add(main.config.BUY_GUI_ITEMS_LORE.replaceAll("\\{price}", "" + main.listMaterials.get(item.getType().toString())[0]));
+                lore.add(main.config.BUY_GUI_ITEMS_LORE.replaceAll("\\{price}", "" + main.listDailyItems.get(item)));
                 meta.setLore(lore);
 
                 item.setItemMeta(meta);

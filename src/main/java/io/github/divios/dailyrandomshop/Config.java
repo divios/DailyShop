@@ -11,10 +11,11 @@ public class Config {
 
     public final String PREFIX, BUY_GUI_TITLE, BUY_GUI_PAINTING_NAME, BUY_GUI_ARROW_NAME, BUY_GUI_ITEMS_LORE,
         CONFIRM_GUI_NAME, CONFIRM_GUI_ADD_PANE, CONFIRM_GUI_REMOVE_PANE, CONFIRM_GUI_CONFIRM_PANE, CONFIRM_GUI_RETURN_NAME,
-        SELL_GUI_TITLE, SELL_PAINTING_NAME, SELL_ARROW_NAME, SELL_ITEM_NAME;
+        SELL_GUI_TITLE, SELL_PAINTING_NAME, SELL_ARROW_NAME, SELL_ITEM_NAME, SETTINGS_GUI_TITLE, SELL_SETTINGS_TITLE, ANVIL_GUI_TITLE;
     public final List<String > BUY_GUI_PAINTING_LORE, BUY_GUI_ARROW_LORE, SELL_PAINTING_LORE, SELL_ARROW_LORE;
-    public final String MSG_OPEN_SHOP, MSG_BUY_ITEM, MSG_SELL_ITEMS, MSG_NOT_ENOUGHT_MONEY, MSG_INVENTORY_FULL,
-            MSG_INVALID_ITEM , MSG_NOT_PERMS, MSG_NEW_DAILY_ITEMS, MSG_RELOAD;
+    public final String MSG_OPEN_SHOP, MSG_BUY_ITEM, MSG_SELL_ITEMS, MSG_NOT_ENOUGH_MONEY, MSG_INVENTORY_FULL,
+            MSG_INVALID_ITEM , MSG_NOT_PERMS, MSG_ADD_DAILY_ITEM_ERROR_ITEM, MSG_ADD_DAILY_ITEM_ERROR_PRICE,
+            MSG_ADD_DAILY_ITEM_ERROR, MSG_ADD_DAILY_ITEM_SUCCESS, MSG_NEW_DAILY_ITEMS, MSG_RELOAD;
     public double N_DAILY_ITEMS;
     public String BUY_GUI_PANE1, BUY_GUI_PANE2, SELL_GUI_PANE;
 
@@ -73,14 +74,24 @@ public class Config {
         SELL_ARROW_NAME = ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("sell-to-daily-shop-name","&6Return to daily shop"));
         SELL_ARROW_LORE = main.getConfig().getStringList("sell-to-daily-shop-lore");
 
+        SETTINGS_GUI_TITLE = ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("settings-gui-name", "&6&lSettings"));
+
+        SELL_SETTINGS_TITLE = ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("sell_settings-gui-name", "&a&lSell items Manager"));
+
+        ANVIL_GUI_TITLE = ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("anvil-gui-name", "&6&lSet price"));
+
         MSG_OPEN_SHOP = ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("message-open-shop", "&7Opening daily shop..."));
         MSG_BUY_ITEM = ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("message-buy-item", "&7You bought the item {item} for {price}"));
         MSG_SELL_ITEMS = ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("message-sell-item", "&7You sold all the items for {price}"));
-        MSG_NOT_ENOUGHT_MONEY = ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("message-not-enough-money", "&7Ey! You dont have enough money to buy this item"));
+        MSG_NOT_ENOUGH_MONEY = ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("message-not-enough-money", "&7Ey! You dont have enough money to buy this item"));
         MSG_INVENTORY_FULL= ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("message-inventory-full", "&7Ey! Your inventory is full!"));
         MSG_INVALID_ITEM = ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("message-invalid-item", "&7Ey, we don't accept that item on the market!"));
         MSG_NEW_DAILY_ITEMS = ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("message-new-daily-items", "&7New items available on the Daily Shop!"));
         MSG_NOT_PERMS = ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("message-not-perms", "&7Ey, you dont have permission to do this!"));
+        MSG_ADD_DAILY_ITEM_ERROR_ITEM =  ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("message-add-daily-item-error-item", "&7Ey, you need to have an item in your hand"));
+        MSG_ADD_DAILY_ITEM_ERROR_PRICE =  ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("message-add-daily-item-error-price", "&7Ey, you have to specify a price for the item"));
+        MSG_ADD_DAILY_ITEM_ERROR = ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("message-add-daily-item-error", "&7Something went wrong while adding the item"));
+        MSG_ADD_DAILY_ITEM_SUCCESS = ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("message-add-daily-item-success", "&7Item added successfully"));
         MSG_RELOAD = ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("message-reload", "&7Reloaded all files"));
     }
 

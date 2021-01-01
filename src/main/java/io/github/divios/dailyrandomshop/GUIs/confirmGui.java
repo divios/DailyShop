@@ -70,7 +70,7 @@ public class confirmGui {
     }
 
     public Inventory getGui(ItemStack item) {
-        Inventory inv = Bukkit.createInventory(null, 27, main.config.CONFIRM_GUI_NAME);
+        Inventory inv = Bukkit.createInventory(null, 27, main.config.CONFIRM_GUI_NAME + ChatColor.GREEN);
 
         inv.setContents(confirmGui.getContents());
 
@@ -102,9 +102,10 @@ public class confirmGui {
 
         ItemStack item = inv.getItem(13);
         ItemMeta meta = item.getItemMeta();
-        ArrayList<String> lore = new ArrayList<String>();
+        List<String> lore = meta.getLore();
 
-        lore.add(main.config.BUY_GUI_ITEMS_LORE.replaceAll("\\{price}", "" + main.listMaterials.get(item.getType().toString())[0] * nstack));
+        lore.remove(lore.size() - 1);
+        lore.add(main.config.BUY_GUI_ITEMS_LORE.replaceAll("\\{price}", "" + main.utils.getItemPrice(main.listDailyItems, item, true) * nstack));
         meta.setLore(lore);
 
         item.setItemMeta(meta);
