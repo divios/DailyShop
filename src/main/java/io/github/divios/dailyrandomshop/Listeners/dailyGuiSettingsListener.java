@@ -7,6 +7,7 @@ import io.github.divios.dailyrandomshop.GUIs.settings.confirmIH;
 import io.github.divios.dailyrandomshop.GUIs.settings.dailyGuiSettings;
 import io.github.divios.dailyrandomshop.GUIs.settings.settingsGuiIH;
 import net.wesjd.anvilgui.AnvilGUI;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -20,6 +21,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class dailyGuiSettingsListener implements Listener {
 
@@ -80,9 +82,10 @@ public class dailyGuiSettingsListener implements Listener {
             ItemMeta meta = rightItem.getItemMeta();
             meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
             rightItem.setItemMeta(meta);
+            AtomicBoolean response = new AtomicBoolean(false);
             new AnvilGUI.Builder()
                     .onClose(player -> {
-                        player.closeInventory();
+                        if(!response.get()) Bukkit.getScheduler().runTaskLater(main, () -> p.openInventory(main.DailyGuiSettings.getFirstGui()), 1);
                     })
                     .onComplete((player, text) -> {                             //called when the inventory output slot is clicked
                         try {
@@ -90,7 +93,7 @@ public class dailyGuiSettingsListener implements Listener {
                             main.listDailyItems.replace(item, price);
                             main.dbManager.updateDailyItems();
                             main.DailyGuiSettings = new dailyGuiSettings(main);
-                            p.openInventory(main.DailyGuiSettings.getFirstGui());
+                            response.set(true);
                             return AnvilGUI.Response.close();
                         } catch (Exception err) {
                             return AnvilGUI.Response.text("Error");

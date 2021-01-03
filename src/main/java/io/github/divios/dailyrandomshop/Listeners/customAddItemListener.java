@@ -25,16 +25,17 @@ public class customAddItemListener implements Listener {
         this.main = main;
         this.p = p;
 
-        Bukkit.getScheduler().runTaskLaterAsynchronously(main, () -> {
+        Bukkit.getScheduler().runTaskLater(main, () -> {
             if(!terminated) {
-                p.sendMessage(main.config.PREFIX + ChatColor.GRAY + "Timer expired");
+                p.sendMessage(main.config.PREFIX + ChatColor.GRAY + "Ey! The time to select an item expired, try it again");
                 PlayerInteractEvent.getHandlerList().unregister(this);
+                p.openInventory(main.DailyGuiSettings.getFirstGui());
             }
         }, 200);
 
         try {
             p.sendTitle(ChatColor.GREEN + "" + ChatColor.BOLD + "Click item",
-                    ChatColor.GRAY + "In hand to add it", 1, 3, 1);
+                    ChatColor.GRAY + "In hand to add it", 20, 60, 20);
         } catch (NoSuchMethodError e) {
             p.sendMessage(main.config.PREFIX + ChatColor.GRAY+ "Click item in hand to add it");
         }
@@ -42,7 +43,7 @@ public class customAddItemListener implements Listener {
 
     @EventHandler
     private void OnPlayerClick(PlayerInteractEvent e) {
-        ItemStack item = e.getItem();
+        ItemStack item = e.getItem().clone();
 
         if (e.getPlayer() != p) return;
 

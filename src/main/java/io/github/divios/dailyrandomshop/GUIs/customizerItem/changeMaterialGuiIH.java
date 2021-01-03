@@ -19,6 +19,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiConsumer;
 
 public class changeMaterialGuiIH implements Listener, InventoryHolder {
@@ -161,10 +162,11 @@ public class changeMaterialGuiIH implements Listener, InventoryHolder {
                 unregisterEvents();
                 new changeMaterialGuiIH(main, p, bi, Material.values(), false);
             } else {
+                AtomicBoolean response = new AtomicBoolean(false);
+                final Material[][] auxmat = {Material.values()};
                 new AnvilGUI.Builder()
                         .onClose(player -> {
-
-                            new changeMaterialGuiIH(main, p, bi, Material.values(),false);
+                            Bukkit.getScheduler().runTaskLater(main, () -> new changeMaterialGuiIH(main, p, bi, auxmat[0], response.get()), 1);
                         })
                         .onComplete((player, text) -> {
 
@@ -174,9 +176,10 @@ public class changeMaterialGuiIH implements Listener, InventoryHolder {
                                     materials2.add(m);
                                 }
                             }
+                            auxmat[0] = materials2.toArray(new Material[0]);
                             unregisterEvents();
-                            new changeMaterialGuiIH(main, p, bi,  materials2.toArray(new Material[0]), true);
-                            return AnvilGUI.Response.text("Error");
+                            response.set(true);
+                            return AnvilGUI.Response.close();
 
                         })
                         .text("")

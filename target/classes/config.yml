@@ -40,9 +40,6 @@ daily-items-lore: "&6&lPrice: &7{price}"
 daily-shop-to-sell-name: "&c&lVisit Market"
 daily-shop-to-sell-lore:
   - "&7Right Click to go to the market"
-# This is the buy Panes that surround the object
-daily-shop-pane1: BROWN_STAINED_GLASS_PANE
-daily-shop-pane2: DARK_STAINED_GLASS_PANE
 
 
 # The name of the confirm GUI
@@ -72,8 +69,6 @@ sell-item-name: "&3&lTotal money: &7{price}"
 sell-to-daily-shop-name: "&3&lReturn to daily shop"
 sell-to-daily-shop-lore:
   - "&7Right Click to go to the daily shop"
-# This is the pane on the edges of the sell gui
-sell-gui-pane: BLACK_STAINED_GLASS_PANE
 
 setting-gui-name: "&c&lSettings"
 
