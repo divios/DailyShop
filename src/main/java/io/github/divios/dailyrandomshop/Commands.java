@@ -1,8 +1,9 @@
 package io.github.divios.dailyrandomshop;
 
-import io.github.divios.dailyrandomshop.GUIs.sellGuiSettings;
+import io.github.divios.dailyrandomshop.GUIs.sellGuiIH;
+import io.github.divios.dailyrandomshop.GUIs.settings.sellGuiSettings;
+import io.github.divios.dailyrandomshop.GUIs.settings.settingsGuiIH;
 import io.github.divios.dailyrandomshop.Utils.ConfigUtils;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -68,7 +69,8 @@ public class Commands implements CommandExecutor {
                     return true;
                 }
                 Player p = (Player) sender;
-                p.openInventory(main.SellGui.createSellInv());
+                new sellGuiIH(main, p);
+
             } else if (args[0].equalsIgnoreCase("adddailyitem") && sender instanceof Player) {
 
                 if (!sender.hasPermission("DailyRandomShop.addDailyItem")) {
@@ -147,7 +149,7 @@ public class Commands implements CommandExecutor {
                 }
                 Player p = (Player) sender;
 
-                p.openInventory(main.Settings.getGUI());
+                new settingsGuiIH(main, p);
             }
 
         }

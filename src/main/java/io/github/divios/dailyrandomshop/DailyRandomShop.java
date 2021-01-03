@@ -7,6 +7,8 @@ import java.util.logging.Logger;
 import io.github.divios.dailyrandomshop.Database.DataManager;
 import io.github.divios.dailyrandomshop.Database.sqlite;
 import io.github.divios.dailyrandomshop.GUIs.*;
+import io.github.divios.dailyrandomshop.GUIs.settings.dailyGuiSettings;
+import io.github.divios.dailyrandomshop.GUIs.settings.sellGuiSettings;
 import io.github.divios.dailyrandomshop.Listeners.*;
 import io.github.divios.dailyrandomshop.Utils.*;
 import net.milkbowl.vault.chat.Chat;
@@ -26,10 +28,8 @@ public final class DailyRandomShop extends JavaPlugin {
     public Chat chat = null;
     public LinkedHashMap<ItemStack, Double> listDailyItems, listSellItems;
     public buyGui BuyGui;
-    public sellGui SellGui;
-    public confirmGui ConfirmGui;
+    public dailyGuiSettings DailyGuiSettings;
     public sellGuiSettings SellGuiSettings;
-    public settings Settings;
 
     public Utils utils;
     public Config config;
@@ -69,19 +69,13 @@ public final class DailyRandomShop extends JavaPlugin {
 
 
         BuyGui = new buyGui(this);
-        SellGui = new sellGui(this);
-        ConfirmGui = new confirmGui(this);
+        DailyGuiSettings = new dailyGuiSettings(this);
         SellGuiSettings = new sellGuiSettings(this);
-        Settings = new settings(this);
 
         buyGuiListener buyguiListener = new buyGuiListener(this);
-        sellGuiListener sellguiListener = new sellGuiListener(this, SellGui.getDailyItemsSlots());
-        confirmGuiListener confirmguiListener = new confirmGuiListener(this);
         getServer().getPluginManager().registerEvents(buyguiListener, this);
-        getServer().getPluginManager().registerEvents(sellguiListener, this);
-        getServer().getPluginManager().registerEvents(confirmguiListener, this);
+        getServer().getPluginManager().registerEvents(new dailyGuiSettingsListener(this), this);
         getServer().getPluginManager().registerEvents(new sellGuiSettingsListener(this), this);
-        getServer().getPluginManager().registerEvents(new settingListener(this), this);
 
         getCommand("rdShop").setExecutor(new Commands(this));
         getCommand("rdShop").setTabCompleter(new TabComplete());

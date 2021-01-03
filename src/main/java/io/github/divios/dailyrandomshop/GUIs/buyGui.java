@@ -25,86 +25,45 @@ public class buyGui {
         inicializeGui(false);
     }
 
-    public void firstRow(int i) {
-        int row = 9*i;
+    public void firstRow() {
         ItemStack item;
         ItemMeta meta;
-        for (int j=0; j < 9; j++) {
 
-            if(j==0 || j==1 || j==7 || j==8) {
-                item = main.utils.setItemAsFill(XMaterial.valueOf(main.config.BUY_GUI_PANE1).parseItem());
+        item = main.utils.setItemAsFill(new ItemStack(Material.PAINTING));
+        meta = item.getItemMeta();
+        meta.setDisplayName(main.config.BUY_GUI_PAINTING_NAME);
+        List<String> lore = new ArrayList<>();
+        for (String s : main.config.BUY_GUI_PAINTING_LORE) {
+            lore.add(ChatColor.translateAlternateColorCodes('&', s));
+        }
+        meta.setLore(lore);
+        item.setItemMeta(meta);
+        shop.setItem(4, item);
+
+        if(main.getConfig().getBoolean("enable-sell-gui")) {
+            ItemStack item2 = XMaterial.OAK_FENCE_GATE.parseItem();
+            meta = item2.getItemMeta();
+            meta.setDisplayName(main.config.BUY_GUI_ARROW_NAME);
+            lore = new ArrayList<>();
+            for (String s : main.config.BUY_GUI_ARROW_LORE) {
+                lore.add(ChatColor.translateAlternateColorCodes('&', s));
             }
-            else if(j==4){
-                item = main.utils.setItemAsFill(new ItemStack(Material.PAINTING));
-                meta = item.getItemMeta();
-
-                meta.setDisplayName(main.config.BUY_GUI_PAINTING_NAME);
-                List<String> lore = new ArrayList<>();
-                for (String s : main.config.BUY_GUI_PAINTING_LORE) {
-                    lore.add(ChatColor.translateAlternateColorCodes('&', s));
-                }
-                meta.setLore(lore);
-
-                item.setItemMeta(meta);
-                shop.setItem(row+j, item);
-                continue;
-            }
-            else item = main.utils.setItemAsFill(XMaterial.valueOf(main.config.BUY_GUI_PANE2).parseItem());
-
-            meta = item.getItemMeta();
-            meta.setDisplayName(ChatColor.GOLD + "");
-            item.setItemMeta(meta);
-            shop.setItem(row+j, item);
+            meta.setLore(lore);
+            item2.setItemMeta(meta);
+            shop.setItem(8, item2);
         }
     }
 
-    public void betweenrows(int i) {
-        int row = 9*i;
+    public void secondRow() {
         ItemStack item;
         ItemMeta meta;
-        for (int j=0; j < 9; j++) {
-            if (j==0 || j==8) {
-                item = main.utils.setItemAsFill(XMaterial.valueOf(main.config.BUY_GUI_PANE2).parseItem());
-            } else continue;
+        for (int j = 0; j < 9; j++) {
+
+            item = main.utils.setItemAsFill(XMaterial.BLACK_STAINED_GLASS_PANE.parseItem());
             meta = item.getItemMeta();
             meta.setDisplayName(ChatColor.GOLD + "");
             item.setItemMeta(meta);
-            shop.setItem(row+j, item);
-        }
-    }
-
-    public void finalRow(int i) {
-        int row = 9*i;
-        ItemStack item;
-        ItemMeta meta;
-        for (int j=0; j < 9; j++) {
-            if (j==0 || j==1 || j==7) {
-                item = main.utils.setItemAsFill(XMaterial.valueOf(main.config.BUY_GUI_PANE1).parseItem());
-            }
-            else if (j==2 || j==3 || j==4 || j==5 || j==6) {
-                item = main.utils.setItemAsFill(XMaterial.valueOf(main.config.BUY_GUI_PANE2).parseItem());
-            } else {
-                if (main.getConfig().getBoolean("enable-sell-gui")) {
-                    item = main.utils.setItemAsFill(new ItemStack(Material.ARROW));
-                    meta = item.getItemMeta();
-
-                    meta.setDisplayName(main.config.BUY_GUI_ARROW_NAME);
-                    List<String> lore = new ArrayList<>();
-                    for (String s : main.config.BUY_GUI_ARROW_LORE) {
-                        lore.add(ChatColor.translateAlternateColorCodes('&', s));
-                    }
-                    meta.setLore(lore);
-
-                    item.setItemMeta(meta);
-                    shop.setItem(row + j, item);
-                    continue;
-                }
-                item = main.utils.setItemAsFill(XMaterial.valueOf(main.config.BUY_GUI_PANE1).parseItem());
-            }
-            meta = item.getItemMeta();
-            meta.setDisplayName(ChatColor.GOLD + "");
-            item.setItemMeta(meta);
-            shop.setItem(row+j, item);
+            shop.setItem(9 + j, item);
         }
     }
 
@@ -114,13 +73,10 @@ public class buyGui {
         int rows = (int) Math.ceil(dailyRows + 2);
         if (rows == 2) rows = 3;
 
-        shop = Bukkit.createInventory(null, (rows * 9) , main.config.BUY_GUI_TITLE + ChatColor.GOLD);
+        shop = Bukkit.createInventory(null, (rows * 9), main.config.BUY_GUI_TITLE + ChatColor.GOLD);
 
-        for ( int i=0; i < rows; i++) {
-            if (i == 0) firstRow(i);
-            else if(i==rows-1) finalRow(i);
-            else betweenrows(i);
-        }
+        firstRow();
+        secondRow();
 
         if (timer) createRandomItems();
         else getDailyItems();
@@ -129,8 +85,9 @@ public class buyGui {
     public void createRandomItems() {
         HashMap<ItemStack, Double> listOfMaterials = main.listDailyItems;
         ArrayList<Integer> inserted = new ArrayList<>();
-        int n = 0;
-        while (n < main.getConfig().getInt("number-of-daily-items")) {
+
+        int j=18;
+        for(int i = 18; i<shop.getSize(); i++) {
 
             if (shop.firstEmpty() == -1) break;
 
@@ -141,21 +98,22 @@ public class buyGui {
             if (!inserted.isEmpty() && inserted.contains(ran)) {
                 continue;
             }
+
             inserted.add(ran);
 
             ItemStack randomItem = main.utils.getEntry(main.listDailyItems, ran);
 
             ItemMeta meta = randomItem.getItemMeta();
             List<String> lore = meta.getLore();
-            if(lore == null) lore= new ArrayList<>();
+            if (lore == null) lore = new ArrayList<>();
 
             lore.add(main.config.BUY_GUI_ITEMS_LORE.replaceAll("\\{price}", "" + listOfMaterials.get(randomItem)));
             meta.setLore(lore);
 
             randomItem.setItemMeta(meta);
 
-            shop.setItem(shop.firstEmpty(), randomItem);
-            n++;
+            shop.setItem(j, randomItem);
+            j++;
         }
         saveDailyItems();
 
@@ -167,11 +125,11 @@ public class buyGui {
     public void saveDailyItems() {
         ArrayList<ItemStack> dailyItems = new ArrayList<>();
 
-        for(ItemStack item : shop.getContents()) {
-            if(item == null || !main.utils.isDailyItem(item)) continue;
+        for (ItemStack item : shop.getContents()) {
+            if (item == null || !main.utils.isDailyItem(item)) continue;
             dailyItems.add(item);
         }
-        if(!dailyItems.isEmpty()) {
+        if (!dailyItems.isEmpty()) {
             main.dbManager.updateCurrentItems();
         }
     }
@@ -179,15 +137,16 @@ public class buyGui {
     public void getDailyItems() {
         try {
             ArrayList<ItemStack> dailyItem = main.dbManager.getCurrentItems();
-            if(dailyItem.isEmpty()) {
+            if (dailyItem.isEmpty()) {
                 createRandomItems();
                 //main.getLogger().severe("Hubo un error al recuperar los items diarios, generando items aleatorios");
                 return;
             }
             dailyItem.trimToSize();
 
-            for(ItemStack item: dailyItem) {
-                if(shop.firstEmpty() == -1) break;
+            int n = 18;
+            for (ItemStack item : dailyItem) {
+                if (shop.firstEmpty() == -1) break;
                 ItemMeta meta = item.getItemMeta();
                 ArrayList<String> lore = new ArrayList<String>();
 
@@ -196,7 +155,8 @@ public class buyGui {
                 meta.setLore(lore);
 
                 item.setItemMeta(meta);
-                shop.setItem(shop.firstEmpty(), item);
+                shop.setItem(n, item);
+                n++;
             }
 
         } catch (Exception e) {

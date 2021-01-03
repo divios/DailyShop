@@ -117,6 +117,14 @@ public class Utils {
         return nbtItem.hasKey("setAmount");
     }
 
+    public ItemStack removeItemAmount(ItemStack item) {
+
+        item.setAmount(1);
+        NBTItem nbtItem = new NBTItem(item);
+        nbtItem.removeKey("setAmount");
+        return nbtItem.getItem();
+    }
+
     public void processItemAmount(ItemStack item, int slot) {
         if(item.getAmount() == 1) {
             item = XMaterial.RED_STAINED_GLASS_PANE.parseItem();
