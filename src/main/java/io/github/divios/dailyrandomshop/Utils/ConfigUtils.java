@@ -35,7 +35,7 @@ public class ConfigUtils {
 
         customFile = new File(main.getDataFolder(), "items.yml");
 
-        if (!customFile.exists()) { // si no existe items.yml lo creamos
+        /*if (!customFile.exists()) { // si no existe items.yml lo creamos
             customFile.createNewFile();
 
             try (InputStream in = main.getResource("items.yml")) {
@@ -50,10 +50,12 @@ public class ConfigUtils {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }
+        } */
 
         createDB(main, reload);
-        readItems(main);
+        main.listDailyItems = main.dbManager.getDailyItems();
+        main.listSellItems = main.dbManager.getSellItems();
+        //readItems(main);
 
         UpdateTimer.initTimer(main, reload);
 
@@ -62,7 +64,6 @@ public class ConfigUtils {
         //readTimer(main); antiguo con yaml
         if(reload) {
             main.BuyGui.inicializeGui(false);
-            main.ConfirmGui = new confirmGui(main);
         }
     }
 

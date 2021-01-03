@@ -1,8 +1,10 @@
 package io.github.divios.dailyrandomshop.Listeners;
 
 import io.github.divios.dailyrandomshop.DailyRandomShop;
+import io.github.divios.dailyrandomshop.GUIs.customizerItem.customizerMainGuiIH;
+import io.github.divios.dailyrandomshop.GUIs.settings.addDailyItemGuiIH;
 import io.github.divios.dailyrandomshop.GUIs.settings.confirmIH;
-import io.github.divios.dailyrandomshop.GUIs.settings.sellGuiSettings;
+import io.github.divios.dailyrandomshop.GUIs.settings.dailyGuiSettings;
 import io.github.divios.dailyrandomshop.GUIs.settings.settingsGuiIH;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.ChatColor;
@@ -19,15 +21,13 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.ArrayList;
 import java.util.List;
 
-public class sellGuiSettingsListener implements Listener {
+public class dailyGuiSettingsListener implements Listener {
 
     private final DailyRandomShop main;
-    private final String name;
     private final ArrayList<Integer> reservedSlots = new ArrayList<>();
 
-    public sellGuiSettingsListener(DailyRandomShop main) {
+    public dailyGuiSettingsListener(DailyRandomShop main) {
         this.main = main;
-        name = main.config.SELL_SETTINGS_TITLE;
         reservedSlots.add(45);
         reservedSlots.add(46);
         reservedSlots.add(47);
@@ -42,34 +42,39 @@ public class sellGuiSettingsListener implements Listener {
     @EventHandler
     public void onInventoryClick(final InventoryClickEvent e) {
 
-        if (!e.getView().getTitle().equals(name + ChatColor.BOLD)) {
+        if (!e.getView().getTitle().equals(main.config.DAILY_SETTINGS_TITLE + ChatColor.AQUA)) {
             return;
         }
 
         e.setCancelled(true);
         Player p = (Player) e.getWhoClicked();
 
-        if(e.getSlot() == e.getRawSlot() && e.getSlot() == 49) {
+        if (e.getSlot() == e.getRawSlot() && e.getSlot() == 49) {
             new settingsGuiIH(main, p);
         }
 
         if (e.getSlot() == e.getRawSlot() && e.getSlot() == 45 &&
-            e.getCurrentItem() != null) {
-            p.openInventory(main.SellGuiSettings.processNextGui(e.getView().getTopInventory(), -1));
+                e.getCurrentItem() != null) {
+            p.openInventory(main.DailyGuiSettings.processNextGui(e.getView().getTopInventory(), -1));
         }
 
         if (e.getSlot() == e.getRawSlot() && e.getSlot() == 53 &&
                 e.getCurrentItem() != null) {
-            p.openInventory(main.SellGuiSettings.processNextGui(e.getView().getTopInventory(), 1));
+            p.openInventory(main.DailyGuiSettings.processNextGui(e.getView().getTopInventory(), 1));
         }
 
-        if(e.getCurrentItem() == null || e.getCurrentItem().getType() == Material.AIR ||
-            e.getSlot() != e.getRawSlot() || reservedSlots.contains(e.getSlot())) {
+        if (e.getSlot() == e.getRawSlot() && e.getSlot() == 52 &&
+                e.getCurrentItem() != null) {
+            new addDailyItemGuiIH(main, p, e.getView().getTopInventory());
+        }
+
+        if (e.getCurrentItem() == null || e.getCurrentItem().getType() == Material.AIR ||
+                e.getSlot() != e.getRawSlot() || reservedSlots.contains(e.getSlot())) {
             return;
         }
 
         ItemStack item = removeLore(e.getCurrentItem().clone());
-        if(e.isRightClick()) {
+        if (e.isLeftClick() && !e.isShiftClick()) {
             ItemStack rightItem = item.clone();
             rightItem.addUnsafeEnchantment(Enchantment.ARROW_DAMAGE, 1);
             ItemMeta meta = rightItem.getItemMeta();
@@ -82,12 +87,12 @@ public class sellGuiSettingsListener implements Listener {
                     .onComplete((player, text) -> {                             //called when the inventory output slot is clicked
                         try {
                             Double price = Double.parseDouble(text);
-                            main.listSellItems.replace(item, price);
-                            main.dbManager.updateSellItems();
-                            main.SellGuiSettings = new sellGuiSettings(main);
-                            p.openInventory(main.SellGuiSettings.invs.get(0));
+                            main.listDailyItems.replace(item, price);
+                            main.dbManager.updateDailyItems();
+                            main.DailyGuiSettings = new dailyGuiSettings(main);
+                            p.openInventory(main.DailyGuiSettings.getFirstGui());
                             return AnvilGUI.Response.close();
-                        }catch (Exception err) {
+                        } catch (Exception err) {
                             return AnvilGUI.Response.text("Error");
                         }
 
@@ -97,29 +102,31 @@ public class sellGuiSettingsListener implements Listener {
                     .title(ChatColor.GOLD + "" + ChatColor.BOLD + "Set price")
                     .plugin(main)
                     .open(p);
-        }
-        else if (e.isLeftClick()) {
 
-            new confirmIH(p, (p1, bool) -> {
+        } else if (e.isRightClick()) {
+
+            new confirmIH(p,  (p1, bool) -> {
 
                 if (bool) {
-                    main.listSellItems.remove(item);
+                    main.listDailyItems.remove(item);
                     p1.sendMessage(main.config.PREFIX + ChatColor.GRAY + "Removed item successfully");
-                    main.SellGuiSettings = new sellGuiSettings(main);
-                    main.dbManager.updateSellItems();
+                    main.DailyGuiSettings = new dailyGuiSettings(main);
+                    main.dbManager.updateDailyItems();
                 }
-                p1.openInventory(main.SellGuiSettings.getFirstGui());
+                p1.openInventory(main.DailyGuiSettings.getFirstGui());
 
             }, ChatColor.DARK_GREEN + "" + ChatColor.BOLD + "Confirm", main);
 
+        } else if (e.isLeftClick() && e.isShiftClick()) {
+            new customizerMainGuiIH(main, (Player) e.getWhoClicked(), removeLore(e.getCurrentItem().clone()), removeLore(e.getCurrentItem().clone()));
         }
-
     }
 
     public ItemStack removeLore(ItemStack item) {
         ItemMeta meta = item.getItemMeta();
         List<String> lore = meta.getLore();
 
+        lore.remove(lore.size() - 1);
         lore.remove(lore.size() - 1);
         lore.remove(lore.size() - 1);
         lore.remove(lore.size() - 1);

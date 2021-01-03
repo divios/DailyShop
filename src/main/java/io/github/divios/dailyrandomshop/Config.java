@@ -11,42 +11,44 @@ public class Config {
 
     public final String PREFIX, BUY_GUI_TITLE, BUY_GUI_PAINTING_NAME, BUY_GUI_ARROW_NAME, BUY_GUI_ITEMS_LORE,
         CONFIRM_GUI_NAME, CONFIRM_GUI_ADD_PANE, CONFIRM_GUI_REMOVE_PANE, CONFIRM_GUI_CONFIRM_PANE, CONFIRM_GUI_RETURN_NAME,
-        SELL_GUI_TITLE, SELL_PAINTING_NAME, SELL_ARROW_NAME, SELL_ITEM_NAME, SETTINGS_GUI_TITLE, SELL_SETTINGS_TITLE, ANVIL_GUI_TITLE;
+        SELL_GUI_TITLE, SELL_PAINTING_NAME, SELL_ARROW_NAME, SELL_ITEM_NAME, SETTINGS_GUI_TITLE, SELL_SETTINGS_TITLE, DAILY_SETTINGS_TITLE,  ANVIL_GUI_TITLE;
+
     public final List<String > BUY_GUI_PAINTING_LORE, BUY_GUI_ARROW_LORE, SELL_PAINTING_LORE, SELL_ARROW_LORE;
     public final String MSG_OPEN_SHOP, MSG_BUY_ITEM, MSG_SELL_ITEMS, MSG_NOT_ENOUGH_MONEY, MSG_INVENTORY_FULL,
             MSG_INVALID_ITEM , MSG_NOT_PERMS, MSG_ADD_DAILY_ITEM_ERROR_ITEM, MSG_ADD_DAILY_ITEM_ERROR_PRICE,
             MSG_ADD_DAILY_ITEM_ERROR, MSG_ADD_DAILY_ITEM_SUCCESS, MSG_NEW_DAILY_ITEMS, MSG_RELOAD;
+
     public double N_DAILY_ITEMS;
     public String BUY_GUI_PANE1, BUY_GUI_PANE2, SELL_GUI_PANE;
 
     public Config(DailyRandomShop main) {
 
-        PREFIX = ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("prefix", "&aDailyShop > "));
+        PREFIX = ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("prefix", "&6&lDailyShop > "));
         main.getConfig().addDefault("timer-duration", 86400);
         main.getConfig().addDefault("buy-price-multiplier", 1);
         main.getConfig().addDefault("sell-price-multiplier", 1);
         main.getConfig().addDefault("sell-price-multiplier", 1);
         main.getConfig().addDefault("enable-sell-gui", true);
         main.getConfig().addDefault("enable-confirm-gui", true);
-        N_DAILY_ITEMS = main.getConfig().getDouble("number-of-daily-items", 7);
+        N_DAILY_ITEMS = main.getConfig().getDouble("number-of-daily-items", 14);
         if(N_DAILY_ITEMS < 0 || N_DAILY_ITEMS > 28) N_DAILY_ITEMS = 7.0;
-        BUY_GUI_PANE1 = main.getConfig().getString("daily-shop-pane1", "GREEN_STAINED_GLASS_PANE").toUpperCase();
+        BUY_GUI_PANE1 = main.getConfig().getString("daily-shop-pane1", "BROWN_STAINED_GLASS_PANE").toUpperCase();
         try{
             XMaterial.valueOf(BUY_GUI_PANE1);
         } catch (IllegalArgumentException e) {
             main.getLogger().warning("daily-shop-pane1 is either an incompatible material or does not exist, setting it to default");
-            BUY_GUI_PANE1 = "GREEN_STAINED_GLASS_PANE";
+            BUY_GUI_PANE1 = "BROWN_STAINED_GLASS_PANE";
         }
 
-        BUY_GUI_PANE2 = main.getConfig().getString("daily-shop-pane2", "LIME_STAINED_GLASS_PANE").toUpperCase();
+        BUY_GUI_PANE2 = main.getConfig().getString("daily-shop-pane2", "BLACK_STAINED_GLASS_PANE").toUpperCase();
         try{
             XMaterial.valueOf(BUY_GUI_PANE2);
         } catch (IllegalArgumentException e) {
             main.getLogger().warning("daily-shop-pane2 is either an incompatible material or does not exist, setting it to default");
-            BUY_GUI_PANE2 = "LIME_STAINED_GLASS_PANE";
+            BUY_GUI_PANE2 = "BLACK_STAINED_GLASS_PANE";
         }
 
-        SELL_GUI_PANE = main.getConfig().getString("sell-gui-pane", "GRAY_STAINED_GLASS_PANE").toUpperCase();
+        SELL_GUI_PANE = main.getConfig().getString("sell-gui-pane", "BLACK_STAINED_GLASS_PANE").toUpperCase();
         try{
             XMaterial.valueOf(SELL_GUI_PANE);
         } catch (IllegalArgumentException e) {
@@ -54,29 +56,30 @@ public class Config {
             SELL_GUI_PANE = "GRAY_STAINED_GLASS_PANE";
         }
 
-        BUY_GUI_TITLE = ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("daily-shop-gui-name","&aDailyShop"));
-        BUY_GUI_PAINTING_NAME = ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("daily-shop-gui-painting-name","&aWhat is this?"));
+        BUY_GUI_TITLE = ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("daily-shop-gui-name","&6&lDailyShop"));
+        BUY_GUI_PAINTING_NAME = ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("daily-shop-gui-painting-name","&c&lWhat is this?"));
         BUY_GUI_PAINTING_LORE =  main.getConfig().getStringList("daily-shop-gui-painting-lore");
         BUY_GUI_ITEMS_LORE = ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("daily-items-lore"));
-        BUY_GUI_ARROW_NAME = ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("daily-shop-to-sell-name","&6Visit Market"));
+        BUY_GUI_ARROW_NAME = ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("daily-shop-to-sell-name","&c&lVisit Market"));
         BUY_GUI_ARROW_LORE = main.getConfig().getStringList("daily-shop-to-sell-lore");
 
-        CONFIRM_GUI_NAME = ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("confirm-gui-name","&aConfirm Purchase"));
+        CONFIRM_GUI_NAME = ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("confirm-gui-name","&2&lConfirm Purchase"));
         CONFIRM_GUI_ADD_PANE = ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("confirm-gui-add-pane","&aAdd"));
         CONFIRM_GUI_REMOVE_PANE = ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("confirm-gui-remove-pane","&cRemove"));
         CONFIRM_GUI_CONFIRM_PANE = ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("confirm-gui-confirm-pane","&aConfirm"));
         CONFIRM_GUI_RETURN_NAME = ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("confirm-gui-return-name","&cReturn"));
 
-        SELL_GUI_TITLE = ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("sell-gui-name", "&6Market"));
-        SELL_PAINTING_NAME = ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("sell-gui-painting-name","&aWhat is this?"));
+        SELL_GUI_TITLE = ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("sell-gui-name", "&3&lMarket"));
+        SELL_PAINTING_NAME = ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("sell-gui-painting-name","&3&lWhat is this?"));
         SELL_PAINTING_LORE =  main.getConfig().getStringList("sell-gui-painting-lore");
         SELL_ITEM_NAME = ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("sell-item-name"));
-        SELL_ARROW_NAME = ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("sell-to-daily-shop-name","&6Return to daily shop"));
+        SELL_ARROW_NAME = ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("sell-to-daily-shop-name","&3&lReturn to daily shop"));
         SELL_ARROW_LORE = main.getConfig().getStringList("sell-to-daily-shop-lore");
 
         SETTINGS_GUI_TITLE = ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("settings-gui-name", "&6&lSettings"));
 
-        SELL_SETTINGS_TITLE = ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("sell_settings-gui-name", "&a&lSell items Manager"));
+        DAILY_SETTINGS_TITLE = ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("daily_settings-gui-name", "&6&lDaily items Manager"));
+        SELL_SETTINGS_TITLE = ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("sell_settings-gui-name", "&c&lSell items Manager"));
 
         ANVIL_GUI_TITLE = ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("anvil-gui-name", "&6&lSet price"));
 

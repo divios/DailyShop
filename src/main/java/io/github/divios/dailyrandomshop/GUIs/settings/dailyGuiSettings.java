@@ -1,4 +1,4 @@
-package io.github.divios.dailyrandomshop.GUIs;
+package io.github.divios.dailyrandomshop.GUIs.settings;
 
 import com.cryptomorin.xseries.XMaterial;
 import io.github.divios.dailyrandomshop.DailyRandomShop;
@@ -13,22 +13,29 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class sellGuiSettings {
-
+public class dailyGuiSettings {
 
     private final DailyRandomShop main;
     private Inventory GUI;
-    private final ItemStack exit = XMaterial.BARRIER.parseItem();
+    private final ItemStack exit = XMaterial.OAK_SIGN.parseItem();
     private final ItemStack next = new ItemStack(Material.ARROW);
+    private final ItemStack create = new ItemStack(Material.ANVIL);
     private final ItemStack previous = new ItemStack(Material.ARROW);
     public final ArrayList<Inventory> invs = new ArrayList<>();
 
-    public sellGuiSettings(DailyRandomShop main) {
+    public dailyGuiSettings(DailyRandomShop main) {
         this.main = main;
 
         ItemMeta meta = exit.getItemMeta();
-        meta.setDisplayName(ChatColor.RED + "" + ChatColor.BOLD + "Exit");
+        meta.setDisplayName(ChatColor.RED + "" + ChatColor.BOLD + "Return");
         exit.setItemMeta(meta);
+
+        meta = create.getItemMeta();
+        meta.setDisplayName(ChatColor.DARK_AQUA + "" + ChatColor.BOLD + "Add");
+        List<String> lore = new ArrayList<>();
+        lore.add(ChatColor.GRAY + "Click to add an item");
+        meta.setLore(lore);
+        create.setItemMeta(meta);
 
         meta = next.getItemMeta();
         meta.setDisplayName(ChatColor.GOLD + "" + ChatColor.BOLD + "Next");
@@ -43,10 +50,11 @@ public class sellGuiSettings {
 
     public void initGui() {
 
-        double nD = main.listSellItems.size() / 44F;
+        double nD = main.listDailyItems.size() / 44F;
         int n = (int) Math.ceil(nD);
 
-        GUI = Bukkit.createInventory(null, 54, main.config.SELL_SETTINGS_TITLE + ChatColor.BOLD);
+        GUI = Bukkit.createInventory(null, 54, main.config.DAILY_SETTINGS_TITLE + ChatColor.AQUA);
+        GUI.setItem(52, create);
         GUI.setItem(49, exit);
 
         for(int i = 0; i<n; i++) {
@@ -57,22 +65,28 @@ public class sellGuiSettings {
             else invs.add(createGUI(i+1, 1));
         }
 
+        if (invs.isEmpty()) {
+            Inventory firstInv = Bukkit.createInventory(null, 54, main.config.DAILY_SETTINGS_TITLE + ChatColor.AQUA);
+            firstInv.setContents(GUI.getContents());
+            invs.add(firstInv);
+        }
+
     }
 
     public Inventory createGUI(int page, int pos) {
         int slot = 0;
-        Inventory returnGui = Bukkit.createInventory(null, 54, main.config.SELL_SETTINGS_TITLE + ChatColor.BOLD);
+        Inventory returnGui = Bukkit.createInventory(null, 54, main.config.DAILY_SETTINGS_TITLE + ChatColor.AQUA);
         returnGui.setContents(GUI.getContents());
-        if(pos == 0 && main.listSellItems.size() > 44) returnGui.setItem(53, next);
+        if(pos == 0 && main.listDailyItems.size() > 44) returnGui.setItem(53, next);
         if(pos == 1) {
             returnGui.setItem(53, next);
             returnGui.setItem(45, previous);
         }
-        if(pos == 2 && main.listSellItems.size() > 44) {
+        if(pos == 2 && main.listDailyItems.size() > 44) {
             returnGui.setItem(45, previous);
         }
 
-        for(Map.Entry<ItemStack, Double> i: main.listSellItems.entrySet()) {
+        for(Map.Entry<ItemStack, Double> i: main.listDailyItems.entrySet()) {
             ItemStack item = i.getKey().clone();
             setLore(item, i.getValue());
 
@@ -98,8 +112,9 @@ public class sellGuiSettings {
 
         lore.add(main.config.BUY_GUI_ITEMS_LORE.replaceAll("\\{price}", "" + price));
         lore.add("");
-        lore.add(ChatColor.GOLD + "" + ChatColor.BOLD + "Right click: " + ChatColor.GRAY + "Change price");
-        lore.add(ChatColor.GOLD + "" + ChatColor.BOLD + "Left click: " + ChatColor.GRAY + "Remove item");
+        lore.add(ChatColor.GOLD + "" + ChatColor.BOLD + "Left click: " + ChatColor.GRAY + "Change price");
+        lore.add(ChatColor.GOLD + "" + ChatColor.BOLD + "Right click: " + ChatColor.GRAY + "Remove item");
+        lore.add(ChatColor.GOLD + "" + ChatColor.BOLD + "Shift Left click: " + ChatColor.GRAY + "Customize item");
         meta.setLore(lore);
         item.setItemMeta(meta);
     }

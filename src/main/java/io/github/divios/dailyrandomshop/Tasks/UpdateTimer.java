@@ -10,18 +10,15 @@ public class UpdateTimer {
 
         if (reload) return;
 
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(main, new Runnable() {
-            @Override
-            public void run() {
-                if (main.time == 0) {
-                    main.BuyGui.createRandomItems();
-                    ConfigUtils.resetTime(main);
-                    return;
-                }
-                main.time--;
-                if (main.time % 180 == 0) {
-                    main.dbManager.updateTimer(main.time);
-                }
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(main, () -> {
+            if (main.time == 0) {
+                main.BuyGui.createRandomItems();
+                ConfigUtils.resetTime(main);
+                return;
+            }
+            main.time--;
+            if (main.time % 180 == 0) {
+                main.dbManager.updateTimer(main.time);
             }
         }, 20L, 20L);
     }

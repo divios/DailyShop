@@ -291,9 +291,9 @@ public class DataManager {
                 ObjectOutputStream data = new ObjectOutputStream(str);
                 PreparedStatement statement;
 
-                for (Map.Entry<ItemStack, Double> item : main.listSellItems.entrySet()) {
+                for (Map.Entry<ItemStack, Double> item : main.listDailyItems.entrySet()) {
 
-                    String insertItem = "INSERT INTO " + "sell_items (material, price) VALUES (?, ?)";
+                    String insertItem = "INSERT INTO " + "daily_items (material, price) VALUES (?, ?)";
                     statement = db.con.prepareStatement(insertItem);
                     NBTCompound itemData = NBTItem.convertItemtoNBT(item.getKey());
 
@@ -311,8 +311,8 @@ public class DataManager {
 
     }
 
-    public HashMap<ItemStack, Double> getDailyItems() {
-        HashMap<ItemStack, Double> items = new HashMap<>();
+    public LinkedHashMap<ItemStack, Double> getDailyItems() {
+        LinkedHashMap<ItemStack, Double> items = new LinkedHashMap<>();
 
 
         try {
