@@ -71,44 +71,7 @@ public class Commands implements CommandExecutor {
                 Player p = (Player) sender;
                 new sellGuiIH(main, p);
 
-            } else if (args[0].equalsIgnoreCase("adddailyitem") && sender instanceof Player) {
-
-                if (!sender.hasPermission("DailyRandomShop.addDailyItem")) {
-                    sender.sendMessage(main.config.PREFIX + main.config.MSG_NOT_PERMS);
-                    return true;
-                }
-
-                Player p = (Player) sender;
-                ItemStack item = p.getInventory().getItemInHand().clone();
-                item.setAmount(1);
-
-                if (item.getType().toString().equalsIgnoreCase("POTION") ||
-                        item.getType().toString().equalsIgnoreCase("SPLASH_POTION")
-                        ) {
-                    p.sendMessage(main.config.PREFIX + "Potions are not allowed via command");
-                    return true;
-                }
-
-                if (item == null || item.getType() == Material.AIR) {
-                    p.sendMessage(main.config.PREFIX + main.config.MSG_ADD_DAILY_ITEM_ERROR_ITEM);
-                    return true;
-                }
-
-                if (args.length == 1) {
-                    p.sendMessage(main.config.PREFIX + main.config.MSG_ADD_DAILY_ITEM_ERROR_PRICE);
-                    return true;
-                }
-
-                item = main.utils.setItemAsDaily(item);
-                main.listDailyItems.put(item, Double.parseDouble(args[1]));
-                try {
-                    ConfigUtils.migrateItemToConfig(main, item, Double.parseDouble(args[1]));
-                } catch (Exception e) {
-                    p.sendMessage(main.config.PREFIX + "Something went wrong while adding the item");
-                    e.printStackTrace();
-                }
-                p.sendMessage(main.config.PREFIX + "Item added successfully");
-            } else if (args[0].equalsIgnoreCase("addsellitem") && sender instanceof Player) {
+            }  else if (args[0].equalsIgnoreCase("addsellitem") && sender instanceof Player) {
 
                 if (!sender.hasPermission("DailyRandomShop.addSellItem")) {
                     sender.sendMessage(main.config.PREFIX + main.config.MSG_NOT_PERMS);
@@ -135,7 +98,7 @@ public class Commands implements CommandExecutor {
                 }
 
                 main.listSellItems.put(item, Double.parseDouble(args[1]));
-                p.sendMessage(main.config.PREFIX + "Item added successfully");
+                p.sendMessage(main.config.PREFIX + main.config.MSG_ADD_DAILY_ITEM_SUCCESS);
                 main.SellGuiSettings = new sellGuiSettings(main);
 
                 main.dbManager.updateSellItems();

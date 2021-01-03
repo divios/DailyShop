@@ -121,6 +121,8 @@ public class sellGuiIH implements Listener, InventoryHolder {
 
         if(e.getSlot() == e.getRawSlot() && !dailyItemsSlots.contains(e.getSlot())) e.setCancelled(true);
 
+        if(e.isShiftClick() && e.getSlot() != e.getRawSlot()) e.setCancelled(true);
+
         if(e.getSlot() == e.getRawSlot() && e.getSlot() == 0) {
 
             for(int i: dailyItemsSlots) {

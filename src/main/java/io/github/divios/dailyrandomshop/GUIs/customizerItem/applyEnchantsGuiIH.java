@@ -2,7 +2,6 @@ package io.github.divios.dailyrandomshop.GUIs.customizerItem;
 
 import com.cryptomorin.xseries.XMaterial;
 import io.github.divios.dailyrandomshop.DailyRandomShop;
-import io.github.divios.dailyrandomshop.GUIs.settings.dailyGuiSettings;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -19,6 +18,8 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.*;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiConsumer;
 
 public class applyEnchantsGuiIH implements Listener, InventoryHolder {
@@ -169,11 +170,11 @@ public class applyEnchantsGuiIH implements Listener, InventoryHolder {
                 unregisterEvents();
                 new applyEnchantsGuiIH(main, p, bi,false, Enchantment.values(), addEnchant);
             } else {
-
+                AtomicBoolean response = new AtomicBoolean(false);
+                final Enchantment[][] auxenchant= {Enchantment.values()};
                 new AnvilGUI.Builder()
                         .onClose(player -> {
-
-                            new applyEnchantsGuiIH(main, p, bi,false, Enchantment.values(), addEnchant);
+                            Bukkit.getScheduler().runTaskLater(main, () -> new applyEnchantsGuiIH(main, p, bi, response.get(), auxenchant[0], addEnchant), 1);
                         })
                         .onComplete((player, text) -> {
 
@@ -183,9 +184,10 @@ public class applyEnchantsGuiIH implements Listener, InventoryHolder {
                                     enchants2.add(m);
                                 }
                             }
+                            response.set(true);
+                            auxenchant[0] = enchants2.toArray(new Enchantment[0]);
                             unregisterEvents();
-                            new applyEnchantsGuiIH(main, p, bi,true, enchants2.toArray(new Enchantment[0]), addEnchant);
-                            return AnvilGUI.Response.text("Error");
+                            return AnvilGUI.Response.close();
 
                         })
                         .text("")
@@ -213,20 +215,24 @@ public class applyEnchantsGuiIH implements Listener, InventoryHolder {
 
         if (e.getSlot() == e.getRawSlot() && reservedSlots.contains(e.getSlot()) && e.getCurrentItem() != null) { //algun material
             unregisterEvents();
-
-            Enchantment enchant = Enchantment.getByName(e.getCurrentItem().getItemMeta().getDisplayName());
+            AtomicBoolean response = new AtomicBoolean(false);
+            Enchantment enchant = Enchantment.getByName(e.getCurrentItem().getItemMeta().getDisplayName().replaceAll(ChatColor.WHITE
+                    + "" +  ChatColor.BOLD, ""));
+            AtomicInteger lvl = new AtomicInteger();
             if(addEnchant) {
             new AnvilGUI.Builder()
                     .onClose(player -> {
-                        new applyEnchantsGuiIH(main, player, bi,false, Enchantment.values(), true);
+                        if(!response.get()) Bukkit.getScheduler().runTaskLater(main, () -> new applyEnchantsGuiIH(main, player, bi,false, Enchantment.values(), true), 1);
+                        else {
+                            AbstractMap.SimpleEntry<Enchantment, Integer> entry = new AbstractMap.SimpleEntry<>(enchant, lvl.get());
+                            bi.accept(entry, true);
+                        }
                     })
                     .onComplete((player, text) -> {                             //called when the inventory output slot is clicked
                         try {
-                            int lvl = Integer.parseInt(text);
+                            lvl.set(Integer.parseInt(text));
 
-                            AbstractMap.SimpleEntry<Enchantment, Integer> entry = new AbstractMap.SimpleEntry<>(enchant, lvl);
-                            bi.accept(entry, true);
-
+                            response.set(true);
                             return AnvilGUI.Response.close();
                         } catch (Exception err) {
                             err.printStackTrace();

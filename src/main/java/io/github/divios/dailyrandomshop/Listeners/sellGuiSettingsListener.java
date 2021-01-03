@@ -1,10 +1,12 @@
 package io.github.divios.dailyrandomshop.Listeners;
 
 import io.github.divios.dailyrandomshop.DailyRandomShop;
+import io.github.divios.dailyrandomshop.GUIs.customizerItem.customizerMainGuiIH;
 import io.github.divios.dailyrandomshop.GUIs.settings.confirmIH;
 import io.github.divios.dailyrandomshop.GUIs.settings.sellGuiSettings;
 import io.github.divios.dailyrandomshop.GUIs.settings.settingsGuiIH;
 import net.wesjd.anvilgui.AnvilGUI;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -69,7 +71,7 @@ public class sellGuiSettingsListener implements Listener {
         }
 
         ItemStack item = removeLore(e.getCurrentItem().clone());
-        if(e.isRightClick()) {
+        if(e.isLeftClick()) {
             ItemStack rightItem = item.clone();
             rightItem.addUnsafeEnchantment(Enchantment.ARROW_DAMAGE, 1);
             ItemMeta meta = rightItem.getItemMeta();
@@ -77,7 +79,7 @@ public class sellGuiSettingsListener implements Listener {
             rightItem.setItemMeta(meta);
             new AnvilGUI.Builder()
                     .onClose(player -> {
-                        player.closeInventory();
+                        Bukkit.getScheduler().runTaskLater(main, () -> p.openInventory(main.SellGuiSettings.getFirstGui()), 1);
                     })
                     .onComplete((player, text) -> {                             //called when the inventory output slot is clicked
                         try {
@@ -85,7 +87,6 @@ public class sellGuiSettingsListener implements Listener {
                             main.listSellItems.replace(item, price);
                             main.dbManager.updateSellItems();
                             main.SellGuiSettings = new sellGuiSettings(main);
-                            p.openInventory(main.SellGuiSettings.invs.get(0));
                             return AnvilGUI.Response.close();
                         }catch (Exception err) {
                             return AnvilGUI.Response.text("Error");
@@ -98,7 +99,7 @@ public class sellGuiSettingsListener implements Listener {
                     .plugin(main)
                     .open(p);
         }
-        else if (e.isLeftClick()) {
+        else if (e.isRightClick()) {
 
             new confirmIH(p, (p1, bool) -> {
 

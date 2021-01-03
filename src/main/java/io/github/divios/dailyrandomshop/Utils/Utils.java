@@ -175,7 +175,9 @@ public class Utils {
         for(String s: command) {
             commands = commands.concat(";" + s);
         }
-        commands = commands.substring(1);
+
+        if(!commands.isEmpty()) commands = commands.substring(1);
+
         nbtItem.setString("Command", commands);
         return nbtItem.getItem();
     }
@@ -193,6 +195,13 @@ public class Utils {
         String rawCommands = NBTitem.getString("Command");
 
         return new ArrayList<>(Arrays.asList(rawCommands.split(";")));
+    }
+
+    public ItemStack removeItemCommand(ItemStack item) {
+        NBTItem NBTitem = new NBTItem(item);
+        NBTitem.removeKey("Command");
+
+        return NBTitem.getItem();
     }
 
     public Double getItemPrice(HashMap<ItemStack, Double> items, ItemStack toCompare, boolean lore) {

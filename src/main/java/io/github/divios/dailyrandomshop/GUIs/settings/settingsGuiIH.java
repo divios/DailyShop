@@ -45,17 +45,21 @@ public class settingsGuiIH implements Listener, InventoryHolder {
         meta.setDisplayName(ChatColor.GOLD + "" + ChatColor.BOLD + "Daily items");
 
         lore = new ArrayList<>();
-        lore.add(ChatColor.GRAY + "Clic to manage daily items");
+        lore.add(ChatColor.GRAY + "Click to manage daily items");
+        lore.add("");
+        lore.add(ChatColor.GRAY + "Note: changing current items except from price");
+        lore.add(ChatColor.GRAY + "won't change the current items in shop and furthermore");
+        lore.add(ChatColor.GRAY + "'ll make them useless, renovate is a must in this cases");
         meta.setLore(lore);
         dailyItemSettings.setItemMeta(meta);
 
 
         ItemStack sellItemSettings = XMaterial.BOOK.parseItem();
-        meta = dailyItemSettings.getItemMeta();
+        meta = sellItemSettings.getItemMeta();
         meta.setDisplayName(ChatColor.GREEN + "" + ChatColor.BOLD + "Sell items");
 
         lore = new ArrayList<>();
-        lore.add(ChatColor.GRAY + "Clic to manage sell items");
+        lore.add(ChatColor.GRAY + "Click to manage sell items");
         meta.setLore(lore);
         sellItemSettings.setItemMeta(meta);
 

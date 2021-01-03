@@ -112,6 +112,12 @@ public class buyGuiListener implements Listener {
 
             Double price = main.utils.getItemPrice(main.listDailyItems, item, true);
 
+            if(price == 0) {
+                p.sendMessage(main.config.PREFIX + ChatColor.GRAY + "That item is not in stock anymore, an admin must have take it away");
+                p.closeInventory();
+                return;
+            }
+
             if (main.utils.isItemAmount(item) && main.econ.getBalance(p) >= price &&
                 !main.utils.inventoryFull(p)) {
                 main.utils.processItemAmount(e.getView().getTopInventory().getItem(e.getSlot()), e.getSlot());
