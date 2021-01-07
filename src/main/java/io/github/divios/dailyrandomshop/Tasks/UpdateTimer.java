@@ -10,9 +10,9 @@ public class UpdateTimer {
 
         if (reload) return;
 
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(main, () -> {
+        Bukkit.getScheduler().runTaskTimerAsynchronously(main, () -> {
             if (main.time == 0) {
-                main.BuyGui.createRandomItems();
+                main.BuyGui.inicializeGui(true);
                 ConfigUtils.resetTime(main);
                 return;
             }

@@ -8,29 +8,27 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
-
-import java.util.Arrays;
+import org.bukkit.scheduler.BukkitTask;
 
 public class customAddItemListener implements Listener {
 
     private final DailyRandomShop main;
     private final Player p;
-    private boolean terminated = false;
+    private final BukkitTask TaskID;
 
     public customAddItemListener(DailyRandomShop main, Player p) {
         Bukkit.getPluginManager().registerEvents(this, main);
         this.main = main;
         this.p = p;
 
-        Bukkit.getScheduler().runTaskLater(main, () -> {
-            if(!terminated) {
+       TaskID = Bukkit.getScheduler().runTaskLater(main, () -> {
                 p.sendMessage(main.config.PREFIX + ChatColor.GRAY + "Ey! The time to select an item expired, try it again");
                 PlayerInteractEvent.getHandlerList().unregister(this);
                 p.openInventory(main.DailyGuiSettings.getFirstGui());
-            }
         }, 200);
 
         try {
@@ -41,21 +39,23 @@ public class customAddItemListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler (priority = EventPriority.HIGHEST)
     private void OnPlayerClick(PlayerInteractEvent e) {
-        ItemStack item = e.getItem().clone();
 
         if (e.getPlayer() != p) return;
+
+        e.setCancelled(true);
+        ItemStack item = e.getItem().clone();
 
         if (item == null || item.getType() == Material.AIR) {
             return;
         }
 
-        e.setCancelled(true);
+        item.setAmount(1);
 
         new customizerMainGuiIH(main, p, item, null);
+        Bukkit.getScheduler().cancelTask(TaskID.getTaskId());
         PlayerInteractEvent.getHandlerList().unregister(this);
-        terminated = true;
 
     }
 

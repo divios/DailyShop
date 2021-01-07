@@ -85,11 +85,11 @@ public class sellGuiSettingsListener implements Listener {
                         try {
                             Double price = Double.parseDouble(text);
                             main.listSellItems.replace(item, price);
-                            main.dbManager.updateSellItems();
+                            main.dbManager.updateSellItemPrice(item, price);
                             main.SellGuiSettings = new sellGuiSettings(main);
                             return AnvilGUI.Response.close();
-                        }catch (Exception err) {
-                            return AnvilGUI.Response.text("Error");
+                        }catch (NumberFormatException err) {
+                            return AnvilGUI.Response.text("Not integer");
                         }
 
                     })
@@ -107,7 +107,7 @@ public class sellGuiSettingsListener implements Listener {
                     main.listSellItems.remove(item);
                     p1.sendMessage(main.config.PREFIX + ChatColor.GRAY + "Removed item successfully");
                     main.SellGuiSettings = new sellGuiSettings(main);
-                    main.dbManager.updateSellItems();
+                    main.dbManager.deleteSellItem(item);
                 }
                 p1.openInventory(main.SellGuiSettings.getFirstGui());
 

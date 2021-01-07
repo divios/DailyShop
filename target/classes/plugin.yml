@@ -1,9 +1,10 @@
 name: DailyRandomShop
-version: 1.12.0
+version: 1.12.6
 main: io.github.divios.dailyrandomshop.DailyRandomShop
 api-version: "1.13"
 prefix: DailyShop
 depend: [ Vault ]
+softdepend: [PlaceholderAPI]
 authors: [ Divios ]
 description: Daily random items to buy on a shop
 commands:

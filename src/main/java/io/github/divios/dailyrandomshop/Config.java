@@ -18,7 +18,7 @@ public class Config {
             MSG_INVALID_ITEM , MSG_NOT_PERMS, MSG_ADD_DAILY_ITEM_ERROR_ITEM, MSG_ADD_DAILY_ITEM_ERROR_PRICE,
             MSG_ADD_DAILY_ITEM_ERROR, MSG_ADD_DAILY_ITEM_SUCCESS, MSG_NEW_DAILY_ITEMS, MSG_RELOAD;
 
-    public double N_DAILY_ITEMS;
+    public int N_DAILY_ITEMS;
     public String BUY_GUI_PANE1, BUY_GUI_PANE2, SELL_GUI_PANE;
 
     public Config(DailyRandomShop main) {
@@ -30,8 +30,8 @@ public class Config {
         main.getConfig().addDefault("sell-price-multiplier", 1);
         main.getConfig().addDefault("enable-sell-gui", true);
         main.getConfig().addDefault("enable-confirm-gui", true);
-        N_DAILY_ITEMS = main.getConfig().getDouble("number-of-daily-items", 14);
-        if(N_DAILY_ITEMS < 0 || N_DAILY_ITEMS > 28) N_DAILY_ITEMS = 7.0;
+        N_DAILY_ITEMS = main.getConfig().getInt("number-of-daily-items", 14);
+        if(N_DAILY_ITEMS < 0 || N_DAILY_ITEMS > 36) N_DAILY_ITEMS = 14;
         BUY_GUI_PANE1 = main.getConfig().getString("daily-shop-pane1", "BROWN_STAINED_GLASS_PANE").toUpperCase();
         try{
             XMaterial.valueOf(BUY_GUI_PANE1);
@@ -59,7 +59,7 @@ public class Config {
         BUY_GUI_TITLE = ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("daily-shop-gui-name","&6&lDailyShop"));
         BUY_GUI_PAINTING_NAME = ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("daily-shop-gui-painting-name","&c&lWhat is this?"));
         BUY_GUI_PAINTING_LORE =  main.getConfig().getStringList("daily-shop-gui-painting-lore");
-        BUY_GUI_ITEMS_LORE = ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("daily-items-lore"));
+        BUY_GUI_ITEMS_LORE = ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("daily-items-lore", "&6Price {price}"));
         BUY_GUI_ARROW_NAME = ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("daily-shop-to-sell-name","&c&lVisit Market"));
         BUY_GUI_ARROW_LORE = main.getConfig().getStringList("daily-shop-to-sell-lore");
 

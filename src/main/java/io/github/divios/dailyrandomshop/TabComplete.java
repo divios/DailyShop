@@ -15,6 +15,7 @@ public class TabComplete implements TabCompleter {
         commands.add("reload");
         commands.add("renovate");
         commands.add("sell");
+        commands.add("addDailyItem");
         commands.add("addSellItem");
         commands.add("settings");
     }

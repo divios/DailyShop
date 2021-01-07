@@ -22,9 +22,9 @@ import java.util.List;
 
 public class addDailyItemGuiIH implements InventoryHolder, Listener {
 
-    private DailyRandomShop main;
-    private Player p;
-    private Inventory returnInventory;
+    private final DailyRandomShop main;
+    private final Player p;
+    private final Inventory returnInventory;
 
     public addDailyItemGuiIH(DailyRandomShop main, Player p, Inventory returnInventory) {
         Bukkit.getPluginManager().registerEvents(this, main);
@@ -99,7 +99,8 @@ public class addDailyItemGuiIH implements InventoryHolder, Listener {
         if(e.getSlot() != e.getRawSlot()) return;
 
         if(e.getSlot() == 22) {
-            p.openInventory(returnInventory);
+            if(returnInventory == null) p.closeInventory();
+            else p.openInventory(returnInventory);
         }
 
         if(e.getSlot() == 11) {

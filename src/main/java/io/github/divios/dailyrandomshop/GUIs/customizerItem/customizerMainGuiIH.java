@@ -7,6 +7,7 @@ import io.github.divios.dailyrandomshop.GUIs.settings.dailyGuiSettings;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -19,16 +20,17 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.potion.PotionEffect;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.function.BiConsumer;
 
 public class customizerMainGuiIH implements Listener, InventoryHolder {
 
-    private DailyRandomShop main;
-    private Player p;
+    private final DailyRandomShop main;
+    private final Player p;
     private final ItemStack itemToReplace;
     private ItemStack newItem;
 
@@ -90,10 +92,10 @@ public class customizerMainGuiIH implements Listener, InventoryHolder {
         meta.setDisplayName(ChatColor.WHITE + "" + ChatColor.BOLD +
                 "Change Lore");
         lore = new ArrayList<>();
-        lore.add(ChatColor.GOLD + "" + ChatColor.BOLD + "Left Click: " + ChatColor.GRAY + "to add lore");
-        lore.add(ChatColor.GOLD + "" + ChatColor.BOLD + "Right Click: " + ChatColor.GRAY + "to remove lore");
+        lore.add(ChatColor.GOLD + "Left Click: " + ChatColor.GRAY + "to add lore");
+        lore.add(ChatColor.GOLD + "Right Click: " + ChatColor.GRAY + "to remove lore");
         lore.add(ChatColor.GOLD + "");
-        if(newItem.getItemMeta().hasLore()) {
+        if (newItem.getItemMeta().hasLore()) {
             lore.addAll(newItem.getItemMeta().getLore());
         }
         meta.setLore(lore);
@@ -104,10 +106,10 @@ public class customizerMainGuiIH implements Listener, InventoryHolder {
         meta.setDisplayName(ChatColor.WHITE + "" + ChatColor.BOLD +
                 "Edit enchantments");
         lore = new ArrayList<>();
-        lore.add(ChatColor.GOLD + "" + ChatColor.BOLD + "Left Click: " + ChatColor.GRAY + "to add Enchantment");
-        lore.add(ChatColor.GOLD + "" + ChatColor.BOLD + "Right Click: " + ChatColor.GRAY + "to remove Enchantment");
+        lore.add(ChatColor.GOLD + "Left Click: " + ChatColor.GRAY + "to add Enchantment");
+        lore.add(ChatColor.GOLD + "Right Click: " + ChatColor.GRAY + "to remove Enchantment");
         lore.add("");
-        for (Map.Entry<Enchantment, Integer> e: newItem.getEnchantments().entrySet()) {
+        for (Map.Entry<Enchantment, Integer> e : newItem.getEnchantments().entrySet()) {
             lore.add(ChatColor.WHITE + "" + ChatColor.WHITE +
                     e.getKey().getName().toUpperCase() + ":" + e.getValue());
         }
@@ -119,10 +121,10 @@ public class customizerMainGuiIH implements Listener, InventoryHolder {
         meta.setDisplayName(ChatColor.WHITE + "" + ChatColor.BOLD +
                 "Set Amount");
         lore = new ArrayList<>();
-        lore.add(ChatColor.GOLD + "" + ChatColor.BOLD + "Left Click: " + ChatColor.GRAY + "Change item amount");
-        lore.add(ChatColor.GOLD + "" + ChatColor.BOLD + "Right Click: " + ChatColor.GRAY + "Remove amount");
+        lore.add(ChatColor.GOLD + "Left Click: " + ChatColor.GRAY + "Change item amount");
+        lore.add(ChatColor.GOLD + "Right Click: " + ChatColor.GRAY + "Remove amount");
         lore.add("");
-        lore.add(ChatColor.GOLD + "" + ChatColor.BOLD + "Is item Amount? " + ChatColor.GRAY + main.utils.isItemAmount(newItem));
+        lore.add(ChatColor.GOLD + "Status " + ChatColor.GRAY + main.utils.isItemAmount(newItem));
         meta.setLore(lore);
         setAmount.setItemMeta(meta);
 
@@ -131,10 +133,9 @@ public class customizerMainGuiIH implements Listener, InventoryHolder {
         meta.setDisplayName(ChatColor.WHITE + "" + ChatColor.BOLD +
                 "Set item reward as Commands");
         lore = new ArrayList<>();
-        lore.add(ChatColor.GOLD + "" + ChatColor.BOLD + "Left Click: " + ChatColor.GRAY + "Make item as command");
-        lore.add(ChatColor.GOLD + "" + ChatColor.BOLD + "Right Click: " + ChatColor.GRAY + "Make item normal");
+        lore.add(ChatColor.GOLD + "Left Click: " + ChatColor.GRAY + "Toggle status");
         lore.add("");
-        lore.add(ChatColor.GOLD + "" + ChatColor.BOLD + "Is item Command? " + ChatColor.GRAY + main.utils.isCommandItem(newItem));
+        lore.add(ChatColor.GOLD + "Status " + ChatColor.GRAY + main.utils.isCommandItem(newItem));
         meta.setLore(lore);
         makeCommand.setItemMeta(meta);
 
@@ -143,36 +144,66 @@ public class customizerMainGuiIH implements Listener, InventoryHolder {
         meta.setDisplayName(ChatColor.WHITE + "" + ChatColor.BOLD +
                 "Set commands to run");
         lore = new ArrayList<>();
-        lore.add(ChatColor.GOLD + "" + ChatColor.BOLD + "Left Click: " + ChatColor.GRAY + "Add command to item");
-        lore.add(ChatColor.GOLD + "" + ChatColor.BOLD + "Right Click: " + ChatColor.GRAY + "Remove command");
+        lore.add(ChatColor.GOLD + "Left Click: " + ChatColor.GRAY + "Add command to item");
+        lore.add(ChatColor.GOLD + "Right Click: " + ChatColor.GRAY + "Remove command");
         lore.add("");
-        for(String s: main.utils.getItemCommand(newItem)) {
+        for (String s : main.utils.getItemCommand(newItem)) {
             lore.add(ChatColor.WHITE + "" + ChatColor.BOLD + s);
         }
         meta.setLore(lore);
         addRemoveCommands.setItemMeta(meta);
 
-        ItemStack hideEnchants = XMaterial.MOJANG_BANNER_PATTERN.parseItem();    //add/remove commands
+        ItemStack hideEnchants = XMaterial.BLACK_BANNER.parseItem();    //add/remove enchants visible
         meta = hideEnchants.getItemMeta();
         meta.setDisplayName(ChatColor.WHITE + "" + ChatColor.BOLD +
                 "Make enchant visible/invisible");
         lore = new ArrayList<>();
-        lore.add(ChatColor.GOLD + "" + ChatColor.BOLD + "Left Click: " + ChatColor.GRAY + "To hide enchants");
-        lore.add(ChatColor.GOLD + "" + ChatColor.BOLD + "Right Click: " + ChatColor.GRAY + "To unhide enchants");
+        lore.add(ChatColor.GOLD + "Left Click: " + ChatColor.GRAY + "Toggle status");
         lore.add("");
+        lore.add(ChatColor.GOLD + "Status " + ChatColor.GRAY + newItem.getItemMeta().hasItemFlag(ItemFlag.HIDE_ENCHANTS));
         meta.setLore(lore);
         hideEnchants.setItemMeta(meta);
 
-        ItemStack hideAtibutes = XMaterial.BOOKSHELF.parseItem();    //add/remove commands
+        ItemStack hideAtibutes = XMaterial.BOOKSHELF.parseItem();    //add/remove attributes
         meta = hideAtibutes.getItemMeta();
         meta.setDisplayName(ChatColor.WHITE + "" + ChatColor.BOLD +
                 "Make attributes visible/invisible");
         lore = new ArrayList<>();
-        lore.add(ChatColor.GOLD + "" + ChatColor.BOLD + "Left Click: " + ChatColor.GRAY + "To hide attributes");
-        lore.add(ChatColor.GOLD + "" + ChatColor.BOLD + "Right Click: " + ChatColor.GRAY + "To unhide attributes");
+        lore.add(ChatColor.GOLD + "Left Click: " + ChatColor.GRAY + "Toggle status");
         lore.add("");
+        lore.add(ChatColor.GOLD + "Status " + ChatColor.GRAY + newItem.getItemMeta().hasItemFlag(ItemFlag.HIDE_ATTRIBUTES));
         meta.setLore(lore);
         hideAtibutes.setItemMeta(meta);
+
+        ItemStack hideEffects = XMaterial.END_CRYSTAL.parseItem();    //add/remove effects
+        meta = hideEffects.getItemMeta();
+        meta.setDisplayName(ChatColor.WHITE + "" + ChatColor.BOLD +
+                "Make potion effects visible/invisible");
+        lore = new ArrayList<>();
+        lore.add(ChatColor.GOLD + "Left Click: " + ChatColor.GRAY + "Toggle status");
+        lore.add("");
+        lore.add(ChatColor.GOLD + "Status " + ChatColor.GRAY + newItem.getItemMeta().hasItemFlag(ItemFlag.HIDE_POTION_EFFECTS));
+        meta.setLore(lore);
+        hideEffects.setItemMeta(meta);
+
+        ItemStack generateMMOItem = null;
+        if(main.utils.isMMOItem(newItem)) {
+            generateMMOItem = XMaterial.BEACON.parseItem();    //scratch MMOItem
+            meta = generateMMOItem.getItemMeta();
+            meta.setDisplayName(ChatColor.WHITE + "" + ChatColor.BOLD +
+                    "Generate MMOItem from Scratch");
+            lore = new ArrayList<>();
+            lore.add(ChatColor.GOLD + "Left Click: " + ChatColor.GRAY + "Toggle status");
+            lore.add("");
+            lore.add(ChatColor.GOLD + "Status " + ChatColor.GRAY + main.utils.isItemScracth(newItem));
+            lore.add("");
+            lore.add(ChatColor.GRAY + "Toggle this if you want, upon purchase,");
+            lore.add(ChatColor.GRAY + "that the item is generated from scratch so");
+            lore.add(ChatColor.GRAY + "in scenarios where items have random stats,");
+            lore.add(ChatColor.GRAY + "the new item is generated correctly");
+            meta.setLore(lore);
+            generateMMOItem.setItemMeta(meta);
+        }
 
 
         for (int j = 0; j < 9; j++) {
@@ -184,15 +215,20 @@ public class customizerMainGuiIH implements Listener, InventoryHolder {
         }
 
         inv.setItem(4, newItem);
-        inv.setItem(18, rename);
-        inv.setItem(19, changeMaterial);
-        inv.setItem(20, changeLore);
-        inv.setItem(21, editEnchantments);
+        inv.setItem(19, rename);
+        inv.setItem(20, changeMaterial);
+        inv.setItem(28, changeLore);
+        inv.setItem(29, editEnchantments);
         inv.setItem(22, setAmount);
         inv.setItem(23, makeCommand);
-        if(main.utils.isCommandItem(newItem)) inv.setItem(24, addRemoveCommands);
+        if (main.utils.isCommandItem(newItem)) inv.setItem(32, addRemoveCommands);
         inv.setItem(25, hideEnchants);
         inv.setItem(26, hideAtibutes);
+        if (newItem.getType() == XMaterial.POTION.parseMaterial() ||
+                newItem.getType() == XMaterial.SPLASH_POTION.parseMaterial()) {
+            inv.setItem(35, hideEffects);
+        }
+        if (generateMMOItem != null) inv.setItem(40, generateMMOItem);
         inv.setItem(47, returnItem);
         inv.setItem(49, customizerItem);
 
@@ -216,17 +252,20 @@ public class customizerMainGuiIH implements Listener, InventoryHolder {
             if (itemToReplace == null) {
                 newItem = main.utils.setItemAsDaily(newItem);
                 main.listDailyItems.put(newItem, 500.0);
+                main.dbManager.addDailyItem(newItem, 500.0);
             } else {
                 Double price = main.utils.getItemPrice(main.listDailyItems, itemToReplace, false);
                 main.listDailyItems.remove(itemToReplace);
                 main.listDailyItems.put(newItem, price);
+                main.dbManager.deleteDailyItem(itemToReplace);
+                main.dbManager.addDailyItem(newItem, price);
             }
             main.DailyGuiSettings = new dailyGuiSettings(main);
-            main.dbManager.updateDailyItems();
+
             p.openInventory(main.DailyGuiSettings.getFirstGui());
         }
 
-        if (e.getSlot() == e.getRawSlot() && e.getSlot() == 18) { // Boton de cambiar nombre
+        if (e.getSlot() == e.getRawSlot() && e.getSlot() == 19) { // Boton de cambiar nombre
             new AnvilGUI.Builder()
                     .onClose(player -> {
                         Bukkit.getScheduler().runTaskLater(main, () -> new customizerMainGuiIH(main, p, newItem, itemToReplace), 1);
@@ -246,7 +285,7 @@ public class customizerMainGuiIH implements Listener, InventoryHolder {
                     .open(p);
         }
 
-        if (e.getSlot() == e.getRawSlot() && e.getSlot() == 19) { // Boton de cambiar material
+        if (e.getSlot() == e.getRawSlot() && e.getSlot() == 20) { // Boton de cambiar material
             new changeMaterialGuiIH(main, p, (material, bool) -> {
 
                 if (bool) {
@@ -258,8 +297,8 @@ public class customizerMainGuiIH implements Listener, InventoryHolder {
 
         }
 
-        if (e.getSlot() == e.getRawSlot() && e.getSlot() == 20) { // Boton de cambiar lore
-            if(e.isLeftClick()) {
+        if (e.getSlot() == e.getRawSlot() && e.getSlot() == 28) { // Boton de cambiar lore
+            if (e.isLeftClick()) {
                 new AnvilGUI.Builder()
                         .onClose(player -> {
                             Bukkit.getScheduler().runTaskLater(main, () -> new customizerMainGuiIH(main, p, newItem, itemToReplace), 1);
@@ -283,7 +322,7 @@ public class customizerMainGuiIH implements Listener, InventoryHolder {
                         .plugin(main)
                         .open(p);
 
-            } else if(e.isRightClick()) {
+            } else if (e.isRightClick()) {
                 ItemMeta meta = newItem.getItemMeta();
                 List<String> lore;
                 if (!meta.hasLore()) return;
@@ -292,17 +331,17 @@ public class customizerMainGuiIH implements Listener, InventoryHolder {
                 meta.setLore(lore);
                 newItem.setItemMeta(meta);
 
-                new customizerMainGuiIH(main, p , newItem, itemToReplace);
+                new customizerMainGuiIH(main, p, newItem, itemToReplace);
 
             }
         }
 
-        if (e.getSlot() == e.getRawSlot() && e.getSlot() == 21) { // Boton de cambiar enchants
+        if (e.getSlot() == e.getRawSlot() && e.getSlot() == 29) { // Boton de cambiar enchants
 
-            if(e.isLeftClick()) {
+            if (e.isLeftClick()) {
                 new applyEnchantsGuiIH(main, p, (entry, aBoolean) -> {
 
-                    if(aBoolean) {
+                    if (aBoolean) {
                         newItem.addUnsafeEnchantment(entry.getKey(), entry.getValue());
                     }
                     new customizerMainGuiIH(main, p, newItem, itemToReplace);
@@ -310,10 +349,10 @@ public class customizerMainGuiIH implements Listener, InventoryHolder {
                 }, false, Enchantment.values(), true);
             }
 
-            if(e.isRightClick()) {
+            if (e.isRightClick()) {
                 new applyEnchantsGuiIH(main, p, (entry, aBoolean) -> {
 
-                    if(aBoolean) {
+                    if (aBoolean) {
                         newItem.removeEnchantment(entry.getKey());
                     }
                     new customizerMainGuiIH(main, p, newItem, itemToReplace);
@@ -324,10 +363,10 @@ public class customizerMainGuiIH implements Listener, InventoryHolder {
 
         if (e.getSlot() == e.getRawSlot() && e.getSlot() == 22) { // Boton de cambiar amount
 
-            if(e.isLeftClick()) {
+            if (e.isLeftClick()) {
                 new confirmGui(main, newItem, p, (aBoolean, itemStack) -> {
 
-                    if(aBoolean) {
+                    if (aBoolean) {
                         newItem.setAmount(itemStack.getAmount());
                         newItem = main.utils.setItemAsAmount(newItem);
                     }
@@ -336,33 +375,32 @@ public class customizerMainGuiIH implements Listener, InventoryHolder {
                 }, "Set item amount", false);
             }
 
-            if(e.isRightClick()) {
-                if(main.utils.isItemAmount(newItem)) {
+            if (e.isRightClick()) {
+                if (main.utils.isItemAmount(newItem)) {
 
-                    new customizerMainGuiIH(main, p , main.utils.removeItemAmount(newItem), itemToReplace);
+                    new customizerMainGuiIH(main, p, main.utils.removeItemAmount(newItem), itemToReplace);
                 }
             }
         }
 
         if (e.getSlot() == e.getRawSlot() && e.getSlot() == 23) { // Boton de cambiar commands
 
-            if(e.isLeftClick()) {
-                if(main.utils.isCommandItem(newItem)) return;
-                newItem = main.utils.setItemAsCommand(newItem, new ArrayList<>());
-                new customizerMainGuiIH(main, p , newItem, itemToReplace);
+            if (e.isLeftClick()) {
+                if (main.utils.isCommandItem(newItem)) {
+                    newItem = main.utils.removeItemCommand(newItem);
+                    new customizerMainGuiIH(main, p, newItem, itemToReplace);
+                } else {
+                    newItem = main.utils.setItemAsCommand(newItem, new ArrayList<>());
+                    new customizerMainGuiIH(main, p, newItem, itemToReplace);
+                }
             }
 
-            if(e.isRightClick()) {
-                if(!main.utils.isCommandItem(newItem)) return;
-                newItem = main.utils.removeItemCommand(newItem);
-                new customizerMainGuiIH(main, p , newItem, itemToReplace);
-            }
         }
 
-        if (e.getSlot() == e.getRawSlot() && e.getSlot() == 24 && e.getCurrentItem() != null &&
+        if (e.getSlot() == e.getRawSlot() && e.getSlot() == 32 && e.getCurrentItem() != null &&
                 e.getCurrentItem().getType() != Material.AIR) { // Boton de cambiar commands
 
-            if(e.isLeftClick()) {
+            if (e.isLeftClick()) {
                 new AnvilGUI.Builder()
                         .onClose(player -> {
                             Bukkit.getScheduler().runTaskLater(main, () -> new customizerMainGuiIH(main, p, newItem, itemToReplace), 1);
@@ -381,61 +419,79 @@ public class customizerMainGuiIH implements Listener, InventoryHolder {
                         .open(p);
             }
 
-            if(e.isRightClick()) {
+            if (e.isRightClick()) {
                 List<String> s = main.utils.getItemCommand(newItem);
-                if(!s.isEmpty()) s.remove(s.size() - 1);
+                if (!s.isEmpty()) s.remove(s.size() - 1);
                 newItem = main.utils.setItemAsCommand(newItem, s);
 
-                new customizerMainGuiIH(main, p , newItem, itemToReplace);
+                new customizerMainGuiIH(main, p, newItem, itemToReplace);
             }
         }
 
         if (e.getSlot() == e.getRawSlot() && e.getSlot() == 25) { // Boton de hide enchants
 
-            if(e.isLeftClick()) {
+            if (e.isLeftClick()) {
                 ItemMeta meta = newItem.getItemMeta();
                 if (!meta.hasItemFlag(ItemFlag.HIDE_ENCHANTS)) {
                     meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
                     newItem.setItemMeta(meta);
-                }
-                new customizerMainGuiIH(main, p , newItem, itemToReplace);
-            }
-
-            if(e.isRightClick()) {
-                ItemMeta meta = newItem.getItemMeta();
-                if (meta.hasItemFlag(ItemFlag.HIDE_ENCHANTS)) {
+                } else {
                     meta.removeItemFlags(ItemFlag.HIDE_ENCHANTS);
                     newItem.setItemMeta(meta);
                 }
-
-                new customizerMainGuiIH(main, p , newItem, itemToReplace);
+                new customizerMainGuiIH(main, p, newItem, itemToReplace);
             }
+
         }
 
         if (e.getSlot() == e.getRawSlot() && e.getSlot() == 26) { // Boton de hide enchants
 
-            if(e.isLeftClick()) {
+            if (e.isLeftClick()) {
                 ItemMeta meta = newItem.getItemMeta();
                 if (!meta.hasItemFlag(ItemFlag.HIDE_ATTRIBUTES)) {
                     meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
                     newItem.setItemMeta(meta);
-                }
-                new customizerMainGuiIH(main, p , newItem, itemToReplace);
-            }
-
-            if(e.isRightClick()) {
-                ItemMeta meta = newItem.getItemMeta();
-                if (meta.hasItemFlag(ItemFlag.HIDE_ATTRIBUTES)) {
+                } else {
                     meta.removeItemFlags(ItemFlag.HIDE_ATTRIBUTES);
                     newItem.setItemMeta(meta);
                 }
+                new customizerMainGuiIH(main, p, newItem, itemToReplace);
+            }
+        }
 
+        if (e.getSlot() == e.getRawSlot() && e.getSlot() == 35 && e.getCurrentItem() != null &&
+                    e.getCurrentItem().getType() != Material.AIR) { // Boton de hide potion effects
+
+            if(e.isLeftClick()) {
+                ItemMeta meta = newItem.getItemMeta();
+                if (!meta.hasItemFlag(ItemFlag.HIDE_POTION_EFFECTS)) {
+                    meta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
+                    newItem.setItemMeta(meta);
+                }
+                else{
+                    meta.removeItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
+                    newItem.setItemMeta(meta);
+                }
+                new customizerMainGuiIH(main, p , newItem, itemToReplace);
+            }
+        }
+
+        if (e.getSlot() == e.getRawSlot() && e.getSlot() == 40 && e.getCurrentItem() != null &&
+                e.getCurrentItem().getType() != Material.AIR) { // Boton de scrath MMOItem
+
+            if(e.isLeftClick()) {
+                ItemMeta meta = newItem.getItemMeta();
+                if (!main.utils.isItemScracth(newItem)) {
+                    newItem = main.utils.setItemAsScracth(newItem);
+                }
+                else{
+                    newItem = main.utils.removeItemScracth(newItem);
+                }
                 new customizerMainGuiIH(main, p , newItem, itemToReplace);
             }
         }
 
     }
-
 
     @EventHandler
     private void onClose(InventoryCloseEvent e) {

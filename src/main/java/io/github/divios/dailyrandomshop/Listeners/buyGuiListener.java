@@ -3,18 +3,18 @@ package io.github.divios.dailyrandomshop.Listeners;
 import io.github.divios.dailyrandomshop.DailyRandomShop;
 import io.github.divios.dailyrandomshop.GUIs.confirmGui;
 import io.github.divios.dailyrandomshop.GUIs.sellGuiIH;
+import net.Indyuce.mmoitems.MMOItems;
+import net.Indyuce.mmoitems.api.Type;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-
-import java.util.function.BiConsumer;
 
 public class buyGuiListener implements Listener {
 
@@ -58,11 +58,20 @@ public class buyGuiListener implements Listener {
         if (!main.utils.isDailyItem(e.getCurrentItem())) return;
 
         ItemStack item = e.getView().getTopInventory().getItem(e.getSlot()).clone();
-        item.setAmount(1);
+        //item.setAmount(1);
+
+        Double priceaux = main.utils.getItemPrice(main.listDailyItems, item, true);
+
+        if(priceaux <= 0) {
+            p.sendMessage(main.config.PREFIX + ChatColor.GRAY + "That item is not in stock anymore, an admin must have take it away");
+            p.closeInventory();
+            return;
+        }
 
         if (main.utils.isCommandItem(item)) {
 
             Double price = main.utils.getItemPrice(main.listDailyItems, item, true);
+
             if (main.econ.getBalance(p) < price) {
                 p.sendMessage(main.config.PREFIX + main.config.MSG_NOT_ENOUGH_MONEY);
                 try {
@@ -79,7 +88,7 @@ public class buyGuiListener implements Listener {
                 p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 0.5F, 1);
             } catch (NoSuchFieldError ignored) {
             }
-
+            main.econ.withdrawPlayer(p, price);
             if (main.utils.isItemAmount(item)) main.utils.processItemAmount(item, e.getSlot());
             return;
         }
@@ -94,6 +103,13 @@ public class buyGuiListener implements Listener {
 
                 if (aBoolean) {
                    Double price = main.utils.getItemPrice(main.listDailyItems, itemStack, true) * itemStack.getAmount();
+
+                    if(main.utils.isItemScracth(itemStack)) {
+                        int amount = itemStack.getAmount();
+                        String constructor[] = main.utils.getMMOItemConstruct(itemStack);
+                        itemStack = MMOItems.plugin.getItem(Type.get(constructor[0]), constructor[1]);
+                        itemStack.setAmount(amount);
+                    }
                     main.utils.giveItem(p, price, e.getView().getBottomInventory(), itemStack);
                     p.closeInventory();
 
@@ -112,7 +128,7 @@ public class buyGuiListener implements Listener {
 
             Double price = main.utils.getItemPrice(main.listDailyItems, item, true);
 
-            if(price == 0) {
+            if(price <= 0) {
                 p.sendMessage(main.config.PREFIX + ChatColor.GRAY + "That item is not in stock anymore, an admin must have take it away");
                 p.closeInventory();
                 return;
@@ -121,6 +137,12 @@ public class buyGuiListener implements Listener {
             if (main.utils.isItemAmount(item) && main.econ.getBalance(p) >= price &&
                 !main.utils.inventoryFull(p)) {
                 main.utils.processItemAmount(e.getView().getTopInventory().getItem(e.getSlot()), e.getSlot());
+            }
+            item.setAmount(1);
+
+            if(main.utils.isItemScracth(item)) {
+                String constructor[] = main.utils.getMMOItemConstruct(item);
+                item = MMOItems.plugin.getItem(Type.get(constructor[0]), constructor[1]);
             }
 
             main.utils.giveItem(p, price, e.getView().getBottomInventory(), item);
