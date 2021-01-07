@@ -2,11 +2,9 @@ package io.github.divios.dailyrandomshop.Utils;
 
 import com.cryptomorin.xseries.XMaterial;
 import de.tr7zw.changeme.nbtapi.NBTItem;
-import de.tr7zw.changeme.nbtapi.NBTList;
 import io.github.divios.dailyrandomshop.DailyRandomShop;
 import org.bukkit.Material;
 import org.bukkit.Sound;
-import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -92,7 +90,7 @@ public class Utils {
         } catch (NoSuchFieldError ignored) {}
         p.getInventory().addItem(aux);
         main.econ.withdrawPlayer(p, price);
-        p.sendMessage(main.config.PREFIX + main.config.MSG_BUY_ITEM.replace("{price}", "" + price).replace("{item}", item.getType().toString()));
+        p.sendMessage(main.config.PREFIX + main.config.MSG_BUY_ITEM.replace("{price}", String.format("%,.2f", price)).replace("{item}", item.getType().toString()));
         p.openInventory(main.BuyGui.getGui());
         outcome = 1;
         return outcome;
@@ -166,6 +164,44 @@ public class Utils {
         }
 
         return nbtValues;
+    }
+
+    public boolean isMMOItem(ItemStack item) {
+        try {
+            net.mmogroup.mmolib.api.item.NBTItem NBTItem = net.mmogroup.mmolib.api.item.NBTItem.get(item);
+            return NBTItem.hasType();
+        } catch (NoClassDefFoundError | NoSuchMethodError e) {
+            return false;
+        }
+    }
+
+    public String[] getMMOItemConstruct(ItemStack item) {
+
+        net.mmogroup.mmolib.api.item.NBTItem NBTItem = net.mmogroup.mmolib.api.item.NBTItem.get(item);
+        String type = NBTItem.getType();
+        String id = NBTItem.getString("MMOITEMS_ITEM_ID");
+
+        return new String[]{type, id};
+    }
+
+    public ItemStack setItemAsScracth(ItemStack item) {
+        NBTItem NBTItem = new NBTItem(item);
+        NBTItem.setString("Scratch", "true");
+
+        return NBTItem.getItem();
+    }
+
+    public ItemStack removeItemScracth(ItemStack item) {
+        NBTItem NBTItem = new NBTItem(item);
+        NBTItem.removeKey("Scratch");
+
+        return NBTItem.getItem();
+    }
+
+    public boolean isItemScracth (ItemStack item) {
+        NBTItem NBTItem = new NBTItem(item);
+
+        return NBTItem.hasKey("Scratch");
     }
 
     public ItemStack setItemAsCommand(ItemStack item, List<String> command) {

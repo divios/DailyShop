@@ -85,18 +85,18 @@ public class dailyGuiSettingsListener implements Listener {
             AtomicBoolean response = new AtomicBoolean(false);
             new AnvilGUI.Builder()
                     .onClose(player -> {
-                        if(!response.get()) Bukkit.getScheduler().runTaskLater(main, () -> p.openInventory(main.DailyGuiSettings.getFirstGui()), 1);
+                        Bukkit.getScheduler().runTaskLater(main, () -> p.openInventory(main.DailyGuiSettings.getFirstGui()), 1);
                     })
                     .onComplete((player, text) -> {                             //called when the inventory output slot is clicked
                         try {
                             Double price = Double.parseDouble(text);
                             main.listDailyItems.replace(item, price);
-                            main.dbManager.updateDailyItems();
+                            main.dbManager.updateDailyItemPrice(item, price);
                             main.DailyGuiSettings = new dailyGuiSettings(main);
                             response.set(true);
                             return AnvilGUI.Response.close();
-                        } catch (Exception err) {
-                            return AnvilGUI.Response.text("Error");
+                        } catch (NumberFormatException err) {
+                            return AnvilGUI.Response.text("Not integer");
                         }
 
                     })
@@ -114,7 +114,7 @@ public class dailyGuiSettingsListener implements Listener {
                     main.listDailyItems.remove(item);
                     p1.sendMessage(main.config.PREFIX + ChatColor.GRAY + "Removed item successfully");
                     main.DailyGuiSettings = new dailyGuiSettings(main);
-                    main.dbManager.updateDailyItems();
+                    main.dbManager.deleteDailyItem(item);
                 }
                 p1.openInventory(main.DailyGuiSettings.getFirstGui());
 

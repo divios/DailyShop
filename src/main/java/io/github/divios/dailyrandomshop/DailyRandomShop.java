@@ -10,6 +10,7 @@ import io.github.divios.dailyrandomshop.GUIs.*;
 import io.github.divios.dailyrandomshop.GUIs.settings.dailyGuiSettings;
 import io.github.divios.dailyrandomshop.GUIs.settings.sellGuiSettings;
 import io.github.divios.dailyrandomshop.Listeners.*;
+import io.github.divios.dailyrandomshop.Placeholders.timePlaceHolder;
 import io.github.divios.dailyrandomshop.Utils.*;
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.economy.Economy;
@@ -58,6 +59,10 @@ public final class DailyRandomShop extends JavaPlugin {
             log.severe(String.format("[%s] - Disabled due to no Vault dependency found!", getDescription().getName()));
             getServer().getPluginManager().disablePlugin(this);
             return;
+        }
+
+        if(getServer().getPluginManager().getPlugin("PlaceholderAPI") != null){
+            new timePlaceHolder(this).register();
         }
 
         try {

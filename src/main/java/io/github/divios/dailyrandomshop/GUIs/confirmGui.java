@@ -133,11 +133,14 @@ public class confirmGui implements Listener, InventoryHolder {
 
         ItemStack item = inv.getItem(22);
         ItemMeta meta = item.getItemMeta();
-        List<String> lore = meta.getLore();
+        List<String> lore;
+        if(meta.hasLore()) lore = meta.getLore();
+        else lore = new ArrayList<>();
+
 
         if(price) {
             lore.remove(lore.size() - 1);
-            lore.add(main.config.BUY_GUI_ITEMS_LORE.replaceAll("\\{price}", "" + main.utils.getItemPrice(main.listDailyItems, item, true) * nstack));
+            lore.add(main.config.BUY_GUI_ITEMS_LORE.replaceAll("\\{price}", String.format("%,.2f",main.utils.getItemPrice(main.listDailyItems, item, true) * nstack)));
             meta.setLore(lore);
 
             item.setItemMeta(meta);

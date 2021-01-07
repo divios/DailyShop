@@ -15,7 +15,7 @@ timer-duration: 86400
 buy-price-multiplier: 1
 sell-price-multiplier: 1
 
-# The number of daily items on the shop, the minimum is 1 and the maximum is 28.
+# The number of daily items on the shop, the minimum is 1 and the maximum is 36.
 # If none of them is provided it 'll default to 14
 number-of-daily-items: 14
 
@@ -34,7 +34,7 @@ daily-shop-gui-painting-lore:
   - "&7show up here!"
 # This is the lore that the daily
 # items will display
-daily-items-lore: "&6&lPrice: &7{price}"
+daily-items-lore: "&6Price: &7{price}"
 # This is the arrow upon clicking
 # sends you to the sell GUI
 daily-shop-to-sell-name: "&c&lVisit Market"

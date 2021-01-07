@@ -231,12 +231,10 @@ public class applyEnchantsGuiIH implements Listener, InventoryHolder {
                     .onComplete((player, text) -> {                             //called when the inventory output slot is clicked
                         try {
                             lvl.set(Integer.parseInt(text));
-
                             response.set(true);
                             return AnvilGUI.Response.close();
-                        } catch (Exception err) {
-                            err.printStackTrace();
-                            return AnvilGUI.Response.text("Error");
+                        } catch (NumberFormatException err ) {
+                            return AnvilGUI.Response.text("Is not Integer");
                         }
 
                     })

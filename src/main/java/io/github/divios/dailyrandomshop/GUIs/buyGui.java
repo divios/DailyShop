@@ -69,9 +69,9 @@ public class buyGui {
 
     public void inicializeGui(boolean timer) {
 
-        double dailyRows = main.config.N_DAILY_ITEMS / 7;
+        double dailyRows = main.config.N_DAILY_ITEMS / 9F;
         int rows = (int) Math.ceil(dailyRows + 2);
-        if (rows == 2) rows = 3;
+        if (rows <= 2) rows = 3;
 
         shop = Bukkit.createInventory(null, (rows * 9), main.config.BUY_GUI_TITLE + ChatColor.GOLD);
 
@@ -79,7 +79,9 @@ public class buyGui {
         secondRow();
 
         if (timer) createRandomItems();
-        else getDailyItems();
+        else {
+            getDailyItems();
+        }
     }
 
     public void createRandomItems() {
@@ -87,11 +89,17 @@ public class buyGui {
         ArrayList<Integer> inserted = new ArrayList<>();
 
         int j=18;
-        for(int i = 18; i<shop.getSize(); i++) {
+        while(true) {
 
-            if (shop.firstEmpty() == -1) break;
+            if(shop.firstEmpty() == -1) break;
 
-            if (listOfMaterials.size() == inserted.size()) break; //make sure to break infinite loop if happens
+            if(j >= (18 + main.config.N_DAILY_ITEMS - 1)) {
+                break;
+            }
+
+            if (listOfMaterials.size() == inserted.size()) {
+                break; //make sure to break infinite loop if happens
+            }
 
             int ran = main.utils.randomValue(0, listOfMaterials.size() - 1);
 
@@ -104,10 +112,11 @@ public class buyGui {
             ItemStack randomItem = main.utils.getEntry(main.listDailyItems, ran);
 
             ItemMeta meta = randomItem.getItemMeta();
-            List<String> lore = meta.getLore();
-            if (lore == null) lore = new ArrayList<>();
+            List<String> lore;
+            if(meta.hasLore()) lore = meta.getLore();
+            else lore = new ArrayList<>();
 
-            lore.add(main.config.BUY_GUI_ITEMS_LORE.replaceAll("\\{price}", "" + listOfMaterials.get(randomItem)));
+            lore.add(main.config.BUY_GUI_ITEMS_LORE.replaceAll("\\{price}", String.format("%,.2f", main.listDailyItems.get(randomItem))));
             meta.setLore(lore);
 
             randomItem.setItemMeta(meta);
@@ -126,11 +135,21 @@ public class buyGui {
         ArrayList<ItemStack> dailyItems = new ArrayList<>();
 
         for (ItemStack item : shop.getContents()) {
-            if (item == null || !main.utils.isDailyItem(item)) continue;
-            dailyItems.add(item);
+
+            if (item == null || !main.utils.isDailyItem(item)) {
+                continue;
+            }
+            ItemStack itemCloned = item.clone();
+            ItemMeta meta = itemCloned.getItemMeta();
+            List<String> lore = meta.getLore();
+            lore.remove(lore.size() - 1);
+            meta.setLore(lore);
+            itemCloned.setItemMeta(meta);
+
+            dailyItems.add(itemCloned);
         }
         if (!dailyItems.isEmpty()) {
-            main.dbManager.updateCurrentItems();
+            main.dbManager.updateCurrentItems(dailyItems);
         }
     }
 
@@ -142,16 +161,17 @@ public class buyGui {
                 //main.getLogger().severe("Hubo un error al recuperar los items diarios, generando items aleatorios");
                 return;
             }
-            dailyItem.trimToSize();
 
             int n = 18;
             for (ItemStack item : dailyItem) {
+                if(n >= (18 + main.config.N_DAILY_ITEMS -1)) break;
                 if (shop.firstEmpty() == -1) break;
                 ItemMeta meta = item.getItemMeta();
-                ArrayList<String> lore = new ArrayList<String>();
+                List<String> lore;
+                if(meta.hasLore()) lore = meta.getLore();
+                else lore = new ArrayList<>();
 
-
-                lore.add(main.config.BUY_GUI_ITEMS_LORE.replaceAll("\\{price}", "" + main.listDailyItems.get(item)));
+                lore.add(main.config.BUY_GUI_ITEMS_LORE.replaceAll("\\{price}", String.format("%,.2f", main.listDailyItems.get(item))));
                 meta.setLore(lore);
 
                 item.setItemMeta(meta);

@@ -103,7 +103,7 @@ public class sellGuiIH implements Listener, InventoryHolder {
         }else{
             ItemStack item = inv.getItem(40);
             ItemMeta meta = item.getItemMeta();
-            meta.setDisplayName(main.config.SELL_ITEM_NAME.replaceAll("\\{price}", "" + price));
+            meta.setDisplayName(main.config.SELL_ITEM_NAME.replaceAll("\\{price}", String.format("%,.2f",price)));
             item.setItemMeta(meta);
             inv.setItem(40, item);
         }
@@ -125,15 +125,12 @@ public class sellGuiIH implements Listener, InventoryHolder {
 
         if(e.getSlot() == e.getRawSlot() && e.getSlot() == 0) {
 
-            for(int i: dailyItemsSlots) {
-                ItemStack item = e.getView().getTopInventory().getItem(i);
-                if(item != null && item.getType() != Material.AIR) {
-                    p.getInventory().addItem(item);
-                }
-            }
-
             p.openInventory(main.BuyGui.getGui());
-            return;
+            try {
+                p.playSound(p.getLocation(), Sound.BLOCK_DISPENSER_DISPENSE, 0.5F, 1);
+            } catch (NoSuchFieldError Ignored) {}
+            finally { return; }
+
         }
 
         if(e.getSlot() == e.getRawSlot() && e.getSlot() == 40) {
@@ -146,8 +143,16 @@ public class sellGuiIH implements Listener, InventoryHolder {
                 finally { return; }
             }
 
+            for(int i: dailyItemsSlots) { //remove all items
+                ItemStack item = e.getView().getTopInventory().getItem(i);
+                e.getView().getTopInventory().remove(item);
+            }
+            try {
+                p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
+            } catch (NoSuchFieldError ignored){}
+
             p.closeInventory();
-            p.sendMessage(main.config.PREFIX + main.config.MSG_ADD_DAILY_ITEM_SUCCESS);
+            p.sendMessage(main.config.PREFIX + main.config.MSG_SELL_ITEMS.replaceAll("\\{price}", String.format("%,.2f", price)));
             main.econ.depositPlayer(p, price);
 
         }
@@ -184,6 +189,11 @@ public class sellGuiIH implements Listener, InventoryHolder {
     private void onClose(InventoryCloseEvent e) {
 
         if (e.getView().getTopInventory().getHolder() == this) {
+
+            for(int i: dailyItemsSlots) { //recover items
+                ItemStack item = e.getView().getTopInventory().getItem(i);
+                if (item != null) p.getInventory().addItem(item);
+            }
 
             InventoryClickEvent.getHandlerList().unregister(this);
             InventoryCloseEvent.getHandlerList().unregister(this);

@@ -1,9 +1,11 @@
 package io.github.divios.dailyrandomshop;
 
 import io.github.divios.dailyrandomshop.GUIs.sellGuiIH;
+import io.github.divios.dailyrandomshop.GUIs.settings.addDailyItemGuiIH;
 import io.github.divios.dailyrandomshop.GUIs.settings.sellGuiSettings;
 import io.github.divios.dailyrandomshop.GUIs.settings.settingsGuiIH;
 import io.github.divios.dailyrandomshop.Utils.ConfigUtils;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -88,7 +90,7 @@ public class Commands implements CommandExecutor {
                 }
 
                 if(main.listSellItems.containsKey(item)) {
-                    p.sendMessage(main.config.PREFIX + "That item is already on sale");
+                    p.sendMessage(main.config.PREFIX + ChatColor.GRAY + "That item is already on sale");
                     return true;
                 }
 
@@ -101,7 +103,7 @@ public class Commands implements CommandExecutor {
                 p.sendMessage(main.config.PREFIX + main.config.MSG_ADD_DAILY_ITEM_SUCCESS);
                 main.SellGuiSettings = new sellGuiSettings(main);
 
-                main.dbManager.updateSellItems();
+                main.dbManager.addSellItem(item, Double.parseDouble(args[1]));
 
 
             } else if (args[0].equalsIgnoreCase("settings") && sender instanceof Player) {
@@ -113,6 +115,14 @@ public class Commands implements CommandExecutor {
                 Player p = (Player) sender;
 
                 new settingsGuiIH(main, p);
+            } else if (args[0].equalsIgnoreCase("addDailyItem") && sender instanceof Player) {
+
+                if(!sender.hasPermission("DailyRandomShop.addDailyItem")) {
+                    sender.sendMessage(main.config.PREFIX + main.config.MSG_NOT_PERMS);
+                    return true;
+                }
+
+                new addDailyItemGuiIH(main, (Player) sender, null);
             }
 
         }

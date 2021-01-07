@@ -95,10 +95,10 @@ public class sellGuiSettings {
         if (meta != null && meta.hasLore() ) lore = meta.getLore();
         else lore = new ArrayList<>();
 
-        lore.add(main.config.BUY_GUI_ITEMS_LORE.replaceAll("\\{price}", "" + price));
+        lore.add(main.config.BUY_GUI_ITEMS_LORE.replaceAll("\\{price}", String.format("%,.2f", price)));
         lore.add("");
-        lore.add(ChatColor.GOLD + "" + ChatColor.BOLD + "Left click: " + ChatColor.GRAY + "Change price");
-        lore.add(ChatColor.GOLD + "" + ChatColor.BOLD + "Right click: " + ChatColor.GRAY + "Remove item");
+        lore.add(ChatColor.GOLD + "Left click: " + ChatColor.GRAY + "Change price");
+        lore.add(ChatColor.GOLD + "Right click: " + ChatColor.GRAY + "Remove item");
         meta.setLore(lore);
         item.setItemMeta(meta);
     }
