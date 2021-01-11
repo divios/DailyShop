@@ -58,7 +58,7 @@ public class customAddItemListener implements Listener {
         item.setAmount(1);
 
         Titles.clearTitle(p);
-        Bukkit.getScheduler().runTaskLaterAsynchronously(main, () ->
+        Bukkit.getScheduler().runTaskLater(main, () ->
                 new customizerMainGuiIH(main, p, item, null)
         , 1L);
 
