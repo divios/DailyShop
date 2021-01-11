@@ -116,7 +116,7 @@ public class sellGuiSettings implements Listener, InventoryHolder {
         if (meta != null && meta.hasLore() ) lore = meta.getLore();
         else lore = new ArrayList<>();
 
-        lore.add(main.config.BUY_GUI_ITEMS_LORE.replaceAll("\\{price}", String.format("%,.2f", price)));
+        lore.add(main.config.BUY_GUI_ITEMS_LORE_PRICE.replaceAll("\\{price}", String.format("%,.2f", price)));
         lore.add("");
         for(String s: main.config.SELL_ITEMS_MENU_ITEMS_LORE) {
             lore.add(ChatColor.translateAlternateColorCodes('&', s));

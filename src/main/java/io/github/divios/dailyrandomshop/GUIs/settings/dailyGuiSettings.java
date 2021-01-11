@@ -133,7 +133,8 @@ public class dailyGuiSettings implements Listener, InventoryHolder {
         if (meta != null && meta.hasLore() ) lore = meta.getLore();
         else lore = new ArrayList<>();
 
-        lore.add(main.config.BUY_GUI_ITEMS_LORE.replaceAll("\\{price}", String.format("%,.2f",price)));
+        lore.add(main.config.BUY_GUI_ITEMS_LORE_PRICE.replaceAll("\\{price}", String.format("%,.2f",price)));
+        lore.add(main.config.BUY_GUI_ITEMS_LORE_RARITY.replaceAll("\\{rarity}", main.utils.getRarityString(item)));
         lore.add("");
         for(String s: main.config.DAILY_ITEMS_MENU_ITEMS_LORE) {
             lore.add(ChatColor.translateAlternateColorCodes('&', s));
@@ -238,7 +239,7 @@ public class dailyGuiSettings implements Listener, InventoryHolder {
         List<String> lore = meta.getLore();
 
         int j = 0;
-        while (j <= main.config.DAILY_ITEMS_MENU_ITEMS_LORE.size() + 1) {
+        while (j <= main.config.DAILY_ITEMS_MENU_ITEMS_LORE.size() + 2) {
             lore.remove(lore.size() - 1);
             j++;
         }

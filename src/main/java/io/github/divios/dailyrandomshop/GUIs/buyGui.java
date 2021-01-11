@@ -127,7 +127,7 @@ public class buyGui implements InventoryHolder, Listener {
             if(meta.hasLore()) lore = meta.getLore();
             else lore = new ArrayList<>();
 
-            lore.add(main.config.BUY_GUI_ITEMS_LORE.replaceAll("\\{price}", String.format("%,.2f", main.listDailyItems.get(randomItem))));
+            lore.add(main.config.BUY_GUI_ITEMS_LORE_PRICE.replaceAll("\\{price}", String.format("%,.2f", main.listDailyItems.get(randomItem))));
             meta.setLore(lore);
 
             randomItem.setItemMeta(meta);
@@ -186,7 +186,7 @@ public class buyGui implements InventoryHolder, Listener {
                 if(meta.hasLore()) lore = meta.getLore();
                 else lore = new ArrayList<>();
 
-                lore.add(main.config.BUY_GUI_ITEMS_LORE.replaceAll("\\{price}", String.format("%,.2f", main.listDailyItems.get(item))));
+                lore.add(main.config.BUY_GUI_ITEMS_LORE_PRICE.replaceAll("\\{price}", String.format("%,.2f", main.listDailyItems.get(item))));
                 meta.setLore(lore);
 
                 item.setItemMeta(meta);

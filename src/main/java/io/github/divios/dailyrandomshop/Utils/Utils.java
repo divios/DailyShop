@@ -330,6 +330,35 @@ public class Utils {
         return rarity;
     }
 
+    public String getRarityString(ItemStack item) {
+        String rarity = "";
+        NBTItem nbtItem = new NBTItem(item);
+        switch (getRarity(item)) {
+            case 100:
+                rarity = "Common";
+                break;
+            case 80:
+                rarity = "unCommon";
+                break;
+            case 60:
+                rarity = "Rare";
+                break;
+            case 40:
+                rarity = "Epic";
+                break;
+            case 20:
+                rarity = "Ancient";
+                break;
+            case 10:
+                rarity = "Legendary";
+                break;
+            case 5:
+                rarity = "Mythic";
+                break;
+        }
+        return rarity;
+    }
+
     //common (100), uncommon (80), rare (60), epic (40), ancient (20), legendary (10), mythic (5)
     public ItemStack processNextRarity(ItemStack item) {
         NBTItem nbtItem = new NBTItem(item);
@@ -357,25 +386,25 @@ public class Utils {
         else lore = new ArrayList<>();
         switch (rarity) {
             case 100:
-                lore.add(ChatColor.GOLD + "Rarity: " + ChatColor.GRAY + "Common");
+                lore.add(main.config.BUY_GUI_ITEMS_LORE_RARITY.replaceAll("\\{rarity}", "Common"));
                 break;
             case 80:
-                lore.add(ChatColor.GOLD + "Rarity: " + ChatColor.GRAY + "Uncommon");
+                lore.add(main.config.BUY_GUI_ITEMS_LORE_RARITY.replaceAll("\\{rarity}", "UnCommon"));
                 break;
             case 60:
-                lore.add(ChatColor.GOLD + "Rarity: " + ChatColor.GRAY + "Rare");
+                lore.add(main.config.BUY_GUI_ITEMS_LORE_RARITY.replaceAll("\\{rarity}", "Rare"));
                 break;
             case 40:
-                lore.add(ChatColor.GOLD + "Rarity: " + ChatColor.GRAY + "Epic");
+                lore.add(main.config.BUY_GUI_ITEMS_LORE_RARITY.replaceAll("\\{rarity}", "Epic"));
                 break;
             case 20:
-                lore.add(ChatColor.GOLD + "Rarity: " + ChatColor.GRAY + "Ancient");
+                lore.add(main.config.BUY_GUI_ITEMS_LORE_RARITY.replaceAll("\\{rarity}", "Ancient"));
                 break;
             case 10:
-                lore.add(ChatColor.GOLD + "Rarity: " + ChatColor.GRAY + "Legendary");
+                lore.add(main.config.BUY_GUI_ITEMS_LORE_RARITY.replaceAll("\\{rarity}", "Legendary"));
                 break;
             case 5:
-                lore.add(ChatColor.GOLD + "Rarity: " + ChatColor.GRAY + "Mythic");
+                lore.add(main.config.BUY_GUI_ITEMS_LORE_RARITY.replaceAll("\\{rarity}", "Mythic"));
                 break;
         }
         meta.setLore(lore);
