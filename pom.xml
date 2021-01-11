@@ -35,18 +35,24 @@
                     <configuration>
                         <relocations>
                             <relocation>
+                                <!-- nbtapi -->
                                 <pattern>de.tr7zw.changeme.nbtapi</pattern>
-                                <shadedPattern>io.github.divios.dailyrandomshop.Utils</shadedPattern>
+                                <shadedPattern>${project.groupId}.dailyrandomshop.nbtapi</shadedPattern>
                             </relocation>
                             <relocation>
+                                <!-- Xseries -->
                                 <pattern>com.cryptomorin.xseries</pattern>
-                                <!-- Be sure to change the package below -->
-                                <shadedPattern>io.github.divios.dailyrandomshop.Utils</shadedPattern>
+                                <shadedPattern>${project.groupId}.dailyrandomshop.xseries</shadedPattern>
                             </relocation>
                             <relocation>
+                                <!-- Bstats -->
                                 <pattern>org.bstats</pattern>
-                                <!-- Replace this with your package! -->
-                                <shadedPattern>io.github.divios.dailyrandomshop.Utils</shadedPattern>
+                                <shadedPattern>${project.groupId}.dailyrandomshop.bstats</shadedPattern>
+                            </relocation>
+                            <relocation>
+                                <!-- AnvilGUI -->
+                                <pattern>net.wesjd.anvilgui</pattern>
+                                <shadedPattern>${project.groupId}.dailyrandomshop.anvilGui</shadedPattern>
                             </relocation>
                         </relocations>
                         <filters>
@@ -54,6 +60,14 @@
                                 <artifact>*:*</artifact>
                                 <excludes>
                                     <exclude>com/cryptomorin/xseries/XBiome*</exclude>
+                                    <exclude>com/cryptomorin/xseries/XEntity*</exclude>
+                                    <exclude>com/cryptomorin/xseries/XItemStack*</exclude>
+                                    <exclude>com/cryptomorin/xseries/XItemStack*</exclude>
+                                    <exclude>com/cryptomorin/xseries/XPotion*</exclude>
+                                    <exclude>com/cryptomorin/xseries/XEnchantment*</exclude>
+                                    <exclude>com/cryptomorin/xseries/XSound*</exclude>
+                                    <exclude>com/cryptomorin/xseries/XParticle*</exclude>
+                                    <exclude>com/cryptomorin/xseries/SkullUtils*</exclude>
                                     <exclude>com/cryptomorin/xseries/NMSExtras*</exclude>
                                     <exclude>com/cryptomorin/xseries/NoteBlockMusic*</exclude>
                                 </excludes>
@@ -135,7 +149,7 @@
         <dependency>
             <groupId>de.tr7zw</groupId>
             <artifactId>item-nbt-api</artifactId>
-            <version>2.6.0</version>
+            <version>2.7.1</version>
         </dependency>
         <dependency>
             <groupId>net.Indyuce</groupId>

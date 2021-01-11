@@ -12,6 +12,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitTask;
+import com.cryptomorin.xseries.messages.Titles;
 
 public class customAddItemListener implements Listener {
 
@@ -31,12 +32,14 @@ public class customAddItemListener implements Listener {
                 p.openInventory(main.DailyGuiSettings.getFirstGui());
         }, 200);
 
-        try {
+        /*try {
             p.sendTitle(main.config.MSG_ADD_ITEM_TITLE,
                     main.config.MSG_ADD_ITEM_SUBTITLE, 20, 60, 20);
         } catch (NoSuchMethodError e) {
             p.sendMessage(main.config.PREFIX + main.config.MSG_ADD_ITEM_TITLE + main.config.MSG_ADD_ITEM_SUBTITLE);
-        }
+        }*/
+
+        Titles.sendTitle(p, 20, 60, 20, main.config.MSG_ADD_ITEM_TITLE, main.config.MSG_ADD_ITEM_SUBTITLE);
     }
 
     @EventHandler (priority = EventPriority.HIGHEST)
@@ -54,12 +57,15 @@ public class customAddItemListener implements Listener {
 
         item.setAmount(1);
 
-        new customizerMainGuiIH(main, p, item, null);
+        Titles.clearTitle(p);
+        Bukkit.getScheduler().runTaskLaterAsynchronously(main, () ->
+                new customizerMainGuiIH(main, p, item, null)
+        , 1L);
+
         Bukkit.getScheduler().cancelTask(TaskID.getTaskId());
         PlayerInteractEvent.getHandlerList().unregister(this);
 
+
     }
-
-
 
 }
