@@ -4,6 +4,8 @@
 
 prefix: "&6&lDailyShop > "
 
+language: "en_US"
+
 # After this amount of seconds, a new set of items
 # will be generated on the daily shop
 # Default: 86400 seconds = 1 day
@@ -19,72 +21,9 @@ sell-price-multiplier: 1
 # If none of them is provided it 'll default to 14
 number-of-daily-items: 14
 
+# On false it won't be possible to access the sell menu
 enable-sell-gui: true
+
+# On false, when clicked an item on the daily menu, it 'll purchased directly
 enable-confirm-gui: true
 
-### You can change how the GUIs are displayed here ###
-
-# The name of the daily shop GUI
-daily-shop-gui-name: "&c&lDailyShop"
-# The name and lore of the painting in the middle-top of the GUI
-# where you should expect how to use the shop
-daily-shop-gui-painting-name: "&c&lWhat is this?"
-daily-shop-gui-painting-lore:
-  - "&7Every day new items 'll"
-  - "&7show up here!"
-# This is the lore that the daily
-# items will display
-daily-items-lore: "&6Price: &7{price}"
-# This is the arrow upon clicking
-# sends you to the sell GUI
-daily-shop-to-sell-name: "&c&lVisit Market"
-daily-shop-to-sell-lore:
-  - "&7Right Click to go to the market"
-
-
-# The name of the confirm GUI
-confirm-gui-name: "&2&lConfirm Purchase"
-#the name of the add/remove panes
-confirm-gui-add-pane: "&a&lAdd"
-confirm-gui-remove-pane: "&c&lRemove"
-#The name of the confirm green pane
-confirm-gui-confirm-pane: "&a&lConfirm"
-#the name of the arrow to return to
-#the daily shop
-confirm-gui-return-name: "&c&lReturn"
-
-# The name of the sell GUI
-sell-gui-name: "&3&lMarket"
-# The name and lore of the painting in the middle-top of the GUI
-# where you should expect how to use the shop
-sell-gui-painting-name: "&3&lWhat is this?"
-sell-gui-painting-lore:
-  - "&7Drag and Drop your items"
-  - "&7to sell them!"
-# This is the name that the confirm
-# bottom will have
-sell-item-name: "&3&lTotal money: &7{price}"
-# This is the arrow upon clicking
-# sends you to the daily shop GUI
-sell-to-daily-shop-name: "&3&lReturn to daily shop"
-sell-to-daily-shop-lore:
-  - "&7Right Click to go to the daily shop"
-
-setting-gui-name: "&c&lSettings"
-
-anvil-menu-name: "&6&lSet price"
-
-### Messages ###
-message-open-shop: "&7Opening daily shop..."
-message-buy-item: "&7You bought the item {item} for {price}"
-message-sell-item: "&7You sold all the items for {price}"
-message-not-enough-money: "&7Ey, You dont have enough money to buy this item!"
-message-inventory-full: "&7Ey, Your inventory is full!"
-message-invalid-item: "&7Ey, we don't accept that item on the market!"
-message-new-daily-items: "&7New items available on the Daily Shop!"
-message-not-perms: "&7Ey, you dont have permission to do this!"
-message-add-daily-item-error-item: "&7Ey, you need to have an item in your hand"
-message-add-daily-item-error-price: "&7Ey, you have to specify a price for the item"
-message-add-daily-item-error: "&7Something went wrong while adding the item"
-message-add-daily-item-success: "&7Item added successfully"
-message-reload: "&7Reloaded all files"

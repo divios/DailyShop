@@ -16,8 +16,10 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.*;
-
+import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiConsumer;
@@ -190,7 +192,7 @@ public class applyEnchantsGuiIH implements Listener, InventoryHolder {
                             return AnvilGUI.Response.close();
 
                         })
-                        .text("")
+                        .text("Insert text to search")
                         .itemLeft(new ItemStack(XMaterial.COMPASS.parseMaterial()))
                         .title(ChatColor.GOLD + "" + ChatColor.BOLD + "Insert text to search")
                         .plugin(main)
@@ -238,7 +240,7 @@ public class applyEnchantsGuiIH implements Listener, InventoryHolder {
                         }
 
                     })
-                    .text("")
+                    .text("Set Enchantment lvl")
                     .itemLeft(XMaterial.ENCHANTED_BOOK.parseItem())
                     .title(ChatColor.GOLD + "" + ChatColor.BOLD + "Set Enchantment lvl")
                     .plugin(main)

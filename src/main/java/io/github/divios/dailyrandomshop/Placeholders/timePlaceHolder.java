@@ -1,12 +1,12 @@
 package io.github.divios.dailyrandomshop.Placeholders;
 
-import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import io.github.divios.dailyrandomshop.DailyRandomShop;
+import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.entity.Player;
 
 public class timePlaceHolder extends PlaceholderExpansion {
 
-    private DailyRandomShop plugin;
+    private final DailyRandomShop plugin;
 
     /**
      * Since we register the expansion inside our own plugin, we

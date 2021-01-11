@@ -4,7 +4,6 @@ package io.github.divios.dailyrandomshop.Listeners;
 import io.github.divios.dailyrandomshop.DailyRandomShop;
 import io.github.divios.dailyrandomshop.GUIs.customizerItem.customizerMainGuiIH;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -20,22 +19,23 @@ public class customAddItemListener implements Listener {
     private final Player p;
     private final BukkitTask TaskID;
 
-    public customAddItemListener(DailyRandomShop main, Player p) {
+    public customAddItemListener(DailyRandomShop main,
+                                 Player p) {
         Bukkit.getPluginManager().registerEvents(this, main);
         this.main = main;
         this.p = p;
 
        TaskID = Bukkit.getScheduler().runTaskLater(main, () -> {
-                p.sendMessage(main.config.PREFIX + ChatColor.GRAY + "Ey! The time to select an item expired, try it again");
+                p.sendMessage(main.config.PREFIX + main.config.MSG_TIMER_EXPIRED);
                 PlayerInteractEvent.getHandlerList().unregister(this);
                 p.openInventory(main.DailyGuiSettings.getFirstGui());
         }, 200);
 
         try {
-            p.sendTitle(ChatColor.GREEN + "" + ChatColor.BOLD + "Click item",
-                    ChatColor.GRAY + "In hand to add it", 20, 60, 20);
+            p.sendTitle(main.config.MSG_ADD_ITEM_TITLE,
+                    main.config.MSG_ADD_ITEM_SUBTITLE, 20, 60, 20);
         } catch (NoSuchMethodError e) {
-            p.sendMessage(main.config.PREFIX + ChatColor.GRAY+ "Click item in hand to add it");
+            p.sendMessage(main.config.PREFIX + main.config.MSG_ADD_ITEM_TITLE + main.config.MSG_ADD_ITEM_SUBTITLE);
         }
     }
 
@@ -45,11 +45,12 @@ public class customAddItemListener implements Listener {
         if (e.getPlayer() != p) return;
 
         e.setCancelled(true);
-        ItemStack item = e.getItem().clone();
 
-        if (item == null || item.getType() == Material.AIR) {
+        if (e.getItem() == null || e.getItem().getType() == Material.AIR) {
             return;
         }
+
+        ItemStack item = e.getItem().clone();
 
         item.setAmount(1);
 

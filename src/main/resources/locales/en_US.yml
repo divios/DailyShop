@@ -1,0 +1,275 @@
+#####################
+####### Menus #######
+#####################
+
+  ################################
+  ####### Daily Shop menu ########
+  ################################
+
+# The name of the daily shop GUI
+daily-shop-gui-name: "&c&lDailyShop"
+# The name and lore of the painting in the middle-top of the GUI
+# where you should expect how to use the shop
+daily-shop-gui-painting-name: "&c&lWhat is this?"
+daily-shop-gui-painting-lore:
+  - "&7Every day new items 'll"
+  - "&7show up here!"
+# This is the lore that the daily
+# items will display
+daily-items-lore: "&6Price: &7{price}"
+# This is the arrow upon clicking
+# sends you to the sell GUI
+daily-shop-to-sell-name: "&c&lVisit Market"
+daily-shop-to-sell-lore:
+  - "&7Right Click to go to the market"
+
+  ###############################
+  ####### Sell Shop menu ########
+  ###############################
+
+# The name of the sell GUI
+sell-gui-name: "&3&lMarket"
+# The name and lore of the painting in the middle-top of the GUI
+# where you should expect how to use the shop
+sell-gui-painting-name: "&3&lWhat is this?"
+sell-gui-painting-lore:
+  - "&7Drag and Drop your items"
+  - "&7to sell them!"
+# This is the name that the confirm
+# bottom will have
+sell-item-name: "&3&lTotal money: &7{price}"
+# This is the arrow upon clicking
+# sends you to the daily shop GUI
+sell-to-daily-shop-name: "&3&lReturn to daily shop"
+sell-to-daily-shop-lore:
+  - "&7Right Click to go to the daily shop"
+
+  ##################################
+  ####### Confirm Shop menu ########
+  ##################################
+
+# The name of the confirm GUI
+confirm-gui-name: "&2&lConfirm Purchase"
+#the name of the add/remove panes
+confirm-gui-add-pane: "&a&lAdd"
+confirm-gui-remove-pane: "&c&lRemove"
+#The name of the confirm green pane
+confirm-gui-confirm-pane: "&a&lConfirm"
+#the name of the arrow to return to
+#the daily shop
+confirm-gui-return-name: "&c&lReturn"
+
+  #############################
+  ####### Confirm menu ########
+  #############################
+
+# NOTE: This is the menu that sometimes
+# appears to confirm an action
+confirm-menu-yes: "&a&lConfirm"
+confirm-manu-no: "&c&lCancel"
+
+  ##############################
+  ####### Settings menu ########
+  ##############################
+
+# NOTE: This is the menu that prompts when /rdshop settings
+settings-gui-title: "&6&lSettings"
+
+settings-daily-item: "&6&lDaily items"
+settings-daily-items-lore:
+  - "&7Click to manage daily items"
+
+settings-sell-items: "&a&lSell items"
+settings-sell-items-lore:
+  - "&7Click to manage sell items"
+
+  ##################################
+  ####### Adding items menu ########
+  ##################################
+
+add-items-title: "&3&lCreate Item"
+
+add-items-from-zero: "&c&LCreate item from zero"
+add-items-from-zero-lore:
+  - "&7Create an items from scratch, customize"
+  - "&7every aspect of it, its your creativity"
+  - "&7and you"
+
+add-items-from-existing: "&a&lCreate item from existing"
+add-items-from-existing-lore:
+  - "&7Create an item from an existing item,"
+  - "&7useful when you need a custom item to be"
+  - "&7added (textures, nbt api, MMOItems...),"
+  - "&7also you 'll be able to customize it too"
+
+add-items-return: "&c&lReturn"
+add-items-return-lore:
+  - "&7Return to manage menu"
+
+  ##################################
+  ####### Daily items menu ########
+  ##################################
+
+# NOTE: This is the menu to manage
+# the daily items
+
+daily-items-menu_title: "&6&lDaily items Manager"
+
+daily-items-menu-add: "&3&lAdd"
+daily_items_menu_add_lore:
+  - "&7Click to add item"
+daily-items-menu-next: "&6&lNext"
+daily-items-menu-previous: "&6&lPrevious"
+daily-items-menu-return: "&c&lReturn"
+
+daily-items-menu-items-lore:
+  - "&6> Left Click: &7Change price"
+  - "&6> Right Click: &7Remove Item"
+  - "&6> Shift Left Click: &7Customize item"
+
+# The anvil that appears when changing price
+daily-items-anvil-title: "&6&lSet Price"
+daily-items-anvil-default-text: "Price"
+
+  ################################
+  ####### Sell items menu ########
+  ################################
+
+# NOTE: This is the menu to manage
+# the daily items
+
+sell-items-menu_title: "&a&lSell items Manager"
+sell-items-menu-next: "&6&lNext"
+sell-items-menu-previous: "&6&lPrevious"
+sell-items-menu-return: "&c&lReturn"
+
+sell-items-menu-items-lore:
+  - "&6> Left Click: &7Change price"
+  - "&6> Right Click: &7Remove Item"
+
+# The anvil that appears when changing price
+sell-items-anvil-title: "&6&lSet Price"
+sell-items-anvil-default-text: "Price"
+
+  ####################################
+  ####### Customize item menu ########
+  ####################################
+
+customize-menu-title: "&a&lCustomize Item"
+
+customize_craft: "&a&lCraft item"
+customize_craft_lore:
+  - "&7Click to finish and add the item"
+
+customize_return: "&c&lReturn"
+customize_return_lore:
+  - "&7Click to cancel Operation"
+
+customize_rename: "&f&lRename"
+customize_rename_lore:
+  - "&7Click to change the item name"
+customize_rename_anvil_title: "&6&lWrite the new name"
+customize_rename_anvil_default_text: "Write the new name"
+
+customize_change_material: "&f&lChange Material"
+customize_change_material_lore:
+  - "&7Click to change the item material"
+
+customize_change_lore: "&f&lChange Lore"
+customize_change_lore_lore:
+  - "&6> Left Click: &7to add lore"
+  - "&6> Right Click: &7to remove lore"
+customize_change_lore_anvil_title: "&6&lWrite lore"
+customize_change_lore_default_text: "Write lore"
+
+customize_change_enchants: "&f&lEdit enchantments"
+customize_change_enchants_lore:
+  - "&6> Left Click: &7to add Enchantment"
+  - "&6> Right Click: &7to remove Enchantment"
+
+customize_change_amount: "&f&lChange Amount"
+customize_change_amount_lore:
+  - "&6> Left Click: &7Change item amount"
+  - "&6> Right Click: &7Remove amount"
+  - ""
+  - "&7This option will make the item as an stock one,"
+  - "&7in other words, there 'll be a limited amount"
+  - "&7of times this item can be purchased before it"
+  - "&7runs out of stick. The amount of times it can be"
+  - "&7purchased is the amount of the item you set"
+
+customize_enable_commands: "&f&lSet Item Reward as Commands"
+customize_enable_commands_lore:
+  - "&6> Left Click: &7Toggle Status"
+  - ""
+  - "&6Status &7{status}"
+  - ""
+  - "&7This option 'll make that upon purchase, instead"
+  - "&7of giving the item to the player, the commands"
+  - "&7listed below are executed."
+
+customize_change_commands: "&f&lSet commands to run"
+customize_change_commands_lore:
+  - "&6> Left Click: &7Add command to item"
+  - "&6> Right Click: &7Remove command"
+  - ""
+  - "&7The commands to be executed"
+  - "&7upon purchase. You can use %player%"
+  - "&7to get the player's name"
+customize_add_commands_anvil_title: "&6&lWrite command to be added"
+customize_add_commands_default_text: "Write command to be added"
+
+customize_toggle_enchants: "&f&lMake enchant visible/invisible"
+customize_toggle_enchants_lore:
+  - "&6> Left Click: &7Toggle status"
+  - ""
+  - "&6Status &7{status}"
+
+customize_toggle_attributes: "&f&lMake attributes visible/invisible"
+customize_toggle_attributes_lore:
+  - "&6> Left Click: &7Toggle status"
+  - ""
+  - "&6Status &7{status}"
+
+customize_toggle_effects: "&f&lMake potion effects visible/invisible"
+customize_toggle_effects_lore:
+  - "&6> Left Click: &7Toggle status"
+  - ""
+  - "&6Status &7{status}"
+
+customize_toggle_mmoitem_scratch: "&f&lGenerate MMOItem from Scratch"
+customize_toggle_mmoitem_scratch_lore:
+  - "&6> Left Click: &7Toggle status"
+  - ""
+  - "&6Status &7{status}"
+  - ""
+  - "&7Toggle this if you want, upon purchase,"
+  - "&7that the item is generated from scratch so"
+  - "&7in scenarios where items have random stats,"
+  - "&7the new item is generated correctly."
+
+######################
+###### Messages ######
+######################
+
+message-open-shop: "&7Opening daily shop..."
+message-buy-item: "&7You bought the item {item} for {price}"
+message-sell-item: "&7You sold all the items for {price}"
+message-not-enough-money: "&7Ey, You dont have enough money to buy this item!"
+message-inventory-full: "&7Ey, Your inventory is full!"
+message-invalid-item: "&7Ey, we don't accept that item on the market!"
+message-new-daily-items: "&7New items available on the Daily Shop!"
+message-not-perms: "&7Ey, you dont have permission to do this!"
+message-error_item_hand: "&7Ey, you need to have an item in your hand"
+message-error_price: "&7Ey, you have to specify a price for the item"
+message-error_adding_item: "&7Something went wrong while adding the item"
+message-added_item: "&7Item added successfully"
+message_removed_item: "&7Removed item successfully"
+message_item_on_sale: "&7Ey! That item is already on sale"
+message_not_in_stock: "&7That item is not in stock anymore, an admin must have take it away"
+message-sell-items-gui-empty: "&7There are not items registered for sale, you can add one with /rdshop addSellItem"
+message-anvil-error-integer: "Not integer"
+message-add-item-title: "&a&lClick item"
+message-add-item-subtitle: "&7In hand to add it"
+message-timer-expired: "&7Ey! The time to select an item expired, try it again"
+message-reload: "&7Reloaded all files"

@@ -9,7 +9,7 @@ import java.util.List;
 
 public class TabComplete implements TabCompleter {
 
-    private List<String> commands = new ArrayList<>();
+    private final List<String> commands = new ArrayList<>();
 
     public TabComplete() {
         commands.add("reload");

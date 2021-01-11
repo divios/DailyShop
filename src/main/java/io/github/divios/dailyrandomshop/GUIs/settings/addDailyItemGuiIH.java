@@ -38,40 +38,36 @@ public class addDailyItemGuiIH implements InventoryHolder, Listener {
 
     @Override
     public Inventory getInventory() {
-        Inventory inv = Bukkit.createInventory(this, 27, ChatColor.DARK_AQUA + "" +
-                ChatColor.BOLD + "Create item");
+        Inventory inv = Bukkit.createInventory(this, 27, main.config.ADD_ITEMS_TITLE);
 
         ItemStack fromZero = XMaterial.REDSTONE_TORCH.parseItem();
         ItemMeta meta = fromZero.getItemMeta();
-        meta.setDisplayName(ChatColor.RED + "" + ChatColor.BOLD + "" +
-                "Create item from zero");
+        meta.setDisplayName(main.config.ADD_ITEMS_FROM_ZERO);
         List<String> lore = new ArrayList<>();
-        lore.add(ChatColor.GRAY + "Create an item from scratch, customize");
-        lore.add(ChatColor.GRAY + "every aspect of it, its your creativity");
-        lore.add(ChatColor.GRAY + "and you");
+        for(String s: main.config.ADD_ITEMS_FROM_ZERO_LORE) {
+            lore.add(ChatColor.translateAlternateColorCodes('&', s));
+        }
         meta.setLore(lore);
         fromZero.setItemMeta(meta);
 
 
         ItemStack fromItem = XMaterial.HOPPER.parseItem();
         meta = fromItem.getItemMeta();
-        meta.setDisplayName(ChatColor.GREEN + "" + ChatColor.BOLD + "" +
-                "Create item from existing");
+        meta.setDisplayName(main.config.ADD_ITEMS_FROM_EXISTING);
         lore = new ArrayList<>();
-        lore.add(ChatColor.GRAY + "Create an item from an existing item,");
-        lore.add(ChatColor.GRAY + "useful when you need a custom item to be");
-        lore.add(ChatColor.GRAY + "added (textures, nbt api, MMOItems...),");
-        lore.add(ChatColor.GRAY + "you 'll still be able to customizer it");
+        for(String s: main.config.ADD_ITEMS_FROM_EXISTING_LORE) {
+            lore.add(ChatColor.translateAlternateColorCodes('&', s));
+        }
         meta.setLore(lore);
         fromItem.setItemMeta(meta);
 
         ItemStack returnItem = XMaterial.OAK_SIGN.parseItem();
         meta = returnItem.getItemMeta();
-        meta.setDisplayName(ChatColor.RED + "" + ChatColor.BOLD + "" +
-                "Return");
+        meta.setDisplayName(main.config.ADD_ITEMS_RETURN);
         lore = new ArrayList<>();
-        lore.add(ChatColor.GRAY + "Return to manage menu");
-
+        for(String s: main.config.ADD_ITEMS_RETURN_LORE) {
+            lore.add(ChatColor.translateAlternateColorCodes('&', s));
+        }
         meta.setLore(lore);
         returnItem.setItemMeta(meta);
 

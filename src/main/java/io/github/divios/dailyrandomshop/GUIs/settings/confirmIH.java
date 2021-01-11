@@ -3,7 +3,6 @@ package io.github.divios.dailyrandomshop.GUIs.settings;
 import com.cryptomorin.xseries.XMaterial;
 import io.github.divios.dailyrandomshop.DailyRandomShop;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -15,35 +14,36 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 
 public class confirmIH implements InventoryHolder, Listener {
 
-    private Player p;
-    private BiConsumer<Player, Boolean> bi;
+    private final Player p;
+    private final BiConsumer<Player, Boolean> bi;
     private Consumer<Player> c;
-    private String title;
+    private final String title;
+    private final DailyRandomShop main;
 
     /**
-     *
-     * @param p Player to show the GUI
+     * @param p          Player to show the GUI
      * @param true_false Block of code to execute
-     * @param title Title of the GUI
-     * @param plugin Plugin instance
+     * @param title      Title of the GUI
+     * @param plugin     Plugin instance
      */
 
     public confirmIH(Player p,
-                     BiConsumer<Player, Boolean> true_false, String title, DailyRandomShop plugin) {
-        Bukkit.getPluginManager().registerEvents(this, plugin);
+                     BiConsumer<Player, Boolean> true_false,
+                     String title,
+                     DailyRandomShop plugin) {
 
+        Bukkit.getPluginManager().registerEvents(this, plugin);
         this.p = p;
         bi = true_false;
         this.title = title;
+        this.main = plugin;
         p.openInventory(getInventory());
-
     }
 
     @Override
@@ -53,12 +53,12 @@ public class confirmIH implements InventoryHolder, Listener {
 
         ItemStack true_ = XMaterial.EMERALD_BLOCK.parseItem();
         ItemMeta m = true_.getItemMeta();
-        m.setDisplayName(ChatColor.GREEN + "" + ChatColor.BOLD + "Confirm");
+        m.setDisplayName(main.config.CONFIRM_MENU_YES);
         true_.setItemMeta(m);
 
         ItemStack false_ = XMaterial.REDSTONE_BLOCK.parseItem();
         m = false_.getItemMeta();
-        m.setDisplayName(ChatColor.RED + "" + ChatColor.BOLD + "Cancel");
+        m.setDisplayName(main.config.CONFIRM_MENU_NO);
         false_.setItemMeta(m);
 
         inv.setItem(15, false_);
@@ -83,19 +83,15 @@ public class confirmIH implements InventoryHolder, Listener {
         if (e.getInventory().getHolder() != this)
             return;
 
-        if(e.getSlot() != e.getRawSlot()) return;
+        if (e.getSlot() != e.getRawSlot()) return;
 
         switch (e.getSlot()) {
             case 15:
-
                 bi.accept(p, false);
-
                 break;
 
             case 11:
-
                 bi.accept(p, true);
-
                 break;
 
             default:

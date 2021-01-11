@@ -5,18 +5,19 @@ import io.github.divios.dailyrandomshop.GUIs.settings.addDailyItemGuiIH;
 import io.github.divios.dailyrandomshop.GUIs.settings.sellGuiSettings;
 import io.github.divios.dailyrandomshop.GUIs.settings.settingsGuiIH;
 import io.github.divios.dailyrandomshop.Utils.ConfigUtils;
-import org.bukkit.ChatColor;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.IOException;
 
 
-public class Commands implements CommandExecutor {
+public class Commands implements CommandExecutor{
 
     private final DailyRandomShop main;
 
@@ -37,7 +38,7 @@ public class Commands implements CommandExecutor {
             }
             sender.sendMessage(main.config.PREFIX + main.config.MSG_OPEN_SHOP);
             Player p = (Player) sender;
-            p.openInventory(main.BuyGui.getGui());
+            p.openInventory(main.BuyGui.getInventory());
         } else {
             if (args[0].equalsIgnoreCase("renovate")) {
 
@@ -56,9 +57,14 @@ public class Commands implements CommandExecutor {
                 }
                 try {
                     //ConfigUtils.CloseAllInventories(main);
+                    if(!Bukkit.getScheduler().isCurrentlyRunning(main.updateListID.getTaskId())) {
+                        main.dbManager.updateAllSellItems();
+                        main.dbManager.updateAllDailyItems();
+                    }
+
                     main.reloadConfig();
-                    sender.sendMessage(main.config.PREFIX + main.config.MSG_RELOAD);
                     ConfigUtils.reloadConfig(main, true);
+                    sender.sendMessage(main.config.PREFIX + main.config.MSG_RELOAD);
 
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -85,25 +91,29 @@ public class Commands implements CommandExecutor {
                 item.setAmount(1);
 
                 if (item == null || item.getType() == Material.AIR) {
-                    p.sendMessage(main.config.PREFIX + main.config.MSG_ADD_DAILY_ITEM_ERROR_ITEM);
+                    p.sendMessage(main.config.PREFIX + main.config.MSG_ERROR_ITEM_HAND);
                     return true;
                 }
 
-                if(main.listSellItems.containsKey(item)) {
-                    p.sendMessage(main.config.PREFIX + ChatColor.GRAY + "That item is already on sale");
+                if(main.utils.listContaisItem(main.listSellItems, item)) {
+                    p.sendMessage(main.config.PREFIX + main.config.MSG_ITEM_ON_SALE);
                     return true;
                 }
 
                 if (args.length == 1) {
-                    p.sendMessage(main.config.PREFIX + main.config.MSG_ADD_DAILY_ITEM_ERROR_PRICE);
+                    p.sendMessage(main.config.PREFIX + main.config.MSG_ERROR_PRICE);
                     return true;
                 }
 
+                while (Bukkit.getScheduler().isCurrentlyRunning(main.updateListID.getTaskId())){
+                    main.utils.waitXticks(10);
+                }
                 main.listSellItems.put(item, Double.parseDouble(args[1]));
-                p.sendMessage(main.config.PREFIX + main.config.MSG_ADD_DAILY_ITEM_SUCCESS);
+                p.sendMessage(main.config.PREFIX + main.config.MSG_ITEM_ADDED);
+                HandlerList.unregisterAll(main.SellGuiSettings);
                 main.SellGuiSettings = new sellGuiSettings(main);
 
-                main.dbManager.addSellItem(item, Double.parseDouble(args[1]));
+                //main.dbManager.addSellItem(item, Double.parseDouble(args[1]));
 
 
             } else if (args[0].equalsIgnoreCase("settings") && sender instanceof Player) {
