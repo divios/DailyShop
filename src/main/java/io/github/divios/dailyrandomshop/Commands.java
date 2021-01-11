@@ -1,19 +1,23 @@
 package io.github.divios.dailyrandomshop;
 
-import io.github.divios.dailyrandomshop.GUIs.sellGuiSettings;
+import io.github.divios.dailyrandomshop.GUIs.sellGuiIH;
+import io.github.divios.dailyrandomshop.GUIs.settings.addDailyItemGuiIH;
+import io.github.divios.dailyrandomshop.GUIs.settings.sellGuiSettings;
+import io.github.divios.dailyrandomshop.GUIs.settings.settingsGuiIH;
 import io.github.divios.dailyrandomshop.Utils.ConfigUtils;
-import org.bukkit.ChatColor;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.IOException;
 
 
-public class Commands implements CommandExecutor {
+public class Commands implements CommandExecutor{
 
     private final DailyRandomShop main;
 
@@ -34,7 +38,7 @@ public class Commands implements CommandExecutor {
             }
             sender.sendMessage(main.config.PREFIX + main.config.MSG_OPEN_SHOP);
             Player p = (Player) sender;
-            p.openInventory(main.BuyGui.getGui());
+            p.openInventory(main.BuyGui.getInventory());
         } else {
             if (args[0].equalsIgnoreCase("renovate")) {
 
@@ -53,9 +57,14 @@ public class Commands implements CommandExecutor {
                 }
                 try {
                     //ConfigUtils.CloseAllInventories(main);
+                    if(!Bukkit.getScheduler().isCurrentlyRunning(main.updateListID.getTaskId())) {
+                        main.dbManager.updateAllSellItems();
+                        main.dbManager.updateAllDailyItems();
+                    }
+
                     main.reloadConfig();
-                    sender.sendMessage(main.config.PREFIX + main.config.MSG_RELOAD);
                     ConfigUtils.reloadConfig(main, true);
+                    sender.sendMessage(main.config.PREFIX + main.config.MSG_RELOAD);
 
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -68,45 +77,9 @@ public class Commands implements CommandExecutor {
                     return true;
                 }
                 Player p = (Player) sender;
-                p.openInventory(main.SellGui.createSellInv());
-            } else if (args[0].equalsIgnoreCase("adddailyitem") && sender instanceof Player) {
+                new sellGuiIH(main, p);
 
-                if (!sender.hasPermission("DailyRandomShop.addDailyItem")) {
-                    sender.sendMessage(main.config.PREFIX + main.config.MSG_NOT_PERMS);
-                    return true;
-                }
-
-                Player p = (Player) sender;
-                ItemStack item = p.getInventory().getItemInHand().clone();
-                item.setAmount(1);
-
-                if (item.getType().toString().equalsIgnoreCase("POTION") ||
-                        item.getType().toString().equalsIgnoreCase("SPLASH_POTION")
-                        ) {
-                    p.sendMessage(main.config.PREFIX + "Potions are not allowed via command");
-                    return true;
-                }
-
-                if (item == null || item.getType() == Material.AIR) {
-                    p.sendMessage(main.config.PREFIX + main.config.MSG_ADD_DAILY_ITEM_ERROR_ITEM);
-                    return true;
-                }
-
-                if (args.length == 1) {
-                    p.sendMessage(main.config.PREFIX + main.config.MSG_ADD_DAILY_ITEM_ERROR_PRICE);
-                    return true;
-                }
-
-                item = main.utils.setItemAsDaily(item);
-                main.listDailyItems.put(item, Double.parseDouble(args[1]));
-                try {
-                    ConfigUtils.migrateItemToConfig(main, item, Double.parseDouble(args[1]));
-                } catch (Exception e) {
-                    p.sendMessage(main.config.PREFIX + "Something went wrong while adding the item");
-                    e.printStackTrace();
-                }
-                p.sendMessage(main.config.PREFIX + "Item added successfully");
-            } else if (args[0].equalsIgnoreCase("addsellitem") && sender instanceof Player) {
+            }  else if (args[0].equalsIgnoreCase("addsellitem") && sender instanceof Player) {
 
                 if (!sender.hasPermission("DailyRandomShop.addSellItem")) {
                     sender.sendMessage(main.config.PREFIX + main.config.MSG_NOT_PERMS);
@@ -118,25 +91,29 @@ public class Commands implements CommandExecutor {
                 item.setAmount(1);
 
                 if (item == null || item.getType() == Material.AIR) {
-                    p.sendMessage(main.config.PREFIX + main.config.MSG_ADD_DAILY_ITEM_ERROR_ITEM);
+                    p.sendMessage(main.config.PREFIX + main.config.MSG_ERROR_ITEM_HAND);
                     return true;
                 }
 
-                if(main.listSellItems.containsKey(item)) {
-                    p.sendMessage(main.config.PREFIX + "That item is already on sale");
+                if(main.utils.listContaisItem(main.listSellItems, item)) {
+                    p.sendMessage(main.config.PREFIX + main.config.MSG_ITEM_ON_SALE);
                     return true;
                 }
 
                 if (args.length == 1) {
-                    p.sendMessage(main.config.PREFIX + main.config.MSG_ADD_DAILY_ITEM_ERROR_PRICE);
+                    p.sendMessage(main.config.PREFIX + main.config.MSG_ERROR_PRICE);
                     return true;
                 }
 
+                while (Bukkit.getScheduler().isCurrentlyRunning(main.updateListID.getTaskId())){
+                    main.utils.waitXticks(10);
+                }
                 main.listSellItems.put(item, Double.parseDouble(args[1]));
-                p.sendMessage(main.config.PREFIX + "Item added successfully");
+                p.sendMessage(main.config.PREFIX + main.config.MSG_ITEM_ADDED);
+                HandlerList.unregisterAll(main.SellGuiSettings);
                 main.SellGuiSettings = new sellGuiSettings(main);
 
-                main.dbManager.updateSellItems();
+                //main.dbManager.addSellItem(item, Double.parseDouble(args[1]));
 
 
             } else if (args[0].equalsIgnoreCase("settings") && sender instanceof Player) {
@@ -147,7 +124,15 @@ public class Commands implements CommandExecutor {
                 }
                 Player p = (Player) sender;
 
-                p.openInventory(main.Settings.getGUI());
+                new settingsGuiIH(main, p);
+            } else if (args[0].equalsIgnoreCase("addDailyItem") && sender instanceof Player) {
+
+                if(!sender.hasPermission("DailyRandomShop.addDailyItem")) {
+                    sender.sendMessage(main.config.PREFIX + main.config.MSG_NOT_PERMS);
+                    return true;
+                }
+
+                new addDailyItemGuiIH(main, (Player) sender, null);
             }
 
         }
