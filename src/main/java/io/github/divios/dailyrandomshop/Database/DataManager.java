@@ -1,5 +1,7 @@
 package io.github.divios.dailyrandomshop.Database;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import de.tr7zw.changeme.nbtapi.NBTCompound;
 import de.tr7zw.changeme.nbtapi.NBTContainer;
 import de.tr7zw.changeme.nbtapi.NBTItem;
@@ -8,12 +10,14 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
-import java.io.*;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class DataManager {
 
@@ -135,7 +139,7 @@ public class DataManager {
         });
     }
 
-    public void updateCurrentItems() {
+    public void updateCurrentItems(ArrayList<ItemStack> currentItems) {
 
         Bukkit.getScheduler().runTaskAsynchronously(main, () -> {
             try {
@@ -146,14 +150,12 @@ public class DataManager {
                 String deleteTable = "DELETE FROM " + "current_items;";
                 statement = db.con.prepareStatement(deleteTable);
                 statement.executeUpdate();
-                ByteArrayOutputStream str = new ByteArrayOutputStream();
-                ObjectOutputStream data = new ObjectOutputStream(str);
 
-                for (ItemStack item : main.listDailyItems.keySet()) {
+                for (ItemStack item : currentItems) {
 
                     String insertItem = "INSERT INTO " + "current_items (material) VALUES (?)";
                     statement = db.con.prepareStatement(insertItem);
-                    NBTCompound itemData = NBTItem.convertItemtoNBT(item);
+                    NBTCompound itemData = NBTItem.convertItemtoNBT(main.utils.removeItemAsDaily(item));
 
                     String base64 = Base64.getEncoder().encodeToString(itemData.toString().getBytes());
 
@@ -161,7 +163,7 @@ public class DataManager {
                     statement.executeUpdate();
                 }
 
-            } catch (SQLException | IOException e) {
+            } catch (SQLException e) {
                 main.getLogger().warning("Couldn't update current items on database");
             }
         });
@@ -187,7 +189,8 @@ public class DataManager {
                     string = new String(itemserial);
                     itemData = new NBTContainer(string);
                     item = NBTItem.convertNBTtoItem(itemData);
-                    if (item == null || !main.listDailyItems.containsKey(item)) continue;
+                    if (item == null || !main.utils.listContaisItem(main.listDailyItems, item) ||
+                            item.getType() == Material.AIR) continue;
 
                 } catch (Exception e) {
                     main.getLogger().warning("A previous current item registered on the db is now unsupported, skipping...");
@@ -197,44 +200,74 @@ public class DataManager {
             }
 
         } catch (SQLException e) {
-            main.getLogger().warning("Couldn't update current items on database");
+            main.getLogger().warning("Couldn't get current items from database");
         }
 
         return items;
     }
 
-    public void updateSellItems() {
+
+    public void updateSellItemPrice(ItemStack item, Double price) {
+        Bukkit.getScheduler().runTaskAsynchronously(main, () -> {
+            try {
+                db.connect();
+                String updateItem = "UPDATE sell_items SET price = ? WHERE material = ?";
+                PreparedStatement statement = db.con.prepareStatement(updateItem);
+
+                NBTCompound itemData = NBTItem.convertItemtoNBT(item);
+                String base64 = Base64.getEncoder().encodeToString(itemData.toString().getBytes());
+
+                statement.setDouble(1, price);
+                statement.setString(2, base64);
+
+                statement.executeUpdate();
+
+            } catch (SQLException err) {
+                main.getLogger().warning("There was an error trying to save the item");
+            }
+        });
+    }
+
+    public void deleteSellItem(ItemStack item) {
 
         Bukkit.getScheduler().runTaskAsynchronously(main, () -> {
             try {
                 db.connect();
+                String updateItem = "DELETE FROM sell_items WHERE material = ?";
+                PreparedStatement statement = db.con.prepareStatement(updateItem);
 
-                //Quitamos los elementos previos
-                Statement statementDel = db.con.createStatement();
-                statementDel.execute("DELETE FROM " + "sell_items;");
+                NBTCompound itemData = NBTItem.convertItemtoNBT(item);
+                String base64 = Base64.getEncoder().encodeToString(itemData.toString().getBytes());
 
-                ByteArrayOutputStream str = new ByteArrayOutputStream();
-                ObjectOutputStream data = new ObjectOutputStream(str);
-                PreparedStatement statement;
+                statement.setString(1, base64);
+                statement.executeUpdate();
 
-                for (Map.Entry<ItemStack, Double> item : main.listSellItems.entrySet()) {
-
-                    String insertItem = "INSERT INTO " + "sell_items (material, price) VALUES (?, ?)";
-                    statement = db.con.prepareStatement(insertItem);
-                    NBTCompound itemData = NBTItem.convertItemtoNBT(item.getKey());
-
-                    String base64 = Base64.getEncoder().encodeToString(itemData.toString().getBytes());
-
-                    statement.setString(1, base64);
-                    statement.setDouble(2, item.getValue());
-                    statement.executeUpdate();
-                }
-
-            } catch (SQLException | IOException e) {
-                main.getLogger().warning("Couldn't update sell items on database");
+            } catch (SQLException err) {
+                main.getLogger().warning("There was an error trying to delete the item");
             }
         });
+    }
 
+    public void addSellItem(ItemStack item, Double price) {
+
+        Bukkit.getScheduler().runTaskAsynchronously(main, () -> {
+            try {
+                db.connect();
+                String updateItem = "INSERT INTO sell_items (material, price) VALUES (?, ?)";
+                PreparedStatement statement = db.con.prepareStatement(updateItem);
+
+                NBTCompound itemData = NBTItem.convertItemtoNBT(item);
+                String base64 = Base64.getEncoder().encodeToString(itemData.toString().getBytes());
+
+                statement.setString(1, base64);
+                statement.setDouble(2, price);
+
+                statement.executeUpdate();
+
+            } catch (SQLException err) {
+                main.getLogger().warning("There was an error trying to delete the item");
+            }
+        });
     }
 
     public LinkedHashMap<ItemStack, Double> getSellItems() {
@@ -244,18 +277,18 @@ public class DataManager {
             String SQL_Create = "SELECT * FROM sell_items";
             PreparedStatement statement = db.con.prepareStatement(SQL_Create);
             ResultSet result = statement.executeQuery();
-
             String string;
             NBTCompound itemData;
             ItemStack item;
             byte[] itemserial;
+            
             while (result.next()) {
                 itemserial = Base64.getDecoder().decode(result.getString("material"));
                 try {
                     string = new String(itemserial);
                     itemData = new NBTContainer(string);
                     item = NBTItem.convertNBTtoItem(itemData);
-                    if (item == null) continue;
+                    if (item == null || item.getType() == Material.AIR) continue;
                     try {
                         Material.valueOf(item.getType().toString());
                     } catch (Exception e) {
@@ -277,42 +310,129 @@ public class DataManager {
         return items;
     }
 
-    public void updateDailyItems() {
+    public void updateAllSellItems() {
+        db.connect();
+        PreparedStatement statement;
+        try {
+            //Quitamos los elementos previos
+            String deleteTable = "DELETE FROM " + "sell_items;";
+            statement = db.con.prepareStatement(deleteTable);
+            statement.executeUpdate();
+
+            for (Map.Entry<ItemStack, Double> entry: main.listSellItems.entrySet()) {
+
+                String updateItem = "INSERT INTO sell_items (material, price) VALUES (?, ?)";
+                statement = db.con.prepareStatement(updateItem);
+
+                NBTCompound itemData = NBTItem.convertItemtoNBT(entry.getKey());
+                String base64 = Base64.getEncoder().encodeToString(itemData.toString().getBytes());
+
+                statement.setString(1, base64);
+                statement.setDouble(2, entry.getValue());
+
+                statement.executeUpdate();
+            }
+
+        } catch (SQLException Ignored) {}
+    }
+
+    public void updateAllSellItemsJson(String json) {
+        Bukkit.getScheduler().runTaskAsynchronously(main, () -> {
+            db.connect();
+            PreparedStatement statement;
+            try {
+                //Quitamos los elementos previos
+                String deleteTable = "DELETE FROM " + "sell_items;";
+                statement = db.con.prepareStatement(deleteTable);
+                statement.executeUpdate();
+                LinkedHashMap<ItemStack, Double> list = new Gson().fromJson(
+                        json, new TypeToken<LinkedHashMap<ItemStack, Double>>() {}.getType());
+
+                for (Map.Entry<ItemStack, Double> entry : list.entrySet()) {
+
+                    String updateItem = "INSERT INTO sell_items (material, price) VALUES (?, ?)";
+                    statement = db.con.prepareStatement(updateItem);
+
+                    NBTCompound itemData = NBTItem.convertItemtoNBT(entry.getKey());
+                    String base64 = Base64.getEncoder().encodeToString(itemData.toString().getBytes());
+
+                    statement.setString(1, base64);
+                    statement.setDouble(2, entry.getValue());
+
+                    statement.executeUpdate();
+                }
+
+            } catch (SQLException Ignored) {
+            }
+        });
+    }
+
+
+    public void updateDailyItemPrice(ItemStack item, Double price) {
+        Bukkit.getScheduler().runTaskAsynchronously(main, () -> {
+            try {
+                db.connect();
+                String updateItem = "UPDATE daily_items SET price = ? WHERE material = ?";
+                PreparedStatement statement = db.con.prepareStatement(updateItem);
+
+                NBTCompound itemData = NBTItem.convertItemtoNBT(item);
+                String base64 = Base64.getEncoder().encodeToString(itemData.toString().getBytes());
+
+                statement.setDouble(1, price);
+                statement.setString(2, base64);
+
+                statement.executeUpdate();
+
+            } catch (SQLException err) {
+                main.getLogger().warning("There was an error trying to save the item");
+            }
+        });
+    }
+
+    public void deleteDailyItem(ItemStack item) {
 
         Bukkit.getScheduler().runTaskAsynchronously(main, () -> {
             try {
                 db.connect();
+                String updateItem = "DELETE FROM daily_items WHERE material = ?";
+                PreparedStatement statement = db.con.prepareStatement(updateItem);
 
-                //Quitamos los elementos previos
-                Statement statementDel = db.con.createStatement();
-                statementDel.execute("DELETE FROM " + "daily_items;");
+                NBTCompound itemData = NBTItem.convertItemtoNBT(item);
+                String base64 = Base64.getEncoder().encodeToString(itemData.toString().getBytes());
 
-                ByteArrayOutputStream str = new ByteArrayOutputStream();
-                ObjectOutputStream data = new ObjectOutputStream(str);
-                PreparedStatement statement;
+                statement.setString(1, base64);
+                statement.executeUpdate();
 
-                for (Map.Entry<ItemStack, Double> item : main.listSellItems.entrySet()) {
-
-                    String insertItem = "INSERT INTO " + "sell_items (material, price) VALUES (?, ?)";
-                    statement = db.con.prepareStatement(insertItem);
-                    NBTCompound itemData = NBTItem.convertItemtoNBT(item.getKey());
-
-                    String base64 = Base64.getEncoder().encodeToString(itemData.toString().getBytes());
-
-                    statement.setString(1, base64);
-                    statement.setDouble(2, item.getValue());
-                    statement.executeUpdate();
-                }
-
-            } catch (SQLException | IOException e) {
-                main.getLogger().warning("Couldn't update daily items on database");
+            } catch (SQLException err) {
+                main.getLogger().warning("There was an error trying to delete the item");
             }
         });
-
     }
 
-    public HashMap<ItemStack, Double> getDailyItems() {
-        HashMap<ItemStack, Double> items = new HashMap<>();
+    public void addDailyItem(ItemStack item, Double price) {
+
+        Bukkit.getScheduler().runTaskAsynchronously(main, () -> {
+            try {
+                db.connect();
+                String updateItem = "INSERT INTO daily_items (material, price) VALUES (?, ?)";
+                PreparedStatement statement = db.con.prepareStatement(updateItem);
+
+                NBTCompound itemData = NBTItem.convertItemtoNBT(item);
+                String base64 = Base64.getEncoder().encodeToString(itemData.toString().getBytes());
+
+                statement.setString(1, base64);
+                statement.setDouble(2, price);
+
+                statement.executeUpdate();
+
+            } catch (SQLException err) {
+                main.getLogger().warning("There was an error trying to delete the item");
+            }
+        });
+    }
+
+    public LinkedHashMap<ItemStack, Double> getDailyItems() {
+        LinkedHashMap<ItemStack, Double> items = new LinkedHashMap<>();
 
 
         try {
@@ -330,7 +450,7 @@ public class DataManager {
                     string = new String(itemserial);
                     itemData = new NBTContainer(string);
                     item = NBTItem.convertNBTtoItem(itemData);
-                    if (item == null) continue;
+                    if (item == null || item.getType() == Material.AIR) continue;
                     try {
                         Material.valueOf(item.getType().toString());
                     } catch (Exception e) {
@@ -341,7 +461,7 @@ public class DataManager {
                     main.getLogger().warning("A previous sell item registered on the db is now unsupported, skipping...");
                     continue;
                 }
-                items.put(item, result.getDouble(2));
+                items.put(main.utils.removeItemAsDaily(item), result.getDouble(2));
             }
 
         } catch (SQLException e) {
@@ -350,6 +470,63 @@ public class DataManager {
 
 
         return items;
+    }
+
+    public void updateAllDailyItems() {
+            db.connect();
+            PreparedStatement statement;
+            try {
+                //Quitamos los elementos previos
+                String deleteTable = "DELETE FROM " + "daily_items;";
+                statement = db.con.prepareStatement(deleteTable);
+                statement.executeUpdate();
+
+                for (Map.Entry<ItemStack, Double> entry: main.listDailyItems.entrySet()) {
+
+                    String updateItem = "INSERT INTO daily_items (material, price) VALUES (?, ?)";
+                    statement = db.con.prepareStatement(updateItem);
+
+                    NBTCompound itemData = NBTItem.convertItemtoNBT(entry.getKey());
+                    String base64 = Base64.getEncoder().encodeToString(itemData.toString().getBytes());
+
+                    statement.setString(1, base64);
+                    statement.setDouble(2, entry.getValue());
+
+                    statement.executeUpdate();
+                }
+
+            } catch (SQLException Ignored) {}
+    }
+
+    public void updateAllDailyItemsJson(String json) {
+        Bukkit.getScheduler().runTaskAsynchronously(main, () -> {
+            db.connect();
+            PreparedStatement statement;
+            try {
+                //Quitamos los elementos previos
+                String deleteTable = "DELETE FROM " + "daily_items;";
+                statement = db.con.prepareStatement(deleteTable);
+                statement.executeUpdate();
+                LinkedHashMap<ItemStack, Double> list = new Gson().fromJson(
+                        json, new TypeToken<LinkedHashMap<ItemStack, Double>>() {}.getType());
+
+                for (Map.Entry<ItemStack, Double> entry : list.entrySet()) {
+
+                    String updateItem = "INSERT INTO daily_items (material, price) VALUES (?, ?)";
+                    statement = db.con.prepareStatement(updateItem);
+
+                    NBTCompound itemData = NBTItem.convertItemtoNBT(entry.getKey());
+                    String base64 = Base64.getEncoder().encodeToString(itemData.toString().getBytes());
+
+                    statement.setString(1, base64);
+                    statement.setDouble(2, entry.getValue());
+
+                    statement.executeUpdate();
+                }
+
+                } catch (SQLException Ignored) {
+            }
+        });
     }
 
 }

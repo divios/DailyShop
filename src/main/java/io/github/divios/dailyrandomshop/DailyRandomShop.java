@@ -1,22 +1,26 @@
 package io.github.divios.dailyrandomshop;
 
-import java.io.*;
-import java.util.*;
-import java.util.logging.Logger;
-
 import io.github.divios.dailyrandomshop.Database.DataManager;
 import io.github.divios.dailyrandomshop.Database.sqlite;
-import io.github.divios.dailyrandomshop.GUIs.*;
-import io.github.divios.dailyrandomshop.Listeners.*;
-import io.github.divios.dailyrandomshop.Utils.*;
+import io.github.divios.dailyrandomshop.GUIs.buyGui;
+import io.github.divios.dailyrandomshop.GUIs.settings.dailyGuiSettings;
+import io.github.divios.dailyrandomshop.GUIs.settings.sellGuiSettings;
+import io.github.divios.dailyrandomshop.Placeholders.timePlaceHolder;
+import io.github.divios.dailyrandomshop.Utils.ConfigUtils;
+import io.github.divios.dailyrandomshop.Utils.Utils;
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
-
 import org.bstats.bukkit.Metrics;
+import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitTask;
+
+import java.io.IOException;
+import java.util.LinkedHashMap;
+import java.util.logging.Logger;
 
 public final class DailyRandomShop extends JavaPlugin {
 
@@ -26,24 +30,25 @@ public final class DailyRandomShop extends JavaPlugin {
     public Chat chat = null;
     public LinkedHashMap<ItemStack, Double> listDailyItems, listSellItems;
     public buyGui BuyGui;
-    public sellGui SellGui;
-    public confirmGui ConfirmGui;
+    public dailyGuiSettings DailyGuiSettings;
     public sellGuiSettings SellGuiSettings;
-    public settings Settings;
 
     public Utils utils;
     public Config config;
     public int time = 0;
     public sqlite db = new sqlite(this);
     public DataManager dbManager = new DataManager(db, this);
+    public BukkitTask updateListID;
 
     public DailyRandomShop() {
     }
 
     @Override
     public void onDisable() {
+        Bukkit.getScheduler().cancelTasks(this); //cancelo las tasks
+        dbManager.updateAllDailyItems();
+        dbManager.updateAllSellItems();
         log.info(String.format("[%s] Disabled Version %s", getDescription().getName(), getDescription().getVersion()));
-
     }
 
     @Override
@@ -60,6 +65,10 @@ public final class DailyRandomShop extends JavaPlugin {
             return;
         }
 
+        if(getServer().getPluginManager().getPlugin("PlaceholderAPI") != null){
+            new timePlaceHolder(this).register();
+        }
+
         try {
             ConfigUtils.reloadConfig(this, false);
         } catch (IOException e) {
@@ -67,21 +76,7 @@ public final class DailyRandomShop extends JavaPlugin {
             getServer().getPluginManager().disablePlugin(this);
         }
 
-
         BuyGui = new buyGui(this);
-        SellGui = new sellGui(this);
-        ConfirmGui = new confirmGui(this);
-        SellGuiSettings = new sellGuiSettings(this);
-        Settings = new settings(this);
-
-        buyGuiListener buyguiListener = new buyGuiListener(this);
-        sellGuiListener sellguiListener = new sellGuiListener(this, SellGui.getDailyItemsSlots());
-        confirmGuiListener confirmguiListener = new confirmGuiListener(this);
-        getServer().getPluginManager().registerEvents(buyguiListener, this);
-        getServer().getPluginManager().registerEvents(sellguiListener, this);
-        getServer().getPluginManager().registerEvents(confirmguiListener, this);
-        getServer().getPluginManager().registerEvents(new sellGuiSettingsListener(this), this);
-        getServer().getPluginManager().registerEvents(new settingListener(this), this);
 
         getCommand("rdShop").setExecutor(new Commands(this));
         getCommand("rdShop").setTabCompleter(new TabComplete());
