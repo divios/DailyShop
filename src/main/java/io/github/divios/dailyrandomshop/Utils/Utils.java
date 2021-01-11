@@ -3,6 +3,8 @@ package io.github.divios.dailyrandomshop.Utils;
 import com.cryptomorin.xseries.XMaterial;
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import io.github.divios.dailyrandomshop.DailyRandomShop;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -82,6 +84,7 @@ public class Utils {
         ItemMeta meta = aux.getItemMeta();
         List<String> lore = meta.getLore();
         lore.remove(lore.size() - 1);
+        lore.remove(lore.size() - 1);
         meta.setLore(lore);
         aux.setItemMeta(meta);
 
@@ -91,7 +94,7 @@ public class Utils {
         p.getInventory().addItem(aux);
         main.econ.withdrawPlayer(p, price);
         p.sendMessage(main.config.PREFIX + main.config.MSG_BUY_ITEM.replace("{price}", String.format("%,.2f", price)).replace("{item}", item.getType().toString()));
-        p.openInventory(main.BuyGui.getGui());
+        p.openInventory(main.BuyGui.getInventory());
         outcome = 1;
         return outcome;
     }
@@ -129,7 +132,7 @@ public class Utils {
 
         } else item.setAmount(item.getAmount() - 1);
 
-        main.BuyGui.getGui().setItem(slot, item);
+        main.BuyGui.getInventory().setItem(slot, item);
 
     }
 
@@ -144,6 +147,12 @@ public class Utils {
 
         NBTItem nbtItem = new NBTItem(item);
         return nbtItem.hasKey("DailyItem");
+    }
+
+    public ItemStack removeItemAsDaily(ItemStack item) {
+        NBTItem nbtItem = new NBTItem(item);
+        nbtItem.removeKey("DailyItem");
+        return nbtItem.getItem();
     }
 
     public List<String> getNBT(ItemStack item) {
@@ -262,6 +271,7 @@ public class Utils {
         if(meta.hasLore()) {
             List<String> lore = meta.getLore();
             lore.remove(lore.size() - 1);
+            lore.remove(lore.size() - 1);
             meta.setLore(lore);
         }
         item2.setItemMeta(meta);
@@ -276,7 +286,100 @@ public class Utils {
         return null;
     }
 
+    public void removeItemOnList(LinkedHashMap<ItemStack, Double> list, ItemStack item) {
 
+        for (ItemStack entryItem: list.keySet()) {
+            if(!entryItem.isSimilar(item)) continue;
 
+            list.remove(entryItem);
+            return;
+        }
+
+    }
+
+    public void replacePriceOnList(LinkedHashMap<ItemStack, Double> list, ItemStack item, Double price) {
+
+        for (ItemStack entryItem: list.keySet()) {
+            if(!entryItem.isSimilar(item)) continue;
+
+            list.replace(entryItem, price);
+            return;
+        }
+    }
+
+    public boolean listContaisItem(LinkedHashMap<ItemStack, Double> list, ItemStack item) {
+        for (ItemStack entryItem: list.keySet()) {
+            if(entryItem.isSimilar(item)) return true;
+        }
+        return false;
+    }
+
+    public void waitXticks(long ticks) {
+        Bukkit.getScheduler().runTaskLater(main, () -> {
+
+        }, ticks);
+    }
+
+    public int getRarity(ItemStack item) {
+        int rarity = 100;
+        NBTItem nbtItem = new NBTItem(item);
+        if(nbtItem.hasKey("rarityRdshop")) {
+            rarity = nbtItem.getInteger("rarityRdshop");
+        }
+
+        return rarity;
+    }
+
+    //common (100), uncommon (80), rare (60), epic (40), ancient (20), legendary (10), mythic (5)
+    public ItemStack processNextRarity(ItemStack item) {
+        NBTItem nbtItem = new NBTItem(item);
+        if(!nbtItem.hasKey("rarityRdshop")) {
+            nbtItem.setInteger("rarityRdshop", 80);
+        }
+        else {
+            switch (nbtItem.getInteger("rarityRdshop")) {
+                case 80: nbtItem.setInteger("rarityRdshop", 60); break;
+                case 60: nbtItem.setInteger("rarityRdshop", 40); break;
+                case 40: nbtItem.setInteger("rarityRdshop", 20); break;
+                case 20: nbtItem.setInteger("rarityRdshop", 10); break;
+                case 10: nbtItem.setInteger("rarityRdshop", 5); break;
+                case 5: nbtItem.removeKey("rarityRdshop"); break;
+            }
+        }
+        return nbtItem.getItem();
+    }
+
+    public void setRarityLore(ItemStack item, int rarity) {
+
+        ItemMeta meta = item.getItemMeta();
+        List<String> lore;
+        if (meta.hasLore()) lore = meta.getLore();
+        else lore = new ArrayList<>();
+        switch (rarity) {
+            case 100:
+                lore.add(ChatColor.GOLD + "Rarity: " + ChatColor.GRAY + "Common");
+                break;
+            case 80:
+                lore.add(ChatColor.GOLD + "Rarity: " + ChatColor.GRAY + "Uncommon");
+                break;
+            case 60:
+                lore.add(ChatColor.GOLD + "Rarity: " + ChatColor.GRAY + "Rare");
+                break;
+            case 40:
+                lore.add(ChatColor.GOLD + "Rarity: " + ChatColor.GRAY + "Epic");
+                break;
+            case 20:
+                lore.add(ChatColor.GOLD + "Rarity: " + ChatColor.GRAY + "Ancient");
+                break;
+            case 10:
+                lore.add(ChatColor.GOLD + "Rarity: " + ChatColor.GRAY + "Legendary");
+                break;
+            case 5:
+                lore.add(ChatColor.GOLD + "Rarity: " + ChatColor.GRAY + "Mythic");
+                break;
+        }
+        meta.setLore(lore);
+        item.setItemMeta(meta);
+    }
 
 }

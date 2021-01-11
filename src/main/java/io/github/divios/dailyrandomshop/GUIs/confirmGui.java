@@ -2,9 +2,9 @@ package io.github.divios.dailyrandomshop.GUIs;
 
 import com.cryptomorin.xseries.XMaterial;
 import io.github.divios.dailyrandomshop.DailyRandomShop;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -34,10 +34,10 @@ public class confirmGui implements Listener, InventoryHolder {
     private final ItemStack confirm = XMaterial.EMERALD_BLOCK.parseItem();
 
     private final Inventory confirmGui = Bukkit.createInventory(null, 45, "");
-    private List<ItemStack> interactItems = new ArrayList<>();
-    private BiConsumer<Boolean, ItemStack> bi;
-    private String title;
-    private boolean price;
+    private final List<ItemStack> interactItems = new ArrayList<>();
+    private final BiConsumer<Boolean, ItemStack> bi;
+    private final String title;
+    private final boolean price;
 
     private final DailyRandomShop main;
 
@@ -137,13 +137,13 @@ public class confirmGui implements Listener, InventoryHolder {
         if(meta.hasLore()) lore = meta.getLore();
         else lore = new ArrayList<>();
 
-
         if(price) {
+            lore.remove(lore.size() - 1);
             lore.remove(lore.size() - 1);
             lore.add(main.config.BUY_GUI_ITEMS_LORE.replaceAll("\\{price}", String.format("%,.2f",main.utils.getItemPrice(main.listDailyItems, item, true) * nstack)));
             meta.setLore(lore);
-
             item.setItemMeta(meta);
+            main.utils.setRarityLore(item, main.utils.getRarity(item));
         }
     }
 

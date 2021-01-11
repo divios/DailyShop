@@ -182,7 +182,7 @@ public class changeMaterialGuiIH implements Listener, InventoryHolder {
                             return AnvilGUI.Response.close();
 
                         })
-                        .text("")
+                        .text("Insert text to search")
                         .itemLeft(new ItemStack(XMaterial.COMPASS.parseMaterial()))
                         .title(ChatColor.GOLD + "" + ChatColor.BOLD + "Insert text to search")
                         .plugin(main)

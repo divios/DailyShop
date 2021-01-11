@@ -4,7 +4,7 @@ import io.github.divios.dailyrandomshop.DailyRandomShop;
 import io.github.divios.dailyrandomshop.Utils.ConfigUtils;
 import org.bukkit.Bukkit;
 
-public class UpdateTimer {
+public class updateTimer {
 
     public static void initTimer(DailyRandomShop main, boolean reload) {
 

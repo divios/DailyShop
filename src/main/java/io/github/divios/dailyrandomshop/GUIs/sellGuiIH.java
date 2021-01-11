@@ -18,7 +18,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class sellGuiIH implements Listener, InventoryHolder {
@@ -110,10 +109,6 @@ public class sellGuiIH implements Listener, InventoryHolder {
         return price;
     }
 
-    public ArrayList<Integer> getDailyItemsSlots() {
-        return dailyItemsSlots;
-    }
-
     @EventHandler
     private void onClick(InventoryClickEvent e) {
 
@@ -125,7 +120,7 @@ public class sellGuiIH implements Listener, InventoryHolder {
 
         if(e.getSlot() == e.getRawSlot() && e.getSlot() == 0) {
 
-            p.openInventory(main.BuyGui.getGui());
+            p.openInventory(main.BuyGui.getInventory());
             try {
                 p.playSound(p.getLocation(), Sound.BLOCK_DISPENSER_DISPENSE, 0.5F, 1);
             } catch (NoSuchFieldError Ignored) {}

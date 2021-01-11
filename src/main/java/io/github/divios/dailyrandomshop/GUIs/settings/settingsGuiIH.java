@@ -42,10 +42,12 @@ public class settingsGuiIH implements Listener, InventoryHolder {
 
         ItemStack dailyItemSettings = XMaterial.PAINTING.parseItem();
         meta = dailyItemSettings.getItemMeta();
-        meta.setDisplayName(ChatColor.GOLD + "" + ChatColor.BOLD + "Daily items");
+        meta.setDisplayName(main.config.SETTINGS_DAILY_ITEM);
 
         lore = new ArrayList<>();
-        lore.add(ChatColor.GRAY + "Click to manage daily items");
+        for(String s: main.config.SETTINGS_DAILY_ITEM_LORE) {
+            lore.add(ChatColor.translateAlternateColorCodes('&', s));
+        }
         lore.add("");
         lore.add(ChatColor.GRAY + "Note: changing current items except from price");
         lore.add(ChatColor.GRAY + "won't change the current items in shop and furthermore");
@@ -56,10 +58,12 @@ public class settingsGuiIH implements Listener, InventoryHolder {
 
         ItemStack sellItemSettings = XMaterial.BOOK.parseItem();
         meta = sellItemSettings.getItemMeta();
-        meta.setDisplayName(ChatColor.GREEN + "" + ChatColor.BOLD + "Sell items");
+        meta.setDisplayName(main.config.SETTINGS_SELL_ITEM);
 
         lore = new ArrayList<>();
-        lore.add(ChatColor.GRAY + "Click to manage sell items");
+        for(String s: main.config.SETTINGS_SELL_ITEM_LORE) {
+            lore.add(ChatColor.translateAlternateColorCodes('&', s));
+        }
         meta.setLore(lore);
         sellItemSettings.setItemMeta(meta);
 
@@ -93,13 +97,12 @@ public class settingsGuiIH implements Listener, InventoryHolder {
         if (e.getSlot() == 15 && e.getSlot() == e.getRawSlot()) {
 
             if(main.listSellItems.isEmpty()) {
-                e.getWhoClicked().sendMessage(main.config.PREFIX + ChatColor.GRAY +
-                        "There are not items registered for sale, you can add one with /rdshop addSellItem");
+                e.getWhoClicked().sendMessage(main.config.PREFIX + main.config.MSG_SELL_ITEMS_GUI_EMPTY);
                 try{
                     Player p = (Player) e.getWhoClicked();
                     p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 0.5F, 1);
                 } catch (NoSuchFieldError Ignored) {}
-
+                p.closeInventory();
                 return;
             }
 
