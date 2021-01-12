@@ -13,3 +13,20 @@ commands:
     default: false
     aliases: [DailyShop, randomshop]
     usage: /rdShop
+
+
+permissions:
+  DailyRandomShop.open:
+    default: op
+  DailyRandomShop.sell:
+    default: op
+  DailyRandomShop.addDailyItem:
+    default: op
+  DailyRandomShop.addSellItem:
+    default: op
+  DailyRandomShop.settings:
+    default: op
+  DailyRandomShop.renovate:
+    default: op
+  DailyRandomShop.reload:
+    default: op
