@@ -337,9 +337,8 @@ public class buyGui implements InventoryHolder, Listener {
 
     @EventHandler
     public void onInventoryClick(final InventoryDragEvent e) {
-        if (e.getView().getTopInventory().getHolder() != this) {
+        if (e.getView().getTopInventory().getHolder() == this) {
             e.setCancelled(true);
-
         }
     }
 
