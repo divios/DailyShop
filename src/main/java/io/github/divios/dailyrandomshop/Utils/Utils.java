@@ -36,16 +36,26 @@ public class Utils {
         return minValue + (int)(Math.random() * ((maxValue - minValue) + 1));
     }
 
-    public boolean inventoryFull(Player p) {
+    /**
+     * Gets the amount of free slots from a player inventory
+     *
+     * @param p    The player to set the active container of
+     * @return     The amount of free slots or -1 if there inventory is full
 
+     */
+    public int inventoryFull(Player p) {
+
+        int freeSlots = 0;
         for (int i = 0; i < 36; i++) {
 
             if (p.getInventory().getItem(i) == null ||
                     p.getInventory().getItem(i).getType() == Material.AIR) {
-                return false;
+                freeSlots++;
             }
         }
-        return true;
+        if(freeSlots == 0) return -1;
+
+        return freeSlots;
     }
 
     public ItemStack getEntry(HashMap<ItemStack, Double> list, int index) {
@@ -57,17 +67,27 @@ public class Utils {
         return null;
     }
 
-    public int giveItem(Player p, Double price, Inventory bottominv, ItemStack item) {
+    /**
+     * Gives the daily item to the player, additionally, it 'll check if the player
+     * has enough money and space and the item getMaxStackSiz. Also it removes the lore
+     * and send messages accordingly
+     *
+     * @param p             The player to give the item
+     * @param price         The price of the item
+     * @param item          The item to give
+    */
 
-        int outcome = -1;
+    public void giveItem(Player p, Double price, ItemStack item) {
 
-        if (main.utils.inventoryFull(p)) {
+        int freeSlots = main.utils.inventoryFull(p);
+
+        if (freeSlots == -1 || (item.getMaxStackSize() == 1 && freeSlots < item.getAmount())) {
             p.sendMessage(main.config.PREFIX + main.config.MSG_INVENTORY_FULL);
             try {
                 p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
 
             } catch (NoSuchFieldError ignored) {}
-            finally { return outcome; }
+            finally { return; }
 
         }
 
@@ -75,12 +95,12 @@ public class Utils {
             p.sendMessage(main.config.PREFIX + main.config.MSG_NOT_ENOUGH_MONEY);
             try {
                 p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
-                return outcome;
+                return;
             } catch (NoSuchFieldError ignored) {}
-            finally { return outcome; }
+            finally { return; }
         }
 
-        ItemStack aux = item.clone();
+        ItemStack aux = item.clone();  /* Just in case */
         ItemMeta meta = aux.getItemMeta();
         List<String> lore = meta.getLore();
         lore.remove(lore.size() - 1);
@@ -91,12 +111,20 @@ public class Utils {
         try {
             p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
         } catch (NoSuchFieldError ignored) {}
-        p.getInventory().addItem(aux);
+
+
+        if (item.getMaxStackSize() == 1) {
+            int amount = item.getAmount();
+            item.setAmount(1);
+            for(int i=0; i< amount; i++){
+                p.getInventory().addItem(item);
+            }
+        }
+        else p.getInventory().addItem(aux);
         main.econ.withdrawPlayer(p, price);
         p.sendMessage(main.config.PREFIX + main.config.MSG_BUY_ITEM.replace("{price}", String.format("%,.2f", price)).replace("{item}", item.getType().toString()));
         p.openInventory(main.BuyGui.getInventory());
-        outcome = 1;
-        return outcome;
+
     }
 
     public ItemStack setItemAsFill(ItemStack item) {
