@@ -6,6 +6,8 @@ import de.tr7zw.changeme.nbtapi.NBTCompound;
 import de.tr7zw.changeme.nbtapi.NBTContainer;
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import io.github.divios.dailyrandomshop.DailyRandomShop;
+import net.Indyuce.mmoitems.MMOItems;
+import net.Indyuce.mmoitems.api.Type;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -455,6 +457,11 @@ public class DataManager {
                         Material.valueOf(item.getType().toString());
                     } catch (Exception e) {
                         continue;
+                    }
+
+                    if(main.utils.isMMOItem(item)){
+                        String[] constructor = main.utils.getMMOItemConstruct(item);
+                        item = MMOItems.plugin.getItem(Type.get(constructor[0]), constructor[1]);
                     }
 
                 } catch (Exception e) {
