@@ -33,7 +33,7 @@ public class sellGuiIH implements Listener, InventoryHolder {
         this.p = p;
         this.main = main;
 
-        for(int i=18; i<36; i++) {
+        for (int i = 18; i < 36; i++) {
             dailyItemsSlots.add(i);
         }
 
@@ -48,8 +48,8 @@ public class sellGuiIH implements Listener, InventoryHolder {
         ItemMeta meta = painting.getItemMeta();
         meta.setDisplayName(main.config.SELL_PAINTING_NAME);
         List<String> lore = new ArrayList<>();
-        for (String s: main.config.SELL_PAINTING_LORE) {
-            lore.add(ChatColor.translateAlternateColorCodes('&',s));
+        for (String s : main.config.SELL_PAINTING_LORE) {
+            lore.add(ChatColor.translateAlternateColorCodes('&', s));
         }
         meta.setLore(lore);
         painting.setItemMeta(meta);
@@ -58,8 +58,8 @@ public class sellGuiIH implements Listener, InventoryHolder {
         meta = fench.getItemMeta();
         meta.setDisplayName(main.config.SELL_ARROW_NAME);
         lore = new ArrayList<>();
-        for (String s: main.config.SELL_ARROW_LORE) {
-            lore.add(ChatColor.translateAlternateColorCodes('&',s));
+        for (String s : main.config.SELL_ARROW_LORE) {
+            lore.add(ChatColor.translateAlternateColorCodes('&', s));
         }
         meta.setLore(lore);
         fench.setItemMeta(meta);
@@ -69,7 +69,7 @@ public class sellGuiIH implements Listener, InventoryHolder {
         meta.setDisplayName(main.config.SELL_ITEM_NAME.replaceAll("\\{price}", "NaN"));
         sellConfirm.setItemMeta(meta);
 
-        for (int i= 9; i<18; i++) {
+        for (int i = 9; i < 18; i++) {
             ItemStack fillItem = XMaterial.BLACK_STAINED_GLASS_PANE.parseItem();
             meta = fillItem.getItemMeta();
             meta.setDisplayName(ChatColor.GOLD + "");
@@ -88,7 +88,7 @@ public class sellGuiIH implements Listener, InventoryHolder {
     public double calculatePrice(Inventory inv) {
         double price = 0;
 
-        for( int i : dailyItemsSlots) {
+        for (int i : dailyItemsSlots) {
             if (inv.getItem(i) == null) continue;
             price += main.utils.getItemPrice(main.listSellItems, inv.getItem(i), false) * inv.getItem(i).getAmount();
         }
@@ -99,10 +99,10 @@ public class sellGuiIH implements Listener, InventoryHolder {
             meta.setDisplayName(main.config.SELL_ITEM_NAME.replaceAll("\\{price}", "NaN"));
             item.setItemMeta(meta);
             inv.setItem(40, item);
-        }else{
+        } else {
             ItemStack item = inv.getItem(40);
             ItemMeta meta = item.getItemMeta();
-            meta.setDisplayName(main.config.SELL_ITEM_NAME.replaceAll("\\{price}", String.format("%,.2f",price)));
+            meta.setDisplayName(main.config.SELL_ITEM_NAME.replaceAll("\\{price}", String.format("%,.2f", price)));
             item.setItemMeta(meta);
             inv.setItem(40, item);
         }
@@ -114,37 +114,42 @@ public class sellGuiIH implements Listener, InventoryHolder {
 
         if (e.getView().getTopInventory().getHolder() != this) return;
 
-        if(e.getSlot() == e.getRawSlot() && !dailyItemsSlots.contains(e.getSlot())) e.setCancelled(true);
+        if (e.getSlot() == e.getRawSlot() && !dailyItemsSlots.contains(e.getSlot())) e.setCancelled(true);
 
-        if(e.isShiftClick() && e.getSlot() != e.getRawSlot()) e.setCancelled(true);
+        if (e.isShiftClick() && e.getSlot() != e.getRawSlot()) e.setCancelled(true);
 
-        if(e.getSlot() == e.getRawSlot() && e.getSlot() == 0) {
+        if (e.getSlot() == e.getRawSlot() && e.getSlot() == 0) {
 
             p.openInventory(main.BuyGui.getInventory());
             try {
                 p.playSound(p.getLocation(), Sound.BLOCK_DISPENSER_DISPENSE, 0.5F, 1);
-            } catch (NoSuchFieldError Ignored) {}
-            finally { return; }
+            } catch (NoSuchFieldError Ignored) {
+            } finally {
+                return;
+            }
 
         }
 
-        if(e.getSlot() == e.getRawSlot() && e.getSlot() == 40) {
+        if (e.getSlot() == e.getRawSlot() && e.getSlot() == 40) {
             Double price = calculatePrice(e.getView().getTopInventory());
 
-            if(price == 0) {
+            if (price == 0) {
                 try {
                     p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 0.5F, 1);
-                } catch (NoSuchFieldError Ignored) {}
-                finally { return; }
+                } catch (NoSuchFieldError Ignored) {
+                } finally {
+                    return;
+                }
             }
 
-            for(int i: dailyItemsSlots) { //remove all items
+            for (int i : dailyItemsSlots) { //remove all items
                 ItemStack item = e.getView().getTopInventory().getItem(i);
                 e.getView().getTopInventory().remove(item);
             }
             try {
                 p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
-            } catch (NoSuchFieldError ignored){}
+            } catch (NoSuchFieldError ignored) {
+            }
 
             p.closeInventory();
             p.sendMessage(main.config.PREFIX + main.config.MSG_SELL_ITEMS.replaceAll("\\{price}", String.format("%,.2f", price)));
@@ -152,7 +157,7 @@ public class sellGuiIH implements Listener, InventoryHolder {
 
         }
 
-        if(e.getCurrentItem() != null && e.getCurrentItem().getType() != Material.AIR &&
+        if (e.getCurrentItem() != null && e.getCurrentItem().getType() != Material.AIR &&
                 (main.utils.getItemPrice(main.listSellItems, e.getCurrentItem(), false) == 0.0)
                 && e.getSlot() != e.getRawSlot()) {
 
@@ -160,8 +165,10 @@ public class sellGuiIH implements Listener, InventoryHolder {
             p.sendMessage(main.config.PREFIX + main.config.MSG_INVALID_ITEM);
             try {
                 p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 0.5F, 1);
-            } catch (NoSuchFieldError Ignored) {}
-            finally { return; }
+            } catch (NoSuchFieldError Ignored) {
+            } finally {
+                return;
+            }
         }
 
         Bukkit.getScheduler().runTaskLater(main, () -> {
@@ -177,24 +184,25 @@ public class sellGuiIH implements Listener, InventoryHolder {
 
     @EventHandler
     private void onDrag(InventoryDragEvent e) {
-        e.setCancelled(true);
+        if (e.getView().getTopInventory().getHolder() == this) {
+            e.setCancelled(true);
+        }
     }
 
     @EventHandler
     private void onClose(InventoryCloseEvent e) {
 
-        if (e.getView().getTopInventory().getHolder() == this) {
+        if (e.getView().getTopInventory().getHolder() != this) return;
 
-            for(int i: dailyItemsSlots) { //recover items
-                ItemStack item = e.getView().getTopInventory().getItem(i);
-                if (item != null) p.getInventory().addItem(item);
-            }
-
-            InventoryClickEvent.getHandlerList().unregister(this);
-            InventoryCloseEvent.getHandlerList().unregister(this);
-            InventoryDragEvent.getHandlerList().unregister(this);
-
+        for (int i : dailyItemsSlots) { //recover items
+            ItemStack item = e.getView().getTopInventory().getItem(i);
+            if (item != null) p.getInventory().addItem(item);
         }
+
+        InventoryClickEvent.getHandlerList().unregister(this);
+        InventoryCloseEvent.getHandlerList().unregister(this);
+        InventoryDragEvent.getHandlerList().unregister(this);
+
 
     }
 }
