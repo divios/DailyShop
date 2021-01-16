@@ -1,0 +1,6 @@
+
+1.13.6
+    - Construct new MMOitems at getting daily items from database. This should guaranty that the items follow lore changes, etc
+    - Fixed getting items that should not be able to stack, like swords
+    - Now inventoryFull return the amount of free slots in order to make the above feature work correctly
+    - remove bottomInv from giveItem and added the feature of stack items
