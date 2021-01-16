@@ -253,7 +253,7 @@ public class buyGui implements InventoryHolder, Listener {
             return;
         }
 
-        if (main.utils.isCommandItem(item)) {
+        if (main.utils.isCommandItem(item)) {                                                                   /* if is command item */
 
             Double price = main.utils.getItemPrice(main.listDailyItems, item, true);
 
@@ -278,7 +278,7 @@ public class buyGui implements InventoryHolder, Listener {
             return;
         }
 
-        if (main.getConfig().getBoolean("enable-confirm-gui") && !main.utils.isItemAmount(item)) {
+        if (main.getConfig().getBoolean("enable-confirm-gui") && !main.utils.isItemAmount(item)) {          /* If the confirm gui is enabled */
             try {
                 p.playSound(p.getLocation(), Sound.BLOCK_DISPENSER_DISPENSE, 0.5F, 1);
             } catch (NoSuchFieldError ignored) {
@@ -309,7 +309,7 @@ public class buyGui implements InventoryHolder, Listener {
 
 
 
-        } else {
+        } else {                                                                                                /* If the confirm gui is not enabled */
 
             Double price = main.utils.getItemPrice(main.listDailyItems, item, true);
 
@@ -319,10 +319,15 @@ public class buyGui implements InventoryHolder, Listener {
                 return;
             }
 
-            if (main.utils.isItemAmount(item) && main.econ.getBalance(p) >= price &&
-                    !main.utils.inventoryFull(p)) {
+            if (main.econ.getBalance(p) < price) {
+                p.sendMessage(main.config.PREFIX + main.config.MSG_NOT_ENOUGH_MONEY);
+                return;
+            }
+
+            if (main.utils.isItemAmount(item) && main.utils.inventoryFull(p) != -1) {
                 main.utils.processItemAmount(e.getView().getTopInventory().getItem(e.getSlot()), e.getSlot());
             }
+
             item.setAmount(1);
 
             if(main.utils.isItemScracth(item)) {
