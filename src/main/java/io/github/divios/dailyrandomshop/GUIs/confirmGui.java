@@ -139,11 +139,11 @@ public class confirmGui implements Listener, InventoryHolder {
 
         if(price) {
             lore.remove(lore.size() - 1);
-            lore.remove(lore.size() - 1);
+            if(main.getConfig().getBoolean("enable-rarity")) lore.remove(lore.size() - 1);
             lore.add(main.config.BUY_GUI_ITEMS_LORE_PRICE.replaceAll("\\{price}", String.format("%,.2f",main.utils.getItemPrice(main.listDailyItems, item, true) * nstack)));
             meta.setLore(lore);
             item.setItemMeta(meta);
-            main.utils.setRarityLore(item, main.utils.getRarity(item));
+            if(main.getConfig().getBoolean("enable-rarity")) main.utils.setRarityLore(item, main.utils.getRarity(item));
         }
     }
 
