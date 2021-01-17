@@ -295,7 +295,7 @@ public class buyGui implements InventoryHolder, Listener {
                         itemStack = MMOItems.plugin.getItem(Type.get(constructor[0]), constructor[1]);
                         itemStack.setAmount(amount);
                     }
-                    main.utils.giveItem(p, price, e.getView().getBottomInventory(), itemStack);
+                    main.utils.giveItem(p, price, itemStack);
                     p.closeInventory();
 
                 } else{
@@ -335,7 +335,7 @@ public class buyGui implements InventoryHolder, Listener {
                 item = MMOItems.plugin.getItem(Type.get(constructor[0]), constructor[1]);
             }
 
-            main.utils.giveItem(p, price, e.getView().getBottomInventory(), item);
+            main.utils.giveItem(p, price, item);
 
         }
     }
