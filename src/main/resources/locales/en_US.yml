@@ -127,6 +127,7 @@ daily-items-menu-items-lore:
   - "&6> Left Click: &7Change price"
   - "&6> Right Click: &7Remove Item"
   - "&6> Shift Left Click: &7Customize item"
+  - "&6> Shift Right Click: &7Add item to sale list"
 
 # The anvil that appears when changing price
 daily-items-anvil-title: "&6&lSet Price"

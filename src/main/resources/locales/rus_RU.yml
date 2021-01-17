@@ -131,6 +131,7 @@ daily-items-menu-items-lore:
   - "&6> Левый клик: &7Change price"
   - "&6> Правый клик: &7Remove Item"
   - "&6> Шифт + Левый клик: &7Кастомизация предмета"
+  - "&6> Щелчок правой кнопкой мыши: &7добавление товара в список покупок"
 
 # The anvil that appears when changing price
 daily-items-anvil-title: "&6&lУстановить цену"
