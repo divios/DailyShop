@@ -104,7 +104,7 @@ public class Utils {
         ItemMeta meta = aux.getItemMeta();
         List<String> lore = meta.getLore();
         lore.remove(lore.size() - 1);
-        lore.remove(lore.size() - 1);
+        if (main.getConfig().getBoolean("enable-rarity")) lore.remove(lore.size() - 1);
         meta.setLore(lore);
         aux.setItemMeta(meta);
 
@@ -113,11 +113,11 @@ public class Utils {
         } catch (NoSuchFieldError ignored) {}
 
 
-        if (item.getMaxStackSize() == 1) {
-            int amount = item.getAmount();
-            item.setAmount(1);
+        if (aux.getMaxStackSize() == 1) {
+            int amount = aux.getAmount();
+            aux.setAmount(1);
             for(int i=0; i< amount; i++){
-                p.getInventory().addItem(item);
+                p.getInventory().addItem(aux);
             }
         }
         else p.getInventory().addItem(aux);
@@ -299,7 +299,7 @@ public class Utils {
         if(meta.hasLore()) {
             List<String> lore = meta.getLore();
             lore.remove(lore.size() - 1);
-            lore.remove(lore.size() - 1);
+            if(main.getConfig().getBoolean("enable-rarity")) lore.remove(lore.size() - 1);
             meta.setLore(lore);
         }
         item2.setItemMeta(meta);
@@ -437,6 +437,27 @@ public class Utils {
         }
         meta.setLore(lore);
         item.setItemMeta(meta);
+    }
+
+    public void transferDailyMetadata(ItemStack oldItem, ItemStack newItem) {
+
+        if(isItemScracth(oldItem)) {
+            newItem = setItemAsScracth(newItem);
+        }
+
+        if(isDailyItem(oldItem)) {
+            newItem = setItemAsDaily(newItem);
+        }
+
+        if(isCommandItem(oldItem)) {
+            newItem = setItemAsCommand(newItem, getItemCommand(oldItem));
+        }
+
+        if(isItemAmount(oldItem)) {
+            newItem = setItemAsAmount(oldItem);
+            newItem.setAmount(oldItem.getAmount());
+        }
+
     }
 
 }
