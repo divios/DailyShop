@@ -118,7 +118,8 @@ public class buyGui implements InventoryHolder, Listener {
 
             ItemStack randomItem = main.utils.getEntry(main.listDailyItems, ran);
 
-            if(Math.random() > main.utils.getRarity(randomItem)/100F) continue;
+            if(Math.random() > main.utils.getRarity(randomItem)/100F
+                    && main.getConfig().getBoolean("enable-rarity")) continue;
 
             inserted.add(ran);
 
@@ -131,7 +132,7 @@ public class buyGui implements InventoryHolder, Listener {
             meta.setLore(lore);
 
             randomItem.setItemMeta(meta);
-            main.utils.setRarityLore(randomItem, main.utils.getRarity(randomItem));
+            if(main.getConfig().getBoolean("enable-rarity"))  main.utils.setRarityLore(randomItem, main.utils.getRarity(randomItem));
 
             randomItem = main.utils.setItemAsDaily(randomItem);
 
@@ -157,7 +158,7 @@ public class buyGui implements InventoryHolder, Listener {
             ItemMeta meta = itemCloned.getItemMeta();
             List<String> lore = meta.getLore();
             lore.remove(lore.size() - 1);
-            lore.remove(lore.size() - 1);
+            if(main.getConfig().getBoolean("enable-rarity")) lore.remove(lore.size() - 1);
             meta.setLore(lore);
             itemCloned.setItemMeta(meta);
 
@@ -190,7 +191,7 @@ public class buyGui implements InventoryHolder, Listener {
                 meta.setLore(lore);
 
                 item.setItemMeta(meta);
-                main.utils.setRarityLore(item, main.utils.getRarity(item));
+                if(main.getConfig().getBoolean("enable-rarity")) main.utils.setRarityLore(item, main.utils.getRarity(item));
                 shop.setItem(n, main.utils.setItemAsDaily(item));
                 n++;
             }
@@ -294,6 +295,15 @@ public class buyGui implements InventoryHolder, Listener {
                         String[] constructor = main.utils.getMMOItemConstruct(itemStack);
                         itemStack = MMOItems.plugin.getItem(Type.get(constructor[0]), constructor[1]);
                         itemStack.setAmount(amount);
+                                                         /* All this is necessary for conviction on giveItem, since it removes the lore */
+                        ItemMeta meta = itemStack.getItemMeta();
+                        List<String> lore;
+                        if(!meta.hasLore()) lore = new ArrayList<>();
+                        else lore = meta.getLore();
+                        lore.add("price");
+                        if(main.getConfig().getBoolean("enable-rarity")) lore.add("rarity");
+                        meta.setLore(lore);
+                        itemStack.setItemMeta(meta);
                     }
                     main.utils.giveItem(p, price, itemStack);
                     p.closeInventory();
@@ -346,7 +356,6 @@ public class buyGui implements InventoryHolder, Listener {
             e.setCancelled(true);
         }
     }
-
 
 
 }
