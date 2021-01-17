@@ -134,7 +134,7 @@ public class dailyGuiSettings implements Listener, InventoryHolder {
         else lore = new ArrayList<>();
 
         lore.add(main.config.BUY_GUI_ITEMS_LORE_PRICE.replaceAll("\\{price}", String.format("%,.2f",price)));
-        lore.add(main.config.BUY_GUI_ITEMS_LORE_RARITY.replaceAll("\\{rarity}", main.utils.getRarityString(item)));
+        if(main.getConfig().getBoolean("enable-rarity"))  lore.add(main.config.BUY_GUI_ITEMS_LORE_RARITY.replaceAll("\\{rarity}", main.utils.getRarityString(item)));
         lore.add("");
         for(String s: main.config.DAILY_ITEMS_MENU_ITEMS_LORE) {
             lore.add(ChatColor.translateAlternateColorCodes('&', s));
@@ -211,9 +211,9 @@ public class dailyGuiSettings implements Listener, InventoryHolder {
                     .plugin(main)
                     .open(p);
 
-        } else if (e.isRightClick()) {
+        } else if (e.isRightClick() && !e.isShiftClick()) {
 
-            new confirmIH(p,  (p1, bool) -> {
+            new confirmIH(p, (p1, bool) -> {
 
                 if (bool) {
                     while (Bukkit.getScheduler().isCurrentlyRunning(main.updateListID.getTaskId())){
@@ -231,6 +231,33 @@ public class dailyGuiSettings implements Listener, InventoryHolder {
 
         } else if (e.isLeftClick() && e.isShiftClick()) {
             new customizerMainGuiIH(main, (Player) e.getWhoClicked(), removeLore(e.getCurrentItem().clone()), removeLore(e.getCurrentItem().clone()));
+
+        } else if (e.isRightClick() && e.isShiftClick()) {
+
+            ItemStack itemToAdd = item.clone();     /* Lore already trim, just to avoid removing metadata */
+
+            if (main.utils.listContaisItem(main.listSellItems, item)) {
+                p.sendMessage(main.config.PREFIX + main.config.MSG_ITEM_ON_SALE);
+                return;
+            }
+
+            new confirmIH(p, (p1, bool) -> {
+
+                if (bool) {
+                    while (Bukkit.getScheduler().isCurrentlyRunning(main.updateListID.getTaskId())){
+                        main.utils.waitXticks(10);
+                    }
+                    Double price = main.utils.getItemPrice(main.listDailyItems, itemToAdd, false);
+                    main.utils.removeDailyMetadata(itemToAdd);
+
+                    main.listSellItems.put(itemToAdd, price);
+                    p.sendMessage(main.config.PREFIX + main.config.MSG_ITEM_ADDED);
+                    main.SellGuiSettings = new sellGuiSettings(main);
+                }
+                p1.openInventory(main.DailyGuiSettings.getFirstGui());
+
+            }, ChatColor.DARK_GREEN + "" + ChatColor.BOLD + "Confirm", main);
+
         }
     }
 
@@ -239,7 +266,9 @@ public class dailyGuiSettings implements Listener, InventoryHolder {
         List<String> lore = meta.getLore();
 
         int j = 0;
-        while (j <= main.config.DAILY_ITEMS_MENU_ITEMS_LORE.size() + 2) {
+        int plus = 1;
+        if(main.getConfig().getBoolean("enable-rarity")) plus++;
+        while (j <= main.config.DAILY_ITEMS_MENU_ITEMS_LORE.size() + plus) {
             lore.remove(lore.size() - 1);
             j++;
         }
