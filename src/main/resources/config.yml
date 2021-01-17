@@ -27,3 +27,5 @@ enable-sell-gui: true
 # On false, when clicked an item on the daily menu, it 'll purchased directly
 enable-confirm-gui: true
 
+# On false, rarity feature 'll be disabled
+enable-rarity: true
