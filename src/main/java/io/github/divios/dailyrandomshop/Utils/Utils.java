@@ -460,4 +460,24 @@ public class Utils {
 
     }
 
+    public void removeDailyMetadata(ItemStack item) {
+
+        if(isItemScracth(item)) {
+            item = removeItemScracth(item);
+        }
+
+        if(isDailyItem(item)) {
+            item = removeItemAsDaily(item);
+        }
+
+        if(isCommandItem(item)) {
+            item = removeItemCommand(item);
+        }
+
+        if(isItemAmount(item)) {
+            item = removeItemAmount(item);
+            item.setAmount(1);
+        }
+    }
+
 }
