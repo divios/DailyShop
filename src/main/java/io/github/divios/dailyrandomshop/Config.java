@@ -57,6 +57,7 @@ public class Config {
         main.getConfig().addDefault("sell-price-multiplier", 1);
         main.getConfig().addDefault("enable-sell-gui", true);
         main.getConfig().addDefault("enable-confirm-gui", true);
+        main.getConfig().addDefault("enable-rarity", true);
         N_DAILY_ITEMS = main.getConfig().getInt("number-of-daily-items", 14);
         if(N_DAILY_ITEMS < 0 || N_DAILY_ITEMS > 36) N_DAILY_ITEMS = 14;
 
