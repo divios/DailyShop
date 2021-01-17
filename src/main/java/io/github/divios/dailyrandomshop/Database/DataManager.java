@@ -461,7 +461,9 @@ public class DataManager {
 
                     if(main.utils.isMMOItem(item)){
                         String[] constructor = main.utils.getMMOItemConstruct(item);
-                        item = MMOItems.plugin.getItem(Type.get(constructor[0]), constructor[1]);
+                        ItemStack auxitem = MMOItems.plugin.getItem(Type.get(constructor[0]), constructor[1]);
+                        main.utils.transferDailyMetadata(item, auxitem);
+                        item = auxitem;
                     }
 
                 } catch (Exception e) {
