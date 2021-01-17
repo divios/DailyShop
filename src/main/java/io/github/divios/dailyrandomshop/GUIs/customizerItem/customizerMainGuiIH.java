@@ -206,18 +206,21 @@ public class customizerMainGuiIH implements Listener, InventoryHolder {
         }
 
         ItemStack changeRarity = null;
-        switch(main.utils.getRarity(newItem)) {
-            case 100: changeRarity = XMaterial.GRAY_DYE.parseItem(); main.utils.setRarityLore(changeRarity, 100); break;
-            case 80: changeRarity = XMaterial.PINK_DYE.parseItem(); main.utils.setRarityLore(changeRarity, 80); break;
-            case 60: changeRarity = XMaterial.MAGENTA_DYE.parseItem(); main.utils.setRarityLore(changeRarity, 60); break;
-            case 40: changeRarity = XMaterial.PURPLE_DYE.parseItem(); main.utils.setRarityLore(changeRarity, 40); break;
-            case 20: changeRarity = XMaterial.CYAN_DYE.parseItem(); main.utils.setRarityLore(changeRarity, 20); break;
-            case 10: changeRarity = XMaterial.ORANGE_DYE.parseItem(); main.utils.setRarityLore(changeRarity, 10); break;
-            case 5: changeRarity = XMaterial.YELLOW_DYE.parseItem(); main.utils.setRarityLore(changeRarity, 5); break;
+        if(main.getConfig().getBoolean("enable-rarity")) {
+            switch(main.utils.getRarity(newItem)) {
+                case 100: changeRarity = XMaterial.GRAY_DYE.parseItem(); main.utils.setRarityLore(changeRarity, 100); break;
+                case 80: changeRarity = XMaterial.PINK_DYE.parseItem(); main.utils.setRarityLore(changeRarity, 80); break;
+                case 60: changeRarity = XMaterial.MAGENTA_DYE.parseItem(); main.utils.setRarityLore(changeRarity, 60); break;
+                case 40: changeRarity = XMaterial.PURPLE_DYE.parseItem(); main.utils.setRarityLore(changeRarity, 40); break;
+                case 20: changeRarity = XMaterial.CYAN_DYE.parseItem(); main.utils.setRarityLore(changeRarity, 20); break;
+                case 10: changeRarity = XMaterial.ORANGE_DYE.parseItem(); main.utils.setRarityLore(changeRarity, 10); break;
+                case 5: changeRarity = XMaterial.YELLOW_DYE.parseItem(); main.utils.setRarityLore(changeRarity, 5); break;
+            }
+
+            meta = changeRarity.getItemMeta();
+            meta.setDisplayName(ChatColor.WHITE + "" + ChatColor.BOLD + "Change rarity");
+            changeRarity.setItemMeta(meta);
         }
-        meta = changeRarity.getItemMeta();
-        meta.setDisplayName(ChatColor.WHITE + "" + ChatColor.BOLD + "Change rarity");
-        changeRarity.setItemMeta(meta);
 
         Integer[] auxList = {3, 5, 13};
         ItemStack item = main.utils.setItemAsFill(XMaterial.BLACK_STAINED_GLASS_PANE.parseItem());             //fill black panes
@@ -230,7 +233,7 @@ public class customizerMainGuiIH implements Listener, InventoryHolder {
 
 
         inv.setItem(4, newItem);
-        inv.setItem(8, changeRarity);
+        if (changeRarity != null) inv.setItem(8, changeRarity);
         inv.setItem(19, rename);
         inv.setItem(20, changeMaterial);
         inv.setItem(28, changeLore);
