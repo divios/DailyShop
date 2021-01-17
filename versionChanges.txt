@@ -4,3 +4,10 @@
     - Fixed getting items that should not be able to stack, like swords
     - Now inventoryFull return the amount of free slots in order to make the above feature work correctly
     - remove bottomInv from giveItem and added the feature of stack items
+
+1.13.7
+    - Added enable-rarity
+    - Added shift-right-click to locales
+    - Added ability to add items to sale through daily settings gui
+    - Fixed itemFromScratch removing lore
+    - Fixed constructing MMMOItems not having daily metadata
