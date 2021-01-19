@@ -11,3 +11,9 @@
     - Added ability to add items to sale through daily settings gui
     - Fixed itemFromScratch removing lore
     - Fixed constructing MMMOItems not having daily metadata
+
+1.13.8
+    - Fixed <1.12 crash by checking the version and getItemInHand instead
+    - Added multi-currencies with gemseconomy
+    - Added new gui, changeEconomy
+    - Added new metadata, economy
