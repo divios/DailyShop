@@ -5,7 +5,6 @@ import de.tr7zw.changeme.nbtapi.NBTItem;
 import io.github.divios.dailyrandomshop.DailyRandomShop;
 import me.xanium.gemseconomy.currency.Currency;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
