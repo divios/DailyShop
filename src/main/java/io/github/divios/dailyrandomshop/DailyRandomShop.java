@@ -21,6 +21,7 @@ import org.bukkit.scheduler.BukkitTask;
 
 import java.io.IOException;
 import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.logging.Logger;
 
 public final class DailyRandomShop extends JavaPlugin {
@@ -29,7 +30,7 @@ public final class DailyRandomShop extends JavaPlugin {
     public Economy econ = null;
     public Permission perms = null;
     public Chat chat = null;
-    public LinkedHashMap<ItemStack, Double> listDailyItems, listSellItems;
+    public Map<ItemStack, Double> listDailyItems, listSellItems;
     public buyGui BuyGui;
     public dailyGuiSettings DailyGuiSettings;
     public sellGuiSettings SellGuiSettings;

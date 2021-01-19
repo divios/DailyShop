@@ -192,9 +192,9 @@ public class dailyGuiSettings implements Listener, InventoryHolder {
                     .onComplete((player, text) -> {                             //called when the inventory output slot is clicked
                         try {
                             Double price = Double.parseDouble(text);
-                            while (Bukkit.getScheduler().isCurrentlyRunning(main.updateListID.getTaskId())){
+                            /*while (Bukkit.getScheduler().isCurrentlyRunning(main.updateListID.getTaskId())){
                                 main.utils.waitXticks(10);
-                            }
+                            }*/
                             main.utils.replacePriceOnList(main.listDailyItems, item, price);
                             //main.dbManager.updateDailyItemPrice(item, price);
                             HandlerList.unregisterAll(main.DailyGuiSettings);
@@ -217,9 +217,9 @@ public class dailyGuiSettings implements Listener, InventoryHolder {
             new confirmIH(p, (p1, bool) -> {
 
                 if (bool) {
-                    while (Bukkit.getScheduler().isCurrentlyRunning(main.updateListID.getTaskId())){
+                   /* while (Bukkit.getScheduler().isCurrentlyRunning(main.updateListID.getTaskId())){
                         main.utils.waitXticks(10);
-                    }
+                    }*/
                     main.utils.removeItemOnList(main.listDailyItems, item);
                     p1.sendMessage(main.config.PREFIX + main.config.MSG_REMOVED_ITEM);
                     HandlerList.unregisterAll(main.DailyGuiSettings);
@@ -245,9 +245,9 @@ public class dailyGuiSettings implements Listener, InventoryHolder {
             new confirmIH(p, (p1, bool) -> {
 
                 if (bool) {
-                    while (Bukkit.getScheduler().isCurrentlyRunning(main.updateListID.getTaskId())){
+                    /*while (Bukkit.getScheduler().isCurrentlyRunning(main.updateListID.getTaskId())){
                         main.utils.waitXticks(10);
-                    }
+                    }*/
                     Double price = main.utils.getItemPrice(main.listDailyItems, itemToAdd, false);
                     main.utils.removeDailyMetadata(itemToAdd);
 

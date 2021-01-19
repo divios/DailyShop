@@ -173,9 +173,9 @@ public class sellGuiSettings implements Listener, InventoryHolder {
                     .onComplete((player, text) -> {                             //called when the inventory output slot is clicked
                         try {
                             Double price = Double.parseDouble(text);
-                            while (Bukkit.getScheduler().isCurrentlyRunning(main.updateListID.getTaskId())){
+                            /*while (Bukkit.getScheduler().isCurrentlyRunning(main.updateListID.getTaskId())){
                                 main.utils.waitXticks(10);
-                            }
+                            }*/
                             main.utils.replacePriceOnList(main.listSellItems, item, price);
                             //main.dbManager.updateSellItemPrice(item, price);
                             HandlerList.unregisterAll(main.SellGuiSettings);
@@ -197,9 +197,9 @@ public class sellGuiSettings implements Listener, InventoryHolder {
             new confirmIH(p, (p1, bool) -> {
 
                 if (bool) {
-                    while (Bukkit.getScheduler().isCurrentlyRunning(main.updateListID.getTaskId())){
+                    /*while (Bukkit.getScheduler().isCurrentlyRunning(main.updateListID.getTaskId())){
                         main.utils.waitXticks(10);
-                    }
+                    }*/
                     main.utils.removeItemOnList(main.listSellItems, item);
                     p1.sendMessage(main.config.PREFIX + main.config.MSG_REMOVED_ITEM);
                     HandlerList.unregisterAll(main.SellGuiSettings);

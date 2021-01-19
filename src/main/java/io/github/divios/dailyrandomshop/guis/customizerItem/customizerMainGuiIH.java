@@ -278,9 +278,9 @@ public class customizerMainGuiIH implements Listener, InventoryHolder {
         if (e.getSlot() == e.getRawSlot() && e.getSlot() == 49) { //Boton de craft
 
             if (itemToReplace == null) {
-                while (Bukkit.getScheduler().isCurrentlyRunning(main.updateListID.getTaskId())){
+                /*while (Bukkit.getScheduler().isCurrentlyRunning(main.updateListID.getTaskId())){
                     main.utils.waitXticks(10);
-                }
+                }*/
                 if( main.utils.listContaisItem(main.listDailyItems, newItem)) {
                     p.sendMessage(main.config.PREFIX + main.config.MSG_ITEM_ON_SALE);
                     return;
@@ -288,9 +288,9 @@ public class customizerMainGuiIH implements Listener, InventoryHolder {
                 main.listDailyItems.put(newItem, 500.0);
                // main.dbManager.addDailyItem(newItem, 500.0);
             } else {
-                while (Bukkit.getScheduler().isCurrentlyRunning(main.updateListID.getTaskId())){
+                /*while (Bukkit.getScheduler().isCurrentlyRunning(main.updateListID.getTaskId())){
                     main.utils.waitXticks(10);
-                }
+                }*/
                 Double price = main.utils.getItemPrice(main.listDailyItems, itemToReplace, false);
                 main.utils.removeItemOnList(main.listDailyItems, itemToReplace);
                 main.listDailyItems.put(newItem, price);

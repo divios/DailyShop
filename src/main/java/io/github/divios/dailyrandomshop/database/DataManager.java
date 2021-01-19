@@ -16,10 +16,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 public class DataManager {
 
@@ -272,8 +269,8 @@ public class DataManager {
         });
     }
 
-    public LinkedHashMap<ItemStack, Double> getSellItems() {
-        LinkedHashMap<ItemStack, Double> items = new LinkedHashMap<>();
+    public Map<ItemStack, Double> getSellItems() {
+        Map<ItemStack, Double> items = Collections.synchronizedMap(new LinkedHashMap<>());
 
         try {
             String SQL_Create = "SELECT * FROM sell_items";
@@ -347,8 +344,8 @@ public class DataManager {
                 String deleteTable = "DELETE FROM " + "sell_items;";
                 statement = db.con.prepareStatement(deleteTable);
                 statement.executeUpdate();
-                LinkedHashMap<ItemStack, Double> list = new Gson().fromJson(
-                        json, new TypeToken<LinkedHashMap<ItemStack, Double>>() {}.getType());
+                Map<ItemStack, Double> list = new Gson().fromJson(
+                        json, new TypeToken<Map<ItemStack, Double>>() {}.getType());
 
                 for (Map.Entry<ItemStack, Double> entry : list.entrySet()) {
 
@@ -433,9 +430,8 @@ public class DataManager {
         });
     }
 
-    public LinkedHashMap<ItemStack, Double> getDailyItems() {
-        LinkedHashMap<ItemStack, Double> items = new LinkedHashMap<>();
-
+    public Map<ItemStack, Double> getDailyItems() {
+        Map<ItemStack, Double> items = Collections.synchronizedMap(new LinkedHashMap<>());
 
         try {
             String SQL_Create = "SELECT * FROM daily_items";
@@ -516,8 +512,8 @@ public class DataManager {
                 String deleteTable = "DELETE FROM " + "daily_items;";
                 statement = db.con.prepareStatement(deleteTable);
                 statement.executeUpdate();
-                LinkedHashMap<ItemStack, Double> list = new Gson().fromJson(
-                        json, new TypeToken<LinkedHashMap<ItemStack, Double>>() {}.getType());
+                Map<ItemStack, Double> list = new Gson().fromJson(
+                        json, new TypeToken<Map<ItemStack, Double>>() {}.getType());
 
                 for (Map.Entry<ItemStack, Double> entry : list.entrySet()) {
 
