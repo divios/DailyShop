@@ -1,4 +1,4 @@
-package io.github.divios.dailyrandomshop.GUIs;
+package io.github.divios.dailyrandomshop.guis;
 
 import com.cryptomorin.xseries.XMaterial;
 import io.github.divios.dailyrandomshop.DailyRandomShop;
@@ -139,8 +139,10 @@ public class confirmGui implements Listener, InventoryHolder {
 
         if(price) {
             lore.remove(lore.size() - 1);
+            lore.remove(lore.size() - 1);
             if(main.getConfig().getBoolean("enable-rarity")) lore.remove(lore.size() - 1);
             lore.add(main.config.BUY_GUI_ITEMS_LORE_PRICE.replaceAll("\\{price}", String.format("%,.2f",main.utils.getItemPrice(main.listDailyItems, item, true) * nstack)));
+            lore.add(main.config.BUY_GUI_ITEMS_LORE_CURRENCY.replaceAll("\\{currency}", main.utils.getEconomyType(item).getValue()));
             meta.setLore(lore);
             item.setItemMeta(meta);
             if(main.getConfig().getBoolean("enable-rarity")) main.utils.setRarityLore(item, main.utils.getRarity(item));

@@ -1,8 +1,8 @@
-package io.github.divios.dailyrandomshop.GUIs.settings;
+package io.github.divios.dailyrandomshop.guis.settings;
 
 import com.cryptomorin.xseries.XMaterial;
 import io.github.divios.dailyrandomshop.DailyRandomShop;
-import io.github.divios.dailyrandomshop.GUIs.customizerItem.customizerMainGuiIH;
+import io.github.divios.dailyrandomshop.guis.customizerItem.customizerMainGuiIH;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -134,6 +134,7 @@ public class dailyGuiSettings implements Listener, InventoryHolder {
         else lore = new ArrayList<>();
 
         lore.add(main.config.BUY_GUI_ITEMS_LORE_PRICE.replaceAll("\\{price}", String.format("%,.2f",price)));
+        lore.add(main.config.BUY_GUI_ITEMS_LORE_CURRENCY.replaceAll("\\{currency}", main.utils.getEconomyType(item).getValue()));
         if(main.getConfig().getBoolean("enable-rarity"))  lore.add(main.config.BUY_GUI_ITEMS_LORE_RARITY.replaceAll("\\{rarity}", main.utils.getRarityString(item)));
         lore.add("");
         for(String s: main.config.DAILY_ITEMS_MENU_ITEMS_LORE) {
@@ -234,7 +235,7 @@ public class dailyGuiSettings implements Listener, InventoryHolder {
 
         } else if (e.isRightClick() && e.isShiftClick()) {
 
-            ItemStack itemToAdd = item.clone();     /* Lore already trim, just to avoid removing metadata */
+            ItemStack itemToAdd = main.utils.removeEconomyTypeMetadata(item.clone());     /* Lore already trim, just to avoid removing metadata */
 
             if (main.utils.listContaisItem(main.listSellItems, item)) {
                 p.sendMessage(main.config.PREFIX + main.config.MSG_ITEM_ON_SALE);
@@ -266,7 +267,7 @@ public class dailyGuiSettings implements Listener, InventoryHolder {
         List<String> lore = meta.getLore();
 
         int j = 0;
-        int plus = 1;
+        int plus = 2;
         if(main.getConfig().getBoolean("enable-rarity")) plus++;
         while (j <= main.config.DAILY_ITEMS_MENU_ITEMS_LORE.size() + plus) {
             lore.remove(lore.size() - 1);
