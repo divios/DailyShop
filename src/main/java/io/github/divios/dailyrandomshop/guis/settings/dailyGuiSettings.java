@@ -158,27 +158,27 @@ public class dailyGuiSettings implements Listener, InventoryHolder {
         e.setCancelled(true);
         Player p = (Player) e.getWhoClicked();
 
-        if (e.getSlot() == e.getRawSlot() && e.getSlot() == 49) {
+        if(e.getSlot() != e.getRawSlot()) return;
+
+        if(e.getCurrentItem() == null || e.getCurrentItem().getType() == Material.AIR) return;
+
+        if (e.getSlot() == 49) {
             new settingsGuiIH(main, p);
         }
 
-        if (e.getSlot() == e.getRawSlot() && e.getSlot() == 45 &&
-                e.getCurrentItem() != null) {
+        if (e.getSlot() == 45 ) {
             p.openInventory(main.DailyGuiSettings.processNextGui(e.getView().getTopInventory(), -1));
         }
 
-        if (e.getSlot() == e.getRawSlot() && e.getSlot() == 53 &&
-                e.getCurrentItem() != null) {
+        if (e.getSlot() == 53 ) {
             p.openInventory(main.DailyGuiSettings.processNextGui(e.getView().getTopInventory(), 1));
         }
 
-        if (e.getSlot() == e.getRawSlot() && e.getSlot() == 52 &&
-                e.getCurrentItem() != null) {
+        if (e.getSlot() == 52 ) {
             new addDailyItemGuiIH(main, p, e.getView().getTopInventory());
         }
 
-        if (e.getCurrentItem() == null || e.getCurrentItem().getType() == Material.AIR ||
-                e.getSlot() != e.getRawSlot() || reservedSlots.contains(e.getSlot())) {
+        if (reservedSlots.contains(e.getSlot())) {
             return;
         }
 
