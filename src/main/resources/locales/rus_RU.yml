@@ -17,6 +17,7 @@ daily-shop-gui-painting-lore:
 # This is the lore that the daily
 # items will display
 daily-items-lore-price: "&6Цена: &7{price}"
+daily-items-lore-currency: "&6валюта: &7{currency}"
 daily-items-lore-rarity: "&6Рареза: &7{rarity}"
 # This is the arrow upon clicking
 # sends you to the sell GUI
