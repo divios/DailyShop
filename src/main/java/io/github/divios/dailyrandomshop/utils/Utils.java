@@ -58,7 +58,7 @@ public class Utils {
         return freeSlots;
     }
 
-    public ItemStack getEntry(HashMap<ItemStack, Double> list, int index) {
+    public ItemStack getEntry(Map<ItemStack, Double> list, int index) {
         int i = 0;
         for (ItemStack item: list.keySet()) {
             if (index == i) return item.clone();
@@ -315,7 +315,7 @@ public class Utils {
         return nbtItem.getItem();
     }
 
-    public Double getItemPrice(HashMap<ItemStack, Double> items, ItemStack toCompare, boolean lore) {
+    public Double getItemPrice(Map<ItemStack, Double> items, ItemStack toCompare, boolean lore) {
         Double price = 0.0;
         ItemStack toCompare2 = null;
         if (lore) toCompare2 =  removePriceLore(toCompare);
@@ -385,7 +385,7 @@ public class Utils {
         return null;
     }
 
-    public void removeItemOnList(LinkedHashMap<ItemStack, Double> list, ItemStack item) {
+    public void removeItemOnList(Map<ItemStack, Double> list, ItemStack item) {
 
         for (ItemStack entryItem: list.keySet()) {
             if(!entryItem.isSimilar(item)) continue;
@@ -396,7 +396,7 @@ public class Utils {
 
     }
 
-    public void replacePriceOnList(LinkedHashMap<ItemStack, Double> list, ItemStack item, Double price) {
+    public void replacePriceOnList(Map<ItemStack, Double> list, ItemStack item, Double price) {
 
         for (ItemStack entryItem: list.keySet()) {
             if(!entryItem.isSimilar(item)) continue;
@@ -406,7 +406,7 @@ public class Utils {
         }
     }
 
-    public boolean listContaisItem(LinkedHashMap<ItemStack, Double> list, ItemStack item) {
+    public boolean listContaisItem(Map<ItemStack, Double> list, ItemStack item) {
         for (ItemStack entryItem: list.keySet()) {
             if(entryItem.isSimilar(item)) return true;
         }

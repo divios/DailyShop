@@ -57,10 +57,10 @@ public class Commands implements CommandExecutor{
                 }
                 try {
                     //ConfigUtils.CloseAllInventories(main);
-                    if(!Bukkit.getScheduler().isCurrentlyRunning(main.updateListID.getTaskId())) {
+                    //if(!Bukkit.getScheduler().isCurrentlyRunning(main.updateListID.getTaskId())) {
                         main.dbManager.updateAllSellItems();
                         main.dbManager.updateAllDailyItems();
-                    }
+                    //}
 
                     main.reloadConfig();
                     ConfigUtils.reloadConfig(main, true);
@@ -105,9 +105,9 @@ public class Commands implements CommandExecutor{
                     return true;
                 }
 
-                while (Bukkit.getScheduler().isCurrentlyRunning(main.updateListID.getTaskId())){
+                /*while (Bukkit.getScheduler().isCurrentlyRunning(main.updateListID.getTaskId())){
                     main.utils.waitXticks(10);
-                }
+                }*/
                 main.listSellItems.put(item, Double.parseDouble(args[1]));
                 p.sendMessage(main.config.PREFIX + main.config.MSG_ITEM_ADDED);
                 HandlerList.unregisterAll(main.SellGuiSettings);

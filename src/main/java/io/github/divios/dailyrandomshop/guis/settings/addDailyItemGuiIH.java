@@ -104,16 +104,16 @@ public class addDailyItemGuiIH implements InventoryHolder, Listener {
         }
 
         if(e.getSlot() == 15) {
-            if (Bukkit.getServer().getClass().getPackage().getName().contains("1_8") || Bukkit.getServer().getClass().getPackage().getName().contains("1_9") ||
+            /*if (Bukkit.getServer().getClass().getPackage().getName().contains("1_8") || Bukkit.getServer().getClass().getPackage().getName().contains("1_9") ||
                     Bukkit.getServer().getClass().getPackage().getName().contains("1_10") || Bukkit.getServer().getClass().getPackage().getName().contains("1_11")) {
                if(p.getItemInHand() == null || p.getItemInHand().getType() == Material.AIR) p.sendMessage(main.config.PREFIX + main.config.MSG_ERROR_ITEM_HAND);
-               else new customizerMainGuiIH(main, p, e.getCurrentItem(), null);
+               else new customizerMainGuiIH(main, p, p.getItemInHand().clone(), null);
             }
 
-            else {
+            else {*/
                 new UtilAddItemListener(main, p);
                 p.closeInventory();
-            }
+            //}
         }
 
     }

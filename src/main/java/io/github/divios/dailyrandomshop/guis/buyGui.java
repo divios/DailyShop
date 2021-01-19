@@ -22,6 +22,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class buyGui implements InventoryHolder, Listener {
 
@@ -94,7 +95,7 @@ public class buyGui implements InventoryHolder, Listener {
     }
 
     public void createRandomItems() {
-        HashMap<ItemStack, Double> listOfMaterials = main.listDailyItems;
+        Map<ItemStack, Double> listOfMaterials = main.listDailyItems;
         ArrayList<Integer> inserted = new ArrayList<>();
 
         int j=18;
