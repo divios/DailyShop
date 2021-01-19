@@ -271,11 +271,15 @@ public class customizerMainGuiIH implements Listener, InventoryHolder {
 
         e.setCancelled(true);
 
-        if (e.getSlot() == e.getRawSlot() && e.getSlot() == 47) { //Boton de retornar
+        if(e.getSlot() != e.getRawSlot()) return;
+
+        if(e.getCurrentItem() == null || e.getCurrentItem().getType() == Material.AIR) return;
+
+        if ( e.getSlot() == 47) { //Boton de retornar
             p.openInventory(main.DailyGuiSettings.getFirstGui());
         }
 
-        if (e.getSlot() == e.getRawSlot() && e.getSlot() == 49) { //Boton de craft
+        if ( e.getSlot() == 49) { //Boton de craft
 
             if (itemToReplace == null) {
                 /*while (Bukkit.getScheduler().isCurrentlyRunning(main.updateListID.getTaskId())){
@@ -303,7 +307,7 @@ public class customizerMainGuiIH implements Listener, InventoryHolder {
             p.openInventory(main.DailyGuiSettings.getFirstGui());
         }
 
-        if (e.getSlot() == e.getRawSlot() && e.getSlot() == 19) { // Boton de cambiar nombre
+        if ( e.getSlot() == 19) { // Boton de cambiar nombre
             new AnvilGUI.Builder()
                     .onClose(player -> {
                         Bukkit.getScheduler().runTaskLater(main, () -> new customizerMainGuiIH(main, p, newItem, itemToReplace), 1);
@@ -323,7 +327,7 @@ public class customizerMainGuiIH implements Listener, InventoryHolder {
                     .open(p);
         }
 
-        if (e.getSlot() == e.getRawSlot() && e.getSlot() == 20) { // Boton de cambiar material
+        if ( e.getSlot() == 20) { // Boton de cambiar material
             new changeMaterialGuiIH(main, p, (material, bool) -> {
 
                 if (bool) {
@@ -335,7 +339,7 @@ public class customizerMainGuiIH implements Listener, InventoryHolder {
 
         }
 
-        if (e.getSlot() == e.getRawSlot() && e.getSlot() == 0) { // Boton de cambiar lore
+        if ( e.getSlot() == 0) { // Boton de cambiar lore
             new changeEconomy(main, p, newItem, (itemStack, aBoolean) -> {
                 if(aBoolean) {
                     newItem = itemStack;
@@ -344,7 +348,7 @@ public class customizerMainGuiIH implements Listener, InventoryHolder {
             });
         }
 
-        if (e.getSlot() == e.getRawSlot() && e.getSlot() == 28) { // Boton de cambiar lore
+        if ( e.getSlot() == 28) { // Boton de cambiar lore
             if (e.isLeftClick()) {
                 new AnvilGUI.Builder()
                         .onClose(player -> {
@@ -383,7 +387,7 @@ public class customizerMainGuiIH implements Listener, InventoryHolder {
             }
         }
 
-        if (e.getSlot() == e.getRawSlot() && e.getSlot() == 29) { // Boton de cambiar enchants
+        if ( e.getSlot() == 29) { // Boton de cambiar enchants
 
             if (e.isLeftClick()) {
                 new applyEnchantsGuiIH(main, p, (entry, aBoolean) -> {
@@ -408,7 +412,7 @@ public class customizerMainGuiIH implements Listener, InventoryHolder {
             }
         }
 
-        if (e.getSlot() == e.getRawSlot() && e.getSlot() == 22) { // Boton de cambiar amount
+        if ( e.getSlot() == 22) { // Boton de cambiar amount
 
             if (e.isLeftClick()) {
                 new confirmGui(main, newItem, p, (aBoolean, itemStack) -> {
@@ -430,7 +434,7 @@ public class customizerMainGuiIH implements Listener, InventoryHolder {
             }
         }
 
-        if (e.getSlot() == e.getRawSlot() && e.getSlot() == 23) { // Boton de cambiar commands
+        if ( e.getSlot() == 23) { // Boton de cambiar commands
 
             if (e.isLeftClick()) {
                 if (main.utils.isCommandItem(newItem)) {
@@ -444,8 +448,7 @@ public class customizerMainGuiIH implements Listener, InventoryHolder {
 
         }
 
-        if (e.getSlot() == e.getRawSlot() && e.getSlot() == 32 && e.getCurrentItem() != null &&
-                e.getCurrentItem().getType() != Material.AIR) { // Boton de cambiar commands
+        if ( e.getSlot() == 32 && e.getCurrentItem() != null ) { // Boton de cambiar commands
 
             if (e.isLeftClick()) {
                 new AnvilGUI.Builder()
@@ -475,7 +478,7 @@ public class customizerMainGuiIH implements Listener, InventoryHolder {
             }
         }
 
-        if (e.getSlot() == e.getRawSlot() && e.getSlot() == 25) { // Boton de hide enchants
+        if ( e.getSlot() == 25) { // Boton de hide enchants
 
             if (e.isLeftClick()) {
                 ItemMeta meta = newItem.getItemMeta();
@@ -491,7 +494,7 @@ public class customizerMainGuiIH implements Listener, InventoryHolder {
 
         }
 
-        if (e.getSlot() == e.getRawSlot() && e.getSlot() == 26) { // Boton de hide enchants
+        if ( e.getSlot() == 26) { // Boton de hide enchants
 
             if (e.isLeftClick()) {
                 ItemMeta meta = newItem.getItemMeta();
@@ -506,8 +509,7 @@ public class customizerMainGuiIH implements Listener, InventoryHolder {
             }
         }
 
-        if (e.getSlot() == e.getRawSlot() && e.getSlot() == 35 && e.getCurrentItem() != null &&
-                    e.getCurrentItem().getType() != Material.AIR) { // Boton de hide potion effects
+        if ( e.getSlot() == 35 && e.getCurrentItem() != null ) { // Boton de hide potion effects
 
             if(e.isLeftClick()) {
                 ItemMeta meta = newItem.getItemMeta();
@@ -523,8 +525,7 @@ public class customizerMainGuiIH implements Listener, InventoryHolder {
             }
         }
 
-        if (e.getSlot() == e.getRawSlot() && e.getSlot() == 40 && e.getCurrentItem() != null &&
-                e.getCurrentItem().getType() != Material.AIR) { // Boton de scrath MMOItem
+        if ( e.getSlot() == 40 && e.getCurrentItem() != null ) { // Boton de scrath MMOItem
 
             if(e.isLeftClick()) {
 
@@ -538,8 +539,7 @@ public class customizerMainGuiIH implements Listener, InventoryHolder {
             }
         }
 
-        if (e.getSlot() == e.getRawSlot() && e.getSlot() == 8 && e.getCurrentItem() != null &&
-                e.getCurrentItem().getType() != Material.AIR) { // Boton de scrath MMOItem
+        if ( e.getSlot() == 8 && e.getCurrentItem() != null ) { // Boton de scrath MMOItem
 
             if(e.isLeftClick()) {
                 newItem = main.utils.processNextRarity(newItem);

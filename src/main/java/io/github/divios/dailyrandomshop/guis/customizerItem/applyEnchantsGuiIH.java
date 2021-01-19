@@ -160,13 +160,17 @@ public class applyEnchantsGuiIH implements Listener, InventoryHolder {
 
         e.setCancelled(true);
 
-        if (e.getSlot() == e.getRawSlot() && e.getSlot() == 49) { //boton de salir
+        if(e.getSlot() != e.getRawSlot()) return;
+
+        if(e.getCurrentItem() == null || e.getCurrentItem().getType() == Material.AIR) return;
+
+        if ( e.getSlot() == 49) { //boton de salir
             unregisterEvents();
             bi.accept(null, false);
             return;
         }
 
-        if (e.getSlot() == e.getRawSlot() && e.getSlot() == 47) { //boton de buscar
+        if ( e.getSlot() == 47) { //boton de buscar
 
             if (e.getCurrentItem().getType() == Material.REDSTONE_BLOCK) {
                 unregisterEvents();
@@ -201,21 +205,19 @@ public class applyEnchantsGuiIH implements Listener, InventoryHolder {
 
         }
 
-        if (e.getSlot() == e.getRawSlot() && e.getSlot() == 53
-                && e.getCurrentItem() != null && e.getCurrentItem().getType() != Material.AIR) { //boton de atras
+        if ( e.getSlot() == 53) { //boton de atras
 
             p.openInventory(processNextGui(e.getView().getTopInventory(), 1));
             return;
         }
 
-        if (e.getSlot() == e.getRawSlot() && e.getSlot() == 45
-                && e.getCurrentItem() != null && e.getCurrentItem().getType() != Material.AIR) { //boton de siguiente
+        if ( e.getSlot() == 45) { //boton de siguiente
 
             p.openInventory(processNextGui(e.getView().getTopInventory(), -1));
             return;
         }
 
-        if (e.getSlot() == e.getRawSlot() && reservedSlots.contains(e.getSlot()) && e.getCurrentItem() != null) { //algun material
+        if ( reservedSlots.contains(e.getSlot()) ) { //algun material
             unregisterEvents();
             AtomicBoolean response = new AtomicBoolean(false);
             Enchantment enchant = Enchantment.getByName(e.getCurrentItem().getItemMeta().getDisplayName().replaceAll(ChatColor.WHITE
