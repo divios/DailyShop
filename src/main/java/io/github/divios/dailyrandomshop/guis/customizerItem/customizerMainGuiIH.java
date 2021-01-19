@@ -1,9 +1,9 @@
-package io.github.divios.dailyrandomshop.GUIs.customizerItem;
+package io.github.divios.dailyrandomshop.guis.customizerItem;
 
 import com.cryptomorin.xseries.XMaterial;
 import io.github.divios.dailyrandomshop.DailyRandomShop;
-import io.github.divios.dailyrandomshop.GUIs.confirmGui;
-import io.github.divios.dailyrandomshop.GUIs.settings.dailyGuiSettings;
+import io.github.divios.dailyrandomshop.guis.confirmGui;
+import io.github.divios.dailyrandomshop.guis.settings.dailyGuiSettings;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -222,6 +222,15 @@ public class customizerMainGuiIH implements Listener, InventoryHolder {
             changeRarity.setItemMeta(meta);
         }
 
+        ItemStack changeCurrency = new ItemStack(Material.EMERALD);
+        meta = Bukkit.getItemFactory().getItemMeta(changeCurrency.getType());
+        meta.setDisplayName(ChatColor.GREEN + "" + ChatColor.BOLD + "Change item currency");
+        lore = new ArrayList<>();
+        lore.add(ChatColor.GRAY + "Click to change item currency");
+        meta.setLore(lore);
+        changeCurrency.setItemMeta(meta);
+
+
         Integer[] auxList = {3, 5, 13};
         ItemStack item = main.utils.setItemAsFill(XMaterial.BLACK_STAINED_GLASS_PANE.parseItem());             //fill black panes
         for (int j: auxList) {
@@ -231,7 +240,7 @@ public class customizerMainGuiIH implements Listener, InventoryHolder {
             inv.setItem(j, item);
         }
 
-
+        inv.setItem(0, changeCurrency);
         inv.setItem(4, newItem);
         if (changeRarity != null) inv.setItem(8, changeRarity);
         inv.setItem(19, rename);
@@ -324,6 +333,15 @@ public class customizerMainGuiIH implements Listener, InventoryHolder {
 
             }, Material.values(), false);
 
+        }
+
+        if (e.getSlot() == e.getRawSlot() && e.getSlot() == 0) { // Boton de cambiar lore
+            new changeEconomy(main, p, newItem, (itemStack, aBoolean) -> {
+                if(aBoolean) {
+                    newItem = itemStack;
+                }
+                new customizerMainGuiIH(main, p, newItem, itemToReplace);
+            });
         }
 
         if (e.getSlot() == e.getRawSlot() && e.getSlot() == 28) { // Boton de cambiar lore
@@ -509,7 +527,7 @@ public class customizerMainGuiIH implements Listener, InventoryHolder {
                 e.getCurrentItem().getType() != Material.AIR) { // Boton de scrath MMOItem
 
             if(e.isLeftClick()) {
-                ItemMeta meta = newItem.getItemMeta();
+
                 if (!main.utils.isItemScracth(newItem)) {
                     newItem = main.utils.setItemAsScracth(newItem);
                 }
