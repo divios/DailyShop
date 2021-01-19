@@ -1,4 +1,4 @@
-package io.github.divios.dailyrandomshop.Database;
+package io.github.divios.dailyrandomshop.database;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;

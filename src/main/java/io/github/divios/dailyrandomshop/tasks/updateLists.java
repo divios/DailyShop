@@ -1,4 +1,4 @@
-package io.github.divios.dailyrandomshop.Tasks;
+package io.github.divios.dailyrandomshop.tasks;
 
 import io.github.divios.dailyrandomshop.DailyRandomShop;
 import org.bukkit.Bukkit;

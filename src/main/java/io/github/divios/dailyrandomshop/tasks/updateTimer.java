@@ -1,7 +1,7 @@
-package io.github.divios.dailyrandomshop.Tasks;
+package io.github.divios.dailyrandomshop.tasks;
 
 import io.github.divios.dailyrandomshop.DailyRandomShop;
-import io.github.divios.dailyrandomshop.Utils.ConfigUtils;
+import io.github.divios.dailyrandomshop.utils.ConfigUtils;
 import org.bukkit.Bukkit;
 
 public class updateTimer {

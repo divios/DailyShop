@@ -1,13 +1,11 @@
-package io.github.divios.dailyrandomshop.Utils;
+package io.github.divios.dailyrandomshop.utils;
 
 import io.github.divios.dailyrandomshop.Config;
 import io.github.divios.dailyrandomshop.DailyRandomShop;
-import io.github.divios.dailyrandomshop.GUIs.settings.dailyGuiSettings;
-import io.github.divios.dailyrandomshop.GUIs.settings.sellGuiSettings;
-import io.github.divios.dailyrandomshop.Tasks.updateLists;
-import io.github.divios.dailyrandomshop.Tasks.updateTimer;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
+import io.github.divios.dailyrandomshop.guis.settings.dailyGuiSettings;
+import io.github.divios.dailyrandomshop.guis.settings.sellGuiSettings;
+import io.github.divios.dailyrandomshop.tasks.updateLists;
+import io.github.divios.dailyrandomshop.tasks.updateTimer;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
@@ -117,20 +115,5 @@ public class ConfigUtils {
 
     }
 
-    public static int getAvariableSlot(DailyRandomShop main) {
-        File customFile = new File(main.getDataFolder(), "items.yml");
-        FileConfiguration file;
-        int slot = -1;
-        file = YamlConfiguration.loadConfiguration(customFile);
-
-        List<String> keysOrdened = new ArrayList<>();
-        file = YamlConfiguration.loadConfiguration(customFile);
-
-        for (String key : file.getKeys(false)) {
-
-        }
-
-        return slot;
-    }
 
 }
