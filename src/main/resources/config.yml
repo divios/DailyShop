@@ -21,6 +21,11 @@ sell-price-multiplier: 1
 # If none of them is provided it 'll default to 14
 number-of-daily-items: 14
 
+# When the currency of an item is set to vault, which is the default, this name
+# 'll appear on the lore. As the default currency usually has a name, this option is included
+# to personalize it
+vault-currency-name: "&7Vault"
+
 # On false it won't be possible to access the sell menu
 enable-sell-gui: true
 
