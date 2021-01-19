@@ -10,8 +10,8 @@ import java.util.List;
 public class Config {
 
     public final String
-        PREFIX,
-        BUY_GUI_TITLE, BUY_GUI_PAINTING_NAME, BUY_GUI_ARROW_NAME, BUY_GUI_ITEMS_LORE_PRICE, BUY_GUI_ITEMS_LORE_RARITY,
+        PREFIX, VAULT_CUSTOM_NAME,
+        BUY_GUI_TITLE, BUY_GUI_PAINTING_NAME, BUY_GUI_ARROW_NAME, BUY_GUI_ITEMS_LORE_PRICE, BUY_GUI_ITEMS_LORE_CURRENCY, BUY_GUI_ITEMS_LORE_RARITY,
         CONFIRM_GUI_NAME, CONFIRM_GUI_ADD_PANE, CONFIRM_GUI_REMOVE_PANE, CONFIRM_GUI_CONFIRM_PANE, CONFIRM_GUI_RETURN_NAME,
         SELL_GUI_TITLE, SELL_PAINTING_NAME, SELL_ARROW_NAME, SELL_ITEM_NAME,
         CONFIRM_MENU_YES, CONFIRM_MENU_NO,
@@ -51,6 +51,7 @@ public class Config {
         FileConfiguration yamlFile = YamlConfiguration.loadConfiguration(file);
 
         PREFIX = ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("prefix", "&6&lDailyShop > "));
+        VAULT_CUSTOM_NAME = ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("vault-currency-name", "&7Vault"));
         main.getConfig().addDefault("timer-duration", 86400);
         main.getConfig().addDefault("buy-price-multiplier", 1);
         main.getConfig().addDefault("sell-price-multiplier", 1);
@@ -65,6 +66,7 @@ public class Config {
         BUY_GUI_PAINTING_NAME = ChatColor.translateAlternateColorCodes('&', yamlFile.getString("daily-shop-gui-painting-name","&c&lWhat is this?"));
         BUY_GUI_PAINTING_LORE =  yamlFile.getStringList("daily-shop-gui-painting-lore");
         BUY_GUI_ITEMS_LORE_PRICE = ChatColor.translateAlternateColorCodes('&', yamlFile.getString("daily-items-lore-price", "&6Price: &7{price}"));
+        BUY_GUI_ITEMS_LORE_CURRENCY = ChatColor.translateAlternateColorCodes('&', yamlFile.getString("daily-items-lore-currency", "&6Currency: &7{currency}"));
         BUY_GUI_ITEMS_LORE_RARITY = ChatColor.translateAlternateColorCodes('&', yamlFile.getString("daily-items-lore-rarity", "&6Rarity: &7{rarity}"));
         BUY_GUI_ARROW_NAME = ChatColor.translateAlternateColorCodes('&', yamlFile.getString("daily-shop-to-sell-name","&c&lVisit Market"));
         BUY_GUI_ARROW_LORE = yamlFile.getStringList("daily-shop-to-sell-lore");
