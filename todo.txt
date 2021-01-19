@@ -1,3 +1,4 @@
 
 
 - Add categories
+- Add more currencies plugins
