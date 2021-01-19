@@ -1,13 +1,14 @@
 package io.github.divios.dailyrandomshop;
 
-import io.github.divios.dailyrandomshop.Database.DataManager;
-import io.github.divios.dailyrandomshop.Database.sqlite;
-import io.github.divios.dailyrandomshop.GUIs.buyGui;
-import io.github.divios.dailyrandomshop.GUIs.settings.dailyGuiSettings;
-import io.github.divios.dailyrandomshop.GUIs.settings.sellGuiSettings;
-import io.github.divios.dailyrandomshop.Placeholders.timePlaceHolder;
-import io.github.divios.dailyrandomshop.Utils.ConfigUtils;
-import io.github.divios.dailyrandomshop.Utils.Utils;
+import io.github.divios.dailyrandomshop.database.DataManager;
+import io.github.divios.dailyrandomshop.database.sqlite;
+import io.github.divios.dailyrandomshop.guis.buyGui;
+import io.github.divios.dailyrandomshop.guis.settings.dailyGuiSettings;
+import io.github.divios.dailyrandomshop.guis.settings.sellGuiSettings;
+import io.github.divios.dailyrandomshop.placeholders.timePlaceHolder;
+import io.github.divios.dailyrandomshop.utils.ConfigUtils;
+import io.github.divios.dailyrandomshop.utils.Utils;
+import me.xanium.gemseconomy.api.GemsEconomyAPI;
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
@@ -39,6 +40,7 @@ public final class DailyRandomShop extends JavaPlugin {
     public sqlite db = new sqlite(this);
     public DataManager dbManager = new DataManager(db, this);
     public BukkitTask updateListID;
+    public GemsEconomyAPI gemsApi = null;
 
     public DailyRandomShop() {
     }
@@ -66,7 +68,13 @@ public final class DailyRandomShop extends JavaPlugin {
         }
 
         if(getServer().getPluginManager().getPlugin("PlaceholderAPI") != null){
+            getLogger().info("Found PlaceholderApi");
             new timePlaceHolder(this).register();
+        }
+
+        if(getServer().getPluginManager().getPlugin("GemsEconomy") != null) {
+            getLogger().info("Found GemsEconomy");
+            gemsApi = new GemsEconomyAPI();
         }
 
         try {
