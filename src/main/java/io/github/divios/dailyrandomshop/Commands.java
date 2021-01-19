@@ -1,10 +1,10 @@
 package io.github.divios.dailyrandomshop;
 
-import io.github.divios.dailyrandomshop.GUIs.sellGuiIH;
-import io.github.divios.dailyrandomshop.GUIs.settings.addDailyItemGuiIH;
-import io.github.divios.dailyrandomshop.GUIs.settings.sellGuiSettings;
-import io.github.divios.dailyrandomshop.GUIs.settings.settingsGuiIH;
-import io.github.divios.dailyrandomshop.Utils.ConfigUtils;
+import io.github.divios.dailyrandomshop.guis.sellGuiIH;
+import io.github.divios.dailyrandomshop.guis.settings.addDailyItemGuiIH;
+import io.github.divios.dailyrandomshop.guis.settings.sellGuiSettings;
+import io.github.divios.dailyrandomshop.guis.settings.settingsGuiIH;
+import io.github.divios.dailyrandomshop.utils.ConfigUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.Command;

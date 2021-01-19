@@ -1,4 +1,4 @@
-package io.github.divios.dailyrandomshop.GUIs.settings;
+package io.github.divios.dailyrandomshop.guis.settings;
 
 import com.cryptomorin.xseries.XMaterial;
 import io.github.divios.dailyrandomshop.DailyRandomShop;

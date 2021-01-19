@@ -1,8 +1,9 @@
-package io.github.divios.dailyrandomshop.Listeners;
+package io.github.divios.dailyrandomshop.listeners;
 
 
+import com.cryptomorin.xseries.messages.Titles;
 import io.github.divios.dailyrandomshop.DailyRandomShop;
-import io.github.divios.dailyrandomshop.GUIs.customizerItem.customizerMainGuiIH;
+import io.github.divios.dailyrandomshop.guis.customizerItem.customizerMainGuiIH;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -12,16 +13,15 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitTask;
-import com.cryptomorin.xseries.messages.Titles;
 
-public class customAddItemListener implements Listener {
+public class UtilAddItemListener implements Listener {
 
     private final DailyRandomShop main;
     private final Player p;
     private final BukkitTask TaskID;
 
-    public customAddItemListener(DailyRandomShop main,
-                                 Player p) {
+    public UtilAddItemListener(DailyRandomShop main,
+                               Player p) {
         Bukkit.getPluginManager().registerEvents(this, main);
         this.main = main;
         this.p = p;

@@ -1,14 +1,14 @@
-package io.github.divios.dailyrandomshop.Utils;
+package io.github.divios.dailyrandomshop.utils;
 
 import com.cryptomorin.xseries.XMaterial;
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import io.github.divios.dailyrandomshop.DailyRandomShop;
+import me.xanium.gemseconomy.currency.Currency;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -91,7 +91,7 @@ public class Utils {
 
         }
 
-        if (main.econ.getBalance(p) < price) {
+        if (!playerHasEnoughMoney(p, getEconomyType(item), price)) {
             p.sendMessage(main.config.PREFIX + main.config.MSG_NOT_ENOUGH_MONEY);
             try {
                 p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
@@ -104,6 +104,7 @@ public class Utils {
         ItemMeta meta = aux.getItemMeta();
         List<String> lore = meta.getLore();
         lore.remove(lore.size() - 1);
+        lore.remove(lore.size() - 1);
         if (main.getConfig().getBoolean("enable-rarity")) lore.remove(lore.size() - 1);
         meta.setLore(lore);
         aux.setItemMeta(meta);
@@ -112,6 +113,8 @@ public class Utils {
             p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
         } catch (NoSuchFieldError ignored) {}
 
+        AbstractMap.SimpleEntry<economyTypes, String> currencyStr = getEconomyType(aux);
+        removeDailyMetadata(aux);
 
         if (aux.getMaxStackSize() == 1) {
             int amount = aux.getAmount();
@@ -120,9 +123,11 @@ public class Utils {
                 p.getInventory().addItem(aux);
             }
         }
+
         else p.getInventory().addItem(aux);
-        main.econ.withdrawPlayer(p, price);
-        p.sendMessage(main.config.PREFIX + main.config.MSG_BUY_ITEM.replace("{price}", String.format("%,.2f", price)).replace("{item}", item.getType().toString()));
+        withdrawMoneyFromPlayer(p, currencyStr, price);
+        p.sendMessage(main.config.PREFIX + main.config.MSG_BUY_ITEM.replace("{price}", String.format("%,.2f", price)).replace("{item}",
+                item.getType().toString()).replace("{currency}", currencyStr.getValue()));
         p.openInventory(main.BuyGui.getInventory());
 
     }
@@ -181,26 +186,6 @@ public class Utils {
         NBTItem nbtItem = new NBTItem(item);
         nbtItem.removeKey("DailyItem");
         return nbtItem.getItem();
-    }
-
-    public List<String> getNBT(ItemStack item) {
-        NBTItem nbtItem = new NBTItem(item);
-        List<String> nbtValues = new ArrayList<>();
-
-        if(nbtItem.getKeys() == null || nbtItem.getKeys().isEmpty()) return nbtValues;
-
-        for (String key: nbtItem.getKeys()) {
-            if(key.equals("Command") || key.equals("DailyItem")) {
-                continue;
-            }
-            String value = nbtItem.getString(key);
-            if(value.isEmpty()) continue;
-
-            nbtValues.add(key.concat(":" + value));
-
-        }
-
-        return nbtValues;
     }
 
     public boolean isMMOItem(ItemStack item) {
@@ -277,6 +262,59 @@ public class Utils {
         return NBTitem.getItem();
     }
 
+    public AbstractMap.SimpleEntry<economyTypes, String> getEconomyType(ItemStack item) {
+
+        AbstractMap.SimpleEntry<economyTypes, String> economyType;
+        AbstractMap.SimpleEntry<String, String> aux;
+        NBTItem NBTitem = new NBTItem(item);
+
+        if(NBTitem.hasKey("dailyEconomyWrapper")) {
+            aux = NBTitem.getObject("dailyEconomyWrapper", AbstractMap.SimpleEntry.class);
+            economyType = new AbstractMap.SimpleEntry<>(economyTypes.valueOf(aux.getKey()), aux.getValue());
+        } else
+            economyType =  new AbstractMap.SimpleEntry<>(economyTypes.VAULT, main.config.VAULT_CUSTOM_NAME);
+
+        return economyType;
+    }
+
+    public ItemStack setEconomyType(ItemStack item, economyTypes e) {
+
+        NBTItem NBTitem = new NBTItem(item);
+
+        switch (e) {
+            case VAULT:
+                NBTitem.removeKey("dailyEconomyWrapper");
+                break;
+            default:
+                NBTitem.setObject("dailyEconomyWrapper", new AbstractMap.SimpleEntry<>(e.toString(), ""));
+        }
+
+        return NBTitem.getItem();
+
+    }
+
+    public ItemStack setEconomyType(ItemStack item, economyTypes e, String economyStr) {
+
+        NBTItem NBTitem = new NBTItem(item);
+
+        switch (e) {
+            case VAULT:
+                NBTitem.removeKey("dailyEconomyWrapper");
+                break;
+            default:
+                NBTitem.setObject("dailyEconomyWrapper", new AbstractMap.SimpleEntry<>(e.toString(), economyStr));
+        }
+
+        return NBTitem.getItem();
+
+    }
+
+    public ItemStack removeEconomyTypeMetadata(ItemStack item) {
+        NBTItem nbtItem = new NBTItem(item);
+        nbtItem.removeKey("dailyEconomyWrapper");
+        return nbtItem.getItem();
+    }
+
     public Double getItemPrice(HashMap<ItemStack, Double> items, ItemStack toCompare, boolean lore) {
         Double price = 0.0;
         ItemStack toCompare2 = null;
@@ -291,6 +329,38 @@ public class Utils {
         return price;
     }
 
+    public Boolean playerHasEnoughMoney(Player p, AbstractMap.SimpleEntry<economyTypes, String> e, Double m) {
+
+        boolean status = false;
+
+        switch (e.getKey()) {
+            case VAULT:
+                status = main.econ.getBalance(p) >= m;
+                break;
+            case GEMSECONOMY:
+                if(main.gemsApi == null) return false;
+                Currency currency = main.gemsApi.plugin.getCurrencyManager().getCurrency(e.getValue());
+                if(currency == null) return false;
+                status = main.gemsApi.plugin.getAccountManager().getAccount(p).hasEnough(currency, m);
+                break;
+        }
+        return status;
+
+    }
+
+    public void withdrawMoneyFromPlayer(Player p, AbstractMap.SimpleEntry<economyTypes, String> e, Double m) {
+        switch (e.getKey()) {
+            case VAULT:
+                main.econ.withdrawPlayer(p, m);
+                break;
+            case GEMSECONOMY:
+                Currency currency = main.gemsApi.plugin.getCurrencyManager().getCurrency(e.getValue());
+                main.gemsApi.withdraw(p.getUniqueId(), m, currency);
+                break;
+        }
+
+    }
+
     public ItemStack removePriceLore ( ItemStack item) {
         ItemStack item2 = item.clone();
         ItemMeta meta = null;
@@ -298,6 +368,7 @@ public class Utils {
 
         if(meta.hasLore()) {
             List<String> lore = meta.getLore();
+            lore.remove(lore.size() - 1);
             lore.remove(lore.size() - 1);
             if(main.getConfig().getBoolean("enable-rarity")) lore.remove(lore.size() - 1);
             meta.setLore(lore);
@@ -478,6 +549,8 @@ public class Utils {
             item = removeItemAmount(item);
             item.setAmount(1);
         }
+
+        item = removeEconomyTypeMetadata(item);
     }
 
 }

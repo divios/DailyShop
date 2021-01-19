@@ -1,4 +1,4 @@
-package io.github.divios.dailyrandomshop.GUIs.customizerItem;
+package io.github.divios.dailyrandomshop.guis.customizerItem;
 
 import com.cryptomorin.xseries.XMaterial;
 import io.github.divios.dailyrandomshop.DailyRandomShop;

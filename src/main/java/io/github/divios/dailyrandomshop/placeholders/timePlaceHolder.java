@@ -1,4 +1,4 @@
-package io.github.divios.dailyrandomshop.Placeholders;
+package io.github.divios.dailyrandomshop.placeholders;
 
 import io.github.divios.dailyrandomshop.DailyRandomShop;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;

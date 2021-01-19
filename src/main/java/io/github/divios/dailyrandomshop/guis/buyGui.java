@@ -1,8 +1,8 @@
-package io.github.divios.dailyrandomshop.GUIs;
+package io.github.divios.dailyrandomshop.guis;
 
 import com.cryptomorin.xseries.XMaterial;
 import io.github.divios.dailyrandomshop.DailyRandomShop;
-import io.github.divios.dailyrandomshop.Utils.ConfigUtils;
+import io.github.divios.dailyrandomshop.utils.ConfigUtils;
 import net.Indyuce.mmoitems.MMOItems;
 import net.Indyuce.mmoitems.api.Type;
 import org.bukkit.Bukkit;
@@ -129,6 +129,7 @@ public class buyGui implements InventoryHolder, Listener {
             else lore = new ArrayList<>();
 
             lore.add(main.config.BUY_GUI_ITEMS_LORE_PRICE.replaceAll("\\{price}", String.format("%,.2f", main.listDailyItems.get(randomItem))));
+            lore.add(ChatColor.GOLD + "Currency: " + ChatColor.GRAY + main.utils.getEconomyType(randomItem).getValue());
             meta.setLore(lore);
 
             randomItem.setItemMeta(meta);
@@ -157,6 +158,7 @@ public class buyGui implements InventoryHolder, Listener {
             ItemStack itemCloned = item.clone();
             ItemMeta meta = itemCloned.getItemMeta();
             List<String> lore = meta.getLore();
+            lore.remove(lore.size() - 1);
             lore.remove(lore.size() - 1);
             if(main.getConfig().getBoolean("enable-rarity")) lore.remove(lore.size() - 1);
             meta.setLore(lore);
@@ -188,6 +190,7 @@ public class buyGui implements InventoryHolder, Listener {
                 else lore = new ArrayList<>();
 
                 lore.add(main.config.BUY_GUI_ITEMS_LORE_PRICE.replaceAll("\\{price}", String.format("%,.2f", main.listDailyItems.get(item))));
+                lore.add(main.config.BUY_GUI_ITEMS_LORE_CURRENCY.replaceAll("\\{currency}", main.utils.getEconomyType(item).getValue()));
                 meta.setLore(lore);
 
                 item.setItemMeta(meta);
@@ -258,7 +261,7 @@ public class buyGui implements InventoryHolder, Listener {
 
             Double price = main.utils.getItemPrice(main.listDailyItems, item, true);
 
-            if (main.econ.getBalance(p) < price) {
+            if (!main.utils.playerHasEnoughMoney(p, main.utils.getEconomyType(item), price)) {
                 p.sendMessage(main.config.PREFIX + main.config.MSG_NOT_ENOUGH_MONEY);
                 try {
                     p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
@@ -274,7 +277,7 @@ public class buyGui implements InventoryHolder, Listener {
                 p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 0.5F, 1);
             } catch (NoSuchFieldError ignored) {
             }
-            main.econ.withdrawPlayer(p, price);
+            main.utils.withdrawMoneyFromPlayer(p, main.utils.getEconomyType(item), price);
             if (main.utils.isItemAmount(item)) main.utils.processItemAmount(item, e.getSlot());
             return;
         }
@@ -301,6 +304,7 @@ public class buyGui implements InventoryHolder, Listener {
                         if(!meta.hasLore()) lore = new ArrayList<>();
                         else lore = meta.getLore();
                         lore.add("price");
+                        lore.add("currency");
                         if(main.getConfig().getBoolean("enable-rarity")) lore.add("rarity");
                         meta.setLore(lore);
                         itemStack.setItemMeta(meta);
@@ -329,7 +333,7 @@ public class buyGui implements InventoryHolder, Listener {
                 return;
             }
 
-            if (main.econ.getBalance(p) < price) {
+            if (!main.utils.playerHasEnoughMoney(p, main.utils.getEconomyType(item), price)) {
                 p.sendMessage(main.config.PREFIX + main.config.MSG_NOT_ENOUGH_MONEY);
                 return;
             }
@@ -343,6 +347,16 @@ public class buyGui implements InventoryHolder, Listener {
             if(main.utils.isItemScracth(item)) {
                 String[] constructor = main.utils.getMMOItemConstruct(item);
                 item = MMOItems.plugin.getItem(Type.get(constructor[0]), constructor[1]);
+                                            /* All this is necessary for conviction on giveItem, since it removes the lore */
+                ItemMeta meta = item.getItemMeta();
+                List<String> lore;
+                if(!meta.hasLore()) lore = new ArrayList<>();
+                else lore = meta.getLore();
+                lore.add("price");
+                lore.add("currency");
+                if(main.getConfig().getBoolean("enable-rarity")) lore.add("rarity");
+                meta.setLore(lore);
+                item.setItemMeta(meta);
             }
 
             main.utils.giveItem(p, price, item);

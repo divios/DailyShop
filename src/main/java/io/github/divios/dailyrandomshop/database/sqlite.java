@@ -1,4 +1,4 @@
-package io.github.divios.dailyrandomshop.Database;
+package io.github.divios.dailyrandomshop.database;
 
 import io.github.divios.dailyrandomshop.DailyRandomShop;
 
