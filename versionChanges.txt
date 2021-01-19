@@ -17,3 +17,4 @@
     - Added multi-currencies with gemseconomy
     - Added new gui, changeEconomy
     - Added new metadata, economy
+    - Made Hashmaps thread safely
