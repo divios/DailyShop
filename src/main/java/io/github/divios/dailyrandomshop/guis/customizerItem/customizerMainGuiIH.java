@@ -227,6 +227,7 @@ public class customizerMainGuiIH implements Listener, InventoryHolder {
         meta.setDisplayName(ChatColor.GREEN + "" + ChatColor.BOLD + "Change item currency");
         lore = new ArrayList<>();
         lore.add(ChatColor.GRAY + "Click to change item currency");
+        lore.add(ChatColor.GREEN + "Current: " + ChatColor.GRAY + main.utils.getEconomyType(newItem).getValue());
         meta.setLore(lore);
         changeCurrency.setItemMeta(meta);
 
