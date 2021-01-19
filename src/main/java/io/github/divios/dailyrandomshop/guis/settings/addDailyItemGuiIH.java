@@ -1,9 +1,9 @@
-package io.github.divios.dailyrandomshop.GUIs.settings;
+package io.github.divios.dailyrandomshop.guis.settings;
 
 import com.cryptomorin.xseries.XMaterial;
 import io.github.divios.dailyrandomshop.DailyRandomShop;
-import io.github.divios.dailyrandomshop.GUIs.customizerItem.customizerMainGuiIH;
-import io.github.divios.dailyrandomshop.Listeners.customAddItemListener;
+import io.github.divios.dailyrandomshop.guis.customizerItem.customizerMainGuiIH;
+import io.github.divios.dailyrandomshop.listeners.UtilAddItemListener;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -104,9 +104,16 @@ public class addDailyItemGuiIH implements InventoryHolder, Listener {
         }
 
         if(e.getSlot() == 15) {
+            if (Bukkit.getServer().getClass().getPackage().getName().contains("1_8") || Bukkit.getServer().getClass().getPackage().getName().contains("1_9") ||
+                    Bukkit.getServer().getClass().getPackage().getName().contains("1_10") || Bukkit.getServer().getClass().getPackage().getName().contains("1_11")) {
+               if(p.getItemInHand() == null || p.getItemInHand().getType() == Material.AIR) p.sendMessage(main.config.PREFIX + main.config.MSG_ERROR_ITEM_HAND);
+               else new customizerMainGuiIH(main, p, e.getCurrentItem(), null);
+            }
 
-            new customAddItemListener(main, p);
-            p.closeInventory();
+            else {
+                new UtilAddItemListener(main, p);
+                p.closeInventory();
+            }
         }
 
     }
