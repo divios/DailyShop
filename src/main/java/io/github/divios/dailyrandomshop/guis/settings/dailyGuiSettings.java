@@ -183,6 +183,7 @@ public class dailyGuiSettings implements Listener, InventoryHolder {
         }
 
         ItemStack item = removeLore(e.getCurrentItem().clone());
+
         if (e.isLeftClick() && !e.isShiftClick()) {
             AtomicBoolean response = new AtomicBoolean(false);
             new AnvilGUI.Builder()
@@ -249,9 +250,9 @@ public class dailyGuiSettings implements Listener, InventoryHolder {
                         main.utils.waitXticks(10);
                     }*/
                     Double price = main.utils.getItemPrice(main.listDailyItems, itemToAdd, false);
-                    main.utils.removeDailyMetadata(itemToAdd);
+                    ItemStack itemtoAdd2 = main.utils.removeDailyMetadata(itemToAdd);
 
-                    main.listSellItems.put(itemToAdd, price);
+                    main.listSellItems.put(itemtoAdd2, price);
                     p.sendMessage(main.config.PREFIX + main.config.MSG_ITEM_ADDED);
                     main.SellGuiSettings = new sellGuiSettings(main);
                 }
