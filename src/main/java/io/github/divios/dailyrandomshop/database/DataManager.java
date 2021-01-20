@@ -188,6 +188,14 @@ public class DataManager {
                     string = new String(itemserial);
                     itemData = new NBTContainer(string);
                     item = NBTItem.convertNBTtoItem(itemData);
+
+                    if(main.utils.isMMOItem(item)){
+                        String[] constructor = main.utils.getMMOItemConstruct(item.clone());
+                        ItemStack auxitem = MMOItems.plugin.getItem(Type.get(constructor[0]), constructor[1]);
+                        item = main.utils.transferDailyMetadata(item, auxitem);
+
+                    }
+
                     if (item == null || !main.utils.listContaisItem(main.listDailyItems, item) ||
                             item.getType() == Material.AIR) continue;
 
@@ -288,6 +296,13 @@ public class DataManager {
                     itemData = new NBTContainer(string);
                     item = NBTItem.convertNBTtoItem(itemData);
                     if (item == null || item.getType() == Material.AIR) continue;
+
+                    if(main.utils.isMMOItem(item)){
+                        String[] constructor = main.utils.getMMOItemConstruct(item.clone());
+                        ItemStack auxitem = MMOItems.plugin.getItem(Type.get(constructor[0]), constructor[1]);
+                        item = main.utils.transferDailyMetadata(item, auxitem);
+
+                    }
                     try {
                         Material.valueOf(item.getType().toString());
                     } catch (Exception e) {
@@ -455,11 +470,11 @@ public class DataManager {
                         continue;
                     }
 
-                    if(main.utils.isMMOItem(item)){
-                        String[] constructor = main.utils.getMMOItemConstruct(item);
+                   if(main.utils.isMMOItem(item)){
+                        String[] constructor = main.utils.getMMOItemConstruct(item.clone());
                         ItemStack auxitem = MMOItems.plugin.getItem(Type.get(constructor[0]), constructor[1]);
-                        main.utils.transferDailyMetadata(item, auxitem);
-                        item = auxitem;
+                        item = main.utils.transferDailyMetadata(item, auxitem);
+
                     }
 
                 } catch (Exception e) {
@@ -472,7 +487,6 @@ public class DataManager {
         } catch (SQLException e) {
             main.getLogger().warning("Couldn't get daily items on database");
         }
-
 
         return items;
     }
