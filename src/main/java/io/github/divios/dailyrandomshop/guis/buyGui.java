@@ -249,17 +249,15 @@ public class buyGui implements InventoryHolder, Listener {
 
         //item.setAmount(1);
 
-        Double priceaux = main.utils.getItemPrice(main.listDailyItems, item, true);
+        Double price = main.utils.getItemPrice(main.listDailyItems, item, true);
 
-        if(priceaux <= 0) {
+        if(price <= 0) {
             p.sendMessage(main.config.PREFIX + main.config.MSG_NOT_IN_STOCK);
             p.closeInventory();
             return;
         }
 
         if (main.utils.isCommandItem(item)) {                                                                   /* if is command item */
-
-            Double price = main.utils.getItemPrice(main.listDailyItems, item, true);
 
             if (!main.utils.playerHasEnoughMoney(p, main.utils.getEconomyType(item), price)) {
                 p.sendMessage(main.config.PREFIX + main.config.MSG_NOT_ENOUGH_MONEY);
@@ -291,11 +289,11 @@ public class buyGui implements InventoryHolder, Listener {
             new confirmGui(main, item, p, (aBoolean, itemStack) -> {
 
                 if (aBoolean) {
-                    Double price = main.utils.getItemPrice(main.listDailyItems, itemStack, true) * itemStack.getAmount();
+                    Double priceaux = price * itemStack.getAmount();
 
                     if(main.utils.isItemScracth(itemStack)) {
                         int amount = itemStack.getAmount();
-                        String[] constructor = main.utils.getMMOItemConstruct(itemStack);
+                        String[] constructor = main.utils.getMMOItemConstruct(itemStack.clone());
                         itemStack = MMOItems.plugin.getItem(Type.get(constructor[0]), constructor[1]);
                         itemStack.setAmount(amount);
                                                          /* All this is necessary for conviction on giveItem, since it removes the lore */
@@ -325,8 +323,6 @@ public class buyGui implements InventoryHolder, Listener {
 
         } else {                                                                                                /* If the confirm gui is not enabled */
 
-            Double price = main.utils.getItemPrice(main.listDailyItems, item, true);
-
             if(price <= 0) {
                 p.sendMessage(main.config.PREFIX + main.config.MSG_NOT_IN_STOCK);
                 p.closeInventory();
@@ -345,7 +341,7 @@ public class buyGui implements InventoryHolder, Listener {
             item.setAmount(1);
 
             if(main.utils.isItemScracth(item)) {
-                String[] constructor = main.utils.getMMOItemConstruct(item);
+                String[] constructor = main.utils.getMMOItemConstruct(item.clone());
                 item = MMOItems.plugin.getItem(Type.get(constructor[0]), constructor[1]);
                                             /* All this is necessary for conviction on giveItem, since it removes the lore */
                 ItemMeta meta = item.getItemMeta();
