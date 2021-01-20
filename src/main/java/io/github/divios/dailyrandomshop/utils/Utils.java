@@ -113,7 +113,7 @@ public class Utils {
         } catch (NoSuchFieldError ignored) {}
 
         AbstractMap.SimpleEntry<economyTypes, String> currencyStr = getEconomyType(aux);
-        removeDailyMetadata(aux);
+        aux = removeDailyMetadata(aux);
 
         if (aux.getMaxStackSize() == 1) {
             int amount = aux.getAmount();
@@ -322,7 +322,8 @@ public class Utils {
 
         for (Map.Entry<ItemStack, Double> item: items.entrySet()) {
             //ItemStack item2 = removePriceLore(item.getKey());
-            if (item.getKey().isSimilar(toCompare2)) return item.getValue();
+            if (item.getKey().isSimilar(toCompare2) ||
+                    (isMMOItem(toCompare2) && net.mmogroup.mmolib.api.item.NBTItem.get(toCompare2).getString("MMOITEMS_ITEM_ID").equals(net.mmogroup.mmolib.api.item.NBTItem.get(item.getKey()).getString("MMOITEMS_ITEM_ID")))) return item.getValue();
         }
 
         return price;
@@ -387,10 +388,13 @@ public class Utils {
     public void removeItemOnList(Map<ItemStack, Double> list, ItemStack item) {
 
         for (ItemStack entryItem: list.keySet()) {
-            if(!entryItem.isSimilar(item)) continue;
 
-            list.remove(entryItem);
-            return;
+            if(entryItem.isSimilar(item) ||
+                    (isMMOItem(item) && net.mmogroup.mmolib.api.item.NBTItem.get(entryItem).getString("MMOITEMS_ITEM_ID").equals(net.mmogroup.mmolib.api.item.NBTItem.get(item).getString("MMOITEMS_ITEM_ID")))) {
+
+                list.remove(entryItem);
+                return;
+            }
         }
 
     }
@@ -398,16 +402,19 @@ public class Utils {
     public void replacePriceOnList(Map<ItemStack, Double> list, ItemStack item, Double price) {
 
         for (ItemStack entryItem: list.keySet()) {
-            if(!entryItem.isSimilar(item)) continue;
-
-            list.replace(entryItem, price);
-            return;
+            if(entryItem.isSimilar(item) || (isMMOItem(item) &&
+                    net.mmogroup.mmolib.api.item.NBTItem.get(entryItem).getString("MMOITEMS_ITEM_ID").equals(net.mmogroup.mmolib.api.item.NBTItem.get(item).getString("MMOITEMS_ITEM_ID")))) {
+                list.replace(entryItem, price);
+                return;
+            }
         }
     }
 
     public boolean listContaisItem(Map<ItemStack, Double> list, ItemStack item) {
         for (ItemStack entryItem: list.keySet()) {
-            if(entryItem.isSimilar(item)) return true;
+            if(entryItem.isSimilar(item) || (isMMOItem(item) &&
+                    net.mmogroup.mmolib.api.item.NBTItem.get(entryItem).getString("MMOITEMS_ITEM_ID").equals(net.mmogroup.mmolib.api.item.NBTItem.get(item).getString("MMOITEMS_ITEM_ID"))))
+                return true;
         }
         return false;
     }
@@ -476,6 +483,26 @@ public class Utils {
         return nbtItem.getItem();
     }
 
+    public ItemStack setRarity(ItemStack item, int rarity) {
+        NBTItem nbtItem = new NBTItem(item);
+        switch (rarity) {
+            case 80: nbtItem.setInteger("rarityRdshop", 80); break;
+            case 60: nbtItem.setInteger("rarityRdshop", 60); break;
+            case 40: nbtItem.setInteger("rarityRdshop", 40); break;
+            case 20: nbtItem.setInteger("rarityRdshop", 20); break;
+            case 10: nbtItem.setInteger("rarityRdshop", 10); break;
+            case 5: nbtItem.setInteger("rarityRdshop", 5); break;
+            default: nbtItem.removeKey("rarityRdshop"); break;
+        }
+        return nbtItem.getItem();
+    }
+
+    public ItemStack removeRarityMeta(ItemStack item) {
+        NBTItem nbtItem = new NBTItem(item);
+        nbtItem.removeKey("rarityRdshop");
+        return nbtItem.getItem();
+    }
+
     public void setRarityLore(ItemStack item, int rarity) {
 
         ItemMeta meta = item.getItemMeta();
@@ -509,7 +536,7 @@ public class Utils {
         item.setItemMeta(meta);
     }
 
-    public void transferDailyMetadata(ItemStack oldItem, ItemStack newItem) {
+    public ItemStack transferDailyMetadata(ItemStack oldItem, ItemStack newItem) {
 
         if(isItemScracth(oldItem)) {
             newItem = setItemAsScracth(newItem);
@@ -527,29 +554,40 @@ public class Utils {
             newItem = setItemAsAmount(oldItem);
             newItem.setAmount(oldItem.getAmount());
         }
+        AbstractMap.SimpleEntry<economyTypes, String> entry = getEconomyType(oldItem);
+        newItem = setEconomyType(newItem, entry.getKey(), entry.getValue());
+
+        newItem = setRarity(newItem, getRarity(oldItem));
+
+        return newItem;
 
     }
 
-    public void removeDailyMetadata(ItemStack item) {
+    public ItemStack removeDailyMetadata(ItemStack item) {
+
+        ItemStack aux = item.clone();
 
         if(isItemScracth(item)) {
-            item = removeItemScracth(item);
+            aux = removeItemScracth(aux);
         }
 
         if(isDailyItem(item)) {
-            item = removeItemAsDaily(item);
+            aux = removeItemAsDaily(aux);
         }
 
         if(isCommandItem(item)) {
-            item = removeItemCommand(item);
+            aux = removeItemCommand(aux);
         }
 
         if(isItemAmount(item)) {
-            item = removeItemAmount(item);
-            item.setAmount(1);
+            aux = removeItemAmount(aux);
+            aux.setAmount(1);
         }
 
-        item = removeEconomyTypeMetadata(item);
+        aux = removeRarityMeta(aux);
+
+        return removeEconomyTypeMetadata(aux);
+
     }
 
 }
