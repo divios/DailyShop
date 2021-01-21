@@ -9,7 +9,7 @@ authors: [ Divios ]
 description: Daily random items to buy on a shop
 commands:
   rdShop:
-    description: Abre la tienda diaria
+    description: Opens diary shop
     default: false
     aliases: [DailyShop, randomshop]
     usage: /rdShop
