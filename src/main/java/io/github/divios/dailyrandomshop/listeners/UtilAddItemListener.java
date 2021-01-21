@@ -54,8 +54,8 @@ public class UtilAddItemListener implements Listener {
         }
 
         ItemStack item = e.getItem().clone();
-
         item.setAmount(1);
+        item.setDurability((short) 0);
 
         Titles.clearTitle(p);
         Bukkit.getScheduler().runTaskLater(main, () ->
