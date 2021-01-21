@@ -5,6 +5,7 @@ import de.tr7zw.changeme.nbtapi.NBTItem;
 import io.github.divios.dailyrandomshop.DailyRandomShop;
 import me.xanium.gemseconomy.currency.Currency;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -161,6 +162,9 @@ public class Utils {
     public void processItemAmount(ItemStack item, int slot) {
         if(item.getAmount() == 1) {
             item = XMaterial.RED_STAINED_GLASS_PANE.parseItem();
+            ItemMeta meta = item.getItemMeta();
+            meta.setDisplayName(ChatColor.RED + "" + ChatColor.BOLD + "Out of Stock");
+            item.setItemMeta(meta);
 
         } else item.setAmount(item.getAmount() - 1);
 
