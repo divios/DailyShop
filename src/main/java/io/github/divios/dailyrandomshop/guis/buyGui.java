@@ -102,7 +102,7 @@ public class buyGui implements InventoryHolder, Listener {
 
             if(shop.firstEmpty() == -1) break;
 
-            if(j >= (18 + main.config.N_DAILY_ITEMS - 1)) {
+            if(j >= (18 + main.config.N_DAILY_ITEMS)) {
                 break;
             }
 
