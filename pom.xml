@@ -6,7 +6,7 @@
 
     <groupId>io.github.divios</groupId>
     <artifactId>DailyRandomShop</artifactId>
-    <version>1.13.9</version>
+    <version>1.13.92</version>
     <packaging>jar</packaging>
 
     <name>DailyRandomShop</name>
@@ -18,89 +18,61 @@
     </properties>
 
     <build>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-shade-plugin</artifactId>
-                    <version>3.2.4</version>
-                    <executions>
-                        <execution>
-                            <id>shade</id>
-                            <phase>package</phase>
-                            <goals>
-                                <goal>shade</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                    <configuration>
-                        <relocations>
-                            <relocation>
-                                <!-- nbtapi -->
-                                <pattern>de.tr7zw.changeme.nbtapi</pattern>
-                                <shadedPattern>${project.groupId}.dailyrandomshop.nbtapi</shadedPattern>
-                            </relocation>
-                            <relocation>
-                                <!-- Xseries -->
-                                <pattern>com.cryptomorin.xseries</pattern>
-                                <shadedPattern>${project.groupId}.dailyrandomshop.xseries</shadedPattern>
-                            </relocation>
-                            <relocation>
-                                <!-- Bstats -->
-                                <pattern>org.bstats</pattern>
-                                <shadedPattern>${project.groupId}.dailyrandomshop.bstats</shadedPattern>
-                            </relocation>
-                            <relocation>
-                                <!-- AnvilGUI -->
-                                <pattern>net.wesjd.anvilgui</pattern>
-                                <shadedPattern>${project.groupId}.dailyrandomshop.anvilGui</shadedPattern>
-                            </relocation>
-                        </relocations>
-                        <filters>
-                            <filter>
-                                <artifact>*:*</artifact>
-                                <excludes>
-                                    <exclude>com/cryptomorin/xseries/XBiome*</exclude>
-                                    <exclude>com/cryptomorin/xseries/XEntity*</exclude>
-                                    <exclude>com/cryptomorin/xseries/XItemStack*</exclude>
-                                    <exclude>com/cryptomorin/xseries/XItemStack*</exclude>
-                                    <exclude>com/cryptomorin/xseries/XPotion*</exclude>
-                                    <exclude>com/cryptomorin/xseries/XEnchantment*</exclude>
-                                    <exclude>com/cryptomorin/xseries/XSound*</exclude>
-                                    <exclude>com/cryptomorin/xseries/XParticle*</exclude>
-                                    <exclude>com/cryptomorin/xseries/SkullUtils*</exclude>
-                                    <exclude>com/cryptomorin/xseries/NMSExtras*</exclude>
-                                    <exclude>com/cryptomorin/xseries/NoteBlockMusic*</exclude>
-                                </excludes>
-                            </filter>
-                        </filters>
-                        <createDependencyReducedPom>false</createDependencyReducedPom>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <executions>
-                        <execution>
-                            <id>compile</id>
-                            <phase>compile</phase>
-                            <goals>
-                                <goal>compile</goal>
-                            </goals>
-                        </execution>
-                        <execution>
-                            <id>testCompile</id>
-                            <phase>test-compile</phase>
-                            <goals>
-                                <goal>testCompile</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                    <configuration>
-                        <source>8</source>
-                        <target>8</target>
-                    </configuration>
-                </plugin>
-            </plugins>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.2.4</version>
+                <executions>
+                    <execution>
+                        <id>shade</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <relocations>
+                        <relocation>
+                            <!-- NBT API -->
+                            <pattern>de.tr7zw.changeme.nbtapi</pattern>
+                            <shadedPattern>${project.groupId}.dailyrandomshop.nbtapi</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <!-- AnvilGUI -->
+                            <pattern>net.wesjd.anvilgui</pattern>
+                            <shadedPattern>${project.groupId}.dailyrandomshop.anvilGui</shadedPattern>
+                        </relocation>
+                    </relocations>
+                    <createDependencyReducedPom>false</createDependencyReducedPom>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>compile</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>testCompile</id>
+                        <phase>test-compile</phase>
+                        <goals>
+                            <goal>testCompile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <source>8</source>
+                    <target>8</target>
+                </configuration>
+            </plugin>
+        </plugins>
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
@@ -111,86 +83,34 @@
 
     <repositories>
         <repository>
-            <id>CodeMC</id>
-            <url>https://repo.codemc.org/repository/maven-public</url>
+            <id>codemc-snapshots</id>
+            <url>https://repo.codemc.io/repository/maven-snapshots/</url>
         </repository>
         <repository>
-            <id>codemc-repo</id>
+            <id>codemc-repo</id> <!-- CodeMC -->
             <url>https://repo.codemc.org/repository/maven-public/</url>
             <layout>default</layout>
         </repository>
         <repository>
-            <id>spigot-repo</id>
+            <id>spigotmc-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
-        </repository>
-        <repository>
-            <id>placeholderapi</id>
-            <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
-        </repository>
-        <repository>
-            <id>jitpack.io</id>
-            <url>https://jitpack.io</url>
         </repository>
         <repository>
             <id>sonatype</id>
             <url>https://oss.sonatype.org/content/groups/public/</url>
         </repository>
-        <repository>
-            <id>codemc-snapshots</id>
-            <url>https://repo.codemc.io/repository/maven-snapshots/</url>
-        </repository>
-        <repository>
-            <id>nexus</id>
-            <name>Lumine Releases</name>
-            <url>https://mvn.lumine.io/repository/maven-public/</url>
-        </repository>
     </repositories>
 
     <dependencies>
-        <dependency>
-            <groupId>de.tr7zw</groupId>
-            <artifactId>item-nbt-api</artifactId>
-            <version>2.7.1</version>
-        </dependency>
-        <dependency>
-            <groupId>net.Indyuce</groupId>
-            <artifactId>MMOItems</artifactId>
-            <version>5.6</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>net.Indyuce</groupId>
-            <artifactId>MMOLib</artifactId>
-            <version>1.7</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>me.clip</groupId>
-            <artifactId>placeholderapi</artifactId>
-            <version>2.10.9</version>
-            <scope>provided</scope>
-        </dependency>
         <dependency>
             <groupId>net.wesjd</groupId>
             <artifactId>anvilgui</artifactId>
             <version>1.4.0-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>org.bstats</groupId>
-            <artifactId>bstats-bukkit</artifactId>
-            <version>1.8</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.github.cryptomorin</groupId>
-            <artifactId>XSeries</artifactId>
-            <version>7.8.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.github.MilkBowl</groupId>
-            <artifactId>VaultAPI</artifactId>
-            <version>1.7</version>
-            <scope>provided</scope>
+            <groupId>de.tr7zw</groupId>
+            <artifactId>item-nbt-api</artifactId>
+            <version>2.7.1</version>
         </dependency>
         <dependency>
             <groupId>org.spigotmc</groupId>

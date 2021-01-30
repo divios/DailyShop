@@ -62,8 +62,8 @@ confirm-gui-confirm-pane: "&a&lConfirmar"
 confirm-gui-return-name: "&c&lVolver"
 
   #############################
-  ####### Confirm menu ########
-  #############################
+####### Confirm menu ########
+#############################
 
 # NOTE: This is the menu that sometimes
 # appears to confirm an action
@@ -71,8 +71,8 @@ confirm-menu-yes: "&a&lConfirmar"
 confirm-manu-no: "&c&lCancelar"
 
   ##############################
-  ####### Settings menu ########
-  ##############################
+####### Settings menu ########
+##############################
 
 # NOTE: This is the menu that prompts when /rdshop settings
 settings-gui-title: "&6&lAjustes"
@@ -134,8 +134,8 @@ daily-items-menu-items-lore:
 daily-items-anvil-title: "&6&lInsertar nuevo precio"
 daily-items-anvil-default-text: "Precio"
 
-  ################################
-  ####### Sell items menu ########
+################################
+####### Sell items menu ########
 ################################
 
 # NOTE: This is the menu to manage
@@ -154,8 +154,8 @@ sell-items-menu-items-lore:
 sell-items-anvil-title: "&6&lInsertar nuevo precio"
 sell-items-anvil-default-text: "Precio"
 
-  ####################################
-  ####### Customize item menu ########
+####################################
+####### Customize item menu ########
 ####################################
 
 customize-menu-title: "&a&lPersonalizar Item"

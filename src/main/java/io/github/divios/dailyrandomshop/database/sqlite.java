@@ -1,23 +1,27 @@
 package io.github.divios.dailyrandomshop.database;
 
-import io.github.divios.dailyrandomshop.DailyRandomShop;
-
 import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-public class sqlite {
+class sqlite {
 
-    public Connection con;
-    private final String connectionString;
-    private final DailyRandomShop main;
+    private static boolean first = false;
+    public static Connection con;
+    private static String connectionString;
+    private static final io.github.divios.dailyrandomshop.main main = io.github.divios.dailyrandomshop.main.getInstance();
 
-    public sqlite(DailyRandomShop main) {
-        this.main = main;
+
+    public static void getInstance() {
+        if (!first) init();
+        connect();
+    }
+
+    public static void init() {
+        first = true;
         connectionString = "jdbc:sqlite:" + main.getDataFolder() + File.separator +
                 main.getDescription().getName().toLowerCase() + ".db";
-
         try {
             Class.forName("org.sqlite.JDBC"); // This is required to put here for Spigot 1.10 and below to force class load
         } catch (ClassNotFoundException e) {
@@ -25,7 +29,7 @@ public class sqlite {
         }
     }
 
-    public void closeConnection() {
+    public static void closeConnection() {
         try {
             if (con != null) {
                 con.close();
@@ -35,17 +39,19 @@ public class sqlite {
         }
     }
 
-    public void connect()  {
+    public static void connect() {
         if (con == null) {
             try {
                 con = DriverManager.getConnection(connectionString);
             } catch (SQLException ex) {
                 main.getLogger().severe("An error occurred retrieving the SQLite database connection: " + ex.getMessage());
-
-
+                main.getServer().getPluginManager().disablePlugin(main);
             }
         }
     }
 
-
+    public static Connection getConnection() {
+        connect();
+        return con;
+    }
 }

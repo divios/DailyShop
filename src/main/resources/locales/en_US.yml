@@ -2,9 +2,9 @@
 ####### Menus #######
 #####################
 
-  ################################
-  ####### Daily Shop menu ########
-  ################################
+################################
+####### Daily Shop menu ########
+################################
 
 # The name of the daily shop GUI
 daily-shop-gui-name: "&c&lDailyShop"
@@ -62,8 +62,8 @@ confirm-gui-confirm-pane: "&a&lConfirm"
 confirm-gui-return-name: "&c&lReturn"
 
   #############################
-  ####### Confirm menu ########
-  #############################
+####### Confirm menu ########
+#############################
 
 # NOTE: This is the menu that sometimes
 # appears to confirm an action
@@ -71,8 +71,8 @@ confirm-menu-yes: "&a&lConfirm"
 confirm-manu-no: "&c&lCancel"
 
   ##############################
-  ####### Settings menu ########
-  ##############################
+####### Settings menu ########
+##############################
 
 # NOTE: This is the menu that prompts when /rdshop settings
 settings-gui-title: "&6&lSettings"
@@ -135,8 +135,8 @@ daily-items-anvil-title: "&6&lSet Price"
 daily-items-anvil-default-text: "Price"
 
   ################################
-  ####### Sell items menu ########
-  ################################
+####### Sell items menu ########
+################################
 
 # NOTE: This is the menu to manage
 # the daily items
@@ -155,8 +155,8 @@ sell-items-anvil-title: "&6&lSet Price"
 sell-items-anvil-default-text: "Price"
 
   ####################################
-  ####### Customize item menu ########
-  ####################################
+####### Customize item menu ########
+####################################
 
 customize-menu-title: "&a&lCustomize Item"
 
