@@ -51,8 +51,8 @@ setting-gui-name: "&c&lНастройки"
 anvil-menu-name: "&6&lУстановить Цену"
 
   ##################################
-  ####### Confirm Shop menu ########
-  ##################################
+####### Confirm Shop menu ########
+##################################
 
 # The name of the confirm GUI
 confirm-gui-name: "&2&lПодтвердить Покупку"
@@ -66,8 +66,8 @@ confirm-gui-confirm-pane: "&a&lПодтвердить"
 confirm-gui-return-name: "&c&lВернутся"
 
   #############################
-  ####### Confirm menu ########
-  #############################
+####### Confirm menu ########
+#############################
 
 # NOTE: This is the menu that sometimes
 # appears to confirm an action
@@ -75,8 +75,8 @@ confirm-menu-yes: "&a&lПодтвердить"
 confirm-manu-no: "&c&lОтменить"
 
   ##############################
-  ####### Settings menu ########
-  ##############################
+####### Settings menu ########
+##############################
 
 # NOTE: This is the menu that prompts when /rdshop settings
 settings-gui-title: "&6&lНастройки"
@@ -142,8 +142,8 @@ daily-items-anvil-default-text: "Цена"
   ####### Sell items menu ########
   ################################
 
-  # NOTE: This is the menu to manage
-  # the daily items
+# NOTE: This is the menu to manage
+# the daily items
 
 sell-items-menu_title: "&a&lИзменение Предметов Продажи"
 sell-items-menu-next: "&6&lВперёд"
@@ -159,8 +159,8 @@ sell-items-anvil-title: "&6&lУстановить цену"
 sell-items-anvil-default-text: "Цена"
 
   ####################################
-  ####### Customize item menu ########
-  ####################################
+####### Customize item menu ########
+####################################
 
 customize-menu-title: "&a&lКастомизация предметов"
 

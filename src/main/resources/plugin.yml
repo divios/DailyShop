@@ -1,19 +1,18 @@
 name: DailyRandomShop
 version: ${project.version}
-main: io.github.divios.dailyrandomshop.DailyRandomShop
+main: io.github.divios.dailyrandomshop.main
 api-version: "1.13"
 prefix: DailyShop
 depend: [ Vault ]
-softdepend: [PlaceholderAPI, GemsEconomy]
+softdepend: [ PlaceholderAPI, GemsEconomy ]
 authors: [ Divios ]
 description: Daily random items to buy on a shop
 commands:
-  rdShop:
+  DailyRandomShop:
     description: Opens diary shop
     default: false
-    aliases: [DailyShop, randomshop]
+    aliases: [ DailyShop, randomshop, rdshop ]
     usage: /rdShop
-
 
 permissions:
   DailyRandomShop.open:
