@@ -1,6 +1,8 @@
 package io.github.divios.dailyrandomshop.guis.customizerguis;
 
+import io.github.divios.dailyrandomshop.builders.itemsFactory;
 import io.github.divios.dailyrandomshop.conf_msg;
+import io.github.divios.dailyrandomshop.database.dataManager;
 import io.github.divios.dailyrandomshop.guis.settings.dailyGuiSettings;
 import io.github.divios.dailyrandomshop.utils.utils;
 import io.github.divios.dailyrandomshop.xseries.XMaterial;
@@ -14,29 +16,31 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
 public class customizerMainGuiIH implements InventoryHolder, Listener {
 
     private static final io.github.divios.dailyrandomshop.main main = io.github.divios.dailyrandomshop.main.getInstance();
-    private static Inventory inv = null;
+    private static final dataManager dbManager = dataManager.getInstance();
+    private static customizerMainGuiIH instance = null;
     private ItemStack newItem;
-    private ItemStack oldItem;
 
-    private customizerMainGuiIH() {};
+    private customizerMainGuiIH() {
+    };
 
-    public static void openInventory(Player p, ItemStack newItem, ItemStack oldItem) {
-        if(inv == null) {
-            createInventory();
+    public static void openInventory(Player p, ItemStack newItem) {
+        if (instance == null) {
+            instance = new customizerMainGuiIH();
+            Bukkit.getPluginManager().registerEvents(instance, main);
         }
-        customizerMainGuiIH instance = new customizerMainGuiIH();
-        Bukkit.getPluginManager().registerEvents(instance, main);
         instance.newItem = newItem;
-        instance.oldItem = oldItem;
-        p.openInventory(instance.getInventory());
+        p.openInventory(instance.createInventory());
 
     }
 
-    private static void createInventory() {
-        inv = Bukkit.createInventory(null, 54, conf_msg.CUSTOMIZE_GUI_TITLE);
+    private Inventory createInventory() {
+        Inventory inv = Bukkit.createInventory(instance, 54, conf_msg.CUSTOMIZE_GUI_TITLE);
 
         ItemStack customizerItem = XMaterial.ANVIL.parseItem();   //Done button (anvil)
         utils.setDisplayName(customizerItem, conf_msg.CUSTOMIZE_CRAFT);
@@ -57,10 +61,13 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
         ItemStack changeLore = XMaterial.PAPER.parseItem();    //Change lore
         utils.setDisplayName(changeLore, conf_msg.CUSTOMIZE_LORE);
         utils.setLore(changeLore, conf_msg.CUSTOMIZE_LORE_LORE);
+        utils.setLore(changeLore, newItem.getItemMeta().getLore());
 
         ItemStack editEnchantments = XMaterial.BOOK.parseItem();    //Change enchants
         utils.setDisplayName(editEnchantments, conf_msg.CUSTOMIZE_ENCHANTS);
         utils.setLore(editEnchantments, conf_msg.CUSTOMIZE_ENCHANTS_LORE);
+        utils.setLore(editEnchantments, newItem.getEnchantments().entrySet().stream()
+                .map(entry -> "&f&l" + entry.getKey().getName() + ":" + entry.getValue()).collect(Collectors.toList()));
 
         ItemStack setAmount = XMaterial.STONE_BUTTON.parseItem();    //Change amount
         utils.setDisplayName(setAmount, conf_msg.CUSTOMIZE_AMOUNT);
@@ -88,12 +95,13 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
 
         Integer[] auxList = {3, 5, 13};
         ItemStack item = XMaterial.BLACK_STAINED_GLASS_PANE.parseItem();             //fill black panes
-        for (int j: auxList) {
+        for (int j : auxList) {
             utils.setDisplayName(item, "&6");
             inv.setItem(j, item);
         }
 
         //inv.setItem(4, newItem);
+        inv.setItem(4, newItem);
         inv.setItem(19, rename);
         inv.setItem(20, changeMaterial);
         inv.setItem(28, changeLore);
@@ -111,14 +119,12 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
         inv.setItem(47, returnItem);
         inv.setItem(49, customizerItem);
 
+        return inv;
     }
 
     @Override
     public Inventory getInventory() {
-        Inventory aux = Bukkit.createInventory(this, 54, conf_msg.CUSTOMIZE_GUI_TITLE);
-        aux.setContents(inv.getContents());
-        aux.setItem(4, newItem);
-        return aux;
+        return null;
     }
 
     @EventHandler
@@ -130,28 +136,34 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
         ItemStack item = e.getCurrentItem();
         Player p = (Player) e.getWhoClicked();
 
-        if(e.getSlot() != e.getRawSlot()) return;
+        if (e.getSlot() != e.getRawSlot()) return;
 
-        if(utils.isEmpty(item)) return;
+        if (utils.isEmpty(item)) return;
 
-        if ( e.getSlot() == 47) { //Boton de retornar
+        if (e.getSlot() == 47) { //Boton de retornar
             dailyGuiSettings.openInventory(p);
         }
 
-        if ( e.getSlot() == 49) { //Boton de craft
-            
+        else if (e.getSlot() == 49) { //Boton de craft
+            String uuid = new itemsFactory.Builder(newItem, false).getUUID();
+            main.getServer().broadcastMessage(uuid);
+            ItemStack aux = utils.getItemByUuid(uuid, dbManager.listDailyItems);
+            if (aux != null) {
+                utils.translateAllItemData(newItem, aux);
+                dailyGuiSettings.openInventory(p);
+            }
+            else dbManager.listDailyItems.put(new itemsFactory.Builder(newItem, true)
+                    .craft(), 500D);
+            dailyGuiSettings.openInventory(p);
         }
 
-        if ( e.getSlot() == 19) { // Boton de cambiar nombre
+        else if (e.getSlot() == 19) { // Boton de cambiar nombre
             new AnvilGUI.Builder()
                     .onClose(player -> {
-                        utils.runTaskLater(() -> openInventory(player, newItem, oldItem), 1L);
+                        utils.runTaskLater(() -> openInventory(player, newItem), 1L);
                     })
                     .onComplete((player, text) -> {
-
-                        
                         utils.setDisplayName(newItem, text);
-
                         return AnvilGUI.Response.close();
                     })
                     .text(conf_msg.CUSTOMIZE_RENAME_ANVIL_DEFAULT_TEXT)
@@ -161,45 +173,64 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
                     .open(p);
         }
 
-        if ( e.getSlot() == 20) { // Boton de cambiar material
+        else if (e.getSlot() == 20) { // Boton de cambiar material
+            changeMaterialGui.openInventory(p, newItem);
         }
 
-        if ( e.getSlot() == 0) { // Boton de cambiar lore
-        }
-
-        if ( e.getSlot() == 28) { // Boton de cambiar lore
-        }
-
-        if ( e.getSlot() == 29) { // Boton de cambiar enchants
-        }
-
-        if ( e.getSlot() == 22) { // Boton de cambiar amount
-
-        }
-
-        if ( e.getSlot() == 23) { // Boton de cambiar commands
-
-        }
-
-        if ( e.getSlot() == 32 && e.getCurrentItem() != null ) { // Boton de cambiar commands
-
-        }
-
-        if ( e.getSlot() == 25) { // Boton de hide enchants
+        else if (e.getSlot() == 28) { // Boton de cambiar lore
+            if (e.isRightClick()) {
+                utils.removeLore(newItem, 1);
+                openInventory(p, newItem);
+            } else if (e.isLeftClick())
+                new AnvilGUI.Builder()
+                        .onClose(player -> utils.runTaskLater(() ->
+                                openInventory(player, newItem), 1L))
+                        .onComplete((player, text) -> {
+                            utils.setLore(newItem, Arrays.asList(text));
+                            return AnvilGUI.Response.close();
+                        })
+                        .text(conf_msg.CUSTOMIZE_RENAME_ANVIL_DEFAULT_TEXT)
+                        .itemLeft(new ItemStack(newItem))
+                        .title(conf_msg.CUSTOMIZE_RENAME_ANVIL_TITLE)
+                        .plugin(main)
+                        .open(p);
 
         }
 
-        if ( e.getSlot() == 26) { // Boton de hide enchants
+
+        else if (e.getSlot() == 29) { // Boton de cambiar enchants
+            if (e.isLeftClick()) changeEnchantments.openInventory(p, newItem);
+            else if (e.isRightClick() && !newItem.getEnchantments().isEmpty())
+                changeEnchantments.openInventory(p, newItem, newItem.getEnchantments());
         }
 
-        if ( e.getSlot() == 35 && e.getCurrentItem() != null ) { // Boton de hide potion effects
-        }
-
-        if ( e.getSlot() == 40 && e.getCurrentItem() != null ) { // Boton de scrath MMOItem
+        else if (e.getSlot() == 22) { // Boton de cambiar amount
 
         }
 
-        if ( e.getSlot() == 8 && e.getCurrentItem() != null ) { // Boton de scrath MMOItem
+        else if (e.getSlot() == 23) { // Boton de cambiar commands
+
+        }
+
+        else if (e.getSlot() == 32 && e.getCurrentItem() != null) { // Boton de cambiar commands
+
+        }
+
+        else if (e.getSlot() == 25) { // Boton de hide enchants
+
+        }
+
+        else if (e.getSlot() == 26) { // Boton de hide enchants
+        }
+
+        else if (e.getSlot() == 35 && e.getCurrentItem() != null) { // Boton de hide potion effects
+        }
+
+        else if (e.getSlot() == 40 && e.getCurrentItem() != null) { // Boton de scrath MMOItem
+
+        }
+
+        else if (e.getSlot() == 8 && e.getCurrentItem() != null) { // Boton de scrath MMOItem
 
         }
 

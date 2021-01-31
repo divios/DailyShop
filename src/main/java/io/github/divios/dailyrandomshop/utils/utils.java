@@ -1,5 +1,7 @@
 package io.github.divios.dailyrandomshop.utils;
 
+import io.github.divios.dailyrandomshop.builders.itemsFactory;
+import io.github.divios.dailyrandomshop.database.dataManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -10,24 +12,50 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class utils {
 
     private static final io.github.divios.dailyrandomshop.main main = io.github.divios.dailyrandomshop.main.getInstance();
+    private static final dataManager dbManager = dataManager.getInstance();
+
+    public static void translateAllItemData(ItemStack recipient, ItemStack  receiver) {
+        receiver.setData(recipient.getData());
+        receiver.setType(recipient.getType());
+        receiver.setItemMeta(recipient.getItemMeta());
+        receiver.setAmount(recipient.getAmount());
+        receiver.setDurability(recipient.getDurability());
+    }
 
     public static void setDisplayName(ItemStack item, String name) {
+        if (name == null) return;
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(formatString(name));
         item.setItemMeta(meta);
     }
 
     public static void setLore(ItemStack item, List<String> lore) {
+        if(lore == null) return;
         ItemMeta meta = item.getItemMeta();
-        List<String> coloredLore = new ArrayList<>();
+        List<String> coloredLore = meta.getLore();
+        if( coloredLore == null) coloredLore = new ArrayList<>();
         for (String s : lore) {
             coloredLore.add(formatString(s));
         }
         meta.setLore(coloredLore);
+        item.setItemMeta(meta);
+    }
+
+    public static void removeLore(ItemStack item, int n) {
+        ItemMeta meta = item.getItemMeta();
+        List<String> lore = meta.getLore();
+        if(lore.isEmpty() || lore == null) return;
+        if(n == -1) lore.clear();
+        else
+            for(int i = 0; i < n; i++) {
+            lore.remove(lore.size() - 1);
+            }
+        meta.setLore(lore);
         item.setItemMeta(meta);
     }
 
@@ -70,5 +98,14 @@ public class utils {
             p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 0.5F, 1);
         } catch (NoSuchFieldError Ignored) {
         }
+    }
+
+    public static ItemStack getItemByUuid(String uuid, Map<ItemStack, Double> list) {
+        for (Map.Entry<ItemStack, Double> entry : list.entrySet()) {
+            if (new itemsFactory.Builder(entry.getKey(), false).getUUID().equals(uuid)) {
+                return entry.getKey();
+            }
+        }
+        return null;
     }
 }

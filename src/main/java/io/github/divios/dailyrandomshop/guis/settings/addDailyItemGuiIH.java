@@ -79,7 +79,7 @@ public class addDailyItemGuiIH implements InventoryHolder, Listener {
         }
 
         if (e.getSlot() == 11) {
-            customizerMainGuiIH.openInventory(p, XMaterial.GRASS.parseItem(), null);
+            customizerMainGuiIH.openInventory(p, XMaterial.GRASS.parseItem());
         }
 
         else if (e.getSlot() == 15) {

@@ -57,7 +57,7 @@ public class dynamicItemListener implements Listener {
 
         Titles.clearTitle(p);
         Bukkit.getScheduler().runTaskLater(main, () ->
-                        customizerMainGuiIH.openInventory(p, item, null)
+                        customizerMainGuiIH.openInventory(p, item)
                 , 1L);
 
         Bukkit.getScheduler().cancelTask(TaskID.getTaskId());

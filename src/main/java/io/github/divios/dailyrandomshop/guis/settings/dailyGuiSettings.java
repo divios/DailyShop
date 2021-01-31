@@ -4,9 +4,11 @@ import io.github.divios.dailyrandomshop.builders.dynamicGui;
 import io.github.divios.dailyrandomshop.builders.itemsFactory;
 import io.github.divios.dailyrandomshop.builders.lorestategy.dailySettingsLore;
 import io.github.divios.dailyrandomshop.database.dataManager;
+import io.github.divios.dailyrandomshop.guis.customizerguis.customizerMainGuiIH;
 import io.github.divios.dailyrandomshop.utils.utils;
 import io.github.divios.dailyrandomshop.xseries.XMaterial;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -20,6 +22,7 @@ public class dailyGuiSettings {
     private static final io.github.divios.dailyrandomshop.main main = io.github.divios.dailyrandomshop.main.getInstance();
     private static final dataManager dbManager = dataManager.getInstance();
     private static dailyGuiSettings instance = null;
+    private Player p;
 
     private dailyGuiSettings () {};
 
@@ -27,11 +30,12 @@ public class dailyGuiSettings {
         if(instance == null) {
             instance = new dailyGuiSettings();
         }
-
+        instance.p = p;
         new dynamicGui.Builder()
                 .contents(instance::Contents)
                 .back(settingsGuiIH::getInstance)
                 .addItems((inventory, integer) -> instance.setItems(inventory))
+                .contentAction(instance::contentAction)
                 .nonContentAction(instance::nonContentAction)
                 .setSearch(false)
                 .open(p);
@@ -53,6 +57,11 @@ public class dailyGuiSettings {
         utils.setDisplayName(addItems, "&b&lAdd");
         utils.setLore(addItems, Arrays.asList("&7Click to add item"));
         inv.setItem(52, addItems);
+    }
+
+    public dynamicGui.Response contentAction(InventoryClickEvent e) {
+        customizerMainGuiIH.openInventory(p, e.getCurrentItem());
+        return dynamicGui.Response.nu();
     }
 
     public dynamicGui.Response nonContentAction(int slot, Player p) {

@@ -73,11 +73,10 @@ public class itemsFactory {
     }
 
     public ItemStack craft(boolean uuid) {
-        NBTItem nbtItem = new NBTItem(item);
-        if (!uuid) return nbtItem.getItem();
+        if (!uuid) return item;
 
-        String metadataStr = item.getItemMeta().toString();
-        nbtItem.setString(metadataType.rds_UUID.name(), UUID.fromString(metadataStr).toString());
+        NBTItem nbtItem = new NBTItem(item);
+        nbtItem.setString(metadataType.rds_UUID.name(), UUID.randomUUID().toString());
 
         return nbtItem.getItem();
     }
@@ -94,8 +93,8 @@ public class itemsFactory {
 
     public static class Builder {
 
-        private List<metadataType> metadataToRemove;
-        private HashMap<metadataType, String> metadataToAdd;
+        private List<metadataType> metadataToRemove = new ArrayList<>();
+        private HashMap<metadataType, String> metadataToAdd = new HashMap<>();
         private boolean removeAllMetadata = false;
         private ItemStack item = null;
         private List<Enchantment> enchantments = new ArrayList<>();
@@ -171,6 +170,11 @@ public class itemsFactory {
                     enchantments, flags, LoreStategy).craft(false);
         }
 
+        public String getUUID() {
+            NBTItem nbtItem = new NBTItem(item);
+            return nbtItem.getString(metadataType.rds_UUID.name());
+        }
+
         public Double getPrice(ItemStack item, Map<ItemStack, Double> list) {
             String uuid = UUID.fromString(item.getItemMeta().toString()).toString();
 
@@ -178,7 +182,7 @@ public class itemsFactory {
                 NBTItem nbtItem = new NBTItem(entry.getKey());
                 if (nbtItem.getString(metadataType.rds_UUID.name()).equals(uuid)) return entry.getValue();
             }
-            return -1D;
+            return null;
         }
     }
 }
