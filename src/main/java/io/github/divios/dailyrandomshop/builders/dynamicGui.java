@@ -29,7 +29,7 @@ public class dynamicGui implements InventoryHolder, Listener {
     private final Function<Integer, String> title;
     private final Consumer<Player> back;
     private final Integer rows2fill;
-    private final Function<ItemStack, Response> contentAction;
+    private final Function<InventoryClickEvent, Response> contentAction;
     private final BiFunction<Integer, Player, Response> nonContentAction;
     private final BiConsumer<Inventory, Integer> addItems;
     private final boolean searchOn;
@@ -44,7 +44,7 @@ public class dynamicGui implements InventoryHolder, Listener {
             Function<Integer, String> title,
             Consumer<Player> back,
             Integer rows2fill,
-            Function<ItemStack, Response> contentAction,
+            Function<InventoryClickEvent, Response> contentAction,
             BiFunction<Integer, Player, Response> nonContentAction,
             BiConsumer<Inventory, Integer> addItems,
             boolean searchOn,
@@ -204,6 +204,10 @@ public class dynamicGui implements InventoryHolder, Listener {
         }
     }
 
+    public void open(Player p) {
+        p.openInventory(invsList.get(0));
+    }
+
 
     @Override
     public Inventory getInventory() {
@@ -230,7 +234,7 @@ public class dynamicGui implements InventoryHolder, Listener {
         else {
             Response response;
             if (slot >= 0 && slot < rows2fill && !utils.isEmpty(item)) {
-                response = contentAction.apply(item);
+                response = contentAction.apply(e);
             } else {
                 response = nonContentAction.apply(slot, p);
             }
@@ -260,7 +264,7 @@ public class dynamicGui implements InventoryHolder, Listener {
         private Consumer<Player> back = player -> {
         };
         private Integer rows2fill = 45;
-        private Function<ItemStack, Response> contentAction = itemStack -> {
+        private Function<InventoryClickEvent, Response> contentAction = InventoryClickEvent -> {
             return null;
         };
         private BiFunction<Integer, Player, Response> nonContentAction = (integer, Player) -> {
@@ -293,7 +297,7 @@ public class dynamicGui implements InventoryHolder, Listener {
             return this;
         }
 
-        public Builder contentAction(Function<ItemStack, Response> contentAction) {
+        public Builder contentAction(Function<InventoryClickEvent, Response> contentAction) {
             this.contentAction = contentAction;
             return this;
         }

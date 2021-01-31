@@ -38,8 +38,8 @@ public class dataManager {
             main.getServer().getPluginManager().disablePlugin(main);
         }
         instance.createTables();
-        instance.getSyncBuyItem();
-        instance.getSyncSellItems();
+        instance.getASyncBuyItem();
+        instance.getASyncSellItems();
     }
 
     public void createTables() {
@@ -117,18 +117,25 @@ public class dataManager {
         listSellItems = AbstractGetList("sell_items");
     }
 
+    public void getASyncSellItems() {
+        utils.async(() -> listSellItems = AbstractGetList("sell_items"));;
+    }
+
     public void updateAsyncBuyItems() {
-        utils.async(() -> AbstractUpdateList(listSellItems, "daily_items"));
+        utils.async(() -> AbstractUpdateList(listDailyItems, "daily_items"));
     }
 
     public void updateSyncBuyItems() {
-        AbstractUpdateList(listSellItems, "daily_items");
+        AbstractUpdateList(listDailyItems, "daily_items");
     }
 
     public void getSyncBuyItem() {
         listDailyItems = AbstractGetList("daily_items");
     }
 
+    public void getASyncBuyItem() {
+        utils.async(() -> listDailyItems = AbstractGetList("daily_items"));
+    }
 
     private Map<ItemStack, Double> AbstractGetList(String table) {
         Map<ItemStack, Double> items = Collections.synchronizedMap(new LinkedHashMap<>());
