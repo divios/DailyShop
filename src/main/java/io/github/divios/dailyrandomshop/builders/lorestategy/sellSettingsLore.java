@@ -8,4 +8,9 @@ public class sellSettingsLore implements loreStategy{
     public void setLore(ItemStack item) {
 
     }
+
+    @Override
+    public void removeLore(ItemStack item) {
+
+    }
 }

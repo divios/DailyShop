@@ -8,6 +8,7 @@ import io.github.divios.dailyrandomshop.utils.utils;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
+import javax.security.auth.callback.Callback;
 import java.io.IOException;
 import java.sql.*;
 import java.util.*;
@@ -17,17 +18,22 @@ public class dataManager {
     private static final io.github.divios.dailyrandomshop.main main = io.github.divios.dailyrandomshop.main.getInstance();
     private static dataManager instance = null;
     public Map<ItemStack, Double> listDailyItems, listSellItems;
-    public List<ItemStack> currentItems;
+    public List<String> currentItems;
 
     private dataManager() {
     }
 
-    public static dataManager getInstance() {
-        if (instance == null) init();
+    public static dataManager getInstance(Runnable r) {
+        if (instance == null) init(r);
         return instance;
     }
 
-    private static void init() {
+    public static dataManager getInstance() {
+        if (instance == null) init(() -> {});
+        return instance;
+    }
+
+    private static void init(Runnable r) {
         instance = new dataManager();
         sqlite.getInstance();
         try {
@@ -37,9 +43,13 @@ public class dataManager {
             e.printStackTrace();
             main.getServer().getPluginManager().disablePlugin(main);
         }
-        instance.createTables();
-        instance.getASyncBuyItem();
-        instance.getASyncSellItems();
+        utils.async(() -> {
+            instance.createTables();
+            instance.getSyncBuyItem();
+            instance.getSyncSellItems();
+            instance.getSyncCurrentItems();
+            r.run();
+        });
     }
 
     public void createTables() {
@@ -137,6 +147,14 @@ public class dataManager {
         utils.async(() -> listDailyItems = AbstractGetList("daily_items"));
     }
 
+    public void updateAsyncCurrentItems() { utils.async(this::updateCurrentItems); }
+
+    public void updateSyncCurrentItems() { updateCurrentItems(); }
+
+    public void getAsyncCurrentItems() { utils.async(() -> currentItems = getCurrentItems()); }
+
+    public void getSyncCurrentItems() { currentItems = getCurrentItems(); }
+
     private Map<ItemStack, Double> AbstractGetList(String table) {
         Map<ItemStack, Double> items = Collections.synchronizedMap(new LinkedHashMap<>());
 
@@ -204,6 +222,47 @@ public class dataManager {
         }
     }
 
+    public List<String> getCurrentItems() {
+        List<String> items = new ArrayList<>();
+        try {
+            Connection con = sqlite.getConnection();
+            String SQL_Create = "SELECT * FROM current_items";
+            PreparedStatement statement = con.prepareStatement(SQL_Create);
+            ResultSet result = statement.executeQuery();
+
+            String s;
+
+            while (result.next()) {
+                s = result.getString(1);
+                items.add(s);
+            }
+
+        } catch (SQLException e) {
+            main.getLogger().warning("Couldn't get current items from database");
+        }
+        return items;
+    }
+
+    public void updateCurrentItems() {
+            try {
+                Connection con = sqlite.getConnection();
+                PreparedStatement statement;
+
+                deleteElements("current_items");
+
+                for (String s : currentItems) {
+
+                    String insertItem = "INSERT INTO " + "current_items (material) VALUES (?)";
+                    statement = con.prepareStatement(insertItem);
+
+                    statement.setString(1, s);
+                    statement.executeUpdate();
+                }
+
+            } catch (SQLException e) {
+                main.getLogger().warning("Couldn't update current items on database");
+            }
+    }
 
     public void deleteElements(String table) throws SQLException {
         Connection con = sqlite.getConnection();

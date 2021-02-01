@@ -15,7 +15,7 @@ import java.util.List;
 public class changeMaterialGui {
 
     private static final io.github.divios.dailyrandomshop.main main = io.github.divios.dailyrandomshop.main.getInstance();
-    private static dynamicGui inventory = null;
+    private static final List<ItemStack> contents = removeGarbageMaterial();
     private ItemStack newItem;
     private Player p;
 
@@ -24,35 +24,27 @@ public class changeMaterialGui {
     public static void openInventory(Player p, ItemStack newItem) {
         changeMaterialGui instance = new changeMaterialGui();
         instance.p = p;
-        instance.newItem = newItem;
-        if(inventory != null) inventory.open(p);
-        else inventory = new dynamicGui.Builder()
+        instance.newItem = newItem.clone();
+            new dynamicGui.Builder()
                 .contents(instance::contents)
                 .contentAction(instance::contentActions)
                 .back(instance::backAction)
-                .open(p);
+                .open(p).getinvs();
     }
 
-    public List<ItemStack> contents() {
-        List<ItemStack> contents = new ArrayList<>();
-
-        for(Material m: removeGarbageMaterial()) {
-            ItemStack item = new ItemStack(m);
-            utils.setDisplayName(item, "&f&l" + m.toString());
-            contents.add(item);
-        }
+    private List<ItemStack> contents() {
         return contents;
     }
 
-    public dynamicGui.Response contentActions(InventoryClickEvent e) {
-        newItem.setType(e.getCurrentItem().getType());
-        customizerMainGuiIH.openInventory(p, newItem);
+    private dynamicGui.Response contentActions(InventoryClickEvent e) {
+        this.newItem.setType(e.getCurrentItem().getType());
+        customizerMainGuiIH.openInventory(p, this.newItem);
         return dynamicGui.Response.nu();
     }
 
-    public ArrayList<Material> removeGarbageMaterial(){
+    private static List<ItemStack> removeGarbageMaterial(){
         Inventory inv = Bukkit.createInventory(null, 54, "");
-        ArrayList<Material> materialsaux = new ArrayList<>();
+        List<ItemStack> materialsaux = new ArrayList<>();
 
         for (Material m: Material.values()) {
             ItemStack item = new ItemStack(m);
@@ -63,14 +55,17 @@ public class changeMaterialGui {
             } catch (NullPointerException e) {
                 err = true;
             }
-            if(!err) materialsaux.add(m);
+            if(!err) {
+                utils.setDisplayName(item, "&f&l" + m.toString());
+                materialsaux.add(item);
+            }
 
         }
         return materialsaux;
     }
 
     public void backAction(Player p) {
-        customizerMainGuiIH.openInventory(p, newItem);
+        customizerMainGuiIH.openInventory(p, this.newItem);
     }
 
 }

@@ -2,6 +2,7 @@ package io.github.divios.dailyrandomshop.utils;
 
 import io.github.divios.dailyrandomshop.builders.itemsFactory;
 import io.github.divios.dailyrandomshop.database.dataManager;
+import io.github.divios.dailyrandomshop.xseries.XMaterial;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -11,6 +12,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -108,4 +110,37 @@ public class utils {
         }
         return null;
     }
+
+    public static void removeItemByUuid(String uuid, Map<ItemStack, Double> list) {
+            list.entrySet().removeIf(e ->
+                    new itemsFactory.Builder(e.getKey()).getUUID().equals(uuid));
+    }
+
+    public static void changePriceByUuid(String uuid, Double price, Map<ItemStack, Double> list) {
+        for (Map.Entry<ItemStack, Double> e : list.entrySet()) {
+            if (new itemsFactory.Builder(e.getKey()).getUUID().equals(uuid)) e.setValue(price);
+        }
+    }
+
+    public static int randomValue(int minValue, int maxValue) {
+
+        return minValue + (int)(Math.random() * ((maxValue - minValue) + 1));
+    }
+
+    public static ItemStack getEntry(Map<ItemStack, Double> list, int index) {
+        int i = 0;
+        for (ItemStack item: list.keySet()) {
+            if (index == i) return item;
+            i++;
+        }
+        return null;
+    }
+
+    public static ItemStack getRedPane() {
+        ItemStack redPane = XMaterial.RED_STAINED_GLASS_PANE.parseItem();
+        utils.setDisplayName(redPane, "&cOut of stock");
+        return redPane;
+    }
+
+
 }

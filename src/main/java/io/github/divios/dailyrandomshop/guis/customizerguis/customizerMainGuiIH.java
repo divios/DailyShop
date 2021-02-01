@@ -3,6 +3,7 @@ package io.github.divios.dailyrandomshop.guis.customizerguis;
 import io.github.divios.dailyrandomshop.builders.itemsFactory;
 import io.github.divios.dailyrandomshop.conf_msg;
 import io.github.divios.dailyrandomshop.database.dataManager;
+import io.github.divios.dailyrandomshop.guis.buyGui;
 import io.github.divios.dailyrandomshop.guis.settings.dailyGuiSettings;
 import io.github.divios.dailyrandomshop.utils.utils;
 import io.github.divios.dailyrandomshop.xseries.XMaterial;
@@ -36,7 +37,6 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
         }
         instance.newItem = newItem;
         p.openInventory(instance.createInventory());
-
     }
 
     private Inventory createInventory() {
@@ -67,7 +67,8 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
         utils.setDisplayName(editEnchantments, conf_msg.CUSTOMIZE_ENCHANTS);
         utils.setLore(editEnchantments, conf_msg.CUSTOMIZE_ENCHANTS_LORE);
         utils.setLore(editEnchantments, newItem.getEnchantments().entrySet().stream()
-                .map(entry -> "&f&l" + entry.getKey().getName() + ":" + entry.getValue()).collect(Collectors.toList()));
+                .map(entry -> "&f&l" + entry.getKey()
+                .getName() + ":" + entry.getValue()).collect(Collectors.toList()));
 
         ItemStack setAmount = XMaterial.STONE_BUTTON.parseItem();    //Change amount
         utils.setDisplayName(setAmount, conf_msg.CUSTOMIZE_AMOUNT);
@@ -146,7 +147,6 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
 
         else if (e.getSlot() == 49) { //Boton de craft
             String uuid = new itemsFactory.Builder(newItem, false).getUUID();
-            main.getServer().broadcastMessage(uuid);
             ItemStack aux = utils.getItemByUuid(uuid, dbManager.listDailyItems);
             if (aux != null) {
                 utils.translateAllItemData(newItem, aux);
@@ -155,6 +155,7 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
             else dbManager.listDailyItems.put(new itemsFactory.Builder(newItem, true)
                     .craft(), 500D);
             dailyGuiSettings.openInventory(p);
+            buyGui.updateItem(uuid, buyGui.updateAction.update);
         }
 
         else if (e.getSlot() == 19) { // Boton de cambiar nombre
@@ -196,7 +197,6 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
                         .open(p);
 
         }
-
 
         else if (e.getSlot() == 29) { // Boton de cambiar enchants
             if (e.isLeftClick()) changeEnchantments.openInventory(p, newItem);

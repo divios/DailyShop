@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
@@ -20,12 +21,18 @@ public class settingsGuiIH implements Listener, InventoryHolder {
 
     private final io.github.divios.dailyrandomshop.main main = io.github.divios.dailyrandomshop.main.getInstance();
     private final dataManager dbManager = dataManager.getInstance();
+    private static settingsGuiIH instance = null;
+    private static Inventory inv = null;
 
     private settingsGuiIH() {
     }
 
-    public static void getInstance(Player p) {
-        p.openInventory(new settingsGuiIH().getInventory());
+    public static void openInventory(Player p) {
+        if (instance == null) {
+            instance = new settingsGuiIH();
+            inv = instance.getInventory();
+        }
+        p.openInventory(inv);
     }
 
     @Override
@@ -37,9 +44,6 @@ public class settingsGuiIH implements Listener, InventoryHolder {
         utils.setDisplayName(dailyItemSettings, conf_msg.SETTINGS_DAILY_ITEM);
 
         utils.setLore(dailyItemSettings, conf_msg.SETTINGS_DAILY_ITEM_LORE);
-        utils.setLore(dailyItemSettings, Arrays.asList("&7Note: changing current items except from price",
-                "&7won't change the current items in shop and furthermore",
-                "&7'll make them useless, renovate is a must in this cases"));
 
         ItemStack sellItemSettings = XMaterial.BOOK.parseItem();
         utils.setDisplayName(sellItemSettings, conf_msg.SETTINGS_SELL_ITEM);
@@ -58,6 +62,11 @@ public class settingsGuiIH implements Listener, InventoryHolder {
         GUI.setItem(11, dailyItemSettings);
         GUI.setItem(15, sellItemSettings);
         return GUI;
+    }
+
+    public static void reload() {
+        if (instance == null) return;
+        inv = instance.getInventory();
     }
 
     @EventHandler

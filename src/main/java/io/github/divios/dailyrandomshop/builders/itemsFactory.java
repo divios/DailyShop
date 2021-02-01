@@ -13,21 +13,23 @@ public class itemsFactory {
 
     private static final io.github.divios.dailyrandomshop.main main = io.github.divios.dailyrandomshop.main.getInstance();
 
-    private List<metadataType> metadataToRemove;
-    private HashMap<metadataType, String> metadataToAdd;
+    private List<dailyMetadataType> metadataToRemove;
+    private HashMap<dailyMetadataType, String> metadataToAdd;
     private boolean removeAllMetadata = false;
     private ItemStack item = null;
     private List<Enchantment> enchantments = new ArrayList<>();
     private List<ItemFlag> flags = new ArrayList<>();
     private loreStategy LoreStategy = null;
+    private strategy loreStrategyOption;
 
     private itemsFactory(ItemStack item,
-                         HashMap<metadataType, String> metadataToAdd,
-                         List<metadataType> metadataToRemove,
+                         HashMap<dailyMetadataType, String> metadataToAdd,
+                         List<dailyMetadataType> metadataToRemove,
                          boolean removeAllMetadata,
                          List<Enchantment> enchantments,
                          List<ItemFlag> flags,
-                         loreStategy LoreStategy
+                         loreStategy LoreStategy,
+                         strategy loreStrategyOption
     ) {
 
         this.item = item;
@@ -37,6 +39,7 @@ public class itemsFactory {
         this.enchantments = enchantments;
         this.flags = flags;
         this.LoreStategy = LoreStategy;
+        this.loreStrategyOption = loreStrategyOption;
 
         constructItem();
     }
@@ -46,13 +49,16 @@ public class itemsFactory {
             if (!metadataToAdd.isEmpty()) applyMetadata();
             if (!metadataToRemove.isEmpty()) removeMetadata();
         } else removeAllMetadata();
-        if (LoreStategy != null) LoreStategy.setLore(item);
+        if (LoreStategy != null) {
+            if(loreStrategyOption == strategy.add) LoreStategy.setLore(item);
+            else if (loreStrategyOption == strategy.remove) LoreStategy.removeLore(item);
+        }
     }
 
     private void applyMetadata() {
         NBTItem nbtItem = new NBTItem(item);
 
-        for (Map.Entry<metadataType, String> entry : metadataToAdd.entrySet()) {
+        for (Map.Entry<dailyMetadataType, String> entry : metadataToAdd.entrySet()) {
             nbtItem.setString(entry.getKey().name(), entry.getValue());
         }
     }
@@ -60,14 +66,14 @@ public class itemsFactory {
     private void removeMetadata() {
         NBTItem nbtItem = new NBTItem(item);
 
-        for (metadataType s : metadataToRemove) {
+        for (dailyMetadataType s : metadataToRemove) {
             nbtItem.removeKey(s.name());
         }
     }
 
     public void removeAllMetadata() {
         NBTItem nbtItem = new NBTItem(item);
-        for (metadataType m : metadataType.values()) {
+        for (dailyMetadataType m : dailyMetadataType.values()) {
             nbtItem.removeKey(m.name());
         }
     }
@@ -76,12 +82,12 @@ public class itemsFactory {
         if (!uuid) return item;
 
         NBTItem nbtItem = new NBTItem(item);
-        nbtItem.setString(metadataType.rds_UUID.name(), UUID.randomUUID().toString());
+        nbtItem.setString(dailyMetadataType.rds_UUID.name(), UUID.randomUUID().toString());
 
         return nbtItem.getItem();
     }
 
-    public enum metadataType {
+    public enum dailyMetadataType {
         DailyItem,
         sellItem,
         rds_UUID,
@@ -93,13 +99,14 @@ public class itemsFactory {
 
     public static class Builder {
 
-        private List<metadataType> metadataToRemove = new ArrayList<>();
-        private HashMap<metadataType, String> metadataToAdd = new HashMap<>();
+        private List<dailyMetadataType> metadataToRemove = new ArrayList<>();
+        private HashMap<dailyMetadataType, String> metadataToAdd = new HashMap<>();
         private boolean removeAllMetadata = false;
         private ItemStack item = null;
         private List<Enchantment> enchantments = new ArrayList<>();
         private List<ItemFlag> flags = new ArrayList<>();
         private loreStategy LoreStategy;
+        private strategy loreStategyOption;
 
         public Builder(Material material) {
             this.item = new ItemStack(material);
@@ -110,27 +117,31 @@ public class itemsFactory {
             else this.item = item;
         }
 
+        public Builder(ItemStack item) {
+            this.item = item;
+        }
+
         public Builder setMaterial(Material m) {
             item.setType(m);
             return this;
         }
 
-        public Builder setAmount(int a) {
-            item.setAmount(a);
-            return this;
-        }
-
-        public Builder setNbtToAdd(metadataType key, String value) {
+        public Builder setNbtToAdd(dailyMetadataType key, String value) {
             metadataToAdd.put(key, value);
             return this;
         }
 
-        public Builder setNbtToRemove(metadataType key) {
+        public Builder setNbtToRemove(dailyMetadataType key) {
             metadataToRemove.add(key);
             return this;
         }
 
-        public Builder removeMetadata() {
+        public boolean hasMetadata(dailyMetadataType key) {
+            NBTItem nbtItem = new NBTItem(item);
+            return nbtItem.hasKey(key.name());
+        }
+
+        public Builder removeAllMetadata() {
             removeAllMetadata = true;
             return this;
         }
@@ -155,34 +166,40 @@ public class itemsFactory {
             return this;
         }
 
-        public Builder setLoreStategy(loreStategy strategy) {
+        public Builder setLoreStrategy(loreStategy strategy, strategy str) {
             LoreStategy = strategy;
+            loreStategyOption = str;
             return this;
         }
 
         public ItemStack craft() {
             return new itemsFactory(item, metadataToAdd, metadataToRemove, removeAllMetadata,
-                    enchantments, flags, LoreStategy).craft(true);
+                    enchantments, flags, LoreStategy, loreStategyOption).craft(true);
         }
 
         public ItemStack getItem() {
             return new itemsFactory(item, metadataToAdd, metadataToRemove, removeAllMetadata,
-                    enchantments, flags, LoreStategy).craft(false);
+                    enchantments, flags, LoreStategy, loreStategyOption).craft(false);
         }
 
         public String getUUID() {
             NBTItem nbtItem = new NBTItem(item);
-            return nbtItem.getString(metadataType.rds_UUID.name());
+            return nbtItem.getString(dailyMetadataType.rds_UUID.name());
         }
 
-        public Double getPrice(ItemStack item, Map<ItemStack, Double> list) {
-            String uuid = UUID.fromString(item.getItemMeta().toString()).toString();
+        public Double getPrice(Map<ItemStack, Double> list) {
+            String uuid = getUUID();
 
             for (Map.Entry<ItemStack, Double> entry : list.entrySet()) {
                 NBTItem nbtItem = new NBTItem(entry.getKey());
-                if (nbtItem.getString(metadataType.rds_UUID.name()).equals(uuid)) return entry.getValue();
+                if (nbtItem.getString(dailyMetadataType.rds_UUID.name()).equals(uuid)) return entry.getValue();
             }
             return null;
         }
+    }
+
+    public enum strategy {
+        add,
+        remove
     }
 }
