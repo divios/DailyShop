@@ -2,7 +2,7 @@ package io.github.divios.dailyrandomshop.tasks;
 
 public class taskManager {
 
-    private static io.github.divios.dailyrandomshop.main main = io.github.divios.dailyrandomshop.main.getInstance();
+    private static final io.github.divios.dailyrandomshop.main main = io.github.divios.dailyrandomshop.main.getInstance();
     private static taskManager instance = null;
     private listsTask ListTask;
     private timerTask TimerTask;

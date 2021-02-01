@@ -19,7 +19,7 @@ public class changeMaterialGui {
     private ItemStack newItem;
     private Player p;
 
-    private changeMaterialGui() {};
+    private changeMaterialGui() {}
 
     public static void openInventory(Player p, ItemStack newItem) {
         changeMaterialGui instance = new changeMaterialGui();

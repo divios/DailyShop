@@ -9,7 +9,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
 public class commands implements CommandExecutor {
 
@@ -17,7 +16,7 @@ public class commands implements CommandExecutor {
     private final dataManager dbManager = dataManager.getInstance();
     private static commands instance = null;
 
-    private commands() {};
+    private commands() {}
 
     public static commands getInstance() {
         if (instance == null) {

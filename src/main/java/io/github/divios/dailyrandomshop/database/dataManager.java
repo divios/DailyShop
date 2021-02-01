@@ -8,7 +8,6 @@ import io.github.divios.dailyrandomshop.utils.utils;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
-import javax.security.auth.callback.Callback;
 import java.io.IOException;
 import java.sql.*;
 import java.util.*;
@@ -128,7 +127,7 @@ public class dataManager {
     }
 
     public void getASyncSellItems() {
-        utils.async(() -> listSellItems = AbstractGetList("sell_items"));;
+        utils.async(() -> listSellItems = AbstractGetList("sell_items"));
     }
 
     public void updateAsyncBuyItems() {
