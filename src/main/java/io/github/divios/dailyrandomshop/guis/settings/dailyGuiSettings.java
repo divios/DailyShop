@@ -28,7 +28,7 @@ public class dailyGuiSettings {
     private static dailyGuiSettings instance = null;
     private Player p;
 
-    private dailyGuiSettings () {};
+    private dailyGuiSettings () {}
 
     public static void openInventory(Player p) {
         if(instance == null) {

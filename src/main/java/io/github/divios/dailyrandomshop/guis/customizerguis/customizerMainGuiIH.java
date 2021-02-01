@@ -28,7 +28,7 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
     private ItemStack newItem;
 
     private customizerMainGuiIH() {
-    };
+    }
 
     public static void openInventory(Player p, ItemStack newItem) {
         if (instance == null) {

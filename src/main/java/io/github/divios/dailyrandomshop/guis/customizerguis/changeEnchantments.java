@@ -23,7 +23,7 @@ public class changeEnchantments {
     private ItemStack newItem;
     private Map<Enchantment, Integer> e;
 
-    private changeEnchantments () {};
+    private changeEnchantments () {}
 
     public static void openInventory(Player p, ItemStack newItem) {
         instance = new changeEnchantments();

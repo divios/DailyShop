@@ -8,7 +8,6 @@ import io.github.divios.dailyrandomshop.events.expiredTimerEvent;
 import io.github.divios.dailyrandomshop.utils.utils;
 import io.github.divios.dailyrandomshop.xseries.XMaterial;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -27,7 +26,7 @@ public class buyGui implements Listener, InventoryHolder {
     private static buyGui instance = null;
     private static Inventory inv = null;
 
-    private buyGui() { };
+    private buyGui() { }
 
     public static buyGui getInstance() {
         if (instance == null) {

@@ -3,14 +3,12 @@ package io.github.divios.dailyrandomshop.builders;
 import io.github.divios.dailyrandomshop.utils.utils;
 import io.github.divios.dailyrandomshop.xseries.XMaterial;
 import net.wesjd.anvilgui.AnvilGUI;
-import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
@@ -204,7 +202,7 @@ public class dynamicGui implements InventoryHolder, Listener {
         }
     }
 
-    public List<Inventory> getinvs() { return invsList; };
+    public List<Inventory> getinvs() { return invsList; }
 
     @Override
     public Inventory getInventory() {

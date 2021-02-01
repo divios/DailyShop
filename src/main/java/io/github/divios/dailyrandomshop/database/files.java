@@ -5,7 +5,7 @@ import java.io.IOException;
 
 public class files {
 
-    private static io.github.divios.dailyrandomshop.main main = io.github.divios.dailyrandomshop.main.getInstance();
+    private static final io.github.divios.dailyrandomshop.main main = io.github.divios.dailyrandomshop.main.getInstance();
 
     public static void createdb() throws IOException {
         File localeDirectory = new File(main.getDataFolder() + File.separator + "locales");

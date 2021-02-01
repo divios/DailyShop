@@ -15,8 +15,6 @@ class timerTask {
     private void timetTask() {
     }
 
-    ;
-
     public static timerTask getInstance() {
         if (TimerTask == null) {
             TimerTask = new timerTask();

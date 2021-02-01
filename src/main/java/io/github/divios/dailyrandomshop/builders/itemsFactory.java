@@ -13,14 +13,14 @@ public class itemsFactory {
 
     private static final io.github.divios.dailyrandomshop.main main = io.github.divios.dailyrandomshop.main.getInstance();
 
-    private List<dailyMetadataType> metadataToRemove;
-    private HashMap<dailyMetadataType, String> metadataToAdd;
+    private final List<dailyMetadataType> metadataToRemove;
+    private final HashMap<dailyMetadataType, String> metadataToAdd;
     private boolean removeAllMetadata = false;
     private ItemStack item = null;
     private List<Enchantment> enchantments = new ArrayList<>();
     private List<ItemFlag> flags = new ArrayList<>();
     private loreStategy LoreStategy = null;
-    private strategy loreStrategyOption;
+    private final strategy loreStrategyOption;
 
     private itemsFactory(ItemStack item,
                          HashMap<dailyMetadataType, String> metadataToAdd,
@@ -99,12 +99,12 @@ public class itemsFactory {
 
     public static class Builder {
 
-        private List<dailyMetadataType> metadataToRemove = new ArrayList<>();
-        private HashMap<dailyMetadataType, String> metadataToAdd = new HashMap<>();
+        private final List<dailyMetadataType> metadataToRemove = new ArrayList<>();
+        private final HashMap<dailyMetadataType, String> metadataToAdd = new HashMap<>();
         private boolean removeAllMetadata = false;
         private ItemStack item = null;
-        private List<Enchantment> enchantments = new ArrayList<>();
-        private List<ItemFlag> flags = new ArrayList<>();
+        private final List<Enchantment> enchantments = new ArrayList<>();
+        private final List<ItemFlag> flags = new ArrayList<>();
         private loreStategy LoreStategy;
         private strategy loreStategyOption;
 
