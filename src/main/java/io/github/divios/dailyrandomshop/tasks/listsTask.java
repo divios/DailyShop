@@ -24,6 +24,7 @@ class listsTask {
         Bukkit.getScheduler().runTaskTimerAsynchronously(main, () -> {
             dbManager.updateAsyncBuyItems();
             dbManager.updateAsyncSellItems();
+            dbManager.updateAsyncCurrentItems();
         }, 12000L, 12000L);
     }
 

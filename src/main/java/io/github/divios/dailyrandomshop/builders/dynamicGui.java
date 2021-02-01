@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
@@ -36,7 +37,7 @@ public class dynamicGui implements InventoryHolder, Listener {
     private final boolean isSearch;
     private final Integer page;
 
-    private List<Inventory> invsList = new ArrayList<>();
+    private final List<Inventory> invsList = new ArrayList<>();
 
     private dynamicGui(
             Player p,
@@ -110,7 +111,6 @@ public class dynamicGui implements InventoryHolder, Listener {
 
         int slot = 0;
         Inventory returnGui = Bukkit.createInventory(this, 54, utils.formatString(title.apply(page)));
-
         setDefaultItems(returnGui);
         if (pos == 0 && content.size() > 44) setNextItem(returnGui);
         if (pos == 1) {
@@ -204,10 +204,7 @@ public class dynamicGui implements InventoryHolder, Listener {
         }
     }
 
-    public void open(Player p) {
-        p.openInventory(invsList.get(0));
-    }
-
+    public List<Inventory> getinvs() { return invsList; };
 
     @Override
     public Inventory getInventory() {
@@ -224,7 +221,10 @@ public class dynamicGui implements InventoryHolder, Listener {
         ItemStack item = e.getCurrentItem();
         Inventory inv = e.getView().getTopInventory();
 
-        if (slot == 49) back.accept(p);
+        if (slot == 49) {
+            unregister();
+            back.accept(p);
+        }
 
         else if (slot == 53 && !utils.isEmpty(item)) p.openInventory(processNextGui(inv, 1));
         else if (slot == 45 && !utils.isEmpty(item)) p.openInventory(processNextGui(inv, -1));
@@ -245,6 +245,7 @@ public class dynamicGui implements InventoryHolder, Listener {
             else if (response.getResponse() == ResponseX.UPDATE) {
                 new dynamicGui(p, contentX, title, back, rows2fill, contentAction,
                         nonContentAction, addItems, searchOn, isSearch, page);
+
             }
         }
     }
@@ -253,6 +254,12 @@ public class dynamicGui implements InventoryHolder, Listener {
     public void onInventoryDrag(InventoryDragEvent e) {
         if (e.getView().getTopInventory().getHolder() != this) return;
         e.setCancelled(true);
+    }
+
+
+    public void unregister() {
+        InventoryDragEvent.getHandlerList().unregister(this);
+        InventoryClickEvent.getHandlerList().unregister(this);
     }
 
 
@@ -329,8 +336,6 @@ public class dynamicGui implements InventoryHolder, Listener {
 
         public dynamicGui open(Player p) {
             this.p = p;
-            Validate.notNull(content);
-            Validate.notNull(contentAction);
 
             return new dynamicGui(p, content, title, back, rows2fill, contentAction,
                     nonContentAction, addItems, searchOn, isSearch, page);

@@ -17,8 +17,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class changeEnchantments {
 
     private static final io.github.divios.dailyrandomshop.main main = io.github.divios.dailyrandomshop.main.getInstance();
-    private static dynamicGui inv = null;
     private static changeEnchantments instance = null;
+    private static final List<ItemStack> contentsList = contents();
     private Player p;
     private ItemStack newItem;
     private Map<Enchantment, Integer> e;
@@ -28,17 +28,15 @@ public class changeEnchantments {
     public static void openInventory(Player p, ItemStack newItem) {
         instance = new changeEnchantments();
         instance.p = p;
-        instance.newItem = newItem;
-        if(inv != null) inv.open(p);
-        else
-            inv = new dynamicGui.Builder()
-                    .contents(instance::contents)
+        instance.newItem = newItem.clone();
+            new dynamicGui.Builder()
+                    .contents(instance::getContents)
                     .contentAction(instance::contentAction)
                     .back(instance::backAction)
                     .open(p);
     }
 
-    private List<ItemStack> contents() {
+    private static List<ItemStack> contents() {
         List<ItemStack> contents = new ArrayList<>();
         for(Enchantment e : Enchantment.values()) {
             ItemStack item = XMaterial.BOOK.parseItem();
@@ -46,6 +44,10 @@ public class changeEnchantments {
             contents.add(item);
         }
         return contents;
+    }
+
+    private List<ItemStack> getContents() {
+        return contentsList;
     }
 
     private void backAction(Player p) {
@@ -58,10 +60,12 @@ public class changeEnchantments {
 
         new AnvilGUI.Builder()
                 .onClose(player -> utils.runTaskLater(() -> {
-                    if (!response.get()) inv.open(p);
-                    else customizerMainGuiIH.openInventory(p, newItem);
+                    customizerMainGuiIH.openInventory(p, newItem);
                 }, 1L))
                 .onComplete((player, text) -> {
+                    try {
+                        Integer.parseInt(text);
+                    } catch (NumberFormatException err) { return AnvilGUI.Response.text("Is not Integer"); }
                     newItem.addUnsafeEnchantment(Enchantment.getByName(s), Integer.parseInt(text));
                     response.set(true);
                     return AnvilGUI.Response.close();
@@ -80,7 +84,7 @@ public class changeEnchantments {
         instance.p = p;
         instance.newItem = newItem;
         instance.e = e;
-        inv = new dynamicGui.Builder()
+        new dynamicGui.Builder()
                 .contents(instance::contentsX)
                 .contentAction(instance::contentActionX)
                 .back(instance::backAction)

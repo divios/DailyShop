@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
@@ -31,7 +32,7 @@ public class addDailyItemGuiIH implements InventoryHolder, Listener {
         p.openInventory(instance.getInventory());
     }
     
-    public void init() {
+    private void init() {
         returnInventory = Bukkit.createInventory(this, 27, conf_msg.ADD_ITEMS_TITLE);
 
         ItemStack fromZero = XMaterial.REDSTONE_TORCH.parseItem();
@@ -57,6 +58,11 @@ public class addDailyItemGuiIH implements InventoryHolder, Listener {
                 returnInventory.setItem(i, XMaterial.GRAY_STAINED_GLASS_PANE.parseItem());
             }
         }
+    }
+
+    public static void reload() {
+        if(instance == null) return;
+        instance.init();
     }
 
     @Override
