@@ -1,6 +1,6 @@
 package io.github.divios.dailyrandomshop.builders.lorestategy;
 
-import io.github.divios.dailyrandomshop.builders.factory.itemsFactory;
+import io.github.divios.dailyrandomshop.builders.factory.dailyItem;
 import io.github.divios.dailyrandomshop.conf_msg;
 import io.github.divios.dailyrandomshop.database.dataManager;
 import io.github.divios.dailyrandomshop.utils.utils;
@@ -15,10 +15,9 @@ public class dailySettingsLore implements loreStrategy {
 
     @Override
     public void setLore(ItemStack item) {
-        String price = String.format("%,.2f",new itemsFactory.Builder(item)
-                .getPrice(dbManager.listDailyItems));
-        int rarityInt = (Integer) new itemsFactory.Builder(item)
-                .getMetadata(itemsFactory.dailyMetadataType.rds_rarity);
+        String price = String.format("%,.2f", dailyItem.getPrice(item));
+        int rarityInt = (Integer) new dailyItem(item)
+                .getMetadata(dailyItem.dailyMetadataType.rds_rarity);
 
         List<String> lore = new ArrayList<>();
         lore.add(conf_msg.BUY_GUI_ITEMS_LORE_PRICE);
@@ -30,9 +29,9 @@ public class dailySettingsLore implements loreStrategy {
                 .replaceAll("\\{rarity}", utils.getRarityLore(rarityInt)));
         utils.setLore(item, lore);
 
-        if(new itemsFactory.Builder(item).hasMetadata(itemsFactory.dailyMetadataType.rds_amount))
-            item.setAmount((Integer) new itemsFactory.Builder(item).
-                    getMetadata(itemsFactory.dailyMetadataType.rds_amount));
+        if(new dailyItem(item).hasMetadata(dailyItem.dailyMetadataType.rds_amount))
+            item.setAmount((Integer) new dailyItem(item).
+                    getMetadata(dailyItem.dailyMetadataType.rds_amount));
 
     }
 

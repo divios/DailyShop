@@ -1,6 +1,5 @@
 package io.github.divios.dailyrandomshop.utils;
 
-import io.github.divios.dailyrandomshop.builders.factory.itemsFactory;
 import io.github.divios.dailyrandomshop.database.dataManager;
 import io.github.divios.dailyrandomshop.xseries.XMaterial;
 import org.bukkit.Bukkit;
@@ -8,9 +7,11 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -73,13 +74,15 @@ public class utils {
         return item == null || item.getType() == Material.AIR;
     }
 
+    public static boolean isEmpty(String s) { return s == null || s.isEmpty(); }
+
     /**
      * Queue a task to be run asynchronously. <br>
      *
      * @param runnable task to run
      */
-    public static void async(Runnable runnable) {
-        Bukkit.getScheduler().runTaskAsynchronously(main, runnable);
+    public static BukkitTask async(Runnable runnable) {
+        return Bukkit.getScheduler().runTaskAsynchronously(main, runnable);
     }
 
     /**
@@ -87,8 +90,8 @@ public class utils {
      *
      * @param runnable task to run on the next server tick
      */
-    public static void sync(Runnable runnable) {
-        Bukkit.getScheduler().runTask(main, runnable);
+    public static BukkitTask sync(Runnable runnable) {
+        return Bukkit.getScheduler().runTask(main, runnable);
     }
 
     public static void runTaskLater(Runnable r, Long ticks) {
@@ -99,26 +102,6 @@ public class utils {
         try {
             p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 0.5F, 1);
         } catch (NoSuchFieldError Ignored) {
-        }
-    }
-
-    public static ItemStack getItemByUuid(String uuid, Map<ItemStack, Double> list) {
-        for (Map.Entry<ItemStack, Double> entry : list.entrySet()) {
-            if (new itemsFactory.Builder(entry.getKey(), false).getUUID().equals(uuid)) {
-                return entry.getKey();
-            }
-        }
-        return null;
-    }
-
-    public static void removeItemByUuid(String uuid, Map<ItemStack, Double> list) {
-        list.entrySet().removeIf(e ->
-                new itemsFactory.Builder(e.getKey()).getUUID().equals(uuid));
-    }
-
-    public static void changePriceByUuid(String uuid, Double price, Map<ItemStack, Double> list) {
-        for (Map.Entry<ItemStack, Double> e : list.entrySet()) {
-            if (new itemsFactory.Builder(e.getKey()).getUUID().equals(uuid)) e.setValue(price);
         }
     }
 
@@ -231,6 +214,18 @@ public class utils {
                 return "Mythic";
 
         }
+    }
+
+    public static int inventoryFull (Inventory inv) {
+
+        int freeSlots = 0;
+        for (int i = 0; i < 36; i++) {
+
+            if (utils.isEmpty(inv.getItem(i))) {
+                freeSlots++;
+            }
+        }
+        return freeSlots;
     }
 
 }

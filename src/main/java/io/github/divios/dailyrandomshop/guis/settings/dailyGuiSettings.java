@@ -1,7 +1,7 @@
 package io.github.divios.dailyrandomshop.guis.settings;
 
 import io.github.divios.dailyrandomshop.builders.dynamicGui;
-import io.github.divios.dailyrandomshop.builders.factory.itemsFactory;
+import io.github.divios.dailyrandomshop.builders.factory.dailyItem;
 import io.github.divios.dailyrandomshop.builders.lorestategy.dailySettingsLore;
 import io.github.divios.dailyrandomshop.conf_msg;
 import io.github.divios.dailyrandomshop.database.dataManager;
@@ -50,7 +50,7 @@ public class dailyGuiSettings {
         List<ItemStack> contents = new ArrayList<>();
 
         for(Map.Entry<ItemStack, Double> entry: dbManager.listDailyItems.entrySet()) {
-            contents.add(new itemsFactory.Builder(entry.getKey(), true)
+            contents.add(new dailyItem(entry.getKey(), true)
                     .addLoreStrategy(new dailySettingsLore())
                     .getItem());
         }
@@ -76,8 +76,8 @@ public class dailyGuiSettings {
                             Double.parseDouble(text);
                         } catch (NumberFormatException err) { return AnvilGUI.Response.text("Is not Integer"); }
 
-                        String uuid = new itemsFactory.Builder(e.getCurrentItem()).getUUID();
-                        utils.changePriceByUuid(uuid, Double.parseDouble(text), dbManager.listDailyItems);
+                        String uuid = dailyItem.getUuid(e.getCurrentItem());
+                        dailyItem.changePriceByUuid(uuid, Double.parseDouble(text));
                         buyGui.getInstance().updateItem(uuid, buyGui.updateAction.update);
                         return AnvilGUI.Response.close();
                     })
@@ -91,8 +91,8 @@ public class dailyGuiSettings {
         else if (e.isRightClick() && !e.isShiftClick()) {
             new confirmIH(p, (player, aBoolean) -> {
                 if (aBoolean) {
-                    String uuid = new itemsFactory.Builder(e.getCurrentItem()).getUUID();
-                    utils.removeItemByUuid(uuid, dbManager.listDailyItems);
+                    String uuid = dailyItem.getUuid(e.getCurrentItem());
+                    dailyItem.removeItemByUuid(e.getCurrentItem());
                     buyGui.getInstance().updateItem(uuid, buyGui.updateAction.delete);
                 }
                 dailyGuiSettings.openInventory(player);
@@ -100,9 +100,8 @@ public class dailyGuiSettings {
         }
 
         else if (e.isLeftClick() && e.isShiftClick()) {
-            String uuid = new itemsFactory.Builder(e.getCurrentItem()).getUUID();
             customizerMainGuiIH.openInventory(p,
-                    utils.getItemByUuid(uuid, dbManager.listDailyItems).clone());
+                    dailyItem.getRawItem(e.getCurrentItem()));
         }
         return dynamicGui.Response.nu();
     }

@@ -3,15 +3,21 @@ package io.github.divios.dailyrandomshop.database;
 import de.tr7zw.changeme.nbtapi.NBTCompound;
 import de.tr7zw.changeme.nbtapi.NBTContainer;
 import de.tr7zw.changeme.nbtapi.NBTItem;
+import io.github.divios.dailyrandomshop.builders.factory.dailyItem;
 import io.github.divios.dailyrandomshop.conf_msg;
 import io.github.divios.dailyrandomshop.guis.buyGui;
 import io.github.divios.dailyrandomshop.utils.utils;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
+import javax.security.auth.callback.Callback;
 import java.io.IOException;
 import java.sql.*;
 import java.util.*;
+import java.util.concurrent.RunnableFuture;
 
 public class dataManager {
 
@@ -24,11 +30,16 @@ public class dataManager {
     }
 
     public static dataManager getInstance() {
-        if (instance == null) init();
+        if (instance == null) init(new BukkitRunnable() {
+            @Override
+            public void run() {
+                buyGui.getInstance();
+            }
+        });
         return instance;
     }
 
-    private static void init() {
+    private static void init(BukkitRunnable c) {
         instance = new dataManager();
         sqlite.getInstance();
         try {
@@ -43,6 +54,7 @@ public class dataManager {
             instance.getSyncBuyItem();
             instance.getSyncSellItems();
             instance.getSyncCurrentItems();
+            c.run();
         });
     }
 
@@ -118,11 +130,11 @@ public class dataManager {
     }
 
     public void getSyncSellItems() {
-        listSellItems = AbstractGetList("sell_items");
+        listSellItems = AbstractGetList("sell_items", false);
     }
 
     public void getASyncSellItems() {
-        utils.async(() -> listSellItems = AbstractGetList("sell_items"));
+        utils.async(() -> listSellItems = AbstractGetList("sell_items", false));
     }
 
     public void updateAsyncBuyItems() {
@@ -134,11 +146,11 @@ public class dataManager {
     }
 
     public void getSyncBuyItem() {
-        listDailyItems = AbstractGetList("daily_items");
+        listDailyItems = AbstractGetList("daily_items", true);
     }
 
     public void getASyncBuyItem() {
-        utils.async(() -> listDailyItems = AbstractGetList("daily_items"));
+        utils.async(() -> listDailyItems = AbstractGetList("daily_items", true));
     }
 
     public void updateAsyncCurrentItems() { utils.async(this::updateCurrentItems); }
@@ -149,7 +161,7 @@ public class dataManager {
 
     public void getSyncCurrentItems() { currentItems = getCurrentItems(); }
 
-    private Map<ItemStack, Double> AbstractGetList(String table) {
+    private Map<ItemStack, Double> AbstractGetList(String table, boolean isDailyItems) {
         Map<ItemStack, Double> items = Collections.synchronizedMap(new LinkedHashMap<>());
 
         try {
@@ -168,7 +180,7 @@ public class dataManager {
                     string = new String(itemserial);
                     itemData = new NBTContainer(string);
                     item = NBTItem.convertNBTtoItem(itemData);
-                    if (item == null || item.getType() == Material.AIR) continue;
+                    if (utils.isEmpty(item)) continue;
 
                     try {
                         Material.valueOf(item.getType().toString());
@@ -180,6 +192,11 @@ public class dataManager {
                     main.getLogger().warning("A previous sell item registered on the db is now unsupported, skipping...");
                     continue;
                 }
+
+                if (utils.isEmpty(dailyItem.getUuid(item))) {
+                    new dailyItem(item).craft();
+                }
+
                 items.put(item, result.getDouble(2));
             }
 

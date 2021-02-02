@@ -2,6 +2,7 @@ package io.github.divios.dailyrandomshop.guis.customizerguis;
 
 import io.github.divios.dailyrandomshop.builders.dynamicGui;
 import io.github.divios.dailyrandomshop.utils.utils;
+import io.github.divios.dailyrandomshop.xseries.XMaterial;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -46,10 +47,10 @@ public class changeMaterialGui {
         Inventory inv = Bukkit.createInventory(null, 54, "");
         List<ItemStack> materialsaux = new ArrayList<>();
 
-        for (Material m: Material.values()) {
-            ItemStack item = new ItemStack(m);
+        for (XMaterial m: XMaterial.values()) {
+            ItemStack item = m.parseItem();
             inv.setItem(0, item);
-            Boolean err = false;
+            boolean err = false;
             try{
                 inv.getItem(0).getType();
             } catch (NullPointerException e) {

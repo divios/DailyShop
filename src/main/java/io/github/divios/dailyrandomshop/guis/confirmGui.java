@@ -1,6 +1,6 @@
 package io.github.divios.dailyrandomshop.guis;
 
-import io.github.divios.dailyrandomshop.builders.factory.itemsFactory;
+import io.github.divios.dailyrandomshop.builders.factory.dailyItem;
 import io.github.divios.dailyrandomshop.builders.lorestategy.confirmItemsLore;
 import io.github.divios.dailyrandomshop.conf_msg;
 import io.github.divios.dailyrandomshop.database.dataManager;
@@ -124,8 +124,7 @@ public class confirmGui implements Listener, InventoryHolder {
         if( nstack < 55) inv.setItem(26, add10);
         else inv.setItem(26, new ItemStack(Material.AIR));
 
-        String uuid = new itemsFactory.Builder(inv.getItem(22)).getUUID();
-        if(utils.isEmpty(utils.getItemByUuid(uuid, dbManager.listDailyItems))) {
+        if(utils.isEmpty(dailyItem.getRawItem(inv.getItem(22)))) {
             p.sendMessage(conf_msg.PREFIX + conf_msg.MSG_REMOVED_ITEM);
             b.accept(p);     /* Close inv if item is deleted */
         }

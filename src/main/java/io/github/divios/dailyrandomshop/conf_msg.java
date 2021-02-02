@@ -44,6 +44,8 @@ public class conf_msg {
 
     public static int N_DAILY_ITEMS, TIMER;
 
+    public static boolean ENABLE_SELL_GUI;
+
     public static void init() {
         main.reloadConfig();
         createLocales();
@@ -60,7 +62,7 @@ public class conf_msg {
         main.getConfig().addDefault("buy-price-multiplier", 1);
         main.getConfig().addDefault("sell-price-multiplier", 1);
         main.getConfig().addDefault("sell-price-multiplier", 1);
-        main.getConfig().addDefault("enable-sell-gui", true);
+        ENABLE_SELL_GUI = main.getConfig().getBoolean("enable-sell-gui", true);
         main.getConfig().addDefault("enable-confirm-gui", true);
         main.getConfig().addDefault("enable-rarity", true);
         N_DAILY_ITEMS = main.getConfig().getInt("number-of-daily-items", 14);
