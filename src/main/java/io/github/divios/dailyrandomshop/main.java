@@ -4,6 +4,7 @@ import io.github.divios.dailyrandomshop.database.dataManager;
 import io.github.divios.dailyrandomshop.guis.buyGui;
 import io.github.divios.dailyrandomshop.guis.settings.addDailyItemGuiIH;
 import io.github.divios.dailyrandomshop.guis.settings.settingsGuiIH;
+import io.github.divios.dailyrandomshop.hooks.hooksManager;
 import io.github.divios.dailyrandomshop.tasks.taskManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -15,10 +16,12 @@ public class main extends JavaPlugin {
     public void onEnable() {
         main = this;
         main.saveDefaultConfig();
+                                /* Init hooks  */
+        hooksManager.getInstance();
                                 /* Init conf & msgs*/
         conf_msg.init();
                                 /* Initiate database + getAllItems + timer */
-        dataManager.getInstance(buyGui::getInstance);
+        dataManager.getInstance();
                                 /* Initiate tasks */
         taskManager.getInstance();
                                 /* Register commands & tabComplete */
@@ -38,6 +41,7 @@ public class main extends JavaPlugin {
     public void realoadPlugin() {
         conf_msg.reload();
                                 /* Reload guis */
+        buyGui.getInstance().reload();
         settingsGuiIH.reload();
         addDailyItemGuiIH.reload();
     }

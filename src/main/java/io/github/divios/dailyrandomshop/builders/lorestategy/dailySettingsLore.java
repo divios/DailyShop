@@ -1,6 +1,6 @@
 package io.github.divios.dailyrandomshop.builders.lorestategy;
 
-import io.github.divios.dailyrandomshop.builders.itemsFactory;
+import io.github.divios.dailyrandomshop.builders.factory.itemsFactory;
 import io.github.divios.dailyrandomshop.conf_msg;
 import io.github.divios.dailyrandomshop.database.dataManager;
 import io.github.divios.dailyrandomshop.utils.utils;
@@ -9,7 +9,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 
-public class dailySettingsLore implements loreStategy {
+public class dailySettingsLore implements loreStrategy {
 
     private static final dataManager dbManager = dataManager.getInstance();
 
@@ -17,19 +17,34 @@ public class dailySettingsLore implements loreStategy {
     public void setLore(ItemStack item) {
         String price = String.format("%,.2f",new itemsFactory.Builder(item)
                 .getPrice(dbManager.listDailyItems));
+        int rarityInt = (Integer) new itemsFactory.Builder(item)
+                .getMetadata(itemsFactory.dailyMetadataType.rds_rarity);
+
         List<String> lore = new ArrayList<>();
         lore.add(conf_msg.BUY_GUI_ITEMS_LORE_PRICE);
         lore.add(conf_msg.BUY_GUI_ITEMS_LORE_CURRENCY);
         lore.add(conf_msg.BUY_GUI_ITEMS_LORE_RARITY);
         lore.add("");
         lore.addAll(conf_msg.DAILY_ITEMS_MENU_ITEMS_LORE);
-        lore.replaceAll(s -> s.replaceAll("\\{price}", price));
+        lore.replaceAll(s -> s.replaceAll("\\{price}", price)
+                .replaceAll("\\{rarity}", utils.getRarityLore(rarityInt)));
         utils.setLore(item, lore);
+
+        if(new itemsFactory.Builder(item).hasMetadata(itemsFactory.dailyMetadataType.rds_amount))
+            item.setAmount((Integer) new itemsFactory.Builder(item).
+                    getMetadata(itemsFactory.dailyMetadataType.rds_amount));
+
     }
 
     @Override
     public void removeLore(ItemStack item) {
         utils.removeLore(item,
                 conf_msg.DAILY_ITEMS_MENU_ITEMS_LORE.size() + 4);
+    }
+
+    @Override
+    public void update(ItemStack item) {
+        removeLore(item);
+        setLore(item);
     }
 }

@@ -1,6 +1,6 @@
 package io.github.divios.dailyrandomshop.guis;
 
-import io.github.divios.dailyrandomshop.builders.itemsFactory;
+import io.github.divios.dailyrandomshop.builders.factory.itemsFactory;
 import io.github.divios.dailyrandomshop.builders.lorestategy.currentItemsLore;
 import io.github.divios.dailyrandomshop.conf_msg;
 import io.github.divios.dailyrandomshop.database.dataManager;
@@ -8,6 +8,7 @@ import io.github.divios.dailyrandomshop.events.expiredTimerEvent;
 import io.github.divios.dailyrandomshop.utils.utils;
 import io.github.divios.dailyrandomshop.xseries.XMaterial;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -17,6 +18,7 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class buyGui implements Listener, InventoryHolder {
@@ -35,10 +37,7 @@ public class buyGui implements Listener, InventoryHolder {
         return instance;
     }
 
-    public static void openInventory(Player p) {
-        if (instance == null) {
-            init();
-        }
+    public void openInventory(Player p) {
         p.openInventory(instance.getInventory());
     }
 
@@ -100,19 +99,20 @@ public class buyGui implements Listener, InventoryHolder {
                 continue;
             }
 
-            ItemStack randomItem = new itemsFactory.Builder(utils.getEntry(listOfMaterials, ran), true)
-                    .setLoreStrategy(new currentItemsLore(), itemsFactory.strategy.add)
+            ItemStack randomItem = new itemsFactory.Builder(
+                    utils.getEntry(listOfMaterials, ran), true)
+                    .addLoreStrategy(new currentItemsLore())
                     .getItem();
 
-            /*if(Math.random() > main.utils.getRarity(randomItem)/100F
+            /* if(Math.random() > main.utils.getRarity(randomItem)/100F
                     && main.getConfig().getBoolean("enable-rarity")) continue; */
 
             inserted.add(ran);
 
             inv.setItem(j, randomItem);
-            dbManager.currentItems.add(new itemsFactory.Builder(randomItem).getUUID());
             j++;
         }
+        dbManager.currentItems = getCurrentItems();
     }
 
     /**
@@ -123,30 +123,46 @@ public class buyGui implements Listener, InventoryHolder {
     private void updateCurrentItems() {
         clearDailySlots();
         int j = 18;
-        for (String uuid : dbManager.currentItems) {
+        for (String text : dbManager.currentItems) {
+            String uuid = text.split("\\\\")[0];
+
+            int amount = -1;
+            try { amount = Integer.parseInt(text.split("\\\\")[1]); }
+            catch (IndexOutOfBoundsException ignored) {};
+
             if(j >= (18 + conf_msg.N_DAILY_ITEMS -1)) break;
             if (j == inv.getSize()) return;
 
             ItemStack item = utils.getItemByUuid(uuid, dbManager.listDailyItems);
             if(utils.isEmpty(item)) continue;
 
-            inv.setItem(j, new itemsFactory.Builder(item, true)
-                    .setLoreStrategy(new currentItemsLore(), itemsFactory.strategy.add).getItem());
+            ItemStack newItem = new itemsFactory.Builder(item, true)
+                    .addLoreStrategy(new currentItemsLore()).getItem();
+
+            if(amount!= -1 &&
+                    new itemsFactory.Builder(newItem).hasMetadata(itemsFactory.dailyMetadataType.rds_amount)) {
+                newItem.setAmount(amount);
+                new itemsFactory.Builder(newItem)
+                        .addNbt(itemsFactory.dailyMetadataType.rds_amount, "" + amount);
+            }
+
+            inv.setItem(j, newItem);
             j++;
         }
     }
 
-    public static void updateItem(String uuid, updateAction a) {
+    public void updateItem(String uuid, updateAction a) {
         utils.async(() -> {
             for (int i = 18; i < inv.getSize(); i++) {
                 ItemStack item = inv.getItem(i);
                 if (item == null) continue;
                 ItemStack newItem;
                 if (new itemsFactory.Builder(item).getUUID().equals(uuid)) {
-                    if (a == updateAction.update)
+                    if (a == updateAction.update) {
                         newItem =
                                 new itemsFactory.Builder(utils.getItemByUuid(uuid, dbManager.listDailyItems), true)
-                                        .setLoreStrategy(new currentItemsLore(), itemsFactory.strategy.add).getItem();
+                                        .addLoreStrategy(new currentItemsLore()).getItem();
+                    }
                     else {
                         newItem = utils.getRedPane();
                     }
@@ -157,15 +173,32 @@ public class buyGui implements Listener, InventoryHolder {
         });
     }
 
+    public List<String> getCurrentItems() {
+        List<String> list = new ArrayList<>();
+        for (int i = 18; i < inv.getSize(); i++) {
+            ItemStack item = inv.getItem(i);
+            if(utils.isEmpty(item)) break;
+
+            String uuid = new itemsFactory.Builder(item).getUUID();
+            if(uuid == null || uuid.isEmpty()) continue;
+
+            if(new itemsFactory.Builder(item).hasMetadata(itemsFactory.dailyMetadataType.rds_amount))
+                uuid = uuid.concat("\\" + new itemsFactory.Builder(item).getMetadata(itemsFactory.dailyMetadataType.rds_amount));
+
+            list.add(uuid);
+        }
+        return list;
+    }
+
     private void clearDailySlots() {
         for (int i = 18; i < inv.getSize(); i++) {
             inv.setItem(i, null);
         }
     }
 
-    public static void reload() {
-        if(instance == null) return;
-        instance.createInventory();
+    public void reload() {
+        inv.getViewers().forEach(HumanEntity::closeInventory);
+        instance = null;
     }
 
     @Override
@@ -177,6 +210,22 @@ public class buyGui implements Listener, InventoryHolder {
     public void onInventoryClick(InventoryClickEvent e) {
         if (e.getView().getTopInventory().getHolder() != this) return;
         e.setCancelled(true);
+
+        Player p = (Player) e.getWhoClicked();
+        if (e.getSlot() == 9) {}
+
+        else if (e.getSlot() >= 18 && e.getSlot() < inv.getSize()
+                && !utils.isEmpty(e.getCurrentItem())) {
+            String uuid = new itemsFactory.Builder(e.getCurrentItem()).getUUID();
+            confirmGui.openInventory(p,
+                        utils.getItemByUuid(uuid, dbManager.listDailyItems).clone(),
+                        (player, itemStack) -> {
+                            player.getInventory().addItem(new itemsFactory.Builder(itemStack, true).
+                                    removeAllMetadata().getItem()); /* TODO: create method o builder to process money */
+                            player.closeInventory();
+                        },
+                        player -> buyGui.getInstance().openInventory(p));
+        }
     }
 
     @EventHandler

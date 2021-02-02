@@ -33,7 +33,7 @@ public class commands implements CommandExecutor {
         Player p = (Player) sender;
 
         if (args.length == 0) {
-            buyGui.openInventory(p);
+            buyGui.getInstance().openInventory(p);
 
         } else {
 

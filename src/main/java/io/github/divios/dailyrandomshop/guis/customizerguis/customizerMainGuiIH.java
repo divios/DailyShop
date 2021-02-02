@@ -1,6 +1,7 @@
 package io.github.divios.dailyrandomshop.guis.customizerguis;
 
-import io.github.divios.dailyrandomshop.builders.itemsFactory;
+import io.github.divios.dailyrandomshop.builders.factory.itemsFactory;
+import io.github.divios.dailyrandomshop.builders.factory.itemsFactory.dailyMetadataType;
 import io.github.divios.dailyrandomshop.conf_msg;
 import io.github.divios.dailyrandomshop.database.dataManager;
 import io.github.divios.dailyrandomshop.guis.buyGui;
@@ -15,9 +16,11 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class customizerMainGuiIH implements InventoryHolder, Listener {
@@ -41,6 +44,10 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
 
     private Inventory createInventory() {
         Inventory inv = Bukkit.createInventory(instance, 54, conf_msg.CUSTOMIZE_GUI_TITLE);
+
+        ItemStack changeRarity = utils.getItemRarity(
+                (Integer) new itemsFactory.Builder(newItem).getMetadata(dailyMetadataType.rds_rarity));
+        utils.setLore(changeRarity, Arrays.asList("&7Click to change rarity"));
 
         ItemStack customizerItem = XMaterial.ANVIL.parseItem();   //Done button (anvil)
         utils.setDisplayName(customizerItem, conf_msg.CUSTOMIZE_CRAFT);
@@ -76,23 +83,39 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
 
         ItemStack makeCommand = XMaterial.COMMAND_BLOCK.parseItem();    //Change command item
         utils.setDisplayName(makeCommand, conf_msg.CUSTOMIZE_ENABLE_COMMANDS);
-        utils.setLore(makeCommand, conf_msg.CUSTOMIZE_ENABLE_COMMANDS_LORE);
+        utils.setLore(makeCommand, utils.replaceOnLore(
+                conf_msg.CUSTOMIZE_ENABLE_COMMANDS_LORE, "\\{status}",
+                "" + new itemsFactory.Builder(newItem)
+                        .hasMetadata(itemsFactory.dailyMetadataType.rds_commands)));
 
         ItemStack addRemoveCommands = XMaterial.JUKEBOX.parseItem();    //add/remove commands
         utils.setDisplayName(addRemoveCommands, conf_msg.CUSTOMIZE_CHANGE_COMMANDS);
         utils.setLore(addRemoveCommands, conf_msg.CUSTOMIZE_CHANGE_COMMANDS_LORE);
+        utils.setLore(addRemoveCommands, ( (List<String>) new itemsFactory.Builder(newItem)
+                .getMetadata(dailyMetadataType.rds_commands))
+                .stream().map(s -> utils.formatString("&f&l" + s)).collect(Collectors.toList()));
+
+        ItemFlag f = ItemFlag.HIDE_ENCHANTS;
 
         ItemStack hideEnchants = XMaterial.BLACK_BANNER.parseItem();    //add/remove enchants visible
         utils.setDisplayName(hideEnchants, conf_msg.CUSTOMIZE_TOGGLE_ENCHANTS);
-        utils.setLore(hideEnchants, conf_msg.CUSTOMIZE_TOGGLE_ENCHANTS_LORE);
+        utils.setLore(hideEnchants, utils.replaceOnLore(
+                conf_msg.CUSTOMIZE_TOGGLE_ENCHANTS_LORE, "\\{status}",
+                "" + utils.hasFlag(newItem, f)));
 
+        f = ItemFlag.HIDE_ATTRIBUTES;
         ItemStack hideAtibutes = XMaterial.BOOKSHELF.parseItem();    //add/remove attributes
         utils.setDisplayName(hideAtibutes, conf_msg.CUSTOMIZE_TOGGLE_ATTRIBUTES);
-        utils.setLore(hideEnchants, conf_msg.CUSTOMIZE_TOGGLE_ATTRIBUTES_LORE);
+        utils.setLore(hideAtibutes, utils.replaceOnLore(
+                conf_msg.CUSTOMIZE_TOGGLE_ATTRIBUTES_LORE, "\\{status}",
+                "" + utils.hasFlag(newItem, f)));
 
+        f = ItemFlag.HIDE_POTION_EFFECTS;
         ItemStack hideEffects = XMaterial.END_CRYSTAL.parseItem(); //add/remove effects
         utils.setDisplayName(hideEffects, conf_msg.CUSTOMIZE_TOGGLE_EFFECTS);
-        utils.setLore(hideEffects, conf_msg.CUSTOMIZE_TOGGLE_EFFECTS_LORE);
+        utils.setLore(hideEffects, utils.replaceOnLore(
+                conf_msg.CUSTOMIZE_TOGGLE_EFFECTS_LORE, "\\{status}",
+                "" + utils.hasFlag(newItem, f)));
 
         Integer[] auxList = {3, 5, 13};
         ItemStack item = XMaterial.BLACK_STAINED_GLASS_PANE.parseItem();             //fill black panes
@@ -101,22 +124,26 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
             inv.setItem(j, item);
         }
 
-        //inv.setItem(4, newItem);
+        if(new itemsFactory.Builder(newItem).hasMetadata(itemsFactory.dailyMetadataType.rds_amount))
+            newItem.setAmount((Integer) new itemsFactory.Builder(newItem).
+                    getMetadata(itemsFactory.dailyMetadataType.rds_amount));
+
         inv.setItem(4, newItem);
+        inv.setItem(8, changeRarity);
         inv.setItem(19, rename);
         inv.setItem(20, changeMaterial);
         inv.setItem(28, changeLore);
         inv.setItem(29, editEnchantments);
         inv.setItem(22, setAmount);
         inv.setItem(23, makeCommand);
-        //if (main.utils.isCommandItem(newItem)) inv.setItem(32, addRemoveCommands);
+        if (new itemsFactory.Builder(newItem).hasMetadata(dailyMetadataType.rds_commands))
+            inv.setItem(32, addRemoveCommands);
         inv.setItem(25, hideEnchants);
         inv.setItem(26, hideAtibutes);
-        /*if (newItem.getType() == XMaterial.POTION.parseMaterial() ||
-                newItem.getType() == XMaterial.SPLASH_POTION.parseMaterial()) {
+        if (utils.isPotion(newItem)) {
             inv.setItem(35, hideEffects);
         }
-        if (generateMMOItem != null) inv.setItem(40, generateMMOItem); */
+        /* if (generateMMOItem != null) inv.setItem(40, generateMMOItem); */
         inv.setItem(47, returnItem);
         inv.setItem(49, customizerItem);
 
@@ -148,16 +175,21 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
         else if (e.getSlot() == 49) { //Boton de craft
             String uuid = new itemsFactory.Builder(newItem, false).getUUID();
             ItemStack aux = utils.getItemByUuid(uuid, dbManager.listDailyItems);
-            if (aux != null) {
+            if (aux != null && !utils.isEmpty(aux)) {
                 utils.translateAllItemData(newItem, aux);
                 dailyGuiSettings.openInventory(p);
             }
             else dbManager.listDailyItems.put(new itemsFactory.Builder(newItem, true)
                     .craft(), 500D);
             dailyGuiSettings.openInventory(p);
-            buyGui.updateItem(uuid, buyGui.updateAction.update);
+            buyGui.getInstance().updateItem(uuid, buyGui.updateAction.update);
         }
 
+
+         else if(e.getSlot() == 8) {
+             new itemsFactory.Builder(newItem).addNbt(dailyMetadataType.rds_rarity, "").getItem();
+             openInventory(p, newItem);
+        }
         else if (e.getSlot() == 19) { // Boton de cambiar nombre
             new AnvilGUI.Builder()
                     .onClose(player -> {
@@ -191,11 +223,10 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
                             return AnvilGUI.Response.close();
                         })
                         .text(conf_msg.CUSTOMIZE_RENAME_ANVIL_DEFAULT_TEXT)
-                        .itemLeft(new ItemStack(newItem))
+                        .itemLeft(newItem.clone())
                         .title(conf_msg.CUSTOMIZE_RENAME_ANVIL_TITLE)
                         .plugin(main)
                         .open(p);
-
         }
 
         else if (e.getSlot() == 29) { // Boton de cambiar enchants
@@ -205,33 +236,90 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
         }
 
         else if (e.getSlot() == 22) { // Boton de cambiar amount
-
+            if(e.isLeftClick()) {
+                new AnvilGUI.Builder()
+                        .onClose(player -> utils.runTaskLater(() ->
+                                openInventory(player, newItem), 1L))
+                        .onComplete((player, text) -> {
+                            try {
+                                Integer.parseInt(text);
+                            } catch (NumberFormatException err) {return AnvilGUI.Response.text("not integer");}
+                            int i = Integer.parseInt(text);
+                            if(i < 1 || i > 64) return AnvilGUI.Response.text("invalid amount");
+                            new itemsFactory.Builder(newItem)
+                                    .addNbt(dailyMetadataType.rds_amount, text).getItem();
+                            return AnvilGUI.Response.close();
+                        })
+                        .text("Change amount")
+                        .itemLeft(newItem.clone())
+                        .title("&6Change amount")
+                        .plugin(main)
+                        .open(p);
+            }
+            else if (e.isRightClick()) {
+                new itemsFactory.Builder(newItem).removeNbt(dailyMetadataType.rds_amount).getItem();
+                newItem.setAmount(1);
+                openInventory(p, newItem);
+            }
         }
 
         else if (e.getSlot() == 23) { // Boton de cambiar commands
 
+            dailyMetadataType type = dailyMetadataType.rds_commands;
+
+            if(new itemsFactory.Builder(newItem).hasMetadata(type))
+                new itemsFactory.Builder(newItem).removeNbt(type).getItem();
+            else new itemsFactory.Builder(newItem).addNbt(type, "").getItem();
+
+            customizerMainGuiIH.openInventory(p, newItem);
         }
 
-        else if (e.getSlot() == 32 && e.getCurrentItem() != null) { // Boton de cambiar commands
+        else if (e.getSlot() == 32 && e.getCurrentItem() != null) { // Boton de añadir/quitar commands
+            if(e.isLeftClick()) {
+                new AnvilGUI.Builder()
+                        .onClose(player -> utils.runTaskLater(() ->
+                                openInventory(player, newItem), 1L))
+                        .onComplete((player, text) -> {
+                            if (text.isEmpty()) return AnvilGUI.Response.text("cannot be empty");
+                            new itemsFactory.Builder(newItem).addNbt(dailyMetadataType.rds_commands, text).getItem();
+                            return AnvilGUI.Response.close();
+                        })
+                        .text(conf_msg.CUSTOMIZE_ADD_COMMANDS_TITLE)
+                        .itemLeft(newItem.clone())
+                        .title(conf_msg.CUSTOMIZE_ADD_COMMANDS_TITLE)
+                        .plugin(main)
+                        .open(p);
+            }
+            else if (e.isRightClick()) {
+                List<String> commands = (List<String>) new itemsFactory.Builder(newItem)
+                        .getMetadata(dailyMetadataType.rds_commands);
 
+                new itemsFactory.Builder(newItem).removeAllMetadata().getItem();
+                commands.remove(commands.size() - 1);
+                commands.stream().forEach(s -> new itemsFactory.Builder(newItem)
+                        .addNbt(dailyMetadataType.rds_commands, s));
+            }
         }
 
         else if (e.getSlot() == 25) { // Boton de hide enchants
-
+            ItemFlag f = ItemFlag.HIDE_ENCHANTS;
+            if (utils.hasFlag(newItem, f)) utils.removeFlag(newItem, f);
+            else utils.addFlag(newItem, f);
+            openInventory(p, newItem);
         }
 
-        else if (e.getSlot() == 26) { // Boton de hide enchants
+        else if (e.getSlot() == 26) { // Boton de hide attributes
+            ItemFlag f = ItemFlag.HIDE_ATTRIBUTES;
+            if (utils.hasFlag(newItem, f)) utils.removeFlag(newItem, f);
+            else utils.addFlag(newItem, f);
+            openInventory(p, newItem);
         }
 
         else if (e.getSlot() == 35 && e.getCurrentItem() != null) { // Boton de hide potion effects
-        }
-
-        else if (e.getSlot() == 40 && e.getCurrentItem() != null) { // Boton de scrath MMOItem
-
-        }
-
-        else if (e.getSlot() == 8 && e.getCurrentItem() != null) { // Boton de scrath MMOItem
-
+            ItemFlag f = ItemFlag.HIDE_POTION_EFFECTS;
+            if (utils.hasFlag(newItem, f)) utils.removeFlag(newItem, f);
+            else utils.addFlag(newItem, f);
+            openInventory(p, newItem);
         }
 
     }
