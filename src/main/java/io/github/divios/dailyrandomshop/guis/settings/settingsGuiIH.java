@@ -6,6 +6,7 @@ import io.github.divios.dailyrandomshop.utils.utils;
 import io.github.divios.dailyrandomshop.xseries.XMaterial;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -63,6 +64,7 @@ public class settingsGuiIH implements Listener, InventoryHolder {
 
     public static void reload() {
         if (instance == null) return;
+        inv.getViewers().forEach(HumanEntity::closeInventory);
         inv = instance.getInventory();
     }
 

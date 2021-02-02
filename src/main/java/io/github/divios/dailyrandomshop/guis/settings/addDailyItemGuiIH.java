@@ -6,6 +6,7 @@ import io.github.divios.dailyrandomshop.listeners.dynamicItemListener;
 import io.github.divios.dailyrandomshop.utils.utils;
 import io.github.divios.dailyrandomshop.xseries.XMaterial;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -18,7 +19,7 @@ public class addDailyItemGuiIH implements InventoryHolder, Listener {
 
     private static final io.github.divios.dailyrandomshop.main main = io.github.divios.dailyrandomshop.main.getInstance();
     private static addDailyItemGuiIH instance = null;
-    private static Inventory returnInventory;
+    private static Inventory inv;
 
     private addDailyItemGuiIH() { }
 
@@ -32,7 +33,7 @@ public class addDailyItemGuiIH implements InventoryHolder, Listener {
     }
     
     private void init() {
-        returnInventory = Bukkit.createInventory(this, 27, conf_msg.ADD_ITEMS_TITLE);
+        inv = Bukkit.createInventory(this, 27, conf_msg.ADD_ITEMS_TITLE);
 
         ItemStack fromZero = XMaterial.REDSTONE_TORCH.parseItem();
         utils.setDisplayName(fromZero, conf_msg.ADD_ITEMS_FROM_ZERO);
@@ -47,26 +48,27 @@ public class addDailyItemGuiIH implements InventoryHolder, Listener {
         utils.setLore(returnItem, conf_msg.ADD_ITEMS_RETURN_LORE);
 
 
-        returnInventory.setItem(11, fromZero);
-        returnInventory.setItem(15, fromItem);
-        returnInventory.setItem(22, returnItem);
+        inv.setItem(11, fromZero);
+        inv.setItem(15, fromItem);
+        inv.setItem(22, returnItem);
 
-        for (int i = 0; i < returnInventory.getSize(); i++) {
-            ItemStack item = returnInventory.getItem(i);
+        for (int i = 0; i < inv.getSize(); i++) {
+            ItemStack item = inv.getItem(i);
             if (utils.isEmpty(item)) {
-                returnInventory.setItem(i, XMaterial.GRAY_STAINED_GLASS_PANE.parseItem());
+                inv.setItem(i, XMaterial.GRAY_STAINED_GLASS_PANE.parseItem());
             }
         }
     }
 
     public static void reload() {
         if(instance == null) return;
+        inv.getViewers().forEach(HumanEntity::closeInventory);
         instance.init();
     }
 
     @Override
     public Inventory getInventory() {
-        return returnInventory;
+        return inv;
     }
 
     @EventHandler

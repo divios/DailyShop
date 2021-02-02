@@ -1,7 +1,7 @@
 package io.github.divios.dailyrandomshop.guis.settings;
 
 import io.github.divios.dailyrandomshop.builders.dynamicGui;
-import io.github.divios.dailyrandomshop.builders.itemsFactory;
+import io.github.divios.dailyrandomshop.builders.factory.itemsFactory;
 import io.github.divios.dailyrandomshop.builders.lorestategy.dailySettingsLore;
 import io.github.divios.dailyrandomshop.conf_msg;
 import io.github.divios.dailyrandomshop.database.dataManager;
@@ -51,7 +51,7 @@ public class dailyGuiSettings {
 
         for(Map.Entry<ItemStack, Double> entry: dbManager.listDailyItems.entrySet()) {
             contents.add(new itemsFactory.Builder(entry.getKey(), true)
-                    .setLoreStrategy(new dailySettingsLore(), itemsFactory.strategy.add)
+                    .addLoreStrategy(new dailySettingsLore())
                     .getItem());
         }
         return contents;
@@ -78,7 +78,7 @@ public class dailyGuiSettings {
 
                         String uuid = new itemsFactory.Builder(e.getCurrentItem()).getUUID();
                         utils.changePriceByUuid(uuid, Double.parseDouble(text), dbManager.listDailyItems);
-                        buyGui.updateItem(uuid, buyGui.updateAction.update);
+                        buyGui.getInstance().updateItem(uuid, buyGui.updateAction.update);
                         return AnvilGUI.Response.close();
                     })
                     .text("Change price")
@@ -93,7 +93,7 @@ public class dailyGuiSettings {
                 if (aBoolean) {
                     String uuid = new itemsFactory.Builder(e.getCurrentItem()).getUUID();
                     utils.removeItemByUuid(uuid, dbManager.listDailyItems);
-                    buyGui.updateItem(uuid, buyGui.updateAction.delete);
+                    buyGui.getInstance().updateItem(uuid, buyGui.updateAction.delete);
                 }
                 dailyGuiSettings.openInventory(player);
             }, "&aConfirm");

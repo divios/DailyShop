@@ -4,6 +4,7 @@ import de.tr7zw.changeme.nbtapi.NBTCompound;
 import de.tr7zw.changeme.nbtapi.NBTContainer;
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import io.github.divios.dailyrandomshop.conf_msg;
+import io.github.divios.dailyrandomshop.guis.buyGui;
 import io.github.divios.dailyrandomshop.utils.utils;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -22,17 +23,12 @@ public class dataManager {
     private dataManager() {
     }
 
-    public static dataManager getInstance(Runnable r) {
-        if (instance == null) init(r);
-        return instance;
-    }
-
     public static dataManager getInstance() {
-        if (instance == null) init(() -> {});
+        if (instance == null) init();
         return instance;
     }
 
-    private static void init(Runnable r) {
+    private static void init() {
         instance = new dataManager();
         sqlite.getInstance();
         try {
@@ -47,7 +43,6 @@ public class dataManager {
             instance.getSyncBuyItem();
             instance.getSyncSellItems();
             instance.getSyncCurrentItems();
-            r.run();
         });
     }
 
@@ -243,6 +238,7 @@ public class dataManager {
     }
 
     public void updateCurrentItems() {
+            currentItems = buyGui.getInstance().getCurrentItems();
             try {
                 Connection con = sqlite.getConnection();
                 PreparedStatement statement;
