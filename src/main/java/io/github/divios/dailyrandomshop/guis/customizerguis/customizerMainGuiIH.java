@@ -1,7 +1,7 @@
 package io.github.divios.dailyrandomshop.guis.customizerguis;
 
-import io.github.divios.dailyrandomshop.builders.factory.itemsFactory;
-import io.github.divios.dailyrandomshop.builders.factory.itemsFactory.dailyMetadataType;
+import io.github.divios.dailyrandomshop.builders.factory.dailyItem;
+import io.github.divios.dailyrandomshop.builders.factory.dailyItem.dailyMetadataType;
 import io.github.divios.dailyrandomshop.conf_msg;
 import io.github.divios.dailyrandomshop.database.dataManager;
 import io.github.divios.dailyrandomshop.guis.buyGui;
@@ -46,7 +46,7 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
         Inventory inv = Bukkit.createInventory(instance, 54, conf_msg.CUSTOMIZE_GUI_TITLE);
 
         ItemStack changeRarity = utils.getItemRarity(
-                (Integer) new itemsFactory.Builder(newItem).getMetadata(dailyMetadataType.rds_rarity));
+                (Integer) new dailyItem(newItem).getMetadata(dailyMetadataType.rds_rarity));
         utils.setLore(changeRarity, Arrays.asList("&7Click to change rarity"));
 
         ItemStack customizerItem = XMaterial.ANVIL.parseItem();   //Done button (anvil)
@@ -85,13 +85,13 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
         utils.setDisplayName(makeCommand, conf_msg.CUSTOMIZE_ENABLE_COMMANDS);
         utils.setLore(makeCommand, utils.replaceOnLore(
                 conf_msg.CUSTOMIZE_ENABLE_COMMANDS_LORE, "\\{status}",
-                "" + new itemsFactory.Builder(newItem)
-                        .hasMetadata(itemsFactory.dailyMetadataType.rds_commands)));
+                "" + new dailyItem(newItem)
+                        .hasMetadata(dailyMetadataType.rds_commands)));
 
         ItemStack addRemoveCommands = XMaterial.JUKEBOX.parseItem();    //add/remove commands
         utils.setDisplayName(addRemoveCommands, conf_msg.CUSTOMIZE_CHANGE_COMMANDS);
         utils.setLore(addRemoveCommands, conf_msg.CUSTOMIZE_CHANGE_COMMANDS_LORE);
-        utils.setLore(addRemoveCommands, ( (List<String>) new itemsFactory.Builder(newItem)
+        utils.setLore(addRemoveCommands, ( (List<String>) new dailyItem(newItem)
                 .getMetadata(dailyMetadataType.rds_commands))
                 .stream().map(s -> utils.formatString("&f&l" + s)).collect(Collectors.toList()));
 
@@ -124,9 +124,9 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
             inv.setItem(j, item);
         }
 
-        if(new itemsFactory.Builder(newItem).hasMetadata(itemsFactory.dailyMetadataType.rds_amount))
-            newItem.setAmount((Integer) new itemsFactory.Builder(newItem).
-                    getMetadata(itemsFactory.dailyMetadataType.rds_amount));
+        if(new dailyItem(newItem).hasMetadata(dailyMetadataType.rds_amount))
+            newItem.setAmount((Integer) new dailyItem(newItem).
+                    getMetadata(dailyMetadataType.rds_amount));
 
         inv.setItem(4, newItem);
         inv.setItem(8, changeRarity);
@@ -136,7 +136,7 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
         inv.setItem(29, editEnchantments);
         inv.setItem(22, setAmount);
         inv.setItem(23, makeCommand);
-        if (new itemsFactory.Builder(newItem).hasMetadata(dailyMetadataType.rds_commands))
+        if (new dailyItem(newItem).hasMetadata(dailyMetadataType.rds_commands))
             inv.setItem(32, addRemoveCommands);
         inv.setItem(25, hideEnchants);
         inv.setItem(26, hideAtibutes);
@@ -173,21 +173,20 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
         }
 
         else if (e.getSlot() == 49) { //Boton de craft
-            String uuid = new itemsFactory.Builder(newItem, false).getUUID();
-            ItemStack aux = utils.getItemByUuid(uuid, dbManager.listDailyItems);
+            ItemStack aux = dailyItem.getRawItem(newItem);
             if (aux != null && !utils.isEmpty(aux)) {
                 utils.translateAllItemData(newItem, aux);
                 dailyGuiSettings.openInventory(p);
             }
-            else dbManager.listDailyItems.put(new itemsFactory.Builder(newItem, true)
+            else dbManager.listDailyItems.put(new dailyItem(newItem, true)
                     .craft(), 500D);
             dailyGuiSettings.openInventory(p);
-            buyGui.getInstance().updateItem(uuid, buyGui.updateAction.update);
+            buyGui.getInstance().updateItem(dailyItem.getUuid(newItem), buyGui.updateAction.update);
         }
 
 
          else if(e.getSlot() == 8) {
-             new itemsFactory.Builder(newItem).addNbt(dailyMetadataType.rds_rarity, "").getItem();
+             new dailyItem(newItem).addNbt(dailyMetadataType.rds_rarity, "").getItem();
              openInventory(p, newItem);
         }
         else if (e.getSlot() == 19) { // Boton de cambiar nombre
@@ -246,7 +245,7 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
                             } catch (NumberFormatException err) {return AnvilGUI.Response.text("not integer");}
                             int i = Integer.parseInt(text);
                             if(i < 1 || i > 64) return AnvilGUI.Response.text("invalid amount");
-                            new itemsFactory.Builder(newItem)
+                            new dailyItem(newItem)
                                     .addNbt(dailyMetadataType.rds_amount, text).getItem();
                             return AnvilGUI.Response.close();
                         })
@@ -257,7 +256,7 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
                         .open(p);
             }
             else if (e.isRightClick()) {
-                new itemsFactory.Builder(newItem).removeNbt(dailyMetadataType.rds_amount).getItem();
+                new dailyItem(newItem).removeNbt(dailyMetadataType.rds_amount).getItem();
                 newItem.setAmount(1);
                 openInventory(p, newItem);
             }
@@ -267,9 +266,9 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
 
             dailyMetadataType type = dailyMetadataType.rds_commands;
 
-            if(new itemsFactory.Builder(newItem).hasMetadata(type))
-                new itemsFactory.Builder(newItem).removeNbt(type).getItem();
-            else new itemsFactory.Builder(newItem).addNbt(type, "").getItem();
+            if(new dailyItem(newItem).hasMetadata(type))
+                new dailyItem(newItem).removeNbt(type).getItem();
+            else new dailyItem(newItem).addNbt(type, "").getItem();
 
             customizerMainGuiIH.openInventory(p, newItem);
         }
@@ -281,7 +280,7 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
                                 openInventory(player, newItem), 1L))
                         .onComplete((player, text) -> {
                             if (text.isEmpty()) return AnvilGUI.Response.text("cannot be empty");
-                            new itemsFactory.Builder(newItem).addNbt(dailyMetadataType.rds_commands, text).getItem();
+                            new dailyItem(newItem).addNbt(dailyMetadataType.rds_commands, text).getItem();
                             return AnvilGUI.Response.close();
                         })
                         .text(conf_msg.CUSTOMIZE_ADD_COMMANDS_TITLE)
@@ -291,12 +290,12 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
                         .open(p);
             }
             else if (e.isRightClick()) {
-                List<String> commands = (List<String>) new itemsFactory.Builder(newItem)
+                List<String> commands = (List<String>) new dailyItem(newItem)
                         .getMetadata(dailyMetadataType.rds_commands);
 
-                new itemsFactory.Builder(newItem).removeAllMetadata().getItem();
+                new dailyItem(newItem).removeAllMetadata().getItem();
                 commands.remove(commands.size() - 1);
-                commands.stream().forEach(s -> new itemsFactory.Builder(newItem)
+                commands.stream().forEach(s -> new dailyItem(newItem)
                         .addNbt(dailyMetadataType.rds_commands, s));
             }
         }

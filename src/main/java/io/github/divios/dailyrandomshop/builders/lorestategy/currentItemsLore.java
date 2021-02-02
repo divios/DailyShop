@@ -1,6 +1,6 @@
 package io.github.divios.dailyrandomshop.builders.lorestategy;
 
-import io.github.divios.dailyrandomshop.builders.factory.itemsFactory;
+import io.github.divios.dailyrandomshop.builders.factory.dailyItem;
 import io.github.divios.dailyrandomshop.conf_msg;
 import io.github.divios.dailyrandomshop.database.dataManager;
 import io.github.divios.dailyrandomshop.utils.utils;
@@ -17,8 +17,7 @@ public class currentItemsLore implements loreStrategy {
     @Override
     public void setLore(ItemStack item) {
 
-        String price = String.format("%,.2f", new itemsFactory.Builder(item)
-                .getPrice(dbManager.listDailyItems));
+        String price = String.format("%,.2f", dailyItem.getPrice(item));
 
         List<String> lore = new ArrayList<>();
 

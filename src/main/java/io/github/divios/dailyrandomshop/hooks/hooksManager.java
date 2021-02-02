@@ -1,6 +1,7 @@
 package io.github.divios.dailyrandomshop.hooks;
 
 import net.milkbowl.vault.economy.Economy;
+import org.bukkit.Bukkit;
 
 public class hooksManager {
 
@@ -20,9 +21,10 @@ public class hooksManager {
     private void init() {
         /* TODO: Initiate all hooks */
         vaultHook.hook();
+        placeholderApiHook.getInstance();
     }
 
-    public Economy getEcon() {
+    public Economy getVault() {
         return vaultHook.getEcon();
     }
 

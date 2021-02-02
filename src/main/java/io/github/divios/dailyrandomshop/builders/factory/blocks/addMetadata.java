@@ -1,7 +1,7 @@
 package io.github.divios.dailyrandomshop.builders.factory.blocks;
 
 import de.tr7zw.changeme.nbtapi.NBTItem;
-import io.github.divios.dailyrandomshop.builders.factory.itemsFactory.dailyMetadataType;
+import io.github.divios.dailyrandomshop.builders.factory.dailyItem.dailyMetadataType;
 import io.github.divios.dailyrandomshop.utils.utils;
 import org.bukkit.inventory.ItemStack;
 
