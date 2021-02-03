@@ -3,7 +3,7 @@ package io.github.divios.dailyrandomshop.hooks;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
-public class vaultHook {
+class vaultHook {
 
     private static Economy econ = null;
 

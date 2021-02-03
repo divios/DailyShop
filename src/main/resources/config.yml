@@ -11,11 +11,7 @@ language: "en_US"
 # Default: 86400 seconds = 1 day
 timer-duration: 86400
 
-# In case you want to multiply every item price
-# on the shop, you can do it here
-# Defaults to 1
-buy-price-multiplier: 1
-sell-price-multiplier: 1
+default-price: 500.0
 
 # The number of daily items on the shop, the minimum is 1 and the maximum is 36.
 # If none of them is provided it 'll default to 14

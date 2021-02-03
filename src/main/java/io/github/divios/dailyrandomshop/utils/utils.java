@@ -1,5 +1,6 @@
 package io.github.divios.dailyrandomshop.utils;
 
+import io.github.divios.dailyrandomshop.conf_msg;
 import io.github.divios.dailyrandomshop.database.dataManager;
 import io.github.divios.dailyrandomshop.xseries.XMaterial;
 import org.bukkit.Bukkit;
@@ -23,11 +24,13 @@ public class utils {
     private static final dataManager dbManager = dataManager.getInstance();
 
     public static void translateAllItemData(ItemStack recipient, ItemStack receiver) {
-        receiver.setData(recipient.getData());
-        receiver.setType(recipient.getType());
-        receiver.setItemMeta(recipient.getItemMeta());
-        receiver.setAmount(recipient.getAmount());
-        receiver.setDurability(recipient.getDurability());
+        try {
+            receiver.setData(recipient.getData());
+            receiver.setType(recipient.getType());
+            receiver.setItemMeta(recipient.getItemMeta());
+            receiver.setAmount(recipient.getAmount());
+            receiver.setDurability(recipient.getDurability());
+        } catch (IllegalArgumentException ignored) {}
     }
 
     public static void setDisplayName(ItemStack item, String name) {
@@ -153,69 +156,6 @@ public class utils {
                 item.getType().equals(XMaterial.SPLASH_POTION.parseMaterial());
     }
 
-    //common (100), uncommon (80), rare (60), epic (40), ancient (20), legendary (10), mythic (5)
-    public static ItemStack getItemRarity(int s) {
-        ItemStack changeRarity = null;
-        switch (s) {
-            case 0:
-                changeRarity = XMaterial.GRAY_DYE.parseItem();
-                utils.setDisplayName(changeRarity, "&7Common");
-                break;
-            case 80:
-                changeRarity = XMaterial.PINK_DYE.parseItem();
-                utils.setDisplayName(changeRarity, "&dUncommon");
-                break;
-            case 60:
-                changeRarity = XMaterial.MAGENTA_DYE.parseItem();
-                utils.setDisplayName(changeRarity, "&5Rare");
-                break;
-            case 40:
-                changeRarity = XMaterial.PURPLE_DYE.parseItem();
-                utils.setDisplayName(changeRarity, "&5Epic");
-                break;
-            case 20:
-                changeRarity = XMaterial.CYAN_DYE.parseItem();
-                utils.setDisplayName(changeRarity, "&9Ancient");
-                break;
-            case 10:
-                changeRarity = XMaterial.ORANGE_DYE.parseItem();
-                utils.setDisplayName(changeRarity, "&6Legendary");
-                break;
-            default:
-                changeRarity = XMaterial.YELLOW_DYE.parseItem();
-                utils.setDisplayName(changeRarity, "&eMythic");
-                break;
-        }
-        return changeRarity;
-    }
-
-    public static String getRarityLore(int rarity) {
-
-        switch (rarity) {
-            case 0:
-                return "Common";
-
-            case 80:
-                return "UnCommon";
-
-            case 60:
-                return "Rare";
-
-            case 40:
-                return "Epic";
-
-            case 20:
-                return "Ancient";
-
-            case 10:
-                return "Legendary";
-
-            default:
-                return "Mythic";
-
-        }
-    }
-
     public static int inventoryFull (Inventory inv) {
 
         int freeSlots = 0;
@@ -226,6 +166,42 @@ public class utils {
             }
         }
         return freeSlots;
+    }
+
+    public static void noPerms(Player p) {
+        p.sendMessage(conf_msg.PREFIX + conf_msg.MSG_NOT_PERMS);
+    }
+
+    public static void changeItemPrice(ItemStack toSearch, Double price) {
+        for(Map.Entry<ItemStack, Double> e : dbManager.listSellItems.entrySet()) {
+            if(e.getKey().getType().equals(toSearch.getType())) {
+                e.setValue(price);
+                return;
+            }
+        }
+    }
+
+    public static void removeItem(ItemStack toSearch) {
+        dbManager.listSellItems.entrySet().removeIf(e -> e.getKey().getType().
+                equals(toSearch.getType()));
+    }
+
+    public static boolean hasItem(ItemStack toSearch) {
+        for(Map.Entry<ItemStack, Double> e : dbManager.listSellItems.entrySet()) {
+            if(e.getKey().getType().equals(toSearch.getType())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static Double getPrice(ItemStack toSearch) {
+        for(Map.Entry<ItemStack, Double> e : dbManager.listSellItems.entrySet()) {
+            if(e.getKey().getType().equals(toSearch.getType())) {
+                return e.getValue();
+            }
+        }
+        return -1D;
     }
 
 }

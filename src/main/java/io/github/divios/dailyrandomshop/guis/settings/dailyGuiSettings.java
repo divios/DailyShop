@@ -2,12 +2,12 @@ package io.github.divios.dailyrandomshop.guis.settings;
 
 import io.github.divios.dailyrandomshop.builders.dynamicGui;
 import io.github.divios.dailyrandomshop.builders.factory.dailyItem;
-import io.github.divios.dailyrandomshop.builders.lorestategy.dailySettingsLore;
 import io.github.divios.dailyrandomshop.conf_msg;
 import io.github.divios.dailyrandomshop.database.dataManager;
 import io.github.divios.dailyrandomshop.guis.buyGui;
 import io.github.divios.dailyrandomshop.guis.confirmIH;
 import io.github.divios.dailyrandomshop.guis.customizerguis.customizerMainGuiIH;
+import io.github.divios.dailyrandomshop.lorestategy.dailySettingsLore;
 import io.github.divios.dailyrandomshop.utils.utils;
 import io.github.divios.dailyrandomshop.xseries.XMaterial;
 import net.wesjd.anvilgui.AnvilGUI;
@@ -69,7 +69,7 @@ public class dailyGuiSettings {
         if (e.isLeftClick() && !e.isShiftClick()) {
             new AnvilGUI.Builder()
                     .onClose(player -> utils.runTaskLater(() -> {
-                        dailyGuiSettings.openInventory(player);
+                        openInventory(player);
                     }, 1L))
                     .onComplete((player, text) -> {
                         try {
@@ -81,9 +81,9 @@ public class dailyGuiSettings {
                         buyGui.getInstance().updateItem(uuid, buyGui.updateAction.update);
                         return AnvilGUI.Response.close();
                     })
-                    .text("Change price")
+                    .text(conf_msg.DAILY_ITEMS_MENU_ANVIL_DEFAULT_TEXT)
                     .itemLeft(new ItemStack(XMaterial.EMERALD.parseMaterial()))
-                    .title("price")
+                    .title(conf_msg.DAILY_ITEMS_MENU_ANVIL_TITLE)
                     .plugin(main)
                     .open(p);
         }
@@ -95,7 +95,7 @@ public class dailyGuiSettings {
                     dailyItem.removeItemByUuid(e.getCurrentItem());
                     buyGui.getInstance().updateItem(uuid, buyGui.updateAction.delete);
                 }
-                dailyGuiSettings.openInventory(player);
+                openInventory(player);
             }, "&aConfirm");
         }
 

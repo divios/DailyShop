@@ -1,9 +1,9 @@
 package io.github.divios.dailyrandomshop.guis;
 
 import io.github.divios.dailyrandomshop.builders.factory.dailyItem;
-import io.github.divios.dailyrandomshop.builders.lorestategy.confirmItemsLore;
 import io.github.divios.dailyrandomshop.conf_msg;
 import io.github.divios.dailyrandomshop.database.dataManager;
+import io.github.divios.dailyrandomshop.lorestategy.confirmItemsLore;
 import io.github.divios.dailyrandomshop.utils.utils;
 import io.github.divios.dailyrandomshop.xseries.XMaterial;
 import org.bukkit.Bukkit;

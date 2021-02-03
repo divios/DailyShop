@@ -2,16 +2,14 @@ package io.github.divios.dailyrandomshop.builders.factory;
 
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import io.github.divios.dailyrandomshop.builders.factory.blocks.*;
-import io.github.divios.dailyrandomshop.builders.lorestategy.loreStrategy;
 import io.github.divios.dailyrandomshop.database.dataManager;
+import io.github.divios.dailyrandomshop.lorestategy.loreStrategy;
 import io.github.divios.dailyrandomshop.utils.utils;
+import io.github.divios.dailyrandomshop.xseries.XMaterial;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class dailyItem {
 
@@ -56,7 +54,7 @@ public class dailyItem {
         return nbtItem.getItem();
     }
 
-    public dailyItem addNbt(dailyMetadataType key, String value) {
+    public dailyItem addNbt(dailyMetadataType key, Object value) {
         RunnableBlocks.add(new addMetadata(key, value));
         return this;
     }
@@ -80,6 +78,9 @@ public class dailyItem {
             case rds_commands:
                 obj = nbtItem.getObject(key.name(), List.class);
                 if(obj == null) obj = new ArrayList<>();
+                break;
+            case rds_econ:
+                obj = nbtItem.getObject(key.name(), AbstractMap.SimpleEntry.class);
                 break;
             case rds_rarity:
                 return nbtItem.getInteger(key.name());
@@ -176,6 +177,86 @@ public class dailyItem {
         for (Map.Entry<ItemStack, Double> e : dbManager.listDailyItems.entrySet()) {
             if (getUuid(e.getKey()).equals(uuid)) e.setValue(price);
         }
+    }
+
+    //common (100), uncommon (80), rare (60), epic (40), ancient (20), legendary (10), mythic (5)
+
+    /**
+     *
+     * @param s
+     * @return returns the item that represents that rarity
+     */
+
+    public static ItemStack getItemRarity(int s) {
+        ItemStack changeRarity = null;
+        switch (s) {
+            case 0:
+                changeRarity = XMaterial.GRAY_DYE.parseItem();
+                utils.setDisplayName(changeRarity, "&7Common");
+                break;
+            case 80:
+                changeRarity = XMaterial.PINK_DYE.parseItem();
+                utils.setDisplayName(changeRarity, "&dUncommon");
+                break;
+            case 60:
+                changeRarity = XMaterial.MAGENTA_DYE.parseItem();
+                utils.setDisplayName(changeRarity, "&5Rare");
+                break;
+            case 40:
+                changeRarity = XMaterial.PURPLE_DYE.parseItem();
+                utils.setDisplayName(changeRarity, "&5Epic");
+                break;
+            case 20:
+                changeRarity = XMaterial.CYAN_DYE.parseItem();
+                utils.setDisplayName(changeRarity, "&9Ancient");
+                break;
+            case 10:
+                changeRarity = XMaterial.ORANGE_DYE.parseItem();
+                utils.setDisplayName(changeRarity, "&6Legendary");
+                break;
+            default:
+                changeRarity = XMaterial.YELLOW_DYE.parseItem();
+                utils.setDisplayName(changeRarity, "&eMythic");
+                break;
+        }
+        return changeRarity;
+    }
+
+    public static ItemStack getItemRarity(ItemStack item) {
+        int s = (Integer) new dailyItem(item).getMetadata(dailyMetadataType.rds_rarity);
+        return getItemRarity(s);
+    }
+
+    public static String getRarityLore(int rarity) {
+
+        switch (rarity) {
+            case 0:
+                return "Common";
+
+            case 80:
+                return "UnCommon";
+
+            case 60:
+                return "Rare";
+
+            case 40:
+                return "Epic";
+
+            case 20:
+                return "Ancient";
+
+            case 10:
+                return "Legendary";
+
+            default:
+                return "Mythic";
+
+        }
+    }
+
+    public static String getRarityLore(ItemStack item) {
+        int rarity = (Integer) new dailyItem(item).getMetadata(dailyMetadataType.rds_rarity);
+        return getRarityLore(rarity);
     }
 
     public enum dailyMetadataType {

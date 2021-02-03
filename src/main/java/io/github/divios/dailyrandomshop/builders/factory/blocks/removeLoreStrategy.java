@@ -1,6 +1,6 @@
 package io.github.divios.dailyrandomshop.builders.factory.blocks;
 
-import io.github.divios.dailyrandomshop.builders.lorestategy.loreStrategy;
+import io.github.divios.dailyrandomshop.lorestategy.loreStrategy;
 import org.bukkit.inventory.ItemStack;
 
 public class removeLoreStrategy implements runnableBlocks{

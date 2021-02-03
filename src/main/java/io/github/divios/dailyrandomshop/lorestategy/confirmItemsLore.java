@@ -1,4 +1,4 @@
-package io.github.divios.dailyrandomshop.builders.lorestategy;
+package io.github.divios.dailyrandomshop.lorestategy;
 
 import io.github.divios.dailyrandomshop.builders.factory.dailyItem;
 import io.github.divios.dailyrandomshop.database.dataManager;

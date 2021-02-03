@@ -1,15 +1,15 @@
 package io.github.divios.dailyrandomshop.guis;
 
 import io.github.divios.dailyrandomshop.builders.factory.dailyItem;
-import io.github.divios.dailyrandomshop.builders.lorestategy.currentItemsLore;
 import io.github.divios.dailyrandomshop.conf_msg;
 import io.github.divios.dailyrandomshop.database.dataManager;
 import io.github.divios.dailyrandomshop.events.expiredTimerEvent;
-import io.github.divios.dailyrandomshop.tasks.taskManager;
+import io.github.divios.dailyrandomshop.lorestategy.currentItemsLore;
 import io.github.divios.dailyrandomshop.utils.transaction;
 import io.github.divios.dailyrandomshop.utils.utils;
 import io.github.divios.dailyrandomshop.xseries.XMaterial;
 import org.bukkit.Bukkit;
+import org.bukkit.Sound;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -20,7 +20,7 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class buyGui implements Listener, InventoryHolder {
@@ -125,12 +125,11 @@ public class buyGui implements Listener, InventoryHolder {
     private void updateCurrentItems() {
         clearDailySlots();
         int j = 18;
-        for (String text : dbManager.currentItems) {
-            String uuid = text.split("\\\\")[0];
+        for (Map.Entry<String, Integer> entry : dbManager.currentItems.entrySet()) {
+            String uuid = entry.getKey();
 
             int amount = -1;
-            try { amount = Integer.parseInt(text.split("\\\\")[1]); }
-            catch (IndexOutOfBoundsException ignored) {};
+            amount = entry.getValue();
 
             if(j >= (18 + conf_msg.N_DAILY_ITEMS -1)) break;
             if (j == inv.getSize()) return;
@@ -141,11 +140,11 @@ public class buyGui implements Listener, InventoryHolder {
             ItemStack newItem = new dailyItem(item, true)
                     .addLoreStrategy(new currentItemsLore()).getItem();
 
-            if(amount != -1 &&
+            if(amount > 0 &&
                     new dailyItem(newItem).hasMetadata(dailyItem.dailyMetadataType.rds_amount)) {
                 newItem.setAmount(amount);
                 new dailyItem(newItem)
-                        .addNbt(dailyItem.dailyMetadataType.rds_amount, "" + amount);
+                        .addNbt(dailyItem.dailyMetadataType.rds_amount, "" + amount).getItem();
             }
 
             inv.setItem(j, newItem);
@@ -197,8 +196,8 @@ public class buyGui implements Listener, InventoryHolder {
         }
     }
 
-    public List<String> getCurrentItems() {
-        List<String> list = new ArrayList<>();
+    public Map<String, Integer> getCurrentItems() {
+        Map<String, Integer> list = new LinkedHashMap<>();
         for (int i = 18; i < inv.getSize(); i++) {
             ItemStack item = inv.getItem(i);
             if(utils.isEmpty(item)) break;
@@ -206,11 +205,12 @@ public class buyGui implements Listener, InventoryHolder {
             String uuid = dailyItem.getUuid(item);
             if(utils.isEmpty(uuid)) continue;
 
+            int amount = 0;
             if(new dailyItem(item).hasMetadata(dailyItem.dailyMetadataType.rds_amount))
-                uuid = uuid.concat("\\" + new dailyItem(item).
-                        getMetadata(dailyItem.dailyMetadataType.rds_amount));
+                amount = (Integer) new dailyItem(item).
+                        getMetadata(dailyItem.dailyMetadataType.rds_amount);
 
-            list.add(uuid);
+            list.put(uuid, amount);
         }
         return list;
     }
@@ -224,6 +224,8 @@ public class buyGui implements Listener, InventoryHolder {
     public void reload() {
         inv.getViewers().forEach(HumanEntity::closeInventory);
         instance = null;
+        dbManager.currentItems = getCurrentItems();
+        getInstance();
     }
 
     @Override
@@ -238,12 +240,19 @@ public class buyGui implements Listener, InventoryHolder {
 
         if(utils.isEmpty(e.getCurrentItem())) return;
 
+        Player p = (Player) e.getWhoClicked();
+
+        if (e.getSlot() == 8) {
+            if (!p.hasPermission("dailyRandomShop.sell")) {
+                utils.noPerms(p);
+                utils.sendSound(p, Sound.ENTITY_VILLAGER_NO);
+            }
+            sellGui.openInventory(p);
+        }
+
         if (utils.isEmpty(dailyItem.getUuid(e.getCurrentItem()))) return;
 
-        Player p = (Player) e.getWhoClicked();
-        if (e.getSlot() == 9) {} //TODO
-
-        else if (e.getSlot() >= 18 && e.getSlot() < inv.getSize()
+        if (e.getSlot() >= 18 && e.getSlot() < inv.getSize()
                 && !utils.isEmpty(e.getCurrentItem())) {
             transaction.initTransaction(p, dailyItem.getRawItem(e.getCurrentItem()));
         }
@@ -252,7 +261,6 @@ public class buyGui implements Listener, InventoryHolder {
     @EventHandler
     public void onTimerExpired(expiredTimerEvent e) {
         main.getServer().broadcastMessage(conf_msg.PREFIX + conf_msg.MSG_NEW_DAILY_ITEMS);
-        taskManager.getInstance().resetTimer();
         createRandomItems();
     }
 

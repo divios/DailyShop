@@ -84,13 +84,7 @@ public class settingsGuiIH implements Listener, InventoryHolder {
         }
 
         if (e.getSlot() == 15) {
-            if (dbManager.listSellItems.isEmpty()) {
-                e.getWhoClicked().sendMessage(conf_msg.PREFIX + conf_msg.MSG_SELL_ITEMS_GUI_EMPTY);
-                utils.sendSound(p, Sound.BLOCK_DISPENSER_DISPENSE);
-                p.closeInventory();
-                return;
-            }
-            //e.getWhoClicked().openInventory(main.SellGuiSettings.getFirstGui());
+            sellGuiSettings.openInventory(p);
         }
     }
 }

@@ -14,15 +14,19 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitTask;
 
+import java.util.function.BiConsumer;
+
 public class dynamicItemListener implements Listener {
 
     private static final io.github.divios.dailyrandomshop.main main = io.github.divios.dailyrandomshop.main.getInstance();
     private final Player p;
     private final BukkitTask TaskID;
+    public final BiConsumer<Player, ItemStack> b;
     
-    public dynamicItemListener(Player p) {
+    public dynamicItemListener(Player p, BiConsumer<Player, ItemStack> b) {
         Bukkit.getPluginManager().registerEvents(this, main);
         this.p = p;
+        this.b = b;
 
         TaskID = Bukkit.getScheduler().runTaskLater(main, () -> {
             p.sendMessage(conf_msg.PREFIX + conf_msg.MSG_TIMER_EXPIRED);
@@ -57,7 +61,7 @@ public class dynamicItemListener implements Listener {
 
         Titles.clearTitle(p);
         Bukkit.getScheduler().runTaskLater(main, () ->
-                        customizerMainGuiIH.openInventory(p, item)
+                        b.accept(p, item)
                 , 1L);
 
         Bukkit.getScheduler().cancelTask(TaskID.getTaskId());

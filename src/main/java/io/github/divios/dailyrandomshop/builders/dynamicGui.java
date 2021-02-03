@@ -214,6 +214,8 @@ public class dynamicGui implements InventoryHolder, Listener {
         if (e.getView().getTopInventory().getHolder() != this) return;
         e.setCancelled(true);
 
+        if (e.getSlot() != e.getRawSlot()) return;
+
         int slot = e.getSlot();
         Player p = (Player) e.getWhoClicked();
         ItemStack item = e.getCurrentItem();

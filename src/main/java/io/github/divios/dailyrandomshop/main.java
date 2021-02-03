@@ -1,5 +1,7 @@
 package io.github.divios.dailyrandomshop;
 
+import io.github.divios.dailyrandomshop.commands.commandsManager;
+import io.github.divios.dailyrandomshop.commands.tabComplete;
 import io.github.divios.dailyrandomshop.database.dataManager;
 import io.github.divios.dailyrandomshop.guis.buyGui;
 import io.github.divios.dailyrandomshop.guis.settings.addDailyItemGuiIH;
@@ -25,7 +27,7 @@ public class main extends JavaPlugin {
                                 /* Initiate tasks */
         taskManager.getInstance();
                                 /* Register commands & tabComplete */
-        commands.getInstance();
+        commandsManager.getInstance();
         tabComplete.getInstance();
 
     }

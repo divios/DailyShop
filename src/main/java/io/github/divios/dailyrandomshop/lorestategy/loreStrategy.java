@@ -1,4 +1,4 @@
-package io.github.divios.dailyrandomshop.builders.lorestategy;
+package io.github.divios.dailyrandomshop.lorestategy;
 
 import org.bukkit.inventory.ItemStack;
 
