@@ -106,8 +106,14 @@ public class buyGui implements Listener, InventoryHolder {
                     .addLoreStrategy(new currentItemsLore())
                     .getItem();
 
-            /* if(Math.random() > main.utils.getRarity(randomItem)/100F
-                    && main.getConfig().getBoolean("enable-rarity")) continue; */
+            int rarity = (Integer) new dailyItem(randomItem)
+                    .getMetadata(dailyItem.dailyMetadataType.rds_rarity);
+
+            if(rarity == 0)
+                rarity = 100;
+
+            if(conf_msg.ENABLE_RARITY &&
+                    Math.random() > rarity / 100F) continue;
 
             inserted.add(ran);
 
