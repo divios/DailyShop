@@ -45,9 +45,12 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
     private Inventory createInventory() {
         Inventory inv = Bukkit.createInventory(instance, 54, conf_msg.CUSTOMIZE_GUI_TITLE);
 
-        ItemStack changeRarity = utils.getItemRarity(
-                (Integer) new dailyItem(newItem).getMetadata(dailyMetadataType.rds_rarity));
-        utils.setLore(changeRarity, Arrays.asList("&7Click to change rarity"));
+        ItemStack changeEcon = XMaterial.EMERALD.parseItem();
+        utils.setDisplayName(changeEcon, conf_msg.CUSTOMIZE_CHANGE_ECON);
+        utils.setLore(changeEcon, conf_msg.CUSTOMIZE_CHANGE_ECON_LORE);
+
+        ItemStack changeRarity = dailyItem.getItemRarity(newItem);
+        utils.setLore(changeRarity, conf_msg.CUSTOMIZE_CHANGE_RARITY_LORE);
 
         ItemStack customizerItem = XMaterial.ANVIL.parseItem();   //Done button (anvil)
         utils.setDisplayName(customizerItem, conf_msg.CUSTOMIZE_CRAFT);
@@ -129,7 +132,8 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
                     getMetadata(dailyMetadataType.rds_amount));
 
         inv.setItem(4, newItem);
-        inv.setItem(8, changeRarity);
+        inv.setItem(0, changeEcon);
+        if (conf_msg.ENABLE_RARITY) inv.setItem(8, changeRarity);
         inv.setItem(19, rename);
         inv.setItem(20, changeMaterial);
         inv.setItem(28, changeLore);
@@ -177,15 +181,19 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
             if (aux != null && !utils.isEmpty(aux)) {
                 utils.translateAllItemData(newItem, aux);
                 dailyGuiSettings.openInventory(p);
+                buyGui.getInstance().updateItem(dailyItem.getUuid(newItem), buyGui.updateAction.update);
             }
             else dbManager.listDailyItems.put(new dailyItem(newItem, true)
-                    .craft(), 500D);
+                    .craft(), conf_msg.DEFAULT_PRICE);
             dailyGuiSettings.openInventory(p);
-            buyGui.getInstance().updateItem(dailyItem.getUuid(newItem), buyGui.updateAction.update);
         }
 
 
-         else if(e.getSlot() == 8) {
+        else if (e.getSlot() == 0) {        /* Boton de cambiar economia */
+            changeEcon.openInventory(p, newItem);
+        }
+
+         else if(e.getSlot() == 8) {        /* Boton de cambiar rarity */
              new dailyItem(newItem).addNbt(dailyMetadataType.rds_rarity, "").getItem();
              openInventory(p, newItem);
         }
@@ -293,10 +301,10 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
                 List<String> commands = (List<String>) new dailyItem(newItem)
                         .getMetadata(dailyMetadataType.rds_commands);
 
-                new dailyItem(newItem).removeAllMetadata().getItem();
+                new dailyItem(newItem).removeNbt(dailyMetadataType.rds_commands).getItem();
                 commands.remove(commands.size() - 1);
                 commands.stream().forEach(s -> new dailyItem(newItem)
-                        .addNbt(dailyMetadataType.rds_commands, s));
+                        .addNbt(dailyMetadataType.rds_commands, s).getItem());
             }
         }
 

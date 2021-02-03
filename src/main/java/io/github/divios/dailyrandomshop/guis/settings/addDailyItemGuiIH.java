@@ -90,7 +90,8 @@ public class addDailyItemGuiIH implements InventoryHolder, Listener {
         }
 
         else if (e.getSlot() == 15) {
-            new dynamicItemListener(p);
+            new dynamicItemListener(p, (player, itemStack) ->
+                    customizerMainGuiIH.openInventory(p, itemStack));
             p.closeInventory();
         }
     }

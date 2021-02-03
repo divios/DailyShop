@@ -11,9 +11,9 @@ import java.util.List;
 public class addMetadata implements runnableBlocks {
 
     private final dailyMetadataType type;
-    private final String value;
+    private final Object value;
 
-    public addMetadata(dailyMetadataType type, String value) {
+    public addMetadata(dailyMetadataType type, Object value) {
         this.type = type;
         this.value = value;
     }
@@ -25,15 +25,18 @@ public class addMetadata implements runnableBlocks {
             case rds_commands:
                 try {
                     List<String> aux = nbtItem.getObject(type.name(), List.class);
-                    aux.add(value);
+                    aux.add((String) value);
                     nbtItem.setObject(type.name(), aux);
                 } catch (NullPointerException e) {
                     List<String> aux = new ArrayList<>();
                     nbtItem.setObject(type.name(), aux);
                 }
                 break;
+            case rds_econ:
+                nbtItem.setObject(type.name(), value);
+                break;
             case rds_amount:
-                nbtItem.setInteger(type.name(), Integer.valueOf(value));
+                nbtItem.setInteger(type.name(), Integer.valueOf((String) value));
                 break;
             case rds_rarity:
                 int i = processNextRarity(nbtItem.getInteger(type.name()));
@@ -41,7 +44,7 @@ public class addMetadata implements runnableBlocks {
                 else nbtItem.setInteger(type.name(), i);
                 break;
             default:
-                nbtItem.setString(type.name(), value);
+                nbtItem.setString(type.name(), (String) value);
                 break;
         }
 

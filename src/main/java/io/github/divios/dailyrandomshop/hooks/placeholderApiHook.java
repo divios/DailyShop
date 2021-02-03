@@ -6,7 +6,7 @@ import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-public class placeholderApiHook extends PlaceholderExpansion {
+class placeholderApiHook extends PlaceholderExpansion {
 
     private static final main plugin = main.getInstance();
     private static placeholderApiHook instance = null;
@@ -14,8 +14,7 @@ public class placeholderApiHook extends PlaceholderExpansion {
     private placeholderApiHook() {};
 
     public static placeholderApiHook getInstance() {
-        if (instance == null && Bukkit.getPluginManager().
-                getPlugin("PlaceholderAPI") != null) {
+        if (instance == null ) {
             instance = new placeholderApiHook();
             instance.register();
             plugin.getLogger().info("Hooked to PlaceholderAPI");

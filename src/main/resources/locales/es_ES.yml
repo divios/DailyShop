@@ -168,6 +168,13 @@ customize_return: "&c&lVolver"
 customize_return_lore:
   - "&7Clic para cancelar operacion"
 
+customize_change_econ: "&f&lCambiar moneda"
+customize_change_econ_lore:
+  - "&7Clic para cambiar la moneda"
+
+customize_change_rarity_lore:
+  - "&7Click para cambiar la rareza del item"
+
 customize_rename: "&f&lCambiar nombre"
 customize_rename_lore:
   - "&7Clic para cambiar el nombre"
@@ -239,17 +246,6 @@ customize_toggle_effects_lore:
   - "&6> Clic izq: &7Cambiar estado"
   - ""
   - "&6Estado &7{status}"
-
-customize_toggle_mmoitem_scratch: "&f&lGenerar MMOItem desde cero"
-customize_toggle_mmoitem_scratch_lore:
-  - "&6> Clic izq: &7Cambiar estado"
-  - ""
-  - "&6Estado &7{status}"
-  - ""
-  - "&7Cambiar si quieres que al comprar un mmoitem,"
-  - "&7este se genere desde cero. Util si por ejemplo"
-  - "&7ese item tienen stats aleatorios y quieres que"
-  - "&7se generen adecuadamente."
 
 ######################
 ###### Messages ######

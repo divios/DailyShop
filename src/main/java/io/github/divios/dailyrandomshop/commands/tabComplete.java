@@ -1,5 +1,6 @@
-package io.github.divios.dailyrandomshop;
+package io.github.divios.dailyrandomshop.commands;
 
+import io.github.divios.dailyrandomshop.commands.cmds.allCmds;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
@@ -15,15 +16,6 @@ public class tabComplete implements TabCompleter {
 
     private tabComplete() { }
 
-    private enum commands {
-        reload,
-        renovate,
-        sell,
-        addDailyItem,
-        addSellItem,
-        settings
-    }
-
     public static tabComplete getInstance() {
         if(instance == null) {
             instance = new tabComplete();
@@ -35,7 +27,7 @@ public class tabComplete implements TabCompleter {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-        List<String> commandsList = Arrays.stream(commands.values())
+        List<String> commandsList = Arrays.stream(allCmds.values())
                 .map(Enum::name).collect(Collectors.toList());
 
         if (args.length == 0) return commandsList;

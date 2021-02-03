@@ -7,24 +7,23 @@ import io.github.divios.dailyrandomshop.builders.factory.dailyItem;
 import io.github.divios.dailyrandomshop.conf_msg;
 import io.github.divios.dailyrandomshop.guis.buyGui;
 import io.github.divios.dailyrandomshop.utils.utils;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
 
-import javax.security.auth.callback.Callback;
 import java.io.IOException;
 import java.sql.*;
-import java.util.*;
-import java.util.concurrent.RunnableFuture;
+import java.util.Base64;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class dataManager {
 
     private static final io.github.divios.dailyrandomshop.main main = io.github.divios.dailyrandomshop.main.getInstance();
     private static dataManager instance = null;
     public Map<ItemStack, Double> listDailyItems, listSellItems;
-    public List<String> currentItems;
+    public Map<String, Integer> currentItems;
 
     private dataManager() {
     }
@@ -66,13 +65,13 @@ public class dataManager {
                     + "(time int);");
 
             statement.execute("CREATE TABLE IF NOT EXISTS sell_items"
-                    + "(material varchar [255], price int);");
+                    + "(serial varchar [255], price int);");
 
             statement.execute("CREATE TABLE IF NOT EXISTS daily_items"
-                    + "(material varchar [255], price int);");
+                    + "(serial varchar [255], price int);");
 
             statement.execute("CREATE TABLE IF NOT EXISTS current_items"
-                    + "(material varchar [255]);");
+                    + "(uuid varchar [255], amount int);");
         } catch (SQLException e) {
             e.printStackTrace();
             main.getLogger().severe("Couldn't load tables from database");
@@ -175,7 +174,7 @@ public class dataManager {
             byte[] itemserial;
 
             while (result.next()) {
-                itemserial = Base64.getDecoder().decode(result.getString("material"));
+                itemserial = Base64.getDecoder().decode(result.getString("serial"));
                 try {
                     string = new String(itemserial);
                     itemData = new NBTContainer(string);
@@ -217,7 +216,7 @@ public class dataManager {
 
             for (Map.Entry<ItemStack, Double> entry : list.entrySet()) {
 
-                String updateItem = "INSERT INTO " + table + " (material, price) VALUES (?, ?)";
+                String updateItem = "INSERT INTO " + table + " (serial, price) VALUES (?, ?)";
                 statement = con.prepareStatement(updateItem);
 
                 NBTCompound itemData = NBTItem.convertItemtoNBT(entry.getKey());
@@ -233,8 +232,8 @@ public class dataManager {
         }
     }
 
-    public List<String> getCurrentItems() {
-        List<String> items = new ArrayList<>();
+    public Map<String, Integer> getCurrentItems() {
+        Map<String, Integer> items = new LinkedHashMap<>();
         try {
             Connection con = sqlite.getConnection();
             String SQL_Create = "SELECT * FROM current_items";
@@ -244,8 +243,8 @@ public class dataManager {
             String s;
 
             while (result.next()) {
-                s = result.getString(1);
-                items.add(s);
+                items.put(result.getString(1),
+                        result.getInt(2));
             }
 
         } catch (SQLException e) {
@@ -262,12 +261,13 @@ public class dataManager {
 
                 deleteElements("current_items");
 
-                for (String s : currentItems) {
+                for (Map.Entry<String, Integer> s : currentItems.entrySet()) {
 
-                    String insertItem = "INSERT INTO " + "current_items (material) VALUES (?)";
+                    String insertItem = "INSERT INTO " + "current_items (uuid, amount) VALUES (?, ?)";
                     statement = con.prepareStatement(insertItem);
 
-                    statement.setString(1, s);
+                    statement.setString(1, s.getKey());
+                    statement.setInt(2, s.getValue());
                     statement.executeUpdate();
                 }
 

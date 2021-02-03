@@ -168,9 +168,17 @@ customize_return: "&c&lReturn"
 customize_return_lore:
   - "&7Click to cancel Operation"
 
+customize_change_econ: "&f&lChange currency"
+customize_change_econ_lore:
+  - "&7Click to change the item currency"
+
+customize_change_rarity_lore:
+  - "&7Click to change item rarity"
+
 customize_rename: "&f&lRename"
 customize_rename_lore:
   - "&7Click to change the item name"
+
 customize_rename_anvil_title: "&6&lWrite the new name"
 customize_rename_anvil_default_text: "Write the new name"
 
@@ -239,17 +247,6 @@ customize_toggle_effects_lore:
   - "&6> Left Click: &7Toggle status"
   - ""
   - "&6Status &7{status}"
-
-customize_toggle_mmoitem_scratch: "&f&lGenerate MMOItem from Scratch"
-customize_toggle_mmoitem_scratch_lore:
-  - "&6> Left Click: &7Toggle status"
-  - ""
-  - "&6Status &7{status}"
-  - ""
-  - "&7Toggle this if you want, upon purchase,"
-  - "&7that the item is generated from scratch so"
-  - "&7in scenarios where items have random stats,"
-  - "&7the new item is generated correctly."
 
 ######################
 ###### Messages ######
