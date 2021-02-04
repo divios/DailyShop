@@ -1,7 +1,6 @@
 package io.github.divios.dailyrandomshop.commands.cmds;
 
 import io.github.divios.dailyrandomshop.guis.buyGui;
-import io.github.divios.dailyrandomshop.main;
 import io.github.divios.dailyrandomshop.utils.utils;
 import org.bukkit.entity.Player;
 

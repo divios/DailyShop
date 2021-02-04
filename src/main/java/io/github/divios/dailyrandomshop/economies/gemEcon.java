@@ -20,7 +20,7 @@ public class gemEcon implements economy{
     }
 
     @Override
-    public void waitchDrawMoney(Player p, Double price) {
+    public void witchDrawMoney(Player p, Double price) {
         gemApi.withdraw(p.getUniqueId(), price, currency);
     }
 }

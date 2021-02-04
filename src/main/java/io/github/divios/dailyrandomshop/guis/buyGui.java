@@ -20,6 +20,7 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -228,7 +229,8 @@ public class buyGui implements Listener, InventoryHolder {
     }
 
     public void reload() {
-        inv.getViewers().forEach(HumanEntity::closeInventory);
+        try { inv.getViewers().forEach(HumanEntity::closeInventory); }
+        catch (ConcurrentModificationException ignored) {};
         instance = null;
         dbManager.currentItems = getCurrentItems();
         getInstance();

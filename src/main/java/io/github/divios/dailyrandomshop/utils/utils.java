@@ -17,6 +17,7 @@ import org.bukkit.scheduler.BukkitTask;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class utils {
 
@@ -202,6 +203,25 @@ public class utils {
             }
         }
         return -1D;
+    }
+
+    public static Double getPriceModifier(Player p) {
+        AtomicReference<Double> modifier = new AtomicReference<>(1.0);
+
+        p.getEffectivePermissions().forEach(perms -> {
+            String perm = perms.getPermission();
+            if (perm.startsWith("dailyrandomshop.sellpricemodifier.")) {
+                String[] splitStr = perm.split("dailyrandomshop.sellpricemodifier.");
+                if(splitStr.length == 1) return;
+                double newValue;
+                try{
+                    newValue = Math.abs(Double.parseDouble(splitStr[1]));
+                } catch (NumberFormatException e) { return; }
+                if (newValue > modifier.get())
+                    modifier.set(newValue);
+            }
+        });
+        return modifier.get();
     }
 
 }
