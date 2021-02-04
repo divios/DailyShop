@@ -1,134 +1,101 @@
 package io.github.divios.dailyrandomshop.guis.settings;
 
-import com.cryptomorin.xseries.XMaterial;
-import io.github.divios.dailyrandomshop.DailyRandomShop;
-import io.github.divios.dailyrandomshop.guis.customizerItem.customizerMainGuiIH;
-import io.github.divios.dailyrandomshop.listeners.UtilAddItemListener;
+import io.github.divios.dailyrandomshop.conf_msg;
+import io.github.divios.dailyrandomshop.guis.customizerguis.customizerMainGuiIH;
+import io.github.divios.dailyrandomshop.listeners.dynamicItemListener;
+import io.github.divios.dailyrandomshop.utils.utils;
+import io.github.divios.dailyrandomshop.xseries.XMaterial;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.ConcurrentModificationException;
 
 public class addDailyItemGuiIH implements InventoryHolder, Listener {
 
-    private final DailyRandomShop main;
-    private final Player p;
-    private final Inventory returnInventory;
+    private static final io.github.divios.dailyrandomshop.main main = io.github.divios.dailyrandomshop.main.getInstance();
+    private static addDailyItemGuiIH instance = null;
+    private static Inventory inv;
 
-    public addDailyItemGuiIH(DailyRandomShop main, Player p, Inventory returnInventory) {
-        Bukkit.getPluginManager().registerEvents(this, main);
+    private addDailyItemGuiIH() { }
 
-        this.main = main;
-        this.p = p;
-        this.returnInventory = returnInventory;
-        p.openInventory(getInventory());
-
+    public static void openInventory(Player p) {
+        if (instance == null) {
+            instance = new addDailyItemGuiIH();
+            Bukkit.getPluginManager().registerEvents(instance, main);
+            instance.init();
+        }
+        p.openInventory(instance.getInventory());
     }
-
-    @Override
-    public Inventory getInventory() {
-        Inventory inv = Bukkit.createInventory(this, 27, main.config.ADD_ITEMS_TITLE);
+    
+    private void init() {
+        inv = Bukkit.createInventory(this, 27, conf_msg.ADD_ITEMS_TITLE);
 
         ItemStack fromZero = XMaterial.REDSTONE_TORCH.parseItem();
-        ItemMeta meta = fromZero.getItemMeta();
-        meta.setDisplayName(main.config.ADD_ITEMS_FROM_ZERO);
-        List<String> lore = new ArrayList<>();
-        for(String s: main.config.ADD_ITEMS_FROM_ZERO_LORE) {
-            lore.add(ChatColor.translateAlternateColorCodes('&', s));
-        }
-        meta.setLore(lore);
-        fromZero.setItemMeta(meta);
-
+        utils.setDisplayName(fromZero, conf_msg.ADD_ITEMS_FROM_ZERO);
+        utils.setLore(fromZero, conf_msg.ADD_ITEMS_FROM_ZERO_LORE);
 
         ItemStack fromItem = XMaterial.HOPPER.parseItem();
-        meta = fromItem.getItemMeta();
-        meta.setDisplayName(main.config.ADD_ITEMS_FROM_EXISTING);
-        lore = new ArrayList<>();
-        for(String s: main.config.ADD_ITEMS_FROM_EXISTING_LORE) {
-            lore.add(ChatColor.translateAlternateColorCodes('&', s));
-        }
-        meta.setLore(lore);
-        fromItem.setItemMeta(meta);
+        utils.setDisplayName(fromItem, conf_msg.ADD_ITEMS_FROM_EXISTING);
+        utils.setLore(fromItem, conf_msg.ADD_ITEMS_FROM_EXISTING_LORE);
 
         ItemStack returnItem = XMaterial.OAK_SIGN.parseItem();
-        meta = returnItem.getItemMeta();
-        meta.setDisplayName(main.config.ADD_ITEMS_RETURN);
-        lore = new ArrayList<>();
-        for(String s: main.config.ADD_ITEMS_RETURN_LORE) {
-            lore.add(ChatColor.translateAlternateColorCodes('&', s));
-        }
-        meta.setLore(lore);
-        returnItem.setItemMeta(meta);
+        utils.setDisplayName(returnItem, conf_msg.ADD_ITEMS_RETURN);
+        utils.setLore(returnItem, conf_msg.ADD_ITEMS_RETURN_LORE);
+
 
         inv.setItem(11, fromZero);
         inv.setItem(15, fromItem);
         inv.setItem(22, returnItem);
 
-        for (int i=0; i<inv.getSize(); i++) {
+        for (int i = 0; i < inv.getSize(); i++) {
             ItemStack item = inv.getItem(i);
-            if (item == null || item.getType() == Material.AIR) {
+            if (utils.isEmpty(item)) {
                 inv.setItem(i, XMaterial.GRAY_STAINED_GLASS_PANE.parseItem());
             }
         }
+    }
 
+    public static void reload() {
+        if(instance == null) return;
+        try { inv.getViewers().forEach(HumanEntity::closeInventory); }
+        catch (ConcurrentModificationException ignored) {};
+        instance.init();
+    }
+
+    @Override
+    public Inventory getInventory() {
         return inv;
     }
 
     @EventHandler
     private void onClick(InventoryClickEvent e) {
 
-        if(e.getView().getTopInventory().getHolder() != this) return;
+        if (e.getView().getTopInventory().getHolder() != this) return;
 
         e.setCancelled(true);
+        Player p = (Player) e.getWhoClicked();
 
-        if(e.getSlot() != e.getRawSlot()) return;
+        if (e.getSlot() != e.getRawSlot()) return;
 
-        if(e.getSlot() == 22) {
-            if(returnInventory == null) p.closeInventory();
-            else p.openInventory(returnInventory);
+        if (e.getSlot() == 22) {
+            dailyGuiSettings.openInventory(p);
         }
 
-        if(e.getSlot() == 11) {
-            new customizerMainGuiIH(main, p, XMaterial.GRASS.parseItem(), null);
+        if (e.getSlot() == 11) {
+            customizerMainGuiIH.openInventory(p, XMaterial.GRASS.parseItem());
         }
 
-        if(e.getSlot() == 15) {
-            /*if (Bukkit.getServer().getClass().getPackage().getName().contains("1_8") || Bukkit.getServer().getClass().getPackage().getName().contains("1_9") ||
-                    Bukkit.getServer().getClass().getPackage().getName().contains("1_10") || Bukkit.getServer().getClass().getPackage().getName().contains("1_11")) {
-               if(p.getItemInHand() == null || p.getItemInHand().getType() == Material.AIR) p.sendMessage(main.config.PREFIX + main.config.MSG_ERROR_ITEM_HAND);
-               else new customizerMainGuiIH(main, p, p.getItemInHand().clone(), null);
-            }
-
-            else {*/
-                new UtilAddItemListener(main, p);
-                p.closeInventory();
-            //}
-        }
-
-    }
-
-    @EventHandler
-    private void onClose(InventoryCloseEvent e) {
-
-        if (e.getView().getTopInventory().getHolder() == this) {
-
-            InventoryClickEvent.getHandlerList().unregister(this);
-            InventoryCloseEvent.getHandlerList().unregister(this);
-
+        else if (e.getSlot() == 15) {
+            new dynamicItemListener(p, (player, itemStack) ->
+                    customizerMainGuiIH.openInventory(p, itemStack));
+            p.closeInventory();
         }
     }
-
-
-
 }

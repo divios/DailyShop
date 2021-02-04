@@ -2,9 +2,9 @@
 ####### Menus #######
 #####################
 
-  ################################
-  ####### Daily Shop menu ########
-  ################################
+################################
+####### Daily Shop menu ########
+################################
 
 # The name of the daily shop GUI
 daily-shop-gui-name: "&c&lDailyShop"
@@ -62,8 +62,8 @@ confirm-gui-confirm-pane: "&a&lConfirm"
 confirm-gui-return-name: "&c&lReturn"
 
   #############################
-  ####### Confirm menu ########
-  #############################
+####### Confirm menu ########
+#############################
 
 # NOTE: This is the menu that sometimes
 # appears to confirm an action
@@ -71,8 +71,8 @@ confirm-menu-yes: "&a&lConfirm"
 confirm-manu-no: "&c&lCancel"
 
   ##############################
-  ####### Settings menu ########
-  ##############################
+####### Settings menu ########
+##############################
 
 # NOTE: This is the menu that prompts when /rdshop settings
 settings-gui-title: "&6&lSettings"
@@ -135,8 +135,8 @@ daily-items-anvil-title: "&6&lSet Price"
 daily-items-anvil-default-text: "Price"
 
   ################################
-  ####### Sell items menu ########
-  ################################
+####### Sell items menu ########
+################################
 
 # NOTE: This is the menu to manage
 # the daily items
@@ -155,8 +155,8 @@ sell-items-anvil-title: "&6&lSet Price"
 sell-items-anvil-default-text: "Price"
 
   ####################################
-  ####### Customize item menu ########
-  ####################################
+####### Customize item menu ########
+####################################
 
 customize-menu-title: "&a&lCustomize Item"
 
@@ -168,9 +168,17 @@ customize_return: "&c&lReturn"
 customize_return_lore:
   - "&7Click to cancel Operation"
 
+customize_change_econ: "&f&lChange currency"
+customize_change_econ_lore:
+  - "&7Click to change the item currency"
+
+customize_change_rarity_lore:
+  - "&7Click to change item rarity"
+
 customize_rename: "&f&lRename"
 customize_rename_lore:
   - "&7Click to change the item name"
+
 customize_rename_anvil_title: "&6&lWrite the new name"
 customize_rename_anvil_default_text: "Write the new name"
 
@@ -240,17 +248,6 @@ customize_toggle_effects_lore:
   - ""
   - "&6Status &7{status}"
 
-customize_toggle_mmoitem_scratch: "&f&lGenerate MMOItem from Scratch"
-customize_toggle_mmoitem_scratch_lore:
-  - "&6> Left Click: &7Toggle status"
-  - ""
-  - "&6Status &7{status}"
-  - ""
-  - "&7Toggle this if you want, upon purchase,"
-  - "&7that the item is generated from scratch so"
-  - "&7in scenarios where items have random stats,"
-  - "&7the new item is generated correctly."
-
 ######################
 ###### Messages ######
 ######################
@@ -269,7 +266,7 @@ message-error_adding_item: "&7Something went wrong while adding the item"
 message-added_item: "&7Item added successfully"
 message_removed_item: "&7Removed item successfully"
 message_item_on_sale: "&7Ey! That item is already on sale"
-message_not_in_stock: "&7That item is not in stock anymore, an admin must have take it away"
+message_not_in_stock: "&7That currency is not available anymore"
 message-sell-items-gui-empty: "&7There are not items registered for sale, you can add one with /rdshop addSellItem"
 message-anvil-error-integer: "Not integer"
 message-add-item-title: "&a&lClick item"

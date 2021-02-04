@@ -1,116 +1,109 @@
 package io.github.divios.dailyrandomshop.guis;
 
-import com.cryptomorin.xseries.XMaterial;
-import io.github.divios.dailyrandomshop.DailyRandomShop;
+import io.github.divios.dailyrandomshop.builders.factory.dailyItem;
+import io.github.divios.dailyrandomshop.conf_msg;
+import io.github.divios.dailyrandomshop.database.dataManager;
+import io.github.divios.dailyrandomshop.lorestategy.confirmItemsLore;
+import io.github.divios.dailyrandomshop.utils.utils;
+import io.github.divios.dailyrandomshop.xseries.XMaterial;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 public class confirmGui implements Listener, InventoryHolder {
 
-    private final ArrayList<Integer> interactSlots = new ArrayList();//{18, 19, 20, 24, 25, 26};
-    private final ItemStack add1 = XMaterial.GREEN_STAINED_GLASS_PANE.parseItem();
-    private final ItemStack add5 = XMaterial.GREEN_STAINED_GLASS_PANE.parseItem();
-    private final ItemStack add10 = XMaterial.GREEN_STAINED_GLASS_PANE.parseItem();
-    private final ItemStack rem1 = XMaterial.RED_STAINED_GLASS_PANE.parseItem();
-    private final ItemStack rem5 = XMaterial.RED_STAINED_GLASS_PANE.parseItem();
-    private final ItemStack rem10 = XMaterial.RED_STAINED_GLASS_PANE.parseItem();
+    private static final io.github.divios.dailyrandomshop.main main = io.github.divios.dailyrandomshop.main.getInstance();
+    private static final dataManager dbManager = dataManager.getInstance();
 
-    private final ItemStack back = XMaterial.OAK_SIGN.parseItem();
-    private final ItemStack confirm = XMaterial.EMERALD_BLOCK.parseItem();
+    private static confirmGui instance = null;
+    private static ItemStack add1 = null;
+    private static ItemStack add5;
+    private static ItemStack add10;
+    private static ItemStack rem1;
+    private static ItemStack rem5;
+    private static ItemStack rem10;
+    private static ItemStack confirm;
+    private static ItemStack back;
+    private static final confirmItemsLore LoreStrategy = new confirmItemsLore();
+    private BiConsumer<Player, ItemStack> c;
+    private Consumer<Player> b;
 
-    private final Inventory confirmGui = Bukkit.createInventory(null, 45, "");
-    private final List<ItemStack> interactItems = new ArrayList<>();
-    private final BiConsumer<Boolean, ItemStack> bi;
-    private final String title;
-    private final boolean price;
+    private confirmGui() {};
 
-    private final DailyRandomShop main;
-
-    public confirmGui(DailyRandomShop main, ItemStack item, Player p,
-                      BiConsumer<Boolean, ItemStack> bi, String title, boolean price) {
-        Bukkit.getPluginManager().registerEvents(this, main);
-
-        this.price = price;
-        this.main = main;
-        this.bi = bi;
-        this.title = title;
-        interactItems.add(rem1);
-        interactItems.add(rem5);
-        interactItems.add(rem10);
-        interactItems.add(add1);
-        interactItems.add(add5);
-        interactItems.add(add10);
-
-        interactSlots.add(18);
-        interactSlots.add(19);
-        interactSlots.add(20);
-        interactSlots.add(24);
-        interactSlots.add(25);
-        interactSlots.add(26);
-        interactSlots.add(36);
-        interactSlots.add(40);
-
-        ItemMeta meta = back.getItemMeta();
-        meta.setDisplayName(ChatColor.RED  + "" + ChatColor.BOLD + main.config.CONFIRM_GUI_RETURN_NAME);
-        back.setItemMeta(meta);
-
-        meta = confirm.getItemMeta();
-        meta.setDisplayName(ChatColor.GREEN + main.config.CONFIRM_GUI_CONFIRM_PANE);
-        confirm.setItemMeta(meta);
-
-        createGui();
-
-        Inventory inv = getInventory();
-
-        inv.setItem(22, item);
-
-        p.openInventory(inv);
+    public static void openInventory(
+            Player p,
+            ItemStack item,
+            BiConsumer<Player, ItemStack> c,
+            Consumer<Player> b
+            ) {
+        if (add1 == null) {
+            init();
+        }
+        instance = new confirmGui();
+        instance.c = c;
+        instance.b = b;
+        Bukkit.getPluginManager().registerEvents(instance, main);
+        p.openInventory(instance.getInventory(item));
     }
 
-    public void createGui() {
-        int[] aux = {1, 5, 10, 1, 5, 10};
+    private static void init() {
+        add1 = XMaterial.GREEN_STAINED_GLASS_PANE.parseItem();
+        add5 = add1.clone();
+        add10 = add1.clone();
 
-        for (int i = 0; i < aux.length; i++) {
+        utils.setDisplayName(add1, conf_msg.CONFIRM_GUI_ADD_PANE + " 1");
+        utils.setDisplayName(add5, conf_msg.CONFIRM_GUI_ADD_PANE + " 5");
+        utils.setDisplayName(add10, conf_msg.CONFIRM_GUI_ADD_PANE + " 10");
 
-            ItemMeta meta = interactItems.get(i).getItemMeta();
-            if (i < 3)  meta.setDisplayName(ChatColor.RED + main.config.CONFIRM_GUI_REMOVE_PANE + " " + aux[i]);
-            else meta.setDisplayName(ChatColor.GREEN + main.config.CONFIRM_GUI_ADD_PANE + " " + aux[i]);
+        rem1 = XMaterial.RED_STAINED_GLASS_PANE.parseItem();
+        rem5 = rem1.clone();
+        rem10 = rem1.clone();
 
-            interactItems.get(i).setItemMeta(meta);
+        utils.setDisplayName(rem1, conf_msg.CONFIRM_GUI_REMOVE_PANE + " 1");
+        utils.setDisplayName(rem5, conf_msg.CONFIRM_GUI_REMOVE_PANE + " 5");
+        utils.setDisplayName(rem10, conf_msg.CONFIRM_GUI_REMOVE_PANE + " 10");
 
-            if ( i > 2 ) confirmGui.setItem(interactSlots.get(i), interactItems.get(i));
-        }
+        back = XMaterial.OAK_SIGN.parseItem();
+        utils.setDisplayName(back, "&c&lBack");
 
-        confirmGui.setItem(36, back);
-        confirmGui.setItem(40, confirm);
-
+        confirm = XMaterial.EMERALD_BLOCK.parseItem();
+        utils.setDisplayName(confirm, "&a&lConfirm");
     }
 
     @Override
-    public Inventory getInventory() {
-        Inventory inv = Bukkit.createInventory(this, 45, title);
+    public @NotNull Inventory getInventory() {
+        return null;
+    }
 
-        inv.setContents(confirmGui.getContents());
+    public Inventory getInventory(ItemStack item) {
+        Inventory inv = Bukkit.createInventory(this, 45, utils.formatString("&a&lConfirm Gui"));
+
+        ItemStack confirmAux = confirm.clone();
+        LoreStrategy.setLore(confirmAux, item);
+
+        inv.setItem(24, add1);
+        inv.setItem(25, add5);
+        inv.setItem(26, add10);
+        inv.setItem(36, back);
+        inv.setItem(40, confirmAux);
+        inv.setItem(22, item);
 
         return inv;
     }
 
-    public void updateGui(Inventory inv) {
+    private void updateInventory(Inventory inv, Player p) {
         int nstack = inv.getItem(22).getAmount();
 
         if( nstack > 1) inv.setItem(18, rem1);
@@ -131,87 +124,54 @@ public class confirmGui implements Listener, InventoryHolder {
         if( nstack < 55) inv.setItem(26, add10);
         else inv.setItem(26, new ItemStack(Material.AIR));
 
-        ItemStack item = inv.getItem(22);
-        ItemMeta meta = item.getItemMeta();
-        List<String> lore;
-        if(meta.hasLore()) lore = meta.getLore();
-        else lore = new ArrayList<>();
-
-        if(price) {
-            lore.remove(lore.size() - 1);
-            lore.remove(lore.size() - 1);
-            if(main.getConfig().getBoolean("enable-rarity")) lore.remove(lore.size() - 1);
-            lore.add(main.config.BUY_GUI_ITEMS_LORE_PRICE.replaceAll("\\{price}", String.format("%,.2f",main.utils.getItemPrice(main.listDailyItems, item, true) * nstack)));
-            lore.add(main.config.BUY_GUI_ITEMS_LORE_CURRENCY.replaceAll("\\{currency}", main.utils.getEconomyType(item).getValue()));
-            meta.setLore(lore);
-            item.setItemMeta(meta);
-            if(main.getConfig().getBoolean("enable-rarity")) main.utils.setRarityLore(item, main.utils.getRarity(item));
+        if(utils.isEmpty(dailyItem.getRawItem(inv.getItem(22)))) {
+            p.sendMessage(conf_msg.PREFIX + conf_msg.MSG_REMOVED_ITEM);
+            b.accept(p);     /* Close inv if item is deleted */
         }
+
+        LoreStrategy.update(inv.getItem(40), inv.getItem(22));
     }
 
     @EventHandler
-    public void onInventoryClick(final InventoryClickEvent e) {
-
-        int[] aux = {1, 5, 10, 1, 5, 10};
-
-        if (e.getView().getTopInventory().getHolder() != this) return;
-
+    public void inventoryClick(InventoryClickEvent e) {
+        if (e.getView().getTopInventory().getHolder() != instance) return;
         e.setCancelled(true);
 
-        if (e.getRawSlot() != e.getSlot() || !(interactSlots.contains(e.getSlot()))) {
-            return;
-        }
+        if (e.getSlot() != e.getRawSlot()) return;
+        if(utils.isEmpty(e.getCurrentItem())) return;
 
+        int slot = e.getSlot();
+        Inventory inv = e.getView().getTopInventory();
+        ItemStack item = inv.getItem(22);
         Player p = (Player) e.getWhoClicked();
 
-        if (e.getSlot() == 36) { //boton de salir
+        if (slot == 36) b.accept(p);    /* Boton de back */
+        if( slot == 40 ) c.accept(p, item);     /* Boton de confirmar */
 
-            bi.accept(false, null);
-            return;
-            /*p.openInventory(main.BuyGui.getGui());
-            try {
-                p.playSound(p.getLocation(), Sound.BLOCK_DISPENSER_DISPENSE, 0.5F, 1);
-            } catch (NoSuchFieldError ignored) {}
-            return; */
-        }
+        if (slot == 24) item.setAmount(item.getAmount() + 1);
+        else if (slot == 25) item.setAmount(item.getAmount() + 5);
+        else if (slot == 26) item.setAmount(item.getAmount() + 10);
 
-        ItemStack item = e.getView().getTopInventory().getItem(22);
+        else if (slot == 18) item.setAmount(item.getAmount() - 1);
+        else if (slot == 19) item.setAmount(item.getAmount() - 5);
+        else if (slot == 20) item.setAmount(item.getAmount() - 10);
 
-        if (e.getSlot() == 40) { //boton de aceptar
-            //Double price = main.utils.getItemPrice(main.listDailyItems, item, true) * item.getAmount();
-
-            bi.accept(true, item);
-            return;
-            /*main.utils.giveItem(p, price, e.getView().getBottomInventory(), item);
-            return; */
-        }
-
-        if (e.getView().getTopInventory().getItem(e.getSlot()) == null) return;
-
-        if (interactSlots.indexOf(e.getSlot()) > 2)
-            item.setAmount(item.getAmount() + aux[interactSlots.indexOf(e.getSlot())]);
-        else item.setAmount(item.getAmount() - aux[interactSlots.indexOf(e.getSlot())]);
-
-        e.getView().getTopInventory().setItem(22, item);
-
-        try {
-            p.playSound(p.getLocation(), Sound.BLOCK_DISPENSER_DISPENSE, 0.5F, 1);
-        } catch (NoSuchFieldError ignored) {}
-        updateGui(e.getView().getTopInventory());
-        p.updateInventory();
-
+        updateInventory(inv, p);
     }
 
     @EventHandler
-    private void onClose(InventoryCloseEvent e) {
-
-        if (e.getInventory().getHolder() == this) {
-
-            InventoryClickEvent.getHandlerList().unregister(this);
-            InventoryCloseEvent.getHandlerList().unregister(this);
-
-        }
+    public void inventoryDrag(InventoryDragEvent e) {
+        if (e.getView().getTopInventory().getHolder() != this) return;
+        e.setCancelled(true);
     }
 
+    @EventHandler
+    public void inventoryClose(InventoryCloseEvent e) {
+        if (e.getView().getTopInventory().getHolder() != this) return;
+
+        InventoryClickEvent.getHandlerList().unregister(this);
+        InventoryDragEvent.getHandlerList().unregister(this);
+        InventoryCloseEvent.getHandlerList().unregister(this);
+    }
 
 }
