@@ -1,371 +1,280 @@
 package io.github.divios.dailyrandomshop.guis;
 
-import com.cryptomorin.xseries.XMaterial;
-import io.github.divios.dailyrandomshop.DailyRandomShop;
-import io.github.divios.dailyrandomshop.utils.ConfigUtils;
-import net.Indyuce.mmoitems.MMOItems;
-import net.Indyuce.mmoitems.api.Type;
+import io.github.divios.dailyrandomshop.builders.factory.dailyItem;
+import io.github.divios.dailyrandomshop.conf_msg;
+import io.github.divios.dailyrandomshop.database.dataManager;
+import io.github.divios.dailyrandomshop.events.expiredTimerEvent;
+import io.github.divios.dailyrandomshop.lorestategy.currentItemsLore;
+import io.github.divios.dailyrandomshop.utils.transaction;
+import io.github.divios.dailyrandomshop.utils.utils;
+import io.github.divios.dailyrandomshop.xseries.XMaterial;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.ConcurrentModificationException;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class buyGui implements InventoryHolder, Listener {
+public class buyGui implements Listener, InventoryHolder {
 
-    private Inventory shop;
-    private final DailyRandomShop main;
+    private static final io.github.divios.dailyrandomshop.main main = io.github.divios.dailyrandomshop.main.getInstance();
+    private static final dataManager dbManager = dataManager.getInstance();
+    private static buyGui instance = null;
+    private static Inventory inv = null;
 
-    public buyGui(DailyRandomShop main) {
-        Bukkit.getPluginManager().registerEvents(this, main);
-        this.main = main;
-        inicializeGui(false);
+    private buyGui() { }
+
+    public static buyGui getInstance() {
+        if (instance == null) {
+            init();
+        }
+        return instance;
     }
 
-    public void firstRow() {
-        ItemStack item;
-        ItemMeta meta;
-
-        item = main.utils.setItemAsFill(new ItemStack(Material.PAINTING));
-        meta = item.getItemMeta();
-        meta.setDisplayName(main.config.BUY_GUI_PAINTING_NAME);
-        List<String> lore = new ArrayList<>();
-        for (String s : main.config.BUY_GUI_PAINTING_LORE) {
-            lore.add(ChatColor.translateAlternateColorCodes('&', s));
-        }
-        meta.setLore(lore);
-        item.setItemMeta(meta);
-        shop.setItem(4, item);
-
-        if(main.getConfig().getBoolean("enable-sell-gui")) {
-            ItemStack item2 = XMaterial.OAK_FENCE_GATE.parseItem();
-            meta = item2.getItemMeta();
-            meta.setDisplayName(main.config.BUY_GUI_ARROW_NAME);
-            lore = new ArrayList<>();
-            for (String s : main.config.BUY_GUI_ARROW_LORE) {
-                lore.add(ChatColor.translateAlternateColorCodes('&', s));
-            }
-            meta.setLore(lore);
-            item2.setItemMeta(meta);
-            shop.setItem(8, item2);
-        }
+    public void openInventory(Player p) {
+        p.openInventory(instance.getInventory());
     }
 
-    public void secondRow() {
-        ItemStack item;
-        ItemMeta meta;
-        for (int j = 0; j < 9; j++) {
-
-            item = main.utils.setItemAsFill(XMaterial.BLACK_STAINED_GLASS_PANE.parseItem());
-            meta = item.getItemMeta();
-            meta.setDisplayName(ChatColor.GOLD + "");
-            item.setItemMeta(meta);
-            shop.setItem(9 + j, item);
-        }
+    private static void init() {
+        instance = new buyGui();
+        instance.createInventory();
+        Bukkit.getPluginManager().registerEvents(instance, main);
     }
 
-    public void inicializeGui(boolean timer) {
-
-        double dailyRows = main.config.N_DAILY_ITEMS / 9F;
+    private void createInventory() {
+        double dailyRows = conf_msg.N_DAILY_ITEMS / 9F;
         int rows = (int) Math.ceil(dailyRows + 2);
         if (rows <= 2) rows = 3;
 
-        shop = Bukkit.createInventory(this, (rows * 9), main.config.BUY_GUI_TITLE);
+        inv = Bukkit.createInventory(this, (rows * 9), conf_msg.BUY_GUI_TITLE);
 
-        firstRow();
-        secondRow();
+        ItemStack painting = XMaterial.PAINTING.parseItem();
+        utils.setDisplayName(painting, conf_msg.BUY_GUI_PAINTING_NAME);
+        utils.setLore(painting, conf_msg.BUY_GUI_PAINTING_LORE);
+        inv.setItem(4, painting);
 
-        if (timer) createRandomItems();
-        else {
-            getDailyItems();
+        if (main.getConfig().getBoolean("enable-sell-gui")) {
+            ItemStack fence = XMaterial.OAK_FENCE_GATE.parseItem();
+            utils.setDisplayName(fence, conf_msg.BUY_GUI_ARROW_NAME);
+            utils.setLore(fence, conf_msg.BUY_GUI_ARROW_LORE);
+            inv.setItem(8, fence);
         }
+
+        ItemStack grayPanel = XMaterial.GRAY_STAINED_GLASS_PANE.parseItem();
+        utils.setDisplayName(grayPanel, "&7");
+        for (int i = 9; i < 18; i++) {     /* Gray panels */
+            inv.setItem(i, grayPanel);
+        }
+        updateCurrentItems();
     }
 
-    public void createRandomItems() {
-        Map<ItemStack, Double> listOfMaterials = main.listDailyItems;
+    private void createRandomItems() {
+        clearDailySlots();
+        dbManager.currentItems.clear();
+        Map<ItemStack, Double> listOfMaterials = dbManager.listDailyItems;
         ArrayList<Integer> inserted = new ArrayList<>();
 
-        int j=18;
-        while(true) {
+        int j = 18;
+        while (true) {
 
-            if(shop.firstEmpty() == -1) break;
+            if (inv.firstEmpty() == -1) break;
 
-            if(j >= (18 + main.config.N_DAILY_ITEMS)) {
+            if (j >= (18 + conf_msg.N_DAILY_ITEMS)) {
                 break;
             }
 
             if (listOfMaterials.size() == inserted.size()) {
-                break; //make sure to break infinite loop if happens
+                break;              //make sure to break infinite loop if happens
             }
 
-            int ran = main.utils.randomValue(0, listOfMaterials.size() - 1);
+            int ran = utils.randomValue(0, listOfMaterials.size() - 1);
 
             if (!inserted.isEmpty() && inserted.contains(ran)) {
                 continue;
             }
 
-            ItemStack randomItem = main.utils.getEntry(main.listDailyItems, ran);
+            ItemStack randomItem = new dailyItem(
+                    utils.getEntry(listOfMaterials, ran), true)
+                    .addLoreStrategy(new currentItemsLore())
+                    .getItem();
 
-            if(Math.random() > main.utils.getRarity(randomItem)/100F
-                    && main.getConfig().getBoolean("enable-rarity")) continue;
+            int rarity = (Integer) new dailyItem(randomItem)
+                    .getMetadata(dailyItem.dailyMetadataType.rds_rarity);
+
+            if(rarity == 0)
+                rarity = 100;
+
+            if(conf_msg.ENABLE_RARITY &&
+                    Math.random() > rarity / 100F) continue;
 
             inserted.add(ran);
 
-            ItemMeta meta = randomItem.getItemMeta();
-            List<String> lore;
-            if(meta.hasLore()) lore = meta.getLore();
-            else lore = new ArrayList<>();
-
-            lore.add(main.config.BUY_GUI_ITEMS_LORE_PRICE.replaceAll("\\{price}", String.format("%,.2f", main.listDailyItems.get(randomItem))));
-            lore.add(ChatColor.GOLD + "Currency: " + ChatColor.GRAY + main.utils.getEconomyType(randomItem).getValue());
-            meta.setLore(lore);
-
-            randomItem.setItemMeta(meta);
-            if(main.getConfig().getBoolean("enable-rarity"))  main.utils.setRarityLore(randomItem, main.utils.getRarity(randomItem));
-
-            randomItem = main.utils.setItemAsDaily(randomItem);
-
-            shop.setItem(j, randomItem);
+            inv.setItem(j, randomItem);
             j++;
         }
-        saveDailyItems();
-
-        main.getServer().broadcastMessage(main.config.PREFIX + main.config.MSG_NEW_DAILY_ITEMS);
-        ConfigUtils.resetTime(main);
-
+        dbManager.currentItems = getCurrentItems();
     }
 
-    public void saveDailyItems() {
-        ArrayList<ItemStack> dailyItems = new ArrayList<>();
+    /**
+     * Update the gui with the currentItem
+     * on database
+     */
 
-        for (ItemStack item : shop.getContents()) {
+    private void updateCurrentItems() {
+        clearDailySlots();
+        int j = 18;
+        for (Map.Entry<String, Integer> entry : dbManager.currentItems.entrySet()) {
+            String uuid = entry.getKey();
 
-            if (item == null || !main.utils.isDailyItem(item)) {
-                continue;
+            int amount = -1;
+            amount = entry.getValue();
+
+            if(j >= (18 + conf_msg.N_DAILY_ITEMS -1)) break;
+            if (j == inv.getSize()) return;
+
+            ItemStack item = dailyItem.getRawItem(uuid);
+            if(utils.isEmpty(item)) continue;
+
+            ItemStack newItem = new dailyItem(item, true)
+                    .addLoreStrategy(new currentItemsLore()).getItem();
+
+            if(amount > 0 &&
+                    new dailyItem(newItem).hasMetadata(dailyItem.dailyMetadataType.rds_amount)) {
+                newItem.setAmount(amount);
+                new dailyItem(newItem)
+                        .addNbt(dailyItem.dailyMetadataType.rds_amount, "" + amount).getItem();
             }
-            ItemStack itemCloned = item.clone();
-            ItemMeta meta = itemCloned.getItemMeta();
-            List<String> lore = meta.getLore();
-            lore.remove(lore.size() - 1);
-            lore.remove(lore.size() - 1);
-            if(main.getConfig().getBoolean("enable-rarity")) lore.remove(lore.size() - 1);
-            meta.setLore(lore);
-            itemCloned.setItemMeta(meta);
 
-            dailyItems.add(itemCloned);
-        }
-        if (!dailyItems.isEmpty()) {
-            main.dbManager.updateCurrentItems(dailyItems);
+            inv.setItem(j, newItem);
+            j++;
         }
     }
 
-    public void getDailyItems() {
-        try {
-            ArrayList<ItemStack> dailyItem = main.dbManager.getCurrentItems();
-            if (dailyItem.isEmpty()) {
-                createRandomItems();
-                //main.getLogger().severe("Hubo un error al recuperar los items diarios, generando items aleatorios");
-                return;
+    public void updateItem(String uuid, updateAction a) {
+        utils.async(() -> {
+            for (int i = 18; i < inv.getSize(); i++) {
+                ItemStack item = inv.getItem(i);
+                if (item == null) continue;
+                ItemStack newItem;
+                if (dailyItem.getUuid(item).equals(uuid)) {
+                    if (a == updateAction.update) {
+                        newItem =
+                                new dailyItem(uuid, true)
+                                        .addLoreStrategy(new currentItemsLore()).getItem();
+                    }
+                    else {
+                        newItem = utils.getRedPane();
+                    }
+                    utils.translateAllItemData(newItem, item);
+                    return;
+                }
             }
+        });
+    }
 
-            int n = 18;
-            for (ItemStack item : dailyItem) {
-                if(n >= (18 + main.config.N_DAILY_ITEMS -1)) break;
-                if (shop.firstEmpty() == -1) break;
-                ItemMeta meta = item.getItemMeta();
-                List<String> lore;
-                if(meta.hasLore()) lore = meta.getLore();
-                else lore = new ArrayList<>();
+    public void processNextAmount(String uuid) {
 
-                lore.add(main.config.BUY_GUI_ITEMS_LORE_PRICE.replaceAll("\\{price}", String.format("%,.2f", main.listDailyItems.get(item))));
-                lore.add(main.config.BUY_GUI_ITEMS_LORE_CURRENCY.replaceAll("\\{currency}", main.utils.getEconomyType(item).getValue()));
-                meta.setLore(lore);
+        ItemStack item = null;
 
-                item.setItemMeta(meta);
-                if(main.getConfig().getBoolean("enable-rarity")) main.utils.setRarityLore(item, main.utils.getRarity(item));
-                shop.setItem(n, main.utils.setItemAsDaily(item));
-                n++;
+        for (int i = 18; i < inv.getSize(); i++) {
+            if (dailyItem.getUuid(inv.getItem(i)).equals(uuid)) {
+                item = inv.getItem(i);
+                break;
             }
-
-        } catch (Exception e) {
-            main.getLogger().severe("Hubo un error al recuperar los items diarios, generando items aleatorios");
-            createRandomItems();
-            e.printStackTrace();
         }
+        if(item == null) return;
 
+        if ( new dailyItem(item).hasMetadata(dailyItem.dailyMetadataType.rds_amount)) {
+            Integer amount = (Integer) new dailyItem(item).getMetadata(dailyItem.dailyMetadataType.rds_amount);
+            if (amount == 1) utils.translateAllItemData(utils.getRedPane(), item);
+            else {
+                item.setAmount(item.getAmount() - 1);
+                new dailyItem(item).addNbt(dailyItem.dailyMetadataType.rds_amount, "" + (item.getAmount())).getItem();
+            }
+        }
+    }
+
+    public Map<String, Integer> getCurrentItems() {
+        Map<String, Integer> list = new LinkedHashMap<>();
+        for (int i = 18; i < inv.getSize(); i++) {
+            ItemStack item = inv.getItem(i);
+            if(utils.isEmpty(item)) break;
+
+            String uuid = dailyItem.getUuid(item);
+            if(utils.isEmpty(uuid)) continue;
+
+            int amount = 0;
+            if(new dailyItem(item).hasMetadata(dailyItem.dailyMetadataType.rds_amount))
+                amount = (Integer) new dailyItem(item).
+                        getMetadata(dailyItem.dailyMetadataType.rds_amount);
+
+            list.put(uuid, amount);
+        }
+        return list;
+    }
+
+    private void clearDailySlots() {
+        for (int i = 18; i < inv.getSize(); i++) {
+            inv.setItem(i, null);
+        }
+    }
+
+    public void reload() {
+        try { inv.getViewers().forEach(HumanEntity::closeInventory); }
+        catch (ConcurrentModificationException ignored) {};
+        instance = null;
+        dbManager.currentItems = getCurrentItems();
+        getInstance();
     }
 
     @Override
     public Inventory getInventory() {
-        return shop;
+        return inv;
     }
 
-
     @EventHandler
-    public void onInventoryClick(final InventoryClickEvent e) {
-        Player p = (Player) e.getWhoClicked();
+    public void onInventoryClick(InventoryClickEvent e) {
         if (e.getView().getTopInventory().getHolder() != this) return;
-
         e.setCancelled(true);
 
-        if (e.getSlot() == 8 &&
-                e.getRawSlot() == e.getSlot() && main.getConfig().getBoolean("enable-sell-gui")) {
+        if(utils.isEmpty(e.getCurrentItem())) return;
 
-            if (!p.hasPermission("DailyRandomShop.sell")) {
-                try {
-                    p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
-                } catch (NoSuchFieldError ignored) {
-                }
-                p.sendMessage(main.config.PREFIX + main.config.MSG_NOT_PERMS);
-                return;
+        Player p = (Player) e.getWhoClicked();
+
+        if (e.getSlot() == 8) {
+            if (!p.hasPermission("dailyRandomShop.sell")) {
+                utils.noPerms(p);
+                utils.sendSound(p, Sound.ENTITY_VILLAGER_NO);
             }
-
-            try {
-                p.playSound(p.getLocation(), Sound.BLOCK_DISPENSER_DISPENSE, 0.5F, 1);
-            } catch (NoSuchFieldError ignored) {}
-
-            new sellGuiIH(main, p);
-            return;
+            sellGui.openInventory(p);
         }
 
-        if (e.getCurrentItem() == null || e.getCurrentItem().getType() == Material.AIR) return;
+        if (utils.isEmpty(dailyItem.getUuid(e.getCurrentItem()))) return;
 
-        if (!main.utils.isDailyItem(e.getCurrentItem())) return;
-
-        ItemStack item = e.getView().getTopInventory().getItem(e.getSlot()).clone();
-        item = main.utils.removeItemAsDaily(item);
-
-        //item.setAmount(1);
-
-        Double price = main.utils.getItemPrice(main.listDailyItems, item, true);
-
-        if(price <= 0) {
-            p.sendMessage(main.config.PREFIX + main.config.MSG_NOT_IN_STOCK);
-            p.closeInventory();
-            return;
-        }
-
-        if (main.utils.isCommandItem(item)) {                                                                   /* if is command item */
-
-            if (!main.utils.playerHasEnoughMoney(p, main.utils.getEconomyType(item), price)) {
-                p.sendMessage(main.config.PREFIX + main.config.MSG_NOT_ENOUGH_MONEY);
-                try {
-                    p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
-                } catch (NoSuchFieldError ignored) {}
-                finally { return; }
-            }
-
-            for (String s : main.utils.getItemCommand(item)) {
-                main.getServer().dispatchCommand(main.getServer().getConsoleSender(), s.replaceAll("%player%", p.getName()));
-            }
-            p.closeInventory();
-            try {
-                p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 0.5F, 1);
-            } catch (NoSuchFieldError ignored) {
-            }
-            main.utils.withdrawMoneyFromPlayer(p, main.utils.getEconomyType(item), price);
-            if (main.utils.isItemAmount(item)) main.utils.processItemAmount(item, e.getSlot());
-            return;
-        }
-
-        if (main.getConfig().getBoolean("enable-confirm-gui") && !main.utils.isItemAmount(item)) {          /* If the confirm gui is enabled */
-            try {
-                p.playSound(p.getLocation(), Sound.BLOCK_DISPENSER_DISPENSE, 0.5F, 1);
-            } catch (NoSuchFieldError ignored) {
-            }
-
-            new confirmGui(main, item, p, (aBoolean, itemStack) -> {
-
-                if (aBoolean) {
-                    Double priceaux = price * itemStack.getAmount();
-
-                    if(main.utils.isItemScracth(itemStack)) {
-                        int amount = itemStack.getAmount();
-                        String[] constructor = main.utils.getMMOItemConstruct(itemStack.clone());
-                        itemStack = MMOItems.plugin.getItem(Type.get(constructor[0]), constructor[1]);
-                        itemStack.setAmount(amount);
-                                                         /* All this is necessary for conviction on giveItem, since it removes the lore */
-                        ItemMeta meta = itemStack.getItemMeta();
-                        List<String> lore;
-                        if(!meta.hasLore()) lore = new ArrayList<>();
-                        else lore = meta.getLore();
-                        lore.add("price");
-                        lore.add("currency");
-                        if(main.getConfig().getBoolean("enable-rarity")) lore.add("rarity");
-                        meta.setLore(lore);
-                        itemStack.setItemMeta(meta);
-                    }
-                    main.utils.giveItem(p, price, itemStack);
-                    p.closeInventory();
-
-                } else{
-                    p.openInventory(main.BuyGui.getInventory());
-                    try {
-                        p.playSound(p.getLocation(), Sound.BLOCK_DISPENSER_DISPENSE, 0.5F, 1);
-                    } catch (NoSuchFieldError ignored) {}
-                }
-
-            }, main.config.CONFIRM_GUI_NAME, true);
-
-
-
-        } else {                                                                                                /* If the confirm gui is not enabled */
-
-            if(price <= 0) {
-                p.sendMessage(main.config.PREFIX + main.config.MSG_NOT_IN_STOCK);
-                p.closeInventory();
-                return;
-            }
-
-            if (!main.utils.playerHasEnoughMoney(p, main.utils.getEconomyType(item), price)) {
-                p.sendMessage(main.config.PREFIX + main.config.MSG_NOT_ENOUGH_MONEY);
-                return;
-            }
-
-            if (main.utils.isItemAmount(item) && main.utils.inventoryFull(p) != -1) {
-                main.utils.processItemAmount(e.getView().getTopInventory().getItem(e.getSlot()), e.getSlot());
-            }
-
-            item.setAmount(1);
-
-            if(main.utils.isItemScracth(item)) {
-                String[] constructor = main.utils.getMMOItemConstruct(item.clone());
-                item = MMOItems.plugin.getItem(Type.get(constructor[0]), constructor[1]);
-                                            /* All this is necessary for conviction on giveItem, since it removes the lore */
-                ItemMeta meta = item.getItemMeta();
-                List<String> lore;
-                if(!meta.hasLore()) lore = new ArrayList<>();
-                else lore = meta.getLore();
-                lore.add("price");
-                lore.add("currency");
-                if(main.getConfig().getBoolean("enable-rarity")) lore.add("rarity");
-                meta.setLore(lore);
-                item.setItemMeta(meta);
-            }
-
-            main.utils.giveItem(p, price, item);
-
+        if (e.getSlot() >= 18 && e.getSlot() < inv.getSize()
+                && !utils.isEmpty(e.getCurrentItem())) {
+            transaction.initTransaction(p, dailyItem.getRawItem(e.getCurrentItem()));
         }
     }
 
     @EventHandler
-    public void onInventoryClick(final InventoryDragEvent e) {
-        if (e.getView().getTopInventory().getHolder() == this) {
-            e.setCancelled(true);
-        }
+    public void onTimerExpired(expiredTimerEvent e) {
+        main.getServer().broadcastMessage(conf_msg.PREFIX + conf_msg.MSG_NEW_DAILY_ITEMS);
+        createRandomItems();
     }
 
+    public enum updateAction {
+        update,
+        delete
+    }
 
 }

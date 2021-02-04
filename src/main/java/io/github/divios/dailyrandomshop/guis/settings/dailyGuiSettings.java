@@ -1,287 +1,130 @@
 package io.github.divios.dailyrandomshop.guis.settings;
 
-import com.cryptomorin.xseries.XMaterial;
-import io.github.divios.dailyrandomshop.DailyRandomShop;
-import io.github.divios.dailyrandomshop.guis.customizerItem.customizerMainGuiIH;
+import io.github.divios.dailyrandomshop.builders.dynamicGui;
+import io.github.divios.dailyrandomshop.builders.factory.dailyItem;
+import io.github.divios.dailyrandomshop.conf_msg;
+import io.github.divios.dailyrandomshop.database.dataManager;
+import io.github.divios.dailyrandomshop.guis.buyGui;
+import io.github.divios.dailyrandomshop.guis.confirmIH;
+import io.github.divios.dailyrandomshop.guis.customizerguis.customizerMainGuiIH;
+import io.github.divios.dailyrandomshop.lorestategy.dailySettingsLore;
+import io.github.divios.dailyrandomshop.utils.utils;
+import io.github.divios.dailyrandomshop.xseries.XMaterial;
 import net.wesjd.anvilgui.AnvilGUI;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.HandlerList;
-import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
 
-public class dailyGuiSettings implements Listener, InventoryHolder {
+public class dailyGuiSettings {
 
-    private final DailyRandomShop main;
-    private Inventory GUI;
-    private final ItemStack exit = XMaterial.OAK_SIGN.parseItem();
-    private final ItemStack next = new ItemStack(Material.ARROW);
-    private final ItemStack create = new ItemStack(Material.ANVIL);
-    private final ItemStack previous = new ItemStack(Material.ARROW);
-    public final ArrayList<Inventory> invs = new ArrayList<>();
-    private final ArrayList<Integer> reservedSlots = new ArrayList<>();
+    private static final io.github.divios.dailyrandomshop.main main = io.github.divios.dailyrandomshop.main.getInstance();
+    private static final dataManager dbManager = dataManager.getInstance();
+    private static dailyGuiSettings instance = null;
+    private Player p;
 
-    public dailyGuiSettings(DailyRandomShop main) {
-        Bukkit.getPluginManager().registerEvents(this, main);
-        this.main = main;
+    private dailyGuiSettings () {}
 
-        ItemMeta meta = exit.getItemMeta();
-        meta.setDisplayName(main.config.DAILY_ITEMS_MENU_RETURN);
-        exit.setItemMeta(meta);
-
-        meta = create.getItemMeta();
-        meta.setDisplayName(main.config.DAILY_ITEMS_MENU_ADD);
-        List<String> lore = new ArrayList<>();
-        for(String s: main.config.DAILY_ITEMS_MENU_ADD_LORE) {
-            lore.add(ChatColor.translateAlternateColorCodes('&', s));
+    public static void openInventory(Player p) {
+        if(instance == null) {
+            instance = new dailyGuiSettings();
         }
-        meta.setLore(lore);
-        create.setItemMeta(meta);
-
-        meta = next.getItemMeta();
-        meta.setDisplayName(main.config.DAILY_ITEMS_MENU_NEXT);
-        next.setItemMeta(meta);
-
-        meta = previous.getItemMeta();
-        meta.setDisplayName(main.config.DAILY_ITEMS_MENU_PREVIOUS);
-        previous.setItemMeta(meta);
-
-        reservedSlots.add(45);
-        reservedSlots.add(46);
-        reservedSlots.add(47);
-        reservedSlots.add(48);
-        reservedSlots.add(49);
-        reservedSlots.add(50);
-        reservedSlots.add(51);
-        reservedSlots.add(52);
-        reservedSlots.add(53);
-
-        initGui();
+        instance.p = p;
+        new dynamicGui.Builder()
+                .title(integer -> conf_msg.DAILY_ITEMS_MENU_TITLE)
+                .contents(instance::Contents)
+                .back(settingsGuiIH::openInventory)
+                .addItems((inventory, integer) -> instance.setItems(inventory))
+                .contentAction(instance::contentAction)
+                .nonContentAction(instance::nonContentAction)
+                .setSearch(false)
+                .open(p);
     }
 
-    public void initGui() {
+    public List<ItemStack> Contents() {
+        List<ItemStack> contents = new ArrayList<>();
 
-        double nD = main.listDailyItems.size() / 44F;
-        int n = (int) Math.ceil(nD);
-
-        GUI = Bukkit.createInventory(this, 54, main.config.DAILY_ITEMS_MENU_TITLE);
-        GUI.setItem(52, create);
-        GUI.setItem(49, exit);
-
-        for(int i = 0; i<n; i++) {
-            if (i + 1 == n) {
-                invs.add(createGUI(i + 1, 2));
-            }
-            else if (i==0) invs.add(createGUI(i+1, 0));
-            else invs.add(createGUI(i+1, 1));
+        for(Map.Entry<ItemStack, Double> entry: dbManager.listDailyItems.entrySet()) {
+            contents.add(new dailyItem(entry.getKey(), true)
+                    .addLoreStrategy(new dailySettingsLore())
+                    .getItem());
         }
-
-        if (invs.isEmpty()) {
-            Inventory firstInv = Bukkit.createInventory(this, 54, main.config.DAILY_ITEMS_MENU_TITLE);
-            firstInv.setContents(GUI.getContents());
-            invs.add(firstInv);
-        }
-
+        return contents;
     }
 
-    public Inventory createGUI(int page, int pos) {
-        int slot = 0;
-        Inventory returnGui = Bukkit.createInventory(this, 54, main.config.DAILY_ITEMS_MENU_TITLE);
-        returnGui.setContents(GUI.getContents());
-        if(pos == 0 && main.listDailyItems.size() > 44) returnGui.setItem(53, next);
-        if(pos == 1) {
-            returnGui.setItem(53, next);
-            returnGui.setItem(45, previous);
-        }
-        if(pos == 2 && main.listDailyItems.size() > 44) {
-            returnGui.setItem(45, previous);
-        }
-
-        for(Map.Entry<ItemStack, Double> i: main.listDailyItems.entrySet()) {
-            ItemStack item = i.getKey().clone();
-            setLore(item, i.getValue());
-
-            if (slot == 45 * page) break;
-            if (slot >= (page - 1) * 45) returnGui.setItem(slot - (page - 1) * 45, item);
-
-            slot++;
-        }
-        return returnGui;
+    public void setItems(Inventory inv) {
+        ItemStack addItems = XMaterial.ANVIL.parseItem();
+        utils.setDisplayName(addItems, "&b&lAdd");
+        utils.setLore(addItems, Arrays.asList("&7Click to add item"));
+        inv.setItem(52, addItems);
     }
 
-    public Inventory processNextGui(Inventory inv, int dir) {
-        return invs.get(invs.indexOf(inv) + dir);
-    }
-
-    public void setLore(ItemStack item, Double price) {
-        ItemMeta meta = item.getItemMeta();
-        if (meta == null) meta = Bukkit.getItemFactory().getItemMeta(item.getType());
-
-        List<String> lore = null;
-        if (meta != null && meta.hasLore() ) lore = meta.getLore();
-        else lore = new ArrayList<>();
-
-        lore.add(main.config.BUY_GUI_ITEMS_LORE_PRICE.replaceAll("\\{price}", String.format("%,.2f",price)));
-        lore.add(main.config.BUY_GUI_ITEMS_LORE_CURRENCY.replaceAll("\\{currency}", main.utils.getEconomyType(item).getValue()));
-        if(main.getConfig().getBoolean("enable-rarity"))  lore.add(main.config.BUY_GUI_ITEMS_LORE_RARITY.replaceAll("\\{rarity}", main.utils.getRarityString(item)));
-        lore.add("");
-        for(String s: main.config.DAILY_ITEMS_MENU_ITEMS_LORE) {
-            lore.add(ChatColor.translateAlternateColorCodes('&', s));
-        }
-        meta.setLore(lore);
-        item.setItemMeta(meta);
-    }
-
-    public Inventory getFirstGui() {
-        return invs.get(0);
-    }
-
-    @EventHandler
-    public void onInventoryClick(final InventoryClickEvent e) {
-
-        if (e.getView().getTopInventory().getHolder() != this) {
-            return;
-        }
-
-        e.setCancelled(true);
-        Player p = (Player) e.getWhoClicked();
-
-        if(e.getSlot() != e.getRawSlot()) return;
-
-        if(e.getCurrentItem() == null || e.getCurrentItem().getType() == Material.AIR) return;
-
-        if (e.getSlot() == 49) {
-            new settingsGuiIH(main, p);
-        }
-
-        if (e.getSlot() == 45 ) {
-            p.openInventory(main.DailyGuiSettings.processNextGui(e.getView().getTopInventory(), -1));
-        }
-
-        if (e.getSlot() == 53 ) {
-            p.openInventory(main.DailyGuiSettings.processNextGui(e.getView().getTopInventory(), 1));
-        }
-
-        if (e.getSlot() == 52 ) {
-            new addDailyItemGuiIH(main, p, e.getView().getTopInventory());
-        }
-
-        if (reservedSlots.contains(e.getSlot())) {
-            return;
-        }
-
-        ItemStack item = removeLore(e.getCurrentItem().clone());
+    public dynamicGui.Response contentAction(InventoryClickEvent e) {
 
         if (e.isLeftClick() && !e.isShiftClick()) {
-            AtomicBoolean response = new AtomicBoolean(false);
             new AnvilGUI.Builder()
-                    .onClose(player -> {
-                        Bukkit.getScheduler().runTaskLater(main, () -> p.openInventory(main.DailyGuiSettings.getFirstGui()), 1);
-                    })
-                    .onComplete((player, text) -> {                             //called when the inventory output slot is clicked
+                    .onClose(player -> utils.runTaskLater(() -> {
+                        openInventory(player);
+                    }, 1L))
+                    .onComplete((player, text) -> {
                         try {
-                            Double price = Double.parseDouble(text);
-                            /*while (Bukkit.getScheduler().isCurrentlyRunning(main.updateListID.getTaskId())){
-                                main.utils.waitXticks(10);
-                            }*/
-                            main.utils.replacePriceOnList(main.listDailyItems, item, price);
-                            //main.dbManager.updateDailyItemPrice(item, price);
-                            HandlerList.unregisterAll(main.DailyGuiSettings);
-                            main.DailyGuiSettings = new dailyGuiSettings(main);
-                            response.set(true);
-                            return AnvilGUI.Response.close();
-                        } catch (NumberFormatException err) {
-                            return AnvilGUI.Response.text("Not integer");
-                        }
+                            Double.parseDouble(text);
+                        } catch (NumberFormatException err) { return AnvilGUI.Response.text("Is not Integer"); }
 
+                        String uuid = dailyItem.getUuid(e.getCurrentItem());
+                        dailyItem.changePriceByUuid(uuid, Double.parseDouble(text));
+                        buyGui.getInstance().updateItem(uuid, buyGui.updateAction.update);
+                        return AnvilGUI.Response.close();
                     })
-                    .text(main.config.DAILY_ITEMS_MENU_ANVIL_DEFAULT_TEXT)
-                    .itemLeft(new ItemStack(item))
-                    .title(main.config.DAILY_ITEMS_MENU_ANVIL_TITLE)
+                    .text(conf_msg.DAILY_ITEMS_MENU_ANVIL_DEFAULT_TEXT)
+                    .itemLeft(new ItemStack(XMaterial.EMERALD.parseMaterial()))
+                    .title(conf_msg.DAILY_ITEMS_MENU_ANVIL_TITLE)
                     .plugin(main)
                     .open(p);
+        }
 
-        } else if (e.isRightClick() && !e.isShiftClick()) {
-
-            new confirmIH(p, (p1, bool) -> {
-
-                if (bool) {
-                   /* while (Bukkit.getScheduler().isCurrentlyRunning(main.updateListID.getTaskId())){
-                        main.utils.waitXticks(10);
-                    }*/
-                    main.utils.removeItemOnList(main.listDailyItems, item);
-                    p1.sendMessage(main.config.PREFIX + main.config.MSG_REMOVED_ITEM);
-                    HandlerList.unregisterAll(main.DailyGuiSettings);
-                    main.DailyGuiSettings = new dailyGuiSettings(main);
-                    //main.dbManager.deleteDailyItem(item);
+        else if (e.isRightClick() && !e.isShiftClick()) {
+            new confirmIH(p, (player, aBoolean) -> {
+                if (aBoolean) {
+                    String uuid = dailyItem.getUuid(e.getCurrentItem());
+                    dailyItem.removeItemByUuid(e.getCurrentItem());
+                    buyGui.getInstance().updateItem(uuid, buyGui.updateAction.delete);
                 }
-                p1.openInventory(main.DailyGuiSettings.getFirstGui());
+                openInventory(player);
+            }, dailyGuiSettings::openInventory
+                    ,"&aConfirm");
+        }
 
-            }, ChatColor.DARK_GREEN + "" + ChatColor.BOLD + "Confirm", main);
+        else if (e.isLeftClick() && e.isShiftClick()) {
+            customizerMainGuiIH.openInventory(p,
+                    dailyItem.getRawItem(e.getCurrentItem()));
+        }
 
-        } else if (e.isLeftClick() && e.isShiftClick()) {
-            new customizerMainGuiIH(main, (Player) e.getWhoClicked(), removeLore(e.getCurrentItem().clone()), removeLore(e.getCurrentItem().clone()));
-
-        } else if (e.isRightClick() && e.isShiftClick()) {
-
-            ItemStack itemToAdd = main.utils.removeEconomyTypeMetadata(item.clone());     /* Lore already trim, just to avoid removing metadata */
-
-            if (main.utils.listContaisItem(main.listSellItems, item)) {
-                p.sendMessage(main.config.PREFIX + main.config.MSG_ITEM_ON_SALE);
-                return;
+        else if( e.isRightClick() && e.isShiftClick()) {
+            if (utils.hasItem(e.getCurrentItem())) {
+                p.sendMessage(conf_msg.PREFIX + conf_msg.MSG_ITEM_ALREADY_ON_SALE);
+                return dynamicGui.Response.nu();
             }
-
-            new confirmIH(p, (p1, bool) -> {
-
-                if (bool) {
-                    /*while (Bukkit.getScheduler().isCurrentlyRunning(main.updateListID.getTaskId())){
-                        main.utils.waitXticks(10);
-                    }*/
-                    Double price = main.utils.getItemPrice(main.listDailyItems, itemToAdd, false);
-                    ItemStack itemtoAdd2 = main.utils.removeDailyMetadata(itemToAdd);
-
-                    main.listSellItems.put(itemtoAdd2, price);
-                    p.sendMessage(main.config.PREFIX + main.config.MSG_ITEM_ADDED);
-                    main.SellGuiSettings = new sellGuiSettings(main);
-                }
-                p1.openInventory(main.DailyGuiSettings.getFirstGui());
-
-            }, ChatColor.DARK_GREEN + "" + ChatColor.BOLD + "Confirm", main);
-
+            dataManager.getInstance().listSellItems.put(new dailyItem(
+                    dailyItem.getRawItem(e.getCurrentItem()), true)
+                    .removeAllMetadata().getItem(), -1D);
+            sellGuiSettings.openInventory(p);
         }
+
+        return dynamicGui.Response.nu();
     }
 
-    public ItemStack removeLore(ItemStack item) {
-        ItemMeta meta = item.getItemMeta();
-        List<String> lore = meta.getLore();
-
-        int j = 0;
-        int plus = 2;
-        if(main.getConfig().getBoolean("enable-rarity")) plus++;
-        while (j <= main.config.DAILY_ITEMS_MENU_ITEMS_LORE.size() + plus) {
-            lore.remove(lore.size() - 1);
-            j++;
+    public dynamicGui.Response nonContentAction(int slot, Player p) {
+        if (slot == 52) {
+            addDailyItemGuiIH.openInventory(p);
         }
-        meta.setLore(lore);
-        item.setItemMeta(meta);
-
-        return item;
+        return dynamicGui.Response.nu();
     }
 
-    @Override
-    public Inventory getInventory() {
-        return null;
-    }
+
 }

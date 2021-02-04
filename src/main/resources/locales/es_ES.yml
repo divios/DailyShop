@@ -62,8 +62,8 @@ confirm-gui-confirm-pane: "&a&lConfirmar"
 confirm-gui-return-name: "&c&lVolver"
 
   #############################
-  ####### Confirm menu ########
-  #############################
+####### Confirm menu ########
+#############################
 
 # NOTE: This is the menu that sometimes
 # appears to confirm an action
@@ -71,8 +71,8 @@ confirm-menu-yes: "&a&lConfirmar"
 confirm-manu-no: "&c&lCancelar"
 
   ##############################
-  ####### Settings menu ########
-  ##############################
+####### Settings menu ########
+##############################
 
 # NOTE: This is the menu that prompts when /rdshop settings
 settings-gui-title: "&6&lAjustes"
@@ -134,8 +134,8 @@ daily-items-menu-items-lore:
 daily-items-anvil-title: "&6&lInsertar nuevo precio"
 daily-items-anvil-default-text: "Precio"
 
-  ################################
-  ####### Sell items menu ########
+################################
+####### Sell items menu ########
 ################################
 
 # NOTE: This is the menu to manage
@@ -154,8 +154,8 @@ sell-items-menu-items-lore:
 sell-items-anvil-title: "&6&lInsertar nuevo precio"
 sell-items-anvil-default-text: "Precio"
 
-  ####################################
-  ####### Customize item menu ########
+####################################
+####### Customize item menu ########
 ####################################
 
 customize-menu-title: "&a&lPersonalizar Item"
@@ -167,6 +167,13 @@ customize_craft_lore:
 customize_return: "&c&lVolver"
 customize_return_lore:
   - "&7Clic para cancelar operacion"
+
+customize_change_econ: "&f&lCambiar moneda"
+customize_change_econ_lore:
+  - "&7Clic para cambiar la moneda"
+
+customize_change_rarity_lore:
+  - "&7Click para cambiar la rareza del item"
 
 customize_rename: "&f&lCambiar nombre"
 customize_rename_lore:
@@ -240,17 +247,6 @@ customize_toggle_effects_lore:
   - ""
   - "&6Estado &7{status}"
 
-customize_toggle_mmoitem_scratch: "&f&lGenerar MMOItem desde cero"
-customize_toggle_mmoitem_scratch_lore:
-  - "&6> Clic izq: &7Cambiar estado"
-  - ""
-  - "&6Estado &7{status}"
-  - ""
-  - "&7Cambiar si quieres que al comprar un mmoitem,"
-  - "&7este se genere desde cero. Util si por ejemplo"
-  - "&7ese item tienen stats aleatorios y quieres que"
-  - "&7se generen adecuadamente."
-
 ######################
 ###### Messages ######
 ######################
@@ -269,7 +265,7 @@ message-error_adding_item: "&7Algo fue mal al añadir el item"
 message-added_item: "&7Item añadido correctamente"
 message_removed_item: "&7Item eliminado correctamente"
 message_item_on_sale: "&7Ey! Ese item ya esta registrado"
-message_not_in_stock: "&7Ese item ya no esta en stock, un admin debio de quitarlo, lo sentimos"
+message_not_in_stock: "&7Esa moneda ya no esta a la venta, lo sentimos"
 message-sell-items-gui-empty: "&7No hay items registrados todavia, añade uno con /rdshop addSellItem"
 message-anvil-error-integer: "No es un numero"
 message-add-item-title: "&a&lClic item"
