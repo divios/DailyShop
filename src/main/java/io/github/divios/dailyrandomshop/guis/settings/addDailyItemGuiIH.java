@@ -15,6 +15,8 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ConcurrentModificationException;
+
 public class addDailyItemGuiIH implements InventoryHolder, Listener {
 
     private static final io.github.divios.dailyrandomshop.main main = io.github.divios.dailyrandomshop.main.getInstance();
@@ -62,7 +64,8 @@ public class addDailyItemGuiIH implements InventoryHolder, Listener {
 
     public static void reload() {
         if(instance == null) return;
-        inv.getViewers().forEach(HumanEntity::closeInventory);
+        try { inv.getViewers().forEach(HumanEntity::closeInventory); }
+        catch (ConcurrentModificationException ignored) {};
         instance.init();
     }
 

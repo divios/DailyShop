@@ -1,7 +1,6 @@
 package io.github.divios.dailyrandomshop.listeners;
 
 import io.github.divios.dailyrandomshop.conf_msg;
-import io.github.divios.dailyrandomshop.guis.customizerguis.customizerMainGuiIH;
 import io.github.divios.dailyrandomshop.guis.settings.dailyGuiSettings;
 import io.github.divios.dailyrandomshop.utils.utils;
 import io.github.divios.dailyrandomshop.xseries.Titles;

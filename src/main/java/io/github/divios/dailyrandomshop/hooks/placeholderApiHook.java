@@ -3,7 +3,6 @@ package io.github.divios.dailyrandomshop.hooks;
 import io.github.divios.dailyrandomshop.main;
 import io.github.divios.dailyrandomshop.tasks.taskManager;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 class placeholderApiHook extends PlaceholderExpansion {

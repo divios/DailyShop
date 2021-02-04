@@ -23,6 +23,8 @@ public class confirmIH implements InventoryHolder, Listener {
     private final BiConsumer<Player, Boolean> bi;
     private Consumer<Player> c;
     private final String title;
+    private final Consumer<Player> back;
+    private boolean backFlag = true;
     private static final io.github.divios.dailyrandomshop.main main = io.github.divios.dailyrandomshop.main.getInstance();
 
     /**
@@ -32,11 +34,13 @@ public class confirmIH implements InventoryHolder, Listener {
      */
 
     public confirmIH(Player p,
-                     BiConsumer<Player, Boolean> true_false,
+                     BiConsumer<Player , Boolean> true_false,
+                     Consumer<Player> back,
                      String title) {
 
         Bukkit.getPluginManager().registerEvents(this, main);
         this.p = p;
+        this.back = back;
         bi = true_false;
         this.title = utils.formatString(title);
         p.openInventory(getInventory());
@@ -66,15 +70,18 @@ public class confirmIH implements InventoryHolder, Listener {
         if (e.getView().getTopInventory().getHolder() != this) return;
         e.setCancelled(true);
 
+
         if (utils.isEmpty(e.getCurrentItem())) return;
         if (e.getSlot() != e.getRawSlot()) return;
 
         switch (e.getSlot()) {
             case 15:
                 bi.accept(p, false);
+                backFlag = false;
                 break;
 
             case 11:
+                backFlag = false;
                 bi.accept(p, true);
                 break;
 
@@ -87,6 +94,8 @@ public class confirmIH implements InventoryHolder, Listener {
     public void onClose(InventoryCloseEvent e) {
         if (e.getView().getTopInventory().getHolder() != this) return;
         InventoryClickEvent.getHandlerList().unregister(this);
+        InventoryCloseEvent.getHandlerList().unregister(this);
+        if(backFlag) utils.runTaskLater(() -> back.accept(p), 1L);
     }
 
 }

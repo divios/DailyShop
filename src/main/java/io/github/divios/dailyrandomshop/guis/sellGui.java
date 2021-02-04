@@ -16,7 +16,6 @@ import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 public class sellGui implements Listener, InventoryHolder {
 
@@ -64,15 +63,15 @@ public class sellGui implements Listener, InventoryHolder {
         return sellGui;
     }
 
-    public double calculatePrice(Inventory inv) {
+    public double calculatePrice(Inventory inv, Player p) {
         double price = 0;
 
-        for (int i = 18; i < inv.getSize(); i++) {
+        for (int i = 18; i < inv.getSize() - 9; i++) {
             ItemStack item = inv.getItem(i);
             if (utils.isEmpty(item)) continue;
             price += utils.getPrice(item) * inv.getItem(i).getAmount();
         }
-        price = (double) Math.round(price * 100.0) / 100;
+        price = (double) Math.round(price * 100.0) / 100 * utils.getPriceModifier(p);
         ItemStack item = inv.getItem(40);
         if (price <= 0) {
             utils.setDisplayName(item, conf_msg.SELL_ITEM_NAME.
@@ -92,7 +91,7 @@ public class sellGui implements Listener, InventoryHolder {
         Inventory inv = e.getView().getTopInventory();
 
         if (e.getSlot() == e.getRawSlot() && (e.getSlot() < 18
-                || e.getSlot() > 45)) e.setCancelled(true);
+                || e.getSlot() > 36)) e.setCancelled(true);
 
         if (e.getSlot() == e.getRawSlot() && e.getSlot() == 0) {
             if (!p.hasPermission("dailyRandomShop.open")) {
@@ -103,10 +102,11 @@ public class sellGui implements Listener, InventoryHolder {
         }
 
         if (e.getSlot() == e.getRawSlot() && e.getSlot() == 40) {
-            double price = calculatePrice(e.getView().getTopInventory());
+            double price = calculatePrice(e.getView().getTopInventory(), p);
 
-            if (price == 0) {
+            if (price <= 0) {
                 utils.sendSound(p, Sound.ENTITY_VILLAGER_NO);
+                return;
             }
 
             for (int i = 18; i < inv.getSize(); i++) { //remove all items
@@ -127,10 +127,10 @@ public class sellGui implements Listener, InventoryHolder {
 
             e.setCancelled(true);
             p.sendMessage(conf_msg.PREFIX + conf_msg.MSG_INVALID_ITEM);
-            p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
+            p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
         }
 
-        utils.async(() -> calculatePrice(e.getView().getTopInventory()));
+        utils.async(() -> calculatePrice(e.getView().getTopInventory(), p));
     }
 
     @EventHandler

@@ -14,7 +14,7 @@ public class vault implements economy{
     }
 
     @Override
-    public void waitchDrawMoney(Player p, Double price) {
+    public void witchDrawMoney(Player p, Double price) {
         vault.withdrawPlayer(p, price);
     }
 }

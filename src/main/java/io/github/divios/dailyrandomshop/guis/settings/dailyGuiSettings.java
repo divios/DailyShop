@@ -96,13 +96,26 @@ public class dailyGuiSettings {
                     buyGui.getInstance().updateItem(uuid, buyGui.updateAction.delete);
                 }
                 openInventory(player);
-            }, "&aConfirm");
+            }, dailyGuiSettings::openInventory
+                    ,"&aConfirm");
         }
 
         else if (e.isLeftClick() && e.isShiftClick()) {
             customizerMainGuiIH.openInventory(p,
                     dailyItem.getRawItem(e.getCurrentItem()));
         }
+
+        else if( e.isRightClick() && e.isShiftClick()) {
+            if (utils.hasItem(e.getCurrentItem())) {
+                p.sendMessage(conf_msg.PREFIX + conf_msg.MSG_ITEM_ALREADY_ON_SALE);
+                return dynamicGui.Response.nu();
+            }
+            dataManager.getInstance().listSellItems.put(new dailyItem(
+                    dailyItem.getRawItem(e.getCurrentItem()), true)
+                    .removeAllMetadata().getItem(), -1D);
+            sellGuiSettings.openInventory(p);
+        }
+
         return dynamicGui.Response.nu();
     }
 

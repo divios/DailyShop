@@ -10,6 +10,7 @@ import io.github.divios.dailyrandomshop.guis.buyGui;
 import io.github.divios.dailyrandomshop.guis.confirmGui;
 import io.github.divios.dailyrandomshop.hooks.hooksManager;
 import io.github.divios.dailyrandomshop.main;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -104,10 +105,12 @@ public class transaction {
     private boolean hasEnoughMoreAndSpace(double price) {
         if (!econStrategy.hasMoney(p, price)) {
             p.sendMessage(conf_msg.PREFIX + conf_msg.MSG_NOT_ENOUGH_MONEY);
+            p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
             return false;
         }
         if(utils.inventoryFull(p.getInventory()) < n) {
             p.sendMessage(conf_msg.PREFIX + conf_msg.MSG_INVENTORY_FULL);
+            p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
             return false;
         }
         return true;
@@ -115,10 +118,17 @@ public class transaction {
 
     private boolean processEcon(ItemStack item) {
         Double price = dailyItem.getPrice(item);
-        econStrategy.waitchDrawMoney(p, price);
+        String currency;
+        try {
+            currency = ((AbstractMap.SimpleEntry<String, String>) new dailyItem(item).
+                    getMetadata(dailyItem.dailyMetadataType.rds_econ)).getKey();
+        } catch (NullPointerException e) { currency = conf_msg.VAULT_CUSTOM_NAME; }
+
+        econStrategy.witchDrawMoney(p, price);
         p.sendMessage(conf_msg.PREFIX + conf_msg.MSG_BUY_ITEM
                 .replaceAll("\\{price}", "" + price)
-                .replaceAll("\\{item}", item.getType().toString()));
+                .replaceAll("\\{item}", item.getType().toString())
+                .replaceAll("\\{currency}", currency));
         giveItem(item);
         return true;
     }

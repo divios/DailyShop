@@ -89,7 +89,8 @@ public class sellGuiSettings {
                         utils.removeItem(e.getCurrentItem());
                     }
                     openInventory(player);
-                }, "&aConfirm");
+                }, sellGuiSettings::openInventory
+                        ,"&aConfirm");
             }
 
             return dynamicGui.Response.nu();
