@@ -5,6 +5,7 @@ import io.github.divios.dailyrandomshop.utils.utils;
 import org.bukkit.entity.Player;
 
 import java.util.Arrays;
+import java.util.List;
 
 public class helpCmd implements dailyCommand{
     @Override
@@ -25,6 +26,13 @@ public class helpCmd implements dailyCommand{
         if (p.hasPermission("DailyRandomShop.help")) {
             p.sendMessage(utils.formatString("&6&l>> &6/rdshop help &8 " +
                     "- &7Displays help"));
+        }
+    }
+
+    @Override
+    public void command(Player p, List<String> s) {
+        if (p.hasPermission("DailyRandomShop.help")) {
+            s.add("help");
         }
     }
 }

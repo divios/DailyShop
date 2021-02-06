@@ -52,9 +52,11 @@ public class conf_msg {
         main.reloadConfig();
         createLocales();
 
-        File file = new File(main.getDataFolder() + File.separator + "locales" + File.separator + main.getConfig().getString("language", "en_US") + ".yml");
+        File file = new File(main.getDataFolder() + File.separator + "locales" +
+                File.separator + main.getConfig().getString("language", "en_US") + ".yml");
 
-        if (file == null) file = new File(main.getDataFolder() + File.separator + "locales" + File.separator + "en_US");
+        if (!file.exists()) file = new File(main.getDataFolder() +
+                File.separator + "locales" + File.separator + "en_US");
 
         FileConfiguration yamlFile = YamlConfiguration.loadConfiguration(file);
 
