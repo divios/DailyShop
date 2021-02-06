@@ -6,6 +6,8 @@ import io.github.divios.dailyrandomshop.utils.utils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+import java.util.List;
+
 public class renovateCmd implements dailyCommand{
 
 
@@ -24,6 +26,13 @@ public class renovateCmd implements dailyCommand{
         if (p.hasPermission("DailyRandomShop.renovate")) {
             p.sendMessage(utils.formatString("&6&l>> &6/rdshop renovate &8 " +
                     "- &7Renovates daily items and resets timer"));
+        }
+    }
+
+    @Override
+    public void command(Player p, List<String> s) {
+        if (p.hasPermission("DailyRandomShop.renovate")) {
+            s.add("renovate");
         }
     }
 }

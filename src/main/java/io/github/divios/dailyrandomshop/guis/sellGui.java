@@ -93,6 +93,8 @@ public class sellGui implements Listener, InventoryHolder {
         if (e.getSlot() == e.getRawSlot() && (e.getSlot() < 18
                 || e.getSlot() > 36)) e.setCancelled(true);
 
+        if (e.isShiftClick() && e.getSlot() != e.getRawSlot()) e.setCancelled(true);
+
         if (e.getSlot() == e.getRawSlot() && e.getSlot() == 0) {
             if (!p.hasPermission("dailyRandomShop.open")) {
                 utils.noPerms(p);
@@ -118,7 +120,7 @@ public class sellGui implements Listener, InventoryHolder {
             p.closeInventory();
             p.sendMessage(conf_msg.PREFIX + conf_msg.MSG_SELL_ITEMS.
                     replaceAll("\\{price}", String.format("%,.2f", price)));
-            hooksManager.getInstance().getVault().withdrawPlayer(p, price);
+            hooksManager.getInstance().getVault().depositPlayer(p, price);
         }
 
         if (!utils.isEmpty(e.getCurrentItem()) &&

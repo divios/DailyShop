@@ -231,9 +231,15 @@ public class buyGui implements Listener, InventoryHolder {
     public void reload() {
         try { inv.getViewers().forEach(HumanEntity::closeInventory); }
         catch (ConcurrentModificationException ignored) {};
+        unRegisterListeners();
         instance = null;
         dbManager.currentItems = getCurrentItems();
         getInstance();
+    }
+
+    private void unRegisterListeners() {
+        InventoryClickEvent.getHandlerList().unregister(instance);
+        expiredTimerEvent.getHandlerList().unregister(instance);
     }
 
     @Override

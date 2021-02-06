@@ -3,6 +3,7 @@ package io.github.divios.dailyrandomshop.tasks;
 import io.github.divios.dailyrandomshop.conf_msg;
 import io.github.divios.dailyrandomshop.database.dataManager;
 import io.github.divios.dailyrandomshop.events.expiredTimerEvent;
+import io.github.divios.dailyrandomshop.utils.utils;
 import org.bukkit.Bukkit;
 
 class timerTask {
@@ -28,7 +29,8 @@ class timerTask {
 
         Bukkit.getScheduler().runTaskTimerAsynchronously(main, () -> {
             if (time == 0) {
-                Bukkit.getPluginManager().callEvent(new expiredTimerEvent());
+                utils.sync(() -> Bukkit.getPluginManager().
+                        callEvent(new expiredTimerEvent()));
                 resetTimer();
                 return;
             }

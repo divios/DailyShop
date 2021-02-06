@@ -82,7 +82,10 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
 
         ItemStack setAmount = XMaterial.STONE_BUTTON.parseItem();    //Change amount
         utils.setDisplayName(setAmount, conf_msg.CUSTOMIZE_AMOUNT);
-        utils.setLore(setAmount, conf_msg.CUSTOMIZE_AMOUNT_LORE);
+        utils.setLore(setAmount, utils.replaceOnLore(
+                conf_msg.CUSTOMIZE_AMOUNT_LORE, "\\{status}",
+                "" + new dailyItem(newItem)
+                        .hasMetadata(dailyMetadataType.rds_amount)));
 
         ItemStack makeCommand = XMaterial.COMMAND_BLOCK.parseItem();    //Change command item
         utils.setDisplayName(makeCommand, conf_msg.CUSTOMIZE_ENABLE_COMMANDS);
