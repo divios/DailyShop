@@ -107,6 +107,24 @@ public class dailyItem {
         return this;
     }
 
+    public static boolean isMMOitem(ItemStack item) {
+        try {
+            net.mmogroup.mmolib.api.item.NBTItem NBTItem = net.mmogroup.mmolib.api.item.NBTItem.get(item);
+            return NBTItem.hasType();
+        } catch (NoClassDefFoundError | NoSuchMethodError e) {
+            return false;
+        }
+    }
+
+    public static String[] getMMOItemConstruct(ItemStack item) {
+
+        net.mmogroup.mmolib.api.item.NBTItem NBTItem = net.mmogroup.mmolib.api.item.NBTItem.get(item.clone());
+        String type = NBTItem.getType();
+        String id = NBTItem.getString("MMOITEMS_ITEM_ID");
+
+        return new String[]{type, id};
+    }
+
     public static Double getPrice(ItemStack item) {
         return getPrice(getUuid(item));
     }
@@ -177,6 +195,35 @@ public class dailyItem {
         for (Map.Entry<ItemStack, Double> e : dbManager.listDailyItems.entrySet()) {
             if (getUuid(e.getKey()).equals(uuid)) e.setValue(price);
         }
+    }
+
+    public static void transferDailyMetadata(ItemStack recipient, ItemStack receiver) {
+        dailyItem newItem = new dailyItem(receiver);
+
+        if (new dailyItem(recipient).hasMetadata(dailyMetadataType.rds_econ)) {
+            newItem = newItem.addNbt(dailyMetadataType.rds_econ,
+                    new dailyItem(recipient).getMetadata(dailyMetadataType.rds_econ));
+        }
+
+        if (new dailyItem(recipient).hasMetadata(dailyMetadataType.rds_rarity)) {
+            newItem = newItem.addNbt(dailyMetadataType.rds_rarity,
+                    new dailyItem(recipient).getMetadata(dailyMetadataType.rds_rarity));
+        }
+
+        if (new dailyItem(recipient).hasMetadata(dailyMetadataType.rds_amount)) {
+            newItem = newItem.addNbt(dailyMetadataType.rds_amount,
+                    new dailyItem(recipient).getMetadata(dailyMetadataType.rds_amount));
+        }
+
+        if (new dailyItem(recipient).hasMetadata(dailyMetadataType.rds_commands)) {
+            newItem = newItem.addNbt(dailyMetadataType.rds_commands,
+                    new dailyItem(recipient).getMetadata(dailyMetadataType.rds_commands));
+        }
+
+        newItem = newItem.addNbt(dailyMetadataType.rds_UUID,
+                new dailyItem(recipient).getMetadata(dailyMetadataType.rds_UUID));
+
+        newItem.getItem();
     }
 
     //common (100), uncommon (80), rare (60), epic (40), ancient (20), legendary (10), mythic (5)
@@ -264,7 +311,6 @@ public class dailyItem {
         rds_amount,
         rds_rarity,
         rds_econ,
-        rds_mmoitem,
         rds_commands
     }
 }

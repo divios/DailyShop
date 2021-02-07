@@ -110,12 +110,12 @@ public class dynamicGui implements InventoryHolder, Listener {
         int slot = 0;
         Inventory returnGui = Bukkit.createInventory(this, 54, utils.formatString(title.apply(page)));
         setDefaultItems(returnGui);
-        if (pos == 0 && content.size() > 44) setNextItem(returnGui);
+        if (pos == 0 && content.size() > 45) setNextItem(returnGui);
         if (pos == 1) {
             setNextItem(returnGui);
             setPreviousItem(returnGui);
         }
-        if (pos == 2 && content.size() > 44) {
+        if (pos == 2 && content.size() > 45) {
             setPreviousItem(returnGui);
         }
 
