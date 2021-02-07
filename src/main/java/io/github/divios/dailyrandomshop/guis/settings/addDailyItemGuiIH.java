@@ -66,7 +66,12 @@ public class addDailyItemGuiIH implements InventoryHolder, Listener {
         if(instance == null) return;
         try { inv.getViewers().forEach(HumanEntity::closeInventory); }
         catch (ConcurrentModificationException ignored) {};
+        unRegisterAll();
         instance.init();
+    }
+
+    private static void unRegisterAll() {
+        InventoryClickEvent.getHandlerList().unregister(instance);
     }
 
     @Override

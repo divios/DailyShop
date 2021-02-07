@@ -14,7 +14,7 @@ daily-shop-gui-name: "&6&l每日商店"
 daily-shop-gui-painting-name: "&a这是什么?"
 daily-shop-gui-painting-lore:
   - "&7每天都会有新的商品"
-    - "&7在每日商店上架!"
+  - "&7在每日商店上架!"
 # 每天卖的道具显示的lore
 daily-items-lore-price: "&6价格: &7{price}"
 daily-items-lore-currency: "&6所需经济依赖: &7{currency}"
@@ -36,7 +36,7 @@ sell-gui-name: "&6&l收购"
 sell-gui-painting-name: "&6这是什么?"
 sell-gui-painting-lore:
   - "&b把你的道具拖到这里"
-    - "&b来卖掉他们!"
+  - "&b来卖掉他们!"
 # 确认 收购按钮 的物品名称
 sell-item-name: "&e总计: &c{price} &e金币"
 # 这是左下角的箭所显示的物品名称和lore
@@ -91,15 +91,15 @@ add-items-title: "&3&l创建道具"
 add-items-from-zero: "&c&l从零开始创建一个道具"
 add-items-from-zero-lore:
   - "&7单击创建道具, 可以自定义几乎每"
-    - "&7个方面, 一切都取决于你和你的创"
-    - "&7造力"
+  - "&7个方面, 一切都取决于你和你的创"
+  - "&7造力"
 
 add-items-from-existing: "&a&l创建一个已经存在的道具"
 add-items-from-existing-lore:
   - "&7创建一个已经存在的的道具,"
-    - "&7当你需要添加高度自定义化的道具时,"
-    - "&7这会很有用 (材质, nbt API, MMOItems...),"
-    - "&7当然你也可以再次更改这个道具的设定"
+  - "&7当你需要添加高度自定义化的道具时,"
+  - "&7这会很有用 (材质, nbt API, MMOItems...),"
+  - "&7当然你也可以再次更改这个道具的设定"
 
 add-items-return: "&c&l返回"
 add-items-return-lore:

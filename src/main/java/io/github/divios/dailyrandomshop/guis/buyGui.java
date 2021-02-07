@@ -14,7 +14,9 @@ import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
@@ -182,7 +184,6 @@ public class buyGui implements Listener, InventoryHolder {
     }
 
     public void processNextAmount(String uuid) {
-
         ItemStack item = null;
 
         for (int i = 18; i < inv.getSize(); i++) {
@@ -231,9 +232,15 @@ public class buyGui implements Listener, InventoryHolder {
     public void reload() {
         try { inv.getViewers().forEach(HumanEntity::closeInventory); }
         catch (ConcurrentModificationException ignored) {};
+        unRegisterListeners();
         instance = null;
         dbManager.currentItems = getCurrentItems();
         getInstance();
+    }
+
+    private void unRegisterListeners() {
+        InventoryClickEvent.getHandlerList().unregister(instance);
+        expiredTimerEvent.getHandlerList().unregister(instance);
     }
 
     @Override
@@ -258,12 +265,16 @@ public class buyGui implements Listener, InventoryHolder {
             sellGui.openInventory(p);
         }
 
-        if (utils.isEmpty(dailyItem.getUuid(e.getCurrentItem()))) return;
+        if (utils.isEmpty(dailyItem.getUuid(e.getCurrentItem()))) {
+            p.sendMessage("oke");
+            return;
+        }
 
         if (e.getSlot() >= 18 && e.getSlot() < inv.getSize()
                 && !utils.isEmpty(e.getCurrentItem())) {
             transaction.initTransaction(p, dailyItem.getRawItem(e.getCurrentItem()));
         }
+
     }
 
     @EventHandler

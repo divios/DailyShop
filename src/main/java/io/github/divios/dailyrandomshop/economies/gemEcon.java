@@ -23,4 +23,7 @@ public class gemEcon implements economy{
     public void witchDrawMoney(Player p, Double price) {
         gemApi.withdraw(p.getUniqueId(), price, currency);
     }
+
+    @Override
+    public void depositMoney(Player p, Double price) { gemApi.deposit(p.getUniqueId(), price, currency); }
 }

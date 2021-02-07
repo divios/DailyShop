@@ -180,6 +180,9 @@ public class dataManager {
                     itemData = new NBTContainer(string);
                     item = NBTItem.convertNBTtoItem(itemData);
                     if (utils.isEmpty(item)) continue;
+                    if (isDailyItems) {
+                        if (utils.isEmpty(dailyItem.getUuid(item))) continue;
+                    }
 
                     try {
                         Material.valueOf(item.getType().toString());

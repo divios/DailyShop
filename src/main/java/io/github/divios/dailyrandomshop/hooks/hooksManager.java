@@ -24,8 +24,8 @@ public class hooksManager {
         vaultHook.hook();
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null)
             placeholderApiHook.getInstance();
-
         gemsEconomyHook.getInstance();
+        bstatsHook.init();
     }
 
     public Economy getVault() {
