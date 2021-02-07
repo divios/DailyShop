@@ -16,7 +16,9 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.AbstractMap;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class transaction {
 
@@ -108,16 +110,16 @@ public class transaction {
             p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
             return false;
         }
-        if(utils.inventoryFull(p.getInventory()) < n) {
+        /*if(utils.inventoryFull(p.getInventory()) < n) {
             p.sendMessage(conf_msg.PREFIX + conf_msg.MSG_INVENTORY_FULL);
             p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
             return false;
-        }
+        } */
         return true;
     }
 
     private boolean processEcon(ItemStack item) {
-        Double price = dailyItem.getPrice(item);
+        Double price = dailyItem.getPrice(item) * item.getAmount();
         String currency;
         try {
             currency = ((AbstractMap.SimpleEntry<String, String>) new dailyItem(item).
@@ -129,20 +131,29 @@ public class transaction {
                 .replaceAll("\\{price}", "" + price)
                 .replaceAll("\\{item}", item.getType().toString())
                 .replaceAll("\\{currency}", currency));
-        giveItem(item);
+
+        HashMap<Integer, ItemStack> remaining = giveItem(item);
+
+        if(!remaining.isEmpty()) {
+            for(Map.Entry<Integer, ItemStack> e: remaining.entrySet()) {
+                econStrategy.depositMoney(p, dailyItem.getPrice(item)
+                        * e.getValue().getAmount());
+                p.sendMessage(conf_msg.PREFIX + utils.formatString("&7You dont have enough space, " +
+                        e.getValue().getAmount() + " " + e.getValue().getType().toString() +
+                        " &7was lost and " + dailyItem.getPrice(item) * e.getValue().getAmount() +
+                        " &7$ was returned to you"));
+            }
+        }
+
         return true;
     }
 
-    private void giveItem(ItemStack item) {
+    private HashMap<Integer, ItemStack> giveItem(ItemStack item) {
         ItemStack itemToGive = new dailyItem(item, true).removeAllMetadata().getItem();
         Inventory inv = p.getInventory();
-        if (!oneSlotFlag) inv.addItem(itemToGive);
-        else {
-            itemToGive.setAmount(1);
-            for(int i= 0; i< n; i++) {
-                inv.addItem(itemToGive);
-            }
-        }
+
+        return inv.addItem(itemToGive);
+
     }
 
     private void getEconomyStrategy() {

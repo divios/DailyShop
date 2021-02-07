@@ -130,6 +130,7 @@ public class confirmGui implements Listener, InventoryHolder {
         }
 
         LoreStrategy.update(inv.getItem(40), inv.getItem(22));
+        p.updateInventory();
     }
 
     @EventHandler

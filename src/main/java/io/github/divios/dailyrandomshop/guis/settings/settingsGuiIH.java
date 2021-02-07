@@ -67,7 +67,12 @@ public class settingsGuiIH implements Listener, InventoryHolder {
         if (instance == null) return;
         try { inv.getViewers().forEach(HumanEntity::closeInventory); }
         catch (ConcurrentModificationException ignored) {};
+        unRegisterAll();
         inv = instance.getInventory();
+    }
+
+    private static void unRegisterAll() {
+        InventoryClickEvent.getHandlerList().unregister(instance);
     }
 
     @EventHandler

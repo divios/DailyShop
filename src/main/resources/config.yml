@@ -2,6 +2,9 @@
 #####  DailyRanShop #####
 #########################
 
+# DO NOT CHANGE THIS
+version: 2.2.2
+
 prefix: "&6&lDailyShop > "
 
 language: "en_US"
