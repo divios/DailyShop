@@ -6,9 +6,6 @@
 ####### Daily Shop menu ########
 ################################
 
-# DO NOT CHANGE THIS
-version: 2.0
-
 # The name of the daily shop GUI
 daily-shop-gui-name: "&c&lDailyShop"
 # The name and lore of the painting in the middle-top of the GUI

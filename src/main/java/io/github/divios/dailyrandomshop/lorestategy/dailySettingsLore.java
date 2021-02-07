@@ -31,7 +31,9 @@ public class dailySettingsLore implements loreStrategy {
             lore.add(conf_msg.BUY_GUI_ITEMS_LORE_RARITY);
         lore.add("");
         lore.addAll(conf_msg.DAILY_ITEMS_MENU_ITEMS_LORE);
-
+        if (dailyItem.isMMOitem(item)) {
+            lore.add(utils.formatString("&6> Click + Q: &7Reload MMOItem"));
+        }
 
         lore.replaceAll(s -> s.replaceAll("\\{price}", price)
                 .replaceAll("\\{rarity}", dailyItem.getRarityLore(item))

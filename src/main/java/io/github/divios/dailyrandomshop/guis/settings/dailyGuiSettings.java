@@ -10,8 +10,12 @@ import io.github.divios.dailyrandomshop.guis.customizerguis.customizerMainGuiIH;
 import io.github.divios.dailyrandomshop.lorestategy.dailySettingsLore;
 import io.github.divios.dailyrandomshop.utils.utils;
 import io.github.divios.dailyrandomshop.xseries.XMaterial;
+import net.Indyuce.mmoitems.MMOItems;
+import net.Indyuce.mmoitems.api.Type;
 import net.wesjd.anvilgui.AnvilGUI;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -113,7 +117,24 @@ public class dailyGuiSettings {
             dataManager.getInstance().listSellItems.put(new dailyItem(
                     dailyItem.getRawItem(e.getCurrentItem()), true)
                     .removeAllMetadata().getItem(), -1D);
+            p.sendMessage(conf_msg.PREFIX + conf_msg.MSG_ADDED_ITEM);
             sellGuiSettings.openInventory(p);
+        }
+
+        else if (e.getClick().equals(ClickType.DROP)) {
+            if (dailyItem.isMMOitem(e.getCurrentItem())) {
+                String uuid = dailyItem.getUuid(e.getCurrentItem());
+                dbManager.listDailyItems.forEach((item, aDouble) -> {
+                    if (dailyItem.getUuid(item).equals(uuid)) {
+                        String[] constructor = dailyItem.getMMOItemConstruct(e.getCurrentItem());
+                        ItemStack auxitem = MMOItems.plugin.getItem(Type.get(constructor[0]), constructor[1]);
+                        dailyItem.transferDailyMetadata(e.getCurrentItem(), auxitem);
+                        utils.translateAllItemData(auxitem, item);
+                        buyGui.getInstance().updateItem(uuid, buyGui.updateAction.update);
+                        openInventory(p);
+                    }
+                });
+            }
         }
 
         return dynamicGui.Response.nu();

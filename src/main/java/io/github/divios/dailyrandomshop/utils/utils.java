@@ -1,5 +1,6 @@
 package io.github.divios.dailyrandomshop.utils;
 
+import io.github.divios.dailyrandomshop.builders.factory.dailyItem;
 import io.github.divios.dailyrandomshop.conf_msg;
 import io.github.divios.dailyrandomshop.database.dataManager;
 import io.github.divios.dailyrandomshop.xseries.XMaterial;
@@ -31,6 +32,18 @@ public class utils {
             receiver.setItemMeta(recipient.getItemMeta());
             receiver.setAmount(recipient.getAmount());
             receiver.setDurability(recipient.getDurability());
+        } catch (IllegalArgumentException ignored) {}
+    }
+
+    public static void translateAllItemData(ItemStack recipient,
+                                            ItemStack receiver, boolean dailyMetadata) {
+        try {
+            receiver.setData(recipient.getData());
+            receiver.setType(recipient.getType());
+            receiver.setItemMeta(recipient.getItemMeta());
+            receiver.setAmount(recipient.getAmount());
+            receiver.setDurability(recipient.getDurability());
+            if(dailyMetadata) dailyItem.transferDailyMetadata(recipient, receiver);
         } catch (IllegalArgumentException ignored) {}
     }
 
