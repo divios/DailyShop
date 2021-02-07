@@ -122,19 +122,8 @@ public class dailyGuiSettings {
         }
 
         else if (e.getClick().equals(ClickType.DROP)) {
-            if (dailyItem.isMMOitem(e.getCurrentItem())) {
-                String uuid = dailyItem.getUuid(e.getCurrentItem());
-                dbManager.listDailyItems.forEach((item, aDouble) -> {
-                    if (dailyItem.getUuid(item).equals(uuid)) {
-                        String[] constructor = dailyItem.getMMOItemConstruct(e.getCurrentItem());
-                        ItemStack auxitem = MMOItems.plugin.getItem(Type.get(constructor[0]), constructor[1]);
-                        dailyItem.transferDailyMetadata(e.getCurrentItem(), auxitem);
-                        utils.translateAllItemData(auxitem, item);
-                        buyGui.getInstance().updateItem(uuid, buyGui.updateAction.update);
-                        openInventory(p);
-                    }
-                });
-            }
+            if (dailyItem.updateMMOitem(e.getCurrentItem()))
+                openInventory(p);
         }
 
         return dynamicGui.Response.nu();
