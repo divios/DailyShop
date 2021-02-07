@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.*;
+import java.util.stream.IntStream;
 
 public class dynamicGui implements InventoryHolder, Listener {
 
@@ -88,12 +89,12 @@ public class dynamicGui implements InventoryHolder, Listener {
         double nD = content.size() / Double.valueOf(rows2fill);
         int n = (int) Math.ceil(nD);
 
-        for (int i = 0; i < n; i++) {
+        IntStream.range(0, n).forEach(i -> {
             if (i + 1 == n) {
                 invsList.add(createSingleInv(i + 1, 2));
             } else if (i == 0) invsList.add(createSingleInv(i + 1, 0));
             else invsList.add(createSingleInv(i + 1, 1));
-        }
+        });
 
         if (invsList.isEmpty()) {
             Inventory firstInv = Bukkit.createInventory(this, 54, utils.formatString(title.apply(0)));

@@ -6,6 +6,8 @@ import io.github.divios.dailyrandomshop.database.dataManager;
 import io.github.divios.dailyrandomshop.lorestategy.loreStrategy;
 import io.github.divios.dailyrandomshop.utils.utils;
 import io.github.divios.dailyrandomshop.xseries.XMaterial;
+import net.Indyuce.mmoitems.MMOItems;
+import net.Indyuce.mmoitems.api.Type;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
@@ -224,6 +226,27 @@ public class dailyItem {
                 new dailyItem(recipient).getMetadata(dailyMetadataType.rds_UUID));
 
         newItem.getItem();
+    }
+
+    public static boolean updateMMOitem(ItemStack item) {
+        String uuid = getUuid(item);
+        if (utils.isEmpty(uuid)) return false;
+        return updateMMOitem(getUuid(item));
+    }
+
+    public static boolean updateMMOitem(String uuid) {
+        ItemStack rawItem = getRawItem(uuid);
+        if (!isMMOitem(rawItem)) return false;
+        ItemStack auxitem = getMMOitem(rawItem);
+        dailyItem.transferDailyMetadata(rawItem, auxitem);
+        utils.translateAllItemData(auxitem, rawItem);
+        return true;
+    }
+
+    public static ItemStack getMMOitem(ItemStack item) {
+        if (!isMMOitem(item)) return null;
+        String[] constructor = dailyItem.getMMOItemConstruct(item.clone());
+        return MMOItems.plugin.getItem(Type.get(constructor[0]), constructor[1]);
     }
 
     //common (100), uncommon (80), rare (60), epic (40), ancient (20), legendary (10), mythic (5)

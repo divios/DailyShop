@@ -7,6 +7,9 @@ import io.github.divios.dailyrandomshop.builders.factory.dailyItem;
 import io.github.divios.dailyrandomshop.conf_msg;
 import io.github.divios.dailyrandomshop.guis.buyGui;
 import io.github.divios.dailyrandomshop.utils.utils;
+import io.github.divios.dailyrandomshop.xseries.XMaterial;
+import net.Indyuce.mmoitems.MMOItems;
+import net.Indyuce.mmoitems.api.Type;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -190,8 +193,16 @@ public class dataManager {
                         continue;
                     }
 
+                    if (dailyItem.isMMOitem(item)) {    /* cant do it with updateMMOItems cause list is empty */
+                        String[] constructor = dailyItem.getMMOItemConstruct(item.clone());
+                        ItemStack auxitem = MMOItems.plugin.getItem(Type.get(constructor[0]), constructor[1]);
+                        dailyItem.transferDailyMetadata(item, auxitem);
+                        utils.translateAllItemData(auxitem, item);
+                    }
+
                 } catch (Exception e) {
-                    main.getLogger().warning("A previous sell item registered on the db is now unsupported, skipping...");
+                    main.getLogger().warning("A previous sell item registered " +
+                            "on the db is now unsupported, skipping...");
                     continue;
                 }
 

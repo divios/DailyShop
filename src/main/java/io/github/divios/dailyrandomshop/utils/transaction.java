@@ -19,6 +19,7 @@ import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.IntStream;
 
 public class transaction {
 
@@ -110,11 +111,11 @@ public class transaction {
             p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
             return false;
         }
-        /*if(utils.inventoryFull(p.getInventory()) < n) {
+        if(oneSlotFlag && utils.inventoryFull(p.getInventory()) < n) {
             p.sendMessage(conf_msg.PREFIX + conf_msg.MSG_INVENTORY_FULL);
             p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
             return false;
-        } */
+        }
         return true;
     }
 
@@ -132,9 +133,9 @@ public class transaction {
                 .replaceAll("\\{item}", item.getType().toString())
                 .replaceAll("\\{currency}", currency));
 
-        HashMap<Integer, ItemStack> remaining = giveItem(item);
+        HashMap<Integer, ItemStack> remaining = giveItem(item);     /* Returns null if oneSlotFlag */
 
-        if(!remaining.isEmpty()) {
+        if(remaining != null && !remaining.isEmpty()) {     /* If items are lost due to space and is not oneSlotFlag */
             for(Map.Entry<Integer, ItemStack> e: remaining.entrySet()) {
                 econStrategy.depositMoney(p, dailyItem.getPrice(item)
                         * e.getValue().getAmount());
@@ -149,8 +150,21 @@ public class transaction {
     }
 
     private HashMap<Integer, ItemStack> giveItem(ItemStack item) {
-        ItemStack itemToGive = new dailyItem(item, true).removeAllMetadata().getItem();
+        ItemStack itemToGive;
+        if (dailyItem.isMMOitem(item)) {
+            itemToGive = dailyItem.getMMOitem(item);
+        }
+        else itemToGive = new dailyItem(item, true).removeAllMetadata().getItem();
         Inventory inv = p.getInventory();
+
+        if (oneSlotFlag) {
+            int n = item.getAmount();
+            item.setAmount(1);
+            IntStream.range(0, n).forEach(value ->
+                    inv.setItem(inv.firstEmpty(), item));
+
+            return null;
+        }
 
         return inv.addItem(itemToGive);
 
