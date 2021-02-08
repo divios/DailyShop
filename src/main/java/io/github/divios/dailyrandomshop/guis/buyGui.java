@@ -264,7 +264,6 @@ public class buyGui implements Listener, InventoryHolder {
         }
 
         if (utils.isEmpty(dailyItem.getUuid(e.getCurrentItem()))) {
-            p.sendMessage("oke");
             return;
         }
 
