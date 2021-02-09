@@ -109,24 +109,6 @@ public class dailyItem {
         return this;
     }
 
-    public static boolean isMMOitem(ItemStack item) {
-        try {
-            net.mmogroup.mmolib.api.item.NBTItem NBTItem = net.mmogroup.mmolib.api.item.NBTItem.get(item);
-            return NBTItem.hasType();
-        } catch (NoClassDefFoundError | NoSuchMethodError e) {
-            return false;
-        }
-    }
-
-    public static String[] getMMOItemConstruct(ItemStack item) {
-
-        net.mmogroup.mmolib.api.item.NBTItem NBTItem = net.mmogroup.mmolib.api.item.NBTItem.get(item.clone());
-        String type = NBTItem.getType();
-        String id = NBTItem.getString("MMOITEMS_ITEM_ID");
-
-        return new String[]{type, id};
-    }
-
     public static Double getPrice(ItemStack item) {
         return getPrice(getUuid(item));
     }
@@ -226,27 +208,6 @@ public class dailyItem {
                 new dailyItem(recipient).getMetadata(dailyMetadataType.rds_UUID));
 
         newItem.getItem();
-    }
-
-    public static boolean updateMMOitem(ItemStack item) {
-        String uuid = getUuid(item);
-        if (utils.isEmpty(uuid)) return false;
-        return updateMMOitem(getUuid(item));
-    }
-
-    public static boolean updateMMOitem(String uuid) {
-        ItemStack rawItem = getRawItem(uuid);
-        if (!isMMOitem(rawItem)) return false;
-        ItemStack auxitem = getMMOitem(rawItem);
-        dailyItem.transferDailyMetadata(rawItem, auxitem);
-        utils.translateAllItemData(auxitem, rawItem);
-        return true;
-    }
-
-    public static ItemStack getMMOitem(ItemStack item) {
-        if (!isMMOitem(item)) return null;
-        String[] constructor = dailyItem.getMMOItemConstruct(item.clone());
-        return MMOItems.plugin.getItem(Type.get(constructor[0]), constructor[1]);
     }
 
     //common (100), uncommon (80), rare (60), epic (40), ancient (20), legendary (10), mythic (5)

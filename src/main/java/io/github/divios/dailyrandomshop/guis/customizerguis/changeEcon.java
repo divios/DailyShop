@@ -32,7 +32,7 @@ public class changeEcon implements Listener, InventoryHolder {
     private ItemStack item;
     private Player p;
 
-    private changeEcon() {};
+    private changeEcon() {}
 
     public static void openInventory(Player p, ItemStack item) {
         changeEcon instance = new changeEcon();

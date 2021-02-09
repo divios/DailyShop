@@ -138,6 +138,11 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>com.github.oraxen</groupId>
+            <artifactId>Oraxen</artifactId>
+            <version>master-SNAPSHOT</version>
+        </dependency>
+        <dependency>
             <groupId>com.github.MilkBowl</groupId>
             <artifactId>VaultAPI</artifactId>
             <version>1.7</version>
