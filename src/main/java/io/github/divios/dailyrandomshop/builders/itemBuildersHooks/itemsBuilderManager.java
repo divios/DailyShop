@@ -5,43 +5,61 @@ import io.github.divios.dailyrandomshop.guis.buyGui;
 import io.github.divios.dailyrandomshop.utils.utils;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
+
 public class itemsBuilderManager {
 
-    private static final MMOItems mmoitems = new MMOItems();
-    private static final oraxenItems oraxenItems = new oraxenItems();
+    static List<itemsBuilder> builders = new ArrayList<>(Arrays.asList(
+            new MMOItems(),
+            new oraxenItems()       /* Just add here new implementations */
+        ));
+
 
     private itemsBuilderManager() {}
 
     public static boolean updateItem(String uuid) {
         if (utils.isEmpty(uuid)) return false;
-        buyGui.getInstance().updateItem(uuid,
+        buyGui.getInstance().updateItem(uuid,   /* Internally async */
                 buyGui.updateAction.update);
 
         return updateItem(dailyItem.getRawItem(uuid));
     }
 
     public static boolean updateItem(ItemStack item) {
-        itemsBuilder builder;
+        AtomicReference<itemsBuilder> builder = new AtomicReference<>(null);
+        builders.forEach(i -> {
+            if (i.isItem(item))
+                builder.set(i);
+        });
 
-        if(mmoitems.isItem(item)) builder = mmoitems;
-        else if(oraxenItems.isItem(item)) builder = oraxenItems;
-        else return false;
+        if (builder.get() == null) return false;
 
-        return builder.updateItem(item);
+        return builder.get().updateItem(item);
     }
 
     public static boolean isUpdateItem(ItemStack item) {
-        return mmoitems.isItem(item) || oraxenItems.isItem(item);
+        AtomicReference<Boolean> response = new AtomicReference<>(false);
+        builders.forEach(i -> {
+            if (i.isItem(item))
+                response.set(true);
+        });
+
+        return response.get();
     }
 
     public static ItemStack getItem(ItemStack item) {
-        itemsBuilder builder;
+        AtomicReference<itemsBuilder> builder = new AtomicReference<>(null);
+        builders.forEach(i -> {
+            if (i.isItem(item))
+                builder.set(i);
+        });
 
-        if(mmoitems.isItem(item)) builder = mmoitems;
-        else if (oraxenItems.isItem(item)) builder = oraxenItems;
-        else return null;
+        if (builder.get() == null) return null;
 
-        return builder.getItem(item);
+        return builder.get().getItem(item);
     }
 
 }
