@@ -3,6 +3,7 @@ package io.github.divios.dailyrandomshop.lorestategy;
 import io.github.divios.dailyrandomshop.builders.factory.dailyItem;
 import io.github.divios.dailyrandomshop.conf_msg;
 import io.github.divios.dailyrandomshop.database.dataManager;
+import io.github.divios.dailyrandomshop.builders.itemBuildersHooks.itemsBuilderManager;
 import io.github.divios.dailyrandomshop.utils.utils;
 import org.bukkit.inventory.ItemStack;
 
@@ -31,8 +32,8 @@ public class dailySettingsLore implements loreStrategy {
             lore.add(conf_msg.BUY_GUI_ITEMS_LORE_RARITY);
         lore.add("");
         lore.addAll(conf_msg.DAILY_ITEMS_MENU_ITEMS_LORE);
-        if (dailyItem.isMMOitem(item)) {
-            lore.add(utils.formatString("&6> Click + Q: &7Reload MMOItem"));
+        if (itemsBuilderManager.isUpdateItem(item)) {
+            lore.add(utils.formatString("&6> Click + Q: &7Reload Custom Item"));
         }
 
         lore.replaceAll(s -> s.replaceAll("\\{price}", price)

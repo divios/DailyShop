@@ -9,6 +9,7 @@ import io.github.divios.dailyrandomshop.economies.vault;
 import io.github.divios.dailyrandomshop.guis.buyGui;
 import io.github.divios.dailyrandomshop.guis.confirmGui;
 import io.github.divios.dailyrandomshop.hooks.hooksManager;
+import io.github.divios.dailyrandomshop.builders.itemBuildersHooks.itemsBuilderManager;
 import io.github.divios.dailyrandomshop.main;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -151,8 +152,8 @@ public class transaction {
 
     private HashMap<Integer, ItemStack> giveItem(ItemStack item) {
         ItemStack itemToGive;
-        if (dailyItem.isMMOitem(item)) {
-            itemToGive = dailyItem.getMMOitem(item);
+        if (itemsBuilderManager.isUpdateItem(item)) {
+            itemToGive = itemsBuilderManager.getItem(item);
         }
         else itemToGive = new dailyItem(item, true).removeAllMetadata().getItem();
         Inventory inv = p.getInventory();

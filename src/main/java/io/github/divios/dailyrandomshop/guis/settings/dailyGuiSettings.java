@@ -7,6 +7,7 @@ import io.github.divios.dailyrandomshop.database.dataManager;
 import io.github.divios.dailyrandomshop.guis.buyGui;
 import io.github.divios.dailyrandomshop.guis.confirmIH;
 import io.github.divios.dailyrandomshop.guis.customizerguis.customizerMainGuiIH;
+import io.github.divios.dailyrandomshop.builders.itemBuildersHooks.itemsBuilderManager;
 import io.github.divios.dailyrandomshop.lorestategy.dailySettingsLore;
 import io.github.divios.dailyrandomshop.utils.utils;
 import io.github.divios.dailyrandomshop.xseries.XMaterial;
@@ -119,7 +120,7 @@ public class dailyGuiSettings {
         }
 
         else if (e.getClick().equals(ClickType.DROP)) {
-            if (dailyItem.updateMMOitem(e.getCurrentItem()))
+            if ( itemsBuilderManager.updateItem(dailyItem.getUuid(e.getCurrentItem())))
                 openInventory(p);
         }
 
