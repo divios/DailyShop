@@ -276,7 +276,8 @@ public class buyGui implements Listener, InventoryHolder {
 
     @EventHandler
     public void onTimerExpired(expiredTimerEvent e) {
-        main.getServer().broadcastMessage(conf_msg.PREFIX + conf_msg.MSG_NEW_DAILY_ITEMS);
+        main.getServer().getOnlinePlayers().forEach(p ->
+                p.sendMessage(conf_msg.PREFIX + conf_msg.MSG_NEW_DAILY_ITEMS));
         createRandomItems();
     }
 
