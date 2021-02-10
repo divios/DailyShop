@@ -17,6 +17,10 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.IntStream;
+
 public class sellGui implements Listener, InventoryHolder {
 
     private static final io.github.divios.dailyrandomshop.main main = io.github.divios.dailyrandomshop.main.getInstance();
@@ -91,55 +95,74 @@ public class sellGui implements Listener, InventoryHolder {
         Inventory inv = e.getView().getTopInventory();
 
         if (e.getSlot() == e.getRawSlot() && (e.getSlot() < 18
-                || e.getSlot() > 36)) e.setCancelled(true);
+                || e.getSlot() > 36)) {
+            e.setCancelled(true);
 
-        if (e.isShiftClick() && e.getSlot() != e.getRawSlot()) e.setCancelled(true);
-
-        if (e.getSlot() == e.getRawSlot() && e.getSlot() == 0) {
-            if (!p.hasPermission("dailyRandomShop.open")) {
-                utils.noPerms(p);
-                utils.sendSound(p, Sound.ENTITY_VILLAGER_NO);
+            if (e.getSlot() == e.getRawSlot() && e.getSlot() == 0) {
+                if (!p.hasPermission("dailyRandomShop.open")) {
+                    utils.noPerms(p);
+                    utils.sendSound(p, Sound.ENTITY_VILLAGER_NO);
+                    return;
+                }
+                buyGui.getInstance().openInventory(p);
             }
-            buyGui.getInstance().openInventory(p);
-        }
 
-        if (e.getSlot() == e.getRawSlot() && e.getSlot() == 40) {
-            double price = calculatePrice(e.getView().getTopInventory(), p);
+            if (e.getSlot() == e.getRawSlot() && e.getSlot() == 40) {
+                double price = calculatePrice(e.getView().getTopInventory(), p);
 
-            if (price <= 0) {
-                utils.sendSound(p, Sound.ENTITY_VILLAGER_NO);
+                if (price <= 0) {
+                    utils.sendSound(p, Sound.ENTITY_VILLAGER_NO);
+                    return;
+                }
+
+                for (int i = 18; i < inv.getSize(); i++) { //remove all items
+                    ItemStack item = e.getView().getTopInventory().getItem(i);
+                    e.getView().getTopInventory().remove(item);
+                }
+                p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
+
+                p.closeInventory();
+                p.sendMessage(conf_msg.PREFIX + conf_msg.MSG_SELL_ITEMS.
+                        replaceAll("\\{price}", String.format("%,.2f", price)));
+                hooksManager.getInstance().getVault().depositPlayer(p, price);
                 return;
             }
-
-            for (int i = 18; i < inv.getSize(); i++) { //remove all items
-                ItemStack item = e.getView().getTopInventory().getItem(i);
-                e.getView().getTopInventory().remove(item);
-            }
-            p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
-
-            p.closeInventory();
-            p.sendMessage(conf_msg.PREFIX + conf_msg.MSG_SELL_ITEMS.
-                    replaceAll("\\{price}", String.format("%,.2f", price)));
-            hooksManager.getInstance().getVault().depositPlayer(p, price);
+            return;
         }
 
-        if (!utils.isEmpty(e.getCurrentItem()) &&
-                (utils.getPrice(e.getCurrentItem()) <= 0.0) &&
-                e.getSlot() != e.getRawSlot()) {
+        if (e.getSlot() != e.getRawSlot() && !utils.isEmpty(e.getCurrentItem()) &&
+                (utils.getPrice(e.getCurrentItem()) <= 0.0)
+        ) {
 
             e.setCancelled(true);
             p.sendMessage(conf_msg.PREFIX + conf_msg.MSG_INVALID_ITEM);
             p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
+            return;
         }
 
-        utils.async(() -> calculatePrice(e.getView().getTopInventory(), p));
-    }
+        if (e.isShiftClick() && e.getSlot() != e.getRawSlot() &&
+                !utils.isEmpty(e.getCurrentItem())) {
 
-    @EventHandler
-    private void onDrag(InventoryDragEvent e) {
-        if (e.getView().getTopInventory().getHolder() == instance) {
             e.setCancelled(true);
+
+            Inventory auxInv = Bukkit.createInventory(null, 18, "");
+
+            IntStream.range(0, 18).forEach(i ->
+                    auxInv.setItem(i, inv.getItem(i + 18)));
+
+            List<Object> items;
+            items = Arrays.asList(auxInv.addItem(e.getCurrentItem().clone()).values().toArray());
+
+            e.getCurrentItem().setAmount(0);
+
+            IntStream.range(0, 18).forEach(i ->
+                    inv.setItem(i + 18, auxInv.getItem(i)));
+
+            items.forEach(i -> p.getInventory().addItem((ItemStack) i));
+
         }
+
+        utils.async(() -> calculatePrice(inv, p));
     }
 
     @EventHandler
