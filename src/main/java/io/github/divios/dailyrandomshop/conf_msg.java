@@ -6,6 +6,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class conf_msg {
@@ -192,11 +193,11 @@ public class conf_msg {
             localeDirectory.mkdir();
         }
 
-        List<String> locales = new ArrayList<>();
-        locales.add("en_US.yml");
-        locales.add("es_ES.yml");
-        locales.add("ru_RU.yml");
-        locales.add("cn_CN.yml");
+        List<String> locales = new ArrayList<>(Arrays.asList(
+                "en_US.yml",
+                "es_ES.yml",
+                "ru_RU.yml",
+                "cn_CN.yml"));
 
         for (String s : locales) {
             File locale = new File(main.getDataFolder() + File.separator + "locales" + File.separator + s);
