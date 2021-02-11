@@ -8,6 +8,7 @@ import io.github.divios.dailyrandomshop.guis.settings.addDailyItemGuiIH;
 import io.github.divios.dailyrandomshop.guis.settings.settingsGuiIH;
 import io.github.divios.dailyrandomshop.hooks.hooksManager;
 import io.github.divios.dailyrandomshop.tasks.taskManager;
+import io.github.divios.dailyrandomshop.utils.conf_updater;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class main extends JavaPlugin {
@@ -23,6 +24,7 @@ public class main extends JavaPlugin {
                                 /* Init conf & msgs*/
         conf_msg.init();
                                 /* Initiate database + getAllItems + timer */
+        conf_updater.check();
         dataManager.getInstance();
                                 /* Initiate tasks */
         taskManager.getInstance();
