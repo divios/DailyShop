@@ -160,8 +160,13 @@ public class conf_updater {
 
                     String quotes = "\"";
 
-                    if(s.contains("lore") && !s.contains("daily-items") &&
-                            !s.equals("customize_change_lore")) {
+                    if(s.contains("lore") &&
+                            !s.equals("customize_change_lore") &&
+                            !s.equals("customize_change_lore_anvil_title") &&
+                            !s.equals("customize_change_lore_default_text") &&
+                            !s.equals("daily-items-lore-rarity") &&
+                            !s.equals("daily-items-lore-currency") &&
+                            !s.equals("daily-items-lore-price") ) {
                         newLines.add(s);
                         for(String lore: yamlOldFile.getStringList(s2)) {
                             newLines.add("  - " + quotes + lore + quotes);
