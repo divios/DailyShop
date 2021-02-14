@@ -170,6 +170,13 @@ public class utils {
                 item.getType().equals(XMaterial.SPLASH_POTION.parseMaterial());
     }
 
+
+    /**
+     *
+     * @param inv
+     * @return amount of free slots on inventory (excluding armor). If inventory is full returns 0
+     */
+
     public static int inventoryFull (Inventory inv) {
 
         int freeSlots = 0;
@@ -236,5 +243,17 @@ public class utils {
         });
         return modifier.get();
     }
+
+    public static String getDisplayName(ItemStack item) {
+        String name;
+
+        if (item.getItemMeta().hasDisplayName()) name =
+                item.getItemMeta().getDisplayName();
+
+        else name = item.getType().toString();
+
+        return name;
+    }
+
 
 }
