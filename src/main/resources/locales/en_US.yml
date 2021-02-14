@@ -12,7 +12,7 @@ daily-shop-gui-name: "&c&lDailyShop"
 # where you should expect how to use the shop
 daily-shop-gui-painting-name: "&c&lWhat is this?"
 daily-shop-gui-painting-lore:
-  - "&7Every day new items 'll"
+  - "&7Every day new items will"
   - "&7show up here!"
 # This is the lore that the daily
 # items will display
@@ -94,15 +94,14 @@ add-items-title: "&3&lCreate Item"
 add-items-from-zero: "&c&LCreate item from zero"
 add-items-from-zero-lore:
   - "&7Create an items from scratch, customize"
-  - "&7every aspect of it, its your creativity"
-  - "&7and you"
+  - "&7every aspect of it."
 
 add-items-from-existing: "&a&lCreate item from existing"
 add-items-from-existing-lore:
   - "&7Create an item from an existing item,"
   - "&7useful when you need a custom item to be"
   - "&7added (textures, nbt api, MMOItems...),"
-  - "&7also you 'll be able to customize it too"
+  - "&7also you'll be able to customize it too"
 
 add-items-return: "&c&lReturn"
 add-items-return-lore:
@@ -198,17 +197,17 @@ customize_change_enchants_lore:
   - "&6> Left Click: &7to add Enchantment"
   - "&6> Right Click: &7to remove Enchantment"
 
-customize_change_amount: "&f&lChange Amount"
+customize_change_amount: "&f&lSet Stock"
 customize_change_amount_lore:
   - "&6> Left Click: &7Change item amount"
   - "&6> Right Click: &7Remove amount"
   - ""
   - "&6Status &7{status}"
   - ""
-  - "&7This option will make the item as an stock one,"
-  - "&7in other words, there 'll be a limited amount"
+  - "&7This option will make the item have limited stock,"
+  - "&7in other words, there will be a limited amount"
   - "&7of times this item can be purchased before it"
-  - "&7runs out of stick. The amount of times it can be"
+  - "&7runs out of stock. The amount of times it can be"
   - "&7purchased is the amount of the item you set"
 
 customize_enable_commands: "&f&lSet Item Reward as Commands"
@@ -217,7 +216,7 @@ customize_enable_commands_lore:
   - ""
   - "&6Status &7{status}"
   - ""
-  - "&7This option 'll make that upon purchase, instead"
+  - "&7This option will execute a command upon purchase instead"
   - "&7of giving the item to the player, the commands"
   - "&7listed below are executed."
 
