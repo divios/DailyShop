@@ -39,17 +39,17 @@ public class transaction {
         instance.p = p;
         instance.item = item.clone();   /* gets raw item */
         instance.getEconomyStrategy();
+        instance.commandFlag = new dailyItem(item).hasMetadata(dailyItem.dailyMetadataType.rds_commands);
+        instance.amountFlag = new dailyItem(item).hasMetadata(dailyItem.dailyMetadataType.rds_amount);
+        instance.oneSlotFlag = item.getMaxStackSize() == 1;
 
         if (instance.econStrategy == null)  {       /* if no economyStrategy was found, */
             p.sendMessage(conf_msg.PREFIX + conf_msg.MSG_NOT_IN_STOCK);   /* either currency doesn't exist or plugin is not on */
             return;
         }
 
-        if (item.getMaxStackSize() == 1)
-            instance.oneSlotFlag = true;
-
-        if (conf_msg.ENABLE_CONFIRM_GUI && !new dailyItem(item).hasMetadata(dailyItem.dailyMetadataType.rds_amount)
-                && !new dailyItem(item).hasMetadata(dailyItem.dailyMetadataType.rds_commands)
+        if (conf_msg.ENABLE_CONFIRM_GUI && !instance.amountFlag
+                && !instance.commandFlag
             )  {
             confirmGui.openInventory(p,
                     dailyItem.getRawItem(item).clone(),
@@ -71,13 +71,13 @@ public class transaction {
 
         n = (int) Math.ceil(nD);
 
-        if (!hasEnoughMoreAndSpace(dailyItem.getPrice(item) * getAmount(item))) return;
+        if (!hasEnoughMoneyAndSpace(dailyItem.getPrice(item) * getAmount(item))) return;
 
-        if (new dailyItem(item).hasMetadata(dailyItem.dailyMetadataType.rds_commands)) {
-            commandFlag = true;
+        if (commandFlag) {
             ((List<String>) new dailyItem(item).getMetadata(dailyItem.dailyMetadataType.rds_commands))
                     .forEach(s -> main.getServer().dispatchCommand(main.getServer().getConsoleSender(),
                             s.replaceAll("%player%", p.getName())));
+            econStrategy.witchDrawMoney(p, dailyItem.getPrice(item));
         }
 
         if (new dailyItem(item).hasMetadata(dailyItem.dailyMetadataType.rds_amount)) {
@@ -86,9 +86,8 @@ public class transaction {
             item.setAmount(1);
         }
 
-        if (!commandFlag) {
+        if (!commandFlag)
             processEcon(item);
-        }
     }
 
     /**
@@ -106,17 +105,20 @@ public class transaction {
     }
 
 
-    private boolean hasEnoughMoreAndSpace(double price) {
+    private boolean hasEnoughMoneyAndSpace(double price) {
         if (!econStrategy.hasMoney(p, price)) {
             p.sendMessage(conf_msg.PREFIX + conf_msg.MSG_NOT_ENOUGH_MONEY);
             p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
             return false;
         }
-        if(oneSlotFlag && utils.inventoryFull(p.getInventory()) < n) {
+        if( (oneSlotFlag && utils.inventoryFull(p.getInventory()) < n) ||
+                ((amountFlag && utils.inventoryFull(p.getInventory()) < 1)) &&
+                !commandFlag) {
             p.sendMessage(conf_msg.PREFIX + conf_msg.MSG_INVENTORY_FULL);
             p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
             return false;
         }
+
         return true;
     }
 
@@ -131,7 +133,7 @@ public class transaction {
         econStrategy.witchDrawMoney(p, price);
         p.sendMessage(conf_msg.PREFIX + conf_msg.MSG_BUY_ITEM
                 .replaceAll("\\{price}", "" + price)
-                .replaceAll("\\{item}", item.getType().toString())
+                .replaceAll("\\{item}", utils.getDisplayName(item) + utils.formatString("&7"))
                 .replaceAll("\\{currency}", currency));
 
         HashMap<Integer, ItemStack> remaining = giveItem(item);     /* Returns null if oneSlotFlag */
