@@ -36,10 +36,10 @@ public class main extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        dataManager.getInstance().updateSyncBuyItems();
-        dataManager.getInstance().updateSyncSellItems();
-        dataManager.getInstance().updateSyncCurrentItems();
-        dataManager.getInstance().updateSyncTimer(taskManager.getInstance().getTimer());
+        dataManager.getInstance().updateBuyItems();
+        dataManager.getInstance().updateSellItems();
+        dataManager.getInstance().updateCurrentItems();
+        dataManager.getInstance().updateTimer(taskManager.getInstance().getTimer());
     }
 
     public void realoadPlugin() {

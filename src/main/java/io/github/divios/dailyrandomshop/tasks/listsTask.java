@@ -1,6 +1,8 @@
 package io.github.divios.dailyrandomshop.tasks;
 
 import io.github.divios.dailyrandomshop.database.dataManager;
+import io.github.divios.dailyrandomshop.guis.buyGui;
+import io.github.divios.dailyrandomshop.utils.utils;
 import org.bukkit.Bukkit;
 
 class listsTask {
@@ -20,15 +22,17 @@ class listsTask {
         return instance;
     }
 
-    private void initTask() {
+    void initTask() {
         Bukkit.getScheduler().runTaskTimerAsynchronously(main, () -> {
             if (dbManager.listSellItemsHash != dbManager.listSellItems.hashCode())
-                dbManager.updateAsyncSellItems();
+                utils.async(dbManager::updateSellItems);
 
             if (dbManager.listDailyItemsHash != dbManager.listDailyItems.hashCode())
-                dbManager.updateAsyncBuyItems();
+                utils.async(dbManager::updateBuyItems);
 
-            dbManager.updateAsyncCurrentItems();
+            if(dbManager.currentItemsHash != buyGui.getInstance().getCurrentItemsHash())
+                utils.async(dbManager::updateCurrentItems);
+
         }, 12000L, 12000L);
     }
 
