@@ -49,15 +49,15 @@ public class utils {
 
     public static void setDisplayName(ItemStack item, String name) {
         if (name == null) return;
-        ItemMeta meta = item.getItemMeta();
+        ItemMeta meta = getItemMeta(item);
         meta.setDisplayName(formatString(name));
         item.setItemMeta(meta);
     }
 
     public static void setLore(ItemStack item, List<String> lore) {
         if (lore == null) return;
-        ItemMeta meta = item.getItemMeta();
-        List<String> coloredLore = meta.getLore();
+        ItemMeta meta = getItemMeta(item);
+        List<String> coloredLore = getItemLore(meta);
         if (coloredLore == null) coloredLore = new ArrayList<>();
         for (String s : lore) {
             coloredLore.add(formatString(s));
@@ -66,10 +66,23 @@ public class utils {
         item.setItemMeta(meta);
     }
 
+    public static ItemMeta getItemMeta(ItemStack item) {
+        ItemMeta meta;
+        if(item.hasItemMeta()) meta = item.getItemMeta();
+        else meta = Bukkit.getItemFactory().getItemMeta(item.getType());
+        return meta;
+    }
+
+    public static List<String> getItemLore(ItemMeta meta) {
+        List<String> lore = new ArrayList<>();
+        if (meta.hasLore()) lore = meta.getLore();
+        return lore;
+    }
+
     public static void removeLore(ItemStack item, int n) {
-        ItemMeta meta = item.getItemMeta();
-        List<String> lore = meta.getLore();
-        if (lore.isEmpty() || lore == null) return;
+        ItemMeta meta = getItemMeta(item);
+        List<String> lore = getItemLore(meta);
+        if (isEmpty(lore)) return;
         if (n == -1) lore.clear();
         else
             for (int i = 0; i < n; i++) {
@@ -92,6 +105,8 @@ public class utils {
     }
 
     public static boolean isEmpty(String s) { return s == null || s.isEmpty(); }
+
+    public static boolean isEmpty(List<String> s) { return s == null || s.isEmpty(); }
 
     /**
      * Queue a task to be run asynchronously. <br>
