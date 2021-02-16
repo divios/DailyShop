@@ -6,7 +6,6 @@ import de.tr7zw.changeme.nbtapi.NBTItem;
 import io.github.divios.dailyrandomshop.builders.factory.dailyItem;
 import io.github.divios.dailyrandomshop.conf_msg;
 import io.github.divios.dailyrandomshop.guis.buyGui;
-import io.github.divios.dailyrandomshop.builders.itemBuildersHooks.itemsBuilderManager;
 import io.github.divios.dailyrandomshop.utils.utils;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -25,7 +24,7 @@ public class dataManager {
     private static dataManager instance = null;
     public Map<ItemStack, Double> listDailyItems, listSellItems;
     public Map<String, Integer> currentItems;
-    public int listDailyItemsHash, listSellItemsHash;
+    public int listDailyItemsHash, listSellItemsHash, currentItemsHash;
 
     private dataManager() {
     }
@@ -50,10 +49,11 @@ public class dataManager {
             e.printStackTrace();
             main.getServer().getPluginManager().disablePlugin(main);
         }
+
         utils.async(() -> {
             instance.createTables();
-            instance.getSyncBuyItem();
-            instance.getSyncSellItems();
+            instance.getBuyItems();
+            instance.getSellItems();
             instance.getSyncCurrentItems();
 
             instance.listDailyItemsHash = instance.listDailyItems.hashCode();
@@ -118,59 +118,37 @@ public class dataManager {
         }
     }
 
-    public void updateAsyncTimer(int time) {
-        utils.async(() -> updateAbstractTimer(time));
-    }
-
-    public void updateSyncTimer(int time) {
+    public void updateTimer(int time) {
         updateAbstractTimer(time);
     }
 
-    public void updateAsyncSellItems() {
-        utils.async(() -> {
-            AbstractUpdateList(listSellItems, "sell_items");
-            listSellItemsHash = listSellItems.hashCode();
-        });
-    }
-
-    public void updateSyncSellItems() {
+    public void updateSellItems() {
         AbstractUpdateList(listSellItems, "sell_items");
+        listSellItemsHash = listSellItems.hashCode();
     }
 
-    public void getSyncSellItems() {
+    public void getSellItems() {
         listSellItems = AbstractGetList("sell_items", false);
     }
 
-    public void getASyncSellItems() {
-        utils.async(() -> listSellItems = AbstractGetList("sell_items", false));
-    }
-
-    public void updateAsyncBuyItems() {
-        utils.async(() -> {
-            AbstractUpdateList(listDailyItems, "daily_items");
-            listDailyItemsHash = listDailyItems.hashCode();
-        });
-    }
-
-    public void updateSyncBuyItems() {
+    public void updateBuyItems() {
         AbstractUpdateList(listDailyItems, "daily_items");
+        listDailyItemsHash = listDailyItems.hashCode();
     }
 
-    public void getSyncBuyItem() {
+    public void getBuyItems() {
         listDailyItems = AbstractGetList("daily_items", true);
     }
 
-    public void getASyncBuyItem() {
-        utils.async(() -> listDailyItems = AbstractGetList("daily_items", true));
+    public void getSyncCurrentItems() {
+        currentItems = getCurrentItems();
     }
 
-    public void updateAsyncCurrentItems() { utils.async(this::updateCurrentItems); }
+    public void updateCurrentItems() {
+        abstractUpdateCurrentItems();
+        currentItemsHash = buyGui.getInstance().getCurrentItemsHash();
+    }
 
-    public void updateSyncCurrentItems() { updateCurrentItems(); }
-
-    public void getAsyncCurrentItems() { utils.async(() -> currentItems = getCurrentItems()); }
-
-    public void getSyncCurrentItems() { currentItems = getCurrentItems(); }
 
     private Map<ItemStack, Double> AbstractGetList(String table, boolean isDailyItems) {
         Map<ItemStack, Double> items = Collections.synchronizedMap(new LinkedHashMap<>());
@@ -202,11 +180,8 @@ public class dataManager {
                         continue;
                     }
 
-                    //itemsBuilderManager.updateItem(item);
-
                 } catch (Exception e) {
-                    main.getLogger().warning("A previous sell item registered " +
-                            "on the db is now unsupported, skipping...");
+                    main.getLogger().warning("A previous sell item registered on the db is now unsupported, skipping...");
                     continue;
                 }
 
@@ -258,6 +233,8 @@ public class dataManager {
             PreparedStatement statement = con.prepareStatement(SQL_Create);
             ResultSet result = statement.executeQuery();
 
+            String s;
+
             while (result.next()) {
                 items.put(result.getString(1),
                         result.getInt(2));
@@ -269,27 +246,27 @@ public class dataManager {
         return items;
     }
 
-    public void updateCurrentItems() {
-            currentItems = buyGui.getInstance().getCurrentItems();
-            try {
-                Connection con = sqlite.getConnection();
-                PreparedStatement statement;
+    public void abstractUpdateCurrentItems() {
+        currentItems = buyGui.getInstance().getCurrentItems();
+        try {
+            Connection con = sqlite.getConnection();
+            PreparedStatement statement;
 
-                deleteElements("current_items");
+            deleteElements("current_items");
 
-                for (Map.Entry<String, Integer> s : currentItems.entrySet()) {
+            for (Map.Entry<String, Integer> s : currentItems.entrySet()) {
 
-                    String insertItem = "INSERT INTO " + "current_items (uuid, amount) VALUES (?, ?)";
-                    statement = con.prepareStatement(insertItem);
+                String insertItem = "INSERT INTO " + "current_items (uuid, amount) VALUES (?, ?)";
+                statement = con.prepareStatement(insertItem);
 
-                    statement.setString(1, s.getKey());
-                    statement.setInt(2, s.getValue());
-                    statement.executeUpdate();
-                }
-
-            } catch (SQLException e) {
-                main.getLogger().warning("Couldn't update current items on database");
+                statement.setString(1, s.getKey());
+                statement.setInt(2, s.getValue());
+                statement.executeUpdate();
             }
+
+        } catch (SQLException e) {
+            main.getLogger().warning("Couldn't update current items on database");
+        }
     }
 
     public void deleteElements(String table) throws SQLException {

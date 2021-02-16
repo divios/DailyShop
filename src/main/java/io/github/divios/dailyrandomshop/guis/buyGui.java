@@ -23,6 +23,8 @@ import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.IntStream;
 
 public class buyGui implements Listener, InventoryHolder {
 
@@ -234,6 +236,16 @@ public class buyGui implements Listener, InventoryHolder {
         instance = null;
         dbManager.currentItems = getCurrentItems();
         getInstance();
+    }
+
+    public int getCurrentItemsHash() {
+        AtomicInteger hash = new AtomicInteger();
+
+        IntStream.range(18, inv.getSize()).forEach(i -> {
+            if(!utils.isEmpty(inv.getItem(i)))
+                hash.addAndGet(inv.getItem(i).hashCode());
+        });
+        return hash.get();
     }
 
     private void unRegisterListeners() {

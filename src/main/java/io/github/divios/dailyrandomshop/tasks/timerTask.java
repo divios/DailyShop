@@ -36,7 +36,7 @@ class timerTask {
             }
             time --;
             if (time % 180 == 0) {
-                dbManager.updateAsyncTimer(time);
+                utils.async(() -> dbManager.updateTimer(time));
             }
         }, 20L, 20L);
     }
