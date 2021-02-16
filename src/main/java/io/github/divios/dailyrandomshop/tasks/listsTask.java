@@ -29,7 +29,7 @@ class listsTask {
                 dbManager.updateAsyncBuyItems();
 
             dbManager.updateAsyncCurrentItems();
-        }, 2000L, 2000L);
+        }, 12000L, 12000L);
     }
 
 }
