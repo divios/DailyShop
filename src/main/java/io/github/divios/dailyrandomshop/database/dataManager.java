@@ -25,6 +25,7 @@ public class dataManager {
     private static dataManager instance = null;
     public Map<ItemStack, Double> listDailyItems, listSellItems;
     public Map<String, Integer> currentItems;
+    public int listDailyItemsHash, listSellItemsHash;
 
     private dataManager() {
     }
@@ -54,6 +55,10 @@ public class dataManager {
             instance.getSyncBuyItem();
             instance.getSyncSellItems();
             instance.getSyncCurrentItems();
+
+            instance.listDailyItemsHash = instance.listDailyItems.hashCode();
+            instance.listSellItemsHash = instance.listSellItems.hashCode();
+
             c.run();
         });
     }
@@ -122,7 +127,10 @@ public class dataManager {
     }
 
     public void updateAsyncSellItems() {
-        utils.async(() -> AbstractUpdateList(listSellItems, "sell_items"));
+        utils.async(() -> {
+            AbstractUpdateList(listSellItems, "sell_items");
+            listSellItemsHash = listSellItems.hashCode();
+        });
     }
 
     public void updateSyncSellItems() {
@@ -138,7 +146,10 @@ public class dataManager {
     }
 
     public void updateAsyncBuyItems() {
-        utils.async(() -> AbstractUpdateList(listDailyItems, "daily_items"));
+        utils.async(() -> {
+            AbstractUpdateList(listDailyItems, "daily_items");
+            listDailyItemsHash = listDailyItems.hashCode();
+        });
     }
 
     public void updateSyncBuyItems() {
