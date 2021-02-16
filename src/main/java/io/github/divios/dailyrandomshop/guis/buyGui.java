@@ -140,7 +140,7 @@ public class buyGui implements Listener, InventoryHolder {
             int amount = -1;
             amount = entry.getValue();
 
-            if(j >= (18 + conf_msg.N_DAILY_ITEMS -1)) break;
+            if(j >= (18 + conf_msg.N_DAILY_ITEMS)) break;
             if (j == inv.getSize()) return;
 
             ItemStack item = dailyItem.getRawItem(uuid);
