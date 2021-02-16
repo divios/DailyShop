@@ -20,12 +20,16 @@ class listsTask {
         return instance;
     }
 
-    void initTask() {
+    private void initTask() {
         Bukkit.getScheduler().runTaskTimerAsynchronously(main, () -> {
-            dbManager.updateAsyncBuyItems();
-            dbManager.updateAsyncSellItems();
+            if (dbManager.listSellItemsHash != dbManager.listSellItems.hashCode())
+                dbManager.updateAsyncSellItems();
+
+            if (dbManager.listDailyItemsHash != dbManager.listDailyItems.hashCode())
+                dbManager.updateAsyncBuyItems();
+
             dbManager.updateAsyncCurrentItems();
-        }, 12000L, 12000L);
+        }, 2000L, 2000L);
     }
 
 }
