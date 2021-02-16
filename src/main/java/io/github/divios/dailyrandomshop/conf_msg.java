@@ -69,7 +69,7 @@ public class conf_msg {
         ENABLE_CONFIRM_GUI = main.getConfig().getBoolean("enable-confirm-gui", true);
         ENABLE_RARITY = main.getConfig().getBoolean("enable-rarity", true);
         N_DAILY_ITEMS = main.getConfig().getInt("number-of-daily-items", 14);
-        if (N_DAILY_ITEMS < 0 || N_DAILY_ITEMS > 36) N_DAILY_ITEMS = 14;
+        if (N_DAILY_ITEMS <= 0 || N_DAILY_ITEMS > 36) N_DAILY_ITEMS = 14;
 
         BUY_GUI_TITLE = utils.formatString(yamlFile.getString("daily-shop-gui-name", "&6&lDailyShop"));
         BUY_GUI_PAINTING_NAME = utils.formatString(yamlFile.getString("daily-shop-gui-painting-name", "&c&lWhat is this?"));
