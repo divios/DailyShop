@@ -117,7 +117,7 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
                 "" + utils.hasFlag(newItem, f)));
 
         f = ItemFlag.HIDE_POTION_EFFECTS;
-        ItemStack hideEffects = XMaterial.END_CRYSTAL.parseItem(); //add/remove effects
+        ItemStack hideEffects = XMaterial.CAULDRON.parseItem(); //add/remove effects
         utils.setDisplayName(hideEffects, conf_msg.CUSTOMIZE_TOGGLE_EFFECTS);
         utils.setLore(hideEffects, utils.replaceOnLore(
                 conf_msg.CUSTOMIZE_TOGGLE_EFFECTS_LORE, "\\{status}",
