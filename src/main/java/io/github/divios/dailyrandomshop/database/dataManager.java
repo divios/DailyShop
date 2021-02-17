@@ -201,28 +201,25 @@ public class dataManager {
     }
 
     private void AbstractUpdateList(Map<ItemStack, Double> list, String table) {
-        Connection con = sqlite.getConnection();
-        PreparedStatement statement;
-        try {
-            //Quitamos los elementos previos
-            deleteElements(table);
+        deleteElements(table);
+        String updateItem = "INSERT INTO " + table + " (serial, price) VALUES (?, ?)";
 
-            for (Map.Entry<ItemStack, Double> entry : list.entrySet()) {
+        sqlite.connect(connection -> {
+            try (PreparedStatement statement = connection.prepareStatement(updateItem)) {
 
-                String updateItem = "INSERT INTO " + table + " (serial, price) VALUES (?, ?)";
-                statement = con.prepareStatement(updateItem);
+                for (Map.Entry<ItemStack, Double> entry : list.entrySet()) {
 
-                NBTCompound itemData = NBTItem.convertItemtoNBT(entry.getKey());
-                String base64 = Base64.getEncoder().encodeToString(itemData.toString().getBytes());
+                    NBTCompound itemData = NBTItem.convertItemtoNBT(entry.getKey());
+                    String base64 = Base64.getEncoder().encodeToString(itemData.toString().getBytes());
 
-                statement.setString(1, base64);
-                statement.setDouble(2, entry.getValue());
+                    statement.setString(1, base64);
+                    statement.setDouble(2, entry.getValue());
 
-                statement.executeUpdate();
-            }
+                    statement.executeUpdate();
+                }
 
-        } catch (SQLException Ignored) {
-        }
+            } catch (SQLException Ignored) { }
+        });
     }
 
     public Map<String, Integer> getCurrentItems() {
@@ -232,8 +229,6 @@ public class dataManager {
             String SQL_Create = "SELECT * FROM current_items";
             PreparedStatement statement = con.prepareStatement(SQL_Create);
             ResultSet result = statement.executeQuery();
-
-            String s;
 
             while (result.next()) {
                 items.put(result.getString(1),
@@ -248,33 +243,35 @@ public class dataManager {
 
     public void abstractUpdateCurrentItems() {
         currentItems = buyGui.getInstance().getCurrentItems();
+        String insertItem = "INSERT INTO " + "current_items (uuid, amount) VALUES (?, ?)";
+        deleteElements("current_items");
+
+        sqlite.connect(connection -> {
+            try (PreparedStatement statement = connection.prepareStatement(insertItem)) {
+
+                for (Map.Entry<String, Integer> s : currentItems.entrySet()) {
+
+                    statement.setString(1, s.getKey());
+                    statement.setInt(2, s.getValue());
+                    statement.executeUpdate();
+                }
+
+            } catch (SQLException e) {
+                main.getLogger().warning("Couldn't update current items on database");
+            }
+        });
+    }
+
+    public void deleteElements(String table) {
         try {
             Connection con = sqlite.getConnection();
             PreparedStatement statement;
-
-            deleteElements("current_items");
-
-            for (Map.Entry<String, Integer> s : currentItems.entrySet()) {
-
-                String insertItem = "INSERT INTO " + "current_items (uuid, amount) VALUES (?, ?)";
-                statement = con.prepareStatement(insertItem);
-
-                statement.setString(1, s.getKey());
-                statement.setInt(2, s.getValue());
-                statement.executeUpdate();
-            }
-
+            String deleteTable = "DELETE FROM " + table + ";";
+            statement = con.prepareStatement(deleteTable);
+            statement.executeUpdate();
         } catch (SQLException e) {
-            main.getLogger().warning("Couldn't update current items on database");
+            e.printStackTrace();
         }
-    }
-
-    public void deleteElements(String table) throws SQLException {
-        Connection con = sqlite.getConnection();
-        PreparedStatement statement;
-        String deleteTable = "DELETE FROM " + table + ";";
-        statement = con.prepareStatement(deleteTable);
-        statement.executeUpdate();
     }
 
 
