@@ -1,9 +1,11 @@
 package io.github.divios.dailyrandomshop.database;
 
+import javax.security.auth.callback.Callback;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.function.Consumer;
 
 class sqlite {
 
@@ -50,8 +52,19 @@ class sqlite {
         }
     }
 
+    public static void connect(Consumer<Connection> c) {
+        if (con == null) {
+            try {
+                con = DriverManager.getConnection(connectionString);
+            } catch (SQLException ex) {
+                main.getLogger().severe("An error occurred retrieving the SQLite database connection: " + ex.getMessage());
+                main.getServer().getPluginManager().disablePlugin(main);
+            }
+        }
+        c.accept(con);
+    }
+
     public static Connection getConnection() {
-        connect();
         return con;
     }
 }
