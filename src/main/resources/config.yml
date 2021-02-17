@@ -9,6 +9,12 @@ prefix: "&6&lDailyShop > "
 
 language: "en_US"
 
+# This option will show more information on
+# console when certain tasks happened. Only
+# useful when there is a bug and the developer
+# ask you to enable this.
+debug: false
+
 # After this amount of seconds, a new set of items
 # will be generated on the daily shop
 # Default: 86400 seconds = 1 day
