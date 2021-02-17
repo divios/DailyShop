@@ -15,7 +15,7 @@ public class conf_updater {
             io.github.divios.dailyrandomshop.main.getInstance();
 
     public static void check() {
-        String version = "2.2.2";
+        String version = "2.2.3";
         if (main.getConfig().getString("version", version).equals(version))
             return;
         update();
