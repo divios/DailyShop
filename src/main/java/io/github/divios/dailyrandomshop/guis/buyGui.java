@@ -159,6 +159,7 @@ public class buyGui implements Listener, InventoryHolder {
             inv.setItem(j, newItem);
             j++;
         }
+        dbManager.currentItemsHash = getCurrentItemsHash();
     }
 
     public void updateItem(String uuid, updateAction a) {
