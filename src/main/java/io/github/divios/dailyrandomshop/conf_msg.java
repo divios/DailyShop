@@ -47,7 +47,7 @@ public class conf_msg {
     public static int N_DAILY_ITEMS, TIMER;
     public static double DEFAULT_PRICE;
 
-    public static boolean ENABLE_SELL_GUI, ENABLE_RARITY, ENABLE_CONFIRM_GUI;
+    public static boolean ENABLE_SELL_GUI, ENABLE_RARITY, ENABLE_CONFIRM_GUI, DEBUG;
 
     public static void init() {
         main.reloadConfig();
@@ -69,6 +69,7 @@ public class conf_msg {
         ENABLE_CONFIRM_GUI = main.getConfig().getBoolean("enable-confirm-gui", true);
         ENABLE_RARITY = main.getConfig().getBoolean("enable-rarity", true);
         N_DAILY_ITEMS = main.getConfig().getInt("number-of-daily-items", 14);
+        DEBUG = main.getConfig().getBoolean("debug", false);
         if (N_DAILY_ITEMS <= 0 || N_DAILY_ITEMS > 36) N_DAILY_ITEMS = 14;
 
         BUY_GUI_TITLE = utils.formatString(yamlFile.getString("daily-shop-gui-name", "&6&lDailyShop"));
