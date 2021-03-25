@@ -8,6 +8,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
@@ -204,8 +205,12 @@ public class utils {
         return freeSlots;
     }
 
-    public static void noPerms(Player p) {
+    public static void noPerms(CommandSender p) {
         p.sendMessage(conf_msg.PREFIX + conf_msg.MSG_NOT_PERMS);
+    }
+
+    public static void noCmd(CommandSender p) {
+        p.sendMessage(conf_msg.PREFIX + utils.formatString("&7Console is no allow to do this command"));
     }
 
     public static void changeItemPrice(ItemStack toSearch, Double price) {

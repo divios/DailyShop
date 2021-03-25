@@ -1,6 +1,5 @@
 package io.github.divios.dailyrandomshop.database;
 
-import javax.security.auth.callback.Callback;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -17,7 +16,6 @@ class sqlite {
 
     public static void getInstance() {
         if (!first) init();
-        connect();
     }
 
     public static void init() {
@@ -41,30 +39,35 @@ class sqlite {
         }
     }
 
-    public static void connect() {
-        if (con == null) {
-            try {
-                con = DriverManager.getConnection(connectionString);
-            } catch (SQLException ex) {
-                main.getLogger().severe("An error occurred retrieving the SQLite database connection: " + ex.getMessage());
-                main.getServer().getPluginManager().disablePlugin(main);
+    private static void connect() {
+        try {
+            if (con != null) {
+                con.close();
             }
+            con = DriverManager.getConnection(connectionString);
+        } catch (SQLException ex) {
+            main.getLogger().severe("An error occurred retrieving the SQLite database connection: " + ex.getMessage());
+            main.getServer().getPluginManager().disablePlugin(main);
         }
     }
 
-    public static void connect(Consumer<Connection> c) {
-        if (con == null) {
-            try {
-                con = DriverManager.getConnection(connectionString);
-            } catch (SQLException ex) {
-                main.getLogger().severe("An error occurred retrieving the SQLite database connection: " + ex.getMessage());
-                main.getServer().getPluginManager().disablePlugin(main);
-            }
+    public static void connect(Callback c) {
+        try {
+            connect();
+            c.accept(con);
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-        c.accept(con);
+        closeConnection();
     }
 
     public static Connection getConnection() {
         return con;
     }
+
+    @FunctionalInterface
+    public interface Callback {
+        void accept(Connection connection) throws SQLException;
+    }
+
 }

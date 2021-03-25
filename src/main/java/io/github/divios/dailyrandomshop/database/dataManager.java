@@ -17,6 +17,7 @@ import java.util.Base64;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class dataManager {
 
@@ -50,7 +51,7 @@ public class dataManager {
             main.getServer().getPluginManager().disablePlugin(main);
         }
 
-        utils.async(() -> {
+        utils.sync(() -> {
             instance.createTables();
             instance.getBuyItems();
             instance.getSellItems();
@@ -64,58 +65,53 @@ public class dataManager {
     }
 
     public void createTables() {
-        try {
-            Connection con = sqlite.getConnection();
-            Statement statement = con.createStatement();
-            statement.execute("CREATE TABLE IF NOT EXISTS timer"
-                    + "(time int);");
+        sqlite.connect(connection -> {
+            try (Statement statement = connection.createStatement()){
 
-            statement.execute("CREATE TABLE IF NOT EXISTS sell_items"
-                    + "(serial varchar [255], price int);");
+                statement.execute("CREATE TABLE IF NOT EXISTS timer"
+                        + "(time int);");
 
-            statement.execute("CREATE TABLE IF NOT EXISTS daily_items"
-                    + "(serial varchar [255], price int);");
+                statement.execute("CREATE TABLE IF NOT EXISTS sell_items"
+                        + "(serial varchar [255], price int);");
 
-            statement.execute("CREATE TABLE IF NOT EXISTS current_items"
-                    + "(uuid varchar [255], amount int);");
-        } catch (SQLException e) {
-            e.printStackTrace();
-            main.getLogger().severe("Couldn't load tables from database");
-            main.getServer().getPluginManager().disablePlugin(main);
-        }
+                statement.execute("CREATE TABLE IF NOT EXISTS daily_items"
+                        + "(serial varchar [255], price int);");
+
+                statement.execute("CREATE TABLE IF NOT EXISTS current_items"
+                        + "(uuid varchar [255], amount int);");
+            }
+        });
     }
 
     public int getTimer() {
-        int time = -1;
-        try {
-            Connection con = sqlite.getConnection();
-            String selectTimer = "SELECT * FROM timer";
-            PreparedStatement statement = con.prepareStatement(selectTimer);
-            ResultSet result = statement.executeQuery();
+        AtomicInteger time = new AtomicInteger();
+        String selectTimer = "SELECT * FROM timer";
+        sqlite.connect(connection -> {
+            try {
+                PreparedStatement statement =
+                        connection.prepareStatement(selectTimer);
 
-            result.next();
-            time = result.getInt("time");
-        } catch (SQLException e) {
-            main.getLogger().warning("Couldn't read timer value from database, setting it to value on config");
-            time = conf_msg.TIMER;
-        }
-        return time;
+                ResultSet result = statement.executeQuery();
+
+                result.next();
+                time.set(result.getInt("time"));
+            } catch (SQLException ignored) {}
+        });
+        return time.get();
     }
 
     private void updateAbstractTimer(int time) {
-        Connection con = sqlite.getConnection();
-        try {
-            deleteElements("timer");
+        String updateTimer = "INSERT INTO timer (time) VALUES (?)";
+        deleteElements("timer");
+        sqlite.connect(connection -> {
+            try (PreparedStatement statement =
+                         connection.prepareStatement(updateTimer)) {
 
-            PreparedStatement statement;
-            String updateTimer = "INSERT INTO timer (time) VALUES (?)";
-            statement = con.prepareStatement(updateTimer);
-            statement.setInt(1, time);
-            statement.executeUpdate();
+                statement.setInt(1, time);
+                statement.executeUpdate();
 
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+            }
+        });
     }
 
     public void updateTimer(int time) {
@@ -152,60 +148,60 @@ public class dataManager {
 
     private Map<ItemStack, Double> AbstractGetList(String table, boolean isDailyItems) {
         Map<ItemStack, Double> items = Collections.synchronizedMap(new LinkedHashMap<>());
+        String SQL_Create = "SELECT * FROM " + table;
 
-        try {
-            Connection con = sqlite.getConnection();
-            String SQL_Create = "SELECT * FROM " + table;
-            PreparedStatement statement = con.prepareStatement(SQL_Create);
-            ResultSet result = statement.executeQuery();
-            String string;
-            NBTCompound itemData;
-            ItemStack item;
-            byte[] itemserial;
+        sqlite.connect(connection -> {
+            try (PreparedStatement statement =
+                         connection.prepareStatement(SQL_Create)) {
 
-            while (result.next()) {
-                itemserial = Base64.getDecoder().decode(result.getString("serial"));
-                try {
-                    string = new String(itemserial);
-                    itemData = new NBTContainer(string);
-                    item = NBTItem.convertNBTtoItem(itemData);
-                    if (utils.isEmpty(item)) continue;
-                    if (isDailyItems) {
-                        if (utils.isEmpty(dailyItem.getUuid(item))) continue;
-                    }
+                ResultSet result = statement.executeQuery();
+                String string;
+                NBTCompound itemData;
+                ItemStack item;
+                byte[] itemserial;
 
+                while (result.next()) {
+                    itemserial = Base64.getDecoder().decode(result.getString("serial"));
                     try {
-                        Material.valueOf(item.getType().toString());
+                        string = new String(itemserial);
+                        itemData = new NBTContainer(string);
+                        item = NBTItem.convertNBTtoItem(itemData);
+                        if (utils.isEmpty(item)) continue;
+                        if (isDailyItems) {
+                            if (utils.isEmpty(dailyItem.getUuid(item))) continue;
+                        }
+
+                        try {
+                            Material.valueOf(item.getType().toString());
+                        } catch (Exception e) {
+                            continue;
+                        }
+
                     } catch (Exception e) {
+                        main.getLogger().warning("A previous sell item registered on the db is now unsupported, skipping...");
                         continue;
                     }
 
-                } catch (Exception e) {
-                    main.getLogger().warning("A previous sell item registered on the db is now unsupported, skipping...");
-                    continue;
+                    if (utils.isEmpty(dailyItem.getUuid(item))) {
+                        new dailyItem(item).craft();
+                    }
+
+                    items.put(item, result.getDouble(2));
                 }
 
-                if (utils.isEmpty(dailyItem.getUuid(item))) {
-                    new dailyItem(item).craft();
-                }
-
-                items.put(item, result.getDouble(2));
             }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            main.getLogger().warning("Couldn't get sell items on database");
-        }
+        });
 
         return items;
     }
 
     private void AbstractUpdateList(Map<ItemStack, Double> list, String table) {
-        deleteElements(table);
-        String updateItem = "INSERT INTO " + table + " (serial, price) VALUES (?, ?)";
+        //deleteElements(table);
+        String updateItem = "REPLACE INTO " + table + " (serial, price) VALUES (?, ?)";
 
         sqlite.connect(connection -> {
-            try (PreparedStatement statement = connection.prepareStatement(updateItem)) {
+            try (PreparedStatement statement =
+                         connection.prepareStatement(updateItem)) {
 
                 for (Map.Entry<ItemStack, Double> entry : list.entrySet()) {
 
@@ -218,33 +214,32 @@ public class dataManager {
                     statement.executeUpdate();
                 }
 
-            } catch (SQLException Ignored) { }
+            }
         });
     }
 
     public Map<String, Integer> getCurrentItems() {
         Map<String, Integer> items = new LinkedHashMap<>();
-        try {
-            Connection con = sqlite.getConnection();
-            String SQL_Create = "SELECT * FROM current_items";
-            PreparedStatement statement = con.prepareStatement(SQL_Create);
-            ResultSet result = statement.executeQuery();
+        String SQL_Create = "SELECT * FROM current_items";
 
-            while (result.next()) {
-                items.put(result.getString(1),
-                        result.getInt(2));
+        sqlite.connect(connection -> {
+            try (PreparedStatement statement = connection.prepareStatement(SQL_Create);) {
+                ResultSet result = statement.executeQuery();
+
+                while (result.next()) {
+                    items.put(result.getString(1),
+                            result.getInt(2));
+                }
+
             }
-
-        } catch (SQLException e) {
-            main.getLogger().warning("Couldn't get current items from database");
-        }
+        });
         return items;
     }
 
     public void abstractUpdateCurrentItems() {
         currentItems = buyGui.getInstance().getCurrentItems();
-        String insertItem = "INSERT INTO " + "current_items (uuid, amount) VALUES (?, ?)";
-        deleteElements("current_items");
+        String insertItem = "REPLACE INTO " + "current_items (uuid, amount) VALUES (?, ?)";
+        //deleteElements("current_items");
 
         sqlite.connect(connection -> {
             try (PreparedStatement statement = connection.prepareStatement(insertItem)) {
@@ -256,22 +251,19 @@ public class dataManager {
                     statement.executeUpdate();
                 }
 
-            } catch (SQLException e) {
-                main.getLogger().warning("Couldn't update current items on database");
             }
         });
     }
 
     public void deleteElements(String table) {
-        try {
-            Connection con = sqlite.getConnection();
-            PreparedStatement statement;
-            String deleteTable = "DELETE FROM " + table + ";";
-            statement = con.prepareStatement(deleteTable);
-            statement.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        String deleteTable = "DELETE FROM " + table + ";";
+        sqlite.connect(connection -> {
+            try (PreparedStatement statement =
+                         connection.prepareStatement(deleteTable)){
+
+                statement.executeUpdate();
+            }
+        });
     }
 
 

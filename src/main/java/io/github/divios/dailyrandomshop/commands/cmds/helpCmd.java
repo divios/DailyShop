@@ -2,14 +2,23 @@ package io.github.divios.dailyrandomshop.commands.cmds;
 
 import io.github.divios.dailyrandomshop.conf_msg;
 import io.github.divios.dailyrandomshop.utils.utils;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.Arrays;
 import java.util.List;
 
 public class helpCmd implements dailyCommand{
+
     @Override
-    public void run(Player p) {
+    public void run(CommandSender sender) {
+
+        if (! (sender instanceof Player)) {
+            utils.noCmd(sender);
+            return;
+        }
+
+        Player p = (Player) sender;
         String path = "io.github.divios.dailyrandomshop.commands.cmds.";
         p.sendMessage(conf_msg.PREFIX + utils.formatString("&e&lPlugin help"));
         Arrays.stream(allCmds.values()).forEach(cmd -> {
