@@ -28,20 +28,23 @@ public class commandsManager implements CommandExecutor {
 
         dailyCommand dlCommand = null;
 
-        if (!(sender instanceof Player)) return true;
-        Player p = (Player) sender;
-
         if (args.length == 0) {
             dlCommand = new buyCmd();
 
         } else {
 
-            if (args[0].equalsIgnoreCase("buy")) {
-                dlCommand = new buyCmd();
+            if (args[0].equalsIgnoreCase("open")) {
+                if (args.length == 2) {
+                    dlCommand = new buyCmd(args[1]);
+                }
+                else dlCommand = new buyCmd();
             }
 
-            if (args[0].equalsIgnoreCase("sell")) {
-                dlCommand = new sellCmd();
+            else if (args[0].equalsIgnoreCase("sell")) {
+                if (args.length == 2) {
+                    dlCommand = new sellCmd(args[1]);
+                }
+                else dlCommand = new sellCmd();
             }
 
             else if (args[0].equalsIgnoreCase("addDailyItem")) {
@@ -66,7 +69,7 @@ public class commandsManager implements CommandExecutor {
 
             else dlCommand = new helpCmd();
         }
-        dlCommand.run(p);
+        dlCommand.run(sender);
         return true;
     }
 }

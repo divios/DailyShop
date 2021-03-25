@@ -5,13 +5,22 @@ import io.github.divios.dailyrandomshop.database.dataManager;
 import io.github.divios.dailyrandomshop.guis.settings.sellGuiSettings;
 import io.github.divios.dailyrandomshop.listeners.dynamicItemListener;
 import io.github.divios.dailyrandomshop.utils.utils;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.List;
 
 public class addSellItemCmd implements dailyCommand{
     @Override
-    public void run(Player p) {
+    public void run(CommandSender sender) {
+
+        if (! (sender instanceof Player)) {
+            utils.noCmd(sender);
+            return;
+        }
+
+        Player p = (Player) sender;
+
         if (!p.hasPermission("DailyRandomShop.addSellItem")) {
             utils.noPerms(p);
             return;

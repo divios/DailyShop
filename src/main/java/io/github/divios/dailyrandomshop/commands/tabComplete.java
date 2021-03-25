@@ -17,7 +17,7 @@ public class tabComplete implements TabCompleter {
 
     private static final io.github.divios.dailyrandomshop.main main = io.github.divios.dailyrandomshop.main.getInstance();
     private static tabComplete instance = null;
-    private static List<dailyCommand> cmdCommands = getCmds();
+    private static final List<dailyCommand> cmdCommands = getCmds();
 
     private tabComplete() { }
 
@@ -48,9 +48,7 @@ public class tabComplete implements TabCompleter {
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         List<String> commandsList = new ArrayList<>();
 
-        cmdCommands.forEach(cmd -> {
-            cmd.command((Player) sender, commandsList);
-        });
+        cmdCommands.forEach(cmd -> cmd.command((Player) sender, commandsList));
 
         if (args.length == 0) return commandsList;
 

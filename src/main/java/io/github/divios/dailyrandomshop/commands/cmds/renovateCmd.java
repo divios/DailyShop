@@ -4,6 +4,7 @@ import io.github.divios.dailyrandomshop.events.expiredTimerEvent;
 import io.github.divios.dailyrandomshop.tasks.taskManager;
 import io.github.divios.dailyrandomshop.utils.utils;
 import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.List;
@@ -12,7 +13,8 @@ public class renovateCmd implements dailyCommand{
 
 
     @Override
-    public void run(Player p) {
+    public void run(CommandSender p) {
+
         if (!p.hasPermission("DailyRandomShop.renovate")) {
             utils.noPerms(p);
             return;

@@ -2,13 +2,22 @@ package io.github.divios.dailyrandomshop.commands.cmds;
 
 import io.github.divios.dailyrandomshop.guis.settings.addDailyItemGuiIH;
 import io.github.divios.dailyrandomshop.utils.utils;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.List;
 
 public class addDailyItemCmd implements dailyCommand{
     @Override
-    public void run(Player p) {
+    public void run(CommandSender sender) {
+
+        if (! (sender instanceof Player)) {
+            utils.noCmd(sender);
+            return;
+        }
+
+        Player p = (Player) sender;
+
         if (!p.hasPermission("DailyRandomShop.addDailyItem")) {
             utils.noPerms(p);
             return;

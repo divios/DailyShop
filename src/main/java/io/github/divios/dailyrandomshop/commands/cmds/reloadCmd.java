@@ -3,13 +3,14 @@ package io.github.divios.dailyrandomshop.commands.cmds;
 import io.github.divios.dailyrandomshop.conf_msg;
 import io.github.divios.dailyrandomshop.main;
 import io.github.divios.dailyrandomshop.utils.utils;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.List;
 
 public class reloadCmd implements dailyCommand{
     @Override
-    public void run(Player p) {
+    public void run(CommandSender p) {
         if (!p.hasPermission("DailyRandomShop.reload")) {
             utils.noPerms(p);
             return;
