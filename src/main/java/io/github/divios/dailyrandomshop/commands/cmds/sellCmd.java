@@ -26,6 +26,12 @@ public class sellCmd implements dailyCommand{
     public void run(CommandSender sender) {
 
         if (playerStr != null && Bukkit.getPlayer(playerStr) != null) {
+
+            if (!sender.hasPermission("DailyRandomShop.sell.others")) {
+                utils.noPerms(sender);
+                return;
+            }
+
             buyGui.getInstance().openInventory(Bukkit.getPlayer(playerStr));
             return;
         }

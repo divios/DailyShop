@@ -1,5 +1,6 @@
 package io.github.divios.dailyrandomshop.commands.cmds;
 
+import io.github.divios.dailyrandomshop.conf_msg;
 import io.github.divios.dailyrandomshop.guis.buyGui;
 import io.github.divios.dailyrandomshop.utils.utils;
 import org.bukkit.Bukkit;
@@ -24,6 +25,12 @@ public class buyCmd implements dailyCommand{
     public void run(CommandSender sender) {
 
         if (playerStr != null && Bukkit.getPlayer(playerStr) != null) {
+
+            if (!sender.hasPermission("DailyRandomShop.open.others")) {
+                utils.noPerms(sender);
+                return;
+            }
+
             buyGui.getInstance().openInventory(Bukkit.getPlayer(playerStr));
             return;
         }
