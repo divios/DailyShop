@@ -2,10 +2,7 @@ package io.github.divios.dailyrandomshop.utils;
 
 import io.github.divios.dailyrandomshop.builders.factory.dailyItem;
 import io.github.divios.dailyrandomshop.conf_msg;
-import io.github.divios.dailyrandomshop.economies.econTypes;
-import io.github.divios.dailyrandomshop.economies.economy;
-import io.github.divios.dailyrandomshop.economies.gemEcon;
-import io.github.divios.dailyrandomshop.economies.vault;
+import io.github.divios.dailyrandomshop.economies.*;
 import io.github.divios.dailyrandomshop.guis.buyGui;
 import io.github.divios.dailyrandomshop.guis.confirmGui;
 import io.github.divios.dailyrandomshop.hooks.hooksManager;
@@ -49,7 +46,6 @@ public class transaction {
         }
 
         if (conf_msg.ENABLE_CONFIRM_GUI && !instance.amountFlag
-                && !instance.commandFlag
             )  {
             confirmGui.openInventory(p,
                     dailyItem.getRawItem(item).clone(),
@@ -73,17 +69,20 @@ public class transaction {
 
         if (!hasEnoughMoneyAndSpace(dailyItem.getPrice(item) * getAmount(item))) return;
 
-        if (commandFlag) {
-            ((List<String>) new dailyItem(item).getMetadata(dailyItem.dailyMetadataType.rds_commands))
-                    .forEach(s -> main.getServer().dispatchCommand(main.getServer().getConsoleSender(),
-                            s.replaceAll("%player%", p.getName())));
-            econStrategy.witchDrawMoney(p, dailyItem.getPrice(item));
-        }
-
-        if (new dailyItem(item).hasMetadata(dailyItem.dailyMetadataType.rds_amount)) {
-            amountFlag = true;
+        if (amountFlag) {
             buyGui.getInstance().processNextAmount(dailyItem.getUuid(item));
             item.setAmount(1);
+        }
+
+        if (commandFlag) {
+            IntStream.range(0, getAmount(item)).forEach(value -> {
+                ((List<String>) new dailyItem(item).getMetadata(dailyItem.dailyMetadataType.rds_commands))
+                        .forEach(s -> main.getServer().dispatchCommand(main.getServer().getConsoleSender(),
+                                s.replaceAll("%player%", p.getName())));
+                econStrategy.witchDrawMoney(p, dailyItem.getPrice(item));
+            });
+
+            sendBuyMessage(dailyItem.getPrice(item) * item.getAmount());
         }
 
         if (!commandFlag)
@@ -108,14 +107,14 @@ public class transaction {
     private boolean hasEnoughMoneyAndSpace(double price) {
         if (!econStrategy.hasMoney(p, price)) {
             p.sendMessage(conf_msg.PREFIX + conf_msg.MSG_NOT_ENOUGH_MONEY);
-            p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
+            utils.sendSound(p, Sound.ENTITY_VILLAGER_NO);
             return false;
         }
         if( (oneSlotFlag && utils.inventoryFull(p.getInventory()) < n) ||
                 ((amountFlag && utils.inventoryFull(p.getInventory()) < 1)) &&
                 !commandFlag) {
             p.sendMessage(conf_msg.PREFIX + conf_msg.MSG_INVENTORY_FULL);
-            p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
+            utils.sendSound(p, Sound.ENTITY_VILLAGER_NO);
             return false;
         }
 
@@ -123,18 +122,10 @@ public class transaction {
     }
 
     private boolean processEcon(ItemStack item) {
-        Double price = dailyItem.getPrice(item) * item.getAmount();
-        String currency;
-        try {
-            currency = ((AbstractMap.SimpleEntry<String, String>) new dailyItem(item).
-                    getMetadata(dailyItem.dailyMetadataType.rds_econ)).getKey();
-        } catch (NullPointerException e) { currency = conf_msg.VAULT_CUSTOM_NAME; }
+        double price = dailyItem.getPrice(item) * item.getAmount();
 
         econStrategy.witchDrawMoney(p, price);
-        p.sendMessage(conf_msg.PREFIX + conf_msg.MSG_BUY_ITEM
-                .replaceAll("\\{price}", "" + price)
-                .replaceAll("\\{item}", utils.getDisplayName(item) + utils.formatString("&7"))
-                .replaceAll("\\{currency}", currency));
+        sendBuyMessage(price);
 
         HashMap<Integer, ItemStack> remaining = giveItem(item);     /* Returns null if oneSlotFlag */
 
@@ -150,6 +141,20 @@ public class transaction {
         }
 
         return true;
+    }
+
+    private void sendBuyMessage(double price) {
+        String currency;
+        try {
+            currency = ((AbstractMap.SimpleEntry<String, String>) new dailyItem(item).
+                    getMetadata(dailyItem.dailyMetadataType.rds_econ)).getKey();
+        } catch (NullPointerException e) { currency = conf_msg.VAULT_CUSTOM_NAME; }
+
+        p.sendMessage(conf_msg.PREFIX + conf_msg.MSG_BUY_ITEM
+                .replaceAll("\\{amount}", "" + getAmount(item))
+                .replaceAll("\\{price}", "" + price)
+                .replaceAll("\\{item}", utils.getDisplayName(item) + utils.formatString("&7"))
+                .replaceAll("\\{currency}", currency));
     }
 
     private HashMap<Integer, ItemStack> giveItem(ItemStack item) {
@@ -184,6 +189,9 @@ public class transaction {
                     hooksManager.getInstance().getGemsEcon().plugin
                             .getCurrencyManager().currencyExist(e.getValue()))
                 econStrategy = new gemEcon(e.getValue());
+        }
+        else if (e.getKey().equals(econTypes.tokenEnchants.name())) {
+            econStrategy = new tokenEnchantsE();
         }
     }
 
