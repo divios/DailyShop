@@ -275,5 +275,10 @@ public class utils {
         return name;
     }
 
+    public static boolean isOperative(String pl) {
+        return Bukkit.getPluginManager().getPlugin(pl) != null &&
+                Bukkit.getPluginManager().getPlugin(pl).isEnabled();
+    }
+
 
 }
