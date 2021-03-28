@@ -1,8 +1,9 @@
 package io.github.divios.dailyrandomshop.hooks;
 
+import com.vk2gpz.tokenenchant.api.TokenEnchantAPI;
+import io.github.divios.dailyrandomshop.utils.utils;
 import me.xanium.gemseconomy.api.GemsEconomyAPI;
 import net.milkbowl.vault.economy.Economy;
-import org.bukkit.Bukkit;
 
 public class hooksManager {
 
@@ -22,8 +23,11 @@ public class hooksManager {
     private void init() {
         /* Initiate all hooks */
         vaultHook.hook();
-        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null)
+        if (utils.isOperative("PlaceholderAPI"))
             placeholderApiHook.getInstance();
+        if (utils.isOperative("TokenEnchant")) {
+            tokenEnchantsHook.hook();
+        }
         gemsEconomyHook.getInstance();
         bstatsHook.init();
     }
@@ -33,5 +37,7 @@ public class hooksManager {
     }
 
     public GemsEconomyAPI getGemsEcon() { return gemsEconomyHook.getGemsEcon(); }
+
+    public TokenEnchantAPI getEnchantApi() {return tokenEnchantsHook.getEcon(); }
 
 }
