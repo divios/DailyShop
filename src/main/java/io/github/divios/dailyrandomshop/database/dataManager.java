@@ -196,8 +196,8 @@ public class dataManager {
     }
 
     private void AbstractUpdateList(Map<ItemStack, Double> list, String table) {
-        //deleteElements(table);
-        String updateItem = "REPLACE INTO " + table + " (serial, price) VALUES (?, ?)";
+        deleteElements(table);
+        String updateItem = "INSERT INTO " + table + " (serial, price) VALUES (?, ?)";
 
         sqlite.connect(connection -> {
             try (PreparedStatement statement =
@@ -238,8 +238,8 @@ public class dataManager {
 
     public void abstractUpdateCurrentItems() {
         currentItems = buyGui.getInstance().getCurrentItems();
-        String insertItem = "REPLACE INTO " + "current_items (uuid, amount) VALUES (?, ?)";
-        //deleteElements("current_items");
+        String insertItem = "INSERT INTO " + "current_items (uuid, amount) VALUES (?, ?)";
+        deleteElements("current_items");
 
         sqlite.connect(connection -> {
             try (PreparedStatement statement = connection.prepareStatement(insertItem)) {
