@@ -1,5 +1,6 @@
 package io.github.divios.dailyrandomshop.guis.customizerguis;
 
+import com.vk2gpz.tokenenchant.api.TokenEnchantAPI;
 import io.github.divios.dailyrandomshop.builders.factory.dailyItem;
 import io.github.divios.dailyrandomshop.conf_msg;
 import io.github.divios.dailyrandomshop.economies.econTypes;
@@ -44,6 +45,8 @@ public class changeEcon implements Listener, InventoryHolder {
     private void init() {
         Bukkit.getPluginManager().registerEvents(this, main);
         GemsEconomyAPI gemsApi = hooksManager.getInstance().getGemsEcon();
+        TokenEnchantAPI tokenEnchantsApi = hooksManager.getInstance().getEnchantApi();
+
         inv = Bukkit.createInventory(this, 27, conf_msg.CUSTOMIZE_CHANGE_ECON);
 
         ItemStack returnItem = XMaterial.OAK_SIGN.parseItem();
@@ -61,11 +64,18 @@ public class changeEcon implements Listener, InventoryHolder {
 
         inv.setItem(22, returnItem);
         inv.addItem(Vault);
-        for(String s: gems) {
+        for (String s: gems) {
             ItemStack gemItem = XMaterial.EMERALD.parseItem();
             utils.setDisplayName(gemItem, "&f&l" + s);
             utils.setLore(Vault, Arrays.asList("&7Click to change"));
             inv.addItem(gemItem);
+        }
+
+        if (tokenEnchantsApi != null) {
+            ItemStack tokenEnchantsItem = XMaterial.ENCHANTED_BOOK.parseItem();
+            utils.setDisplayName(tokenEnchantsItem, "&dTokenEnchants");
+            utils.setLore(tokenEnchantsItem, Arrays.asList("&7Click to change"));
+            inv.addItem(tokenEnchantsItem);
         }
     }
 
@@ -94,6 +104,13 @@ public class changeEcon implements Listener, InventoryHolder {
                     .addNbt(dailyItem.dailyMetadataType.rds_econ,
                             new AbstractMap.SimpleEntry<>(econTypes.gemsEconomy.name(), name)).getItem();
         }
+
+        else if (e.getCurrentItem().getType().equals(XMaterial.ENCHANTED_BOOK.parseMaterial())) {
+            new dailyItem(item)
+                    .addNbt(dailyItem.dailyMetadataType.rds_econ,
+                            new AbstractMap.SimpleEntry<>(econTypes.tokenEnchants.name(), "")).getItem();
+        }
+
         customizerMainGuiIH.openInventory(p, item);
 
     }
