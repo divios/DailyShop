@@ -157,7 +157,7 @@ public class conf_msg {
         CUSTOMIZE_TOGGLE_ATTRIBUTES_LORE = yamlFile.getStringList("customize_toggle_attributes_lore");
         CUSTOMIZE_TOGGLE_EFFECTS = utils.formatString(yamlFile.getString("customize_toggle_effects", "&f&lMake potion effects visible/invisible"));
         CUSTOMIZE_TOGGLE_EFFECTS_LORE = yamlFile.getStringList("customize_toggle_effects_lore");
-        CUSTOMIZE_RENAME_ANVIL_TITLE = utils.formatString(yamlFile.getString("customize_rename_anvil_title", "&6&lWrite the new name"));
+        CUSTOMIZE_RENAME_ANVIL_TITLE = utils.formatString(yamlFile.getString("customize_rename_anvil_title", "&6&lInput the new lore"));
         CUSTOMIZE_RENAME_ANVIL_DEFAULT_TEXT = utils.formatString(yamlFile.getString("customize_rename_anvil_default_text", "Write the new name"));
         CUSTOMIZE_CHANGE_LORE_TITLE = utils.formatString(yamlFile.getString("customize_change_lore_anvil_title", "&6&lWrite lore"));
         CUSTOMIZE_CHANGE_LORE_DEFAULT_TEXT = utils.formatString(yamlFile.getString("customize_change_lore_default_text", "Write lore"));

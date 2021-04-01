@@ -178,8 +178,8 @@ customize_rename: "&f&lRename"
 customize_rename_lore:
   - "&7Click to change the item name"
 
-customize_rename_anvil_title: "&6&lWrite the new name"
-customize_rename_anvil_default_text: "Write the new name"
+customize_rename_anvil_title: "&6&lInput the new lore"
+customize_rename_anvil_default_text: "Input the new lore"
 
 customize_change_material: "&f&lChange Material"
 customize_change_material_lore:

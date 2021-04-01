@@ -6,6 +6,7 @@ import io.github.divios.dailyrandomshop.conf_msg;
 import io.github.divios.dailyrandomshop.database.dataManager;
 import io.github.divios.dailyrandomshop.guis.buyGui;
 import io.github.divios.dailyrandomshop.guis.settings.dailyGuiSettings;
+import io.github.divios.dailyrandomshop.listeners.dynamicChatListener;
 import io.github.divios.dailyrandomshop.utils.utils;
 import io.github.divios.dailyrandomshop.xseries.XMaterial;
 import net.wesjd.anvilgui.AnvilGUI;
@@ -202,9 +203,8 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
         }
         else if (e.getSlot() == 19) { // Boton de cambiar nombre
             new AnvilGUI.Builder()
-                    .onClose(player -> {
-                        utils.runTaskLater(() -> openInventory(player, newItem), 1L);
-                    })
+                    .onClose(player ->
+                            utils.runTaskLater(() -> openInventory(player, newItem), 1L))
                     .onComplete((player, text) -> {
                         utils.setDisplayName(newItem, text);
                         return AnvilGUI.Response.close();
@@ -225,18 +225,12 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
                 utils.removeLore(newItem, 1);
                 openInventory(p, newItem);
             } else if (e.isLeftClick())
-                new AnvilGUI.Builder()
-                        .onClose(player -> utils.runTaskLater(() ->
-                                openInventory(player, newItem), 1L))
-                        .onComplete((player, text) -> {
-                            utils.setLore(newItem, Arrays.asList(text));
-                            return AnvilGUI.Response.close();
-                        })
-                        .text(conf_msg.CUSTOMIZE_RENAME_ANVIL_DEFAULT_TEXT)
-                        .itemLeft(newItem.clone())
-                        .title(conf_msg.CUSTOMIZE_RENAME_ANVIL_TITLE)
-                        .plugin(main)
-                        .open(p);
+                new dynamicChatListener(p, s -> {
+                    if (!s.isEmpty()) {
+                        utils.setLore(newItem, Arrays.asList(s));
+                    }
+                    openInventory(p, newItem);
+                }, conf_msg.CUSTOMIZE_RENAME_ANVIL_TITLE, "");
         }
 
         else if (e.getSlot() == 29) { // Boton de cambiar enchants
@@ -286,28 +280,24 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
 
         else if (e.getSlot() == 32 && e.getCurrentItem() != null) { // Boton de añadir/quitar commands
             if(e.isLeftClick()) {
-                new AnvilGUI.Builder()
-                        .onClose(player -> utils.runTaskLater(() ->
-                                openInventory(player, newItem), 1L))
-                        .onComplete((player, text) -> {
-                            if (text.isEmpty()) return AnvilGUI.Response.text("cannot be empty");
-                            new dailyItem(newItem).addNbt(dailyMetadataType.rds_commands, text).getItem();
-                            return AnvilGUI.Response.close();
-                        })
-                        .text(conf_msg.CUSTOMIZE_ADD_COMMANDS_TITLE)
-                        .itemLeft(newItem.clone())
-                        .title(conf_msg.CUSTOMIZE_ADD_COMMANDS_TITLE)
-                        .plugin(main)
-                        .open(p);
+                new dynamicChatListener(p, s -> {
+                    if (!s.isEmpty())
+                        new dailyItem(newItem)
+                                .addNbt(dailyMetadataType.rds_commands, s).getItem();
+                    openInventory(p, newItem);
+                }, utils.formatString("&6&lEnter a msg on chat"),
+                        utils.formatString("&7to add the command"));
             }
+
             else if (e.isRightClick()) {
                 List<String> commands = (List<String>) new dailyItem(newItem)
                         .getMetadata(dailyMetadataType.rds_commands);
 
                 new dailyItem(newItem).removeNbt(dailyMetadataType.rds_commands).getItem();
                 commands.remove(commands.size() - 1);
-                commands.stream().forEach(s -> new dailyItem(newItem)
+                commands.forEach(s -> new dailyItem(newItem)
                         .addNbt(dailyMetadataType.rds_commands, s).getItem());
+                openInventory(p, newItem);
             }
         }
 

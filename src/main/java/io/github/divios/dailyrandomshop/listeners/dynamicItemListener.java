@@ -33,14 +33,8 @@ public class dynamicItemListener implements Listener {
             dailyGuiSettings.openInventory(p);
         }, 200);
 
-        /*try {
-            p.sendTitle(conf_msg.MSG_ADD_ITEM_TITLE,
-                    conf_msg.MSG_ADD_ITEM_SUBTITLE, 20, 60, 20);
-        } catch (NoSuchMethodError e) {
-            p.sendMessage(conf_msg.PREFIX + conf_msg.MSG_ADD_ITEM_TITLE + conf_msg.MSG_ADD_ITEM_SUBTITLE);
-        }*/
-
-        Titles.sendTitle(p, 20, 60, 20, conf_msg.MSG_ADD_ITEM_TITLE, conf_msg.MSG_ADD_ITEM_SUBTITLE);
+        Titles.sendTitle(p, 20, 60, 20,
+                conf_msg.MSG_ADD_ITEM_TITLE, conf_msg.MSG_ADD_ITEM_SUBTITLE);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
