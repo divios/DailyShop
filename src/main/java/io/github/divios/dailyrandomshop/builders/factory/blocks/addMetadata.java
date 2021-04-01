@@ -29,6 +29,7 @@ public class addMetadata implements runnableBlocks {
                     nbtItem.setObject(type.name(), aux);
                 } catch (NullPointerException e) {
                     List<String> aux = new ArrayList<>();
+                    aux.add((String) value);
                     nbtItem.setObject(type.name(), aux);
                 }
                 break;
