@@ -193,6 +193,9 @@ public class transaction {
         else if (e.getKey().equals(econTypes.tokenEnchants.name())) {
             econStrategy = new tokenEnchantsE();
         }
+        else if (e.getKey().equals(econTypes.tokenManager.name())) {
+            econStrategy = new tokenManagerE();
+        }
     }
 
 }

@@ -7,6 +7,7 @@ import io.github.divios.dailyrandomshop.economies.econTypes;
 import io.github.divios.dailyrandomshop.hooks.hooksManager;
 import io.github.divios.dailyrandomshop.utils.utils;
 import io.github.divios.dailyrandomshop.xseries.XMaterial;
+import me.realized.tokenmanager.api.TokenManager;
 import me.xanium.gemseconomy.api.GemsEconomyAPI;
 import me.xanium.gemseconomy.currency.Currency;
 import org.bukkit.Bukkit;
@@ -45,7 +46,8 @@ public class changeEcon implements Listener, InventoryHolder {
     private void init() {
         Bukkit.getPluginManager().registerEvents(this, main);
         GemsEconomyAPI gemsApi = hooksManager.getInstance().getGemsEcon();
-        TokenEnchantAPI tokenEnchantsApi = hooksManager.getInstance().getEnchantApi();
+        TokenEnchantAPI tokenEnchantsApi = hooksManager.getInstance().getTokenEnchantApi();
+        TokenManager tokenManagerApi = hooksManager.getInstance().getTokenManagerApi();
 
         inv = Bukkit.createInventory(this, 27, conf_msg.CUSTOMIZE_CHANGE_ECON);
 
@@ -73,10 +75,18 @@ public class changeEcon implements Listener, InventoryHolder {
 
         if (tokenEnchantsApi != null) {
             ItemStack tokenEnchantsItem = XMaterial.ENCHANTED_BOOK.parseItem();
-            utils.setDisplayName(tokenEnchantsItem, "&dTokenEnchants");
+            utils.setDisplayName(tokenEnchantsItem, "&d&lTokenEnchants");
             utils.setLore(tokenEnchantsItem, Arrays.asList("&7Click to change"));
             inv.addItem(tokenEnchantsItem);
         }
+
+        if (tokenManagerApi != null) {
+            ItemStack tokenManagerItem = XMaterial.DIAMOND.parseItem();
+            utils.setDisplayName(tokenManagerItem, "&b&lTokenManager");
+            utils.setLore(tokenManagerItem, Arrays.asList("&7Click to change"));
+            inv.addItem(tokenManagerItem);
+        }
+
     }
 
     @Override
@@ -108,7 +118,15 @@ public class changeEcon implements Listener, InventoryHolder {
         else if (e.getCurrentItem().getType().equals(XMaterial.ENCHANTED_BOOK.parseMaterial())) {
             new dailyItem(item)
                     .addNbt(dailyItem.dailyMetadataType.rds_econ,
-                            new AbstractMap.SimpleEntry<>(econTypes.tokenEnchants.name(), "")).getItem();
+                            new AbstractMap.SimpleEntry<>(econTypes.tokenEnchants.name()
+                                    , econTypes.tokenEnchants.name())).getItem();
+        }
+
+        else if (e.getCurrentItem().getType().equals(XMaterial.DIAMOND.parseMaterial())) {
+            new dailyItem(item)
+                    .addNbt(dailyItem.dailyMetadataType.rds_econ,
+                            new AbstractMap.SimpleEntry<>(econTypes.tokenManager.name()
+                                    , econTypes.tokenManager.name())).getItem();
         }
 
         customizerMainGuiIH.openInventory(p, item);
