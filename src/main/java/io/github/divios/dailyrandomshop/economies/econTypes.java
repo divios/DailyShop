@@ -4,5 +4,6 @@ public enum econTypes {
     vault,
     gemsEconomy,
     tokenEnchants,
-    tokenManager
+    tokenManager,
+    MPoints
 }

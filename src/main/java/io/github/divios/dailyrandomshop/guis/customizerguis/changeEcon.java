@@ -10,6 +10,7 @@ import io.github.divios.dailyrandomshop.xseries.XMaterial;
 import me.realized.tokenmanager.api.TokenManager;
 import me.xanium.gemseconomy.api.GemsEconomyAPI;
 import me.xanium.gemseconomy.currency.Currency;
+import me.yic.mpoints.MPointsAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -48,6 +49,7 @@ public class changeEcon implements Listener, InventoryHolder {
         GemsEconomyAPI gemsApi = hooksManager.getInstance().getGemsEcon();
         TokenEnchantAPI tokenEnchantsApi = hooksManager.getInstance().getTokenEnchantApi();
         TokenManager tokenManagerApi = hooksManager.getInstance().getTokenManagerApi();
+        MPointsAPI mPointsAPI = hooksManager.getInstance().getMPointsApi();
 
         inv = Bukkit.createInventory(this, 27, conf_msg.CUSTOMIZE_CHANGE_ECON);
 
@@ -86,6 +88,11 @@ public class changeEcon implements Listener, InventoryHolder {
             utils.setLore(tokenManagerItem, Arrays.asList("&7Click to change"));
             inv.addItem(tokenManagerItem);
         }
+
+        /*List<String> points = new ArrayList<>();
+        if (mPointsAPI != null) {
+            mPointsAPI.
+        } */
 
     }
 
@@ -128,6 +135,7 @@ public class changeEcon implements Listener, InventoryHolder {
                             new AbstractMap.SimpleEntry<>(econTypes.tokenManager.name()
                                     , econTypes.tokenManager.name())).getItem();
         }
+
 
         customizerMainGuiIH.openInventory(p, item);
 
