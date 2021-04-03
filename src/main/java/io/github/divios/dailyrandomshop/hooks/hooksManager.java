@@ -4,6 +4,7 @@ import com.vk2gpz.tokenenchant.api.TokenEnchantAPI;
 import io.github.divios.dailyrandomshop.utils.utils;
 import me.realized.tokenmanager.api.TokenManager;
 import me.xanium.gemseconomy.api.GemsEconomyAPI;
+import me.yic.mpoints.MPointsAPI;
 import net.milkbowl.vault.economy.Economy;
 
 public class hooksManager {
@@ -32,6 +33,10 @@ public class hooksManager {
         if (utils.isOperative("TokenManager")) {
             tokenManagerHook.hook();
         }
+
+        if (utils.isOperative("MPoints")) {
+           // MPointsHook.hook();
+        }
         gemsEconomyHook.getInstance();
         bstatsHook.init();
     }
@@ -46,4 +51,5 @@ public class hooksManager {
 
     public TokenManager getTokenManagerApi() { return tokenManagerHook.getApi(); }
 
+    public MPointsAPI getMPointsApi() { return MPointsHook.getApi(); }
 }
