@@ -2,6 +2,7 @@ package io.github.divios.dailyrandomshop.builders.factory.blocks;
 
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import io.github.divios.dailyrandomshop.builders.factory.dailyItem.dailyMetadataType;
+import io.github.divios.dailyrandomshop.main;
 import io.github.divios.dailyrandomshop.utils.utils;
 import org.bukkit.inventory.ItemStack;
 
@@ -23,9 +24,11 @@ public class addMetadata implements runnableBlocks {
         NBTItem nbtItem = new NBTItem(item);
         switch (type) {
             case rds_commands:
+            case rds_permissions:
                 try {
                     List<String> aux = nbtItem.getObject(type.name(), List.class);
-                    aux.add((String) value);
+                    if ( !((String) value).isEmpty())
+                            aux.add((String) value);
                     nbtItem.setObject(type.name(), aux);
                 } catch (NullPointerException e) {
                     List<String> aux = new ArrayList<>();
@@ -36,6 +39,7 @@ public class addMetadata implements runnableBlocks {
             case rds_econ:
                 nbtItem.setObject(type.name(), value);
                 break;
+            case rds_setItems:
             case rds_amount:
                 nbtItem.setInteger(type.name(), Integer.valueOf((String) value));
                 break;
@@ -43,6 +47,9 @@ public class addMetadata implements runnableBlocks {
                 int i = processNextRarity(nbtItem.getInteger(type.name()));
                 if (i == 0) nbtItem.removeKey(type.name());
                 else nbtItem.setInteger(type.name(), i);
+                break;
+            case rds_confirm_gui:
+                nbtItem.setBoolean(type.name(), (Boolean) value);
                 break;
             default:
                 nbtItem.setString(type.name(), (String) value);
