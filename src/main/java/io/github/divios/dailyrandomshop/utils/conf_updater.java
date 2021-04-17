@@ -15,7 +15,7 @@ public class conf_updater {
             io.github.divios.dailyrandomshop.main.getInstance();
 
     public static void check() {
-        String version = "2.3.1";
+        String version = "2.3.3";
         if (main.getConfig().getString("version", version).equals(version))
             return;
         update();
@@ -34,7 +34,8 @@ public class conf_updater {
         newFile.delete();
         oldFile.renameTo(newFile);
         oldFile.delete();
-        restoreOldValues(newFile);
+        main.saveDefaultConfig();
+        //restoreOldValues(newFile);
     }
 
     private static void restoreOldValues(File oldFile) {
