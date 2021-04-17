@@ -21,8 +21,10 @@ public class confirmIH implements InventoryHolder, Listener {
 
     private final Player p;
     private final BiConsumer<Player, Boolean> bi;
-    private Consumer<Player> c;
+    private final ItemStack item;
     private final String title;
+    private final String confirmLore;
+    private final String cancelLore;
     private final Consumer<Player> back;
     private boolean backFlag = true;
     private static final io.github.divios.dailyrandomshop.main main = io.github.divios.dailyrandomshop.main.getInstance();
@@ -36,13 +38,19 @@ public class confirmIH implements InventoryHolder, Listener {
     public confirmIH(Player p,
                      BiConsumer<Player , Boolean> true_false,
                      Consumer<Player> back,
-                     String title) {
+                     ItemStack item,
+                     String title,
+                     String confirmLore,
+                     String cancelLore) {
 
         Bukkit.getPluginManager().registerEvents(this, main);
         this.p = p;
         this.back = back;
+        this.item = item;
         bi = true_false;
         this.title = utils.formatString(title);
+        this.confirmLore = confirmLore;
+        this.cancelLore = cancelLore;
         p.openInventory(getInventory());
     }
 
@@ -52,12 +60,14 @@ public class confirmIH implements InventoryHolder, Listener {
         Inventory inv = Bukkit.createInventory(this, 27, title);
 
         ItemStack true_ = XMaterial.EMERALD_BLOCK.parseItem();
-        utils.setDisplayName(true_, conf_msg.CONFIRM_MENU_YES);
+        utils.setDisplayName(true_, confirmLore);
 
 
         ItemStack false_ = XMaterial.REDSTONE_BLOCK.parseItem();
-        utils.setDisplayName(false_, conf_msg.CONFIRM_MENU_NO);
+        utils.setDisplayName(false_, cancelLore);
 
+        if (!utils.isEmpty(item))
+            inv.setItem(4, item);
         inv.setItem(15, false_);
         inv.setItem(11, true_);
 
