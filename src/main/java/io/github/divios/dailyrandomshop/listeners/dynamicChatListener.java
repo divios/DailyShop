@@ -47,6 +47,7 @@ public class dynamicChatListener implements Listener {
 
         e.setCancelled(true);
 
+        Titles.clearTitle(p);
         Bukkit.getScheduler().runTaskLater(main, () -> c.accept(e.getMessage()), 1);
         Bukkit.getScheduler().cancelTask(TaskID.getTaskId());
         AsyncPlayerChatEvent.getHandlerList().unregister(this);
