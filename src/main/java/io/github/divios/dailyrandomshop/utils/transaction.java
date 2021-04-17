@@ -5,6 +5,7 @@ import io.github.divios.dailyrandomshop.conf_msg;
 import io.github.divios.dailyrandomshop.economies.*;
 import io.github.divios.dailyrandomshop.guis.buyGui;
 import io.github.divios.dailyrandomshop.guis.confirmGui;
+import io.github.divios.dailyrandomshop.guis.confirmIH;
 import io.github.divios.dailyrandomshop.hooks.hooksManager;
 import io.github.divios.dailyrandomshop.builders.itemBuildersHooks.itemsBuilderManager;
 import io.github.divios.dailyrandomshop.main;
@@ -26,6 +27,9 @@ public class transaction {
     private boolean commandFlag = false;
     private boolean amountFlag = false;
     private boolean oneSlotFlag = false;
+    private boolean confirmGuiFlag = false;
+    private boolean setFlag = false;
+    private boolean setOfItemsFlag = false;
     private Player p;
     private ItemStack item;
     private economy econStrategy = null;
@@ -38,15 +42,24 @@ public class transaction {
         instance.getEconomyStrategy();
         instance.commandFlag = new dailyItem(item).hasMetadata(dailyItem.dailyMetadataType.rds_commands);
         instance.amountFlag = new dailyItem(item).hasMetadata(dailyItem.dailyMetadataType.rds_amount);
+        instance.setOfItemsFlag = new dailyItem(item).hasMetadata(dailyItem.dailyMetadataType.rds_setItems);
+        instance.confirmGuiFlag = (boolean) new dailyItem(item).getMetadata(dailyItem.dailyMetadataType.rds_confirm_gui);
         instance.oneSlotFlag = item.getMaxStackSize() == 1;
+        instance.setFlag = new dailyItem(item).hasMetadata(dailyItem.dailyMetadataType.rds_setItems);
 
         if (instance.econStrategy == null)  {       /* if no economyStrategy was found, */
             p.sendMessage(conf_msg.PREFIX + conf_msg.MSG_NOT_IN_STOCK);   /* either currency doesn't exist or plugin is not on */
             return;
         }
 
-        if (conf_msg.ENABLE_CONFIRM_GUI && !instance.amountFlag
-            )  {
+        if (!instance.checkPerms()) {
+            p.closeInventory();
+            p.sendMessage(conf_msg.PREFIX + conf_msg.MSG_NOT_PERMS_ITEM);
+            return;
+        }
+
+        if (instance.confirmGuiFlag && !instance.amountFlag
+                && !instance.setFlag && !instance.setOfItemsFlag)  {
             confirmGui.openInventory(p,
                     dailyItem.getRawItem(item).clone(),
                     (player, itemStack) -> {
@@ -67,13 +80,32 @@ public class transaction {
 
         n = (int) Math.ceil(nD);
 
-        if (!hasEnoughMoneyAndSpace(dailyItem.getPrice(item) * getAmount(item))) return;
+        double price = dailyItem.getPrice(item);
+        if (!setOfItemsFlag) price *= getAmount(item);
+
+        if (!hasEnoughMoneyAndSpace(price)) return;
 
         if (amountFlag) {
             buyGui.getInstance().processNextAmount(dailyItem.getUuid(item));
             item.setAmount(1);
         }
 
+        if (setOfItemsFlag)
+            item.setAmount((Integer) new dailyItem(item).
+                    getMetadata(dailyItem.dailyMetadataType.rds_setItems));
+
+        new confirmIH(p, (player, aBoolean) -> {
+            if (aBoolean) {
+                thirdPhase();
+                player.closeInventory();
+            } else
+                buyGui.getInstance().openInventory(player);
+        }, player -> buyGui.getInstance().openInventory(player), item,
+                conf_msg.CONFIRM_GUI_NAME, "&a&lConfirm purchase",
+                "&7&lCancel purchase");
+    }
+
+    private void thirdPhase() {
         if (commandFlag) {
             IntStream.range(0, getAmount(item)).forEach(value -> {
                 ((List<String>) new dailyItem(item).getMetadata(dailyItem.dailyMetadataType.rds_commands))
@@ -81,11 +113,10 @@ public class transaction {
                                 s.replaceAll("%player%", p.getName())));
                 econStrategy.witchDrawMoney(p, dailyItem.getPrice(item));
             });
-
             sendBuyMessage(dailyItem.getPrice(item) * item.getAmount());
         }
 
-        if (!commandFlag)
+        if (!commandFlag || setOfItemsFlag)
             processEcon(item);
     }
 
@@ -122,7 +153,9 @@ public class transaction {
     }
 
     private boolean processEcon(ItemStack item) {
-        double price = dailyItem.getPrice(item) * item.getAmount();
+        double price = dailyItem.getPrice(item);
+        if (!setOfItemsFlag)
+            price *= item.getAmount();
 
         econStrategy.witchDrawMoney(p, price);
         sendBuyMessage(price);
@@ -175,7 +208,6 @@ public class transaction {
         }
 
         return inv.addItem(itemToGive);
-
     }
 
     private void getEconomyStrategy() {
@@ -196,6 +228,16 @@ public class transaction {
         else if (e.getKey().equals(econTypes.tokenManager.name())) {
             econStrategy = new tokenManagerE();
         }
+    }
+
+    private boolean checkPerms() {
+        if (!new dailyItem(item).hasMetadata(dailyItem.dailyMetadataType.rds_permissions))
+            return true;
+        for (String s: (List<String>) new dailyItem(item).
+                getMetadata(dailyItem.dailyMetadataType.rds_permissions)) {
+            if (!p.hasPermission(s)) return false;
+        }
+        return true;
     }
 
 }
