@@ -1,5 +1,6 @@
 package io.github.divios.dailyrandomshop.guis.settings;
 
+import io.github.divios.dailyrandomshop.builders.factory.dailyItem;
 import io.github.divios.dailyrandomshop.conf_msg;
 import io.github.divios.dailyrandomshop.guis.customizerguis.customizerMainGuiIH;
 import io.github.divios.dailyrandomshop.listeners.dynamicItemListener;
@@ -66,7 +67,6 @@ public class addDailyItemGuiIH implements InventoryHolder, Listener {
         if(instance == null) return;
         try { inv.getViewers().forEach(HumanEntity::closeInventory); }
         catch (ConcurrentModificationException ignored) {};
-        unRegisterAll();
         instance.init();
     }
 
@@ -94,13 +94,18 @@ public class addDailyItemGuiIH implements InventoryHolder, Listener {
         }
 
         if (e.getSlot() == 11) {
-            customizerMainGuiIH.openInventory(p, XMaterial.GRASS.parseItem());
+            customizerMainGuiIH.openInventory(p, enableConfirmGui(XMaterial.GRASS.parseItem()));
         }
 
         else if (e.getSlot() == 15) {
             new dynamicItemListener(p, (player, itemStack) ->
-                    customizerMainGuiIH.openInventory(p, itemStack));
+                    customizerMainGuiIH.openInventory(p, enableConfirmGui(itemStack)));
             p.closeInventory();
         }
     }
+
+    private ItemStack enableConfirmGui(ItemStack item) {
+        return new dailyItem(item).addNbt(dailyItem.dailyMetadataType.rds_confirm_gui, true).getItem();
+    }
+
 }
