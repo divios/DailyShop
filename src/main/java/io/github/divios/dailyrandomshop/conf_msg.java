@@ -26,7 +26,7 @@ public class conf_msg {
             CUSTOMIZE_GUI_TITLE, CUSTOMIZE_CRAFT, CUSTOMIZE_RETURN, CUSTOMIZE_MATERIAL, CUSTOMIZE_RENAME, CUSTOMIZE_LORE, CUSTOMIZE_ENCHANTS, CUSTOMIZE_AMOUNT, CUSTOMIZE_ENABLE_COMMANDS, CUSTOMIZE_CHANGE_COMMANDS, CUSTOMIZE_TOGGLE_ENCHANTS,
             CUSTOMIZE_RENAME_ANVIL_TITLE, CUSTOMIZE_RENAME_ANVIL_DEFAULT_TEXT, CUSTOMIZE_CHANGE_LORE_TITLE, CUSTOMIZE_CHANGE_LORE_DEFAULT_TEXT,
             CUSTOMIZE_ADD_COMMANDS_TITLE, CUSTOMIZE_ADD_COMMANDS_DEFAULT_TEXT,
-            CUSTOMIZE_TOGGLE_ATTRIBUTES, CUSTOMIZE_TOGGLE_EFFECTS, CUSTOMIZE_CHANGE_ECON;
+            CUSTOMIZE_TOGGLE_ATTRIBUTES, CUSTOMIZE_TOGGLE_EFFECTS, CUSTOMIZE_CHANGE_ECON, CUSTOMIZE_CHANGE_CONFIRM_GUI, CUSTOMIZE_PERMS, CUSTOMIZE_SET;
 
     public static List<String> BUY_GUI_PAINTING_LORE, BUY_GUI_ARROW_LORE,
             SELL_PAINTING_LORE, SELL_ARROW_LORE,
@@ -34,12 +34,12 @@ public class conf_msg {
             ADD_ITEMS_FROM_ZERO_LORE, ADD_ITEMS_FROM_EXISTING_LORE, ADD_ITEMS_RETURN_LORE,
             DAILY_ITEMS_MENU_ITEMS_LORE, DAILY_ITEMS_MENU_ADD_LORE,
             SELL_ITEMS_MENU_ITEMS_LORE,
-            CUSTOMIZE_CRAFT_LORE, CUSTOMIZE_RETURN_LORE, CUSTOMIZE_RENAME_LORE, CUSTOMIZE_MATERIAL_LORE, CUSTOMIZE_LORE_LORE, CUSTOMIZE_ENCHANTS_LORE, CUSTOMIZE_AMOUNT_LORE, CUSTOMIZE_ENABLE_COMMANDS_LORE,
+            CUSTOMIZE_CRAFT_LORE, CUSTOMIZE_RETURN_LORE, CUSTOMIZE_RENAME_LORE, CUSTOMIZE_MATERIAL_LORE, CUSTOMIZE_LORE_LORE, CUSTOMIZE_ENCHANTS_LORE, CUSTOMIZE_AMOUNT_LORE, CUSTOMIZE_AMOUNT_ENABLE_LORE, CUSTOMIZE_ENABLE_COMMANDS_LORE,
             CUSTOMIZE_CHANGE_COMMANDS_LORE, CUSTOMIZE_TOGGLE_ENCHANTS_LORE, CUSTOMIZE_TOGGLE_ATTRIBUTES_LORE, CUSTOMIZE_TOGGLE_EFFECTS_LORE, CUSTOMIZE_CHANGE_ECON_LORE,
-            CUSTOMIZE_CHANGE_RARITY_LORE;
+            CUSTOMIZE_CHANGE_RARITY_LORE, CUSTOMIZE_CHANGE_CONFIRM_GUI_LORE, CUSTOMIZE_ENABLE_PERMS_LORE, CUSTOMIZE_CHANGE_PERMS_LORE, CUSTOMIZE_ENABLE_SET_LORE, CUSTOMIZE_CHANGE_SET_LORE;
 
     public static String MSG_OPEN_SHOP, MSG_BUY_ITEM, MSG_SELL_ITEMS, MSG_NOT_ENOUGH_MONEY, MSG_INVENTORY_FULL,
-            MSG_INVALID_ITEM, MSG_NOT_PERMS, MSG_ERROR_ITEM_HAND, MSG_ERROR_PRICE,
+            MSG_INVALID_ITEM, MSG_NOT_PERMS, MSG_NOT_PERMS_ITEM, MSG_ERROR_ITEM_HAND, MSG_ERROR_PRICE,
             MSG_ERROR_ADDING_ITEM, MSG_ITEM_ADDED, MSG_NEW_DAILY_ITEMS, MSG_SELL_ITEMS_GUI_EMPTY,
             MSG_ADDED_ITEM, MSG_REMOVED_ITEM, MSG_ITEM_ALREADY_ON_SALE, MSG_NOT_IN_STOCK, MSG_TIMER_EXPIRED,
             MSG_ADD_ITEM_TITLE, MSG_ADD_ITEM_SUBTITLE, MSG_RELOAD;
@@ -47,7 +47,7 @@ public class conf_msg {
     public static int N_DAILY_ITEMS, TIMER;
     public static double DEFAULT_PRICE;
 
-    public static boolean ENABLE_SELL_GUI, ENABLE_RARITY, ENABLE_CONFIRM_GUI, DEBUG;
+    public static boolean ENABLE_SELL_GUI, ENABLE_RARITY, DEBUG;
 
     public static void init() {
         main.reloadConfig();
@@ -66,7 +66,6 @@ public class conf_msg {
         DEFAULT_PRICE = main.getConfig().getDouble("default-price", 500.0);
         TIMER = main.getConfig().getInt("timer-duration", 86400);
         ENABLE_SELL_GUI = main.getConfig().getBoolean("enable-sell-gui", true);
-        ENABLE_CONFIRM_GUI = main.getConfig().getBoolean("enable-confirm-gui", true);
         ENABLE_RARITY = main.getConfig().getBoolean("enable-rarity", true);
         N_DAILY_ITEMS = main.getConfig().getInt("number-of-daily-items", 14);
         DEBUG = main.getConfig().getBoolean("debug", false);
@@ -136,6 +135,14 @@ public class conf_msg {
         CUSTOMIZE_RETURN_LORE = yamlFile.getStringList("customize_return_lore");
         CUSTOMIZE_CHANGE_ECON = utils.formatString(yamlFile.getString("customize_change_econ", "&f&lChange currency"));
         CUSTOMIZE_CHANGE_ECON_LORE = yamlFile.getStringList("customize_change_econ_lore");
+        CUSTOMIZE_CHANGE_CONFIRM_GUI = utils.formatString(yamlFile.getString("customize_change_confirm_gui", "&aEnable/disable confirm Gui"));
+        CUSTOMIZE_CHANGE_CONFIRM_GUI_LORE = yamlFile.getStringList("customize_change_confirm_gui_lore");
+        CUSTOMIZE_PERMS = utils.formatString(yamlFile.getString("customize_perms", "&f&lEdit permissions"));
+        CUSTOMIZE_ENABLE_PERMS_LORE = yamlFile.getStringList("customize_enable_perms_lore");
+        CUSTOMIZE_CHANGE_PERMS_LORE = yamlFile.getStringList("customize_change_perms_lore");
+        CUSTOMIZE_SET = utils.formatString(yamlFile.getString("customize_set", "&f&lEdit set"));
+        CUSTOMIZE_ENABLE_SET_LORE = yamlFile.getStringList("customize_enable_set_lore");
+        CUSTOMIZE_CHANGE_SET_LORE = yamlFile.getStringList("customize_change_set_lore");
         CUSTOMIZE_CHANGE_RARITY_LORE = yamlFile.getStringList("customize_change_rarity_lore");
         CUSTOMIZE_RENAME = utils.formatString(yamlFile.getString("customize_rename", "&f&lRename"));
         CUSTOMIZE_RENAME_LORE = yamlFile.getStringList("customize_rename_lore");
@@ -146,6 +153,7 @@ public class conf_msg {
         CUSTOMIZE_ENCHANTS = utils.formatString(yamlFile.getString("customize-change_enchants", "&f&lEdit enchantments"));
         CUSTOMIZE_ENCHANTS_LORE = yamlFile.getStringList("customize_change_enchants_lore");
         CUSTOMIZE_AMOUNT = utils.formatString(yamlFile.getString("customize_change_amount", "&f&lChange Amount"));
+        CUSTOMIZE_AMOUNT_ENABLE_LORE = yamlFile.getStringList("customize_enable_amount_lore");
         CUSTOMIZE_AMOUNT_LORE = yamlFile.getStringList("customize_change_amount_lore");
         CUSTOMIZE_ENABLE_COMMANDS = utils.formatString(yamlFile.getString("customize_enable_commands", "&f&lSet Item Reward as Commands"));
         CUSTOMIZE_ENABLE_COMMANDS_LORE = yamlFile.getStringList("customize_enable_commands_lore");
@@ -172,6 +180,7 @@ public class conf_msg {
         MSG_INVALID_ITEM = utils.formatString(yamlFile.getString("message-invalid-item", "&7Ey, we don't accept that item on the market!"));
         MSG_NEW_DAILY_ITEMS = utils.formatString(yamlFile.getString("message-new-daily-items", "&7New items available on the Daily Shop!"));
         MSG_NOT_PERMS = utils.formatString(yamlFile.getString("message-not-perms", "&7Ey, you dont have permission to do this!"));
+        MSG_NOT_PERMS_ITEM = utils.formatString(yamlFile.getString("message-not-perms-item", "&7Ey, you don't have the perms necessary to buy this item"));
         MSG_ERROR_ITEM_HAND = utils.formatString(yamlFile.getString("message-error_item_hand", "&7Ey, you need to have an item in your hand"));
         MSG_ERROR_PRICE = utils.formatString(yamlFile.getString("message-error_price", "&7Ey, you have to specify a price for the item"));
         MSG_ERROR_ADDING_ITEM = utils.formatString(yamlFile.getString("message-error_adding_item", "&7Something went wrong while adding the item"));
