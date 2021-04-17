@@ -174,6 +174,13 @@ customize_change_econ_lore:
 customize_change_rarity_lore:
   - "&7Click to change item rarity"
 
+customize_change_confirm_gui: "&f&lEnable/disable confirm Gui"
+customize_change_confirm_gui_lore:
+  - "&7Click to allow/disable the"
+  - "&7confirm gui for this item"
+  - ""
+  - "&6Status: &7{status}"
+
 customize_rename: "&f&lRename"
 customize_rename_lore:
   - "&7Click to change the item name"
@@ -198,11 +205,8 @@ customize_change_enchants_lore:
   - "&6> Right Click: &7to remove Enchantment"
 
 customize_change_amount: "&f&lSet Stock"
-customize_change_amount_lore:
-  - "&6> Left Click: &7Change item amount"
-  - "&6> Right Click: &7Remove amount"
-  - ""
-  - "&6Status &7{status}"
+customize_enable_amount_lore:
+  - "&6> Left Click: &7Enable feature"
   - ""
   - "&7This option will make the item have limited stock,"
   - "&7in other words, there will be a limited amount"
@@ -210,23 +214,56 @@ customize_change_amount_lore:
   - "&7runs out of stock. The amount of times it can be"
   - "&7purchased is the amount of the item you set"
 
+customize_change_amount_lore:
+  - "&6> Left Click: &7Change current amount"
+  - "&6> Right Click: &7Disable feature"
+  - ""
+  - "&6Current stock: &7{amount}"
+
 customize_enable_commands: "&f&lSet Item Reward as Commands"
 customize_enable_commands_lore:
-  - "&6> Left Click: &7Toggle Status"
+  - "&6> Left Click: &7Enable feature"
   - ""
-  - "&6Status &7{status}"
-  - ""
-  - "&7This option will execute a command upon purchase instead"
-  - "&7of giving the item to the player, the commands"
-  - "&7listed below are executed."
+  - "&7This option will execute a command upon"
+  - "&7purchase instead of giving the item to"
+  - "&7the player, the commands listed"
+  - "&7below are executed."
 
 customize_change_commands: "&f&lSet commands to run"
 customize_change_commands_lore:
   - "&6> Left Click: &7Add command to item"
   - "&6> Right Click: &7Remove command"
+  - "&6> Shift Right Click: &7Disable feature"
   - "&7The commands to be executed"
   - "&7upon purchase. You can use %player%"
   - "&7to get the player's name"
+
+customize_perms: "&f&lEdit permissions"
+customize_enable_perms_lore:
+  - "&6Left click: &7Enable feature"
+  - ""
+  - "&7Enable this option to allow players to purchase"
+  - "&7this item if they have certain permissions"
+
+customize_change_perms_lore:
+  - "&6> Left Click: &7Add Permission to the list"
+  - "&6> Right Click: &7Remove permission from list"
+  - "&6> Shift Right Click: &7Disable Feature"
+
+customize_set: "&f&lEdit set"
+customize_enable_set_lore:
+  - "&6> Left Click: &7Enable feature"
+  - ""
+  - "&7Enable this option to lock the amount"
+  - "&7and sell the whole amount"
+  - "&7of items for the given price"
+
+customize_change_set_lore:
+  - "&6> Left Click: &7Change set amount"
+  - "&6> Right Click: &7Disable Feature"
+  - ""
+  - "&6Current amount: &7{amount}"
+
 customize_add_commands_anvil_title: "&6&lWrite command to be added"
 customize_add_commands_default_text: "Write command to be added"
 
@@ -260,6 +297,7 @@ message-inventory-full: "&7Ey, You don't have enough space in your inventory!"
 message-invalid-item: "&7Ey, we don't accept that item on the market!"
 message-new-daily-items: "&7New items available on the Daily Shop!"
 message-not-perms: "&7Ey, you dont have permission to do this!"
+message-not-perms-item: "&7Ey, you don't have the perms necessary to buy this item"
 message-error_item_hand: "&7Ey, you need to have an item in your hand"
 message-error_price: "&7Ey, you have to specify a price for the item"
 message-error_adding_item: "&7Something went wrong while adding the item"
