@@ -99,7 +99,7 @@ public class dailyGuiSettings {
                 }
                 openInventory(player);
             }, dailyGuiSettings::openInventory
-                    ,"&aConfirm");
+                    ,null, "&aConfirm", conf_msg.CONFIRM_MENU_YES, conf_msg.CONFIRM_MENU_NO);
         }
 
         else if (e.isLeftClick() && e.isShiftClick()) {
