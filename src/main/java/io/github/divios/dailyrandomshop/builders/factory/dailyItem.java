@@ -6,8 +6,6 @@ import io.github.divios.dailyrandomshop.database.dataManager;
 import io.github.divios.dailyrandomshop.lorestategy.loreStrategy;
 import io.github.divios.dailyrandomshop.utils.utils;
 import io.github.divios.dailyrandomshop.xseries.XMaterial;
-import net.Indyuce.mmoitems.MMOItems;
-import net.Indyuce.mmoitems.api.Type;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
@@ -75,8 +73,8 @@ public class dailyItem {
         NBTItem nbtItem = new NBTItem(item);
         Object obj;
         switch (key) {
-            case rds_amount:
-                obj = nbtItem.getInteger(key.name()); break;
+
+            case rds_permissions:
             case rds_commands:
                 obj = nbtItem.getObject(key.name(), List.class);
                 if(obj == null) obj = new ArrayList<>();
@@ -84,8 +82,12 @@ public class dailyItem {
             case rds_econ:
                 obj = nbtItem.getObject(key.name(), AbstractMap.SimpleEntry.class);
                 break;
+            case rds_amount:
             case rds_rarity:
+            case rds_setItems:
                 return nbtItem.getInteger(key.name());
+            case rds_confirm_gui:
+                return nbtItem.getBoolean(key.name());
             default: obj = nbtItem.getString(key.name()); break;
         }
         return obj;
@@ -295,6 +297,9 @@ public class dailyItem {
         rds_amount,
         rds_rarity,
         rds_econ,
-        rds_commands
+        rds_commands,
+        rds_permissions,
+        rds_confirm_gui,
+        rds_setItems
     }
 }
