@@ -90,7 +90,7 @@ public class sellGuiSettings {
                     }
                     openInventory(player);
                 }, sellGuiSettings::openInventory
-                        ,"&aConfirm");
+                        ,null ,"&aConfirm", conf_msg.CONFIRM_MENU_YES, conf_msg.CONFIRM_MENU_NO);
             }
 
             return dynamicGui.Response.nu();
