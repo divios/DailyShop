@@ -20,8 +20,7 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class customizerMainGuiIH implements InventoryHolder, Listener {
@@ -31,6 +30,8 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
     private static customizerMainGuiIH instance = null;
     private ItemStack newItem;
 
+    private boolean amountFlag, commandsFlag, permsFlag, confirmGuiFlag, setItemsFlag;
+
     private customizerMainGuiIH() {
     }
 
@@ -39,12 +40,24 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
             instance = new customizerMainGuiIH();
             Bukkit.getPluginManager().registerEvents(instance, main);
         }
-        instance.newItem = newItem;
+        instance.newItem = newItem.clone();
         p.openInventory(instance.createInventory());
     }
 
     private Inventory createInventory() {
+
+        dailyItem dItem = new dailyItem(newItem);
+
+        amountFlag = dItem.hasMetadata(dailyMetadataType.rds_amount);
+        commandsFlag = dItem.hasMetadata(dailyMetadataType.rds_commands);
+        permsFlag = dItem.hasMetadata(dailyMetadataType.rds_permissions);
+        confirmGuiFlag = (boolean) dItem.getMetadata(dailyMetadataType.rds_confirm_gui);
+        setItemsFlag = dItem.hasMetadata(dailyMetadataType.rds_setItems);
+
         Inventory inv = Bukkit.createInventory(instance, 54, conf_msg.CUSTOMIZE_GUI_TITLE);
+
+        ItemStack barrier = XMaterial.BARRIER.parseItem();
+        utils.setDisplayName(barrier, "&c&lUNAVAILABLE");
 
         ItemStack changeEcon = XMaterial.EMERALD.parseItem();
         utils.setDisplayName(changeEcon, conf_msg.CUSTOMIZE_CHANGE_ECON);
@@ -52,6 +65,12 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
 
         ItemStack changeRarity = dailyItem.getItemRarity(newItem);
         utils.setLore(changeRarity, conf_msg.CUSTOMIZE_CHANGE_RARITY_LORE);
+
+        ItemStack changeConfirmGui = XMaterial.LEVER.parseItem();
+        utils.setDisplayName(changeConfirmGui, conf_msg.CUSTOMIZE_CHANGE_CONFIRM_GUI);
+        utils.setLore(changeConfirmGui, utils.replaceOnLore(conf_msg.CUSTOMIZE_CHANGE_CONFIRM_GUI_LORE
+                    , "\\{status}", "" +
+                        confirmGuiFlag));
 
         ItemStack customizerItem = XMaterial.ANVIL.parseItem();   //Done button (anvil)
         utils.setDisplayName(customizerItem, conf_msg.CUSTOMIZE_CRAFT);
@@ -72,6 +91,7 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
         ItemStack changeLore = XMaterial.PAPER.parseItem();    //Change lore
         utils.setDisplayName(changeLore, conf_msg.CUSTOMIZE_LORE);
         utils.setLore(changeLore, conf_msg.CUSTOMIZE_LORE_LORE);
+        utils.setLore(changeLore, Arrays.asList(""));
         utils.setLore(changeLore, newItem.getItemMeta().getLore());
 
         ItemStack editEnchantments = XMaterial.BOOK.parseItem();    //Change enchants
@@ -83,24 +103,55 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
 
         ItemStack setAmount = XMaterial.STONE_BUTTON.parseItem();    //Change amount
         utils.setDisplayName(setAmount, conf_msg.CUSTOMIZE_AMOUNT);
-        utils.setLore(setAmount, utils.replaceOnLore(
-                conf_msg.CUSTOMIZE_AMOUNT_LORE, "\\{status}",
-                "" + new dailyItem(newItem)
-                        .hasMetadata(dailyMetadataType.rds_amount)));
+        if (amountFlag)
+            utils.setLore(setAmount, utils.replaceOnLore(conf_msg.CUSTOMIZE_AMOUNT_LORE,
+                    "\\{amount}"
+                    , "" + new dailyItem(newItem).getMetadata(dailyMetadataType.rds_amount)));
+        else
+            utils.setLore(setAmount, conf_msg.CUSTOMIZE_AMOUNT_ENABLE_LORE);
 
-        ItemStack makeCommand = XMaterial.COMMAND_BLOCK.parseItem();    //Change command item
-        utils.setDisplayName(makeCommand, conf_msg.CUSTOMIZE_ENABLE_COMMANDS);
-        utils.setLore(makeCommand, utils.replaceOnLore(
-                conf_msg.CUSTOMIZE_ENABLE_COMMANDS_LORE, "\\{status}",
-                "" + new dailyItem(newItem)
-                        .hasMetadata(dailyMetadataType.rds_commands)));
 
-        ItemStack addRemoveCommands = XMaterial.JUKEBOX.parseItem();    //add/remove commands
-        utils.setDisplayName(addRemoveCommands, conf_msg.CUSTOMIZE_CHANGE_COMMANDS);
-        utils.setLore(addRemoveCommands, conf_msg.CUSTOMIZE_CHANGE_COMMANDS_LORE);
-        utils.setLore(addRemoveCommands, ( (List<String>) new dailyItem(newItem)
-                .getMetadata(dailyMetadataType.rds_commands))
-                .stream().map(s -> utils.formatString("&f&l" + s)).collect(Collectors.toList()));
+        ItemStack addRemoveCommands = XMaterial.COMMAND_BLOCK.parseItem();     //Change command item
+        if (!commandsFlag) {
+            utils.setDisplayName(addRemoveCommands, conf_msg.CUSTOMIZE_ENABLE_COMMANDS);
+            utils.setLore(addRemoveCommands, utils.replaceOnLore(
+                    conf_msg.CUSTOMIZE_ENABLE_COMMANDS_LORE, "\\{status}",
+                    "" + new dailyItem(newItem)
+                            .hasMetadata(dailyMetadataType.rds_commands)));
+        } else {                                                                //add/remove commands
+            utils.setDisplayName(addRemoveCommands, conf_msg.CUSTOMIZE_CHANGE_COMMANDS);
+            utils.setLore(addRemoveCommands, conf_msg.CUSTOMIZE_CHANGE_COMMANDS_LORE);
+            utils.setLore(addRemoveCommands, Arrays.asList(""));
+            utils.setLore(addRemoveCommands, ((List<String>) new dailyItem(newItem)
+                    .getMetadata(dailyMetadataType.rds_commands))
+                    .stream().map(s -> utils.formatString("&f&l" + s)).collect(Collectors.toList()));
+        }
+
+
+        ItemStack perms = XMaterial.WRITTEN_BOOK.parseItem();   //add remove perms
+        utils.setDisplayName(perms, conf_msg.CUSTOMIZE_PERMS);
+        if (!permsFlag) {
+            utils.setLore(perms, conf_msg.CUSTOMIZE_ENABLE_PERMS_LORE);
+        }
+        else {
+            utils.setLore(perms, conf_msg.CUSTOMIZE_CHANGE_PERMS_LORE);
+            utils.setLore(perms, Collections.singletonList(""));
+            utils.setLore(perms, ( (List<String>) new dailyItem(newItem)
+                    .getMetadata(dailyMetadataType.rds_permissions))
+                    .stream().map(s -> utils.formatString("&f&l" + s)).collect(Collectors.toList()));
+        }
+
+        ItemStack setOfItems = XMaterial.CHEST_MINECART.parseItem();    //set of items
+        utils.setDisplayName(setOfItems, conf_msg.CUSTOMIZE_SET);
+        if (setItemsFlag) {
+            utils.setLore(setOfItems, utils.replaceOnLore(
+                    conf_msg.CUSTOMIZE_CHANGE_SET_LORE, "\\{amount}",
+                    "" + new dailyItem(newItem)
+                            .getMetadata(dailyMetadataType.rds_setItems)));
+        } else {
+            utils.setLore(setOfItems, conf_msg.CUSTOMIZE_ENABLE_SET_LORE);
+        }
+
 
         ItemFlag f = ItemFlag.HIDE_ENCHANTS;
 
@@ -138,14 +189,17 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
         inv.setItem(4, newItem);
         inv.setItem(0, changeEcon);
         if (conf_msg.ENABLE_RARITY) inv.setItem(8, changeRarity);
+        inv.setItem(7, changeConfirmGui);
         inv.setItem(19, rename);
         inv.setItem(20, changeMaterial);
         inv.setItem(28, changeLore);
         inv.setItem(29, editEnchantments);
-        inv.setItem(22, setAmount);
-        inv.setItem(23, makeCommand);
-        if (new dailyItem(newItem).hasMetadata(dailyMetadataType.rds_commands))
-            inv.setItem(32, addRemoveCommands);
+        if (!setItemsFlag) inv.setItem(22, setAmount);
+        else inv.setItem(22, barrier);
+        inv.setItem(23, addRemoveCommands);
+        inv.setItem(31, perms);
+        if (!amountFlag) inv.setItem(32, setOfItems);
+        else inv.setItem(32, barrier);
         inv.setItem(25, hideEnchants);
         inv.setItem(26, hideAtibutes);
         if (utils.isPotion(newItem)) {
@@ -156,6 +210,10 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
         inv.setItem(49, customizerItem);
 
         return inv;
+    }
+
+    private void refresh (Player p) {
+        openInventory(p, newItem);
     }
 
     @Override
@@ -182,7 +240,7 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
 
         else if (e.getSlot() == 49) { //Boton de craft
             ItemStack aux = dailyItem.getRawItem(newItem);
-            if (aux != null && !utils.isEmpty(aux)) {
+            if (!utils.isEmpty(aux)) {
                 utils.translateAllItemData(newItem, aux);
                 dailyGuiSettings.openInventory(p);
                 buyGui.getInstance().updateItem(dailyItem.getUuid(newItem), buyGui.updateAction.update);
@@ -197,9 +255,17 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
             changeEcon.openInventory(p, newItem);
         }
 
-         else if(e.getSlot() == 8) {        /* Boton de cambiar rarity */
+        else if (e.getSlot() == 7) {        /* Boton de cambiar confirm Gui */
+            if (confirmGuiFlag)
+                new dailyItem(newItem).addNbt(dailyMetadataType.rds_confirm_gui, false).getItem();
+            else
+                new dailyItem(newItem).addNbt(dailyMetadataType.rds_confirm_gui, true).getItem();
+            refresh(p);
+        }
+
+        else if(e.getSlot() == 8 && !utils.isEmpty(e.getCurrentItem())) {    /* Boton de cambiar rarity */
              new dailyItem(newItem).addNbt(dailyMetadataType.rds_rarity, "").getItem();
-             openInventory(p, newItem);
+             refresh(p);
         }
         else if (e.getSlot() == 19) { // Boton de cambiar nombre
             new AnvilGUI.Builder()
@@ -223,13 +289,13 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
         else if (e.getSlot() == 28) { // Boton de cambiar lore
             if (e.isRightClick()) {
                 utils.removeLore(newItem, 1);
-                openInventory(p, newItem);
+                refresh(p);
             } else if (e.isLeftClick())
                 new dynamicChatListener(p, s -> {
                     if (!s.isEmpty()) {
                         utils.setLore(newItem, Arrays.asList(s));
                     }
-                    openInventory(p, newItem);
+                    refresh(p);
                 }, conf_msg.CUSTOMIZE_RENAME_ANVIL_TITLE, "");
         }
 
@@ -239,7 +305,7 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
                 changeEnchantments.openInventory(p, newItem, newItem.getEnchantments());
         }
 
-        else if (e.getSlot() == 22) { // Boton de cambiar amount
+        else if (e.getSlot() == 22 && amountFlag) { // Boton de cambiar amount
             if(e.isLeftClick()) {
                 new AnvilGUI.Builder()
                         .onClose(player -> utils.runTaskLater(() ->
@@ -263,41 +329,48 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
             else if (e.isRightClick()) {
                 new dailyItem(newItem).removeNbt(dailyMetadataType.rds_amount).getItem();
                 newItem.setAmount(1);
-                openInventory(p, newItem);
+                refresh(p);
             }
         }
 
-        else if (e.getSlot() == 23) { // Boton de cambiar commands
+        else if (e.getSlot() == 22 && !amountFlag && e.isLeftClick()) { // Boton de cambiar amount
+            if (setItemsFlag) {
+                p.sendMessage(conf_msg.PREFIX + utils.formatString("&7You can't enable this when " +
+                        "the set feature is enable"));
+                return;
+            }
+            new dailyItem(newItem).addNbt(dailyMetadataType.rds_amount, "" + 1).getItem();
+            refresh(p);
 
-            dailyMetadataType type = dailyMetadataType.rds_commands;
-
-            if(new dailyItem(newItem).hasMetadata(type))
-                new dailyItem(newItem).removeNbt(type).getItem();
-            else new dailyItem(newItem).addNbt(type, "").getItem();
-
-            customizerMainGuiIH.openInventory(p, newItem);
         }
 
-        else if (e.getSlot() == 32 && e.getCurrentItem() != null) { // Boton de añadir/quitar commands
-            if(e.isLeftClick()) {
+        else if (e.getSlot() == 23 && !new dailyItem(newItem)
+                .hasMetadata(dailyMetadataType.rds_commands)) { // Boton de cambiar commands
+            new dailyItem(newItem).addNbt(dailyMetadataType.rds_commands, "").getItem();
+            refresh(p);
+        }
+
+        else if (e.getSlot() == 23 && new dailyItem(newItem)
+                .hasMetadata(dailyMetadataType.rds_commands)) { // Boton de añadir/quitar commands
+            if (e.isLeftClick()) {
                 new dynamicChatListener(p, s -> {
                     if (!s.isEmpty())
-                        new dailyItem(newItem)
-                                .addNbt(dailyMetadataType.rds_commands, s).getItem();
-                    openInventory(p, newItem);
-                }, utils.formatString("&6&lEnter a msg on chat"),
-                        utils.formatString("&7to add the command"));
-            }
+                        new dailyItem(newItem).addNbt(dailyMetadataType.rds_commands, s).getItem();
+                    refresh(p);
+                }, utils.formatString("&7Input new command"), "");
 
-            else if (e.isRightClick()) {
-                List<String> commands = (List<String>) new dailyItem(newItem)
+            } else if (e.isRightClick() && !e.isShiftClick()) {
+                List<String> s = (List<String>) new dailyItem(newItem)
                         .getMetadata(dailyMetadataType.rds_commands);
-
                 new dailyItem(newItem).removeNbt(dailyMetadataType.rds_commands).getItem();
-                commands.remove(commands.size() - 1);
-                commands.forEach(s -> new dailyItem(newItem)
-                        .addNbt(dailyMetadataType.rds_commands, s).getItem());
-                openInventory(p, newItem);
+                if (!s.isEmpty()) {
+                    s.remove(s.size() - 1);
+                    s.forEach(s1 -> new dailyItem(newItem).addNbt(dailyMetadataType.rds_commands, s1).getItem());
+                }
+                refresh(p);
+            } else if (e.isShiftClick() && e.isRightClick()) {
+                new dailyItem(newItem).removeNbt(dailyMetadataType.rds_commands).getItem();
+                refresh(p);
             }
         }
 
@@ -305,21 +378,89 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
             ItemFlag f = ItemFlag.HIDE_ENCHANTS;
             if (utils.hasFlag(newItem, f)) utils.removeFlag(newItem, f);
             else utils.addFlag(newItem, f);
-            openInventory(p, newItem);
+            refresh(p);
         }
 
         else if (e.getSlot() == 26) { // Boton de hide attributes
             ItemFlag f = ItemFlag.HIDE_ATTRIBUTES;
             if (utils.hasFlag(newItem, f)) utils.removeFlag(newItem, f);
             else utils.addFlag(newItem, f);
-            openInventory(p, newItem);
+            refresh(p);
+        }
+
+        else if (e.getSlot() == 31 && !permsFlag) { // Boton de habilitar perms
+            new dailyItem(newItem).addNbt(dailyMetadataType.rds_permissions, "").getItem();
+            refresh(p);
+        }
+
+        else if (e.getSlot() == 31 && permsFlag) {  // Boton de añadir/quitar perms
+            if (e.isLeftClick()) {
+                new dynamicChatListener(p, s -> {
+                    if (!s.isEmpty())
+                        new dailyItem(newItem).addNbt(dailyMetadataType.rds_permissions, s).getItem();
+                    refresh(p);
+                }, utils.formatString("&7Input permission"), "");
+
+            } else if (e.isRightClick() && !e.isShiftClick()) {
+                List<String> s = (List<String>) new dailyItem(newItem)
+                        .getMetadata(dailyMetadataType.rds_permissions);
+                new dailyItem(newItem).removeNbt(dailyMetadataType.rds_permissions).getItem();
+                if (!s.isEmpty()) {
+                    s.remove(s.size() - 1);
+                    s.forEach(s1 -> new dailyItem(newItem).addNbt(dailyMetadataType.rds_permissions, s1).getItem());
+                }
+                refresh(p);
+            } else if (e.isShiftClick() && e.isRightClick()) {
+                new dailyItem(newItem).removeNbt(dailyMetadataType.rds_permissions).getItem();
+                refresh(p);
+            }
+
+        }
+
+        else if (e.getSlot() == 32 && !setItemsFlag && e.isLeftClick()) {  // Boton de edit set
+            if (amountFlag) {
+                p.sendMessage(conf_msg.PREFIX + utils.formatString("&7You can't enable this when " +
+                        "the stock feature is enable"));
+                return;
+            }
+            new dailyItem(newItem).addNbt(dailyMetadataType.rds_setItems, "1").getItem();
+            refresh(p);
+        }
+
+        else if (e.getSlot() == 32 && setItemsFlag) {
+            if (e.isLeftClick()) {
+                new AnvilGUI.Builder()
+                        .onClose(player -> utils.runTaskLater(() ->
+                                openInventory(player, newItem), 1L))
+                        .onComplete((player, text) -> {
+                            try {
+                                Integer.parseInt(text);
+                            } catch (NumberFormatException err) {return AnvilGUI.Response.text("not integer");}
+                            int i = Integer.parseInt(text);
+                            if(i < 1 || i > 64) return AnvilGUI.Response.text("invalid amount");
+                            new dailyItem(newItem)
+                                    .addNbt(dailyMetadataType.rds_setItems, text).getItem();
+                            newItem.setAmount(Integer.parseInt(text));
+                            return AnvilGUI.Response.close();
+                        })
+                        .text("Change amount")
+                        .itemLeft(newItem.clone())
+                        .title("&6Change amount")
+                        .plugin(main)
+                        .open(p);
+            }
+            else if (e.isRightClick()) {
+                new dailyItem(newItem).removeNbt(dailyMetadataType.rds_setItems).getItem();
+                newItem.setAmount(1);
+                refresh(p);
+            }
         }
 
         else if (e.getSlot() == 35 && e.getCurrentItem() != null) { // Boton de hide potion effects
             ItemFlag f = ItemFlag.HIDE_POTION_EFFECTS;
             if (utils.hasFlag(newItem, f)) utils.removeFlag(newItem, f);
             else utils.addFlag(newItem, f);
-            openInventory(p, newItem);
+            refresh(p);
         }
 
     }
