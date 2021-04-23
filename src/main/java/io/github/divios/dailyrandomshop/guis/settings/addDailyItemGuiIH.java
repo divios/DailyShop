@@ -16,7 +16,11 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.ConcurrentModificationException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class addDailyItemGuiIH implements InventoryHolder, Listener {
 
@@ -36,6 +40,7 @@ public class addDailyItemGuiIH implements InventoryHolder, Listener {
     }
     
     private void init() {
+
         inv = Bukkit.createInventory(this, 27, conf_msg.ADD_ITEMS_TITLE);
 
         ItemStack fromZero = XMaterial.REDSTONE_TORCH.parseItem();
@@ -46,6 +51,9 @@ public class addDailyItemGuiIH implements InventoryHolder, Listener {
         utils.setDisplayName(fromItem, conf_msg.ADD_ITEMS_FROM_EXISTING);
         utils.setLore(fromItem, conf_msg.ADD_ITEMS_FROM_EXISTING_LORE);
 
+        ItemStack bundleItem = XMaterial.CHEST_MINECART.parseItem();
+        utils.setLore(bundleItem, Arrays.asList("&6&lCreate bundle"));
+
         ItemStack returnItem = XMaterial.OAK_SIGN.parseItem();
         utils.setDisplayName(returnItem, conf_msg.ADD_ITEMS_RETURN);
         utils.setLore(returnItem, conf_msg.ADD_ITEMS_RETURN_LORE);
@@ -53,6 +61,7 @@ public class addDailyItemGuiIH implements InventoryHolder, Listener {
 
         inv.setItem(11, fromZero);
         inv.setItem(15, fromItem);
+        inv.setItem(13, bundleItem);
         inv.setItem(22, returnItem);
 
         for (int i = 0; i < inv.getSize(); i++) {
@@ -101,6 +110,10 @@ public class addDailyItemGuiIH implements InventoryHolder, Listener {
             new dynamicItemListener(p, (player, itemStack) ->
                     customizerMainGuiIH.openInventory(p, enableConfirmGui(itemStack)));
             p.closeInventory();
+        }
+
+        else if (e.getSlot() == 13) {
+
         }
     }
 
