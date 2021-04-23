@@ -119,7 +119,7 @@ public class sellGui implements Listener, InventoryHolder {
                     ItemStack item = e.getView().getTopInventory().getItem(i);
                     e.getView().getTopInventory().remove(item);
                 }
-                p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
+                utils.sendSound(p, Sound.ENTITY_PLAYER_LEVELUP);
 
                 p.closeInventory();
                 p.sendMessage(conf_msg.PREFIX + conf_msg.MSG_SELL_ITEMS.
