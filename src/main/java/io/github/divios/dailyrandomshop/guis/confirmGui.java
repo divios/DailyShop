@@ -27,7 +27,6 @@ public class confirmGui implements Listener, InventoryHolder {
     private static final io.github.divios.dailyrandomshop.main main = io.github.divios.dailyrandomshop.main.getInstance();
     private static final dataManager dbManager = dataManager.getInstance();
 
-    private static confirmGui instance = null;
     private static ItemStack add1 = null;
     private static ItemStack add5;
     private static ItemStack add10;
@@ -40,7 +39,17 @@ public class confirmGui implements Listener, InventoryHolder {
     private BiConsumer<Player, ItemStack> c;
     private Consumer<Player> b;
 
-    private confirmGui() {}
+    private confirmGui(
+            Player p,
+            BiConsumer<Player,
+            ItemStack> c, Consumer<Player> b,
+            ItemStack item
+            ) {
+        this.c = c;
+        this.b = b;
+        Bukkit.getPluginManager().registerEvents(this, main);
+        p.openInventory(getInventory(item));
+    }
 
     public static void openInventory(
             Player p,
@@ -51,11 +60,9 @@ public class confirmGui implements Listener, InventoryHolder {
         if (add1 == null) {
             init();
         }
-        instance = new confirmGui();
-        instance.c = c;
-        instance.b = b;
-        Bukkit.getPluginManager().registerEvents(instance, main);
-        p.openInventory(instance.getInventory(item));
+
+        new confirmGui(p, c, b, item);
+
     }
 
     private static void init() {
@@ -76,10 +83,10 @@ public class confirmGui implements Listener, InventoryHolder {
         utils.setDisplayName(rem10, conf_msg.CONFIRM_GUI_REMOVE_PANE + " 10");
 
         back = XMaterial.OAK_SIGN.parseItem();
-        utils.setDisplayName(back, "&c&lBack");
+        utils.setDisplayName(back, conf_msg.CONFIRM_GUI_REMOVE_PANE);
 
         confirm = XMaterial.EMERALD_BLOCK.parseItem();
-        utils.setDisplayName(confirm, "&a&lConfirm");
+        utils.setDisplayName(confirm, conf_msg.CONFIRM_GUI_CONFIRM_PANE);
     }
 
     @Override
@@ -88,7 +95,7 @@ public class confirmGui implements Listener, InventoryHolder {
     }
 
     public Inventory getInventory(ItemStack item) {
-        Inventory inv = Bukkit.createInventory(this, 45, utils.formatString("&a&lConfirm Gui"));
+        Inventory inv = Bukkit.createInventory(this, 45, conf_msg.CONFIRM_GUI_NAME);
 
         ItemStack confirmAux = confirm.clone();
         LoreStrategy.setLore(confirmAux, item);
@@ -135,7 +142,7 @@ public class confirmGui implements Listener, InventoryHolder {
 
     @EventHandler
     public void inventoryClick(InventoryClickEvent e) {
-        if (e.getView().getTopInventory().getHolder() != instance) return;
+        if (e.getView().getTopInventory().getHolder() != this) return;
         e.setCancelled(true);
 
         if (e.getSlot() != e.getRawSlot()) return;
