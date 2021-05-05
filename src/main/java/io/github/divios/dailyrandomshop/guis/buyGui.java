@@ -5,7 +5,8 @@ import io.github.divios.dailyrandomshop.conf_msg;
 import io.github.divios.dailyrandomshop.database.dataManager;
 import io.github.divios.dailyrandomshop.events.expiredTimerEvent;
 import io.github.divios.dailyrandomshop.lorestategy.currentItemsLore;
-import io.github.divios.dailyrandomshop.utils.transaction;
+import io.github.divios.dailyrandomshop.transaction.transaction;
+import io.github.divios.dailyrandomshop.transaction.transactionExc;
 import io.github.divios.dailyrandomshop.utils.utils;
 import io.github.divios.dailyrandomshop.xseries.XMaterial;
 import org.bukkit.Bukkit;
@@ -64,13 +65,6 @@ public class buyGui implements Listener, InventoryHolder {
         utils.setLore(painting, conf_msg.BUY_GUI_PAINTING_LORE);
         inv.setItem(4, painting);
 
-        if (main.getConfig().getBoolean("enable-sell-gui")) {
-            ItemStack fence = XMaterial.OAK_FENCE_GATE.parseItem();
-            utils.setDisplayName(fence, conf_msg.BUY_GUI_ARROW_NAME);
-            utils.setLore(fence, conf_msg.BUY_GUI_ARROW_LORE);
-            inv.setItem(8, fence);
-        }
-
         ItemStack grayPanel = XMaterial.GRAY_STAINED_GLASS_PANE.parseItem();
         utils.setDisplayName(grayPanel, "&7");
         for (int i = 9; i < 18; i++) {     /* Gray panels */
@@ -111,6 +105,9 @@ public class buyGui implements Listener, InventoryHolder {
 
             int rarity = (Integer) new dailyItem(randomItem)
                     .getMetadata(dailyItem.dailyMetadataType.rds_rarity);
+
+            if (rarity == -1)
+                inserted.add(ran);
 
             if(rarity == 0)
                 rarity = 100;
@@ -188,11 +185,13 @@ public class buyGui implements Listener, InventoryHolder {
         ItemStack item = null;
 
         for (int i = 18; i < inv.getSize(); i++) {
+            if (utils.isEmpty(inv.getItem(i))) continue;
             if (dailyItem.getUuid(inv.getItem(i)).equals(uuid)) {
                 item = inv.getItem(i);
                 break;
             }
         }
+
         if(item == null) return;
 
         if ( new dailyItem(item).hasMetadata(dailyItem.dailyMetadataType.rds_amount)) {
@@ -264,25 +263,52 @@ public class buyGui implements Listener, InventoryHolder {
         if (e.getView().getTopInventory().getHolder() != this) return;
         e.setCancelled(true);
 
+        if (e.getSlot() != e.getRawSlot()) return;
+
         if(utils.isEmpty(e.getCurrentItem())) return;
 
         Player p = (Player) e.getWhoClicked();
-
-        if (e.getSlot() == 8) {
-            if (!p.hasPermission("dailyRandomShop.sell")) {
-                utils.noPerms(p);
-                utils.sendSound(p, Sound.ENTITY_VILLAGER_NO);
-            }
-            sellGui.openInventory(p);
-        }
 
         if (utils.isEmpty(dailyItem.getUuid(e.getCurrentItem()))) {
             return;
         }
 
+        //TODO: confirm guis here
+
         if (e.getSlot() >= 18 && e.getSlot() < inv.getSize()
                 && !utils.isEmpty(e.getCurrentItem())) {
-            transaction.initTransaction(p, dailyItem.getRawItem(e.getCurrentItem()));
+
+            dailyItem dItem = new dailyItem(e.getCurrentItem());
+
+            if (dItem.hasMetadata(dailyItem.dailyMetadataType.rds_confirm_gui)
+                    && !dItem.hasMetadata(dailyItem.dailyMetadataType.rds_amount)
+                    && !dItem.hasMetadata(dailyItem.dailyMetadataType.rds_setItems))  {
+                confirmGui.openInventory(p,
+                        dailyItem.getRawItem(dailyItem
+                                .getRawItem(e.getCurrentItem())).clone(),
+                        (player, itemStack) -> {
+                            player.closeInventory();
+                            try {
+                                transaction.initTransaction(p, itemStack);
+                            } catch (transactionExc transactionExc) {
+                                transactionExc.sendErrorMsg(p);
+                            }
+                        }, player -> buyGui.getInstance().openInventory(player));
+            } else {
+                new confirmIH(p, (player, aBoolean) -> {
+                    if (aBoolean) {
+                        p.closeInventory();
+                        try {
+                            transaction.initTransaction(p, dailyItem.getRawItem(e.getCurrentItem()));
+                        } catch (transactionExc transactionExc) {
+                            transactionExc.sendErrorMsg(p);
+                        }
+                    } else
+                        buyGui.getInstance().openInventory(player);
+                }, player -> buyGui.getInstance().openInventory(player), e.getCurrentItem(),
+                        conf_msg.CONFIRM_GUI_NAME, conf_msg.CONFIRM_MENU_YES, conf_msg.CONFIRM_MENU_NO);
+            }
+
         }
 
     }
