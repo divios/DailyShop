@@ -30,7 +30,7 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
     private static customizerMainGuiIH instance = null;
     private ItemStack newItem;
 
-    private boolean amountFlag, commandsFlag, permsFlag, confirmGuiFlag, setItemsFlag;
+    private boolean amountFlag, commandsFlag, permsFlag, confirmGuiFlag, setItemsFlag, bundleFlag;
 
     private customizerMainGuiIH() {
     }
@@ -53,6 +53,7 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
         permsFlag = dItem.hasMetadata(dailyMetadataType.rds_permissions);
         confirmGuiFlag = (boolean) dItem.getMetadata(dailyMetadataType.rds_confirm_gui);
         setItemsFlag = dItem.hasMetadata(dailyMetadataType.rds_setItems);
+        bundleFlag = dItem.hasMetadata(dailyMetadataType.rds_bundle);
 
         Inventory inv = Bukkit.createInventory(instance, 54, conf_msg.CUSTOMIZE_GUI_TITLE);
 
@@ -152,6 +153,10 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
             utils.setLore(setOfItems, conf_msg.CUSTOMIZE_ENABLE_SET_LORE);
         }
 
+        ItemStack bundle = XMaterial.CHAIN.parseItem();  //bundle
+        utils.setDisplayName(bundle, "&6&lChange bundle items");
+        utils.setLore(bundle, Arrays.asList("&6Right Click > &7To change items on the bundle"));
+
 
         ItemFlag f = ItemFlag.HIDE_ENCHANTS;
 
@@ -200,6 +205,8 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
         inv.setItem(31, perms);
         if (!amountFlag) inv.setItem(32, setOfItems);
         else inv.setItem(32, barrier);
+        if (bundleFlag)
+            inv.setItem(34, bundle);
         inv.setItem(25, hideEnchants);
         inv.setItem(26, hideAtibutes);
         if (utils.isPotion(newItem)) {
@@ -372,6 +379,14 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
                 new dailyItem(newItem).removeNbt(dailyMetadataType.rds_commands).getItem();
                 refresh(p);
             }
+        }
+
+        else if (e.getSlot() == 34) {  //boton de bundle
+            new changeBundleItem(p, newItem,
+                    (player, itemStack) -> {
+                    newItem = itemStack;
+                    refresh(p);
+            }, player -> refresh(p));
         }
 
         else if (e.getSlot() == 25) { // Boton de hide enchants
