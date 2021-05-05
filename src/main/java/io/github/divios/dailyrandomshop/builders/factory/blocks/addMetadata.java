@@ -23,6 +23,8 @@ public class addMetadata implements runnableBlocks {
     public void run(ItemStack item) {
         NBTItem nbtItem = new NBTItem(item);
         switch (type) {
+
+            case rds_bundle:
             case rds_commands:
             case rds_permissions:
                 try {
@@ -72,6 +74,8 @@ public class addMetadata implements runnableBlocks {
             case 10:
                 return 5;
             case 5:
+                return -1;
+            case -1:
                 return 0;
             default:
                 return 80;

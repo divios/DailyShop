@@ -1,12 +1,18 @@
 package io.github.divios.dailyrandomshop.guis.settings;
 
+import io.github.divios.dailyrandomshop.builders.dynamicGui;
 import io.github.divios.dailyrandomshop.builders.factory.dailyItem;
 import io.github.divios.dailyrandomshop.conf_msg;
+import io.github.divios.dailyrandomshop.database.dataManager;
+import io.github.divios.dailyrandomshop.guis.customizerguis.changeBundleItem;
 import io.github.divios.dailyrandomshop.guis.customizerguis.customizerMainGuiIH;
 import io.github.divios.dailyrandomshop.listeners.dynamicItemListener;
+import io.github.divios.dailyrandomshop.lorestategy.bundleSettingsLore;
+import io.github.divios.dailyrandomshop.lorestategy.loreStrategy;
 import io.github.divios.dailyrandomshop.utils.utils;
 import io.github.divios.dailyrandomshop.xseries.XMaterial;
 import org.bukkit.Bukkit;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -14,7 +20,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -52,7 +60,8 @@ public class addDailyItemGuiIH implements InventoryHolder, Listener {
         utils.setLore(fromItem, conf_msg.ADD_ITEMS_FROM_EXISTING_LORE);
 
         ItemStack bundleItem = XMaterial.CHEST_MINECART.parseItem();
-        utils.setLore(bundleItem, Arrays.asList("&6&lCreate bundle"));
+        utils.setDisplayName(bundleItem, "&6&lCreate bundle");
+        utils.setLore(bundleItem, Arrays.asList("&7Create bundle"));
 
         ItemStack returnItem = XMaterial.OAK_SIGN.parseItem();
         utils.setDisplayName(returnItem, conf_msg.ADD_ITEMS_RETURN);
@@ -98,24 +107,32 @@ public class addDailyItemGuiIH implements InventoryHolder, Listener {
 
         if (e.getSlot() != e.getRawSlot()) return;
 
-        if (e.getSlot() == 22) {
+        if (e.getSlot() == 22) {    //return
             dailyGuiSettings.openInventory(p);
         }
 
-        if (e.getSlot() == 11) {
+        if (e.getSlot() == 11) { //from zero
             customizerMainGuiIH.openInventory(p, enableConfirmGui(XMaterial.GRASS.parseItem()));
         }
 
-        else if (e.getSlot() == 15) {
+        else if (e.getSlot() == 15) {  //from item
             new dynamicItemListener(p, (player, itemStack) ->
                     customizerMainGuiIH.openInventory(p, enableConfirmGui(itemStack)));
             p.closeInventory();
         }
 
-        else if (e.getSlot() == 13) {
+        else if (e.getSlot() == 13) {  //bundle item
 
+            new changeBundleItem(
+                    p,
+                    XMaterial.CHEST_MINECART.parseItem(),
+                    (player, itemStack) ->
+                            customizerMainGuiIH.openInventory(p,
+                            new dailyItem(itemStack).craft()),
+                    player -> openInventory(p));
         }
     }
+
 
     private ItemStack enableConfirmGui(ItemStack item) {
         return new dailyItem(item).addNbt(dailyItem.dailyMetadataType.rds_confirm_gui, true).getItem();
