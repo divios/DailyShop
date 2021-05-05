@@ -19,11 +19,7 @@ daily-shop-gui-painting-lore:
 daily-items-lore-price: "&6Precio: &7{price}"
 daily-items-lore-currency: "&6Moneda: &7{currency}"
 daily-items-lore-rarity: "&6Rareza: &7{rarity}"
-# This is the arrow upon clicking
-# sends you to the sell GUI
-daily-shop-to-sell-name: "&c&lVisitar Mercado"
-daily-shop-to-sell-lore:
-  - "&7Clic Drch para ir al mercado"
+
 
   ###############################
   ####### Sell Shop menu ########
@@ -40,11 +36,7 @@ sell-gui-painting-lore:
 # This is the name that the confirm
 # bottom will have
 sell-item-name: "&3&lDinero total: &7{price}"
-# This is the arrow upon clicking
-# sends you to the daily shop GUI
-sell-to-daily-shop-name: "&3&lVolver a tienda diaria"
-sell-to-daily-shop-lore:
-  - "&7Clic Drch para volver a la tienda diaria"
+
 
   ##################################
   ####### Confirm Shop menu ########
@@ -174,6 +166,16 @@ customize_change_econ_lore:
 
 customize_change_rarity_lore:
   - "&7Click para cambiar la rareza del item"
+
+customize_rarity-names:
+  - "&7Comun"
+  - "&dPoco Comun"
+  - "&5Raro"
+  - "&5Epico"
+  - "&9Antiguo"
+  - "&6Legendario"
+  - "&eMitico"
+  - "&cAgotado"
 
 customize_change_confirm_gui: "&f&lEnable/disable confirm Gui"
 customize_change_confirm_gui_lore:
