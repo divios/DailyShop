@@ -2,6 +2,7 @@ package io.github.divios.dailyrandomshop.builders.factory;
 
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import io.github.divios.dailyrandomshop.builders.factory.blocks.*;
+import io.github.divios.dailyrandomshop.conf_msg;
 import io.github.divios.dailyrandomshop.database.dataManager;
 import io.github.divios.dailyrandomshop.lorestategy.loreStrategy;
 import io.github.divios.dailyrandomshop.utils.utils;
@@ -49,9 +50,9 @@ public class dailyItem {
 
     public ItemStack craft() {
         constructItem();
-        NBTItem nbtItem = new NBTItem(item);
-        nbtItem.setString(dailyMetadataType.rds_UUID.name(), UUID.randomUUID().toString());
-        return nbtItem.getItem();
+        new addMetadata(dailyMetadataType.rds_UUID,
+                UUID.randomUUID().toString()).run(item);
+        return item;
     }
 
     public dailyItem addNbt(dailyMetadataType key, Object value) {
@@ -73,7 +74,7 @@ public class dailyItem {
         NBTItem nbtItem = new NBTItem(item);
         Object obj;
         switch (key) {
-
+            case rds_bundle:
             case rds_permissions:
             case rds_commands:
                 obj = nbtItem.getObject(key.name(), List.class);
@@ -225,31 +226,51 @@ public class dailyItem {
         switch (s) {
             case 0:
                 changeRarity = XMaterial.GRAY_DYE.parseItem();
-                utils.setDisplayName(changeRarity, "&7Common");
+                try {
+                    utils.setDisplayName(changeRarity, conf_msg.RARITY_NAMES.get(0));
+                } catch (Exception Ignored) { utils.setDisplayName(changeRarity, "&7Common"); }
                 break;
             case 80:
                 changeRarity = XMaterial.PINK_DYE.parseItem();
-                utils.setDisplayName(changeRarity, "&dUncommon");
+                try {
+                    utils.setDisplayName(changeRarity, conf_msg.RARITY_NAMES.get(1));
+                } catch (Exception Ignored) { utils.setDisplayName(changeRarity, "&dUnCommon"); }
                 break;
             case 60:
                 changeRarity = XMaterial.MAGENTA_DYE.parseItem();
-                utils.setDisplayName(changeRarity, "&5Rare");
+                try {
+                    utils.setDisplayName(changeRarity, conf_msg.RARITY_NAMES.get(2));
+                } catch (Exception Ignored) { utils.setDisplayName(changeRarity, "&5Rare"); }
                 break;
             case 40:
                 changeRarity = XMaterial.PURPLE_DYE.parseItem();
-                utils.setDisplayName(changeRarity, "&5Epic");
+                try {
+                    utils.setDisplayName(changeRarity, conf_msg.RARITY_NAMES.get(3));
+                } catch (Exception Ignored) { utils.setDisplayName(changeRarity, "&5Epic"); }
                 break;
             case 20:
                 changeRarity = XMaterial.CYAN_DYE.parseItem();
-                utils.setDisplayName(changeRarity, "&9Ancient");
+                try {
+                    utils.setDisplayName(changeRarity, conf_msg.RARITY_NAMES.get(4));
+                } catch (Exception Ignored) { utils.setDisplayName(changeRarity, "&9Ancient"); }
                 break;
             case 10:
                 changeRarity = XMaterial.ORANGE_DYE.parseItem();
-                utils.setDisplayName(changeRarity, "&6Legendary");
+                try {
+                    utils.setDisplayName(changeRarity, conf_msg.RARITY_NAMES.get(5));
+                } catch (Exception Ignored) { utils.setDisplayName(changeRarity, "&6Legendary"); }
+                break;
+            case 5:
+                changeRarity = XMaterial.YELLOW_DYE.parseItem();
+                try {
+                    utils.setDisplayName(changeRarity, conf_msg.RARITY_NAMES.get(6));
+                } catch (Exception Ignored) { utils.setDisplayName(changeRarity, "&eMythic"); }
                 break;
             default:
-                changeRarity = XMaterial.YELLOW_DYE.parseItem();
-                utils.setDisplayName(changeRarity, "&eMythic");
+                changeRarity = XMaterial.BARRIER.parseItem();
+                try {
+                    utils.setDisplayName(changeRarity, conf_msg.RARITY_NAMES.get(7));
+                } catch (Exception Ignored) { utils.setDisplayName(changeRarity, "&cUnavailable"); }
                 break;
         }
         return changeRarity;
@@ -280,9 +301,11 @@ public class dailyItem {
 
             case 10:
                 return "Legendary";
+            case 5:
+                return "Mythic";
 
             default:
-                return "Mythic";
+                return "Unavailable";
 
         }
     }
@@ -300,6 +323,7 @@ public class dailyItem {
         rds_commands,
         rds_permissions,
         rds_confirm_gui,
-        rds_setItems
+        rds_setItems,
+        rds_bundle
     }
 }
