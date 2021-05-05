@@ -22,10 +22,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.AbstractMap;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class changeEcon implements Listener, InventoryHolder {
@@ -89,10 +86,17 @@ public class changeEcon implements Listener, InventoryHolder {
             inv.addItem(tokenManagerItem);
         }
 
-        /*List<String> points = new ArrayList<>();
+        Set<String> points = new HashSet<>();
         if (mPointsAPI != null) {
-            mPointsAPI.
-        } */
+            points = mPointsAPI.getpointslist();
+        }
+
+        points.forEach(s -> {
+            ItemStack pointsItem = XMaterial.SUNFLOWER.parseItem();
+            utils.setDisplayName(pointsItem, "&f&l" + s);
+            utils.setLore(Vault, Arrays.asList("&7Click to change"));
+            inv.addItem(pointsItem);
+        });
 
     }
 
@@ -134,6 +138,14 @@ public class changeEcon implements Listener, InventoryHolder {
                     .addNbt(dailyItem.dailyMetadataType.rds_econ,
                             new AbstractMap.SimpleEntry<>(econTypes.tokenManager.name()
                                     , econTypes.tokenManager.name())).getItem();
+        }
+
+        else if (e.getCurrentItem().getType().equals(XMaterial.SUNFLOWER.parseMaterial())) {
+            String name = utils.trimString(e.getCurrentItem().getItemMeta().getDisplayName());
+            new dailyItem(item)
+                    .addNbt(dailyItem.dailyMetadataType.rds_econ,
+                            new AbstractMap.SimpleEntry<>(econTypes.MPoints.name()
+                                    , name)).getItem();
         }
 
 
