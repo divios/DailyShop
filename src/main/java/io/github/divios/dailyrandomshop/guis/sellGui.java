@@ -46,10 +46,6 @@ public class sellGui implements Listener, InventoryHolder {
         utils.setDisplayName(painting, conf_msg.SELL_PAINTING_NAME);
         utils.setLore(painting, conf_msg.SELL_PAINTING_LORE);
 
-        ItemStack fence = XMaterial.OAK_FENCE_GATE.parseItem();
-        utils.setDisplayName(fence, conf_msg.SELL_ARROW_NAME);
-        utils.setLore(fence, conf_msg.SELL_ARROW_LORE);
-
         ItemStack sellConfirm = XMaterial.OAK_SIGN.parseItem();
         utils.setDisplayName(sellConfirm,
                 conf_msg.SELL_ITEM_NAME.replaceAll("\\{price}", "NaN"));
@@ -60,7 +56,6 @@ public class sellGui implements Listener, InventoryHolder {
             sellGui.setItem(i, fillItem);
         }
 
-        sellGui.setItem(0, fence);
         sellGui.setItem(4, painting);
         sellGui.setItem(40, sellConfirm);
 
@@ -97,15 +92,6 @@ public class sellGui implements Listener, InventoryHolder {
         if (e.getSlot() == e.getRawSlot() && (e.getSlot() < 18
                 || e.getSlot() > 36)) {
             e.setCancelled(true);
-
-            if (e.getSlot() == e.getRawSlot() && e.getSlot() == 0) {
-                if (!p.hasPermission("dailyRandomShop.open")) {
-                    utils.noPerms(p);
-                    utils.sendSound(p, Sound.ENTITY_VILLAGER_NO);
-                    return;
-                }
-                buyGui.getInstance().openInventory(p);
-            }
 
             if (e.getSlot() == e.getRawSlot() && e.getSlot() == 40) {
                 double price = calculatePrice(e.getView().getTopInventory(), p);
