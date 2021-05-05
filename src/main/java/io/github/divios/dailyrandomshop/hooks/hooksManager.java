@@ -35,7 +35,7 @@ public class hooksManager {
         }
 
         if (utils.isOperative("MPoints")) {
-           // MPointsHook.hook();
+            MPointsHook.hook();
         }
         gemsEconomyHook.getInstance();
         bstatsHook.init();
