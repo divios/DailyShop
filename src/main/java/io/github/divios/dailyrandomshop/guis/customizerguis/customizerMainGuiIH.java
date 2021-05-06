@@ -153,10 +153,13 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
             utils.setLore(setOfItems, conf_msg.CUSTOMIZE_ENABLE_SET_LORE);
         }
 
-        ItemStack bundle = XMaterial.CHAIN.parseItem();  //bundle
-        utils.setDisplayName(bundle, "&6&lChange bundle items");
+        ItemStack bundle = XMaterial.ITEM_FRAME.parseItem();                         //bundle
+        utils.setDisplayName(bundle, "&f&lChange bundle items");
         utils.setLore(bundle, Arrays.asList("&6Right Click > &7To change items on the bundle"));
 
+        ItemStack durability = XMaterial.DAMAGED_ANVIL.parseItem();
+        utils.setDisplayName(durability, "&fChange item Durability");
+        utils.setLore(durability, Arrays.asList("&6Right Click > &7To change items durability"));
 
         ItemFlag f = ItemFlag.HIDE_ENCHANTS;
 
@@ -195,18 +198,20 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
         inv.setItem(0, changeEcon);
         if (conf_msg.ENABLE_RARITY) inv.setItem(8, changeRarity);
         inv.setItem(7, changeConfirmGui);
-        inv.setItem(19, rename);
-        inv.setItem(20, changeMaterial);
-        inv.setItem(28, changeLore);
-        inv.setItem(29, editEnchantments);
-        if (!setItemsFlag) inv.setItem(22, setAmount);
-        else inv.setItem(22, barrier);
-        inv.setItem(23, addRemoveCommands);
-        inv.setItem(31, perms);
-        if (!amountFlag) inv.setItem(32, setOfItems);
-        else inv.setItem(32, barrier);
+        inv.setItem(18, rename);
+        inv.setItem(19, changeMaterial);
+        inv.setItem(27, changeLore);
+        inv.setItem(28, editEnchantments);
+        if (!setItemsFlag) inv.setItem(21, setAmount);
+        else inv.setItem(21, barrier);
+        inv.setItem(22, addRemoveCommands);
+        if (newItem.getType().getMaxDurability() != 0)
+            inv.setItem(23, durability);
+        inv.setItem(30, perms);
+        if (!amountFlag) inv.setItem(31, setOfItems);
+        else inv.setItem(31, barrier);
         if (bundleFlag)
-            inv.setItem(34, bundle);
+            inv.setItem(32, bundle);
         inv.setItem(25, hideEnchants);
         inv.setItem(26, hideAtibutes);
         if (utils.isPotion(newItem)) {
@@ -274,7 +279,7 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
              new dailyItem(newItem).addNbt(dailyMetadataType.rds_rarity, "").getItem();
              refresh(p);
         }
-        else if (e.getSlot() == 19) { // Boton de cambiar nombre
+        else if (e.getSlot() == 18) { // Boton de cambiar nombre
             new AnvilGUI.Builder()
                     .onClose(player ->
                             utils.runTaskLater(() -> openInventory(player, newItem), 1L))
@@ -289,11 +294,11 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
                     .open(p);
         }
 
-        else if (e.getSlot() == 20) { // Boton de cambiar material
+        else if (e.getSlot() == 19) { // Boton de cambiar material
             changeMaterialGui.openInventory(p, newItem);
         }
 
-        else if (e.getSlot() == 28) { // Boton de cambiar lore
+        else if (e.getSlot() == 27) { // Boton de cambiar lore
             if (e.isRightClick()) {
                 utils.removeLore(newItem, 1);
                 refresh(p);
@@ -306,13 +311,13 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
                 }, conf_msg.CUSTOMIZE_RENAME_ANVIL_TITLE, "");
         }
 
-        else if (e.getSlot() == 29) { // Boton de cambiar enchants
+        else if (e.getSlot() == 28) { // Boton de cambiar enchants
             if (e.isLeftClick()) changeEnchantments.openInventory(p, newItem);
             else if (e.isRightClick() && !newItem.getEnchantments().isEmpty())
                 changeEnchantments.openInventory(p, newItem, newItem.getEnchantments());
         }
 
-        else if (e.getSlot() == 22 && amountFlag) { // Boton de cambiar amount
+        else if (e.getSlot() == 21 && amountFlag) { // Boton de cambiar amount
             if(e.isLeftClick()) {
                 new AnvilGUI.Builder()
                         .onClose(player -> utils.runTaskLater(() ->
@@ -340,7 +345,7 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
             }
         }
 
-        else if (e.getSlot() == 22 && !amountFlag && e.isLeftClick()) { // Boton de cambiar amount
+        else if (e.getSlot() == 21 && !amountFlag && e.isLeftClick()) { // Boton de cambiar amount
             if (setItemsFlag) {
                 p.sendMessage(conf_msg.PREFIX + utils.formatString("&7You can't enable this when " +
                         "the set feature is enable"));
@@ -351,13 +356,13 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
 
         }
 
-        else if (e.getSlot() == 23 && !new dailyItem(newItem)
+        else if (e.getSlot() == 22 && !new dailyItem(newItem)
                 .hasMetadata(dailyMetadataType.rds_commands)) { // Boton de cambiar commands
             new dailyItem(newItem).addNbt(dailyMetadataType.rds_commands, "").getItem();
             refresh(p);
         }
 
-        else if (e.getSlot() == 23 && new dailyItem(newItem)
+        else if (e.getSlot() == 22 && new dailyItem(newItem)
                 .hasMetadata(dailyMetadataType.rds_commands)) { // Boton de añadir/quitar commands
             if (e.isLeftClick()) {
                 new dynamicChatListener(p, s -> {
@@ -381,7 +386,28 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
             }
         }
 
-        else if (e.getSlot() == 34) {  //boton de bundle
+        else if (e.getSlot() == 23) {               //durability
+
+            new AnvilGUI.Builder()
+                    .onClose(player -> utils.runTaskLater(() ->
+                            openInventory(player, newItem), 1L))
+                    .onComplete((player, text) -> {
+                        try {
+                            Short.parseShort(text);
+                        } catch (NumberFormatException err) {return AnvilGUI.Response.text("not integer");}
+                        short i = Short.parseShort(text);
+                        newItem.setDurability((short) (newItem.getType().getMaxDurability() - i));
+                        return AnvilGUI.Response.close();
+                    })
+                    .text("Change durability")
+                    .itemLeft(newItem.clone())
+                    .title("&6Change durability")
+                    .plugin(main)
+                    .open(p);
+
+        }
+
+        else if (e.getSlot() == 32) {  //boton de bundle
             new changeBundleItem(p, newItem,
                     (player, itemStack) -> {
                     newItem = itemStack;
@@ -403,12 +429,12 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
             refresh(p);
         }
 
-        else if (e.getSlot() == 31 && !permsFlag) { // Boton de habilitar perms
+        else if (e.getSlot() == 30 && !permsFlag) { // Boton de habilitar perms
             new dailyItem(newItem).addNbt(dailyMetadataType.rds_permissions, "").getItem();
             refresh(p);
         }
 
-        else if (e.getSlot() == 31 && permsFlag) {  // Boton de añadir/quitar perms
+        else if (e.getSlot() == 30 && permsFlag) {  // Boton de añadir/quitar perms
             if (e.isLeftClick()) {
                 new dynamicChatListener(p, s -> {
                     if (!s.isEmpty())
@@ -432,7 +458,7 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
 
         }
 
-        else if (e.getSlot() == 32 && !setItemsFlag && e.isLeftClick()) {  // Boton de edit set
+        else if (e.getSlot() == 31 && !setItemsFlag && e.isLeftClick()) {  // Boton de edit set
             if (amountFlag) {
                 p.sendMessage(conf_msg.PREFIX + utils.formatString("&7You can't enable this when " +
                         "the stock feature is enable"));
@@ -442,7 +468,7 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
             refresh(p);
         }
 
-        else if (e.getSlot() == 32 && setItemsFlag) {
+        else if (e.getSlot() == 31 && setItemsFlag) {
             if (e.isLeftClick()) {
                 new AnvilGUI.Builder()
                         .onClose(player -> utils.runTaskLater(() ->
