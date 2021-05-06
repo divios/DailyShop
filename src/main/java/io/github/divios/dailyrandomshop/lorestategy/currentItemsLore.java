@@ -8,6 +8,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.AbstractMap;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class currentItemsLore implements loreStrategy {
@@ -35,6 +36,10 @@ public class currentItemsLore implements loreStrategy {
                         .replaceAll("\\{currency}", finalCurrency)
                         .replaceAll("\\{rarity}", dailyItem.getRarityLore(item))); //add rarity
         utils.setLore(item, lore);
+
+        if (new dailyItem(item).hasMetadata(dailyItem.dailyMetadataType.rds_bundle))
+            utils.setLore(item, Arrays.asList("",
+                        "&6Right Click > &7to see the list", "&7of items in the bundle"));
     }
 
     @Override
