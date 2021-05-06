@@ -29,6 +29,8 @@ public class transaction {
         if (utils.inventoryFull(p.getInventory()) < s.getSlots())
             throw new transactionExc(transactionExc.err.noSpace);
 
+        s.getEcon().witchDrawMoney(p, s.getPrice());
+
         s.getRunnables().forEach(Runnable::run);
 
         p.sendMessage(conf_msg.PREFIX + conf_msg.MSG_BUY_ITEM

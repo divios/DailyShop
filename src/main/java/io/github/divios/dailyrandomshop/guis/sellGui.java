@@ -122,7 +122,7 @@ public class sellGui implements Listener, InventoryHolder {
 
             e.setCancelled(true);
             p.sendMessage(conf_msg.PREFIX + conf_msg.MSG_INVALID_ITEM);
-            p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
+            utils.sendSound(p, Sound.ENTITY_VILLAGER_NO);
             return;
         }
 

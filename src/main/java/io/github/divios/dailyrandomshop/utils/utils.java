@@ -133,7 +133,7 @@ public class utils {
 
     public static void sendSound(Player p, Sound s) {
         try {
-            p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 0.5F, 1);
+            p.playSound(p.getLocation(), s, 0.5F, 1);
         } catch (NoSuchFieldError Ignored) {
         }
     }
