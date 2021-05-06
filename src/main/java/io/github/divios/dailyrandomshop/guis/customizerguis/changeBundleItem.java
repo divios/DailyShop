@@ -94,6 +94,7 @@ public class changeBundleItem {
                     return dynamicGui.Response.nu();
                 }).setSearch(false)
                 .back(back)
+                .title(_i -> "&6Set items on the bundle")
                 .open(p);
 
     }
