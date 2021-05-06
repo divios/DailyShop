@@ -1,5 +1,6 @@
 package io.github.divios.dailyrandomshop.guis;
 
+import io.github.divios.dailyrandomshop.builders.dynamicGui;
 import io.github.divios.dailyrandomshop.builders.factory.dailyItem;
 import io.github.divios.dailyrandomshop.conf_msg;
 import io.github.divios.dailyrandomshop.database.dataManager;
@@ -20,11 +21,9 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.ConcurrentModificationException;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class buyGui implements Listener, InventoryHolder {
@@ -273,12 +272,24 @@ public class buyGui implements Listener, InventoryHolder {
             return;
         }
 
-        //TODO: confirm guis here
+
 
         if (e.getSlot() >= 18 && e.getSlot() < inv.getSize()
                 && !utils.isEmpty(e.getCurrentItem())) {
 
             dailyItem dItem = new dailyItem(e.getCurrentItem());
+
+            if (e.isRightClick() && dItem
+                    .hasMetadata(dailyItem.dailyMetadataType.rds_bundle)) {
+                new dynamicGui.Builder()
+                        .contents(() -> ((List<String>) dItem.getMetadata(dailyItem.dailyMetadataType.rds_bundle))
+                                .stream().map(s -> dailyItem.getRawItem(s).clone()).collect(Collectors.toList()))
+                        .setSearch(false)
+                        .back(player -> openInventory(p))
+                        .open(p);
+                return;
+            }
+
 
             if (dItem.hasMetadata(dailyItem.dailyMetadataType.rds_confirm_gui)
                     && !dItem.hasMetadata(dailyItem.dailyMetadataType.rds_amount)
