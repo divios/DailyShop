@@ -69,7 +69,7 @@ public class transaction {
             for (String _s : (List<String>) dItem.getMetadata(dailyItem.dailyMetadataType.rds_bundle))
                 for (int i = 0; i < item.getAmount(); i++)
                     s.concat(printSummary(p, dailyItem.getRawItem(_s)));
-            s.setPrice(dailyItem.getPrice(item)); // sets price as the bundle
+            s.setPrice(new dailyItem(item).getPrice()); // sets price as the bundle
         }
 
         if (dItem.hasMetadata(dailyItem.dailyMetadataType.rds_commands))   // adds commands to run
@@ -82,9 +82,9 @@ public class transaction {
         /// A PARTIR DE AQUI YA SOLO COMPROBAR SLOTS Y PRICE ///
 
         if (dItem.hasMetadata(dailyItem.dailyMetadataType.rds_setItems))
-            s.setPrice(s.getPrice() + dailyItem.getPrice(item));
+            s.setPrice(s.getPrice() + new dailyItem(item).getPrice());
         else
-            s.setPrice(s.getPrice() + dailyItem.getPrice(item) * item.getAmount());
+            s.setPrice(s.getPrice() + new dailyItem(item).getPrice() * item.getAmount());
 
 
         if (item.getMaxStackSize() == 1)

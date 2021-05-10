@@ -258,7 +258,8 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
                 buyGui.getInstance().updateItem(dailyItem.getUuid(newItem), buyGui.updateAction.update);
             }
             else dbManager.listDailyItems.put(new dailyItem(newItem, true)
-                    .craft(), conf_msg.DEFAULT_PRICE);
+                    .addNbt(dailyMetadataType.rds_itemEcon, new dailyItem.dailyItemPrice(conf_msg.DEFAULT_PRICE))
+                    .craft(), 0D);
             dailyGuiSettings.openInventory(p);
         }
 

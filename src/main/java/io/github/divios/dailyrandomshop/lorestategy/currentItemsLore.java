@@ -19,7 +19,7 @@ public class currentItemsLore implements loreStrategy {
     @Override
     public void setLore(ItemStack item) {
 
-        String price = String.format("%,.2f", dailyItem.getPrice(item));
+        String price = String.format("%,.2f", new dailyItem(item).getPrice());
         String currency;
         try {
             currency = ((AbstractMap.SimpleEntry<String, String>) new dailyItem(item).getMetadata(dailyItem.dailyMetadataType.rds_econ)).getValue();

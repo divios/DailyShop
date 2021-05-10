@@ -6,6 +6,7 @@ import de.tr7zw.changeme.nbtapi.NBTItem;
 import io.github.divios.dailyrandomshop.builders.factory.dailyItem;
 import io.github.divios.dailyrandomshop.conf_msg;
 import io.github.divios.dailyrandomshop.guis.buyGui;
+import io.github.divios.dailyrandomshop.utils.conf_updater;
 import io.github.divios.dailyrandomshop.utils.utils;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -13,10 +14,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.IOException;
 import java.sql.*;
-import java.util.Base64;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class dataManager {
@@ -24,7 +22,7 @@ public class dataManager {
     private static final io.github.divios.dailyrandomshop.main main = io.github.divios.dailyrandomshop.main.getInstance();
     private static dataManager instance = null;
     public Map<ItemStack, Double> listDailyItems, listSellItems;
-    public Map<String, Integer> currentItems;
+    public Map<String, Integer>  currentItems;
     public int listDailyItemsHash, listSellItemsHash, currentItemsHash;
 
     private dataManager() {
@@ -178,13 +176,19 @@ public class dataManager {
                         }
 
                     } catch (Exception e) {
-                        main.getLogger().warning("A previous sell item registered on the db is now unsupported, skipping...");
+                        main.getLogger().warning("A previous sell item registered " +
+                                "on the db is now unsupported, skipping...");
                         continue;
                     }
 
                     if (utils.isEmpty(dailyItem.getUuid(item))) {
                         new dailyItem(item).craft();
                     }
+
+                    if (table.equals("daily_items") && conf_updater.priceFormat)
+                        new dailyItem(item).addNbt(dailyItem.dailyMetadataType.rds_itemEcon,
+                                new dailyItem.dailyItemPrice(result.getDouble(2)))
+                                .getItem();
 
                     items.put(item, result.getDouble(2));
                 }

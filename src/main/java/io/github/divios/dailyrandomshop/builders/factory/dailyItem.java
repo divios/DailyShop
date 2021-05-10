@@ -83,6 +83,9 @@ public class dailyItem {
             case rds_econ:
                 obj = nbtItem.getObject(key.name(), AbstractMap.SimpleEntry.class);
                 break;
+            case rds_itemEcon:
+                obj = nbtItem.getObject(key.name(), dailyItemPrice.class);
+                break;
             case rds_amount:
             case rds_rarity:
             case rds_setItems:
@@ -112,15 +115,16 @@ public class dailyItem {
         return this;
     }
 
-    public static Double getPrice(ItemStack item) {
-        return getPrice(getUuid(item));
+    public double getPrice() {
+        return ((dailyItemPrice) this.getMetadata(dailyMetadataType.rds_itemEcon)).getCurrentPrice();
     }
 
-    public static Double getPrice(String uuid) {
-        for(Map.Entry<ItemStack, Double> entry: dbManager.listDailyItems.entrySet()) {
-            if(getUuid(entry.getKey()).equals(uuid)) return entry.getValue();
-        }
-        return -1D;
+    public dailyItem generateRandomPrice() {
+        dailyItemPrice priceE = (dailyItemPrice) this.getMetadata(dailyMetadataType.rds_itemEcon);
+        priceE.generateRandomPrice();
+
+        new addMetadata(dailyMetadataType.rds_itemEcon, priceE).run(item);
+        return this;
     }
 
     /**
@@ -222,57 +226,34 @@ public class dailyItem {
      */
 
     public static ItemStack getItemRarity(int s) {
-        ItemStack changeRarity = null;
+        ItemStack changeRarity;
         switch (s) {
             case 0:
                 changeRarity = XMaterial.GRAY_DYE.parseItem();
-                try {
-                    utils.setDisplayName(changeRarity, conf_msg.RARITY_NAMES.get(0));
-                } catch (Exception Ignored) { utils.setDisplayName(changeRarity, "&7Common"); }
                 break;
             case 80:
                 changeRarity = XMaterial.PINK_DYE.parseItem();
-                try {
-                    utils.setDisplayName(changeRarity, conf_msg.RARITY_NAMES.get(1));
-                } catch (Exception Ignored) { utils.setDisplayName(changeRarity, "&dUnCommon"); }
                 break;
             case 60:
                 changeRarity = XMaterial.MAGENTA_DYE.parseItem();
-                try {
-                    utils.setDisplayName(changeRarity, conf_msg.RARITY_NAMES.get(2));
-                } catch (Exception Ignored) { utils.setDisplayName(changeRarity, "&5Rare"); }
                 break;
             case 40:
                 changeRarity = XMaterial.PURPLE_DYE.parseItem();
-                try {
-                    utils.setDisplayName(changeRarity, conf_msg.RARITY_NAMES.get(3));
-                } catch (Exception Ignored) { utils.setDisplayName(changeRarity, "&5Epic"); }
                 break;
             case 20:
                 changeRarity = XMaterial.CYAN_DYE.parseItem();
-                try {
-                    utils.setDisplayName(changeRarity, conf_msg.RARITY_NAMES.get(4));
-                } catch (Exception Ignored) { utils.setDisplayName(changeRarity, "&9Ancient"); }
                 break;
             case 10:
                 changeRarity = XMaterial.ORANGE_DYE.parseItem();
-                try {
-                    utils.setDisplayName(changeRarity, conf_msg.RARITY_NAMES.get(5));
-                } catch (Exception Ignored) { utils.setDisplayName(changeRarity, "&6Legendary"); }
                 break;
             case 5:
                 changeRarity = XMaterial.YELLOW_DYE.parseItem();
-                try {
-                    utils.setDisplayName(changeRarity, conf_msg.RARITY_NAMES.get(6));
-                } catch (Exception Ignored) { utils.setDisplayName(changeRarity, "&eMythic"); }
                 break;
             default:
                 changeRarity = XMaterial.BARRIER.parseItem();
-                try {
-                    utils.setDisplayName(changeRarity, conf_msg.RARITY_NAMES.get(7));
-                } catch (Exception Ignored) { utils.setDisplayName(changeRarity, "&cUnavailable"); }
                 break;
         }
+        utils.setDisplayName(changeRarity, getRarityLore(s));
         return changeRarity;
     }
 
@@ -285,34 +266,80 @@ public class dailyItem {
 
         switch (rarity) {
             case 0:
+                try {
+                    return conf_msg.RARITY_NAMES.get(0);
+                } catch (Exception ignored) {}
                 return "Common";
-
             case 80:
+                try {
+                    return conf_msg.RARITY_NAMES.get(1);
+                } catch (Exception ignored) {}
                 return "UnCommon";
-
             case 60:
+                try {
+                    return conf_msg.RARITY_NAMES.get(2);
+                } catch (Exception ignored) {}
                 return "Rare";
-
             case 40:
+                try {
+                    return conf_msg.RARITY_NAMES.get(3);
+                } catch (Exception ignored) {}
                 return "Epic";
-
             case 20:
+                try {
+                    return conf_msg.RARITY_NAMES.get(4);
+                } catch (Exception ignored) {}
                 return "Ancient";
-
             case 10:
-                return "Legendary";
+                try {
+                    return conf_msg.RARITY_NAMES.get(5);
+                } catch (Exception ignored) {}
+                return "&6Legendary";
             case 5:
+                try {
+                    return conf_msg.RARITY_NAMES.get(6);
+                } catch (Exception ignored) {}
                 return "Mythic";
-
             default:
+                try {
+                    return conf_msg.RARITY_NAMES.get(7);
+                } catch (Exception ignored) {}
                 return "Unavailable";
-
         }
     }
 
     public static String getRarityLore(ItemStack item) {
         int rarity = (Integer) new dailyItem(item).getMetadata(dailyMetadataType.rds_rarity);
         return getRarityLore(rarity);
+    }
+
+    public static class dailyItemPrice {
+
+        private boolean randomFlag = false;
+        private double minPrice = 0;
+        private double maxPrice = 0;
+        private double currentPrice = -1;
+
+        public dailyItemPrice(double minPrice) {
+            this.minPrice = minPrice;
+        }
+
+        public dailyItemPrice(double minPrice, double maxPrice) {
+            this.minPrice = minPrice;
+            this.maxPrice = maxPrice;
+            randomFlag = true;
+        }
+
+        public void generateRandomPrice() {
+
+            if (!randomFlag)
+                currentPrice = minPrice;
+            else
+                currentPrice = minPrice + Math.random() * (maxPrice - minPrice);
+        }
+
+        public double getCurrentPrice() { return currentPrice; }
+
     }
 
     public enum dailyMetadataType {
@@ -324,6 +351,7 @@ public class dailyItem {
         rds_permissions,
         rds_confirm_gui,
         rds_setItems,
-        rds_bundle
+        rds_bundle,
+        rds_itemEcon
     }
 }

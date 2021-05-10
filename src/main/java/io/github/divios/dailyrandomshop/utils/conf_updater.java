@@ -1,5 +1,6 @@
 package io.github.divios.dailyrandomshop.utils;
 
+import io.github.divios.dailyrandomshop.database.dataManager;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -14,9 +15,21 @@ public class conf_updater {
     private static final io.github.divios.dailyrandomshop.main main =
             io.github.divios.dailyrandomshop.main.getInstance();
 
+    public static final int version = 235;
+    public static boolean priceFormat = false;
+
     public static void check() {
-        String version = "2.3.4";
-        if (main.getConfig().getString("version", version).equals(version))
+
+        String[] _v = main.getConfig().getString("version").split("\\.");
+        int _version = 0;
+        for (int i = 0; i < _v.length; i++) {
+            _version += Integer.parseInt(_v[i]) * Math.pow(10, _v.length - 1 - i);
+        }
+
+        priceFormat = _version < 235;
+        //main.getLogger().info(priceFormat + "");
+
+        if (_version == version)
             return;
         update();
     }

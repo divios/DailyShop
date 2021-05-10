@@ -14,7 +14,7 @@ public class confirmItemsLore implements loreStrategy {
 
     @Override
     public void setLore(ItemStack item) {
-        String price = String.format("%,.2f", dailyItem.getPrice(item) * item.getAmount());
+        String price = String.format("%,.2f", new dailyItem(item).getPrice() * item.getAmount());
         utils.setLore(item, Arrays.asList("&6Buy for &7" + price));
     }
 
@@ -35,7 +35,7 @@ public class confirmItemsLore implements loreStrategy {
     }
 
     public void setLore(ItemStack item, ItemStack itemPrice) {
-        String price = String.format("%,.2f", dailyItem.getPrice(itemPrice) * itemPrice.getAmount());
+        String price = String.format("%,.2f", new dailyItem(itemPrice).getPrice() * itemPrice.getAmount());
         utils.setLore(item, Arrays.asList("&6Buy for &7" + price));
     }
 

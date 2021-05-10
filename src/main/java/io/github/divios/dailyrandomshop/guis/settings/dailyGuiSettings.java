@@ -70,17 +70,18 @@ public class dailyGuiSettings {
 
         if (e.isLeftClick() && !e.isShiftClick()) {
             new AnvilGUI.Builder()
-                    .onClose(player -> utils.runTaskLater(() -> {
-                        openInventory(player);
-                    }, 1L))
+                    .onClose(player -> utils.runTaskLater(() -> openInventory(player), 1L))
                     .onComplete((player, text) -> {
                         try {
                             Double.parseDouble(text);
                         } catch (NumberFormatException err) { return AnvilGUI.Response.text("Is not Integer"); }
 
-                        String uuid = dailyItem.getUuid(e.getCurrentItem());
-                        dailyItem.changePriceByUuid(uuid, Double.parseDouble(text));
-                        buyGui.getInstance().updateItem(uuid, buyGui.updateAction.update);
+                        new dailyItem(dailyItem.getRawItem(e.getCurrentItem()))
+                                .addNbt(dailyItem.dailyMetadataType.rds_itemEcon,
+                                        new dailyItem.dailyItemPrice(Double.parseDouble(text))).getItem();
+
+                        buyGui.getInstance().updateItem(dailyItem.getUuid(e.getCurrentItem()),
+                                buyGui.updateAction.update);
                         return AnvilGUI.Response.close();
                     })
                     .text(conf_msg.DAILY_ITEMS_MENU_ANVIL_DEFAULT_TEXT)

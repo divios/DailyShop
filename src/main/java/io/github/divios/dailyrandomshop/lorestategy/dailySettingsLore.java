@@ -17,7 +17,7 @@ public class dailySettingsLore implements loreStrategy {
 
     @Override
     public void setLore(ItemStack item) {
-        String price = String.format("%,.2f", dailyItem.getPrice(item));
+        String price = String.format("%,.2f", new dailyItem(item).getPrice());
         String currency = conf_msg.VAULT_CUSTOM_NAME;
         try {
             currency = ((AbstractMap.SimpleEntry<String, String>)

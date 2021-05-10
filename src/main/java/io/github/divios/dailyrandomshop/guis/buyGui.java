@@ -99,6 +99,7 @@ public class buyGui implements Listener, InventoryHolder {
 
             ItemStack randomItem = new dailyItem(
                     utils.getEntry(listOfMaterials, ran), true)
+                    .generateRandomPrice()
                     .addLoreStrategy(new currentItemsLore())
                     .getItem();
 
