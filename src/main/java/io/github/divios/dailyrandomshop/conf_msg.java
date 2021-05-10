@@ -144,7 +144,7 @@ public class conf_msg {
         CUSTOMIZE_ENABLE_SET_LORE = yamlFile.getStringList("customize_enable_set_lore");
         CUSTOMIZE_CHANGE_SET_LORE = yamlFile.getStringList("customize_change_set_lore");
         CUSTOMIZE_CHANGE_RARITY_LORE = yamlFile.getStringList("customize_change_rarity_lore");
-        RARITY_NAMES = yamlFile.getStringList("customize_rarity-names");
+        RARITY_NAMES = yamlFile.getStringList("customize_rarity_names");
         CUSTOMIZE_RENAME = utils.formatString(yamlFile.getString("customize_rename", "&f&lRename"));
         CUSTOMIZE_RENAME_LORE = yamlFile.getStringList("customize_rename_lore");
         CUSTOMIZE_MATERIAL = utils.formatString(yamlFile.getString("customize-change-material", "&f&lChange Material"));

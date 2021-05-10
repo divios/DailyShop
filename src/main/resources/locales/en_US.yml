@@ -164,7 +164,7 @@ customize_change_econ_lore:
 customize_change_rarity_lore:
   - "&7Click to change item rarity"
 
-customize_rarity-names:
+customize_rarity_names:
   - "&7Common"
   - "&dUncommon"
   - "&5Rare"
