@@ -58,7 +58,7 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
         Inventory inv = Bukkit.createInventory(instance, 54, conf_msg.CUSTOMIZE_GUI_TITLE);
 
         ItemStack barrier = XMaterial.BARRIER.parseItem();
-        utils.setDisplayName(barrier, "&c&lUNAVAILABLE");
+        utils.setDisplayName(barrier, conf_msg.CUSTOMIZE_UNAVAILABLE);
 
         ItemStack changeEcon = XMaterial.EMERALD.parseItem();
         utils.setDisplayName(changeEcon, conf_msg.CUSTOMIZE_CHANGE_ECON);
@@ -158,8 +158,8 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
         utils.setLore(bundle, Arrays.asList("&6Right Click > &7To change items on the bundle"));
 
         ItemStack durability = XMaterial.DAMAGED_ANVIL.parseItem();
-        utils.setDisplayName(durability, "&fChange item Durability");
-        utils.setLore(durability, Arrays.asList("&6Right Click > &7To change items durability"));
+        utils.setDisplayName(durability, conf_msg.CUSTOMIZE_DURABILITY);
+        utils.setLore(durability, conf_msg.CUSTOMIZE_DURABILITY_LORE);
 
         ItemFlag f = ItemFlag.HIDE_ENCHANTS;
 
@@ -326,7 +326,7 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
                         .onComplete((player, text) -> {
                             try {
                                 Integer.parseInt(text);
-                            } catch (NumberFormatException err) {return AnvilGUI.Response.text("not integer");}
+                            } catch (NumberFormatException err) {return AnvilGUI.Response.text(conf_msg.MSG_NOT_INTEGER);}
                             int i = Integer.parseInt(text);
                             if(i < 1 || i > 64) return AnvilGUI.Response.text("invalid amount");
                             new dailyItem(newItem)
@@ -395,7 +395,7 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
                     .onComplete((player, text) -> {
                         try {
                             Short.parseShort(text);
-                        } catch (NumberFormatException err) {return AnvilGUI.Response.text("not integer");}
+                        } catch (NumberFormatException err) {return AnvilGUI.Response.text(conf_msg.MSG_NOT_INTEGER);}
                         short i = Short.parseShort(text);
                         newItem.setDurability((short) (newItem.getType().getMaxDurability() - i));
                         return AnvilGUI.Response.close();
@@ -477,7 +477,7 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
                         .onComplete((player, text) -> {
                             try {
                                 Integer.parseInt(text);
-                            } catch (NumberFormatException err) {return AnvilGUI.Response.text("not integer");}
+                            } catch (NumberFormatException err) {return AnvilGUI.Response.text(conf_msg.MSG_NOT_INTEGER);}
                             int i = Integer.parseInt(text);
                             if(i < 1 || i > 64) return AnvilGUI.Response.text("invalid amount");
                             new dailyItem(newItem)

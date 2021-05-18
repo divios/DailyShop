@@ -19,6 +19,7 @@ daily-shop-gui-painting-lore:
 daily-items-lore-price: "&6Price: &7{price}"
 daily-items-lore-currency: "&6Currency: &7{currency}"
 daily-items-lore-rarity: "&6Rarity: &7{rarity}"
+daily-items-lore-buy-for: "&6Buy for &7{price}"
 
   ###############################
   ####### Sell Shop menu ########
@@ -50,6 +51,8 @@ confirm-gui-confirm-pane: "&a&lConfirm"
 #the name of the arrow to return to
 #the daily shop
 confirm-gui-return-name: "&c&lReturn"
+confirm-gui-return-pane-lore:
+  - "&7Click to go back"
 
   #############################
 ####### Confirm menu ########
@@ -174,6 +177,14 @@ customize_rarity_names:
   - "&eMythic"
   - "&cUnavailable"
 
+customize_search: "&b&lSearch"
+customize_search_lore:
+  - "&7Click to search item"
+
+customize_cancel_search: "&c&lCancel search"
+customize_cancel_search_lore:
+  - "&7Click to cancel search"
+
 customize_change_confirm_gui: "&f&lEnable/disable confirm Gui"
 customize_change_confirm_gui_lore:
   - "&7Click to allow/disable the"
@@ -219,6 +230,14 @@ customize_change_amount_lore:
   - "&6> Right Click: &7Disable feature"
   - ""
   - "&6Current stock: &7{amount}"
+
+customize_bundle: "&f&lChange bundle items"
+customize_bundle_lore:
+  - "&6Right Click > &7To change items on the bundle"
+
+customize_change-durability: "&fChange item Durability"
+customize_change-durability_lore:
+  - "&6Right Click > &7To change items durability"
 
 customize_enable_commands: "&f&lSet Item Reward as Commands"
 customize_enable_commands_lore:
@@ -285,6 +304,8 @@ customize_toggle_effects_lore:
   - ""
   - "&6Status &7{status}"
 
+customize_unavailable_item: "&c&lUNAVAILABLE"
+
 ######################
 ###### Messages ######
 ######################
@@ -310,4 +331,5 @@ message-anvil-error-integer: "Not integer"
 message-add-item-title: "&a&lClick item"
 message-add-item-subtitle: "&7In hand to add it"
 message-timer-expired: "&7Ey! The time to select an item expired, try it again"
+message-not-integer: "Not integer"
 message-reload: "&7Reloaded all files"
