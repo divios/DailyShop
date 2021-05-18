@@ -292,34 +292,45 @@ public class buyGui implements Listener, InventoryHolder {
             }
 
 
-            if (dItem.hasMetadata(dailyItem.dailyMetadataType.rds_confirm_gui)
-                    && !dItem.hasMetadata(dailyItem.dailyMetadataType.rds_amount)
-                    && !dItem.hasMetadata(dailyItem.dailyMetadataType.rds_setItems))  {
-                confirmGui.openInventory(p,
-                        dailyItem.getRawItem(dailyItem
-                                .getRawItem(e.getCurrentItem())).clone(),
-                        (player, itemStack) -> {
-                            player.closeInventory();
+            if ((boolean) dItem.getMetadata(dailyItem.dailyMetadataType.rds_confirm_gui)) {
+
+                if (!dItem.hasMetadata(dailyItem.dailyMetadataType.rds_amount)
+                        && !dItem.hasMetadata(dailyItem.dailyMetadataType.rds_setItems)) {
+                    confirmGui.openInventory(p,
+                            dailyItem.getRawItem(dailyItem
+                                    .getRawItem(e.getCurrentItem())).clone(),
+                            (player, itemStack) -> {
+                                player.closeInventory();
+                                try {
+                                    transaction.initTransaction(p, itemStack);
+                                } catch (transactionExc transactionExc) {
+                                    transactionExc.sendErrorMsg(p);
+                                }
+                            }, player -> buyGui.getInstance().openInventory(player));
+                } else {
+                    new confirmIH(p, (player, aBoolean) -> {
+                        if (aBoolean) {
+                            p.closeInventory();
                             try {
-                                transaction.initTransaction(p, itemStack);
+                                transaction.initTransaction(p, dailyItem.getRawItem(e.getCurrentItem()));
                             } catch (transactionExc transactionExc) {
                                 transactionExc.sendErrorMsg(p);
                             }
-                        }, player -> buyGui.getInstance().openInventory(player));
+                        } else
+                            buyGui.getInstance().openInventory(player);
+                    }, player -> buyGui.getInstance().openInventory(player), e.getCurrentItem(),
+                            conf_msg.CONFIRM_GUI_NAME, conf_msg.CONFIRM_MENU_YES, conf_msg.CONFIRM_MENU_NO);
+                }
+
             } else {
-                new confirmIH(p, (player, aBoolean) -> {
-                    if (aBoolean) {
-                        p.closeInventory();
-                        try {
-                            transaction.initTransaction(p, dailyItem.getRawItem(e.getCurrentItem()));
-                        } catch (transactionExc transactionExc) {
-                            transactionExc.sendErrorMsg(p);
-                        }
-                    } else
-                        buyGui.getInstance().openInventory(player);
-                }, player -> buyGui.getInstance().openInventory(player), e.getCurrentItem(),
-                        conf_msg.CONFIRM_GUI_NAME, conf_msg.CONFIRM_MENU_YES, conf_msg.CONFIRM_MENU_NO);
+                try {
+                    transaction.initTransaction(p, dailyItem.getRawItem(e.getCurrentItem()));
+                } catch (transactionExc transactionExc) {
+                    transactionExc.sendErrorMsg(p);
+                }
             }
+
+
 
         }
 
