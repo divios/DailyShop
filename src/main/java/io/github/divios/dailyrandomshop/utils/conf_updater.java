@@ -15,19 +15,31 @@ public class conf_updater {
     private static final io.github.divios.dailyrandomshop.main main =
             io.github.divios.dailyrandomshop.main.getInstance();
 
-    public static final int version = 235;
+    public static final double version = 235.1; //2.3.5A
     public static boolean priceFormat = false;
 
     public static void check() {
+        int pace = 1;
+        List<String> _v = new ArrayList<>
+                (Arrays.asList(main.getConfig().getString("version").split("\\.")));
+        if (_v.get(_v.size() - 1).length() == 2) { //si hay una letra
+            pace = 2;
+            String letter = _v.get(_v.size() - 1).substring(1, 2);
+            _v.set(_v.size() - 1, _v.get(_v.size() - 1).substring(0, 1));
+            _v.add(letter);
+        }
+        double _version = 0;
+        for (int i = 0; i < _v.size(); i++) {
 
-        String[] _v = main.getConfig().getString("version").split("\\.");
-        int _version = 0;
-        for (int i = 0; i < _v.length; i++) {
-            _version += Integer.parseInt(_v[i]) * Math.pow(10, _v.length - 1 - i);
+            if (_v.get(i).contains("A")) _version += 0.1;
+            else if (_v.get(i).equals("B")) _version += 0.2;
+            else if (_v.get(i).equals("C")) _version += 0.3;
+
+            else _version += Integer.parseInt(_v.get(i)) * Math.pow(10, _v.size() - pace - i);
         }
 
-        priceFormat = _version < 235;
-        //main.getLogger().info(priceFormat + "");
+        priceFormat = _version < 235; //version desde donde se empieza este cambio
+        //main.getLogger().severe(priceFormat + "");
 
         if (_version == version)
             return;
@@ -149,6 +161,8 @@ public class conf_updater {
             FileConfiguration yamlOldFile = YamlConfiguration.loadConfiguration(newFile);
             Map<String, Object> oldValues = yamlOldFile.getValues(false);
 
+            FileConfiguration yamlNewFile = YamlConfiguration.loadConfiguration(oldFile);
+
             ArrayList<String> linesInDefaultConfig = new ArrayList<>();
             try {
 
@@ -163,6 +177,7 @@ public class conf_updater {
             }
 
             ArrayList<String> newLines = new ArrayList<>();
+            String quotes = "\"";
 
             for (String s : linesInDefaultConfig) {
                 boolean added = false;
@@ -172,28 +187,26 @@ public class conf_updater {
                 for (String s2 : oldValues.keySet()) {
                     if (!s.startsWith(s2 + ":")) continue;
 
-                    String quotes = "\"";
+                    if (yamlOldFile.isList(s2)) {
+                        newLines.add(s2 + ":");
+                        for (String s3: yamlOldFile.getStringList(s2))
+                            newLines.add("  - " + quotes + s3 + quotes);
+                    } else
+                        newLines.add(s2 + ": " + quotes + yamlOldFile.getString(s2) + quotes);
 
-                    if(s.contains("lore") &&
-                            !s.equals("customize_change_lore") &&
-                            !s.equals("customize_change_lore_anvil_title") &&
-                            !s.equals("customize_change_lore_default_text") &&
-                            !s.equals("daily-items-lore-rarity") &&
-                            !s.equals("daily-items-lore-currency") &&
-                            !s.equals("daily-items-lore-price") ) {
-                        newLines.add(s);
-                        for(String lore: yamlOldFile.getStringList(s2)) {
-                            newLines.add("  - " + quotes + lore + quotes);
-                        }
-                        added = true;
-                        break;
-                    }
-
-                    newLines.add(s2 + ": " + quotes + oldValues.get(s2).toString() + quotes);
                     added = true;
                     break;
                 }
-                if (!added) newLines.add(s);
+
+                if (!added) {
+                    newLines.add(s);
+                    if (s.startsWith("#") || s.isEmpty()) continue;
+
+                    String _s = s.substring(0, s.length() - 1);
+                    if (yamlNewFile.isList(_s))
+                        for (String s2: yamlNewFile.getStringList(_s))
+                            newLines.add("  - " + quotes + s2 + quotes);
+                }
             }
 
             oldFile.delete();
