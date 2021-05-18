@@ -61,8 +61,8 @@ public class dailyGuiSettings {
 
     public void setItems(Inventory inv) {
         ItemStack addItems = XMaterial.ANVIL.parseItem();
-        utils.setDisplayName(addItems, "&b&lAdd");
-        utils.setLore(addItems, Arrays.asList("&7Click to add item"));
+        utils.setDisplayName(addItems, conf_msg.CONFIRM_GUI_ADD_PANE);
+        utils.setLore(addItems, conf_msg.DAILY_ITEMS_MENU_ADD_LORE);
         inv.setItem(52, addItems);
     }
 
@@ -74,7 +74,7 @@ public class dailyGuiSettings {
                     .onComplete((player, text) -> {
                         try {
                             Double.parseDouble(text);
-                        } catch (NumberFormatException err) { return AnvilGUI.Response.text("Is not Integer"); }
+                        } catch (NumberFormatException err) { return AnvilGUI.Response.text(conf_msg.MSG_NOT_INTEGER); }
 
                         new dailyItem(dailyItem.getRawItem(e.getCurrentItem()))
                                 .addNbt(dailyItem.dailyMetadataType.rds_itemEcon,
@@ -100,7 +100,7 @@ public class dailyGuiSettings {
                 }
                 openInventory(player);
             }, dailyGuiSettings::openInventory
-                    ,null, "&aConfirm", conf_msg.CONFIRM_MENU_YES, conf_msg.CONFIRM_MENU_NO);
+                    ,null, conf_msg.CONFIRM_MENU_YES, conf_msg.CONFIRM_MENU_YES, conf_msg.CONFIRM_MENU_NO);
         }
 
         else if (e.isLeftClick() && e.isShiftClick()) {

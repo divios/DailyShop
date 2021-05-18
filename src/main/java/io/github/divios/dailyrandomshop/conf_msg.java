@@ -15,7 +15,7 @@ public class conf_msg {
 
     public static String
             PREFIX, VAULT_CUSTOM_NAME,
-            BUY_GUI_TITLE, BUY_GUI_PAINTING_NAME, BUY_GUI_ARROW_NAME, BUY_GUI_ITEMS_LORE_PRICE, BUY_GUI_ITEMS_LORE_CURRENCY, BUY_GUI_ITEMS_LORE_RARITY,
+            BUY_GUI_TITLE, BUY_GUI_PAINTING_NAME, BUY_GUI_ARROW_NAME, BUY_GUI_ITEMS_LORE_PRICE, BUY_GUI_ITEMS_LORE_CURRENCY, BUY_GUI_ITEMS_LORE_RARITY, BUY_GUI_ITEMS_LORE_BUY_FOR,
             CONFIRM_GUI_NAME, CONFIRM_GUI_ADD_PANE, CONFIRM_GUI_REMOVE_PANE, CONFIRM_GUI_CONFIRM_PANE, CONFIRM_GUI_RETURN_NAME,
             SELL_GUI_TITLE, SELL_PAINTING_NAME, SELL_ARROW_NAME, SELL_ITEM_NAME,
             CONFIRM_MENU_YES, CONFIRM_MENU_NO,
@@ -24,25 +24,25 @@ public class conf_msg {
             DAILY_ITEMS_MENU_TITLE, DAILY_ITEMS_MENU_ADD, DAILY_ITEMS_MENU_NEXT, DAILY_ITEMS_MENU_PREVIOUS, DAILY_ITEMS_MENU_RETURN, DAILY_ITEMS_MENU_ANVIL_TITLE, DAILY_ITEMS_MENU_ANVIL_DEFAULT_TEXT,
             SELL_ITEMS_MENU_TITLE, SELL_ITEMS_MENU_NEXT, SELL_ITEMS_MENU_PREVIOUS, SELL_ITEMS_MENU_RETURN, SELL_ITEMS_MENU_ANVIL_TITLE, SELL_ITEMS_MENU_ANVIL_DEFAULT_TEXT,
             CUSTOMIZE_GUI_TITLE, CUSTOMIZE_CRAFT, CUSTOMIZE_RETURN, CUSTOMIZE_MATERIAL, CUSTOMIZE_RENAME, CUSTOMIZE_LORE, CUSTOMIZE_ENCHANTS, CUSTOMIZE_AMOUNT, CUSTOMIZE_ENABLE_COMMANDS, CUSTOMIZE_CHANGE_COMMANDS, CUSTOMIZE_TOGGLE_ENCHANTS,
-            CUSTOMIZE_RENAME_ANVIL_TITLE, CUSTOMIZE_RENAME_ANVIL_DEFAULT_TEXT, CUSTOMIZE_CHANGE_LORE_TITLE, CUSTOMIZE_CHANGE_LORE_DEFAULT_TEXT,
+            CUSTOMIZE_RENAME_ANVIL_TITLE, CUSTOMIZE_RENAME_ANVIL_DEFAULT_TEXT, CUSTOMIZE_CHANGE_LORE_TITLE, CUSTOMIZE_CHANGE_LORE_DEFAULT_TEXT, CUSTOMIZE_SEARCH, CUSTOMIZE_CANCEL_SEARCH, CUSTOMIZE_DURABILITY, CUSTOMIZE_BUNDLE,
             CUSTOMIZE_ADD_COMMANDS_TITLE, CUSTOMIZE_ADD_COMMANDS_DEFAULT_TEXT,
-            CUSTOMIZE_TOGGLE_ATTRIBUTES, CUSTOMIZE_TOGGLE_EFFECTS, CUSTOMIZE_CHANGE_ECON, CUSTOMIZE_CHANGE_CONFIRM_GUI, CUSTOMIZE_PERMS, CUSTOMIZE_SET;
+            CUSTOMIZE_TOGGLE_ATTRIBUTES, CUSTOMIZE_TOGGLE_EFFECTS, CUSTOMIZE_CHANGE_ECON, CUSTOMIZE_CHANGE_CONFIRM_GUI, CUSTOMIZE_PERMS, CUSTOMIZE_SET ,CUSTOMIZE_UNAVAILABLE;;
 
     public static List<String> BUY_GUI_PAINTING_LORE, BUY_GUI_ARROW_LORE,
             SELL_PAINTING_LORE, SELL_ARROW_LORE,
             SETTINGS_DAILY_ITEM_LORE, SETTINGS_SELL_ITEM_LORE,
             ADD_ITEMS_FROM_ZERO_LORE, ADD_ITEMS_FROM_EXISTING_LORE, ADD_ITEMS_RETURN_LORE,
             DAILY_ITEMS_MENU_ITEMS_LORE, DAILY_ITEMS_MENU_ADD_LORE,
-            SELL_ITEMS_MENU_ITEMS_LORE,
+            SELL_ITEMS_MENU_ITEMS_LORE, CONFIRM_GUI_RETURN_PANE_LORE, CUSTOMIZE_SEARCH_LORE, CUSTOMIZE_CANCEL_SEARCH_LORE,
             CUSTOMIZE_CRAFT_LORE, CUSTOMIZE_RETURN_LORE, CUSTOMIZE_RENAME_LORE, CUSTOMIZE_MATERIAL_LORE, CUSTOMIZE_LORE_LORE, CUSTOMIZE_ENCHANTS_LORE, CUSTOMIZE_AMOUNT_LORE, CUSTOMIZE_AMOUNT_ENABLE_LORE, CUSTOMIZE_ENABLE_COMMANDS_LORE,
-            CUSTOMIZE_CHANGE_COMMANDS_LORE, CUSTOMIZE_TOGGLE_ENCHANTS_LORE, CUSTOMIZE_TOGGLE_ATTRIBUTES_LORE, CUSTOMIZE_TOGGLE_EFFECTS_LORE, CUSTOMIZE_CHANGE_ECON_LORE,
+            CUSTOMIZE_CHANGE_COMMANDS_LORE, CUSTOMIZE_TOGGLE_ENCHANTS_LORE, CUSTOMIZE_TOGGLE_ATTRIBUTES_LORE, CUSTOMIZE_TOGGLE_EFFECTS_LORE, CUSTOMIZE_CHANGE_ECON_LORE ,CUSTOMIZE_DURABILITY_LORE, CUSTOMIZE_BUNDLE_LORE,
             CUSTOMIZE_CHANGE_RARITY_LORE, CUSTOMIZE_CHANGE_CONFIRM_GUI_LORE, CUSTOMIZE_ENABLE_PERMS_LORE, CUSTOMIZE_CHANGE_PERMS_LORE, CUSTOMIZE_ENABLE_SET_LORE, CUSTOMIZE_CHANGE_SET_LORE, RARITY_NAMES;
 
     public static String MSG_OPEN_SHOP, MSG_BUY_ITEM, MSG_SELL_ITEMS, MSG_NOT_ENOUGH_MONEY, MSG_INVENTORY_FULL,
             MSG_INVALID_ITEM, MSG_NOT_PERMS, MSG_NOT_PERMS_ITEM, MSG_ERROR_ITEM_HAND, MSG_ERROR_PRICE,
             MSG_ERROR_ADDING_ITEM, MSG_ITEM_ADDED, MSG_NEW_DAILY_ITEMS, MSG_SELL_ITEMS_GUI_EMPTY,
             MSG_ADDED_ITEM, MSG_REMOVED_ITEM, MSG_ITEM_ALREADY_ON_SALE, MSG_NOT_IN_STOCK, MSG_TIMER_EXPIRED,
-            MSG_ADD_ITEM_TITLE, MSG_ADD_ITEM_SUBTITLE, MSG_RELOAD;
+            MSG_ADD_ITEM_TITLE, MSG_ADD_ITEM_SUBTITLE, MSG_NOT_INTEGER, MSG_RELOAD;
 
     public static int N_DAILY_ITEMS, TIMER;
     public static double DEFAULT_PRICE;
@@ -77,6 +77,7 @@ public class conf_msg {
         BUY_GUI_ITEMS_LORE_PRICE = utils.formatString(yamlFile.getString("daily-items-lore-price", "&6Price: &7{price}"));
         BUY_GUI_ITEMS_LORE_CURRENCY = utils.formatString(yamlFile.getString("daily-items-lore-currency", "&6Currency: &7{currency}"));
         BUY_GUI_ITEMS_LORE_RARITY = utils.formatString(yamlFile.getString("daily-items-lore-rarity", "&6Rarity: &7{rarity}"));
+        BUY_GUI_ITEMS_LORE_BUY_FOR = utils.formatString(yamlFile.getString("daily-items-lore-buy-for", "&6Buy for &7{price}"));
         BUY_GUI_ARROW_NAME = utils.formatString(yamlFile.getString("daily-shop-to-sell-name", "&c&lVisit Market"));
         BUY_GUI_ARROW_LORE = yamlFile.getStringList("daily-shop-to-sell-lore");
 
@@ -85,6 +86,7 @@ public class conf_msg {
         CONFIRM_GUI_REMOVE_PANE = utils.formatString(yamlFile.getString("confirm-gui-remove-pane", "&cRemove"));
         CONFIRM_GUI_CONFIRM_PANE = utils.formatString(yamlFile.getString("confirm-gui-confirm-pane", "&aConfirm"));
         CONFIRM_GUI_RETURN_NAME = utils.formatString(yamlFile.getString("confirm-gui-return-name", "&cReturn"));
+        CONFIRM_GUI_RETURN_PANE_LORE = yamlFile.getStringList("confirm-gui-return-pane-lore");
 
         SELL_GUI_TITLE = utils.formatString(yamlFile.getString("sell-gui-name", "&3&lMarket"));
         SELL_PAINTING_NAME = utils.formatString(yamlFile.getString("sell-gui-painting-name", "&3&lWhat is this?"));
@@ -112,7 +114,7 @@ public class conf_msg {
 
         DAILY_ITEMS_MENU_TITLE = utils.formatString(yamlFile.getString("daily-items-menu_title", "&6&lDaily items Manager"));
         DAILY_ITEMS_MENU_ADD = utils.formatString(yamlFile.getString("daily-items-menu-add", "&3&lAdd"));
-        DAILY_ITEMS_MENU_ADD_LORE = yamlFile.getStringList("daily-items-menu-add-lore");
+        DAILY_ITEMS_MENU_ADD_LORE = yamlFile.getStringList("daily_items_menu_add_lore");
         DAILY_ITEMS_MENU_NEXT = utils.formatString(yamlFile.getString("daily-items-menu_next", "&6&lNext"));
         DAILY_ITEMS_MENU_PREVIOUS = utils.formatString(yamlFile.getString("daily-items-menu_previous", "&6&lPrevious"));
         DAILY_ITEMS_MENU_RETURN = utils.formatString(yamlFile.getString("daily-items-menu_return", "&c&lReturn"));
@@ -147,14 +149,22 @@ public class conf_msg {
         RARITY_NAMES = yamlFile.getStringList("customize_rarity_names");
         CUSTOMIZE_RENAME = utils.formatString(yamlFile.getString("customize_rename", "&f&lRename"));
         CUSTOMIZE_RENAME_LORE = yamlFile.getStringList("customize_rename_lore");
-        CUSTOMIZE_MATERIAL = utils.formatString(yamlFile.getString("customize-change-material", "&f&lChange Material"));
+        CUSTOMIZE_MATERIAL = utils.formatString(yamlFile.getString("customize_change_material", "&f&lChange Material"));
         CUSTOMIZE_MATERIAL_LORE = yamlFile.getStringList("customize_change_material_lore");
+        CUSTOMIZE_SEARCH = utils.formatString(yamlFile.getString("customize_search", "&b&lSearch"));
+        CUSTOMIZE_SEARCH_LORE = yamlFile.getStringList("customize_search_lore");
+        CUSTOMIZE_CANCEL_SEARCH = utils.formatString(yamlFile.getString("customize_cancel_search", "&c&lCancel search"));
+        CUSTOMIZE_CANCEL_SEARCH_LORE = yamlFile.getStringList("customize_cancel_search_lore");
         CUSTOMIZE_LORE = utils.formatString(yamlFile.getString("customize-change_lore", "&f&lChange Lore"));
         CUSTOMIZE_LORE_LORE = yamlFile.getStringList("customize_change_lore_lore");
-        CUSTOMIZE_ENCHANTS = utils.formatString(yamlFile.getString("customize-change_enchants", "&f&lEdit enchantments"));
+        CUSTOMIZE_ENCHANTS = utils.formatString(yamlFile.getString("customize_change_enchants", "&f&lEdit enchantments"));
         CUSTOMIZE_ENCHANTS_LORE = yamlFile.getStringList("customize_change_enchants_lore");
         CUSTOMIZE_AMOUNT = utils.formatString(yamlFile.getString("customize_change_amount", "&f&lChange Amount"));
         CUSTOMIZE_AMOUNT_ENABLE_LORE = yamlFile.getStringList("customize_enable_amount_lore");
+        CUSTOMIZE_BUNDLE = utils.formatString(yamlFile.getString("customize_bundle", "&f&lChange item Durability"));
+        CUSTOMIZE_BUNDLE_LORE = yamlFile.getStringList("customize_bundle_lore");
+        CUSTOMIZE_DURABILITY = utils.formatString(yamlFile.getString("customize_change-durability", "&f&lChange Bundle item"));
+        CUSTOMIZE_DURABILITY_LORE = yamlFile.getStringList("customize_change-durability_lore");
         CUSTOMIZE_AMOUNT_LORE = yamlFile.getStringList("customize_change_amount_lore");
         CUSTOMIZE_ENABLE_COMMANDS = utils.formatString(yamlFile.getString("customize_enable_commands", "&f&lSet Item Reward as Commands"));
         CUSTOMIZE_ENABLE_COMMANDS_LORE = yamlFile.getStringList("customize_enable_commands_lore");
@@ -172,6 +182,7 @@ public class conf_msg {
         CUSTOMIZE_CHANGE_LORE_DEFAULT_TEXT = utils.formatString(yamlFile.getString("customize_change_lore_default_text", "Write lore"));
         CUSTOMIZE_ADD_COMMANDS_TITLE = utils.formatString(yamlFile.getString("customize_add_commands_anvil_title", "&6&lWrite command to be added"));
         CUSTOMIZE_ADD_COMMANDS_DEFAULT_TEXT = utils.formatString(yamlFile.getString("customize_add_commands_default_text", "Write command to be added"));
+        CUSTOMIZE_UNAVAILABLE = utils.formatString(yamlFile.getString("customize_unavailable_item", "&c&lUNAVAILABLE"));
 
         MSG_OPEN_SHOP = utils.formatString(yamlFile.getString("message-open-shop", "&7Opening daily shop..."));
         MSG_BUY_ITEM = utils.formatString(yamlFile.getString("message-buy-item", "&7You bought the item {item} for {price}"));
@@ -194,6 +205,7 @@ public class conf_msg {
         MSG_ADD_ITEM_TITLE = utils.formatString(yamlFile.getString("message-add-item-title", "&a&lClick item"));
         MSG_ADD_ITEM_SUBTITLE = utils.formatString(yamlFile.getString("message-add-item-subtitle", "&7In hand to add it"));
         MSG_TIMER_EXPIRED = utils.formatString(yamlFile.getString("message-timer-expired", "&Ey! The time to select an item expired, try it again"));
+        MSG_NOT_INTEGER = utils.formatString(yamlFile.getString("message-not-integer", "Not integer"));
         MSG_RELOAD = utils.formatString(yamlFile.getString("message-reload", "&7Reloaded all files"));
     }
 

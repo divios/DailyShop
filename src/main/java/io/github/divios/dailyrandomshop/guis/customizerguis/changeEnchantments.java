@@ -1,6 +1,7 @@
 package io.github.divios.dailyrandomshop.guis.customizerguis;
 
 import io.github.divios.dailyrandomshop.builders.dynamicGui;
+import io.github.divios.dailyrandomshop.conf_msg;
 import io.github.divios.dailyrandomshop.utils.utils;
 import io.github.divios.dailyrandomshop.xseries.XMaterial;
 import net.wesjd.anvilgui.AnvilGUI;
@@ -65,7 +66,7 @@ public class changeEnchantments {
                 .onComplete((player, text) -> {
                     try {
                         Integer.parseInt(text);
-                    } catch (NumberFormatException err) { return AnvilGUI.Response.text("Is not Integer"); }
+                    } catch (NumberFormatException err) { return AnvilGUI.Response.text(conf_msg.MSG_NOT_INTEGER); }
                     newItem.addUnsafeEnchantment(Enchantment.getByName(s), Integer.parseInt(text));
                     response.set(true);
                     return AnvilGUI.Response.close();

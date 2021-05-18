@@ -52,6 +52,8 @@ confirm-gui-confirm-pane: "&a&lConfirmar"
 #the name of the arrow to return to
 #the daily shop
 confirm-gui-return-name: "&c&lVolver"
+confirm-gui-return-pane-lore:
+  - "&7Click para volver"
 
   #############################
 ####### Confirm menu ########
@@ -177,6 +179,14 @@ customize_rarity-names:
   - "&eMitico"
   - "&cAgotado"
 
+customize_search: "&b&lBuscar"
+customize_search_lore:
+  - "&7Clic para buscar item"
+
+customize_cancel_search: "&c&lCancelar busqueda"
+customize_cancel_search_lore:
+  - "&7Clic para cancelar busqueda"
+
 customize_change_confirm_gui: "&f&lEnable/disable confirm Gui"
 customize_change_confirm_gui_lore:
   - "&7Click to allow/disable the"
@@ -217,6 +227,13 @@ customize_enable_amount_lore:
   - "&7el numero de veces que se puede comprar viene"
   - "&7determinado por la cantidad del objeto"
 
+customize_bundle: "&f&lCambiar bundle"
+customize_bundle_lore:
+  - "&6Clic drch > &7Para cambiar bundle"
+
+customize_change-durability: "&fCambiar durabilidad"
+customize_change-durability_lore:
+  - "&6Click drch > &7Para cambiar durabilidad del item"
 
 customize_change_amount_lore:
   - "&6> Clic izq: &7Cambiar stock actual"
@@ -288,6 +305,8 @@ customize_toggle_effects_lore:
   - ""
   - "&6Estado &7{status}"
 
+customize_unavailable_item: "&c&lNO DISPONIBLE"
+
 ######################
 ###### Messages ######
 ######################
@@ -313,4 +332,5 @@ message-anvil-error-integer: "No es un numero"
 message-add-item-title: "&a&lClic item"
 message-add-item-subtitle: "&7En mano para añadirlo"
 message-timer-expired: "&7Ey! El temporidazado ha expirado, intentalo de nuevo"
+message-not-integer: "Not es un numero"
 message-reload: "&7Ficheros recargados correctamente"

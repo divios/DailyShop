@@ -25,7 +25,6 @@ import java.util.function.Consumer;
 public class confirmGui implements Listener, InventoryHolder {
 
     private static final io.github.divios.dailyrandomshop.main main = io.github.divios.dailyrandomshop.main.getInstance();
-    private static final dataManager dbManager = dataManager.getInstance();
 
     private static ItemStack add1 = null;
     private static ItemStack add5;
