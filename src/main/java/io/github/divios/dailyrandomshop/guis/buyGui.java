@@ -329,9 +329,6 @@ public class buyGui implements Listener, InventoryHolder {
                     transactionExc.sendErrorMsg(p);
                 }
             }
-
-
-
         }
 
     }
