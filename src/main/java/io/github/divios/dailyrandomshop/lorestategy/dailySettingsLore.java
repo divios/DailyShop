@@ -17,7 +17,6 @@ public class dailySettingsLore implements loreStrategy {
 
     @Override
     public void setLore(ItemStack item) {
-        String price = String.format("%,.2f", new dailyItem(item).getPrice());
         String currency = conf_msg.VAULT_CUSTOM_NAME;
         try {
             currency = ((AbstractMap.SimpleEntry<String, String>)
@@ -36,7 +35,7 @@ public class dailySettingsLore implements loreStrategy {
             lore.add(utils.formatString("&6> Click + Q: &7Reload Custom Item"));
         }
 
-        lore.replaceAll(s -> s.replaceAll("\\{price}", price)
+        lore.replaceAll(s -> s.replaceAll("\\{price}", new dailyItem(item).getVisualPrice())
                 .replaceAll("\\{rarity}", dailyItem.getRarityLore(item))
                 .replaceAll("\\{currency}", finalCurrency));
 

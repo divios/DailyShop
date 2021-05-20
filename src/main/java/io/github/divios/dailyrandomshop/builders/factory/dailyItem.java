@@ -120,6 +120,10 @@ public class dailyItem {
         return ((dailyItemPrice) this.getMetadata(dailyMetadataType.rds_price)).getCurrentPrice();
     }
 
+    public String getVisualPrice() {
+        return ((dailyItemPrice) this.getMetadata(dailyMetadataType.rds_price)).getVisualPrice();
+    }
+
     public dailyItem generateRandomPrice() {
         dailyItemPrice priceE = (dailyItemPrice) this.getMetadata(dailyMetadataType.rds_price);
         priceE.generateRandomPrice();
@@ -339,6 +343,16 @@ public class dailyItem {
                 currentPrice = utils.round(minPrice + Math.random() *
                         (maxPrice - minPrice), 2);
             }
+        }
+
+        /**
+         * Return a visual representation of the price. Useful for lores on settings
+         */
+        public String getVisualPrice() {
+            if (randomFlag)
+                return minPrice + " - " + maxPrice;
+            else
+                return "" + currentPrice;
         }
 
         public double getCurrentPrice() { return currentPrice; }
