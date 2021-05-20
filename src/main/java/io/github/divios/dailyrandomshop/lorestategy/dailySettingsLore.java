@@ -21,7 +21,7 @@ public class dailySettingsLore implements loreStrategy {
         String currency = conf_msg.VAULT_CUSTOM_NAME;
         try {
             currency = ((AbstractMap.SimpleEntry<String, String>)
-                    new dailyItem(item).getMetadata(dailyItem.dailyMetadataType.rds_econ)).getValue();
+                    new dailyItem(item).getMetadata(dailyItem.dailyMetadataType.rds_tEcon)).getValue();
         } catch (NullPointerException ignored) {}
         String finalCurrency = currency; /* Because of lambdas... */
 
