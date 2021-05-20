@@ -69,6 +69,14 @@ public class buyGui implements Listener, InventoryHolder {
         for (int i = 9; i < 18; i++) {     /* Gray panels */
             inv.setItem(i, grayPanel);
         }
+
+        if (main.getConfig().getBoolean("enable-connected-shops", false)) {
+            ItemStack fence = XMaterial.OAK_FENCE_GATE.parseItem();
+            utils.setDisplayName(fence, conf_msg.BUY_GUI_ARROW_NAME);
+            utils.setLore(fence, conf_msg.BUY_GUI_ARROW_LORE);
+            inv.setItem(8, fence);
+        }
+
         updateCurrentItems();
     }
 
@@ -269,11 +277,17 @@ public class buyGui implements Listener, InventoryHolder {
 
         Player p = (Player) e.getWhoClicked();
 
+        if (e.getSlot() == 8) {
+            if (!p.hasPermission("dailyRandomShop.sell")) {
+                utils.noPerms(p);
+                utils.sendSound(p, Sound.ENTITY_VILLAGER_NO);
+            }
+            sellGui.openInventory(p);
+        }
+
         if (utils.isEmpty(dailyItem.getUuid(e.getCurrentItem()))) {
             return;
         }
-
-
 
         if (e.getSlot() >= 18 && e.getSlot() < inv.getSize()
                 && !utils.isEmpty(e.getCurrentItem())) {
