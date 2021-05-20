@@ -8,5 +8,6 @@ public enum allCmds {
     settings,
     renovate,
     reload,
-    help
+    help,
+    importShopGuiItems
 }
