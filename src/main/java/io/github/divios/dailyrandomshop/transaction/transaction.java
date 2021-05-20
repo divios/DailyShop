@@ -107,7 +107,7 @@ public class transaction {
     private static economy getEconomyStrategy(Player p, ItemStack item) {
         AbstractMap.SimpleEntry<String, String> e =
                 (AbstractMap.SimpleEntry<String, String>) new dailyItem(item).
-                        getMetadata(dailyItem.dailyMetadataType.rds_econ);
+                        getMetadata(dailyItem.dailyMetadataType.rds_tEcon);
 
         economy econ = new vault();
 
@@ -130,7 +130,11 @@ public class transaction {
             econ = new MPointsE(e.getValue());
         }
 
-        try {
+        else if (e.getKey().equals(econTypes.playerPoints.name())) {
+            econ = new playerPointsE();
+        }
+
+        try {  //try if exits
             econ.hasMoney(p, 0D);
         } catch (Exception err) { econ = new vault(); }
 
@@ -141,8 +145,8 @@ public class transaction {
         String currency;
         try {
             currency = ((AbstractMap.SimpleEntry<String, String>) new dailyItem(item).
-                    getMetadata(dailyItem.dailyMetadataType.rds_econ)).getKey();
-        } catch (NullPointerException e) { currency = conf_msg.VAULT_CUSTOM_NAME; }
+                    getMetadata(dailyItem.dailyMetadataType.rds_tEcon)).getKey();
+        } catch (Exception e) { currency = conf_msg.VAULT_CUSTOM_NAME; }
 
         return currency;
     }

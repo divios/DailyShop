@@ -5,5 +5,6 @@ public enum econTypes {
     gemsEconomy,
     tokenEnchants,
     tokenManager,
-    MPoints
+    MPoints,
+    playerPoints
 }
