@@ -5,7 +5,9 @@ import io.github.divios.dailyrandomshop.utils.utils;
 import me.realized.tokenmanager.api.TokenManager;
 import me.xanium.gemseconomy.api.GemsEconomyAPI;
 import me.yic.mpoints.MPointsAPI;
+import net.brcdev.shopgui.ShopGuiPlusApi;
 import net.milkbowl.vault.economy.Economy;
+import org.black_ixx.playerpoints.PlayerPointsAPI;
 
 public class hooksManager {
 
@@ -37,6 +39,13 @@ public class hooksManager {
         if (utils.isOperative("MPoints")) {
             MPointsHook.hook();
         }
+
+        if (utils.isOperative("PlayerPoints"))
+            playerPointsHook.hook();
+
+        if (utils.isOperative("ShopGUIPlus"))
+            shopGuiPlusHook.hook();
+
         gemsEconomyHook.getInstance();
         bstatsHook.init();
     }
@@ -52,4 +61,8 @@ public class hooksManager {
     public TokenManager getTokenManagerApi() { return tokenManagerHook.getApi(); }
 
     public MPointsAPI getMPointsApi() { return MPointsHook.getApi(); }
+
+    public PlayerPointsAPI getPlayerPointsApi() { return  playerPointsHook.getApi(); }
+
+    public Object getShopGuiPlusApi() { return shopGuiPlusHook.getApi(); }
 }
