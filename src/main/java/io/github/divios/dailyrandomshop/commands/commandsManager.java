@@ -67,6 +67,11 @@ public class commandsManager implements CommandExecutor {
                 dlCommand = new reloadCmd();
             }
 
+            else if (args[0].equalsIgnoreCase("importShopGui+")
+                    && args.length == 3) {
+                dlCommand = new importShopGuiItemsCmd(args[1], args[2]);
+            }
+
             else dlCommand = new helpCmd();
         }
         dlCommand.run(sender);
