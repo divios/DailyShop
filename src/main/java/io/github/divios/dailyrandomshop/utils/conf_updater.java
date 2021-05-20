@@ -15,7 +15,7 @@ public class conf_updater {
     private static final io.github.divios.dailyrandomshop.main main =
             io.github.divios.dailyrandomshop.main.getInstance();
 
-    public static final double version = 235.1; //2.3.5A
+    public static final double version = 235.2; //2.3.5B
     public static boolean priceFormat = false;
 
     public static void check() {
