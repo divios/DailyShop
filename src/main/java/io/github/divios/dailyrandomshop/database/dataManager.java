@@ -4,7 +4,6 @@ import de.tr7zw.changeme.nbtapi.NBTCompound;
 import de.tr7zw.changeme.nbtapi.NBTContainer;
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import io.github.divios.dailyrandomshop.builders.factory.dailyItem;
-import io.github.divios.dailyrandomshop.conf_msg;
 import io.github.divios.dailyrandomshop.guis.buyGui;
 import io.github.divios.dailyrandomshop.utils.conf_updater;
 import io.github.divios.dailyrandomshop.utils.utils;
@@ -186,7 +185,7 @@ public class dataManager {
                     }
 
                     if (table.equals("daily_items") && conf_updater.priceFormat)
-                        new dailyItem(item).addNbt(dailyItem.dailyMetadataType.rds_itemEcon,
+                        new dailyItem(item).addNbt(dailyItem.dailyMetadataType.rds_price,
                                 new dailyItem.dailyItemPrice(result.getDouble(2)))
                                 .getItem();
 
