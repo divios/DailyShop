@@ -3,7 +3,7 @@
 #########################
 
 # DO NOT CHANGE THIS
-version: 2.3.5A
+version: 2.3.5B
 
 prefix: "&6&lDailyShop > "
 
@@ -20,6 +20,8 @@ debug: false
 # Default: 86400 seconds = 1 day
 timer-duration: 86400
 
+# The default price an item 'll get when added
+# to the shop
 default-price: 500.0
 
 # The number of daily items on the shop, the minimum is 1 and the maximum is 36.
@@ -31,11 +33,12 @@ number-of-daily-items: 14
 # to personalize it
 vault-currency-name: "&7Vault"
 
+# Enable this option to add a button on each shop
+# that will let you travel between them
+enable-connected-shops: false
+
 # On false it won't be possible to access the sell menu
 enable-sell-gui: true
-
-# On false, when clicked an item on the daily menu, it 'll purchased directly
-enable-confirm-gui: true
 
 # On false, rarity feature 'll be disabled
 enable-rarity: true
