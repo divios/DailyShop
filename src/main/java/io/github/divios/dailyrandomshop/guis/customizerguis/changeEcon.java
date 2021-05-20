@@ -11,6 +11,7 @@ import me.realized.tokenmanager.api.TokenManager;
 import me.xanium.gemseconomy.api.GemsEconomyAPI;
 import me.xanium.gemseconomy.currency.Currency;
 import me.yic.mpoints.MPointsAPI;
+import org.black_ixx.playerpoints.PlayerPointsAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -47,6 +48,7 @@ public class changeEcon implements Listener, InventoryHolder {
         TokenEnchantAPI tokenEnchantsApi = hooksManager.getInstance().getTokenEnchantApi();
         TokenManager tokenManagerApi = hooksManager.getInstance().getTokenManagerApi();
         MPointsAPI mPointsAPI = hooksManager.getInstance().getMPointsApi();
+        PlayerPointsAPI pPointsApi = hooksManager.getInstance().getPlayerPointsApi();
 
         inv = Bukkit.createInventory(this, 27, conf_msg.CUSTOMIZE_CHANGE_ECON);
 
@@ -98,6 +100,13 @@ public class changeEcon implements Listener, InventoryHolder {
             inv.addItem(pointsItem);
         });
 
+        if (pPointsApi != null) {
+            ItemStack playerPointsItem = XMaterial.PLAYER_HEAD.parseItem();
+            utils.setDisplayName(playerPointsItem, "&f&lPlayerPoints");
+            utils.setLore(playerPointsItem, Arrays.asList("&7Click to change"));
+            inv.addItem(playerPointsItem);
+        }
+
     }
 
     @Override
@@ -116,26 +125,26 @@ public class changeEcon implements Listener, InventoryHolder {
 
         if (e.getCurrentItem().getType().equals(XMaterial.CHEST.parseMaterial())) {
             new dailyItem(item)
-                .removeNbt(dailyItem.dailyMetadataType.rds_econ).getItem();
+                .removeNbt(dailyItem.dailyMetadataType.rds_tEcon).getItem();
         }
 
         else if (e.getCurrentItem().getType().equals(XMaterial.EMERALD.parseMaterial())) {
             String name = utils.trimString(e.getCurrentItem().getItemMeta().getDisplayName());
             new dailyItem(item)
-                    .addNbt(dailyItem.dailyMetadataType.rds_econ,
+                    .addNbt(dailyItem.dailyMetadataType.rds_tEcon,
                             new AbstractMap.SimpleEntry<>(econTypes.gemsEconomy.name(), name)).getItem();
         }
 
         else if (e.getCurrentItem().getType().equals(XMaterial.ENCHANTED_BOOK.parseMaterial())) {
             new dailyItem(item)
-                    .addNbt(dailyItem.dailyMetadataType.rds_econ,
+                    .addNbt(dailyItem.dailyMetadataType.rds_tEcon,
                             new AbstractMap.SimpleEntry<>(econTypes.tokenEnchants.name()
                                     , econTypes.tokenEnchants.name())).getItem();
         }
 
         else if (e.getCurrentItem().getType().equals(XMaterial.DIAMOND.parseMaterial())) {
             new dailyItem(item)
-                    .addNbt(dailyItem.dailyMetadataType.rds_econ,
+                    .addNbt(dailyItem.dailyMetadataType.rds_tEcon,
                             new AbstractMap.SimpleEntry<>(econTypes.tokenManager.name()
                                     , econTypes.tokenManager.name())).getItem();
         }
@@ -143,8 +152,16 @@ public class changeEcon implements Listener, InventoryHolder {
         else if (e.getCurrentItem().getType().equals(XMaterial.SUNFLOWER.parseMaterial())) {
             String name = utils.trimString(e.getCurrentItem().getItemMeta().getDisplayName());
             new dailyItem(item)
-                    .addNbt(dailyItem.dailyMetadataType.rds_econ,
+                    .addNbt(dailyItem.dailyMetadataType.rds_tEcon,
                             new AbstractMap.SimpleEntry<>(econTypes.MPoints.name()
+                                    , name)).getItem();
+        }
+
+        else if(e.getCurrentItem().getType().equals(XMaterial.PLAYER_HEAD.parseMaterial())) {
+            String name = utils.trimString(e.getCurrentItem().getItemMeta().getDisplayName());
+            new dailyItem(item)
+                    .addNbt(dailyItem.dailyMetadataType.rds_tEcon,
+                            new AbstractMap.SimpleEntry<>(econTypes.playerPoints.name()
                                     , name)).getItem();
         }
 
