@@ -4,7 +4,8 @@ main: io.github.divios.dailyrandomshop.main
 api-version: "1.13"
 prefix: DailyShop
 depend: [ Vault ]
-softdepend: [ PlaceholderAPI, GemsEconomy, MMOItems, MMOLib, Oraxen, TokenEnchant, TokenManager, MPoints ]
+softdepend: [ PlaceholderAPI, GemsEconomy, MMOItems, MMOLib, Oraxen,
+              TokenEnchant, TokenManager, MPoints, PlayerPoints, ShopGUIPlus]
 authors: [ Divios ]
 description: Daily random items to buy on a shop
 commands:
