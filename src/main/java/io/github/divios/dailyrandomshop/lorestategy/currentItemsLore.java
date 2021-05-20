@@ -22,7 +22,7 @@ public class currentItemsLore implements loreStrategy {
         String price = String.format("%,.2f", new dailyItem(item).getPrice());
         String currency;
         try {
-            currency = ((AbstractMap.SimpleEntry<String, String>) new dailyItem(item).getMetadata(dailyItem.dailyMetadataType.rds_econ)).getValue();
+            currency = ((AbstractMap.SimpleEntry<String, String>) new dailyItem(item).getMetadata(dailyItem.dailyMetadataType.rds_tEcon)).getValue();
         } catch (NullPointerException e) {currency = conf_msg.VAULT_CUSTOM_NAME;}
         String finalCurrency = currency; /* Because of lambdas... */
 

@@ -3,7 +3,6 @@ package io.github.divios.dailyrandomshop.builders.factory.blocks;
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import io.github.divios.dailyrandomshop.builders.factory.dailyItem;
 import io.github.divios.dailyrandomshop.builders.factory.dailyItem.dailyMetadataType;
-import io.github.divios.dailyrandomshop.main;
 import io.github.divios.dailyrandomshop.utils.utils;
 import org.bukkit.inventory.ItemStack;
 
@@ -39,11 +38,11 @@ public class addMetadata implements runnableBlocks {
                     nbtItem.setObject(type.name(), aux);
                 }
                 break;
-            case rds_itemEcon:
+            case rds_price:
                 ((dailyItem.dailyItemPrice) value).generateRandomPrice();
                 nbtItem.setObject(type.name(), value);
                 break;
-            case rds_econ:
+            case rds_tEcon:
                 nbtItem.setObject(type.name(), value);
                 break;
             case rds_setItems:
