@@ -280,5 +280,9 @@ public class utils {
                 Bukkit.getPluginManager().getPlugin(pl).isEnabled();
     }
 
+    public static double round(double d, int decimals) {
+        return Math.round(d * Math.pow(10, decimals)) / Math.pow(10, decimals);
+    }
+
 
 }
