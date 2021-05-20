@@ -6,6 +6,7 @@ import io.github.divios.dailyrandomshop.conf_msg;
 import io.github.divios.dailyrandomshop.database.dataManager;
 import io.github.divios.dailyrandomshop.guis.buyGui;
 import io.github.divios.dailyrandomshop.guis.confirmIH;
+import io.github.divios.dailyrandomshop.guis.customizerguis.changePrice;
 import io.github.divios.dailyrandomshop.guis.customizerguis.customizerMainGuiIH;
 import io.github.divios.dailyrandomshop.builders.itemBuildersHooks.itemsBuilderManager;
 import io.github.divios.dailyrandomshop.lorestategy.dailySettingsLore;
@@ -69,26 +70,8 @@ public class dailyGuiSettings {
     public dynamicGui.Response contentAction(InventoryClickEvent e) {
 
         if (e.isLeftClick() && !e.isShiftClick()) {
-            new AnvilGUI.Builder()
-                    .onClose(player -> utils.runTaskLater(() -> openInventory(player), 1L))
-                    .onComplete((player, text) -> {
-                        try {
-                            Double.parseDouble(text);
-                        } catch (NumberFormatException err) { return AnvilGUI.Response.text(conf_msg.MSG_NOT_INTEGER); }
-
-                        new dailyItem(dailyItem.getRawItem(e.getCurrentItem()))
-                                .addNbt(dailyItem.dailyMetadataType.rds_itemEcon,
-                                        new dailyItem.dailyItemPrice(Double.parseDouble(text))).getItem();
-
-                        buyGui.getInstance().updateItem(dailyItem.getUuid(e.getCurrentItem()),
-                                buyGui.updateAction.update);
-                        return AnvilGUI.Response.close();
-                    })
-                    .text(conf_msg.DAILY_ITEMS_MENU_ANVIL_DEFAULT_TEXT)
-                    .itemLeft(new ItemStack(XMaterial.EMERALD.parseMaterial()))
-                    .title(conf_msg.DAILY_ITEMS_MENU_ANVIL_TITLE)
-                    .plugin(main)
-                    .open(p);
+            new changePrice(p, dailyItem.getRawItem(e.getCurrentItem()),
+                    () -> openInventory(p), () -> openInventory(p));
         }
 
         else if (e.isRightClick() && !e.isShiftClick()) {
