@@ -124,7 +124,7 @@ public class changePrice implements InventoryHolder, Listener {
                                     } catch (NumberFormatException err) {
                                         return AnvilGUI.Response.text(conf_msg.MSG_NOT_INTEGER); }
 
-                                    if (aux.get() <= Double.parseDouble(text1))
+                                    if (aux.get() >= Double.parseDouble(text1))
                                         return AnvilGUI.Response.text("Max price can't be lower than min price");
 
                                     new dailyItem(this.item)
