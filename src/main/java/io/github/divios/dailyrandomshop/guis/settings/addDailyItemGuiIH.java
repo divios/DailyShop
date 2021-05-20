@@ -112,12 +112,12 @@ public class addDailyItemGuiIH implements InventoryHolder, Listener {
         }
 
         if (e.getSlot() == 11) { //from zero
-            customizerMainGuiIH.openInventory(p, enableConfirmGui(XMaterial.GRASS.parseItem()));
+            customizerMainGuiIH.openInventory(p, XMaterial.GRASS.parseItem());
         }
 
         else if (e.getSlot() == 15) {  //from item
             new dynamicItemListener(p, (player, itemStack) ->
-                    customizerMainGuiIH.openInventory(p, enableConfirmGui(itemStack)));
+                    customizerMainGuiIH.openInventory(p, itemStack));
             p.closeInventory();
         }
 
@@ -131,11 +131,6 @@ public class addDailyItemGuiIH implements InventoryHolder, Listener {
                             new dailyItem(itemStack).craft()),
                     player -> openInventory(p));
         }
-    }
-
-
-    private ItemStack enableConfirmGui(ItemStack item) {
-        return new dailyItem(item).addNbt(dailyItem.dailyMetadataType.rds_confirm_gui, true).getItem();
     }
 
 }

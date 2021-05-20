@@ -50,6 +50,7 @@ public class dailyItem {
 
     public ItemStack craft() {
         constructItem();
+        new addMetadata(dailyMetadataType.rds_confirm_gui, true).run(item);
         new addMetadata(dailyMetadataType.rds_UUID,
                 UUID.randomUUID().toString()).run(item);
         return item;
@@ -80,10 +81,10 @@ public class dailyItem {
                 obj = nbtItem.getObject(key.name(), List.class);
                 if(obj == null) obj = new ArrayList<>();
                 break;
-            case rds_econ:
+            case rds_tEcon:
                 obj = nbtItem.getObject(key.name(), AbstractMap.SimpleEntry.class);
                 break;
-            case rds_itemEcon:
+            case rds_price:
                 obj = nbtItem.getObject(key.name(), dailyItemPrice.class);
                 break;
             case rds_amount:
@@ -116,14 +117,14 @@ public class dailyItem {
     }
 
     public double getPrice() {
-        return ((dailyItemPrice) this.getMetadata(dailyMetadataType.rds_itemEcon)).getCurrentPrice();
+        return ((dailyItemPrice) this.getMetadata(dailyMetadataType.rds_price)).getCurrentPrice();
     }
 
     public dailyItem generateRandomPrice() {
-        dailyItemPrice priceE = (dailyItemPrice) this.getMetadata(dailyMetadataType.rds_itemEcon);
+        dailyItemPrice priceE = (dailyItemPrice) this.getMetadata(dailyMetadataType.rds_price);
         priceE.generateRandomPrice();
 
-        new addMetadata(dailyMetadataType.rds_itemEcon, priceE).run(item);
+        new addMetadata(dailyMetadataType.rds_price, priceE).run(item);
         return this;
     }
 
@@ -191,9 +192,9 @@ public class dailyItem {
     public static void transferDailyMetadata(ItemStack recipient, ItemStack receiver) {
         dailyItem newItem = new dailyItem(receiver);
 
-        if (new dailyItem(recipient).hasMetadata(dailyMetadataType.rds_econ)) {
-            newItem = newItem.addNbt(dailyMetadataType.rds_econ,
-                    new dailyItem(recipient).getMetadata(dailyMetadataType.rds_econ));
+        if (new dailyItem(recipient).hasMetadata(dailyMetadataType.rds_tEcon)) {
+            newItem = newItem.addNbt(dailyMetadataType.rds_tEcon,
+                    new dailyItem(recipient).getMetadata(dailyMetadataType.rds_tEcon));
         }
 
         if (new dailyItem(recipient).hasMetadata(dailyMetadataType.rds_rarity)) {
@@ -334,8 +335,10 @@ public class dailyItem {
 
             if (!randomFlag)
                 currentPrice = minPrice;
-            else
-                currentPrice = minPrice + Math.random() * (maxPrice - minPrice);
+            else {
+                currentPrice = utils.round(minPrice + Math.random() *
+                        (maxPrice - minPrice), 2);
+            }
         }
 
         public double getCurrentPrice() { return currentPrice; }
@@ -346,12 +349,12 @@ public class dailyItem {
         rds_UUID,
         rds_amount,
         rds_rarity,
-        rds_econ,
+        rds_tEcon,
         rds_commands,
         rds_permissions,
         rds_confirm_gui,
         rds_setItems,
         rds_bundle,
-        rds_itemEcon
+        rds_price
     }
 }
