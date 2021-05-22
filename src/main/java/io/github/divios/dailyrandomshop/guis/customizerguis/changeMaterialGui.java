@@ -1,5 +1,6 @@
 package io.github.divios.dailyrandomshop.guis.customizerguis;
 
+import io.github.divios.dailyrandomshop.DRShop;
 import io.github.divios.dailyrandomshop.builders.dynamicGui;
 import io.github.divios.dailyrandomshop.utils.utils;
 import io.github.divios.dailyrandomshop.xseries.XMaterial;
@@ -14,7 +15,7 @@ import java.util.List;
 
 public class changeMaterialGui {
 
-    private static final io.github.divios.dailyrandomshop.main main = io.github.divios.dailyrandomshop.main.getInstance();
+    private static final DRShop main = DRShop.getInstance();
     private static final List<ItemStack> contents = removeGarbageMaterial();
     private ItemStack newItem;
     private Player p;
@@ -38,7 +39,7 @@ public class changeMaterialGui {
 
     private dynamicGui.Response contentActions(InventoryClickEvent e) {
         this.newItem.setType(e.getCurrentItem().getType());
-        customizerMainGuiIH.openInventory(p, this.newItem);
+        //customizerMainGuiIH.openInventory(p, this.newItem);
         return dynamicGui.Response.nu();
     }
 
@@ -65,7 +66,7 @@ public class changeMaterialGui {
     }
 
     public void backAction(Player p) {
-        customizerMainGuiIH.openInventory(p, this.newItem);
+        //customizerMainGuiIH.openInventory(p, this.newItem);
     }
 
 }

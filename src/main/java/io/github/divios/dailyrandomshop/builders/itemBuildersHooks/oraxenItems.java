@@ -1,6 +1,5 @@
 package io.github.divios.dailyrandomshop.builders.itemBuildersHooks;
 
-import io.github.divios.dailyrandomshop.builders.factory.dailyItem;
 import io.github.divios.dailyrandomshop.utils.utils;
 import io.th0rgal.oraxen.items.OraxenItems;
 import org.bukkit.inventory.ItemStack;
@@ -42,7 +41,7 @@ public class oraxenItems implements itemsBuilder{
     public boolean updateItem(ItemStack toUpdate) {
         if (!isItem(toUpdate)) return false;
         ItemStack auxitem = getItem(toUpdate);
-        dailyItem.transferDailyMetadata(toUpdate, auxitem);
+        //dailyItem.transferDailyMetadata(toUpdate, auxitem);
         utils.translateAllItemData(auxitem, toUpdate);
         return true;
     }

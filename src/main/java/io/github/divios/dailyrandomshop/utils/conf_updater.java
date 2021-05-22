@@ -1,6 +1,6 @@
 package io.github.divios.dailyrandomshop.utils;
 
-import io.github.divios.dailyrandomshop.database.dataManager;
+import io.github.divios.dailyrandomshop.DRShop;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -8,12 +8,11 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class conf_updater {
 
-    private static final io.github.divios.dailyrandomshop.main main =
-            io.github.divios.dailyrandomshop.main.getInstance();
+    private static final DRShop main =
+            DRShop.getInstance();
 
     public static final double version = 235.2; //2.3.5B
     public static boolean priceFormat = false;

@@ -5,11 +5,9 @@ import org.black_ixx.playerpoints.PlayerPoints;
 import org.black_ixx.playerpoints.PlayerPointsAPI;
 import org.bukkit.entity.Player;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 public class playerPointsE implements economy {
 
-   PlayerPointsAPI api = PlayerPoints.getInstance().getAPI();
+    PlayerPointsAPI api = PlayerPoints.getInstance().getAPI();
 
 
     @Override

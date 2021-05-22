@@ -1,7 +1,7 @@
 package io.github.divios.dailyrandomshop.commands.cmds;
 
+import io.github.divios.dailyrandomshop.DRShop;
 import io.github.divios.dailyrandomshop.conf_msg;
-import io.github.divios.dailyrandomshop.main;
 import io.github.divios.dailyrandomshop.utils.utils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -16,7 +16,7 @@ public class reloadCmd implements dailyCommand{
             return;
         }
         p.sendMessage(conf_msg.PREFIX + conf_msg.MSG_RELOAD);
-        main.getInstance().realoadPlugin();
+        DRShop.getInstance().realoadPlugin();
     }
 
     @Override

@@ -11,7 +11,7 @@ import java.util.List;
 
 public class conf_msg {
 
-    private static final io.github.divios.dailyrandomshop.main main = io.github.divios.dailyrandomshop.main.getInstance();
+    private static final DRShop main = DRShop.getInstance();
 
     public static String
             PREFIX, VAULT_CUSTOM_NAME,

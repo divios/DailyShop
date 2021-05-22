@@ -1,7 +1,6 @@
 package io.github.divios.dailyrandomshop.commands.cmds;
 
 import io.github.divios.dailyrandomshop.events.expiredTimerEvent;
-import io.github.divios.dailyrandomshop.tasks.taskManager;
 import io.github.divios.dailyrandomshop.utils.utils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -19,7 +18,7 @@ public class renovateCmd implements dailyCommand{
             utils.noPerms(p);
             return;
         }
-        taskManager.getInstance().resetTimer();
+        //taskManager.getInstance().resetTimer();
         Bukkit.getPluginManager().callEvent(new expiredTimerEvent());
     }
 

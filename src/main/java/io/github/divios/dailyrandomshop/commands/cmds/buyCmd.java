@@ -1,7 +1,5 @@
 package io.github.divios.dailyrandomshop.commands.cmds;
 
-import io.github.divios.dailyrandomshop.conf_msg;
-import io.github.divios.dailyrandomshop.guis.buyGui;
 import io.github.divios.dailyrandomshop.utils.utils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -31,7 +29,7 @@ public class buyCmd implements dailyCommand{
                 return;
             }
 
-            buyGui.getInstance().openInventory(Bukkit.getPlayer(playerStr));
+            //buyGui.getInstance().openInventory(Bukkit.getPlayer(playerStr));
             return;
         }
 
@@ -45,7 +43,7 @@ public class buyCmd implements dailyCommand{
             utils.noPerms(p);
             return;
         }
-        buyGui.getInstance().openInventory(p);
+        //buyGui.getInstance().openInventory(p);
     }
 
     @Override

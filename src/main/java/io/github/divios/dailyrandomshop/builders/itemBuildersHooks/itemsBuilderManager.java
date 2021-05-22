@@ -1,7 +1,5 @@
 package io.github.divios.dailyrandomshop.builders.itemBuildersHooks;
 
-import io.github.divios.dailyrandomshop.builders.factory.dailyItem;
-import io.github.divios.dailyrandomshop.guis.buyGui;
 import io.github.divios.dailyrandomshop.utils.utils;
 import org.bukkit.inventory.ItemStack;
 
@@ -22,10 +20,11 @@ public class itemsBuilderManager {
 
     public static boolean updateItem(String uuid) {
         if (utils.isEmpty(uuid)) return false;
-        buyGui.getInstance().updateItem(uuid,   /* Internally async */
-                buyGui.updateAction.update);
+        //buyGui.getInstance().updateItem(uuid,   /* Internally async */
+               //buyGui.updateAction.update);
 
-        return updateItem(dailyItem.getRawItem(uuid));
+        //return updateItem(dailyItem.getRawItem(uuid));
+        return true;
     }
 
     public static boolean updateItem(ItemStack item) {

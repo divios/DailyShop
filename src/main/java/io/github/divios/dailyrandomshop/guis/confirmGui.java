@@ -1,9 +1,7 @@
 package io.github.divios.dailyrandomshop.guis;
 
-import io.github.divios.dailyrandomshop.builders.factory.dailyItem;
+import io.github.divios.dailyrandomshop.DRShop;
 import io.github.divios.dailyrandomshop.conf_msg;
-import io.github.divios.dailyrandomshop.database.dataManager;
-import io.github.divios.dailyrandomshop.lorestategy.confirmItemsLore;
 import io.github.divios.dailyrandomshop.utils.utils;
 import io.github.divios.dailyrandomshop.xseries.XMaterial;
 import org.bukkit.Bukkit;
@@ -24,7 +22,7 @@ import java.util.function.Consumer;
 
 public class confirmGui implements Listener, InventoryHolder {
 
-    private static final io.github.divios.dailyrandomshop.main main = io.github.divios.dailyrandomshop.main.getInstance();
+    private static final DRShop main = DRShop.getInstance();
 
     private static ItemStack add1 = null;
     private static ItemStack add5;
@@ -34,7 +32,6 @@ public class confirmGui implements Listener, InventoryHolder {
     private static ItemStack rem10;
     private static ItemStack confirm;
     private static ItemStack back;
-    private static final confirmItemsLore LoreStrategy = new confirmItemsLore();
     private BiConsumer<Player, ItemStack> c;
     private Consumer<Player> b;
 
@@ -97,7 +94,7 @@ public class confirmGui implements Listener, InventoryHolder {
         Inventory inv = Bukkit.createInventory(this, 45, conf_msg.CONFIRM_GUI_NAME);
 
         ItemStack confirmAux = confirm.clone();
-        LoreStrategy.setLore(confirmAux, item);
+        //LoreStrategy.setLore(confirmAux, item);
 
         inv.setItem(24, add1);
         inv.setItem(25, add5);
@@ -130,12 +127,9 @@ public class confirmGui implements Listener, InventoryHolder {
         if( nstack < 55) inv.setItem(26, add10);
         else inv.setItem(26, new ItemStack(Material.AIR));
 
-        if(utils.isEmpty(dailyItem.getRawItem(inv.getItem(22)))) {
-            p.sendMessage(conf_msg.PREFIX + conf_msg.MSG_REMOVED_ITEM);
-            b.accept(p);     /* Close inv if item is deleted */
-        }
 
-        LoreStrategy.update(inv.getItem(40), inv.getItem(22));
+
+        //LoreStrategy.update(inv.getItem(40), inv.getItem(22));
         p.updateInventory();
     }
 

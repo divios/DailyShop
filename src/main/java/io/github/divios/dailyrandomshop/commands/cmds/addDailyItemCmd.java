@@ -1,6 +1,5 @@
 package io.github.divios.dailyrandomshop.commands.cmds;
 
-import io.github.divios.dailyrandomshop.guis.settings.addDailyItemGuiIH;
 import io.github.divios.dailyrandomshop.utils.utils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -22,7 +21,7 @@ public class addDailyItemCmd implements dailyCommand{
             utils.noPerms(p);
             return;
         }
-        addDailyItemGuiIH.openInventory(p);
+        //addDailyItemGuiIH.openInventory(p);
     }
 
     @Override

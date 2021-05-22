@@ -1,13 +1,12 @@
 package io.github.divios.dailyrandomshop.hooks;
 
-import io.github.divios.dailyrandomshop.main;
-import io.github.divios.dailyrandomshop.tasks.taskManager;
+import io.github.divios.dailyrandomshop.DRShop;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.entity.Player;
 
 class placeholderApiHook extends PlaceholderExpansion {
 
-    private static final main plugin = main.getInstance();
+    private static final DRShop plugin = DRShop.getInstance();
     private static placeholderApiHook instance = null;
 
     private placeholderApiHook() {};
@@ -93,7 +92,7 @@ class placeholderApiHook extends PlaceholderExpansion {
     public String onPlaceholderRequest(Player player, String identifier){
 
         // %DailyRandomShop_
-        if(identifier.equals("time")){
+        /*if(identifier.equals("time")){
 
             int timeInSeconds = taskManager.getInstance().getTimer();
             int secondsLeft = timeInSeconds % 3600 % 60;
@@ -105,7 +104,7 @@ class placeholderApiHook extends PlaceholderExpansion {
             String SS = ((secondsLeft < 10) ? "0" : "") + secondsLeft;
 
             return HH + ":" + MM + ":" + SS;
-        }
+        } */
 
         // We return null if an invalid placeholder (f.e. %someplugin_placeholder3%)
         // was provided

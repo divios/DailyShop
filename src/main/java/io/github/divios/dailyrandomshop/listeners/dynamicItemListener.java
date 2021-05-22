@@ -1,7 +1,7 @@
 package io.github.divios.dailyrandomshop.listeners;
 
+import io.github.divios.dailyrandomshop.DRShop;
 import io.github.divios.dailyrandomshop.conf_msg;
-import io.github.divios.dailyrandomshop.guis.settings.dailyGuiSettings;
 import io.github.divios.dailyrandomshop.utils.utils;
 import io.github.divios.dailyrandomshop.xseries.Titles;
 import org.bukkit.Bukkit;
@@ -17,7 +17,7 @@ import java.util.function.BiConsumer;
 
 public class dynamicItemListener implements Listener {
 
-    private static final io.github.divios.dailyrandomshop.main main = io.github.divios.dailyrandomshop.main.getInstance();
+    private static final DRShop main = DRShop.getInstance();
     private final Player p;
     private final BukkitTask TaskID;
     public final BiConsumer<Player, ItemStack> b;
@@ -30,7 +30,7 @@ public class dynamicItemListener implements Listener {
         TaskID = Bukkit.getScheduler().runTaskLater(main, () -> {
             p.sendMessage(conf_msg.PREFIX + conf_msg.MSG_TIMER_EXPIRED);
             PlayerInteractEvent.getHandlerList().unregister(this);
-            dailyGuiSettings.openInventory(p);
+            //dailyGuiSettings.openInventory(p);
         }, 200);
 
         Titles.sendTitle(p, 20, 60, 20,
