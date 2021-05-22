@@ -1,5 +1,6 @@
 package io.github.divios.dailyrandomshop.commands;
 
+import io.github.divios.dailyrandomshop.DRShop;
 import io.github.divios.dailyrandomshop.commands.cmds.allCmds;
 import io.github.divios.dailyrandomshop.commands.cmds.dailyCommand;
 import org.bukkit.command.Command;
@@ -15,7 +16,7 @@ import java.util.stream.Collectors;
 
 public class tabComplete implements TabCompleter {
 
-    private static final io.github.divios.dailyrandomshop.main main = io.github.divios.dailyrandomshop.main.getInstance();
+    private static final DRShop main = DRShop.getInstance();
     private static tabComplete instance = null;
     private static final List<dailyCommand> cmdCommands = getCmds();
 

@@ -1,7 +1,7 @@
 package io.github.divios.dailyrandomshop.listeners;
 
+import io.github.divios.dailyrandomshop.DRShop;
 import io.github.divios.dailyrandomshop.conf_msg;
-import io.github.divios.dailyrandomshop.utils.utils;
 import io.github.divios.dailyrandomshop.xseries.Titles;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -15,7 +15,7 @@ import java.util.function.Consumer;
 
 public class dynamicChatListener implements Listener {
 
-    private static final io.github.divios.dailyrandomshop.main main = io.github.divios.dailyrandomshop.main.getInstance();
+    private static final DRShop main = DRShop.getInstance();
 
     private final Player p;
     private final Consumer<String> c;

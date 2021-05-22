@@ -1,17 +1,17 @@
 package io.github.divios.dailyrandomshop.hooks;
 
 import com.vk2gpz.tokenenchant.api.TokenEnchantAPI;
+import io.github.divios.dailyrandomshop.DRShop;
 import io.github.divios.dailyrandomshop.utils.utils;
 import me.realized.tokenmanager.api.TokenManager;
 import me.xanium.gemseconomy.api.GemsEconomyAPI;
 import me.yic.mpoints.MPointsAPI;
-import net.brcdev.shopgui.ShopGuiPlusApi;
 import net.milkbowl.vault.economy.Economy;
 import org.black_ixx.playerpoints.PlayerPointsAPI;
 
 public class hooksManager {
 
-    private static final io.github.divios.dailyrandomshop.main main = io.github.divios.dailyrandomshop.main.getInstance();
+    private static final DRShop mainp = DRShop.getInstance();
     private static hooksManager instance = null;
 
     private hooksManager() {};

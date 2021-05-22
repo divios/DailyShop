@@ -1,5 +1,6 @@
 package io.github.divios.dailyrandomshop.builders;
 
+import io.github.divios.dailyrandomshop.DRShop;
 import io.github.divios.dailyrandomshop.utils.utils;
 import io.github.divios.dailyrandomshop.xseries.XMaterial;
 import net.wesjd.anvilgui.AnvilGUI;
@@ -22,7 +23,7 @@ import java.util.stream.IntStream;
 
 public class dynamicGui implements InventoryHolder, Listener {
 
-    private final io.github.divios.dailyrandomshop.main main = io.github.divios.dailyrandomshop.main.getInstance();
+    private final DRShop main = DRShop.getInstance();
 
     private final Player p;
     private final contentX contentX;

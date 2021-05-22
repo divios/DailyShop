@@ -1,15 +1,13 @@
 package io.github.divios.dailyrandomshop.hooks;
 
-import io.github.divios.dailyrandomshop.main;
-import net.brcdev.shopgui.ShopGuiPlugin;
-import net.brcdev.shopgui.ShopGuiPlusApi;
+import io.github.divios.dailyrandomshop.DRShop;
 
 public class shopGuiPlusHook {
 
     public static Object api = null;
 
     public static void hook() {
-        main.getInstance().getLogger().info("Hooked to ShopGUIPlus");
+        DRShop.getInstance().getLogger().info("Hooked to ShopGUIPlus");
         api = new Object();
     }
 

@@ -1,12 +1,13 @@
 package io.github.divios.dailyrandomshop.guis.customizerguis;
 
 import com.vk2gpz.tokenenchant.api.TokenEnchantAPI;
-import io.github.divios.dailyrandomshop.builders.factory.dailyItem;
+import io.github.divios.dailyrandomshop.DRShop;
 import io.github.divios.dailyrandomshop.conf_msg;
-import io.github.divios.dailyrandomshop.economies.econTypes;
+import io.github.divios.dailyrandomshop.economies.*;
 import io.github.divios.dailyrandomshop.hooks.hooksManager;
 import io.github.divios.dailyrandomshop.utils.utils;
 import io.github.divios.dailyrandomshop.xseries.XMaterial;
+import io.github.divios.lib.itemHolder.dItem;
 import me.realized.tokenmanager.api.TokenManager;
 import me.xanium.gemseconomy.api.GemsEconomyAPI;
 import me.xanium.gemseconomy.currency.Currency;
@@ -28,22 +29,22 @@ import java.util.stream.Collectors;
 
 public class changeEcon implements Listener, InventoryHolder {
 
-    private static final io.github.divios.dailyrandomshop.main main = io.github.divios.dailyrandomshop.main.getInstance();
+    private static final DRShop plugin = DRShop.getInstance();
     private Inventory inv = null;
-    private ItemStack item;
+    private dItem item;
     private Player p;
 
     private changeEcon() {}
 
-    public static void openInventory(Player p, ItemStack item) {
+    public static void openInventory(Player p, dItem item) {
         changeEcon instance = new changeEcon();
         instance.p = p;
-        instance.item = item.clone();
+        instance.item = item;
         p.openInventory(instance.getInventory());
     }
 
     private void init() {
-        Bukkit.getPluginManager().registerEvents(this, main);
+        Bukkit.getPluginManager().registerEvents(this, plugin);
         GemsEconomyAPI gemsApi = hooksManager.getInstance().getGemsEcon();
         TokenEnchantAPI tokenEnchantsApi = hooksManager.getInstance().getTokenEnchantApi();
         TokenManager tokenManagerApi = hooksManager.getInstance().getTokenManagerApi();
@@ -124,49 +125,33 @@ public class changeEcon implements Listener, InventoryHolder {
         if (e.getSlot() != e.getRawSlot()) return;
 
         if (e.getCurrentItem().getType().equals(XMaterial.CHEST.parseMaterial())) {
-            new dailyItem(item)
-                .removeNbt(dailyItem.dailyMetadataType.rds_tEcon).getItem();
+            item.setEconomy(new vault());
         }
 
         else if (e.getCurrentItem().getType().equals(XMaterial.EMERALD.parseMaterial())) {
             String name = utils.trimString(e.getCurrentItem().getItemMeta().getDisplayName());
-            new dailyItem(item)
-                    .addNbt(dailyItem.dailyMetadataType.rds_tEcon,
-                            new AbstractMap.SimpleEntry<>(econTypes.gemsEconomy.name(), name)).getItem();
+            item.setEconomy(new gemEcon(name));
         }
 
         else if (e.getCurrentItem().getType().equals(XMaterial.ENCHANTED_BOOK.parseMaterial())) {
-            new dailyItem(item)
-                    .addNbt(dailyItem.dailyMetadataType.rds_tEcon,
-                            new AbstractMap.SimpleEntry<>(econTypes.tokenEnchants.name()
-                                    , econTypes.tokenEnchants.name())).getItem();
+            item.setEconomy(new tokenManagerE());
         }
 
         else if (e.getCurrentItem().getType().equals(XMaterial.DIAMOND.parseMaterial())) {
-            new dailyItem(item)
-                    .addNbt(dailyItem.dailyMetadataType.rds_tEcon,
-                            new AbstractMap.SimpleEntry<>(econTypes.tokenManager.name()
-                                    , econTypes.tokenManager.name())).getItem();
+           item.setEconomy(new tokenManagerE());
         }
 
         else if (e.getCurrentItem().getType().equals(XMaterial.SUNFLOWER.parseMaterial())) {
             String name = utils.trimString(e.getCurrentItem().getItemMeta().getDisplayName());
-            new dailyItem(item)
-                    .addNbt(dailyItem.dailyMetadataType.rds_tEcon,
-                            new AbstractMap.SimpleEntry<>(econTypes.MPoints.name()
-                                    , name)).getItem();
+            item.setEconomy(new MPointsE(name));
         }
 
         else if(e.getCurrentItem().getType().equals(XMaterial.PLAYER_HEAD.parseMaterial())) {
-            String name = utils.trimString(e.getCurrentItem().getItemMeta().getDisplayName());
-            new dailyItem(item)
-                    .addNbt(dailyItem.dailyMetadataType.rds_tEcon,
-                            new AbstractMap.SimpleEntry<>(econTypes.playerPoints.name()
-                                    , name)).getItem();
+            item.setEconomy(new playerPointsE());
         }
 
 
-        customizerMainGuiIH.openInventory(p, item);
+        //customizerMainGuiIH.openInventory(p, item);
 
     }
 

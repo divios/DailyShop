@@ -1,14 +1,11 @@
 package io.github.divios.dailyrandomshop.commands.cmds;
 
-import io.github.divios.dailyrandomshop.builders.factory.dailyItem;
 import io.github.divios.dailyrandomshop.conf_msg;
-import io.github.divios.dailyrandomshop.database.dataManager;
 import io.github.divios.dailyrandomshop.hooks.hooksManager;
 import io.github.divios.dailyrandomshop.utils.utils;
 import net.brcdev.shopgui.ShopGuiPlusApi;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 
@@ -51,6 +48,7 @@ public class importShopGuiItemsCmd implements dailyCommand {
         }
 
         ShopGuiPlusApi.getShop(shop).getShopItems().forEach(shopItem -> {
+            /*
             if (action.equalsIgnoreCase("Buy")) {
                 ItemStack item = new dailyItem(shopItem.getItem(), true)
                         .addNbt(dailyItem.dailyMetadataType.rds_price,
@@ -70,7 +68,7 @@ public class importShopGuiItemsCmd implements dailyCommand {
                 item.setAmount(1);
                 dataManager.getInstance().listSellItems.put(shopItem.getItem(),
                         price);
-            }
+            } */
         });
 
         p.sendMessage(conf_msg.PREFIX + utils.formatString("&7Items imported successfully"));

@@ -1,8 +1,7 @@
 package io.github.divios.dailyrandomshop.utils;
 
-import io.github.divios.dailyrandomshop.builders.factory.dailyItem;
+import io.github.divios.dailyrandomshop.DRShop;
 import io.github.divios.dailyrandomshop.conf_msg;
-import io.github.divios.dailyrandomshop.database.dataManager;
 import io.github.divios.dailyrandomshop.xseries.XMaterial;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -23,8 +22,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class utils {
 
-    private static final io.github.divios.dailyrandomshop.main main = io.github.divios.dailyrandomshop.main.getInstance();
-    private static final dataManager dbManager = dataManager.getInstance();
+    private static final DRShop main = DRShop.getInstance();
 
     public static void translateAllItemData(ItemStack recipient, ItemStack receiver) {
         try {
@@ -44,7 +42,7 @@ public class utils {
             receiver.setItemMeta(recipient.getItemMeta());
             receiver.setAmount(recipient.getAmount());
             receiver.setDurability(recipient.getDurability());
-            if(dailyMetadata) dailyItem.transferDailyMetadata(recipient, receiver);
+            //if(dailyMetadata) dailyItem.transferDailyMetadata(recipient, receiver);
         } catch (IllegalArgumentException ignored) {}
     }
 
@@ -213,37 +211,6 @@ public class utils {
         p.sendMessage(conf_msg.PREFIX + utils.formatString("&7Console is no allow to do this command"));
     }
 
-    public static void changeItemPrice(ItemStack toSearch, Double price) {
-        for(Map.Entry<ItemStack, Double> e : dbManager.listSellItems.entrySet()) {
-            if(e.getKey().getType().equals(toSearch.getType())) {
-                e.setValue(price);
-                return;
-            }
-        }
-    }
-
-    public static void removeItem(ItemStack toSearch) {
-        dbManager.listSellItems.entrySet().removeIf(e -> e.getKey().getType().
-                equals(toSearch.getType()));
-    }
-
-    public static boolean hasItem(ItemStack toSearch) {
-        for(Map.Entry<ItemStack, Double> e : dbManager.listSellItems.entrySet()) {
-            if(e.getKey().getType().equals(toSearch.getType())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public static Double getPrice(ItemStack toSearch) {
-        for(Map.Entry<ItemStack, Double> e : dbManager.listSellItems.entrySet()) {
-            if(e.getKey().getType().equals(toSearch.getType())) {
-                return e.getValue();
-            }
-        }
-        return -1D;
-    }
 
     public static Double getPriceModifier(Player p) {
         AtomicReference<Double> modifier = new AtomicReference<>(1.0);

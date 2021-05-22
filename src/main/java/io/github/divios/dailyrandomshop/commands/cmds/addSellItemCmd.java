@@ -1,9 +1,5 @@
 package io.github.divios.dailyrandomshop.commands.cmds;
 
-import io.github.divios.dailyrandomshop.conf_msg;
-import io.github.divios.dailyrandomshop.database.dataManager;
-import io.github.divios.dailyrandomshop.guis.settings.sellGuiSettings;
-import io.github.divios.dailyrandomshop.listeners.dynamicItemListener;
 import io.github.divios.dailyrandomshop.utils.utils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -25,14 +21,14 @@ public class addSellItemCmd implements dailyCommand{
             utils.noPerms(p);
             return;
         }
-        new dynamicItemListener(p, (player, itemStack) -> {
+        /*new dynamicItemListener(p, (player, itemStack) -> {
             if (utils.hasItem(itemStack)) {
                 p.sendMessage(conf_msg.PREFIX + conf_msg.MSG_ITEM_ALREADY_ON_SALE);
                 return;
             }
             dataManager.getInstance().listSellItems.put(itemStack, -1D);
             sellGuiSettings.openInventory(p);
-        });
+        }); */
     }
 
     @Override

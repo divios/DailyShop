@@ -1,5 +1,6 @@
 package io.github.divios.dailyrandomshop.hooks;
 
+import io.github.divios.dailyrandomshop.DRShop;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
@@ -7,7 +8,7 @@ class vaultHook {
 
     private static Economy econ = null;
 
-    private static final io.github.divios.dailyrandomshop.main main = io.github.divios.dailyrandomshop.main.getInstance();
+    private static final DRShop main = DRShop.getInstance();
 
     static void hook() {
         if (!setupEconomy()) {

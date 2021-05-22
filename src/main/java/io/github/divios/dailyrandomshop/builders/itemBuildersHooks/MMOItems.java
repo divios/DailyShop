@@ -1,6 +1,5 @@
 package io.github.divios.dailyrandomshop.builders.itemBuildersHooks;
 
-import io.github.divios.dailyrandomshop.builders.factory.dailyItem;
 import io.github.divios.dailyrandomshop.utils.utils;
 import net.Indyuce.mmoitems.api.Type;
 import org.bukkit.inventory.ItemStack;
@@ -34,7 +33,7 @@ public class MMOItems implements itemsBuilder{
     public boolean updateItem(ItemStack toUpdate) {
         if (!isItem(toUpdate)) return false;
         ItemStack auxitem = getItem(toUpdate);
-        dailyItem.transferDailyMetadata(toUpdate, auxitem);
+        //dailyItem.transferDailyMetadata(toUpdate, auxitem);
         utils.translateAllItemData(auxitem, toUpdate);
         return true;
     }

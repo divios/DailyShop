@@ -1,6 +1,6 @@
 package io.github.divios.dailyrandomshop.guis;
 
-import io.github.divios.dailyrandomshop.conf_msg;
+import io.github.divios.dailyrandomshop.DRShop;
 import io.github.divios.dailyrandomshop.utils.utils;
 import io.github.divios.dailyrandomshop.xseries.XMaterial;
 import org.bukkit.Bukkit;
@@ -27,7 +27,7 @@ public class confirmIH implements InventoryHolder, Listener {
     private final String cancelLore;
     private final Consumer<Player> back;
     private boolean backFlag = true;
-    private static final io.github.divios.dailyrandomshop.main main = io.github.divios.dailyrandomshop.main.getInstance();
+    private static final DRShop main = DRShop.getInstance();
 
     /**
      * @param p          Player to show the GUI
