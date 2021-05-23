@@ -2,6 +2,7 @@ package io.github.divios.dailyrandomshop.utils;
 
 import io.github.divios.dailyrandomshop.DRShop;
 import io.github.divios.dailyrandomshop.conf_msg;
+import io.github.divios.dailyrandomshop.xseries.SkullUtils;
 import io.github.divios.dailyrandomshop.xseries.XMaterial;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -249,6 +250,10 @@ public class utils {
 
     public static double round(double d, int decimals) {
         return Math.round(d * Math.pow(10, decimals)) / Math.pow(10, decimals);
+    }
+
+    public static void applyTexture(ItemStack item, String url) {
+        item.setItemMeta(SkullUtils.applySkin(item.getItemMeta(), url));
     }
 
 

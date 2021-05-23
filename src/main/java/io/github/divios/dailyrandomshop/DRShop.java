@@ -1,7 +1,10 @@
 package io.github.divios.dailyrandomshop;
 
+import io.github.divios.dailyrandomshop.commands.commandsManager;
+import io.github.divios.dailyrandomshop.commands.tabComplete;
 import io.github.divios.dailyrandomshop.hooks.hooksManager;
 import io.github.divios.dailyrandomshop.utils.conf_updater;
+import io.github.divios.lib.managers.shopsManager;
 import io.github.divios.lib.storage.dataManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -20,6 +23,10 @@ public class DRShop extends JavaPlugin {
                                 /* Initiate database + getAllItems + timer */
         conf_updater.check();
         dataManager.getInstance();
+        shopsManager.getInstance();
+
+        commandsManager.getInstance();
+        tabComplete.getInstance();
 
     }
 

@@ -44,9 +44,8 @@ class DataManagerAbstract {
      *
      * @param runnable task to run
      */
-    public CompletableFuture<Boolean> async(Runnable runnable) {
-        Bukkit.getScheduler().runTaskAsynchronously(this.plugin, runnable);
-        return CompletableFuture.completedFuture(true);
+    public void async(Runnable runnable) {
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, runnable);
     }
 
     /**
@@ -54,9 +53,8 @@ class DataManagerAbstract {
      *
      * @param runnable task to run on the next server tick
      */
-    public CompletableFuture<Boolean> sync(Runnable runnable) {
-        Bukkit.getScheduler().runTask(this.plugin, runnable);
-        return CompletableFuture.completedFuture(true);
+    public void sync(Runnable runnable) {
+        Bukkit.getScheduler().runTask(plugin, runnable);
     }
 
     /**

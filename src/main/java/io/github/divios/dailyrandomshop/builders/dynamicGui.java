@@ -23,7 +23,7 @@ import java.util.stream.IntStream;
 
 public class dynamicGui implements InventoryHolder, Listener {
 
-    private final DRShop main = DRShop.getInstance();
+    private static final DRShop main = DRShop.getInstance();
 
     private final Player p;
     private final contentX contentX;
