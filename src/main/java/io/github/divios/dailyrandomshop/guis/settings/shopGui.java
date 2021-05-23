@@ -2,9 +2,11 @@ package io.github.divios.dailyrandomshop.guis.settings;
 
 import io.github.divios.dailyrandomshop.DRShop;
 import io.github.divios.dailyrandomshop.builders.dynamicGui;
+import io.github.divios.dailyrandomshop.guis.customizerguis.customizerMainGuiIH;
 import io.github.divios.dailyrandomshop.utils.utils;
 import io.github.divios.dailyrandomshop.xseries.XMaterial;
 import io.github.divios.lib.itemHolder.dItem;
+import io.github.divios.lib.itemHolder.dShop;
 import io.github.divios.lib.managers.shopsManager;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -22,7 +24,7 @@ public class shopGui {
         new dynamicGui.Builder()
                 .contents(() -> contents(shop))
                 .addItems((inv, i) -> addItems(inv))
-                .contentAction(shopGui::contentAction)
+                .contentAction(e -> contentAction(e, shop))
                 .nonContentAction((i, p1) -> nonContentAction(i, p1, shop))
                 .setSearch(false)
                 .back(p1 -> shopsManagerGui.open(p))
@@ -47,8 +49,15 @@ public class shopGui {
         inv.setItem(52, addItems);
     }
 
-    private static dynamicGui.Response contentAction(InventoryClickEvent e) {
+    private static dynamicGui.Response contentAction(InventoryClickEvent e, String shop) {
         e.setCancelled(true);
+
+        if (utils.isEmpty(e.getCurrentItem())) return dynamicGui.Response.nu();
+
+        dShop shopE = shopsManager.getInstance().getShop(utils.trimString
+                (e.getCurrentItem().getItemMeta().getDisplayName()));
+
+
         return dynamicGui.Response.nu();
     }
 

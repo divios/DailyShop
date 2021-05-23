@@ -9,7 +9,7 @@ public class dShop {
 
     private final String name;
     private final dShopT type;
-    private HashSet<dItem> items = new LinkedHashSet<>();
+    private Set<dItem> items = new LinkedHashSet<>();
 
     public dShop(String name, dShopT type) {
         this.name = name;
@@ -39,6 +39,31 @@ public class dShop {
      */
     public Set<dItem> getItems() {
         return Collections.unmodifiableSet(items);
+    }
+
+    /**
+     * Gets the item by uuid
+     * @param uid the UUID to search
+     * @return null if it does not exist
+     */
+    public dItem getItem(UUID uid) {
+        for (dItem item : items)
+            if (item.getUid().equals(uid))
+                return item;
+        return null;
+    }
+
+    /**
+     * Checks if the shop has a particular item
+     * @param uid the UUID to check
+     * @return true if exits, false if not
+     */
+    public boolean hasItem(UUID uid) {
+        return getItem(uid) != null;
+    }
+
+    public void updateItem(UUID uid, dItem newItem) {
+
     }
 
     /**
