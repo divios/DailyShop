@@ -5,6 +5,8 @@ import de.tr7zw.changeme.nbtapi.NBTContainer;
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import io.github.divios.dailyrandomshop.economies.economy;
 import io.github.divios.dailyrandomshop.economies.vault;
+import io.github.divios.dailyrandomshop.utils.utils;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -22,8 +24,9 @@ public class dItem implements Serializable {
     public dItem(@NotNull ItemStack item) {
         this.item = new NBTItem(item);
         setUid(UUID.randomUUID());
-        setConfirm_gui(true);  // Defaults true
-        setEconomy(new vault()); // Default Vault
+        setRarity(new dRarity());       //Defaults to Common
+        setConfirm_gui(true);           // Defaults true
+        setEconomy(new vault());        // Default Vault
     }
 
     private dItem() {}
@@ -44,6 +47,34 @@ public class dItem implements Serializable {
         this.item = new NBTItem(item);
         if (getUid() != null)
             setUid(UUID.randomUUID());
+    }
+
+    /**
+     * Sets the display name of the item
+     * @param name
+     */
+    public void setDisplayName(@NotNull String name) {
+        ItemStack itemA = getItem();
+        utils.setDisplayName(itemA, name);
+        setItem(itemA);
+    }
+
+    /**
+     * Sets the lore of the item
+     * @param lore
+     */
+    public void setLore(@NotNull List<String> lore) {
+        ItemStack itemA = getItem();
+        utils.setLore(itemA, lore);
+        setItem(itemA);
+    }
+
+    /**
+     * Sets the enchants of the item
+     * @param enchants
+     */
+    public void setEnchantments(@NotNull List<Enchantment> enchants) {
+
     }
 
     /**
@@ -129,6 +160,15 @@ public class dItem implements Serializable {
         return UUID.fromString(item.getString("rds_UUID"));
     }
 
+
+    public static UUID getUid(ItemStack item) {
+        return new NBTItem(item).getString("rds_UUID");
+    }
+
+    /**
+     * Sets uuid
+     * @param uid
+     */
     private void setUid(UUID uid) {
         item.setString("rds_UUID", uid.toString());
     }
@@ -157,7 +197,7 @@ public class dItem implements Serializable {
      *
      * @param rarity rarity to set, can be null
      */
-    public void setRarity(@Nullable dRarity rarity) {
+    public void setRarity(@NotNull dRarity rarity) {
         item.setObject("rds_rarity", rarity);
     }
 
@@ -166,12 +206,15 @@ public class dItem implements Serializable {
      *
      * @return an integer symbolizing a rarity. Use utils to format to itemStack or String
      */
-    public @Nullable dRarity getRarity() {
+    public @NotNull dRarity getRarity() {
         return item.getObject("rds_rarity", dRarity.class);
     }
 
+    /**
+     * Set the next Rarity
+     */
     public void nextRarity() {
-        //TODO
+        setRarity(getRarity().next());
     }
 
     /**
@@ -247,6 +290,13 @@ public class dItem implements Serializable {
     }
 
     /**
+     * Toggles the value of Confirm_GUI
+     */
+    public void toggleConfirm_gui() {
+        setConfirm_gui(!getConfirm_gui());
+    }
+
+    /**
      * Gets the amount for the set of items
      *
      * @return
@@ -303,6 +353,18 @@ public class dItem implements Serializable {
         newItem.setItem(item);
 
         return newItem;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof dItem))
+            return false;
+        return this.getUid().equals(((dItem) o).getUid());
+    }
+
+    @Override
+    public int hashCode() {
+        return getUid().hashCode();
     }
 
 

@@ -18,24 +18,7 @@ public class conf_updater {
     public static boolean priceFormat = false;
 
     public static void check() {
-        int pace = 1;
-        List<String> _v = new ArrayList<>
-                (Arrays.asList(main.getConfig().getString("version").split("\\.")));
-        if (_v.get(_v.size() - 1).length() == 2) { //si hay una letra
-            pace = 2;
-            String letter = _v.get(_v.size() - 1).substring(1, 2);
-            _v.set(_v.size() - 1, _v.get(_v.size() - 1).substring(0, 1));
-            _v.add(letter);
-        }
-        double _version = 0;
-        for (int i = 0; i < _v.size(); i++) {
-
-            if (_v.get(i).contains("A")) _version += 0.1;
-            else if (_v.get(i).equals("B")) _version += 0.2;
-            else if (_v.get(i).equals("C")) _version += 0.3;
-
-            else _version += Integer.parseInt(_v.get(i)) * Math.pow(10, _v.size() - pace - i);
-        }
+        double _version = getVersion();
 
         priceFormat = _version < 235; //version desde donde se empieza este cambio
         //main.getLogger().severe(priceFormat + "");
@@ -231,6 +214,29 @@ public class conf_updater {
 
     }
 
+
+    private static double getVersion() {
+        int pace = 1;
+        double _version = 0;
+        List<String> _v = new ArrayList<>
+                (Arrays.asList(main.getConfig().getString("version").split("\\.")));
+        if (_v.get(_v.size() - 1).length() == 2) { //si hay una letra
+            pace = 2;
+            String letter = _v.get(_v.size() - 1).substring(1, 2);
+            _v.set(_v.size() - 1, _v.get(_v.size() - 1).substring(0, 1));
+            _v.add(letter);
+        }
+
+        for (int i = 0; i < _v.size(); i++) {
+
+            if (_v.get(i).contains("A")) _version += 0.1;
+            else if (_v.get(i).equals("B")) _version += 0.2;
+            else if (_v.get(i).equals("C")) _version += 0.3;
+
+            else _version += Integer.parseInt(_v.get(i)) * Math.pow(10, _v.size() - pace - i);
+        }
+        return _version;
+    }
 
     private static void createFile(File file) {
         try {
