@@ -6,25 +6,22 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 public class shopsManager {
 
     private static shopsManager instance = null;
-    private final HashSet<dShop> shops;
+    private HashSet<dShop> shops = new LinkedHashSet<>();
 
-    private shopsManager(HashSet<dShop> shops) {
-        this.shops = shops;
-    }
+    private shopsManager() {}
 
     public static shopsManager getInstance() {
         if (instance == null) {
-            try {
-                instance = new shopsManager(dataManager.getInstance().getShops().get());
-            } catch (InterruptedException | ExecutionException e) {
-                e.printStackTrace();
-            }
+            instance = new shopsManager();
+            dataManager.getInstance()
+                    .getShops(dShops -> instance.setShops(dShops));
         }
         return instance;
     }
@@ -40,6 +37,14 @@ public class shopsManager {
     }
 
     /**
+     * Sets the shops. Private
+     * @param shops
+     */
+    private void setShops(HashSet<dShop> shops) {
+        this.shops = shops;
+    }
+
+    /**
      * Creates a new shop
      *
      * @param name the name of the shop
@@ -48,7 +53,7 @@ public class shopsManager {
 
     public void createShop(String name, dShop.dShopT type) {
         shops.add(new dShop(name, type));
-        // TODO: llamar a sqlManager
+        dataManager.getInstance().createShop(name, type);
     }
 
     /**

@@ -1,5 +1,6 @@
 package io.github.divios.lib.itemHolder;
 
+import io.github.divios.lib.storage.dataManager;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -53,6 +54,7 @@ public class dShop {
      */
     public void addItem(@NotNull dItem item) {
         items.add(item);
+        dataManager.getInstance().addItem(this.name, item);
     }
 
     /**
@@ -61,7 +63,10 @@ public class dShop {
      * @return true if the item was removed. False if not
      */
     public boolean removeItem(UUID uid) {
-        return items.removeIf(dItem -> dItem.getUid().equals(uid));
+        boolean result = items.removeIf(dItem -> dItem.getUid().equals(uid));
+        if (result)
+            dataManager.getInstance().deleteItem(this.name, uid);
+        return result;
     }
 
 

@@ -26,6 +26,8 @@ public class dItem implements Serializable {
         setEconomy(new vault()); // Default Vault
     }
 
+    private dItem() {}
+
     /**
      *
      * @return the ItemStack that this instance holds
@@ -40,16 +42,8 @@ public class dItem implements Serializable {
      */
     public void setItem(@NotNull ItemStack item) {
         this.item = new NBTItem(item);
-    }
-
-    /**
-     * Sets item from a base64 serial
-     * @param serial
-     */
-    public void setItem(String serial) {
-        NBTContainer itemData = new NBTContainer(new String(Base64.getDecoder().decode(serial)));
-        this.item = new NBTItem(NBTItem.convertNBTtoItem(itemData));
-
+        if (getUid() != null)
+            setUid(UUID.randomUUID());
     }
 
     /**
@@ -294,6 +288,21 @@ public class dItem implements Serializable {
     public String getItemSerial() {
         NBTCompound itemData = NBTItem.convertItemtoNBT(item.getItem());
         return Base64.getEncoder().encodeToString(itemData.toString().getBytes());
+    }
+
+    /**
+     * Constructs dItem from base 64
+     * @param base64
+     * @return dItem constructed
+     */
+    public static dItem constructFromBase64(String base64) {
+        NBTCompound itemData = new NBTContainer(new String(Base64.getDecoder().decode(base64)));
+        ItemStack item = NBTItem.convertNBTtoItem(itemData);
+
+        dItem newItem = new dItem();
+        newItem.setItem(item);
+
+        return newItem;
     }
 
 

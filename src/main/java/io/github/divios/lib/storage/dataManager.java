@@ -5,16 +5,18 @@ import io.github.divios.lib.itemHolder.dItem;
 import io.github.divios.lib.itemHolder.dShop;
 import io.github.divios.lib.storage.migrations.initialMigration;
 
+import javax.security.auth.callback.Callback;
 import java.io.ByteArrayInputStream;
 import java.io.ObjectInputStream;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.Base64;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
 
 public class dataManager {
 
@@ -31,69 +33,45 @@ public class dataManager {
     }
 
 
-    public CompletableFuture<HashSet<dShop>> getShops() {
-        HashSet<dShop> shops = new LinkedHashSet<>();
+    public void getShops(Consumer<HashSet<dShop>> callback) {
 
-        try {
+            HashSet<dShop> shops = new LinkedHashSet<>();
+
             con.async(() -> con.databaseConnector.connect(connection -> {
                 try (Statement statement = connection.createStatement()) {
                     String selectFarms = "SELECT * FROM " + con.getTablePrefix() + "active_shops";
                     ResultSet result = statement.executeQuery(selectFarms);
 
-                    String name = result.getString("name");
-
-                    while(result.next()) {
+                    while (result.next()) {
+                        String name = result.getString("name");
                         dShop shop = new dShop(name,
                                 dShop.dShopT.valueOf(result.getString("type")));
 
-                        try {
-                            shop.setItems(getShop(name).get());
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                        shops.add(shop);
+                       getShop(name, shop::setItems);
+                       shops.add(shop);
                     }
                 }
-            })).get();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
-
-        return CompletableFuture.completedFuture(shops);
-
+                callback.accept(shops);
+            }));
     }
 
 
-    public CompletableFuture<HashSet<dItem>> getShop(String name) {
-        HashSet<dItem> items = new LinkedHashSet<>();
-        try {
+    public void getShop(String name, Consumer<HashSet<dItem>> callback) {
+
+            HashSet<dItem> items = new LinkedHashSet<>();
+
             con.async(() -> con.databaseConnector.connect(connection -> {
                 try (Statement statement = connection.createStatement()) {
                     String selectFarms = "SELECT * FROM " + con.getTablePrefix() + "shop_" + name;
                     ResultSet result = statement.executeQuery(selectFarms);
 
-                    while(result.next()) {
-                        try {
-                            byte[] itemSerial = Base64.getDecoder().decode(result.getString("itemSerial"));
-                            ByteArrayInputStream bs = new ByteArrayInputStream(itemSerial);
-                            ObjectInputStream is = new ObjectInputStream(bs);
-
-                            dItem item = (dItem) is.readObject();
-                            items.add(item);
-
-                        } catch (Exception e) {
-                            DRShop.getInstance().getLogger().warning("A previous sell item registered " +
-                                    "on the db is now unsupported, skipping...");
-                        }
+                    while (result.next()) {
+                       items.add(dItem.constructFromBase64(result.getString("itemSerial")));
                     }
                 }
-            })).get();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
+                callback.accept(items);
+            }));
         }
-        return CompletableFuture.completedFuture(items);
-    }
-
 
     public void createShop(String name, dShop.dShopT type) {
         con.async(() -> con.databaseConnector.connect(connection -> {
@@ -148,11 +126,11 @@ public class dataManager {
         }), "add");
     }
 
-    public void deleteItem(String name, dItem item) {
+    public void deleteItem(String name, UUID uid) {
         con.queueAsync(() -> con.databaseConnector.connect(connection -> {
             String deeleteItem = "DELETE FROM " + con.getTablePrefix() + "shop_" + name + " WHERE uuid = ?";
             try (PreparedStatement statement = connection.prepareStatement(deeleteItem)) {
-                statement.setString(1, item.getUid().toString());
+                statement.setString(1, uid.toString());
                 statement.executeUpdate();
             }
         }), "delete");
@@ -168,9 +146,6 @@ public class dataManager {
             }
         }), "update");
     }
-
-
-
 
 
 }
