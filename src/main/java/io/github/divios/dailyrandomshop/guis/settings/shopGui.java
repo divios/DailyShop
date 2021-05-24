@@ -15,6 +15,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class shopGui {
 
@@ -28,6 +29,7 @@ public class shopGui {
                 .nonContentAction((i, p1) -> nonContentAction(i, p1, shop))
                 .setSearch(false)
                 .back(p1 -> shopsManagerGui.open(p))
+                .title(i -> utils.formatString(utils.formatString("&f&lShop Manager")))
                 .open(p);
     }
 
@@ -35,9 +37,7 @@ public class shopGui {
     private static List<ItemStack> contents (String name){
         List<ItemStack> items = new ArrayList<>();
         shopsManager.getInstance().getShop(name)
-                .getItems().forEach(dItem -> {
-            items.add(dItem.getItem());
-        });
+                .getItems().forEach(dItem -> items.add(dItem.getItem()));
 
         return items;
     }
@@ -54,8 +54,10 @@ public class shopGui {
 
         if (utils.isEmpty(e.getCurrentItem())) return dynamicGui.Response.nu();
 
-        dShop shopE = shopsManager.getInstance().getShop(utils.trimString
-                (e.getCurrentItem().getItemMeta().getDisplayName()));
+        UUID uid = dItem.getUid(e.getCurrentItem());
+
+        customizerMainGuiIH.openInventory((Player) e.getWhoClicked(),
+                shopsManager.getInstance().getShop(shop).getItem(uid), shop);
 
 
         return dynamicGui.Response.nu();

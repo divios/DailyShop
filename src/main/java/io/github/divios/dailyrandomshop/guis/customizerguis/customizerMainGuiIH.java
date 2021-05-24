@@ -40,7 +40,7 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
             instance = new customizerMainGuiIH();
             Bukkit.getPluginManager().registerEvents(instance, main);
         }
-        instance.ditem = ditem;
+        instance.ditem = ditem.clone();
         instance.shop = shopsManager.getInstance().getShop(shopName);
         p.openInventory(instance.createInventory());
     }
@@ -52,11 +52,13 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
         ItemStack barrier = XMaterial.BARRIER.parseItem();
         utils.setDisplayName(barrier, conf_msg.CUSTOMIZE_UNAVAILABLE);
 
-        ItemStack changeEcon = XMaterial.EMERALD.parseItem();
+        ItemStack changeEcon = XMaterial.EMERALD.parseItem();       // Change econ
         utils.setDisplayName(changeEcon, conf_msg.CUSTOMIZE_CHANGE_ECON);
         utils.setLore(changeEcon, conf_msg.CUSTOMIZE_CHANGE_ECON_LORE);
+        utils.setLore(changeEcon, Arrays.asList("", "&7Current: " + ditem.getEconomy().getClass().getName()
+                .replace("io.github.divios.dailyrandomshop.economies.", "&6&l")));
 
-        ItemStack changeRarity = ditem.getRarity().getAsItem();
+        ItemStack changeRarity = ditem.getRarity().getAsItem();         // Change rarity
         utils.setLore(changeRarity, conf_msg.CUSTOMIZE_CHANGE_RARITY_LORE);
 
         ItemStack changeConfirmGui = XMaterial.LEVER.parseItem();
@@ -155,21 +157,21 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
         utils.setDisplayName(hideEnchants, conf_msg.CUSTOMIZE_TOGGLE_ENCHANTS);
         utils.setLore(hideEnchants, utils.replaceOnLore(
                 conf_msg.CUSTOMIZE_TOGGLE_ENCHANTS_LORE, "\\{status}",
-                "" + utils.hasFlag(ditem.getItem(), f)));
+                "" + ditem.hasFlag(f)));
 
         f = ItemFlag.HIDE_ATTRIBUTES;
         ItemStack hideAtibutes = XMaterial.BOOKSHELF.parseItem();    //add/remove attributes
         utils.setDisplayName(hideAtibutes, conf_msg.CUSTOMIZE_TOGGLE_ATTRIBUTES);
         utils.setLore(hideAtibutes, utils.replaceOnLore(
                 conf_msg.CUSTOMIZE_TOGGLE_ATTRIBUTES_LORE, "\\{status}",
-                "" + utils.hasFlag(ditem.getItem(), f)));
+                "" + ditem.hasFlag(f)));
 
         f = ItemFlag.HIDE_POTION_EFFECTS;
         ItemStack hideEffects = XMaterial.CAULDRON.parseItem(); //add/remove effects
         utils.setDisplayName(hideEffects, conf_msg.CUSTOMIZE_TOGGLE_EFFECTS);
         utils.setLore(hideEffects, utils.replaceOnLore(
                 conf_msg.CUSTOMIZE_TOGGLE_EFFECTS_LORE, "\\{status}",
-                "" + utils.hasFlag(ditem.getItem(), f)));
+                "" + ditem.hasFlag(f)));
 
         Integer[] auxList = {3, 5, 13};
         ItemStack item = XMaterial.BLACK_STAINED_GLASS_PANE.parseItem();             //fill black panes
@@ -234,10 +236,10 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
         else if (e.getSlot() == 49) { //Boton de craft
             if (shop.hasItem(ditem.getUid())) {
                 shop.updateItem(ditem.getUid(), ditem);
-            }
-            else {
+            } else {
                 shop.addItem(ditem);
             }
+            shopGui.open(p, shop.getName());
         }
 
 
@@ -263,24 +265,29 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
                         return AnvilGUI.Response.close();
                     })
                     .text(conf_msg.CUSTOMIZE_RENAME_ANVIL_DEFAULT_TEXT)
-                    .itemLeft(ditem.getItem())
+                    .itemLeft(ditem.getItem().clone())
                     .title(conf_msg.CUSTOMIZE_RENAME_ANVIL_TITLE)
                     .plugin(main)
                     .open(p);
         }
 
         else if (e.getSlot() == 19) { // Boton de cambiar material
-            //changeMaterialGui.openInventory(p, newItem);
+            changeMaterialGui.openInventory(p, ditem, shop.getName());
         }
 
         else if (e.getSlot() == 27) { // Boton de cambiar lore
             if (e.isRightClick()) {
-                //utils.removeLore(newItem, 1);
+                List<String> lore = ditem.getLore();
+                if (lore.isEmpty()) return;
+                lore.remove(lore.size() - 1);
+                ditem.setLore(lore);
                 refresh(p);
             } else if (e.isLeftClick())
                 new dynamicChatListener(p, s -> {
                     if (!s.isEmpty()) {
-                        //utils.setLore(newItem, Arrays.asList(s));
+                        List<String> lore = ditem.getLore();
+                        lore.add(s);
+                        ditem.setLore(lore);
                     }
                     refresh(p);
                 }, conf_msg.CUSTOMIZE_RENAME_ANVIL_TITLE, "");
@@ -307,7 +314,7 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
                             return AnvilGUI.Response.close();
                         })
                         .text("Change amount")
-                        .itemLeft(ditem.getItem())
+                        .itemLeft(ditem.getItem().clone())
                         .title("&6Change amount")
                         .plugin(main)
                         .open(p);
@@ -338,22 +345,24 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
         else if (e.getSlot() == 22 && ditem.getCommands() != null) { // Boton de añadir/quitar commands
             if (e.isLeftClick()) {
                 new dynamicChatListener(p, s -> {
-                    if (!s.isEmpty())
-                        //new dailyItem(newItem).addNbt(dMeta.rds_commands, s).getItem();
+                    if (!s.isEmpty()) {
+                        List<String> cmds = ditem.getCommands();
+                        cmds.add(s);
+                        ditem.setCommands(cmds);
+                    }
                     refresh(p);
                 }, utils.formatString("&7Input new command"), "");
 
             } else if (e.isRightClick() && !e.isShiftClick()) {
-                /*List<String> s = (List<String>) new dailyItem(newItem)
-                        .getMetadata(dMeta.rds_commands);
-                new dailyItem(newItem).removeNbt(dMeta.rds_commands).getItem();
-                if (!s.isEmpty()) {
-                    s.remove(s.size() - 1);
-                    s.forEach(s1 -> new dailyItem(newItem).addNbt(dMeta.rds_commands, s1).getItem());
+                List<String> cmds = ditem.getCommands();
+
+                if (!cmds.isEmpty()) {
+                    cmds.remove(cmds.size() - 1);
+                    ditem.setCommands(cmds);
                 }
-                refresh(p); */
+                refresh(p);
             } else if (e.isShiftClick() && e.isRightClick()) {
-                //new dailyItem(newItem).removeNbt(dMeta.rds_commands).getItem();
+                ditem.setCommands(null);
                 refresh(p);
             }
         }
@@ -367,12 +376,11 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
                         try {
                             Short.parseShort(text);
                         } catch (NumberFormatException err) {return AnvilGUI.Response.text(conf_msg.MSG_NOT_INTEGER);}
-                        short i = Short.parseShort(text);
-                        //newItem.setDurability((short) (newItem.getType().getMaxDurability() - i));
+                        ditem.setDurability(Short.parseShort(text));
                         return AnvilGUI.Response.close();
                     })
                     .text("Change durability")
-                    .itemLeft(ditem.getItem())
+                    .itemLeft(ditem.getItem().clone())
                     .title("&6Change durability")
                     .plugin(main)
                     .open(p);
@@ -388,43 +396,41 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
         }
 
         else if (e.getSlot() == 25) { // Boton de hide enchants
-            /*ItemFlag f = ItemFlag.HIDE_ENCHANTS;
-            if (utils.hasFlag(newItem, f)) utils.removeFlag(newItem, f);
-            else utils.addFlag(newItem, f);
-            refresh(p); */
+            ditem.toggleFlag(ItemFlag.HIDE_ENCHANTS);
+            refresh(p);
         }
 
         else if (e.getSlot() == 26) { // Boton de hide attributes
-            /*ItemFlag f = ItemFlag.HIDE_ATTRIBUTES;
-            if (utils.hasFlag(newItem, f)) utils.removeFlag(newItem, f);
-            else utils.addFlag(newItem, f);
-            refresh(p); */
+            ditem.toggleFlag(ItemFlag.HIDE_ATTRIBUTES);
+            refresh(p);
         }
 
         else if (e.getSlot() == 30 && ditem.getPerms() == null) { // Boton de habilitar perms
-            //new dailyItem(newItem).addNbt(dMeta.rds_permissions, "").getItem();
+            ditem.setPerms(new ArrayList<>());
             refresh(p);
         }
 
         else if (e.getSlot() == 30 && ditem.getPerms() != null) {  // Boton de añadir/quitar perms
             if (e.isLeftClick()) {
                 new dynamicChatListener(p, s -> {
-                    if (!s.isEmpty())
-                        //new dailyItem(newItem).addNbt(dMeta.rds_permissions, s).getItem();
+                    if (!s.isEmpty()) {
+                        List<String> perms = ditem.getPerms();
+                        perms.add(s);
+                        ditem.setPerms(perms);
+                    }
                     refresh(p);
                 }, utils.formatString("&7Input permission"), "");
 
             } else if (e.isRightClick() && !e.isShiftClick()) {
-                /*List<String> s = (List<String>) new dailyItem(newItem)
-                        .getMetadata(dMeta.rds_permissions);
-                new dailyItem(newItem).removeNbt(dMeta.rds_permissions).getItem();
+                List<String> s = ditem.getPerms();
+
                 if (!s.isEmpty()) {
                     s.remove(s.size() - 1);
-                    s.forEach(s1 -> new dailyItem(newItem).addNbt(dMeta.rds_permissions, s1).getItem());
-                }*/
+                    ditem.setPerms(s);
+                }
                 refresh(p);
             } else if (e.isShiftClick() && e.isRightClick()) {
-                //new dailyItem(newItem).removeNbt(dMeta.rds_permissions).getItem();
+                ditem.setPerms(null);
                 refresh(p);
             }
 
@@ -436,7 +442,7 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
                         "the stock feature is enable"));
                 return;
             }
-            //new dailyItem(newItem).addNbt(dMeta.rds_setItems, "1").getItem();
+            ditem.setSetItems(1);
             refresh(p);
         }
 
@@ -451,28 +457,25 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
                             } catch (NumberFormatException err) {return AnvilGUI.Response.text(conf_msg.MSG_NOT_INTEGER);}
                             int i = Integer.parseInt(text);
                             if(i < 1 || i > 64) return AnvilGUI.Response.text("invalid amount");
-                            //new dailyItem(newItem)
-                                    //.addNbt(dMeta.rds_setItems, text).getItem();
-                            //newItem.setAmount(Integer.parseInt(text));
+                            ditem.setSetItems(Integer.parseInt(text));
+                            ditem.setAmount(Integer.parseInt(text));
                             return AnvilGUI.Response.close();
                         })
                         .text("Change amount")
-                        .itemLeft(ditem.getItem())
+                        .itemLeft(ditem.getItem().clone())
                         .title("&6Change amount")
                         .plugin(main)
                         .open(p);
             }
             else if (e.isRightClick()) {
-                //new dailyItem(newItem).removeNbt(dMeta.rds_setItems).getItem();
-                //.setAmount(1);
+                ditem.setSetItems(null);
+                ditem.setAmount(1);
                 refresh(p);
             }
         }
 
         else if (e.getSlot() == 35 && e.getCurrentItem() != null) { // Boton de hide potion effects
-            ItemFlag f = ItemFlag.HIDE_POTION_EFFECTS;
-            //if (utils.hasFlag(newItem, f)) utils.removeFlag(newItem, f);
-            //else utils.addFlag(newItem, f);
+            ditem.toggleFlag(ItemFlag.HIDE_POTION_EFFECTS);
             refresh(p);
         }
 

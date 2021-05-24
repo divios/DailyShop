@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 public class MPointsE implements economy{
 
     private final String point;
-    private final MPointsAPI api = hooksManager.getInstance().getMPointsApi();
+    private transient static final MPointsAPI api = hooksManager.getInstance().getMPointsApi();
 
     public MPointsE(String point) { this.point = point; }
 
