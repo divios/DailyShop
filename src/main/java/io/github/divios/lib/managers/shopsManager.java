@@ -32,7 +32,7 @@ public class shopsManager {
      * @return a list of all the shops. Note that the returned list
      * is a copy of the original.
      */
-    public Set<dShop> getShops() {
+    public synchronized Set<dShop> getShops() {
         return Collections.unmodifiableSet(shops);
     }
 
@@ -40,7 +40,7 @@ public class shopsManager {
      * Sets the shops. Private
      * @param shops
      */
-    private void setShops(HashSet<dShop> shops) {
+    private synchronized void setShops(HashSet<dShop> shops) {
         this.shops = shops;
     }
 
@@ -51,7 +51,7 @@ public class shopsManager {
      * @param type the type of the shop
      */
 
-    public void createShop(String name, dShop.dShopT type) {
+    public synchronized void createShop(String name, dShop.dShopT type) {
         shops.add(new dShop(name, type));
         dataManager.getInstance().createShop(name, type);
     }
@@ -62,7 +62,7 @@ public class shopsManager {
      * @param name name of the shop
      * @return shop with the name. Null if it does not exist
      */
-    public @Nullable dShop getShop(String name) {
+    public synchronized @Nullable dShop getShop(String name) {
         for (dShop dS : shops) {
             if (dS.getName().equals(name))
                 return dS;
@@ -75,11 +75,10 @@ public class shopsManager {
      * @param name name of the shop to be deleted
      * @return true if succeeded. False if it does not exist
      */
-    public boolean deleteShop(String name) {
+    public synchronized boolean deleteShop(String name) {
         boolean result = shops.removeIf(dShop -> dShop.getName().equals(name));
         if (result)
-            System.out.println("oke"); //quitar xd
-            //TODO: llamar a sqlManager y eliminar tienda
+            dataManager.getInstance().deleteShop(name);
         return result;
     }
 

@@ -6,17 +6,19 @@ import de.tr7zw.changeme.nbtapi.NBTItem;
 import io.github.divios.dailyrandomshop.economies.economy;
 import io.github.divios.dailyrandomshop.economies.vault;
 import io.github.divios.dailyrandomshop.utils.utils;
+import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.Serializable;
-import java.util.Base64;
-import java.util.List;
-import java.util.UUID;
+import java.io.*;
+import java.util.*;
+import java.util.stream.Collectors;
 
-public class dItem implements Serializable {
+public class dItem implements Serializable, Cloneable {
 
     private NBTItem item;
     private String shop = ""; // TODO: not sure
@@ -45,8 +47,18 @@ public class dItem implements Serializable {
      */
     public void setItem(@NotNull ItemStack item) {
         this.item = new NBTItem(item);
-        if (getUid() != null)
+        if (getUid() == null)
             setUid(UUID.randomUUID());
+    }
+
+    /**
+     * Sets the meta of the item
+     * @param meta
+     */
+    public void setMeta(ItemMeta meta) {
+        ItemStack itemA = getItem();
+        itemA.setItemMeta(meta);
+        setItem(itemA);
     }
 
     /**
@@ -60,21 +72,97 @@ public class dItem implements Serializable {
     }
 
     /**
-     * Sets the lore of the item
+     * Gets the displayName of the item
+     * @return
+     */
+    public String getDisplayName() {
+        return getItem().getItemMeta().getDisplayName();
+    }
+
+    /**
+     * Sets the lore of the item. Supports Color Codes
      * @param lore
      */
     public void setLore(@NotNull List<String> lore) {
         ItemStack itemA = getItem();
-        utils.setLore(itemA, lore);
+        ItemMeta meta = itemA.getItemMeta();
+        meta.setLore(lore.stream().map(utils::formatString).collect(Collectors.toList()));
+        itemA.setItemMeta(meta);
         setItem(itemA);
     }
 
     /**
-     * Sets the enchants of the item
-     * @param enchants
+     * Gets the lore of the item
+     * @return
      */
-    public void setEnchantments(@NotNull List<Enchantment> enchants) {
+    public @NotNull List<String> getLore() {
+        if (!getItem().getItemMeta().hasLore())
+            return new ArrayList<>();
+        return getItem().getItemMeta().getLore();
+    }
 
+    /**
+     * Sets the material of the item
+     * @param m
+     */
+    public void setMaterial(Material m) {
+        ItemStack item = getItem();
+        item.setType(m);
+        setItem(item);
+    }
+
+    /**
+     * Gets the material of the item
+     * @return
+     */
+    public Material getMaterial() {
+        return getItem().getType();
+    }
+
+    /**
+     * Sets the durability of the item
+     * @param durability
+     */
+    public void setDurability(short durability) {
+        ItemStack item = getItem();
+        item.setDurability((short) (item.getType().getMaxDurability() - durability));
+        setItem(item);
+    }
+
+    /**
+     * Gets the durability of the item
+     * @return
+     */
+    public short getDurability() {
+        return getItem().getDurability();
+    }
+
+    /**
+     * Adds enchantment to item
+     * @param ench
+     */
+    public void addEnchantments(@NotNull Enchantment ench, int lvl) {
+        ItemStack item = getItem();
+        item.addUnsafeEnchantment(ench, lvl);
+        setItem(item);
+    }
+
+    /**
+     * Removes enchantment from item
+     * @param ench
+     */
+    public void removeEnchantments(@NotNull Enchantment ench) {
+        ItemStack item = getItem();
+        item.removeEnchantment(ench);
+        setItem(item);
+    }
+
+    /**
+     * gets a map containing all the enchants of this item
+     * @return
+     */
+    public @NotNull Map<Enchantment, Integer> getEnchantments() {
+        return getItem().getEnchantments();
     }
 
     /**
@@ -93,6 +181,28 @@ public class dItem implements Serializable {
      */
     public int getAmount() {
         return item.getItem().getAmount();
+    }
+
+    /**
+     * Return if the item has a flag
+     * @param flag
+     * @return
+     */
+    public boolean hasFlag(ItemFlag flag) {
+        return utils.hasFlag(getItem(), flag);
+    }
+
+    /**
+     * Toggles a flag from the item
+     * @param flag
+     */
+    public void toggleFlag(ItemFlag flag) {
+        ItemStack item = getItem();
+
+        if (utils.hasFlag(item, flag))
+            utils.removeFlag(item, flag);
+        else
+            utils.addFlag(item, flag);
     }
 
     /**
@@ -157,12 +267,12 @@ public class dItem implements Serializable {
      * @return the uuid of this item
      */
     public UUID getUid() {
-        return UUID.fromString(item.getString("rds_UUID"));
+        return item.getObject("rds_UUID", UUID.class);
     }
 
 
     public static UUID getUid(ItemStack item) {
-        return new NBTItem(item).getString("rds_UUID");
+        return new NBTItem(item).getObject("rds_UUID", UUID.class);
     }
 
     /**
@@ -170,7 +280,7 @@ public class dItem implements Serializable {
      * @param uid
      */
     private void setUid(UUID uid) {
-        item.setString("rds_UUID", uid.toString());
+        item.setObject("rds_UUID", uid);
     }
 
     /**
@@ -189,6 +299,8 @@ public class dItem implements Serializable {
      * the feature is disabled
      */
     public @Nullable Integer getStock() {
+        if (!item.hasKey("rds_stock"))
+            return null;
         return item.getInteger("rds_stock");
     }
 
@@ -222,8 +334,18 @@ public class dItem implements Serializable {
      *
      * @return
      */
-    public economy getEconomy() {
-        return item.getObject("rds_econ", economy.class);
+    public @NotNull economy getEconomy() {
+        economy econR = new vault();
+        byte [] data = Base64.getDecoder().decode(item.getString("rds_econ"));
+        try {
+            ObjectInputStream ois = new ObjectInputStream(
+                    new ByteArrayInputStream(data));
+            econR = (economy) ois.readObject();
+            ois.close();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return econR;
     }
 
     /**
@@ -232,7 +354,15 @@ public class dItem implements Serializable {
      * @param econ
      */
     public void setEconomy(@NotNull economy econ) {
-        item.setObject("rds_econ", econ);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try {
+            ObjectOutputStream oos = new ObjectOutputStream( baos );
+            oos.writeObject(econ);
+            oos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        item.setString("rds_econ", Base64.getEncoder().encodeToString(baos.toByteArray()));
     }
 
     /**
@@ -302,6 +432,8 @@ public class dItem implements Serializable {
      * @return
      */
     public @Nullable Integer getSetItems() {
+        if (!item.hasKey("rds_setItems"))
+            return null;
         return item.getInteger("rds_setItems");
     }
 
@@ -353,6 +485,14 @@ public class dItem implements Serializable {
         newItem.setItem(item);
 
         return newItem;
+    }
+
+    /**
+     * Returns a deep copy of the object
+     * @return
+     */
+    public dItem clone() {
+        return constructFromBase64(getItemSerial());
     }
 
     @Override

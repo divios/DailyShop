@@ -20,7 +20,7 @@ public class dShop {
      * Gets the name of the shop
      * @return
      */
-    public String getName() {
+    public synchronized String getName() {
         return name;
     }
 
@@ -28,7 +28,7 @@ public class dShop {
      * Gets the type of the shop
      * @return type of the shop (buy,sell)
      */
-    public dShopT getType() {
+    public synchronized dShopT getType() {
         return type;
     }
 
@@ -37,8 +37,10 @@ public class dShop {
      * @return returns a List of dItems. Note that this list is a copy of the original,
      * any change made to it won't affect the original one
      */
-    public Set<dItem> getItems() {
-        return Collections.unmodifiableSet(items);
+    public synchronized @NotNull Set<dItem> getItems() {
+        Set<dItem> copy = new LinkedHashSet<>();
+        items.forEach(dItem -> copy.add(dItem.clone()));
+        return copy;
     }
 
     /**
@@ -46,7 +48,7 @@ public class dShop {
      * @param uid the UUID to search
      * @return null if it does not exist
      */
-    public dItem getItem(UUID uid) {
+    public synchronized dItem getItem(UUID uid) {
         for (dItem item : items)
             if (item.getUid().equals(uid))
                 return item;
@@ -58,18 +60,28 @@ public class dShop {
      * @param uid the UUID to check
      * @return true if exits, false if not
      */
-    public boolean hasItem(UUID uid) {
+    public synchronized boolean hasItem(UUID uid) {
         return getItem(uid) != null;
     }
 
-    public void updateItem(UUID uid, dItem newItem) {
-
+    /**
+     * Updates the item of the shop
+     * @param uid
+     * @param newItem
+     */
+    public synchronized void updateItem(UUID uid, dItem newItem) {
+        items.iterator().forEachRemaining(dItem -> {
+            if (dItem.getUid().equals(uid)) {
+                dItem.setItem(newItem.getItem());
+                dataManager.getInstance().updateItem(getName(), dItem);
+            }
+        });
     }
 
     /**
      * Sets the items of this shop
      */
-    public void setItems(@NotNull HashSet<dItem> items) {
+    public synchronized void setItems(@NotNull HashSet<dItem> items) {
         this.items = items;
     }
 
@@ -77,7 +89,7 @@ public class dShop {
      * Adds an item to this shop
      * @param item item to be added
      */
-    public void addItem(@NotNull dItem item) {
+    public synchronized void addItem(@NotNull dItem item) {
         items.add(item);
         dataManager.getInstance().addItem(this.name, item);
     }
@@ -87,11 +99,22 @@ public class dShop {
      * @param uid UUID of the item to be removed
      * @return true if the item was removed. False if not
      */
-    public boolean removeItem(UUID uid) {
+    public synchronized boolean removeItem(UUID uid) {
         boolean result = items.removeIf(dItem -> dItem.getUid().equals(uid));
         if (result)
             dataManager.getInstance().deleteItem(this.name, uid);
         return result;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return o instanceof dShop &&
+                this.getName().equals(((dShop) o).getName());
+    }
+
+    @Override
+    public int hashCode() {
+        return this.getName().hashCode();
     }
 
 

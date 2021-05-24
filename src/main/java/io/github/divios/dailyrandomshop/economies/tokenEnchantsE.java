@@ -6,7 +6,7 @@ import org.bukkit.entity.Player;
 
 public class tokenEnchantsE implements economy {
 
-    private final static TokenEnchantAPI api = hooksManager.getInstance().getTokenEnchantApi();
+    private transient final static TokenEnchantAPI api = hooksManager.getInstance().getTokenEnchantApi();
 
     @Override
     public boolean hasMoney(Player p, Double price) {

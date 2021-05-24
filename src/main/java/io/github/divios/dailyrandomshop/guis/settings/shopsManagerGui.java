@@ -2,6 +2,8 @@ package io.github.divios.dailyrandomshop.guis.settings;
 
 import io.github.divios.dailyrandomshop.DRShop;
 import io.github.divios.dailyrandomshop.builders.dynamicGui;
+import io.github.divios.dailyrandomshop.conf_msg;
+import io.github.divios.dailyrandomshop.guis.confirmIH;
 import io.github.divios.dailyrandomshop.utils.utils;
 import io.github.divios.dailyrandomshop.xseries.XMaterial;
 import io.github.divios.lib.itemHolder.dShop;
@@ -27,6 +29,7 @@ public class shopsManagerGui {
                 .nonContentAction(shopsManagerGui::nonContentAction)
                 .back(player -> p.closeInventory())
                 .setSearch(false)
+                .title(i -> utils.formatString("&f&lShops Manager"))
                 .open(p);
     }
 
@@ -55,8 +58,22 @@ public class shopsManagerGui {
             return dynamicGui.Response.nu();
         }
 
-        shopGui.open((Player) e.getWhoClicked(),
-                utils.trimString(utils.getDisplayName(e.getCurrentItem())));
+        ItemStack selected = e.getCurrentItem();
+        String shopName = utils.trimString(utils.getDisplayName(selected));
+        Player p = (Player) e.getWhoClicked();
+
+        if (e.isRightClick()) {
+            new confirmIH(p, (player, aBoolean) -> {
+                if (aBoolean)
+                    shopsManager.getInstance().deleteShop(shopName);
+                open(player);
+            }, shopsManagerGui::open, selected,
+                    conf_msg.CONFIRM_GUI_NAME,
+                    conf_msg.CONFIRM_MENU_YES, conf_msg.CONFIRM_MENU_NO);
+            return dynamicGui.Response.nu();
+        }
+
+        shopGui.open(p, shopName);
         return dynamicGui.Response.nu();
     }
 

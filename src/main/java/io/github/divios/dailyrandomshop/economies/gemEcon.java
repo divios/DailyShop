@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 public class gemEcon implements economy{
 
     private final Currency currency;
-    private final static GemsEconomyAPI gemApi = hooksManager.getInstance().getGemsEcon();
+    private transient final static GemsEconomyAPI gemApi = hooksManager.getInstance().getGemsEcon();
 
     public gemEcon(String currency) {
         this.currency = gemApi.getCurrency(currency);

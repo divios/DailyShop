@@ -33,7 +33,7 @@ public class dataManager {
     }
 
 
-    public void getShops(Consumer<HashSet<dShop>> callback) {
+    public synchronized void getShops(Consumer<HashSet<dShop>> callback) {
 
             HashSet<dShop> shops = new LinkedHashSet<>();
 
@@ -56,7 +56,7 @@ public class dataManager {
     }
 
 
-    public void getShop(String name, Consumer<HashSet<dItem>> callback) {
+    public synchronized void getShop(String name, Consumer<HashSet<dItem>> callback) {
 
             HashSet<dItem> items = new LinkedHashSet<>();
 
@@ -66,14 +66,15 @@ public class dataManager {
                     ResultSet result = statement.executeQuery(selectFarms);
 
                     while (result.next()) {
-                       items.add(dItem.constructFromBase64(result.getString("itemSerial")));
+                        dItem newItem = dItem.constructFromBase64(result.getString("itemSerial"));
+                       items.add(newItem);
                     }
                 }
                 callback.accept(items);
             }));
         }
 
-    public void createShop(String name, dShop.dShopT type) {
+    public synchronized void createShop(String name, dShop.dShopT type) {
         con.async(() -> con.databaseConnector.connect(connection -> {
 
             String createShop = "INSERT INTO " + con.getTablePrefix() +
@@ -95,7 +96,7 @@ public class dataManager {
         }));
     }
 
-    public void deleteShop(String name) {
+    public synchronized void deleteShop(String name) {
         con.async(() -> con.databaseConnector.connect(connection -> {
             String deleteShop = "DELETE FROM " + con.getTablePrefix() + "active_shops WHERE name = ?";
             try (PreparedStatement statement = connection.prepareStatement(deleteShop)) {
@@ -110,7 +111,7 @@ public class dataManager {
         }));
     }
 
-    public void addItem(String name, dItem item) {
+    public synchronized void addItem(String name, dItem item) {
         con.queueAsync(() -> con.databaseConnector.connect(connection -> {
 
             String createShop = "INSERT INTO " + con.getTablePrefix() +
@@ -126,7 +127,7 @@ public class dataManager {
         }), "add");
     }
 
-    public void deleteItem(String name, UUID uid) {
+    public synchronized void deleteItem(String name, UUID uid) {
         con.queueAsync(() -> con.databaseConnector.connect(connection -> {
             String deeleteItem = "DELETE FROM " + con.getTablePrefix() + "shop_" + name + " WHERE uuid = ?";
             try (PreparedStatement statement = connection.prepareStatement(deeleteItem)) {
@@ -136,13 +137,14 @@ public class dataManager {
         }), "delete");
     }
 
-    public void updateItem(String name, dItem item) {
+    public synchronized void updateItem(String name, dItem item) {
         con.queueAsync(() -> con.databaseConnector.connect(connection -> {
-            String updateItem = "UPDATE FROM " + con.getTablePrefix() + "shop_" + name +
-                    "SET itemSerial = ? WHERE uuid = ?";
+            String updateItem = "UPDATE " + con.getTablePrefix() + "shop_" + name +
+                    " SET itemSerial = ? WHERE uuid = ?";
             try (PreparedStatement statement = connection.prepareStatement(updateItem)) {
                 statement.setString(1, item.getItemSerial());
                 statement.setString(2, item.getUid().toString());
+                statement.executeUpdate();
             }
         }), "update");
     }

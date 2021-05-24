@@ -7,7 +7,7 @@ import org.bukkit.entity.Player;
 
 public class tokenManagerE implements economy{
 
-    private final TokenManager api = hooksManager.getInstance().getTokenManagerApi();
+    private transient static final TokenManager api = hooksManager.getInstance().getTokenManagerApi();
 
     @Override
     public boolean hasMoney(Player p, Double price) {

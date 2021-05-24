@@ -4,6 +4,7 @@ import io.github.divios.dailyrandomshop.DRShop;
 import io.github.divios.dailyrandomshop.builders.dynamicGui;
 import io.github.divios.dailyrandomshop.utils.utils;
 import io.github.divios.dailyrandomshop.xseries.XMaterial;
+import io.github.divios.lib.itemHolder.dItem;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -17,15 +18,17 @@ public class changeMaterialGui {
 
     private static final DRShop main = DRShop.getInstance();
     private static final List<ItemStack> contents = removeGarbageMaterial();
-    private ItemStack newItem;
+    private dItem newItem;
     private Player p;
+    private String shopName;
 
     private changeMaterialGui() {}
 
-    public static void openInventory(Player p, ItemStack newItem) {
+    public static void openInventory(Player p, dItem newItem, String shopName) {
         changeMaterialGui instance = new changeMaterialGui();
         instance.p = p;
-        instance.newItem = newItem.clone();
+        instance.newItem = newItem;
+        instance.shopName = shopName;
             new dynamicGui.Builder()
                 .contents(instance::contents)
                 .contentAction(instance::contentActions)
@@ -38,8 +41,8 @@ public class changeMaterialGui {
     }
 
     private dynamicGui.Response contentActions(InventoryClickEvent e) {
-        this.newItem.setType(e.getCurrentItem().getType());
-        //customizerMainGuiIH.openInventory(p, this.newItem);
+        this.newItem.setMaterial(XMaterial.matchXMaterial(e.getCurrentItem()).parseMaterial());
+        customizerMainGuiIH.openInventory(p, this.newItem, shopName);
         return dynamicGui.Response.nu();
     }
 

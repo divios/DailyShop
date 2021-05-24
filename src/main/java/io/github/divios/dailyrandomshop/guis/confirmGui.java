@@ -32,8 +32,8 @@ public class confirmGui implements Listener, InventoryHolder {
     private static ItemStack rem10;
     private static ItemStack confirm;
     private static ItemStack back;
-    private BiConsumer<Player, ItemStack> c;
-    private Consumer<Player> b;
+    private final BiConsumer<Player, ItemStack> c;
+    private final Consumer<Player> b;
 
     private confirmGui(
             Player p,

@@ -7,8 +7,7 @@ import org.bukkit.entity.Player;
 
 public class playerPointsE implements economy {
 
-    PlayerPointsAPI api = PlayerPoints.getInstance().getAPI();
-
+    private transient static final PlayerPointsAPI api = PlayerPoints.getInstance().getAPI();
 
     @Override
     public boolean hasMoney(Player p, Double price) {
