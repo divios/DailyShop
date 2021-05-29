@@ -12,7 +12,8 @@ public class initialMigration {
         try (Statement statement = connection.createStatement()) {
             statement.execute("CREATE TABLE IF NOT EXISTS " + tablePrefix + "active_shops (" +
                     "name varchar [255], " +
-                    "type varchar [255] " +
+                    "type varchar [255], " +
+                    "gui varchar [255]" +
                     ")");
         }
 

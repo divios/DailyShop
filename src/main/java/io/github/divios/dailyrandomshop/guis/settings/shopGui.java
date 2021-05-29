@@ -2,6 +2,7 @@ package io.github.divios.dailyrandomshop.guis.settings;
 
 import io.github.divios.dailyrandomshop.DRShop;
 import io.github.divios.dailyrandomshop.builders.dynamicGui;
+import io.github.divios.dailyrandomshop.guis.confirmIH;
 import io.github.divios.dailyrandomshop.guis.customizerguis.customizerMainGuiIH;
 import io.github.divios.dailyrandomshop.utils.utils;
 import io.github.divios.dailyrandomshop.xseries.XMaterial;
@@ -20,6 +21,7 @@ import java.util.UUID;
 public class shopGui {
 
     private static final DRShop plugin = DRShop.getInstance();
+    private static final shopsManager sManager = shopsManager.getInstance();
 
     public static void open(Player p, String shop) {
         new dynamicGui.Builder()
@@ -49,25 +51,37 @@ public class shopGui {
         inv.setItem(52, addItems);
     }
 
-    private static dynamicGui.Response contentAction(InventoryClickEvent e, String shop) {
+    private static dynamicGui.Response contentAction(InventoryClickEvent e, String shopName) {
         e.setCancelled(true);
 
         if (utils.isEmpty(e.getCurrentItem())) return dynamicGui.Response.nu();
 
+        Player p = (Player) e.getWhoClicked();
+        dShop shop = sManager.getShop(shopName);
         UUID uid = dItem.getUid(e.getCurrentItem());
 
-        customizerMainGuiIH.openInventory((Player) e.getWhoClicked(),
-                shopsManager.getInstance().getShop(shop).getItem(uid), shop);
+        if (e.isLeftClick())
+            customizerMainGuiIH.openInventory((Player) e.getWhoClicked(),
+                    shop.getItem(uid), shop);
 
+        else if (e.isRightClick())
+            new confirmIH(p, (player, aBoolean) -> {
+                if (aBoolean)
+                    shop.removeItem(uid);
+                open(p, shopName);
+            }, player -> open(player, shopName), e.getCurrentItem(),
+                    "", "", "");
 
         return dynamicGui.Response.nu();
     }
 
     private static dynamicGui.Response nonContentAction(int slot, Player p, String name) {
         if (slot == 52) {
-            ItemStack newItem = XMaterial.GRASS.parseItem();
-            shopsManager.getInstance().getShop(name).addItem(new dItem(newItem));
-            open(p, name);
+            addDailyItemGuiIH.openInventory(p, itemStack -> {
+                shopsManager.getInstance().getShop(name)
+                        .addItem(new dItem(itemStack));
+                open(p, name);
+            });
         }
         return dynamicGui.Response.nu();
     }

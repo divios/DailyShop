@@ -1,15 +1,20 @@
 package io.github.divios.lib.itemHolder;
 
 import io.github.divios.lib.storage.dataManager;
+import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.Set;
+import java.util.UUID;
 
 public class dShop {
 
-    private final String name;
+    private String name;
     private final dShopT type;
     private Set<dItem> items = new LinkedHashSet<>();
+    private final dGui gui = new dGui();
 
     public dShop(String name, dShopT type) {
         this.name = name;
@@ -23,6 +28,12 @@ public class dShop {
     public synchronized String getName() {
         return name;
     }
+
+    /**
+     * Sets the name of the shop
+     * @param name
+     */
+    public synchronized void setName(String name) { this.name = name; }
 
     /**
      * Gets the type of the shop
@@ -104,6 +115,30 @@ public class dShop {
         if (result)
             dataManager.getInstance().deleteItem(this.name, uid);
         return result;
+    }
+
+    /**
+     * Updates the gui from a base 64
+     * @param base64
+     */
+    public synchronized void updateGui(String base64) {
+        gui.updateInventory(base64);
+    }
+
+    /**
+     * Updates the gui with the given inv
+     * @param inv
+     */
+    public synchronized void updateGui(Inventory inv) {
+        gui.updateInventory(inv);
+    }
+
+    /**
+     * Return the dGui of this shop
+     * @return
+     */
+    public synchronized dGui getGui() {
+        return gui;
     }
 
     @Override

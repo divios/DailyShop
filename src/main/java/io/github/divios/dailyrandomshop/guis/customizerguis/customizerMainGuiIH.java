@@ -45,6 +45,16 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
         p.openInventory(instance.createInventory());
     }
 
+    public static void openInventory(Player p, dItem ditem, dShop shop) {
+        if (instance == null) {
+            instance = new customizerMainGuiIH();
+            Bukkit.getPluginManager().registerEvents(instance, main);
+        }
+        instance.ditem = ditem.clone();
+        instance.shop = shop;
+        p.openInventory(instance.createInventory());
+    }
+
     private Inventory createInventory() {
 
         Inventory inv = Bukkit.createInventory(instance, 54, conf_msg.CUSTOMIZE_GUI_TITLE);
@@ -244,7 +254,7 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
 
 
         else if (e.getSlot() == 0) {        /* Boton de cambiar economia */
-            //changeEcon.openInventory(p, newItem);
+            changeEcon.openInventory(p, ditem);
         }
 
         else if (e.getSlot() == 7) {        /* Boton de cambiar confirm Gui */
@@ -294,9 +304,9 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
         }
 
         else if (e.getSlot() == 28) { // Boton de cambiar enchants
-            /*if (e.isLeftClick()) changeEnchantments.openInventory(p, newItem);
-            else if (e.isRightClick() && !newItem.getEnchantments().isEmpty())
-                changeEnchantments.openInventory(p, newItem, newItem.getEnchantments()); */
+            if (e.isLeftClick()) changeEnchantments.openInventory(p, ditem, shop);
+            else if (e.isRightClick() && !ditem.getEnchantments().isEmpty())
+                changeEnchantments.openInventory(p, ditem, ditem.getEnchantments(), shop);
         }
 
         else if (e.getSlot() == 21 && ditem.getStock() != null) { // Boton de cambiar amount
