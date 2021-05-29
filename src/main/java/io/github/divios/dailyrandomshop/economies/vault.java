@@ -4,8 +4,6 @@ import io.github.divios.dailyrandomshop.hooks.hooksManager;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.entity.Player;
 
-import java.io.Serializable;
-
 public class vault implements economy{
 
     private transient static final Economy vault = hooksManager.getInstance().getVault();

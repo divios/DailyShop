@@ -5,7 +5,6 @@ import io.github.divios.dailyrandomshop.conf_msg;
 import io.github.divios.dailyrandomshop.utils.utils;
 import io.github.divios.dailyrandomshop.xseries.XMaterial;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -107,26 +106,14 @@ public class confirmGui implements Listener, InventoryHolder {
     }
 
     private void updateInventory(Inventory inv, Player p) {
-        int nstack = inv.getItem(22).getAmount();
+        int nStack = inv.getItem(22).getAmount();
 
-        if( nstack > 1) inv.setItem(18, rem1);
-        else inv.setItem(18, new ItemStack(Material.AIR));
-
-        if( nstack > 5) inv.setItem(19, rem5);
-        else inv.setItem(19, new ItemStack(Material.AIR));
-
-        if( nstack > 10) inv.setItem(20, rem10);
-        else inv.setItem(20, new ItemStack(Material.AIR));
-
-        if( nstack < 64) inv.setItem(24, add1);
-        else inv.setItem(24, new ItemStack(Material.AIR));
-
-        if( nstack < 60) inv.setItem(25, add5);
-        else inv.setItem(25, new ItemStack(Material.AIR));
-
-        if( nstack < 55) inv.setItem(26, add10);
-        else inv.setItem(26, new ItemStack(Material.AIR));
-
+        inv.setItem(18, nStack > 1 ? rem1: XMaterial.AIR.parseItem());
+        inv.setItem(19, nStack > 5 ? rem5: XMaterial.AIR.parseItem());
+        inv.setItem(20, nStack > 10 ? rem10: XMaterial.AIR.parseItem());
+        inv.setItem(24, nStack < 64 ? add1: XMaterial.AIR.parseItem());
+        inv.setItem(25, nStack < 60 ? add5: XMaterial.AIR.parseItem());
+        inv.setItem(26, nStack < 55 ? add10: XMaterial.AIR.parseItem());
 
 
         //LoreStrategy.update(inv.getItem(40), inv.getItem(22));

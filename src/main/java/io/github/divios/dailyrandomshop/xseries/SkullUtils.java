@@ -22,6 +22,8 @@
 package io.github.divios.dailyrandomshop.xseries;
 
 import com.google.common.collect.Lists;
+import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.properties.Property;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -29,8 +31,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 
-import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.properties.Property;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Field;

@@ -3,12 +3,10 @@ package io.github.divios.lib.itemHolder;
 import io.github.divios.dailyrandomshop.conf_msg;
 import io.github.divios.dailyrandomshop.utils.utils;
 import io.github.divios.dailyrandomshop.xseries.XMaterial;
-import io.th0rgal.oraxen.shaded.syntaxapi.utils.java.Arrays;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.IntStream;
 
 public class dRarity {
 

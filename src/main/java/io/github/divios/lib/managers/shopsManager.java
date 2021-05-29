@@ -8,7 +8,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
-import java.util.concurrent.ExecutionException;
 
 public class shopsManager {
 
@@ -52,8 +51,9 @@ public class shopsManager {
      */
 
     public synchronized void createShop(String name, dShop.dShopT type) {
-        shops.add(new dShop(name, type));
-        dataManager.getInstance().createShop(name, type);
+        dShop newShop = new dShop(name, type);
+        shops.add(newShop);
+        dataManager.getInstance().createShop(newShop);
     }
 
     /**

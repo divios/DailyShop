@@ -1,21 +1,16 @@
 package io.github.divios.lib.storage;
 
-import io.github.divios.dailyrandomshop.DRShop;
+import io.github.divios.lib.itemHolder.dGui;
 import io.github.divios.lib.itemHolder.dItem;
 import io.github.divios.lib.itemHolder.dShop;
 import io.github.divios.lib.storage.migrations.initialMigration;
 
-import javax.security.auth.callback.Callback;
-import java.io.ByteArrayInputStream;
-import java.io.ObjectInputStream;
-import java.sql.*;
-import java.util.Base64;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
 public class dataManager {
@@ -47,8 +42,9 @@ public class dataManager {
                         dShop shop = new dShop(name,
                                 dShop.dShopT.valueOf(result.getString("type")));
 
-                       getShop(name, shop::setItems);
-                       shops.add(shop);
+                        shop.updateGui(result.getString("gui"));
+                        getShop(name, shop::setItems);
+                        shops.add(shop);
                     }
                 }
                 callback.accept(shops);
@@ -74,23 +70,43 @@ public class dataManager {
             }));
         }
 
-    public synchronized void createShop(String name, dShop.dShopT type) {
+    public synchronized void createShop(dShop shop) {
         con.async(() -> con.databaseConnector.connect(connection -> {
 
             String createShop = "INSERT INTO " + con.getTablePrefix() +
-                    "active_shops (name, type) VALUES (?, ?)";
+                    "active_shops (name, type, gui) VALUES (?, ?, ?)";
             try (PreparedStatement statement = connection.prepareStatement(createShop)) {
-                statement.setString(1, name);
-                statement.setString(2, type.name());
+                statement.setString(1, shop.getName());
+                statement.setString(2, shop.getType().name());
+                statement.setString(3, shop.getGui().serialize());
                 statement.executeUpdate();
             }
 
             try (Statement statement = connection.createStatement()) {
                 statement.execute("CREATE TABLE IF NOT EXISTS " + con.getTablePrefix() + "shop_"
-                        + name + "(" +
+                        + shop.getName() + "(" +
                         "itemSerial varchar [255], " +
                         "uuid varchar [255] " +
                         ")");
+            }
+
+        }));
+    }
+
+    public synchronized void renameShop(String oldName, String newName) {
+        con.async(() -> con.databaseConnector.connect(connection -> {
+            String renameShop = "UPDATE " + con.getTablePrefix() + "active_shops" +
+                    " SET name = ? WHERE name = ?";
+            try (PreparedStatement statement = connection.prepareStatement(renameShop)) {
+                statement.setString(1, newName);
+                statement.setString(2, oldName);
+                statement.executeUpdate();
+            }
+
+            String renameTable = "ALTER TABLE " + con.getTablePrefix() + "shop_" + oldName +
+                    " RENAME TO " + con.getTablePrefix() + "shop_" + newName;
+            try (Statement statement = connection.createStatement()) {
+                statement.execute(renameTable);
             }
 
         }));
@@ -146,7 +162,19 @@ public class dataManager {
                 statement.setString(2, item.getUid().toString());
                 statement.executeUpdate();
             }
-        }), "update");
+        }), "itemUpdate");
+    }
+
+    public synchronized void updateGui(String name, dGui gui) {
+        con.queueAsync(() -> con.databaseConnector.connect(connection -> {
+            String updateGui = "UPDATE " + con.getTablePrefix() + "active_shops " +
+                    "SET gui = ? WHERE name = ?";
+            try (PreparedStatement statement = connection.prepareStatement(updateGui)) {
+                statement.setString(1, gui.serialize());
+                statement.setString(2, name);
+                statement.executeUpdate();
+            }
+        }), "guiUpdate");
     }
 
 
