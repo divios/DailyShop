@@ -1,6 +1,8 @@
 package io.github.divios.lib.itemHolder;
 
 import io.github.divios.dailyrandomshop.utils.utils;
+import io.github.divios.dailyrandomshop.xseries.XMaterial;
+import io.github.divios.lib.storage.dataManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
@@ -25,7 +27,7 @@ import java.util.List;
 public class dGui implements InventoryHolder, Listener {
 
     private Inventory inv;
-    String title = "";  // for some reason is throwing noSuckMethod
+    String title = utils.formatString("&cprueba");  // for some reason is throwing noSuchMethod
     private boolean available = true;
 
     public dGui(String base64) {
@@ -67,6 +69,10 @@ public class dGui implements InventoryHolder, Listener {
         return available;
     }
 
+    public String getTitle() {
+        return title;
+    }
+
     @Override
     public Inventory getInventory() {
         return inv;
@@ -76,19 +82,13 @@ public class dGui implements InventoryHolder, Listener {
      * Updates the inventory from a base64
      * @param base64
      */
-    public void updateInventory(String base64) {
-        inv = deserialize(base64);
-    }
+    public void updateInventory(String base64) { inv = deserialize(base64); }
 
     /**
      * Sets this instance inventory holder
      * @param inv
      */
-    public void updateInventory(Inventory inv) {
-        this.inv.clear();
-        Arrays.stream(inv.getContents()).iterator()
-                .forEachRemaining(item -> this.inv.addItem(item));
-    }
+    protected void updateInventory(Inventory inv) { this.inv = inv; }
 
     /**
      * Gets the inventory serialized
@@ -102,7 +102,7 @@ public class dGui implements InventoryHolder, Listener {
             BOOS.writeObject(title);
             BOOS.writeInt(inv.getSize());
             for (ItemStack item : inv.getContents()) {
-                BOOS.writeObject(item);
+                BOOS.writeObject(utils.isEmpty(item) ? XMaterial.AIR.parseItem():item);
             }
             BOOS.close();
             base64 = Base64Coder.encodeLines(byteArrayOutputStream.toByteArray());
@@ -129,10 +129,11 @@ public class dGui implements InventoryHolder, Listener {
             title = (String) BOIS.readObject();
             inventory = Bukkit.getServer().createInventory(this, BOIS.readInt(), title);
 
+            int i = 0;
             while (true) {
                 ItemStack item = (ItemStack) BOIS.readObject();
-                if (utils.isEmpty(item)) continue;
-                inventory.addItem(item);
+                if (!utils.isEmpty(item)) inventory.setItem(i, item);
+                i++;
             }
 
         } catch (IOException | ClassNotFoundException e) {

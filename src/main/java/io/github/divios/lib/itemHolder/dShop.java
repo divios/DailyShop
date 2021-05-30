@@ -11,14 +11,25 @@ import java.util.UUID;
 
 public class dShop {
 
+    private static final dataManager dManager = dataManager.getInstance();
+
     private String name;
     private final dShopT type;
     private Set<dItem> items = new LinkedHashSet<>();
-    private final dGui gui = new dGui();
+    private final dGui gui;
 
     public dShop(String name, dShopT type) {
         this.name = name;
         this.type = type;
+
+        gui = new dGui();
+    }
+
+    public dShop(String name, dShopT type, String base64) {
+        this.name = name;
+        this.type = type;
+
+        gui = new dGui(base64);
     }
 
     /**
@@ -84,7 +95,7 @@ public class dShop {
         items.iterator().forEachRemaining(dItem -> {
             if (dItem.getUid().equals(uid)) {
                 dItem.setItem(newItem.getItem());
-                dataManager.getInstance().updateItem(getName(), dItem);
+                dManager.updateItem(getName(), dItem);
             }
         });
     }
@@ -102,7 +113,7 @@ public class dShop {
      */
     public synchronized void addItem(@NotNull dItem item) {
         items.add(item);
-        dataManager.getInstance().addItem(this.name, item);
+        dManager.addItem(this.name, item);
     }
 
     /**
@@ -113,7 +124,7 @@ public class dShop {
     public synchronized boolean removeItem(UUID uid) {
         boolean result = items.removeIf(dItem -> dItem.getUid().equals(uid));
         if (result)
-            dataManager.getInstance().deleteItem(this.name, uid);
+            dManager.deleteItem(this.name, uid);
         return result;
     }
 
@@ -123,6 +134,8 @@ public class dShop {
      */
     public synchronized void updateGui(String base64) {
         gui.updateInventory(base64);
+        dManager.updateGui(name, gui);
+
     }
 
     /**
@@ -131,6 +144,7 @@ public class dShop {
      */
     public synchronized void updateGui(Inventory inv) {
         gui.updateInventory(inv);
+        dManager.updateGui(name, gui);
     }
 
     /**

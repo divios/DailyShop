@@ -40,9 +40,9 @@ public class dataManager {
                     while (result.next()) {
                         String name = result.getString("name");
                         dShop shop = new dShop(name,
-                                dShop.dShopT.valueOf(result.getString("type")));
+                                dShop.dShopT.valueOf(result.getString("type")),
+                                result.getString("gui"));
 
-                        shop.updateGui(result.getString("gui"));
                         getShop(name, shop::setItems);
                         shops.add(shop);
                     }
