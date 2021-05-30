@@ -25,21 +25,25 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class changeEcon implements Listener, InventoryHolder {
 
     private static final DRShop plugin = DRShop.getInstance();
     private Inventory inv = null;
-    private dItem item;
-    private Player p;
+    private final dItem item;
+    private final Player p;
+    private final Consumer<dItem> consumer;
 
-    private changeEcon() {}
+    private changeEcon(Player p, dItem item, Consumer<dItem> consumer) {
+        this.p = p;
+        this.item = item;
+        this.consumer = consumer;
+    }
 
-    public static void openInventory(Player p, dItem item) {
-        changeEcon instance = new changeEcon();
-        instance.p = p;
-        instance.item = item;
+    public static void openInventory(Player p, dItem item, Consumer<dItem> consumer) {
+        changeEcon instance = new changeEcon(p, item, consumer);
         p.openInventory(instance.getInventory());
     }
 
@@ -150,8 +154,7 @@ public class changeEcon implements Listener, InventoryHolder {
             item.setEconomy(new playerPointsE());
         }
 
-
-        //customizerMainGuiIH.openInventory(p, item);
+        consumer.accept(item);
 
     }
 

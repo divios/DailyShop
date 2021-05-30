@@ -62,7 +62,8 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
         ItemStack barrier = XMaterial.BARRIER.parseItem();
         utils.setDisplayName(barrier, conf_msg.CUSTOMIZE_UNAVAILABLE);
 
-        ItemStack changeEcon = XMaterial.EMERALD.parseItem();       // Change econ
+        ItemStack changeEcon = XMaterial.PLAYER_HEAD.parseItem();      // Change econ
+        utils.applyTexture(changeEcon, "e36e94f6c34a35465fce4a90f2e25976389eb9709a12273574ff70fd4daa6852");
         utils.setDisplayName(changeEcon, conf_msg.CUSTOMIZE_CHANGE_ECON);
         utils.setLore(changeEcon, conf_msg.CUSTOMIZE_CHANGE_ECON_LORE);
         utils.setLore(changeEcon, Arrays.asList("", "&7Current: " + ditem.getEconomy().getClass().getName()
@@ -93,13 +94,14 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
         utils.setDisplayName(changeMaterial, conf_msg.CUSTOMIZE_MATERIAL);
         utils.setLore(changeMaterial, conf_msg.CUSTOMIZE_MATERIAL_LORE);
 
-        ItemStack changeLore = XMaterial.PAPER.parseItem();    //Change lore
+        ItemStack changeLore = XMaterial.PLAYER_HEAD.parseItem();    //Change lore
+        utils.applyTexture(changeLore, "c6692f99cc6d78242304110553589484298b2e4a0233b76753f888e207ef5");
         utils.setDisplayName(changeLore, conf_msg.CUSTOMIZE_LORE);
         utils.setLore(changeLore, conf_msg.CUSTOMIZE_LORE_LORE);
         utils.setLore(changeLore, Arrays.asList(""));
         utils.setLore(changeLore, utils.getItemLore(ditem.getItem().getItemMeta()));
 
-        ItemStack editEnchantments = XMaterial.BOOK.parseItem();    //Change enchants
+        ItemStack editEnchantments = XMaterial.ENCHANTING_TABLE.parseItem();   //Change enchants
         utils.setDisplayName(editEnchantments, conf_msg.CUSTOMIZE_ENCHANTS);
         utils.setLore(editEnchantments, conf_msg.CUSTOMIZE_ENCHANTS_LORE);
         utils.setLore(editEnchantments, ditem.getItem().getEnchantments().entrySet().stream()
@@ -116,7 +118,7 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
             utils.setLore(setAmount, conf_msg.CUSTOMIZE_AMOUNT_ENABLE_LORE);
 
 
-        ItemStack addRemoveCommands = XMaterial.COMMAND_BLOCK.parseItem();     //Change command item
+        ItemStack addRemoveCommands = XMaterial.COMMAND_BLOCK.parseItem();    //Change command item
         if (ditem.getCommands() == null) {
             utils.setDisplayName(addRemoveCommands, conf_msg.CUSTOMIZE_ENABLE_COMMANDS);
             utils.setLore(addRemoveCommands, utils.replaceOnLore(
@@ -131,7 +133,8 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
         }
 
 
-        ItemStack perms = XMaterial.WRITTEN_BOOK.parseItem();   //add remove perms
+        ItemStack perms = XMaterial.PLAYER_HEAD.parseItem();   //add remove perms
+        utils.applyTexture(perms, "4e68435e9dd05dbe2e7bb45c5d3c95d0c9d8cb4c062d30e9b4aed1ccfa65a49b");
         utils.setDisplayName(perms, conf_msg.CUSTOMIZE_PERMS);
         if (ditem.getPerms() == null) {
             utils.setLore(perms, conf_msg.CUSTOMIZE_ENABLE_PERMS_LORE);
@@ -254,7 +257,7 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
 
 
         else if (e.getSlot() == 0) {        /* Boton de cambiar economia */
-            changeEcon.openInventory(p, ditem);
+            changeEcon.openInventory(p, ditem, dItem -> refresh(p));
         }
 
         else if (e.getSlot() == 7) {        /* Boton de cambiar confirm Gui */

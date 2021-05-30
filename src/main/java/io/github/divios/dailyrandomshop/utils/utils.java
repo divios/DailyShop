@@ -17,9 +17,11 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 public class utils {
 
@@ -254,6 +256,14 @@ public class utils {
 
     public static void applyTexture(ItemStack item, String url) {
         item.setItemMeta(SkullUtils.applySkin(item.getItemMeta(), url));
+    }
+
+    public static void translateContents(Inventory from, Inventory to) {
+        if (from.getSize() > to.getSize())
+            to.setContents(Arrays.stream(from.getContents()).limit(to.getSize()).toArray(ItemStack[]::new));
+        else
+            to.setContents(from.getContents());
+
     }
 
 
