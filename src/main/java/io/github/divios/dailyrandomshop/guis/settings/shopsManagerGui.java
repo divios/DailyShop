@@ -101,7 +101,7 @@ public class shopsManagerGui {
                 if (aBoolean)
                     shopsManager.getInstance().deleteShop(shop.getName());
                 open(player);
-            }, shopsManagerGui::open, selected,
+            }, selected,
                     conf_msg.CONFIRM_GUI_NAME,
                     conf_msg.CONFIRM_MENU_YES, conf_msg.CONFIRM_MENU_NO);
             return dynamicGui.Response.nu();

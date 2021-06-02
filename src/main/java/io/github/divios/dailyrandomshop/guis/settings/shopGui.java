@@ -2,6 +2,7 @@ package io.github.divios.dailyrandomshop.guis.settings;
 
 import io.github.divios.dailyrandomshop.DRShop;
 import io.github.divios.dailyrandomshop.builders.dynamicGui;
+import io.github.divios.dailyrandomshop.conf_msg;
 import io.github.divios.dailyrandomshop.guis.confirmIH;
 import io.github.divios.dailyrandomshop.guis.customizerguis.customizerMainGuiIH;
 import io.github.divios.dailyrandomshop.utils.utils;
@@ -69,8 +70,8 @@ public class shopGui {
                 if (aBoolean)
                     shop.removeItem(uid);
                 open(p, shopName);
-            }, player -> open(player, shopName), e.getCurrentItem(),
-                    "", "", "");
+            }, e.getCurrentItem(),
+                    conf_msg.CONFIRM_GUI_NAME, conf_msg.CONFIRM_MENU_YES, conf_msg.CONFIRM_MENU_NO);
 
         return dynamicGui.Response.nu();
     }

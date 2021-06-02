@@ -21,17 +21,16 @@ import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 public class dGui implements InventoryHolder, Listener {
 
     private Inventory inv;
-    String title = utils.formatString("&cprueba");  // for some reason is throwing noSuchMethod
+    String title;                     // for some reason is throwing noSuchMethod
     private boolean available = true;
 
     public dGui(String base64) {
-        inv = deserialize(base64);
+        updateInventory(base64);
     }
 
     public dGui(String title, @NotNull List<ItemStack> items) {
@@ -82,13 +81,21 @@ public class dGui implements InventoryHolder, Listener {
      * Updates the inventory from a base64
      * @param base64
      */
-    public void updateInventory(String base64) { inv = deserialize(base64); }
+    public void updateInventory(String base64) {
+        AbstractMap.SimpleEntry<String, Inventory> dese = (AbstractMap.SimpleEntry<String, Inventory>)
+                deserialize(base64);
+        inv = dese.getValue();
+        title = dese.getKey();
+    }
 
     /**
      * Sets this instance inventory holder
      * @param inv
      */
-    protected void updateInventory(Inventory inv) { this.inv = inv; }
+    protected void updateInventory(String title, Inventory inv) {
+        this.title = title;
+        this.inv = inv;
+    }
 
     /**
      * Gets the inventory serialized
@@ -118,7 +125,7 @@ public class dGui implements InventoryHolder, Listener {
      * @param base64 base64 to deserialize
      * @return the new inventory
      */
-    private Inventory deserialize(String base64) {
+    private Map.Entry<String, Inventory> deserialize(String base64) {
         Inventory inventory = null;
 
         BukkitObjectInputStream BOIS = null;
@@ -137,7 +144,7 @@ public class dGui implements InventoryHolder, Listener {
             }
 
         } catch (IOException | ClassNotFoundException e) {
-            return inventory;
+            return new AbstractMap.SimpleEntry<>(title, inventory);
         } finally {
             try {
                 BOIS.close();

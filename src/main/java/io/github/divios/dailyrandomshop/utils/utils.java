@@ -263,8 +263,6 @@ public class utils {
             to.setContents(Arrays.stream(from.getContents()).limit(to.getSize()).toArray(ItemStack[]::new));
         else
             to.setContents(from.getContents());
-
     }
-
 
 }

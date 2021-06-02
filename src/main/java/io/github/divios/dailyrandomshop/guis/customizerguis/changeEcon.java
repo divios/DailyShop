@@ -5,6 +5,9 @@ import io.github.divios.dailyrandomshop.DRShop;
 import io.github.divios.dailyrandomshop.conf_msg;
 import io.github.divios.dailyrandomshop.economies.*;
 import io.github.divios.dailyrandomshop.hooks.hooksManager;
+import io.github.divios.dailyrandomshop.redLib.inventorygui.InventoryGUI;
+import io.github.divios.dailyrandomshop.redLib.inventorygui.ItemButton;
+import io.github.divios.dailyrandomshop.redLib.itemutils.ItemBuilder;
 import io.github.divios.dailyrandomshop.utils.utils;
 import io.github.divios.dailyrandomshop.xseries.XMaterial;
 import io.github.divios.lib.itemHolder.dItem;
@@ -28,10 +31,16 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-public class changeEcon implements Listener, InventoryHolder {
+public class changeEcon{
 
     private static final DRShop plugin = DRShop.getInstance();
-    private Inventory inv = null;
+
+    private static final GemsEconomyAPI gemsApi = hooksManager.getInstance().getGemsEcon();
+    private static final TokenEnchantAPI tokenEnchantsApi = hooksManager.getInstance().getTokenEnchantApi();
+    private static final TokenManager tokenManagerApi = hooksManager.getInstance().getTokenManagerApi();
+    private static final MPointsAPI mPointsAPI = hooksManager.getInstance().getMPointsApi();
+    private static final PlayerPointsAPI pPointsApi = hooksManager.getInstance().getPlayerPointsApi();
+
     private final dItem item;
     private final Player p;
     private final Consumer<dItem> consumer;
@@ -42,134 +51,63 @@ public class changeEcon implements Listener, InventoryHolder {
         this.consumer = consumer;
     }
 
-    public static void openInventory(Player p, dItem item, Consumer<dItem> consumer) {
+    public static void open(Player p, dItem item, Consumer<dItem> consumer) {
         changeEcon instance = new changeEcon(p, item, consumer);
-        p.openInventory(instance.getInventory());
+        instance.init();
     }
 
     private void init() {
-        Bukkit.getPluginManager().registerEvents(this, plugin);
-        GemsEconomyAPI gemsApi = hooksManager.getInstance().getGemsEcon();
-        TokenEnchantAPI tokenEnchantsApi = hooksManager.getInstance().getTokenEnchantApi();
-        TokenManager tokenManagerApi = hooksManager.getInstance().getTokenManagerApi();
-        MPointsAPI mPointsAPI = hooksManager.getInstance().getMPointsApi();
-        PlayerPointsAPI pPointsApi = hooksManager.getInstance().getPlayerPointsApi();
 
-        inv = Bukkit.createInventory(this, 27, conf_msg.CUSTOMIZE_CHANGE_ECON);
 
-        ItemStack returnItem = XMaterial.OAK_SIGN.parseItem();
-        utils.setDisplayName(returnItem, "&c&lReturn");
+        InventoryGUI gui = new InventoryGUI(27, conf_msg.CUSTOMIZE_CHANGE_ECON);
 
-        ItemStack Vault = XMaterial.CHEST.parseItem();
-        utils.setDisplayName(Vault, "&f&lVault");
-        utils.setLore(Vault, Arrays.asList("&7Click to change"));
+        int slot = 0;
 
-        List<String> gems = new ArrayList<>();
-        if (gemsApi != null) {
-            gems = gemsApi.plugin.getCurrencyManager().getCurrencies().stream()
-                    .map(Currency::getPlural).collect(Collectors.toList());
-        }
+        gui.addButton(ItemButton.create(new ItemBuilder(XMaterial.OAK_SIGN)
+                .setName("&c&lReturn"), e -> consumer.accept(item)), 22);
+        gui.addButton(ItemButton.create(new ItemBuilder(XMaterial.CHEST)
+                .setName("&f&lVault").addLore("&7Click to change"), e -> consumer.accept(item)), slot);
+        slot++;
 
-        inv.setItem(22, returnItem);
-        inv.addItem(Vault);
-        for (String s: gems) {
-            ItemStack gemItem = XMaterial.EMERALD.parseItem();
-            utils.setDisplayName(gemItem, "&f&l" + s);
-            utils.setLore(Vault, Arrays.asList("&7Click to change"));
-            inv.addItem(gemItem);
-        }
+        if (gemsApi != null)
+            for (String s : gemsApi.plugin.getCurrencyManager().getCurrencies().stream()
+                    .map(Currency::getPlural).collect(Collectors.toList())) {
+                gui.addButton(ItemButton.create(new ItemBuilder(XMaterial.EMERALD)
+                        .setName("&f&l" + s).addLore("&7Click to change"), e -> consumer.accept(item)), slot);
+                slot++;
+            }
 
         if (tokenEnchantsApi != null) {
-            ItemStack tokenEnchantsItem = XMaterial.ENCHANTED_BOOK.parseItem();
-            utils.setDisplayName(tokenEnchantsItem, "&d&lTokenEnchants");
-            utils.setLore(tokenEnchantsItem, Arrays.asList("&7Click to change"));
-            inv.addItem(tokenEnchantsItem);
+            gui.addButton(ItemButton.create(new ItemBuilder(XMaterial.ENCHANTED_BOOK)
+                    .setName("&d&lTokenEnchants").addLore("&7Click to change"), e -> consumer.accept(item)), slot);
+            slot++;
         }
+
 
         if (tokenManagerApi != null) {
-            ItemStack tokenManagerItem = XMaterial.DIAMOND.parseItem();
-            utils.setDisplayName(tokenManagerItem, "&b&lTokenManager");
-            utils.setLore(tokenManagerItem, Arrays.asList("&7Click to change"));
-            inv.addItem(tokenManagerItem);
+            gui.addButton(ItemButton.create(new ItemBuilder(XMaterial.DIAMOND)
+                    .setName("&b&lTokenManager").addLore("&7Click to change"), e -> consumer.accept(item)), slot);
+            slot++;
         }
 
-        Set<String> points = new HashSet<>();
         if (mPointsAPI != null) {
-            points = mPointsAPI.getpointslist();
+            for (String s : mPointsAPI.getpointslist()) {
+                gui.addButton(ItemButton.create(new ItemBuilder(XMaterial.SUNFLOWER)
+                        .setName("&f&l" + s).addLore("&7Click to change"), e -> consumer.accept(item)), slot);
+                slot++;
+            }
         }
-
-        points.forEach(s -> {
-            ItemStack pointsItem = XMaterial.SUNFLOWER.parseItem();
-            utils.setDisplayName(pointsItem, "&f&l" + s);
-            utils.setLore(Vault, Arrays.asList("&7Click to change"));
-            inv.addItem(pointsItem);
-        });
 
         if (pPointsApi != null) {
-            ItemStack playerPointsItem = XMaterial.PLAYER_HEAD.parseItem();
-            utils.setDisplayName(playerPointsItem, "&f&lPlayerPoints");
-            utils.setLore(playerPointsItem, Arrays.asList("&7Click to change"));
-            inv.addItem(playerPointsItem);
+            gui.addButton(ItemButton.create(new ItemBuilder(XMaterial.PLAYER_HEAD)
+                    .setName("&f&lPlayerPoints").addLore("&7Click to change"), e -> consumer.accept(item)), slot);
+            slot++;
         }
 
-    }
+        gui.destroysOnClose();
+        gui.preventPlayerInvSlots();
+        gui.open(p);
 
-    @Override
-    public Inventory getInventory() {
-        init();
-        return inv;
-    }
-
-    @EventHandler
-    public void onInventoryClick(InventoryClickEvent e) {
-        if (e.getView().getTopInventory().getHolder() != this) return;
-        e.setCancelled(true);
-
-        if (utils.isEmpty(e.getCurrentItem())) return;
-        if (e.getSlot() != e.getRawSlot()) return;
-
-        if (e.getCurrentItem().getType().equals(XMaterial.CHEST.parseMaterial())) {
-            item.setEconomy(new vault());
-        }
-
-        else if (e.getCurrentItem().getType().equals(XMaterial.EMERALD.parseMaterial())) {
-            String name = utils.trimString(e.getCurrentItem().getItemMeta().getDisplayName());
-            item.setEconomy(new gemEcon(name));
-        }
-
-        else if (e.getCurrentItem().getType().equals(XMaterial.ENCHANTED_BOOK.parseMaterial())) {
-            item.setEconomy(new tokenManagerE());
-        }
-
-        else if (e.getCurrentItem().getType().equals(XMaterial.DIAMOND.parseMaterial())) {
-           item.setEconomy(new tokenManagerE());
-        }
-
-        else if (e.getCurrentItem().getType().equals(XMaterial.SUNFLOWER.parseMaterial())) {
-            String name = utils.trimString(e.getCurrentItem().getItemMeta().getDisplayName());
-            item.setEconomy(new MPointsE(name));
-        }
-
-        else if(e.getCurrentItem().getType().equals(XMaterial.PLAYER_HEAD.parseMaterial())) {
-            item.setEconomy(new playerPointsE());
-        }
-
-        consumer.accept(item);
-
-    }
-
-    @EventHandler
-    public void onInventoryDrag(InventoryDragEvent e) {
-        if (e.getView().getTopInventory().getHolder() != this) return;
-        e.setCancelled(true);
-    }
-
-    @EventHandler
-    public void onInventoryClose(InventoryCloseEvent e) {
-        if (e.getView().getTopInventory().getHolder() != this) return;
-        InventoryDragEvent.getHandlerList().unregister(this);
-        InventoryClickEvent.getHandlerList().unregister(this);
-        InventoryCloseEvent.getHandlerList().unregister(this);
     }
 
 }

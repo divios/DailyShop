@@ -142,8 +142,8 @@ public class dShop {
      * Updates the gui with the given inv
      * @param inv
      */
-    public synchronized void updateGui(Inventory inv) {
-        gui.updateInventory(inv);
+    public synchronized void updateGui(String name, Inventory inv) {
+        gui.updateInventory(name, inv);
         dManager.updateGui(name, gui);
     }
 

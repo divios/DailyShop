@@ -1,8 +1,12 @@
 package io.github.divios.dailyrandomshop.guis.settings;
 
+import com.google.gson.Gson;
 import io.github.divios.dailyrandomshop.DRShop;
 import io.github.divios.dailyrandomshop.conf_msg;
 import io.github.divios.dailyrandomshop.listeners.dynamicItemListener;
+import io.github.divios.dailyrandomshop.redLib.inventorygui.InventoryGUI;
+import io.github.divios.dailyrandomshop.redLib.inventorygui.ItemButton;
+import io.github.divios.dailyrandomshop.redLib.itemutils.ItemBuilder;
 import io.github.divios.dailyrandomshop.utils.utils;
 import io.github.divios.dailyrandomshop.xseries.XMaterial;
 import org.bukkit.Bukkit;
@@ -16,95 +20,45 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.Arrays;
 import java.util.function.Consumer;
+import java.util.stream.IntStream;
 
-public class addDailyItemGuiIH implements InventoryHolder, Listener {
+public class addDailyItemGuiIH {
 
     private static final DRShop plugin = DRShop.getInstance();
-    private Inventory inv;
 
     private final Player p;
     private final Consumer<ItemStack> consumer;
 
     public static void openInventory(Player p, Consumer<ItemStack> consumer) {
-
-        addDailyItemGuiIH instance = new addDailyItemGuiIH(p,  consumer);
-
-        p.openInventory(instance.getInventory());
+        new addDailyItemGuiIH(p,  consumer);
     }
 
     private addDailyItemGuiIH(Player p, Consumer<ItemStack> consumer) {
         this.p = p;
         this.consumer = consumer;
 
-        Bukkit.getPluginManager().registerEvents(this, plugin);
-        this.init();
+        open();
     }
 
-    private void init() {
+    private void open() {
 
-        inv = Bukkit.createInventory(this, 27, conf_msg.ADD_ITEMS_TITLE);
+        InventoryGUI gui =  new InventoryGUI(27, conf_msg.ADD_ITEMS_TITLE);
 
-        ItemStack fromZero = XMaterial.REDSTONE_TORCH.parseItem();
-        utils.setDisplayName(fromZero, conf_msg.ADD_ITEMS_FROM_ZERO);
-        utils.setLore(fromZero, conf_msg.ADD_ITEMS_FROM_ZERO_LORE);
+        gui.addButton(ItemButton.create(new ItemBuilder(XMaterial.REDSTONE_TORCH)
+                .setName(conf_msg.ADD_ITEMS_FROM_ZERO).addLore(conf_msg.ADD_ITEMS_FROM_ZERO_LORE)
+                , e -> consumer.accept(XMaterial.GRASS.parseItem())), 11);
 
-        ItemStack fromItem = XMaterial.HOPPER.parseItem();
-        utils.setDisplayName(fromItem, conf_msg.ADD_ITEMS_FROM_EXISTING);
-        utils.setLore(fromItem, conf_msg.ADD_ITEMS_FROM_EXISTING_LORE);
+        gui.addButton(ItemButton.create(new ItemBuilder(XMaterial.HOPPER)
+                        .setName(conf_msg.ADD_ITEMS_FROM_EXISTING).addLore(conf_msg.ADD_ITEMS_FROM_EXISTING_LORE)
+                , e -> {
+                    new dynamicItemListener(p, (player, itemStack) ->
+                            consumer.accept(itemStack));
+                    p.closeInventory();
+                }), 15);
 
-        ItemStack bundleItem = XMaterial.CHEST_MINECART.parseItem();
-        utils.setDisplayName(bundleItem, "&6&lCreate bundle");
-        utils.setLore(bundleItem, Arrays.asList("&7Create bundle"));
-
-        ItemStack returnItem = XMaterial.OAK_SIGN.parseItem();
-        utils.setDisplayName(returnItem, conf_msg.ADD_ITEMS_RETURN);
-        utils.setLore(returnItem, conf_msg.ADD_ITEMS_RETURN_LORE);
-
-
-        inv.setItem(11, fromZero);
-        inv.setItem(15, fromItem);
-        inv.setItem(13, bundleItem);
-        inv.setItem(22, returnItem);
-
-        for (int i = 0; i < inv.getSize(); i++) {
-            ItemStack item = inv.getItem(i);
-            if (utils.isEmpty(item)) {
-                inv.setItem(i, XMaterial.GRAY_STAINED_GLASS_PANE.parseItem());
-            }
-        }
-    }
-
-    @Override
-    public Inventory getInventory() {
-        return inv;
-    }
-
-    @EventHandler
-    private void onClick(InventoryClickEvent e) {
-
-        if (e.getView().getTopInventory().getHolder() != this) return;
-
-        e.setCancelled(true);
-        Player p = (Player) e.getWhoClicked();
-
-        if (e.getSlot() != e.getRawSlot()) return;
-
-        if (e.getSlot() == 22) {    //return
-            shopsManagerGui.open(p);
-        }
-
-        if (e.getSlot() == 11) { //from zero
-            consumer.accept(XMaterial.GRASS.parseItem());
-        }
-
-        else if (e.getSlot() == 15) {  //from item
-            new dynamicItemListener(p, (player, itemStack) ->
-                    consumer.accept(itemStack));
-            p.closeInventory();
-        }
-
-        else if (e.getSlot() == 13) {  //bundle item
-
+        gui.addButton(ItemButton.create(new ItemBuilder(XMaterial.CHEST_MINECART)
+                        .setName("&6&lCreate bundle").addLore("&7Create bundle")
+                , e -> {
             /*new changeBundleItem(
                     p,
                     XMaterial.CHEST_MINECART.parseItem(),
@@ -112,7 +66,23 @@ public class addDailyItemGuiIH implements InventoryHolder, Listener {
                             customizerMainGuiIH.openInventory(p,
                                     new dailyItem(itemStack).craft()),
                     player -> openInventory(p)); */
-        }
+                }), 13);
+
+        gui.addButton(ItemButton.create(new ItemBuilder(XMaterial.OAK_SIGN)
+                        .setName(conf_msg.ADD_ITEMS_RETURN).addLore(conf_msg.ADD_ITEMS_RETURN_LORE)
+                , e -> shopsManagerGui.open(p)), 22);
+
+        IntStream.range(0, 27).forEach(value -> {
+            if (utils.isEmpty(gui.getInventory().getItem(value)))
+                gui.addButton(ItemButton.create(new ItemBuilder(XMaterial.GRAY_STAINED_GLASS_PANE)
+                        , e -> {}), value);
+        });
+
+        gui.getState().serialize();
+
+        gui.preventPlayerInvSlots();
+        gui.destroysOnClose();
+        gui.open(p);
     }
 
 }

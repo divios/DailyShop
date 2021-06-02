@@ -1,6 +1,7 @@
 package io.github.divios.dailyrandomshop.builders;
 
 import io.github.divios.dailyrandomshop.DRShop;
+import io.github.divios.dailyrandomshop.utils.EventListener;
 import io.github.divios.dailyrandomshop.utils.utils;
 import io.github.divios.dailyrandomshop.xseries.XMaterial;
 import net.wesjd.anvilgui.AnvilGUI;
@@ -10,6 +11,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
@@ -18,6 +20,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.*;
 import java.util.stream.IntStream;
 
@@ -33,9 +36,13 @@ public class dynamicGui implements InventoryHolder, Listener {
     private final Function<InventoryClickEvent, Response> contentAction;
     private final BiFunction<Integer, Player, Response> nonContentAction;
     private final BiConsumer<Inventory, Integer> addItems;
+
     private final boolean searchOn;
     private final boolean isSearch;
     private final Integer page;
+    private AtomicBoolean preventCloseB;
+
+    private EventListener<InventoryCloseEvent> preventClose;
 
     private final List<Inventory> invsList = new ArrayList<>();
 
@@ -50,7 +57,8 @@ public class dynamicGui implements InventoryHolder, Listener {
             BiConsumer<Inventory, Integer> addItems,
             boolean searchOn,
             boolean isSearch,
-            Integer page
+            Integer page,
+            boolean preventClose
 
     ) {
         this.p = p;
@@ -64,6 +72,22 @@ public class dynamicGui implements InventoryHolder, Listener {
         this.searchOn = searchOn;
         this.isSearch = isSearch;
         this.page = page;
+        this.preventCloseB = new AtomicBoolean(preventClose);
+
+        this.preventClose = new EventListener<>(main,
+                InventoryCloseEvent.class, (l, e) -> {
+                    if (e.getInventory().getHolder() != this)
+                        return;
+
+                    if (preventCloseB.get()) {
+                        l.unregister();
+                        unregister();
+                        utils.runTaskLater(() -> new dynamicGui(p, contentX, title, back, rows2fill, contentAction,
+                                nonContentAction, addItems, searchOn, false, page, preventCloseB.get()),
+                                1L);
+                    }
+        });
+
 
         Bukkit.getPluginManager().registerEvents(this, main);
 
@@ -173,15 +197,17 @@ public class dynamicGui implements InventoryHolder, Listener {
 
     private void searchAction(ItemStack item) {
         if (item.getType() == XMaterial.REDSTONE_BLOCK.parseMaterial()) {
+            preventClose.unregister();
             new dynamicGui(p, contentX, title, back, rows2fill, contentAction,
-                    nonContentAction, addItems, searchOn, false, page);
+                    nonContentAction, addItems, searchOn, false, page, preventCloseB.get());
         } else {
             final List<ItemStack> lists = new ArrayList<>();
             new AnvilGUI.Builder()
                     .onClose(player -> {
                         utils.runTaskLater(() -> {
+                            preventClose.unregister();
                             new dynamicGui(p, contentX, title, back, rows2fill, contentAction,
-                                    nonContentAction, addItems, searchOn, true, page);
+                                    nonContentAction, addItems, searchOn, true, page, preventCloseB.get());
                         }, 1L);
                     })
                     .onComplete((player, text) -> {
@@ -225,11 +251,22 @@ public class dynamicGui implements InventoryHolder, Listener {
 
         if (slot == 49) {
             unregister();
+            preventClose.unregister();
             back.accept(p);
         }
 
-        else if (slot == 53 && !utils.isEmpty(item)) p.openInventory(processNextGui(inv, 1));
-        else if (slot == 45 && !utils.isEmpty(item)) p.openInventory(processNextGui(inv, -1));
+        else if (slot == 53 && !utils.isEmpty(item)) {
+            boolean aux = preventCloseB.get();
+            preventCloseB.set(false);
+            p.openInventory(processNextGui(inv, 1));
+            preventCloseB.set(aux);
+        }
+        else if (slot == 45 && !utils.isEmpty(item)) {
+            boolean aux = preventCloseB.get();
+            preventCloseB.set(false);
+            p.openInventory(processNextGui(inv, -1));
+            preventCloseB.set(aux);
+        }
 
         else if (e.getSlot() == 51 && searchOn) searchAction(item);                             /* Search button */
 
@@ -243,11 +280,14 @@ public class dynamicGui implements InventoryHolder, Listener {
 
             if (response == null) return;
 
-            if (response.getResponse() == ResponseX.CLOSE) p.closeInventory();
+            if (response.getResponse() == ResponseX.CLOSE) {
+                preventClose.unregister();
+                p.closeInventory();
+            }
             else if (response.getResponse() == ResponseX.UPDATE) {
+                preventClose.unregister();
                 new dynamicGui(p, contentX, title, back, rows2fill, contentAction,
-                        nonContentAction, addItems, searchOn, isSearch, page);
-
+                        nonContentAction, addItems, searchOn, isSearch, page, preventCloseB.get());
             }
         }
     }
@@ -257,7 +297,6 @@ public class dynamicGui implements InventoryHolder, Listener {
         if (e.getView().getTopInventory().getHolder() != this) return;
         e.setCancelled(true);
     }
-
 
     public void unregister() {
         InventoryDragEvent.getHandlerList().unregister(this);
@@ -284,6 +323,7 @@ public class dynamicGui implements InventoryHolder, Listener {
 
         private boolean searchOn = true;
         private boolean isSearch = false;
+        private boolean preventClose = false;
         private Integer page = 0;
 
         public Builder contents(Supplier<List<ItemStack>> content) {
@@ -336,11 +376,21 @@ public class dynamicGui implements InventoryHolder, Listener {
             return this;
         }
 
+        public Builder preventClose() {
+            this.preventClose = true;
+            return this;
+        }
+
+        public Builder setPreventClose(boolean preventClose) {
+            this.preventClose = preventClose;
+            return this;
+        }
+
         public dynamicGui open(Player p) {
             this.p = p;
 
             return new dynamicGui(p, content, title, back, rows2fill, contentAction,
-                    nonContentAction, addItems, searchOn, isSearch, page);
+                    nonContentAction, addItems, searchOn, isSearch, page, preventClose);
         }
     }
 
