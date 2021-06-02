@@ -96,6 +96,7 @@ public class changeEnchantments {
                 .contents(instance::contentsX)
                 .contentAction(instance::contentActionX)
                 .back(instance::backAction)
+                .preventClose()
                 .open(p);
     }
 

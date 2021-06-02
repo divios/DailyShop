@@ -9,6 +9,7 @@ import io.github.divios.lib.itemHolder.dGui;
 import io.github.divios.lib.itemHolder.dShop;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -153,7 +154,7 @@ public class customizeGui implements Listener, InventoryHolder {
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent e) {
-        if (!e.getWhoClicked().getUniqueId().equals(p.getUniqueId()))
+        if (e.getInventory().getHolder() != this)
             return;
 
         e.setCancelled(true);
@@ -165,18 +166,18 @@ public class customizeGui implements Listener, InventoryHolder {
             if (utils.isEmpty(e.getCurrentItem()))
                 return;
 
-            if (e.getSlot() == 3) {
+            if (e.getSlot() == 3) {  //back
                 preventClose = false;
                 p.closeInventory();
             }
 
             else if (e.getSlot() == 5) {   //apply changes
-                shop.updateGui(inv);
+                shop.updateGui(title, inv);
                 preventClose = false;
                 p.closeInventory();
             }
 
-            else if (e.getSlot() == 19) {
+            else if (e.getSlot() == 19) {           //change Name
                 resfreshFlag = true;
                 new AnvilGUI.Builder()
                         .onClose(player -> utils.runTaskLater(this::refresh, 1L))
@@ -194,7 +195,7 @@ public class customizeGui implements Listener, InventoryHolder {
                         .open(p);
             }
 
-            else if (e.getSlot() == 23) {
+            else if (e.getSlot() == 23) {           //quitar row
                 if (inv.getSize() == 9) return;
 
                 Inventory aux = Bukkit.createInventory(this, inv.getSize() - 9, title);
@@ -203,7 +204,7 @@ public class customizeGui implements Listener, InventoryHolder {
                 refresh();
             }
 
-            else if (e.getSlot() == 25) {
+            else if (e.getSlot() == 25) {           //ampliar row
                 if (inv.getSize() == 54) return;
 
                 Inventory aux = Bukkit.createInventory(this, inv.getSize() + 9, title);
@@ -214,20 +215,26 @@ public class customizeGui implements Listener, InventoryHolder {
         }
 
         else {          //si le da arriba
+
+            if (e.isRightClick()) {
+                inv.clear(e.getSlot());
+                return;
+            }
+
             resfreshFlag = true;
-            new miniCustomizeGui(p, utils.isEmpty(e.getCurrentItem()) ?
-                    XMaterial.GRASS_BLOCK.parseItem() : e.getCurrentItem(),
+            new miniCustomizeGui(p,
+                    utils.isEmpty(e.getCurrentItem()) ?
+                         XMaterial.GRASS_BLOCK.parseItem() : e.getCurrentItem().clone(),
                     item -> {
                         inv.setItem(e.getSlot(), item);
                         refresh();
             });
         }
-
     }
 
     @EventHandler
     public void onInventoryDrag(InventoryDragEvent e) {
-        if (!e.getWhoClicked().getUniqueId().equals(p.getUniqueId()))
+        if (e.getInventory().getHolder() != this)
             return;
 
         e.setCancelled(true);
@@ -235,7 +242,7 @@ public class customizeGui implements Listener, InventoryHolder {
 
     @EventHandler
     public void onInventoryClose(InventoryCloseEvent e) {
-        if (!e.getPlayer().getUniqueId().equals(p.getUniqueId()))
+        if (e.getInventory().getHolder() != this)
             return;
 
         if (resfreshFlag)
@@ -269,8 +276,5 @@ public class customizeGui implements Listener, InventoryHolder {
         InventoryDragEvent.getHandlerList().unregister(this);
         PlayerPickupItemEvent.getHandlerList().unregister(this);
     }
-
-
-
 
 }

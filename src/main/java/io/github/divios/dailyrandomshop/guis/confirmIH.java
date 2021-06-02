@@ -1,6 +1,9 @@
 package io.github.divios.dailyrandomshop.guis;
 
 import io.github.divios.dailyrandomshop.DRShop;
+import io.github.divios.dailyrandomshop.redLib.inventorygui.InventoryGUI;
+import io.github.divios.dailyrandomshop.redLib.inventorygui.ItemButton;
+import io.github.divios.dailyrandomshop.redLib.itemutils.ItemBuilder;
 import io.github.divios.dailyrandomshop.utils.utils;
 import io.github.divios.dailyrandomshop.xseries.XMaterial;
 import org.bukkit.Bukkit;
@@ -17,7 +20,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 
-public class confirmIH implements InventoryHolder, Listener {
+public class confirmIH {
 
     private final Player p;
     private final BiConsumer<Player, Boolean> bi;
@@ -25,7 +28,6 @@ public class confirmIH implements InventoryHolder, Listener {
     private final String title;
     private final String confirmLore;
     private final String cancelLore;
-    private final Consumer<Player> back;
     private boolean backFlag = true;
     private static final DRShop main = DRShop.getInstance();
 
@@ -37,75 +39,36 @@ public class confirmIH implements InventoryHolder, Listener {
 
     public confirmIH(Player p,
                      BiConsumer<Player , Boolean> true_false,
-                     Consumer<Player> back,
                      ItemStack item,
                      String title,
                      String confirmLore,
                      String cancelLore) {
 
-        Bukkit.getPluginManager().registerEvents(this, main);
         this.p = p;
-        this.back = back;
         this.item = item;
         bi = true_false;
         this.title = utils.formatString(title);
         this.confirmLore = confirmLore;
         this.cancelLore = cancelLore;
-        p.openInventory(getInventory());
+        openInventory();
     }
 
-    @Override
-    public Inventory getInventory() {
+    public void openInventory() {
 
-        Inventory inv = Bukkit.createInventory(this, 27, title);
+        InventoryGUI gui = new InventoryGUI(27, title);
 
-        ItemStack true_ = XMaterial.EMERALD_BLOCK.parseItem();
-        utils.setDisplayName(true_, confirmLore);
+        gui.addButton(ItemButton.create(new ItemBuilder(
+                utils.isEmpty(item) ? XMaterial.AIR.parseItem():item), e -> {}), 4);
 
+        gui.addButton(ItemButton.create(new ItemBuilder(XMaterial.EMERALD_BLOCK)
+                .setName(confirmLore), (e) -> bi.accept(p, true)), 11);
 
-        ItemStack false_ = XMaterial.REDSTONE_BLOCK.parseItem();
-        utils.setDisplayName(false_, cancelLore);
+        gui.addButton(ItemButton.create(new ItemBuilder(XMaterial.REDSTONE_BLOCK)
+                .setName(cancelLore), (e) -> bi.accept(p, false)), 15);
 
-        if (!utils.isEmpty(item))
-            inv.setItem(4, item);
-        inv.setItem(15, false_);
-        inv.setItem(11, true_);
-
-        return inv;
+        gui.destroysOnClose();
+        gui.open(p);
     }
 
-    @EventHandler
-    private void onClick(InventoryClickEvent e) {
-
-        if (e.getView().getTopInventory().getHolder() != this) return;
-        e.setCancelled(true);
-
-
-        if (utils.isEmpty(e.getCurrentItem())) return;
-        if (e.getSlot() != e.getRawSlot()) return;
-
-        switch (e.getSlot()) {
-            case 15:
-                bi.accept(p, false);
-                backFlag = false;
-                break;
-
-            case 11:
-                backFlag = false;
-                bi.accept(p, true);
-                break;
-
-            default:
-                break;
-        }
-    }
-
-    @EventHandler
-    public void onClose(InventoryCloseEvent e) {
-        if (e.getView().getTopInventory().getHolder() != this) return;
-        InventoryClickEvent.getHandlerList().unregister(this);
-        InventoryCloseEvent.getHandlerList().unregister(this);
-        if(backFlag) utils.runTaskLater(() -> back.accept(p), 1L);
-    }
 
 }

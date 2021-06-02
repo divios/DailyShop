@@ -257,7 +257,7 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
 
 
         else if (e.getSlot() == 0) {        /* Boton de cambiar economia */
-            changeEcon.openInventory(p, ditem, dItem -> refresh(p));
+            changeEcon.open(p, ditem, dItem -> refresh(p));
         }
 
         else if (e.getSlot() == 7) {        /* Boton de cambiar confirm Gui */
@@ -285,7 +285,11 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
         }
 
         else if (e.getSlot() == 19) { // Boton de cambiar material
-            changeMaterialGui.openInventory(p, ditem, shop.getName());
+            changeMaterialGui.openInventory(p, (aBoolean, material) -> {
+                if (aBoolean)
+                    ditem.setMaterial(material);
+                refresh(p);
+            });
         }
 
         else if (e.getSlot() == 27) { // Boton de cambiar lore
