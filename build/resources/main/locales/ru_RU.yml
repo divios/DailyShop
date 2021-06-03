@@ -1,0 +1,274 @@
+#####################
+####### Menus RU #######
+#####################
+
+################################
+####### Daily Shop menu ########
+################################
+
+# The name of the daily shop GUI
+daily-shop-gui-name: "&c&lЕжедневный Магазин"
+# The name and lore of the painting in the middle-top of the GUI
+# where you should expect how to use the shop
+daily-shop-gui-painting-name: "&c&lЧто это?"
+daily-shop-gui-painting-lore:
+  - "&7Каждый день предметы"
+  - "&7обновляются на новые!"
+# This is the lore that the daily
+# items will display
+daily-items-lore-price: "&6Цена: &7{price}"
+daily-items-lore-currency: "&6валюта: &7{currency}"
+daily-items-lore-rarity: "&6Рареза: &7{rarity}"
+# This is the arrow upon clicking
+# sends you to the sell GUI
+daily-shop-to-sell-name: "&c&lПосметить Магазин"
+daily-shop-to-sell-lore:
+  - "&7Левый Клик чтобы посетить Магазин"
+
+  ###############################
+  ####### Sell Shop menu ########
+  ###############################
+
+# The name of the sell GUI
+sell-gui-name: "&3&lМагазин"
+# The name and lore of the painting in the middle-top of the GUI
+# where you should expect how to use the shop
+sell-gui-painting-name: "&3&lЧто это??"
+sell-gui-painting-lore:
+  - "&7Перетащите предмет чтобы"
+  - "&7продать его!"
+# This is the name that the confirm
+# bottom will have
+sell-item-name: "&3&lВсего монет: &7{price}"
+# This is the arrow upon clicking
+# sends you to the daily shop GUI
+sell-to-daily-shop-name: "&3&lВернутся в ежедневный магазин"
+sell-to-daily-shop-lore:
+  - "&7Правый клик чтобы вернутся в ежедневный магазин"
+
+setting-gui-name: "&c&lНастройки"
+
+anvil-menu-name: "&6&lУстановить Цену"
+
+  ##################################
+####### Confirm Shop menu ########
+##################################
+
+# The name of the confirm GUI
+confirm-gui-name: "&2&lПодтвердить Покупку"
+#the name of the add/remove panes
+confirm-gui-add-pane: "&a&lДобавить"
+confirm-gui-remove-pane: "&c&lУбрать"
+#The name of the confirm green pane
+confirm-gui-confirm-pane: "&a&lПодтвердить"
+#the name of the arrow to return to
+#the daily shop
+confirm-gui-return-name: "&c&lВернутся"
+
+  #############################
+####### Confirm menu ########
+#############################
+
+# NOTE: This is the menu that sometimes
+# appears to confirm an action
+confirm-menu-yes: "&a&lПодтвердить"
+confirm-manu-no: "&c&lОтменить"
+
+  ##############################
+####### Settings menu ########
+##############################
+
+# NOTE: This is the menu that prompts when /rdshop settings
+settings-gui-title: "&6&lНастройки"
+
+settings-daily-item: "&6&lЕжедневные Предметы"
+settings-daily-items-lore:
+  - "&7Нажмите чтобы изменить ежедневные предметы"
+
+settings-sell-items: "&a&lПредметы продажи"
+settings-sell-items-lore:
+  - "&7Нажмите чтобы изменить предметы продажи"
+
+  ##################################
+  ####### Adding items menu ########
+  ##################################
+
+add-items-title: "&3&lСоздать предмет"
+
+add-items-from-zero: "&c&LСоздайте предмет с нуля"
+add-items-from-zero-lore:
+  - "&7Создавайте предметы с нуля, настраивайте"
+  - "&7каждый аспект, это ваше творчество"
+  - "&7и вы"
+
+add-items-from-existing: "&a&lСоздать предмет из существующих"
+add-items-from-existing-lore:
+  - "&7Создайте предмет который уже существует,"
+  - "&7полезно если вы хотите чтобы предмет был"
+  - "&7добавлен с текстурой, NBT и подобным."
+  - "&7Вы так-же можете его кастомизировать."
+
+add-items-return: "&c&lВернутся"
+add-items-return-lore:
+  - "&7Вернутся чтобы изменить меню"
+
+  ##################################
+  ####### Daily items menu ########
+  ##################################
+
+  # NOTE: This is the menu to manage
+  # the daily items
+
+daily-items-menu_title: "&6&lИзменение Ежедневных Предметов"
+
+daily-items-menu-add: "&3&lДобавить"
+daily_items_menu_add_lore:
+  - "&7Нажмите чтобы добавить предмет"
+daily-items-menu-next: "&6&lСледующая страница"
+daily-items-menu-previous: "&6&lПредыдущая страница"
+daily-items-menu-return: "&c&lВернутся"
+
+daily-items-menu-items-lore:
+  - "&6> Левый клик: &7Change price"
+  - "&6> Правый клик: &7Remove Item"
+  - "&6> Шифт + Левый клик: &7Кастомизация предмета"
+  - "&6> Щелчок правой кнопкой мыши: &7добавление товара в список покупок"
+
+# The anvil that appears when changing price
+daily-items-anvil-title: "&6&lУстановить цену"
+daily-items-anvil-default-text: "Цена"
+
+  ################################
+  ####### Sell items menu ########
+  ################################
+
+# NOTE: This is the menu to manage
+# the daily items
+
+sell-items-menu_title: "&a&lИзменение Предметов Продажи"
+sell-items-menu-next: "&6&lВперёд"
+sell-items-menu-previous: "&6&lНазад"
+sell-items-menu-return: "&c&lВернутся"
+
+sell-items-menu-items-lore:
+  - "&6> Левый клик: &7Изменить цену"
+  - "&6> Правый клик: &7Удалить предмет"
+
+# The anvil that appears when changing price
+sell-items-anvil-title: "&6&lУстановить цену"
+sell-items-anvil-default-text: "Цена"
+
+  ####################################
+####### Customize item menu ########
+####################################
+
+customize-menu-title: "&a&lКастомизация предметов"
+
+customize_craft: "&a&lСоздать предмет"
+customize_craft_lore:
+  - "&7Нажмите чтобы закончить и добавить предмет"
+
+customize_return: "&c&lВернутся"
+customize_return_lore:
+  - "&7Нажмите чтобы отменить действия"
+
+customize_change_econ: "&f&lПоменять монеты"
+customize_change_econ_lore:
+  - "&7Нажмите, чтобы изменить валюту"
+
+customize_change_rarity_lore:
+  - "&7Нажмите, чтобы изменить редкость предмета"
+
+customize_rename: "&f&lПереназвать"
+customize_rename_lore:
+  - "&7Нажмите чтобы изменить название предмета"
+customize_rename_anvil_title: "&6&lНапишите новое название"
+customize_rename_anvil_default_text: "Напишите новое название"
+
+customize_change_material: "&f&lИзменить материал"
+customize_change_material_lore:
+  - "&7Нажмите чтобы изменить материал"
+
+customize_change_lore: "&f&lИзменить лор"
+customize_change_lore_lore:
+  - "&6> Левый клик: &7Добавить описание"
+  - "&6> Правый клик: &7Удалить описание"
+customize_change_lore_anvil_title: "&6&lНапишите описание"
+customize_change_lore_default_text: "Напишите описание"
+
+customize_change_enchants: "&f&lИзменить зачарования"
+customize_change_enchants_lore:
+  - "&6> Левый клик: &7чтобы добавить зачарования"
+  - "&6> Правый клик: &7чтобы убрать зачарования"
+
+customize_change_amount: "&f&lИзменить Количество"
+customize_change_amount_lore:
+  - "&6> Левый Клик: &7Изменить количество"
+  - "&6> Правый Клик: &7Удалить количество"
+  - ""
+  - "&7Эта опция позволяет сделать максимально количество"
+  - "&7товара для покупки. Не вписывайте количество чтобы"
+  - "&7оно было неограниченым."
+
+customize_enable_commands: "&f&lСделать выдачу предмета по команде"
+customize_enable_commands_lore:
+  - "&6> Левый Клик: &7Показать Статус"
+  - ""
+  - "&6Статус &7{status}"
+  - ""
+  - "&7Эта опция нужна для выдачи предмета по команде"
+
+customize_change_commands: "&f&lУстановить команду"
+customize_change_commands_lore:
+  - "&6> Левый клик: &7Добавить команду"
+  - "&6> Правый клик: &7Удалить команду"
+  - ""
+  - "&7Эта команда будет выполнена"
+  - "&7после покупки. Используйте %player%"
+  - "&7чтобы получить ник игрока"
+customize_add_commands_anvil_title: "&6&lВпишите команду"
+customize_add_commands_default_text: "Впишите команду"
+
+customize_toggle_enchants: "&f&lДелает зачарования видимыми/невидимыми"
+customize_toggle_enchants_lore:
+  - "&6> Левый клик: &7Показать статус"
+  - ""
+  - "&6Статус &7{status}"
+
+customize_toggle_attributes: "&f&lДелает атрибуты видимыми/невидимыми"
+customize_toggle_attributes_lore:
+  - "&6> Левый клик: &7Показать статус"
+  - ""
+  - "&6Статус &7{status}"
+
+customize_toggle_effects: "&f&lДелает эффекты зелий видимыми/невидимыми"
+customize_toggle_effects_lore:
+  - "&6> Левый клик: &7Показать статус"
+  - ""
+  - "&6Статус &7{status}"
+
+  ######################
+  ###### Messages ######
+  ######################
+
+message-open-shop: "&7Открытие ежедневного магазина..."
+message-buy-item: "&7Вы купили предмет {item} за {price}"
+message-sell-item: "&7Вы продали всё за {price}"
+message-not-enough-money: "&7Недостаточно монет для покупки!"
+message-inventory-full: "&7Ваш инвентарь полон!"
+message-invalid-item: "&7Мы не принимаем этот предмет в магазине!"
+message-new-daily-items: "&7Новые предметы доступны в ежедневном магазине!"
+message-not-perms: "&7У вас нет прав для этого!"
+message-error_item_hand: "&7У вас должен быть предмет в руке для этого"
+message-error_price: "&7Необходимо указать цену за товар"
+message-error_adding_item: "&7Что-то пошло не так при добавлении товара"
+message-added_item: "&7Предмет добавлен успешно"
+message_removed_item: "&7Предмет удалён успешно"
+message_item_on_sale: "&7Этот предмет уже в продаже!"
+message_not_in_stock: "&7Этого товара больше нет в наличии, администратор должен забрать его"
+message-sell-items-gui-empty: "&7В продаже нет товаров, вы можете добавить их с помощью /rdshop addSellItem"
+message-anvil-error-integer: "Not integer"
+message-add-item-title: "&a&lНажмите предметом"
+message-add-item-subtitle: "&7В руке чтобы добавить предмет"
+message-timer-expired: "&7Эй! Время для выбора элемента истекло, попробуйте еще раз"
+message-reload: "&cФайлы перезагружены"
