@@ -60,6 +60,14 @@ repositories {
         name = 'minecraft-repo'
         url = 'https://libraries.minecraft.net'
     }
+
+    maven {
+        url repsyUrl
+        credentials {
+            username repsyUsername
+            password repsyPassword
+        }
+    }
 }
 
 dependencies {
@@ -74,6 +82,7 @@ dependencies {
     compileOnly 'com.vk2gpz.tokenenchant:TokenEnchantAPI:18.15.2'
     implementation "net.wesjd:anvilgui:1.5.0-SNAPSHOT"
     compileOnly 'com.mojang:authlib:1.5.21'
+    implementation 'io.github.divios:core_lib:1.0'
 
     compileOnly fileTree(dir: 'libs', include: ['*.jar'])
 }
@@ -93,6 +102,7 @@ shadowJar {
     relocate('org.bstats', 'io.github.divios.DailyRandomShop.shaded.bstats')
     relocate('net.wesjd.anvilgui', 'io.github.divios.DailyRandomShop.shaded.anvilGUI')
     relocate('de.tr7zw.changeme.nbtapi', 'io.github.divios.DailyRandomShop.shaded.nbt-api')
+    relocate('io.github.divios.core_lib', 'io.github.divios.DailyRandomShop.shaded.Core_lib')
 
     minimize()
 }
