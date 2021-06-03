@@ -1,0 +1,105 @@
+import org.apache.tools.ant.filters.ReplaceTokens
+
+plugins {
+    id 'java'
+    id "idea"
+    id "eclipse"
+    id "maven-publish"
+    id "com.github.johnrengelman.shadow" version "7.0.0"
+}
+
+apply plugin: 'maven-publish'
+
+group = 'io.github.divios'
+def pluginVersion = "3.0"
+version = pluginVersion
+
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+    maven {
+        name = 'spigotmc-repo'
+        url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
+    }
+    maven {
+        name = 'sonatype'
+        url = 'https://oss.sonatype.org/content/groups/public/'
+    }
+
+    maven {
+        name = 'codemc-snapshots'
+        url = 'https://repo.codemc.io/repository/maven-snapshots/'
+    }
+
+    maven {
+        name = 'codemc-repo'
+        url = 'https://repo.codemc.org/repository/maven-public/'
+    }
+
+    maven {
+        name = 'teamvk-repo'
+        url = 'https://raw.githubusercontent.com/TeamVK/maven-repository/master/release/'
+    }
+
+    maven { url 'https://jitpack.io' }
+
+    maven {
+        name = 'placeholderapi'
+        url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/'
+    }
+
+    maven {
+        name = 'Lumine Releases'
+        url = 'https://mvn.lumine.io/repository/maven-public/'
+    }
+
+    maven {
+        name = 'minecraft-repo'
+        url = 'https://libraries.minecraft.net'
+    }
+}
+
+dependencies {
+    implementation 'org.jetbrains:annotations:20.1.0'
+    compileOnly group: "org.spigotmc", name: "spigot-api", version: "1.16.5-R0.1-SNAPSHOT"
+    compileOnly group: "net.Indyuce", name: "MMOItems", version: "5.6"
+    compileOnly group: "net.Indyuce", name: "MMOLib", version: "1.7"
+    compileOnly 'com.github.MilkBowl:VaultAPI:1.7'
+    compileOnly 'me.clip:placeholderapi:2.10.9'
+    implementation 'de.tr7zw:item-nbt-api:2.7.1'
+    implementation 'org.bstats:bstats-bukkit:2.2.1'
+    compileOnly 'com.vk2gpz.tokenenchant:TokenEnchantAPI:18.15.2'
+    implementation "net.wesjd:anvilgui:1.5.0-SNAPSHOT"
+    compileOnly 'com.mojang:authlib:1.5.21'
+
+    compileOnly fileTree(dir: 'libs', include: ['*.jar'])
+}
+
+task updateJars {
+    doLast {
+        copy {
+            from 'build/libs/DailyRandomShop-' + pluginVersion + "-all.jar"
+            into 'C:/Users/serbe/Desktop/server_pruebas2/plugins'
+            rename ("DailyRandomShop-" + pluginVersion + "-all.jar"
+                    , "DailyRandomShop-" + pluginVersion + ".jar")
+        }
+    }
+}
+
+shadowJar {
+    relocate('org.bstats', 'io.github.divios.DailyRandomShop.shaded.bstats')
+    relocate('net.wesjd.anvilgui', 'io.github.divios.DailyRandomShop.shaded.anvilGUI')
+    relocate('de.tr7zw.changeme.nbtapi', 'io.github.divios.DailyRandomShop.shaded.nbt-api')
+
+    minimize()
+}
+
+task deploy(dependsOn: ["build", "updateJars"]) {
+    updateJars.mustRunAfter jar
+}
+
+compileJava.dependsOn clean
+build.dependsOn shadowJar

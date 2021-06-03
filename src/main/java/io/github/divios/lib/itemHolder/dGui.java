@@ -127,6 +127,7 @@ public class dGui implements InventoryHolder, Listener {
      */
     private Map.Entry<String, Inventory> deserialize(String base64) {
         Inventory inventory = null;
+        String title2;
 
         BukkitObjectInputStream BOIS = null;
         try {
