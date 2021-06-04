@@ -1,7 +1,5 @@
 package io.github.divios.dailyrandomshop.builders.itemBuildersHooks;
 
-import io.github.divios.dailyrandomshop.utils.utils;
-import io.th0rgal.oraxen.items.OraxenItems;
 import org.bukkit.inventory.ItemStack;
 
 public class oraxenItems implements itemsBuilder{

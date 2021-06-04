@@ -1,9 +1,10 @@
 package io.github.divios.dailyrandomshop.guis;
 
+import io.github.divios.core_lib.XCore.XMaterial;
+import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.dailyrandomshop.DRShop;
 import io.github.divios.dailyrandomshop.conf_msg;
 import io.github.divios.dailyrandomshop.utils.utils;
-import io.github.divios.dailyrandomshop.xseries.XMaterial;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -61,27 +62,25 @@ public class confirmGui implements Listener, InventoryHolder {
     }
 
     private static void init() {
-        add1 = XMaterial.GREEN_STAINED_GLASS_PANE.parseItem();
-        add5 = add1.clone();
-        add10 = add1.clone();
+        add1 = new ItemBuilder(XMaterial.GREEN_STAINED_GLASS_PANE)
+                .setName(conf_msg.CONFIRM_GUI_ADD_PANE + " 1");
+        add5 = new ItemBuilder(XMaterial.GREEN_STAINED_GLASS_PANE)
+                .setName(conf_msg.CONFIRM_GUI_ADD_PANE + " 5");
+        add10 = new ItemBuilder(XMaterial.GREEN_STAINED_GLASS_PANE)
+                .setName(conf_msg.CONFIRM_GUI_ADD_PANE + " 10");
 
-        utils.setDisplayName(add1, conf_msg.CONFIRM_GUI_ADD_PANE + " 1");
-        utils.setDisplayName(add5, conf_msg.CONFIRM_GUI_ADD_PANE + " 5");
-        utils.setDisplayName(add10, conf_msg.CONFIRM_GUI_ADD_PANE + " 10");
+        rem1 = new ItemBuilder(XMaterial.RED_STAINED_GLASS_PANE)
+                .setName(conf_msg.CONFIRM_GUI_REMOVE_PANE + " 1");
+        rem5 = new ItemBuilder(XMaterial.RED_STAINED_GLASS_PANE)
+                .setName(conf_msg.CONFIRM_GUI_REMOVE_PANE + " 5");
+        rem10 = new ItemBuilder(XMaterial.RED_STAINED_GLASS_PANE)
+                .setName(conf_msg.CONFIRM_GUI_REMOVE_PANE + " 10");
 
-        rem1 = XMaterial.RED_STAINED_GLASS_PANE.parseItem();
-        rem5 = rem1.clone();
-        rem10 = rem1.clone();
+        back = new ItemBuilder(XMaterial.OAK_SIGN)
+                .setName(conf_msg.CONFIRM_GUI_REMOVE_PANE);
 
-        utils.setDisplayName(rem1, conf_msg.CONFIRM_GUI_REMOVE_PANE + " 1");
-        utils.setDisplayName(rem5, conf_msg.CONFIRM_GUI_REMOVE_PANE + " 5");
-        utils.setDisplayName(rem10, conf_msg.CONFIRM_GUI_REMOVE_PANE + " 10");
-
-        back = XMaterial.OAK_SIGN.parseItem();
-        utils.setDisplayName(back, conf_msg.CONFIRM_GUI_REMOVE_PANE);
-
-        confirm = XMaterial.EMERALD_BLOCK.parseItem();
-        utils.setDisplayName(confirm, conf_msg.CONFIRM_GUI_CONFIRM_PANE);
+        confirm = new ItemBuilder(XMaterial.EMERALD_BLOCK)
+                .setName(conf_msg.CONFIRM_GUI_CONFIRM_PANE);
     }
 
     @Override

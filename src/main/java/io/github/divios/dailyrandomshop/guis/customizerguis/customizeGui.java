@@ -1,15 +1,18 @@
 package io.github.divios.dailyrandomshop.guis.customizerguis;
 
+import io.github.divios.core_lib.XCore.XMaterial;
+import io.github.divios.core_lib.inventory.inventoryUtils;
+import io.github.divios.core_lib.itemutils.ItemBuilder;
+import io.github.divios.core_lib.misc.FormatUtils;
+import io.github.divios.core_lib.misc.Task;
 import io.github.divios.dailyrandomshop.DRShop;
 import io.github.divios.dailyrandomshop.conf_msg;
 import io.github.divios.dailyrandomshop.guis.settings.shopsManagerGui;
 import io.github.divios.dailyrandomshop.utils.utils;
-import io.github.divios.dailyrandomshop.xseries.XMaterial;
 import io.github.divios.lib.itemHolder.dGui;
 import io.github.divios.lib.itemHolder.dShop;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -21,10 +24,8 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.function.Consumer;
 import java.util.stream.IntStream;
 
 public class customizeGui implements Listener, InventoryHolder {
@@ -44,7 +45,7 @@ public class customizeGui implements Listener, InventoryHolder {
         this.shop = shop;
         this.title = shop.getGui().getTitle();
 
-        utils.runTaskLater(() ->
+        Task.syncDelayed(plugin, () ->
                 Bukkit.getPluginManager().registerEvents(this, plugin), 1L);
 
         pItems = withdrawPlayerItems();
@@ -57,7 +58,7 @@ public class customizeGui implements Listener, InventoryHolder {
 
     public static void open(Player p, dShop shop) {
         if (!shop.getGui().getAvailable()) {
-            p.sendMessage(conf_msg.PREFIX + utils.formatString("&7Someone is already editing this gui"));
+            p.sendMessage(conf_msg.PREFIX + FormatUtils.color("&7Someone is already editing this gui"));
             return;
         }
         shop.getGui().setAvailable(false);
@@ -67,28 +68,22 @@ public class customizeGui implements Listener, InventoryHolder {
     }
 
     public void addCustomizeItems() {
-        ItemStack back = XMaterial.SPRUCE_SIGN.parseItem();
-        utils.setDisplayName(back, "&b&lGo back");
-        utils.setLore(back, Collections.singletonList("&7Click to go back"));
+        ItemStack back = new ItemBuilder(XMaterial.SPRUCE_SIGN)
+                .setName("&b&lGo back").setLore("&7Click to go back");
 
-        ItemStack complete = XMaterial.ANVIL.parseItem();
-        utils.setDisplayName(complete, "&b&lApply changes");
-        utils.setLore(complete, Collections.singletonList("&7Click to complete changes"));
+        ItemStack complete = new ItemBuilder(XMaterial.ANVIL)
+                .setName("&b&lApply changes").setLore("&7Click to complete changes");
 
-        ItemStack rename = XMaterial.NAME_TAG.parseItem();
-        utils.setDisplayName(rename, "&b&lChange title");
-        utils.setLore(rename, Collections.singletonList("&7Click to change the gui title"));
+        ItemStack rename = new ItemBuilder(XMaterial.NAME_TAG)
+                .setName("&b&lChange title").setLore("&7Click to change the gui title");
 
-        ItemStack addRow = XMaterial.PLAYER_HEAD.parseItem();
-        utils.applyTexture(addRow, "3edd20be93520949e6ce789dc4f43efaeb28c717ee6bfcbbe02780142f716");
-        utils.setDisplayName(addRow, "&b&lAdd row");
-        utils.setLore(addRow, Collections.singletonList("&7Adds a row"));
+        ItemStack addRow = new ItemBuilder(XMaterial.PLAYER_HEAD)
+                .setName("&b&lAdd row").setLore("&7Adds a row")
+                .applyTexture("3edd20be93520949e6ce789dc4f43efaeb28c717ee6bfcbbe02780142f716");
 
-        ItemStack deleteRow = XMaterial.PLAYER_HEAD.parseItem();
-        utils.applyTexture(deleteRow, "bd8a99db2c37ec71d7199cd52639981a7513ce9cca9626a3936f965b131193");
-        utils.setDisplayName(deleteRow, "&b&lRemove row");
-        utils.setLore(deleteRow, Collections.singletonList("&7Deletes a row"));
-
+        ItemStack deleteRow = new ItemBuilder(XMaterial.PLAYER_HEAD)
+                .setName("&7Deletes a row").setLore("&b&lRemove row")
+                .applyTexture("bd8a99db2c37ec71d7199cd52639981a7513ce9cca9626a3936f965b131193");
 
         p.getInventory().setItem(3, back);
         p.getInventory().setItem(5, complete);
@@ -133,7 +128,7 @@ public class customizeGui implements Listener, InventoryHolder {
      * Opens again the inv for the player
      */
     public void refresh() {
-        utils.runTaskLater(() -> {
+        Task.syncDelayed(plugin, () -> {
             resfreshFlag = true;
             addCustomizeItems();
             p.openInventory(inv);
@@ -180,11 +175,11 @@ public class customizeGui implements Listener, InventoryHolder {
             else if (e.getSlot() == 19) {           //change Name
                 resfreshFlag = true;
                 new AnvilGUI.Builder()
-                        .onClose(player -> utils.runTaskLater(this::refresh, 1L))
+                        .onClose(player -> Task.syncDelayed(plugin, this::refresh, 1L))
                         .onComplete((player, s) -> {
-                            title = utils.formatString(s);
+                            title = FormatUtils.color(s);
                             Inventory aux = Bukkit.createInventory(this, inv.getSize(), title);
-                            utils.translateContents(inv, aux);
+                            inventoryUtils.translateContents(inv, aux);
                             inv = aux;
                             refresh();
                             return AnvilGUI.Response.close();
@@ -199,7 +194,7 @@ public class customizeGui implements Listener, InventoryHolder {
                 if (inv.getSize() == 9) return;
 
                 Inventory aux = Bukkit.createInventory(this, inv.getSize() - 9, title);
-                utils.translateContents(inv, aux);
+                inventoryUtils.translateContents(inv, aux);
                 inv = aux;
                 refresh();
             }
@@ -208,7 +203,7 @@ public class customizeGui implements Listener, InventoryHolder {
                 if (inv.getSize() == 54) return;
 
                 Inventory aux = Bukkit.createInventory(this, inv.getSize() + 9, title);
-                utils.translateContents(inv, aux);
+                inventoryUtils.translateContents(inv, aux);
                 inv = aux;
                 refresh();
             }
@@ -257,7 +252,7 @@ public class customizeGui implements Listener, InventoryHolder {
         depositPlayerItems();
 
         unregisterAll();
-        utils.runTaskLater(() -> shopsManagerGui.open(p), 1L);
+        Task.syncDelayed(plugin, () -> shopsManagerGui.open(p), 1L);
 
     }
 

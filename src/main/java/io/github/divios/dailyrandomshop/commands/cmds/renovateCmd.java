@@ -1,5 +1,6 @@
 package io.github.divios.dailyrandomshop.commands.cmds;
 
+import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.dailyrandomshop.events.expiredTimerEvent;
 import io.github.divios.dailyrandomshop.utils.utils;
 import org.bukkit.Bukkit;
@@ -25,7 +26,7 @@ public class renovateCmd implements dailyCommand{
     @Override
     public void help(Player p) {
         if (p.hasPermission("DailyRandomShop.renovate")) {
-            p.sendMessage(utils.formatString("&6&l>> &6/rdshop renovate &8 " +
+            p.sendMessage(FormatUtils.color("&6&l>> &6/rdshop renovate &8 " +
                     "- &7Renovates daily items and resets timer"));
         }
     }

@@ -1,5 +1,6 @@
 package io.github.divios.dailyrandomshop.commands.cmds;
 
+import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.dailyrandomshop.utils.utils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -49,7 +50,7 @@ public class buyCmd implements dailyCommand{
     @Override
     public void help(Player p) {
         if (p.hasPermission("DailyRandomShop.open")) {
-            p.sendMessage(utils.formatString("&6&l>> &6/rdshop open &8 " +
+            p.sendMessage(FormatUtils.color("&6&l>> &6/rdshop open &8 " +
                     "- &7Opens the dailyShop"));
         }
     }

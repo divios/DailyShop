@@ -1,5 +1,6 @@
 package io.github.divios.dailyrandomshop.commands.cmds;
 
+import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.dailyrandomshop.guis.settings.shopsManagerGui;
 import io.github.divios.dailyrandomshop.utils.utils;
 import org.bukkit.command.CommandSender;
@@ -30,7 +31,7 @@ public class settingsCmd implements dailyCommand{
     @Override
     public void help(Player p) {
         if (p.hasPermission("DailyRandomShop.settings")) {
-            p.sendMessage(utils.formatString("&6&l>> &6/rdshop settings &8 " +
+            p.sendMessage(FormatUtils.color("&6&l>> &6/rdshop settings &8 " +
                     "- &7Opens the settings menu"));
         }
     }

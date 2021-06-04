@@ -1,28 +1,18 @@
 package io.github.divios.dailyrandomshop.guis.customizerguis;
 
 import com.google.common.util.concurrent.AtomicDouble;
+import io.github.divios.core_lib.XCore.XMaterial;
+import io.github.divios.core_lib.inventory.InventoryGUI;
+import io.github.divios.core_lib.inventory.ItemButton;
+import io.github.divios.core_lib.itemutils.ItemBuilder;
+import io.github.divios.core_lib.misc.Task;
 import io.github.divios.dailyrandomshop.DRShop;
 import io.github.divios.dailyrandomshop.conf_msg;
-import io.github.divios.dailyrandomshop.redLib.inventorygui.InventoryGUI;
-import io.github.divios.dailyrandomshop.redLib.inventorygui.ItemButton;
-import io.github.divios.dailyrandomshop.redLib.itemutils.ItemBuilder;
-import io.github.divios.dailyrandomshop.utils.utils;
-import io.github.divios.dailyrandomshop.xseries.XMaterial;
 import io.github.divios.lib.itemHolder.dItem;
 import io.github.divios.lib.itemHolder.dShop;
 import net.wesjd.anvilgui.AnvilGUI;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.inventory.InventoryDragEvent;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
-
-import java.util.Arrays;
 
 
 public class changePrice {
@@ -54,7 +44,7 @@ public class changePrice {
 
     public void open() {
 
-        InventoryGUI gui = new InventoryGUI(27, "&bChange price");
+        InventoryGUI gui = new InventoryGUI(plugin, 27, "&bChange price");
 
         gui.addButton(ItemButton.create(new ItemBuilder(XMaterial.SUNFLOWER)
                         .setName("&6&lSet fixed price").addLore("&7The item 'll always have", "&7the given price"),
@@ -95,7 +85,7 @@ public class changePrice {
                                 }
 
                                 aux.set(Double.parseDouble(text));
-                                utils.runTaskLater(() -> new AnvilGUI.Builder()
+                                Task.syncDelayed(plugin, () -> new AnvilGUI.Builder()
                                         .onComplete((player1, text1) -> {
                                             try {
                                                 Double.parseDouble(text1);
@@ -134,10 +124,9 @@ public class changePrice {
 
         gui.addButton(ItemButton.create(new ItemBuilder(XMaterial.OAK_SIGN)
                         .setName(conf_msg.CONFIRM_GUI_RETURN_NAME)
-                        .addLore(conf_msg.CONFIRM_GUI_RETURN_PANE_LORE)
+                        .setLore(conf_msg.CONFIRM_GUI_RETURN_PANE_LORE)
                 , e -> back.run()), 22);
 
-        gui.preventPlayerInvSlots();
         gui.destroysOnClose();
         gui.open(p);
     }

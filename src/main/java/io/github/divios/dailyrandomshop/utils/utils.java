@@ -1,11 +1,10 @@
 package io.github.divios.dailyrandomshop.utils;
 
+import io.github.divios.core_lib.XCore.XMaterial;
+import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.dailyrandomshop.DRShop;
 import io.github.divios.dailyrandomshop.conf_msg;
-import io.github.divios.dailyrandomshop.xseries.SkullUtils;
-import io.github.divios.dailyrandomshop.xseries.XMaterial;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.command.CommandSender;
@@ -14,14 +13,11 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.scheduler.BukkitTask;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.Collectors;
 
 public class utils {
 
@@ -47,25 +43,6 @@ public class utils {
             receiver.setDurability(recipient.getDurability());
             //if(dailyMetadata) dailyItem.transferDailyMetadata(recipient, receiver);
         } catch (IllegalArgumentException ignored) {}
-    }
-
-    public static void setDisplayName(ItemStack item, String name) {
-        if (name == null) return;
-        ItemMeta meta = getItemMeta(item);
-        meta.setDisplayName(formatString(name));
-        item.setItemMeta(meta);
-    }
-
-    public static void setLore(ItemStack item, List<String> lore) {
-        if (lore == null) return;
-        ItemMeta meta = getItemMeta(item);
-        List<String> coloredLore = getItemLore(meta);
-        if (coloredLore == null) coloredLore = new ArrayList<>();
-        for (String s : lore) {
-            coloredLore.add(formatString(s));
-        }
-        meta.setLore(coloredLore);
-        item.setItemMeta(meta);
     }
 
     public static ItemMeta getItemMeta(ItemStack item) {
@@ -94,14 +71,6 @@ public class utils {
         item.setItemMeta(meta);
     }
 
-    public static String formatString(String str) {
-        return ChatColor.translateAlternateColorCodes('&', str);
-    }
-
-    public static String trimString(String str) {
-        return ChatColor.stripColor(str);
-    }
-
     public static boolean isEmpty(ItemStack item) {
         return item == null || item.getType() == Material.AIR;
     }
@@ -110,27 +79,6 @@ public class utils {
 
     public static boolean isEmpty(List<String> s) { return s == null || s.isEmpty(); }
 
-    /**
-     * Queue a task to be run asynchronously. <br>
-     *
-     * @param runnable task to run
-     */
-    public static BukkitTask async(Runnable runnable) {
-        return Bukkit.getScheduler().runTaskAsynchronously(main, runnable);
-    }
-
-    /**
-     * Queue a task to be run synchronously.
-     *
-     * @param runnable task to run on the next server tick
-     */
-    public static BukkitTask sync(Runnable runnable) {
-        return Bukkit.getScheduler().runTask(main, runnable);
-    }
-
-    public static void runTaskLater(Runnable r, Long ticks) {
-        Bukkit.getScheduler().runTaskLater(main, r, ticks);
-    }
 
     public static void sendSound(Player p, Sound s) {
         try {
@@ -155,31 +103,14 @@ public class utils {
 
     public static ItemStack getRedPane() {
         ItemStack redPane = XMaterial.RED_STAINED_GLASS_PANE.parseItem();
-        utils.setDisplayName(redPane, "&cOut of stock");
+        //utils.setDisplayName(redPane, "&cOut of stock");
         return redPane;
-    }
-
-    public static void addFlag(ItemStack i, ItemFlag f) {
-        ItemMeta meta = i.getItemMeta();
-        meta.addItemFlags(f);
-        i.setItemMeta(meta);
     }
 
     public static void removeFlag(ItemStack i, ItemFlag f) {
         ItemMeta meta = i.getItemMeta();
         meta.removeItemFlags(f);
         i.setItemMeta(meta);
-    }
-
-    public static boolean hasFlag(ItemStack item, ItemFlag f) {
-        return item.getItemMeta().hasItemFlag(f);
-    }
-
-    public static List<String> replaceOnLore(List<String> lore, String pattern, String replace) {
-        List<String> loreX = new ArrayList<>();
-        loreX.addAll(lore);
-        loreX.replaceAll(s -> s.replaceAll(pattern, replace));
-        return loreX;
     }
 
     public static boolean isPotion(ItemStack item) {
@@ -211,7 +142,7 @@ public class utils {
     }
 
     public static void noCmd(CommandSender p) {
-        p.sendMessage(conf_msg.PREFIX + utils.formatString("&7Console is no allow to do this command"));
+        p.sendMessage(conf_msg.PREFIX + FormatUtils.color("&7Console is no allow to do this command"));
     }
 
 
@@ -254,15 +185,5 @@ public class utils {
         return Math.round(d * Math.pow(10, decimals)) / Math.pow(10, decimals);
     }
 
-    public static void applyTexture(ItemStack item, String url) {
-        item.setItemMeta(SkullUtils.applySkin(item.getItemMeta(), url));
-    }
-
-    public static void translateContents(Inventory from, Inventory to) {
-        if (from.getSize() > to.getSize())
-            to.setContents(Arrays.stream(from.getContents()).limit(to.getSize()).toArray(ItemStack[]::new));
-        else
-            to.setContents(from.getContents());
-    }
 
 }

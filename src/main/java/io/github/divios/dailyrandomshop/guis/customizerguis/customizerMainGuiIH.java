@@ -1,11 +1,17 @@
 package io.github.divios.dailyrandomshop.guis.customizerguis;
 
+import io.github.divios.core_lib.XCore.XMaterial;
+import io.github.divios.core_lib.inventory.materialsPrompt;
+import io.github.divios.core_lib.itemutils.ItemBuilder;
+import io.github.divios.core_lib.itemutils.ItemUtils;
+import io.github.divios.core_lib.misc.ChatPrompt;
+import io.github.divios.core_lib.misc.FormatUtils;
+import io.github.divios.core_lib.misc.Msg;
+import io.github.divios.core_lib.misc.Task;
 import io.github.divios.dailyrandomshop.DRShop;
 import io.github.divios.dailyrandomshop.conf_msg;
 import io.github.divios.dailyrandomshop.guis.settings.shopGui;
-import io.github.divios.dailyrandomshop.listeners.dynamicChatListener;
 import io.github.divios.dailyrandomshop.utils.utils;
-import io.github.divios.dailyrandomshop.xseries.XMaterial;
 import io.github.divios.lib.itemHolder.dItem;
 import io.github.divios.lib.itemHolder.dShop;
 import io.github.divios.lib.managers.shopsManager;
@@ -22,7 +28,6 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -59,137 +64,134 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
 
         Inventory inv = Bukkit.createInventory(instance, 54, conf_msg.CUSTOMIZE_GUI_TITLE);
 
-        ItemStack barrier = XMaterial.BARRIER.parseItem();
-        utils.setDisplayName(barrier, conf_msg.CUSTOMIZE_UNAVAILABLE);
+        ItemStack barrier = new ItemBuilder(XMaterial.BARRIER.parseItem())
+                .setName(conf_msg.CUSTOMIZE_UNAVAILABLE);
 
-        ItemStack changeEcon = XMaterial.PLAYER_HEAD.parseItem();      // Change econ
-        utils.applyTexture(changeEcon, "e36e94f6c34a35465fce4a90f2e25976389eb9709a12273574ff70fd4daa6852");
-        utils.setDisplayName(changeEcon, conf_msg.CUSTOMIZE_CHANGE_ECON);
-        utils.setLore(changeEcon, conf_msg.CUSTOMIZE_CHANGE_ECON_LORE);
-        utils.setLore(changeEcon, Arrays.asList("", "&7Current: " + ditem.getEconomy().getClass().getName()
-                .replace("io.github.divios.dailyrandomshop.economies.", "&6&l")));
+        ItemStack changeEcon = new ItemBuilder(XMaterial.PLAYER_HEAD)     // Change econ
+                .setName(conf_msg.CUSTOMIZE_CHANGE_ECON).addLore(conf_msg.CUSTOMIZE_CHANGE_ECON_LORE)
+                .addLore(Arrays.asList("", "&7Current: " + ditem.getEconomy().getClass().getName()
+                        .replace("io.github.divios.dailyrandomshop.economies.", "&6&l")))
+                .applyTexture("e36e94f6c34a35465fce4a90f2e25976389eb9709a12273574ff70fd4daa6852");
 
-        ItemStack changeRarity = ditem.getRarity().getAsItem();         // Change rarity
-        utils.setLore(changeRarity, conf_msg.CUSTOMIZE_CHANGE_RARITY_LORE);
+        ItemStack changeRarity = new ItemBuilder(ditem.getRarity().getAsItem())         // Change rarity
+                .addLore(conf_msg.CUSTOMIZE_CHANGE_RARITY_LORE);
 
-        ItemStack changeConfirmGui = XMaterial.LEVER.parseItem();
-        utils.setDisplayName(changeConfirmGui, conf_msg.CUSTOMIZE_CHANGE_CONFIRM_GUI);
-        utils.setLore(changeConfirmGui, utils.replaceOnLore(conf_msg.CUSTOMIZE_CHANGE_CONFIRM_GUI_LORE
-                , "\\{status}", "" +
-                        ditem.getConfirm_gui()));
+        ItemStack changeConfirmGui = new ItemBuilder(XMaterial.LEVER.parseItem())
+                .setName(conf_msg.CUSTOMIZE_CHANGE_CONFIRM_GUI)
+                .setLore(Msg.msgList(conf_msg.CUSTOMIZE_CHANGE_CONFIRM_GUI_LORE)
+                        .add("\\{status}", "" + ditem.getConfirm_gui()).build());  //TODO
 
-        ItemStack customizerItem = XMaterial.ANVIL.parseItem();   //Done button (anvil)
-        utils.setDisplayName(customizerItem, conf_msg.CUSTOMIZE_CRAFT);
-        utils.setLore(customizerItem, conf_msg.CUSTOMIZE_CRAFT_LORE);
+        ItemStack customizerItem = new ItemBuilder(XMaterial.ANVIL)   //Done button (anvil)
+                .setName(conf_msg.CUSTOMIZE_CRAFT).addLore(conf_msg.CUSTOMIZE_CRAFT_LORE);
 
-        ItemStack returnItem = XMaterial.OAK_SIGN.parseItem();    //Back sign
-        utils.setDisplayName(returnItem, conf_msg.CUSTOMIZE_RETURN);
-        utils.setLore(returnItem, conf_msg.CUSTOMIZE_RETURN_LORE);
+        ItemStack returnItem = new ItemBuilder(XMaterial.OAK_SIGN)    //Back sign
+                .setName(conf_msg.CUSTOMIZE_RETURN).setLore(conf_msg.CUSTOMIZE_RETURN_LORE);
 
-        ItemStack rename = XMaterial.NAME_TAG.parseItem();    //Rename item
-        utils.setDisplayName(rename, conf_msg.CUSTOMIZE_RENAME);
-        utils.setLore(rename, conf_msg.CUSTOMIZE_RENAME_LORE);
+        ItemStack rename = new ItemBuilder(XMaterial.NAME_TAG)   //Rename item
+                .setName(conf_msg.CUSTOMIZE_RENAME).setLore(conf_msg.CUSTOMIZE_RENAME_LORE);
 
-        ItemStack changeMaterial = XMaterial.SLIME_BALL.parseItem();    //Change material
-        utils.setDisplayName(changeMaterial, conf_msg.CUSTOMIZE_MATERIAL);
-        utils.setLore(changeMaterial, conf_msg.CUSTOMIZE_MATERIAL_LORE);
+        ItemStack changeMaterial = new ItemBuilder(XMaterial.SLIME_BALL)   //Change material
+                .setName(conf_msg.CUSTOMIZE_MATERIAL).setLore(conf_msg.CUSTOMIZE_MATERIAL_LORE);
 
-        ItemStack changeLore = XMaterial.PLAYER_HEAD.parseItem();    //Change lore
-        utils.applyTexture(changeLore, "c6692f99cc6d78242304110553589484298b2e4a0233b76753f888e207ef5");
-        utils.setDisplayName(changeLore, conf_msg.CUSTOMIZE_LORE);
-        utils.setLore(changeLore, conf_msg.CUSTOMIZE_LORE_LORE);
-        utils.setLore(changeLore, Arrays.asList(""));
-        utils.setLore(changeLore, utils.getItemLore(ditem.getItem().getItemMeta()));
+        ItemStack changeLore = new ItemBuilder(XMaterial.PLAYER_HEAD)   //Change lore
+                .setName(conf_msg.CUSTOMIZE_LORE)
+                .addLore(conf_msg.CUSTOMIZE_LORE_LORE)
+                .addLore("")
+                .addLore(ItemUtils.getLore(ditem.getItem()))
+                .applyTexture("c6692f99cc6d78242304110553589484298b2e4a0233b76753f888e207ef5");
 
-        ItemStack editEnchantments = XMaterial.ENCHANTING_TABLE.parseItem();   //Change enchants
-        utils.setDisplayName(editEnchantments, conf_msg.CUSTOMIZE_ENCHANTS);
-        utils.setLore(editEnchantments, conf_msg.CUSTOMIZE_ENCHANTS_LORE);
-        utils.setLore(editEnchantments, ditem.getItem().getEnchantments().entrySet().stream()
-                .map(entry -> "&f&l" + entry.getKey()
-                        .getName() + ":" + entry.getValue()).collect(Collectors.toList()));
+        ItemStack editEnchantments = new ItemBuilder(XMaterial.ENCHANTING_TABLE)  //Change enchants
+                .setName(conf_msg.CUSTOMIZE_ENCHANTS)
+                .addLore(conf_msg.CUSTOMIZE_ENCHANTS_LORE)
+                .addLore(ditem.getItem().getEnchantments().entrySet().stream()
+                        .map(entry -> "&f&l" + entry.getKey()
+                                .getName() + ":" + entry.getValue()).collect(Collectors.toList()));
 
-        ItemStack setAmount = XMaterial.STONE_BUTTON.parseItem();    //Change amount
-        utils.setDisplayName(setAmount, conf_msg.CUSTOMIZE_AMOUNT);
-        if (ditem.getStock() != null)
-            utils.setLore(setAmount, utils.replaceOnLore(conf_msg.CUSTOMIZE_AMOUNT_LORE,
-                    "\\{amount}"
-                    , "" + ditem.getStock()));
-        else
-            utils.setLore(setAmount, conf_msg.CUSTOMIZE_AMOUNT_ENABLE_LORE);
-
+        ItemStack setAmount = new ItemBuilder(XMaterial.STONE_BUTTON)  //Change amount
+                .setName(conf_msg.CUSTOMIZE_AMOUNT)
+                .setLore(ditem.getStock() != null ?
+                        Msg.msgList(conf_msg.CUSTOMIZE_AMOUNT_LORE).add("\\{amount}",
+                                "" + ditem.getStock()).build() :
+                        conf_msg.CUSTOMIZE_AMOUNT_ENABLE_LORE);
 
         ItemStack addRemoveCommands = XMaterial.COMMAND_BLOCK.parseItem();    //Change command item
         if (ditem.getCommands() == null) {
-            utils.setDisplayName(addRemoveCommands, conf_msg.CUSTOMIZE_ENABLE_COMMANDS);
-            utils.setLore(addRemoveCommands, utils.replaceOnLore(
-                    conf_msg.CUSTOMIZE_ENABLE_COMMANDS_LORE, "\\{status}",
-                    "false"));
+            addRemoveCommands = new ItemBuilder(addRemoveCommands)
+                    .setName(conf_msg.CUSTOMIZE_ENABLE_COMMANDS)
+                    .setLore(Msg.msgList(conf_msg.CUSTOMIZE_ENABLE_COMMANDS_LORE)
+                        .add("\\{status}", "false").build());
         } else {                                                                //add/remove commands
-            utils.setDisplayName(addRemoveCommands, conf_msg.CUSTOMIZE_CHANGE_COMMANDS);
-            utils.setLore(addRemoveCommands, conf_msg.CUSTOMIZE_CHANGE_COMMANDS_LORE);
-            utils.setLore(addRemoveCommands, Arrays.asList(""));
-            utils.setLore(addRemoveCommands, ditem.getCommands()
-                    .stream().map(s -> utils.formatString("&f&l" + s)).collect(Collectors.toList()));
+            addRemoveCommands = new ItemBuilder(addRemoveCommands)
+                    .setName(conf_msg.CUSTOMIZE_CHANGE_COMMANDS)
+                    .setLore(conf_msg.CUSTOMIZE_CHANGE_COMMANDS_LORE)
+                    .addLore("")
+                    .addLore(ditem.getCommands()
+                            .stream().map(s -> FormatUtils.color("&f&l" + s)).collect(Collectors.toList()));
         }
 
 
-        ItemStack perms = XMaterial.PLAYER_HEAD.parseItem();   //add remove perms
-        utils.applyTexture(perms, "4e68435e9dd05dbe2e7bb45c5d3c95d0c9d8cb4c062d30e9b4aed1ccfa65a49b");
-        utils.setDisplayName(perms, conf_msg.CUSTOMIZE_PERMS);
+        ItemStack perms = new ItemBuilder(XMaterial.PLAYER_HEAD.parseItem())   //add remove perms
+                .setName(conf_msg.CUSTOMIZE_PERMS)
+                .applyTexture("4e68435e9dd05dbe2e7bb45c5d3c95d0c9d8cb4c062d30e9b4aed1ccfa65a49b");
+
         if (ditem.getPerms() == null) {
-            utils.setLore(perms, conf_msg.CUSTOMIZE_ENABLE_PERMS_LORE);
+            perms = new ItemBuilder(perms).addLore(conf_msg.CUSTOMIZE_ENABLE_PERMS_LORE);
         }
         else {
-            utils.setLore(perms, conf_msg.CUSTOMIZE_CHANGE_PERMS_LORE);
-            utils.setLore(perms, Collections.singletonList(""));
-            utils.setLore(perms, ditem.getPerms()
-                    .stream().map(s -> utils.formatString("&f&l" + s)).collect(Collectors.toList()));
+            perms = new ItemBuilder(perms)
+                    .addLore(conf_msg.CUSTOMIZE_CHANGE_PERMS_LORE)
+                    .addLore("")
+                    .addLore(ditem.getPerms()
+                            .stream().map(s -> FormatUtils.color("&f&l" + s))
+                            .collect(Collectors.toList()));
         }
 
-        ItemStack setOfItems = XMaterial.CHEST_MINECART.parseItem();    //set of items
-        utils.setDisplayName(setOfItems, conf_msg.CUSTOMIZE_SET);
+        ItemStack setOfItems = new ItemBuilder(XMaterial.CHEST_MINECART)    //set of items
+                .setName(conf_msg.CUSTOMIZE_SET);
+
         if (ditem.getSetItems() != null) {
-            utils.setLore(setOfItems, utils.replaceOnLore(
-                    conf_msg.CUSTOMIZE_CHANGE_SET_LORE, "\\{amount}",
-                    "" + ditem.getSetItems()));
+            setOfItems = new ItemBuilder(setOfItems).addLore(
+                    Msg.msgList(conf_msg.CUSTOMIZE_CHANGE_SET_LORE).add("\\{amount}",
+                    "" + ditem.getSetItems()).build());
+
         } else {
-            utils.setLore(setOfItems, conf_msg.CUSTOMIZE_ENABLE_SET_LORE);
+            setOfItems = new ItemBuilder(setOfItems)
+                    .addLore(conf_msg.CUSTOMIZE_ENABLE_SET_LORE);
         }
 
-        ItemStack bundle = XMaterial.ITEM_FRAME.parseItem();                         //bundle
-        utils.setDisplayName(bundle, "&f&lChange bundle items");
-        utils.setLore(bundle, Arrays.asList("&6Right Click > &7To change items on the bundle"));
+        ItemStack bundle = new ItemBuilder(XMaterial.ITEM_FRAME)                //bundle
+                .setName("&f&lChange bundle items")
+                .setLore("&6Right Click > &7To change items on the bundle");
 
-        ItemStack durability = XMaterial.DAMAGED_ANVIL.parseItem();
-        utils.setDisplayName(durability, conf_msg.CUSTOMIZE_DURABILITY);
-        utils.setLore(durability, conf_msg.CUSTOMIZE_DURABILITY_LORE);
+        ItemStack durability = new ItemBuilder(XMaterial.DAMAGED_ANVIL)
+                .setName(conf_msg.CUSTOMIZE_DURABILITY)
+                .setLore(conf_msg.CUSTOMIZE_DURABILITY_LORE);
 
         ItemFlag f = ItemFlag.HIDE_ENCHANTS;
 
-        ItemStack hideEnchants = XMaterial.BLACK_BANNER.parseItem();    //add/remove enchants visible
-        utils.setDisplayName(hideEnchants, conf_msg.CUSTOMIZE_TOGGLE_ENCHANTS);
-        utils.setLore(hideEnchants, utils.replaceOnLore(
-                conf_msg.CUSTOMIZE_TOGGLE_ENCHANTS_LORE, "\\{status}",
-                "" + ditem.hasFlag(f)));
+        ItemStack hideEnchants = new ItemBuilder(XMaterial.BLACK_BANNER)   //add/remove enchants visible
+                .setName(conf_msg.CUSTOMIZE_TOGGLE_ENCHANTS)
+                .setLore(Msg.msgList(conf_msg.CUSTOMIZE_TOGGLE_ENCHANTS_LORE)
+                .add("\\{status}", "" + ditem.hasFlag(f)).build());
 
         f = ItemFlag.HIDE_ATTRIBUTES;
-        ItemStack hideAtibutes = XMaterial.BOOKSHELF.parseItem();    //add/remove attributes
-        utils.setDisplayName(hideAtibutes, conf_msg.CUSTOMIZE_TOGGLE_ATTRIBUTES);
-        utils.setLore(hideAtibutes, utils.replaceOnLore(
-                conf_msg.CUSTOMIZE_TOGGLE_ATTRIBUTES_LORE, "\\{status}",
-                "" + ditem.hasFlag(f)));
+
+        ItemStack hideAtibutes = new ItemBuilder(XMaterial.BOOKSHELF)    //add/remove attributes
+                .setName(conf_msg.CUSTOMIZE_TOGGLE_ATTRIBUTES)
+                .setLore(Msg.msgList(conf_msg.CUSTOMIZE_TOGGLE_ATTRIBUTES_LORE)
+                    .add("\\{status}", "" + ditem.hasFlag(f)).build());
 
         f = ItemFlag.HIDE_POTION_EFFECTS;
-        ItemStack hideEffects = XMaterial.CAULDRON.parseItem(); //add/remove effects
-        utils.setDisplayName(hideEffects, conf_msg.CUSTOMIZE_TOGGLE_EFFECTS);
-        utils.setLore(hideEffects, utils.replaceOnLore(
-                conf_msg.CUSTOMIZE_TOGGLE_EFFECTS_LORE, "\\{status}",
-                "" + ditem.hasFlag(f)));
+
+        ItemStack hideEffects = new ItemBuilder(XMaterial.CAULDRON)     //add/remove effects
+                .setName(conf_msg.CUSTOMIZE_TOGGLE_EFFECTS)
+                .addLore(Msg.msgList(conf_msg.CUSTOMIZE_TOGGLE_EFFECTS_LORE)
+                    .add("\\{status}", "" + ditem.hasFlag(f)).build());
 
         Integer[] auxList = {3, 5, 13};
-        ItemStack item = XMaterial.BLACK_STAINED_GLASS_PANE.parseItem();             //fill black panes
+                                    //fill black panes
         for (int j : auxList) {
-            utils.setDisplayName(item, "&6");
+            ItemStack item = new ItemBuilder(XMaterial.BLACK_STAINED_GLASS_PANE).setName("&6");
             inv.setItem(j, item);
         }
 
@@ -272,7 +274,7 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
         else if (e.getSlot() == 18) { // Boton de cambiar nombre
             new AnvilGUI.Builder()
                     .onClose(player ->
-                            utils.runTaskLater(() -> refresh(player), 1L))
+                            Task.syncDelayed(main, () -> refresh(player), 1L))
                     .onComplete((player, text) -> {
                         ditem.setDisplayName(text);
                         return AnvilGUI.Response.close();
@@ -285,7 +287,7 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
         }
 
         else if (e.getSlot() == 19) { // Boton de cambiar material
-            changeMaterialGui.openInventory(p, (aBoolean, material) -> {
+            materialsPrompt.open(main, p, (aBoolean, material) -> {
                 if (aBoolean)
                     ditem.setMaterial(material);
                 refresh(p);
@@ -300,14 +302,14 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
                 ditem.setLore(lore);
                 refresh(p);
             } else if (e.isLeftClick())
-                new dynamicChatListener(p, s -> {
+                new ChatPrompt(main, p, (player, s) -> {
                     if (!s.isEmpty()) {
                         List<String> lore = ditem.getLore();
                         lore.add(s);
                         ditem.setLore(lore);
                     }
                     refresh(p);
-                }, conf_msg.CUSTOMIZE_RENAME_ANVIL_TITLE, "");
+                }, this::refresh, conf_msg.CUSTOMIZE_RENAME_ANVIL_TITLE, "");
         }
 
         else if (e.getSlot() == 28) { // Boton de cambiar enchants
@@ -319,7 +321,7 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
         else if (e.getSlot() == 21 && ditem.getStock() != null) { // Boton de cambiar amount
             if(e.isLeftClick()) {
                 new AnvilGUI.Builder()
-                        .onClose(player -> utils.runTaskLater(() ->
+                        .onClose(player -> Task.syncDelayed(main, () ->
                                 refresh(player), 1L))
                         .onComplete((player, text) -> {
                             try {
@@ -345,7 +347,7 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
 
         else if (e.getSlot() == 21 && ditem.getStock() == null && e.isLeftClick()) { // Boton de cambiar amount
             if (ditem.getSetItems() != null) {
-                p.sendMessage(conf_msg.PREFIX + utils.formatString("&7You can't enable this when " +
+                p.sendMessage(conf_msg.PREFIX + FormatUtils.color("&7You can't enable this when " +
                         "the set feature is enable"));
                 return;
             }
@@ -361,14 +363,14 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
 
         else if (e.getSlot() == 22 && ditem.getCommands() != null) { // Boton de añadir/quitar commands
             if (e.isLeftClick()) {
-                new dynamicChatListener(p, s -> {
+                new ChatPrompt(main, p, (player, s) -> {
                     if (!s.isEmpty()) {
                         List<String> cmds = ditem.getCommands();
                         cmds.add(s);
                         ditem.setCommands(cmds);
                     }
                     refresh(p);
-                }, utils.formatString("&7Input new command"), "");
+                }, this::refresh, FormatUtils.color("&7Input new command"), "");
 
             } else if (e.isRightClick() && !e.isShiftClick()) {
                 List<String> cmds = ditem.getCommands();
@@ -387,7 +389,7 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
         else if (e.getSlot() == 23) {               //durability
 
             new AnvilGUI.Builder()
-                    .onClose(player -> utils.runTaskLater(() ->
+                    .onClose(player -> Task.syncDelayed(main, () ->
                             refresh(player), 1L))
                     .onComplete((player, text) -> {
                         try {
@@ -429,14 +431,15 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
 
         else if (e.getSlot() == 30 && ditem.getPerms() != null) {  // Boton de añadir/quitar perms
             if (e.isLeftClick()) {
-                new dynamicChatListener(p, s -> {
+                new ChatPrompt(main, p, (player, s) -> {
+
                     if (!s.isEmpty()) {
                         List<String> perms = ditem.getPerms();
                         perms.add(s);
                         ditem.setPerms(perms);
                     }
                     refresh(p);
-                }, utils.formatString("&7Input permission"), "");
+                }, this::refresh, FormatUtils.color("&7Input permission"), "");
 
             } else if (e.isRightClick() && !e.isShiftClick()) {
                 List<String> s = ditem.getPerms();
@@ -455,7 +458,7 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
 
         else if (e.getSlot() == 31 && ditem.getSetItems() == null && e.isLeftClick()) {  // Boton de edit set
             if (ditem.getStock() != null) {
-                p.sendMessage(conf_msg.PREFIX + utils.formatString("&7You can't enable this when " +
+                p.sendMessage(conf_msg.PREFIX + FormatUtils.color("&7You can't enable this when " +
                         "the stock feature is enable"));
                 return;
             }
@@ -466,7 +469,7 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
         else if (e.getSlot() == 31 && ditem.getSetItems() != null) {
             if (e.isLeftClick()) {
                 new AnvilGUI.Builder()
-                        .onClose(player -> utils.runTaskLater(() ->
+                        .onClose(player -> Task.syncDelayed(main, () ->
                                 refresh(player), 1L))
                         .onComplete((player, text) -> {
                             try {

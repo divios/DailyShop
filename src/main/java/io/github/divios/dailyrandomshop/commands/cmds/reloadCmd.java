@@ -1,5 +1,6 @@
 package io.github.divios.dailyrandomshop.commands.cmds;
 
+import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.dailyrandomshop.DRShop;
 import io.github.divios.dailyrandomshop.conf_msg;
 import io.github.divios.dailyrandomshop.utils.utils;
@@ -22,7 +23,7 @@ public class reloadCmd implements dailyCommand{
     @Override
     public void help(Player p) {
         if (p.hasPermission("DailyRandomShop.reload")) {
-            p.sendMessage(utils.formatString("&6&l>> &6/rdshop reload &8 " +
+            p.sendMessage(FormatUtils.color("&6&l>> &6/rdshop reload &8 " +
                     "- &7Reload config"));
         }
     }
