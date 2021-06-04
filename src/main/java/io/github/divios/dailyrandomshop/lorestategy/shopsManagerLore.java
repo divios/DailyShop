@@ -1,21 +1,22 @@
 package io.github.divios.dailyrandomshop.lorestategy;
 
-import io.github.divios.dailyrandomshop.utils.utils;
+import io.github.divios.core_lib.itemutils.ItemBuilder;
+import io.github.divios.core_lib.itemutils.ItemUtils;
 import org.bukkit.inventory.ItemStack;
-
-import java.util.Collections;
 
 public class shopsManagerLore implements loreStrategy{
 
 
     @Override
     public void setLore(ItemStack item) {
-        utils.setLore(item, Collections.singletonList(""));
-        utils.setLore(item, Collections.singletonList("&6Left click: &7Manage items"));
-        utils.setLore(item, Collections.singletonList("&6Right click: &7Delete shop"));
-        utils.setLore(item, Collections.singletonList("&6Middle click: &7Change shop name"));
-        utils.setLore(item, Collections.singletonList(""));
-        utils.setLore(item, Collections.singletonList("&6Shift Left Click: &7Customize shop appearance"));
+        ItemUtils.translateAllItemData(new ItemBuilder(item)
+            .addLore("",
+                    "&6Left click: &7Manage items",
+                    "&6Right click: &7Delete shop",
+                    "&6Middle click: &7Change shop name",
+                    "",
+                    "&6Shift Left Click: &7Customize shop appearance"),
+                item);
     }
 
     @Override

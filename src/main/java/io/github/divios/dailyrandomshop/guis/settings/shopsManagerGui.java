@@ -1,14 +1,17 @@
 package io.github.divios.dailyrandomshop.guis.settings;
 
+import io.github.divios.core_lib.XCore.XMaterial;
+import io.github.divios.core_lib.inventory.dynamicGui;
+import io.github.divios.core_lib.itemutils.ItemBuilder;
+import io.github.divios.core_lib.misc.FormatUtils;
+import io.github.divios.core_lib.misc.Task;
 import io.github.divios.dailyrandomshop.DRShop;
-import io.github.divios.dailyrandomshop.builders.dynamicGui;
 import io.github.divios.dailyrandomshop.conf_msg;
 import io.github.divios.dailyrandomshop.guis.confirmIH;
 import io.github.divios.dailyrandomshop.guis.customizerguis.customizeGui;
 import io.github.divios.dailyrandomshop.lorestategy.loreStrategy;
 import io.github.divios.dailyrandomshop.lorestategy.shopsManagerLore;
 import io.github.divios.dailyrandomshop.utils.utils;
-import io.github.divios.dailyrandomshop.xseries.XMaterial;
 import io.github.divios.lib.itemHolder.dShop;
 import io.github.divios.lib.managers.shopsManager;
 import io.github.divios.lib.storage.dataManager;
@@ -20,7 +23,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class shopsManagerGui {
@@ -39,17 +41,18 @@ public class shopsManagerGui {
                 .nonContentAction(shopsManagerGui::nonContentAction)
                 .back(player -> p.closeInventory())
                 .setSearch(false)
-                .title(i -> utils.formatString("&f&lShops Manager"))
+                .title(i -> FormatUtils.color("&f&lShops Manager"))
+                .plugin(plugin)
                 .open(p);
     }
 
     private static List<ItemStack> contents() {
         List<ItemStack> iShops = new ArrayList<>();
         shopsManager.getInstance().getShops().forEach(dShop -> {
-            ItemStack item = XMaterial.PLAYER_HEAD.parseItem();
-            utils.applyTexture(item, "7e3deb57eaa2f4d403ad57283ce8b41805ee5b6de912ee2b4ea736a9d1f465a7");
-            utils.setDisplayName(item, "&f&l" + dShop.getName());
-            utils.setLore(item, Collections.singletonList("&6Shop type: &7" + dShop.getType().name()));
+            ItemStack item = new ItemBuilder(XMaterial.PLAYER_HEAD)
+                    .setName("&f&l" + dShop.getName()).setLore("&6Shop type: &7" + dShop.getType().name())
+                    .applyTexture("7e3deb57eaa2f4d403ad57283ce8b41805ee5b6de912ee2b4ea736a9d1f465a7");
+
             loreItem.setLore(item);
 
             iShops.add(item);
@@ -58,8 +61,8 @@ public class shopsManagerGui {
     }
 
     private static void setItems(Inventory inv) {
-        ItemStack item = XMaterial.ANVIL.parseItem();
-        utils.setDisplayName(item, "&f&lCreate Shop");
+        ItemStack item = new ItemBuilder(XMaterial.ANVIL)
+                .setName("&f&lCreate Shop");
 
         inv.setItem(52, item);
     }
@@ -71,7 +74,7 @@ public class shopsManagerGui {
         }
 
         ItemStack selected = e.getCurrentItem();
-        dShop shop = sManager.getShop(utils.trimString(utils.getDisplayName(selected)));
+        dShop shop = sManager.getShop(FormatUtils.stripColor(utils.getDisplayName(selected)));
         Player p = (Player) e.getWhoClicked();
 
         if (e.isShiftClick() && e.isLeftClick())
@@ -82,7 +85,7 @@ public class shopsManagerGui {
 
         else if (e.getClick().equals(ClickType.MIDDLE)) {
             new AnvilGUI.Builder()
-                    .onClose(player -> utils.runTaskLater(() -> open(p), 1L))
+                    .onClose(player -> Task.syncDelayed(plugin, () -> open(p), 1L))
                     .onComplete((player, s) -> {
                         if (s.isEmpty())
                             return AnvilGUI.Response.text("Cat be empty");
@@ -90,7 +93,7 @@ public class shopsManagerGui {
                         shop.setName(s);
                         return AnvilGUI.Response.close();
                     })
-                    .title(utils.formatString("&c&lRename shop"))
+                    .title(FormatUtils.color("&c&lRename shop"))
                     .text("Rename Shop")
                     .plugin(plugin)
                     .open(p);
@@ -119,7 +122,7 @@ public class shopsManagerGui {
                         shopsManager.getInstance().createShop(s, dShop.dShopT.buy);
                         return AnvilGUI.Response.close();
                     })
-                    .onClose(player -> utils.runTaskLater(() -> open(p), 1L))
+                    .onClose(player -> Task.syncDelayed(plugin, () -> open(p), 1L))
                     .text("input shop name")
                     .plugin(plugin)
                     .open(p);

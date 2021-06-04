@@ -1,11 +1,11 @@
 package io.github.divios.lib.itemHolder;
 
-import de.tr7zw.changeme.nbtapi.NBTCompound;
-import de.tr7zw.changeme.nbtapi.NBTContainer;
-import de.tr7zw.changeme.nbtapi.NBTItem;
+
+import de.tr7zw.nbtapi.*;
+import io.github.divios.core_lib.itemutils.ItemBuilder;
+import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.dailyrandomshop.economies.economy;
 import io.github.divios.dailyrandomshop.economies.vault;
-import io.github.divios.dailyrandomshop.utils.utils;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
@@ -15,8 +15,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Base64;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 public class dItem implements Serializable, Cloneable {
 
@@ -66,9 +68,7 @@ public class dItem implements Serializable, Cloneable {
      * @param name
      */
     public void setDisplayName(@NotNull String name) {
-        ItemStack itemA = getItem();
-        utils.setDisplayName(itemA, name);
-        setItem(itemA);
+        setItem(new ItemBuilder(getItem()).setName(name));
     }
 
     /**
@@ -84,11 +84,7 @@ public class dItem implements Serializable, Cloneable {
      * @param lore
      */
     public void setLore(@NotNull List<String> lore) {
-        ItemStack itemA = getItem();
-        ItemMeta meta = itemA.getItemMeta();
-        meta.setLore(lore.stream().map(utils::formatString).collect(Collectors.toList()));
-        itemA.setItemMeta(meta);
-        setItem(itemA);
+        setItem(new ItemBuilder(getItem()).setLore(lore));
     }
 
     /**
@@ -96,9 +92,7 @@ public class dItem implements Serializable, Cloneable {
      * @return
      */
     public @NotNull List<String> getLore() {
-        if (!getItem().getItemMeta().hasLore())
-            return new ArrayList<>();
-        return getItem().getItemMeta().getLore();
+        return ItemUtils.getLore(getItem());
     }
 
     /**
@@ -189,7 +183,7 @@ public class dItem implements Serializable, Cloneable {
      * @return
      */
     public boolean hasFlag(ItemFlag flag) {
-        return utils.hasFlag(getItem(), flag);
+        return ItemUtils.hasItemFlags(getItem(), flag);
     }
 
     /**
@@ -199,10 +193,10 @@ public class dItem implements Serializable, Cloneable {
     public void toggleFlag(ItemFlag flag) {
         ItemStack item = getItem();
 
-        if (utils.hasFlag(item, flag))
-            utils.removeFlag(item, flag);
+        if (ItemUtils.hasItemFlags(item, flag))
+            ItemUtils.removeItemFlags(item, flag);
         else
-            utils.addFlag(item, flag);
+            ItemUtils.addItemFlags(item, flag);
     }
 
     /**

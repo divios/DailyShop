@@ -1,5 +1,6 @@
 package io.github.divios.dailyrandomshop.commands.cmds;
 
+import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.dailyrandomshop.utils.utils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -27,7 +28,7 @@ public class addDailyItemCmd implements dailyCommand{
     @Override
     public void help(Player p) {
         if (p.hasPermission("DailyRandomShop.addDailyItem")) {
-            p.sendMessage(utils.formatString("&6&l>> &6/rdshop addDailyItems &8 " +
+            p.sendMessage(FormatUtils.color("&6&l>> &6/rdshop addDailyItems &8 " +
                     "- &7Opens the menu to add an item"));
         }
     }

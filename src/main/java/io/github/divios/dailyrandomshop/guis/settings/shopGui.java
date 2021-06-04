@@ -1,12 +1,14 @@
 package io.github.divios.dailyrandomshop.guis.settings;
 
+import io.github.divios.core_lib.XCore.XMaterial;
+import io.github.divios.core_lib.inventory.dynamicGui;
+import io.github.divios.core_lib.itemutils.ItemBuilder;
+import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.dailyrandomshop.DRShop;
-import io.github.divios.dailyrandomshop.builders.dynamicGui;
 import io.github.divios.dailyrandomshop.conf_msg;
 import io.github.divios.dailyrandomshop.guis.confirmIH;
 import io.github.divios.dailyrandomshop.guis.customizerguis.customizerMainGuiIH;
 import io.github.divios.dailyrandomshop.utils.utils;
-import io.github.divios.dailyrandomshop.xseries.XMaterial;
 import io.github.divios.lib.itemHolder.dItem;
 import io.github.divios.lib.itemHolder.dShop;
 import io.github.divios.lib.managers.shopsManager;
@@ -32,7 +34,8 @@ public class shopGui {
                 .nonContentAction((i, p1) -> nonContentAction(i, p1, shop))
                 .setSearch(false)
                 .back(p1 -> shopsManagerGui.open(p))
-                .title(i -> utils.formatString(utils.formatString("&f&lShop Manager")))
+                .title(i -> FormatUtils.color("&f&lShop Manager"))
+                .plugin(plugin)
                 .open(p);
     }
 
@@ -46,8 +49,8 @@ public class shopGui {
     }
 
     private static void addItems(Inventory inv) {
-        ItemStack addItems = XMaterial.ANVIL.parseItem();
-        utils.setDisplayName(addItems, "&f&lAdd new item");
+        ItemStack addItems = new ItemBuilder(XMaterial.ANVIL.parseItem())
+                .setName("&f&lAdd new item");
 
         inv.setItem(52, addItems);
     }

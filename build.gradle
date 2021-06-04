@@ -1,9 +1,8 @@
-import org.apache.tools.ant.filters.ReplaceTokens
-
 plugins {
     id 'java'
     id "idea"
     id "eclipse"
+    id 'java-library'
     id "maven-publish"
     id "com.github.johnrengelman.shadow" version "7.0.0"
 }
@@ -77,12 +76,10 @@ dependencies {
     compileOnly group: "net.Indyuce", name: "MMOLib", version: "1.7"
     compileOnly 'com.github.MilkBowl:VaultAPI:1.7'
     compileOnly 'me.clip:placeholderapi:2.10.9'
-    implementation 'de.tr7zw:item-nbt-api:2.7.1'
-    implementation 'org.bstats:bstats-bukkit:2.2.1'
     compileOnly 'com.vk2gpz.tokenenchant:TokenEnchantAPI:18.15.2'
-    implementation "net.wesjd:anvilgui:1.5.0-SNAPSHOT"
     compileOnly 'com.mojang:authlib:1.5.21'
-    implementation 'io.github.divios:core_lib:1.0'
+
+    api 'io.github.divios:core_lib:1.0'
 
     compileOnly fileTree(dir: 'libs', include: ['*.jar'])
 }

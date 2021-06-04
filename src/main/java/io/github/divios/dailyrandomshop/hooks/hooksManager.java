@@ -1,6 +1,7 @@
 package io.github.divios.dailyrandomshop.hooks;
 
 import com.vk2gpz.tokenenchant.api.TokenEnchantAPI;
+import io.github.divios.core_lib.hooks.vaultHook;
 import io.github.divios.dailyrandomshop.DRShop;
 import io.github.divios.dailyrandomshop.utils.utils;
 import me.realized.tokenmanager.api.TokenManager;
@@ -11,10 +12,10 @@ import org.black_ixx.playerpoints.PlayerPointsAPI;
 
 public class hooksManager {
 
-    private static final DRShop mainp = DRShop.getInstance();
+    private static final DRShop main = DRShop.getInstance();
     private static hooksManager instance = null;
 
-    private hooksManager() {};
+    private hooksManager() {}
 
     public static hooksManager getInstance() {
         if (instance == null) {
@@ -26,7 +27,12 @@ public class hooksManager {
 
     private void init() {
         /* Initiate all hooks */
-        vaultHook.hook();
+        if (!vaultHook.isEnabled()) {
+            main.getLogger().severe(String.format(
+                    "[%s] - Disabled due to no Vault dependency found!", main.getDescription().getName()));
+            main.getPluginLoader().disablePlugin(main);
+        }
+
         if (utils.isOperative("PlaceholderAPI"))
             placeholderApiHook.getInstance();
         if (utils.isOperative("TokenEnchant")) {

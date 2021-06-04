@@ -1,26 +1,21 @@
 package io.github.divios.dailyrandomshop.guis;
 
+import io.github.divios.core_lib.XCore.XMaterial;
+import io.github.divios.core_lib.inventory.InventoryGUI;
+import io.github.divios.core_lib.inventory.ItemButton;
+import io.github.divios.core_lib.itemutils.ItemBuilder;
+import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.dailyrandomshop.DRShop;
-import io.github.divios.dailyrandomshop.redLib.inventorygui.InventoryGUI;
-import io.github.divios.dailyrandomshop.redLib.inventorygui.ItemButton;
-import io.github.divios.dailyrandomshop.redLib.itemutils.ItemBuilder;
 import io.github.divios.dailyrandomshop.utils.utils;
-import io.github.divios.dailyrandomshop.xseries.XMaterial;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 
 public class confirmIH {
+
+    private final static DRShop plugin = DRShop.getInstance();
 
     private final Player p;
     private final BiConsumer<Player, Boolean> bi;
@@ -47,7 +42,7 @@ public class confirmIH {
         this.p = p;
         this.item = item;
         bi = true_false;
-        this.title = utils.formatString(title);
+        this.title = FormatUtils.color(title);
         this.confirmLore = confirmLore;
         this.cancelLore = cancelLore;
         openInventory();
@@ -55,7 +50,7 @@ public class confirmIH {
 
     public void openInventory() {
 
-        InventoryGUI gui = new InventoryGUI(27, title);
+        InventoryGUI gui = new InventoryGUI(plugin, 27, title);
 
         gui.addButton(ItemButton.create(new ItemBuilder(
                 utils.isEmpty(item) ? XMaterial.AIR.parseItem():item), e -> {}), 4);

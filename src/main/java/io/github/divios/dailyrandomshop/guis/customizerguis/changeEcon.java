@@ -1,33 +1,21 @@
 package io.github.divios.dailyrandomshop.guis.customizerguis;
 
 import com.vk2gpz.tokenenchant.api.TokenEnchantAPI;
+import io.github.divios.core_lib.XCore.XMaterial;
+import io.github.divios.core_lib.inventory.InventoryGUI;
+import io.github.divios.core_lib.inventory.ItemButton;
+import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.dailyrandomshop.DRShop;
 import io.github.divios.dailyrandomshop.conf_msg;
-import io.github.divios.dailyrandomshop.economies.*;
 import io.github.divios.dailyrandomshop.hooks.hooksManager;
-import io.github.divios.dailyrandomshop.redLib.inventorygui.InventoryGUI;
-import io.github.divios.dailyrandomshop.redLib.inventorygui.ItemButton;
-import io.github.divios.dailyrandomshop.redLib.itemutils.ItemBuilder;
-import io.github.divios.dailyrandomshop.utils.utils;
-import io.github.divios.dailyrandomshop.xseries.XMaterial;
 import io.github.divios.lib.itemHolder.dItem;
 import me.realized.tokenmanager.api.TokenManager;
 import me.xanium.gemseconomy.api.GemsEconomyAPI;
 import me.xanium.gemseconomy.currency.Currency;
 import me.yic.mpoints.MPointsAPI;
 import org.black_ixx.playerpoints.PlayerPointsAPI;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.inventory.InventoryDragEvent;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryHolder;
-import org.bukkit.inventory.ItemStack;
 
-import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -59,7 +47,7 @@ public class changeEcon{
     private void init() {
 
 
-        InventoryGUI gui = new InventoryGUI(27, conf_msg.CUSTOMIZE_CHANGE_ECON);
+        InventoryGUI gui = new InventoryGUI(plugin, 27, conf_msg.CUSTOMIZE_CHANGE_ECON);
 
         int slot = 0;
 
@@ -105,7 +93,6 @@ public class changeEcon{
         }
 
         gui.destroysOnClose();
-        gui.preventPlayerInvSlots();
         gui.open(p);
 
     }

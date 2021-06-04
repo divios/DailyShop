@@ -1,8 +1,8 @@
 package io.github.divios.lib.itemHolder;
 
+import io.github.divios.core_lib.XCore.XMaterial;
+import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.dailyrandomshop.conf_msg;
-import io.github.divios.dailyrandomshop.utils.utils;
-import io.github.divios.dailyrandomshop.xseries.XMaterial;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -31,9 +31,8 @@ public class dRarity {
      * @return
      */
     public ItemStack getAsItem() {
-        ItemStack item = items.get(rarity.ordinal()).clone();
-        utils.setDisplayName(item, getRarityLore());
-        return item;
+        return new ItemBuilder(items.get(rarity.ordinal()).clone())
+                .setName(getRarityLore());
     }
 
     /**

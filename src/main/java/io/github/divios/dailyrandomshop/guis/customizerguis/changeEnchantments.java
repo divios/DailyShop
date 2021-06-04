@@ -1,10 +1,12 @@
 package io.github.divios.dailyrandomshop.guis.customizerguis;
 
+import io.github.divios.core_lib.XCore.XMaterial;
+import io.github.divios.core_lib.inventory.dynamicGui;
+import io.github.divios.core_lib.itemutils.ItemBuilder;
+import io.github.divios.core_lib.misc.FormatUtils;
+import io.github.divios.core_lib.misc.Task;
 import io.github.divios.dailyrandomshop.DRShop;
-import io.github.divios.dailyrandomshop.builders.dynamicGui;
 import io.github.divios.dailyrandomshop.conf_msg;
-import io.github.divios.dailyrandomshop.utils.utils;
-import io.github.divios.dailyrandomshop.xseries.XMaterial;
 import io.github.divios.lib.itemHolder.dItem;
 import io.github.divios.lib.itemHolder.dShop;
 import net.wesjd.anvilgui.AnvilGUI;
@@ -40,14 +42,15 @@ public class changeEnchantments {
                 .contents(instance::getContents)
                 .contentAction(instance::contentAction)
                 .back(instance::backAction)
+                .plugin(plugin)
                 .open(p);
     }
 
     private static List<ItemStack> contents() {
         List<ItemStack> contents = new ArrayList<>();
         for(Enchantment e : Enchantment.values()) {
-            ItemStack item = XMaterial.BOOK.parseItem();
-            utils.setDisplayName(item, "&f&l" + e.getName());
+            ItemStack item = new ItemBuilder(XMaterial.BOOK.parseItem())
+                    .setName("&f&l" + e.getName());
             contents.add(item);
         }
         return contents;
@@ -63,12 +66,11 @@ public class changeEnchantments {
 
     private dynamicGui.Response contentAction(InventoryClickEvent e) {
         AtomicBoolean response = new AtomicBoolean(false);
-        String s = utils.trimString(e.getCurrentItem().getItemMeta().getDisplayName());
+        String s = FormatUtils.stripColor(e.getCurrentItem().getItemMeta().getDisplayName());
 
         new AnvilGUI.Builder()
-                .onClose(player -> utils.runTaskLater(() -> {
-                    customizerMainGuiIH.openInventory(p, ditem, shop);
-                }, 1L))
+                .onClose(player -> Task.syncDelayed(plugin, () ->
+                        customizerMainGuiIH.openInventory(p, ditem, shop), 1L))
                 .onComplete((player, text) -> {
                     try {
                         Integer.parseInt(text);
@@ -96,22 +98,23 @@ public class changeEnchantments {
                 .contents(instance::contentsX)
                 .contentAction(instance::contentActionX)
                 .back(instance::backAction)
-                .preventClose()
+                .plugin(plugin)
+                //.preventClose()
                 .open(p);
     }
 
     private List<ItemStack> contentsX() {
         List<ItemStack> contents = new ArrayList<>();
         for(Map.Entry<Enchantment, Integer> e : e.entrySet()) {
-            ItemStack item = XMaterial.ENCHANTED_BOOK.parseItem();
-            utils.setDisplayName(item, "&f&l" + e.getKey().getName() + ":" + e.getValue());
+            ItemStack item = new ItemBuilder(XMaterial.ENCHANTED_BOOK.parseItem())
+                    .setName("&f&l" + e.getKey().getName() + ":" + e.getValue());
             contents.add(item);
         }
         return contents;
     }
 
     private dynamicGui.Response contentActionX(InventoryClickEvent e) {
-        String[] entry = utils.trimString(e.getCurrentItem().getItemMeta().getDisplayName()).split(":");
+        String[] entry = FormatUtils.color(e.getCurrentItem().getItemMeta().getDisplayName()).split(":");
         ditem.removeEnchantments(Enchantment.getByName(entry[0]));
         customizerMainGuiIH.openInventory(p, ditem, instance.shop);
         return dynamicGui.Response.nu();

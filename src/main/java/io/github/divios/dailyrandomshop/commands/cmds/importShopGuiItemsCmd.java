@@ -1,5 +1,6 @@
 package io.github.divios.dailyrandomshop.commands.cmds;
 
+import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.dailyrandomshop.conf_msg;
 import io.github.divios.dailyrandomshop.hooks.hooksManager;
 import io.github.divios.dailyrandomshop.utils.utils;
@@ -32,18 +33,18 @@ public class importShopGuiItemsCmd implements dailyCommand {
         }
 
         if (hooksManager.getInstance().getShopGuiPlusApi() == null) {
-            p.sendMessage(conf_msg.PREFIX + utils.formatString("ShopGuiPlus isn't enable"));
+            p.sendMessage(conf_msg.PREFIX + FormatUtils.color("ShopGuiPlus isn't enable"));
             return;
         }
 
         if (!(action.equalsIgnoreCase("buy") ||
                 action.equalsIgnoreCase("sell"))) {
-            p.sendMessage(conf_msg.PREFIX + utils.formatString("&cInvalid action.&7 Supported: Sell, Buy"));
+            p.sendMessage(conf_msg.PREFIX + FormatUtils.color("&cInvalid action.&7 Supported: Sell, Buy"));
             return;
         }
 
         if (ShopGuiPlusApi.getShop(shop) == null) {
-            p.sendMessage(conf_msg.PREFIX + utils.formatString("&cThat shop doesnt exist"));
+            p.sendMessage(conf_msg.PREFIX + FormatUtils.color("&cThat shop doesnt exist"));
             return;
         }
 
@@ -71,14 +72,14 @@ public class importShopGuiItemsCmd implements dailyCommand {
             } */
         });
 
-        p.sendMessage(conf_msg.PREFIX + utils.formatString("&7Items imported successfully"));
+        p.sendMessage(conf_msg.PREFIX + FormatUtils.color("&7Items imported successfully"));
 
     }
 
     @Override
     public void help(Player p) {
         if (p.hasPermission("DailyRandomShop.import.shopGuiPlus")) {
-            p.sendMessage(utils.formatString("&6&l>> &6/rdshop importShopGui+ {shop} {action} &8 " +
+            p.sendMessage(FormatUtils.color("&6&l>> &6/rdshop importShopGui+ {shop} {action} &8 " +
                     "- &7Imports the given shop for sell/buy"));
         }
     }

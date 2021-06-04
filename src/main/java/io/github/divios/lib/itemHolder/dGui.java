@@ -1,8 +1,7 @@
 package io.github.divios.lib.itemHolder;
 
+import io.github.divios.core_lib.XCore.XMaterial;
 import io.github.divios.dailyrandomshop.utils.utils;
-import io.github.divios.dailyrandomshop.xseries.XMaterial;
-import io.github.divios.lib.storage.dataManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
@@ -21,7 +20,9 @@ import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.*;
+import java.util.AbstractMap;
+import java.util.List;
+import java.util.Map;
 
 public class dGui implements InventoryHolder, Listener {
 

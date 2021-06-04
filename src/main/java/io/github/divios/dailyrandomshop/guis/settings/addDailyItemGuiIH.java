@@ -1,24 +1,16 @@
 package io.github.divios.dailyrandomshop.guis.settings;
 
-import com.google.gson.Gson;
+import io.github.divios.core_lib.XCore.XMaterial;
+import io.github.divios.core_lib.inventory.InventoryGUI;
+import io.github.divios.core_lib.inventory.ItemButton;
+import io.github.divios.core_lib.itemutils.ItemBuilder;
+import io.github.divios.core_lib.misc.ItemPrompt;
 import io.github.divios.dailyrandomshop.DRShop;
 import io.github.divios.dailyrandomshop.conf_msg;
-import io.github.divios.dailyrandomshop.listeners.dynamicItemListener;
-import io.github.divios.dailyrandomshop.redLib.inventorygui.InventoryGUI;
-import io.github.divios.dailyrandomshop.redLib.inventorygui.ItemButton;
-import io.github.divios.dailyrandomshop.redLib.itemutils.ItemBuilder;
 import io.github.divios.dailyrandomshop.utils.utils;
-import io.github.divios.dailyrandomshop.xseries.XMaterial;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Arrays;
 import java.util.function.Consumer;
 import java.util.stream.IntStream;
 
@@ -42,7 +34,7 @@ public class addDailyItemGuiIH {
 
     private void open() {
 
-        InventoryGUI gui =  new InventoryGUI(27, conf_msg.ADD_ITEMS_TITLE);
+        InventoryGUI gui =  new InventoryGUI(plugin, 27, conf_msg.ADD_ITEMS_TITLE);
 
         gui.addButton(ItemButton.create(new ItemBuilder(XMaterial.REDSTONE_TORCH)
                 .setName(conf_msg.ADD_ITEMS_FROM_ZERO).addLore(conf_msg.ADD_ITEMS_FROM_ZERO_LORE)
@@ -51,8 +43,9 @@ public class addDailyItemGuiIH {
         gui.addButton(ItemButton.create(new ItemBuilder(XMaterial.HOPPER)
                         .setName(conf_msg.ADD_ITEMS_FROM_EXISTING).addLore(conf_msg.ADD_ITEMS_FROM_EXISTING_LORE)
                 , e -> {
-                    new dynamicItemListener(p, (player, itemStack) ->
-                            consumer.accept(itemStack));
+                    new ItemPrompt(plugin, p, (player, itemStack) -> consumer.accept(itemStack),
+                            player -> p.sendMessage(conf_msg.MSG_TIMER_EXPIRED)
+                            , conf_msg.MSG_ADD_ITEM_TITLE, conf_msg.MSG_ADD_ITEM_SUBTITLE);
                     p.closeInventory();
                 }), 15);
 
@@ -78,9 +71,7 @@ public class addDailyItemGuiIH {
                         , e -> {}), value);
         });
 
-        gui.getState().serialize();
-
-        gui.preventPlayerInvSlots();
+        //gui.preventPlayerInvSlots();
         gui.destroysOnClose();
         gui.open(p);
     }

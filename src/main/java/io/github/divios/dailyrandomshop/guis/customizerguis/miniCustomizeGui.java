@@ -1,27 +1,21 @@
 package io.github.divios.dailyrandomshop.guis.customizerguis;
 
+import io.github.divios.core_lib.XCore.XMaterial;
+import io.github.divios.core_lib.inventory.InventoryGUI;
+import io.github.divios.core_lib.inventory.ItemButton;
+import io.github.divios.core_lib.inventory.materialsPrompt;
+import io.github.divios.core_lib.itemutils.ItemBuilder;
+import io.github.divios.core_lib.itemutils.ItemUtils;
+import io.github.divios.core_lib.misc.EventListener;
+import io.github.divios.core_lib.misc.FormatUtils;
+import io.github.divios.core_lib.misc.Task;
 import io.github.divios.dailyrandomshop.DRShop;
-import io.github.divios.dailyrandomshop.redLib.inventorygui.InventoryGUI;
-import io.github.divios.dailyrandomshop.redLib.inventorygui.ItemButton;
-import io.github.divios.dailyrandomshop.redLib.itemutils.ItemBuilder;
-import io.github.divios.dailyrandomshop.utils.EventListener;
-import io.github.divios.dailyrandomshop.utils.utils;
-import io.github.divios.dailyrandomshop.xseries.XMaterial;
 import net.wesjd.anvilgui.AnvilGUI;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Collections;
 import java.util.function.Consumer;
 
 public class miniCustomizeGui {
@@ -29,7 +23,7 @@ public class miniCustomizeGui {
     private static final DRShop plugin = DRShop.getInstance();
 
     private final Player p;
-    private final ItemStack item;
+    private ItemStack item;
     private final Consumer<ItemStack> consumer;
     private final InventoryGUI inv;
     private final EventListener<PlayerPickupItemEvent> preventPicks;
@@ -47,7 +41,7 @@ public class miniCustomizeGui {
                 e.setCancelled(true);
         });
 
-        inv.preventPlayerInvSlots();
+        //inv.preventPlayerInvSlots();
         inv.setDestroyOnClose(false);
         inv.open(p);
     }
@@ -55,25 +49,25 @@ public class miniCustomizeGui {
 
     private InventoryGUI getGui() {
 
-        InventoryGUI gui = new InventoryGUI(54, "");
+        InventoryGUI gui = new InventoryGUI(plugin, 54, "");
 
         gui.addButton(ItemButton.create(new ItemBuilder(XMaterial.NAME_TAG)
                 .setName("&b&lChange name").addLore("&7Click to change the item's name")
                 , e -> new AnvilGUI.Builder()
-                        .onClose((player) -> utils.runTaskLater(() -> inv.open(p), 1L))
+                        .onClose((player) -> Task.syncDelayed(plugin, () -> inv.open(p), 1L))
                         .onComplete((player, s) -> {
-                            utils.setDisplayName(item, s);
+                            item = ItemUtils.setName(item, s);
                             refreshItem();
                             return AnvilGUI.Response.close();
                         })
-                        .title(utils.formatString("&cSet name"))
+                        .title(FormatUtils.color("&cSet name"))
                         .itemLeft(item.clone())
                         .plugin(plugin)
                         .open(p)), 10);
 
         gui.addButton(ItemButton.create(new ItemBuilder(XMaterial.SLIME_BALL)
                 .setName("&b&lChange material").addLore("&7Click to change the item's material")
-                , e -> changeMaterialGui.openInventory(p, (aBoolean, material) -> {
+                , e -> materialsPrompt.open(plugin, p, (aBoolean, material) -> {
                     if (aBoolean)
                         item.setType(material);
                     refreshItem();
@@ -90,7 +84,7 @@ public class miniCustomizeGui {
                     preventPicks.unregister();
                 }), 49);
 
-        gui.preventPlayerInvSlots();
+        //gui.preventPlayerInvSlots();
         return gui;
     }
 

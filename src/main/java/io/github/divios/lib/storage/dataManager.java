@@ -1,9 +1,14 @@
 package io.github.divios.lib.storage;
 
+import io.github.divios.core_lib.database.DataManagerAbstract;
+import io.github.divios.core_lib.database.DatabaseConnector;
+import io.github.divios.core_lib.database.SQLiteConnector;
+import io.github.divios.dailyrandomshop.DRShop;
 import io.github.divios.lib.itemHolder.dGui;
 import io.github.divios.lib.itemHolder.dItem;
 import io.github.divios.lib.itemHolder.dShop;
 import io.github.divios.lib.storage.migrations.initialMigration;
+import org.bukkit.plugin.Plugin;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -13,16 +18,19 @@ import java.util.LinkedHashSet;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-public class dataManager {
+public class dataManager extends DataManagerAbstract{
+
+    private static final DRShop plugin = DRShop.getInstance();
 
     private static dataManager instance = null;
-    private static final DataManagerAbstract con = DataManagerAbstract.getInstance();
+
+    private dataManager(DatabaseConnector connection, Plugin plugin) {
+        super(connection, plugin);
+    }
 
     public static dataManager getInstance() {
         if (instance == null) {
-            instance = new dataManager();
-            con.databaseConnector.connect(connection ->
-                    initialMigration.migrate(connection, con.getTablePrefix()));
+            instance = new dataManager(new SQLiteConnector(plugin), plugin);
         }
         return instance;
     }
@@ -32,9 +40,9 @@ public class dataManager {
 
             HashSet<dShop> shops = new LinkedHashSet<>();
 
-            con.async(() -> con.databaseConnector.connect(connection -> {
+            this.async(() -> this.databaseConnector.connect(connection -> {
                 try (Statement statement = connection.createStatement()) {
-                    String selectFarms = "SELECT * FROM " + con.getTablePrefix() + "active_shops";
+                    String selectFarms = "SELECT * FROM " + this.getTablePrefix() + "active_shops";
                     ResultSet result = statement.executeQuery(selectFarms);
 
                     while (result.next()) {
@@ -56,9 +64,9 @@ public class dataManager {
 
             HashSet<dItem> items = new LinkedHashSet<>();
 
-            con.async(() -> con.databaseConnector.connect(connection -> {
+            this.async(() -> this.databaseConnector.connect(connection -> {
                 try (Statement statement = connection.createStatement()) {
-                    String selectFarms = "SELECT * FROM " + con.getTablePrefix() + "shop_" + name;
+                    String selectFarms = "SELECT * FROM " + this.getTablePrefix() + "shop_" + name;
                     ResultSet result = statement.executeQuery(selectFarms);
 
                     while (result.next()) {
@@ -71,9 +79,9 @@ public class dataManager {
         }
 
     public synchronized void createShop(dShop shop) {
-        con.async(() -> con.databaseConnector.connect(connection -> {
+        this.async(() -> this.databaseConnector.connect(connection -> {
 
-            String createShop = "INSERT INTO " + con.getTablePrefix() +
+            String createShop = "INSERT INTO " + this.getTablePrefix() +
                     "active_shops (name, type, gui) VALUES (?, ?, ?)";
             try (PreparedStatement statement = connection.prepareStatement(createShop)) {
                 statement.setString(1, shop.getName());
@@ -83,7 +91,7 @@ public class dataManager {
             }
 
             try (Statement statement = connection.createStatement()) {
-                statement.execute("CREATE TABLE IF NOT EXISTS " + con.getTablePrefix() + "shop_"
+                statement.execute("CREATE TABLE IF NOT EXISTS " + this.getTablePrefix() + "shop_"
                         + shop.getName() + "(" +
                         "itemSerial varchar [255], " +
                         "uuid varchar [255] " +
@@ -94,8 +102,8 @@ public class dataManager {
     }
 
     public synchronized void renameShop(String oldName, String newName) {
-        con.async(() -> con.databaseConnector.connect(connection -> {
-            String renameShop = "UPDATE " + con.getTablePrefix() + "active_shops" +
+        this.async(() -> this.databaseConnector.connect(connection -> {
+            String renameShop = "UPDATE " + this.getTablePrefix() + "active_shops" +
                     " SET name = ? WHERE name = ?";
             try (PreparedStatement statement = connection.prepareStatement(renameShop)) {
                 statement.setString(1, newName);
@@ -103,8 +111,8 @@ public class dataManager {
                 statement.executeUpdate();
             }
 
-            String renameTable = "ALTER TABLE " + con.getTablePrefix() + "shop_" + oldName +
-                    " RENAME TO " + con.getTablePrefix() + "shop_" + newName;
+            String renameTable = "ALTER TABLE " + this.getTablePrefix() + "shop_" + oldName +
+                    " RENAME TO " + this.getTablePrefix() + "shop_" + newName;
             try (Statement statement = connection.createStatement()) {
                 statement.execute(renameTable);
             }
@@ -113,24 +121,24 @@ public class dataManager {
     }
 
     public synchronized void deleteShop(String name) {
-        con.async(() -> con.databaseConnector.connect(connection -> {
-            String deleteShop = "DELETE FROM " + con.getTablePrefix() + "active_shops WHERE name = ?";
+        this.async(() -> this.databaseConnector.connect(connection -> {
+            String deleteShop = "DELETE FROM " + this.getTablePrefix() + "active_shops WHERE name = ?";
             try (PreparedStatement statement = connection.prepareStatement(deleteShop)) {
                 statement.setString(1, name);
                 statement.executeUpdate();
             }
 
             try (Statement statement = connection.createStatement()) {
-                statement.execute("DROP TABLE " + con.getTablePrefix() + "shop_" + name);
+                statement.execute("DROP TABLE " + this.getTablePrefix() + "shop_" + name);
             }
 
         }));
     }
 
     public synchronized void addItem(String name, dItem item) {
-        con.queueAsync(() -> con.databaseConnector.connect(connection -> {
+        this.queueAsync(() -> this.databaseConnector.connect(connection -> {
 
-            String createShop = "INSERT INTO " + con.getTablePrefix() +
+            String createShop = "INSERT INTO " + this.getTablePrefix() +
                     "shop_" + name + " (itemSerial, uuid) VALUES (?, ?)";
             try (PreparedStatement statement = connection.prepareStatement(createShop)) {
 
@@ -144,8 +152,8 @@ public class dataManager {
     }
 
     public synchronized void deleteItem(String name, UUID uid) {
-        con.queueAsync(() -> con.databaseConnector.connect(connection -> {
-            String deeleteItem = "DELETE FROM " + con.getTablePrefix() + "shop_" + name + " WHERE uuid = ?";
+        this.queueAsync(() -> this.databaseConnector.connect(connection -> {
+            String deeleteItem = "DELETE FROM " + this.getTablePrefix() + "shop_" + name + " WHERE uuid = ?";
             try (PreparedStatement statement = connection.prepareStatement(deeleteItem)) {
                 statement.setString(1, uid.toString());
                 statement.executeUpdate();
@@ -154,8 +162,8 @@ public class dataManager {
     }
 
     public synchronized void updateItem(String name, dItem item) {
-        con.queueAsync(() -> con.databaseConnector.connect(connection -> {
-            String updateItem = "UPDATE " + con.getTablePrefix() + "shop_" + name +
+        this.queueAsync(() -> this.databaseConnector.connect(connection -> {
+            String updateItem = "UPDATE " + this.getTablePrefix() + "shop_" + name +
                     " SET itemSerial = ? WHERE uuid = ?";
             try (PreparedStatement statement = connection.prepareStatement(updateItem)) {
                 statement.setString(1, item.getItemSerial());
@@ -166,8 +174,8 @@ public class dataManager {
     }
 
     public synchronized void updateGui(String name, dGui gui) {
-        con.queueAsync(() -> con.databaseConnector.connect(connection -> {
-            String updateGui = "UPDATE " + con.getTablePrefix() + "active_shops " +
+        this.queueAsync(() -> this.databaseConnector.connect(connection -> {
+            String updateGui = "UPDATE " + this.getTablePrefix() + "active_shops " +
                     "SET gui = ? WHERE name = ?";
             try (PreparedStatement statement = connection.prepareStatement(updateGui)) {
                 statement.setString(1, gui.serialize());
