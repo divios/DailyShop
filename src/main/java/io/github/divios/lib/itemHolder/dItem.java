@@ -1,7 +1,9 @@
 package io.github.divios.lib.itemHolder;
 
 
-import de.tr7zw.nbtapi.*;
+import de.tr7zw.nbtapi.NBTCompound;
+import de.tr7zw.nbtapi.NBTContainer;
+import de.tr7zw.nbtapi.NBTItem;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.dailyrandomshop.economies.economy;
@@ -26,8 +28,13 @@ public class dItem implements Serializable, Cloneable {
     private String shop = ""; // TODO: not sure
 
     public dItem(@NotNull ItemStack item) {
+        new dItem(item, -1);
+    }
+
+    public dItem(@NotNull ItemStack item, int slot) {
         this.item = new NBTItem(item);
-        setUid(UUID.randomUUID());
+        setSlot(slot);
+        if (getUid() == null) setUid(UUID.randomUUID());
         setRarity(new dRarity());       //Defaults to Common
         setConfirm_gui(true);           // Defaults true
         setEconomy(new vault());        // Default Vault
@@ -52,6 +59,18 @@ public class dItem implements Serializable, Cloneable {
         if (getUid() == null)
             setUid(UUID.randomUUID());
     }
+
+    /**
+     * Sets the slot of this item
+     * @param slot
+     */
+    public void setSlot(int slot) { item.setInteger("dailySlots", slot); }
+
+    /**
+     * Gets the slot of this item
+     * @return
+     */
+    public int getSlot() { return item.getInteger("dailySlots"); }
 
     /**
      * Sets the meta of the item
@@ -461,7 +480,7 @@ public class dItem implements Serializable, Cloneable {
      * Gets item serializable as base64
      * @return
      */
-    public String getItemSerial() {
+    public String serialize() {
         NBTCompound itemData = NBTItem.convertItemtoNBT(item.getItem());
         return Base64.getEncoder().encodeToString(itemData.toString().getBytes());
     }
@@ -471,7 +490,7 @@ public class dItem implements Serializable, Cloneable {
      * @param base64
      * @return dItem constructed
      */
-    public static dItem constructFromBase64(String base64) {
+    public static dItem deserialize(String base64) {
         NBTCompound itemData = new NBTContainer(new String(Base64.getDecoder().decode(base64)));
         ItemStack item = NBTItem.convertNBTtoItem(itemData);
 
@@ -486,7 +505,7 @@ public class dItem implements Serializable, Cloneable {
      * @return
      */
     public dItem clone() {
-        return constructFromBase64(getItemSerial());
+        return deserialize(serialize());
     }
 
     @Override

@@ -2,12 +2,8 @@ package io.github.divios.lib.managers;
 
 import io.github.divios.lib.itemHolder.dShop;
 import io.github.divios.lib.storage.dataManager;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.*;
 
 public class shopsManager {
 
@@ -62,12 +58,12 @@ public class shopsManager {
      * @param name name of the shop
      * @return shop with the name. Null if it does not exist
      */
-    public synchronized @Nullable dShop getShop(String name) {
+    public synchronized Optional<dShop> getShop(String name) {
         for (dShop dS : shops) {
             if (dS.getName().equals(name))
-                return dS;
+                return Optional.of(dS);
         }
-        return null;
+        return Optional.empty();
     }
 
     /**

@@ -7,7 +7,6 @@ import io.github.divios.dailyrandomshop.DRShop;
 import io.github.divios.lib.itemHolder.dGui;
 import io.github.divios.lib.itemHolder.dItem;
 import io.github.divios.lib.itemHolder.dShop;
-import io.github.divios.lib.storage.migrations.initialMigration;
 import org.bukkit.plugin.Plugin;
 
 import java.sql.PreparedStatement;
@@ -70,7 +69,7 @@ public class dataManager extends DataManagerAbstract{
                     ResultSet result = statement.executeQuery(selectFarms);
 
                     while (result.next()) {
-                        dItem newItem = dItem.constructFromBase64(result.getString("itemSerial"));
+                        dItem newItem = dItem.deserialize(result.getString("itemSerial"));
                        items.add(newItem);
                     }
                 }
@@ -143,7 +142,7 @@ public class dataManager extends DataManagerAbstract{
             try (PreparedStatement statement = connection.prepareStatement(createShop)) {
 
 
-                statement.setString(1, item.getItemSerial());
+                statement.setString(1, item.serialize());
                 statement.setString(2, item.getUid().toString());
                 statement.executeUpdate();
             }
@@ -166,7 +165,7 @@ public class dataManager extends DataManagerAbstract{
             String updateItem = "UPDATE " + this.getTablePrefix() + "shop_" + name +
                     " SET itemSerial = ? WHERE uuid = ?";
             try (PreparedStatement statement = connection.prepareStatement(updateItem)) {
-                statement.setString(1, item.getItemSerial());
+                statement.setString(1, item.serialize());
                 statement.setString(2, item.getUid().toString());
                 statement.executeUpdate();
             }

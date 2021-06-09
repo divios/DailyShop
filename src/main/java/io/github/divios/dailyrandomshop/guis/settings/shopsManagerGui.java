@@ -74,7 +74,7 @@ public class shopsManagerGui {
         }
 
         ItemStack selected = e.getCurrentItem();
-        dShop shop = sManager.getShop(FormatUtils.stripColor(utils.getDisplayName(selected)));
+        dShop shop = sManager.getShop(FormatUtils.stripColor(utils.getDisplayName(selected))).get();
         Player p = (Player) e.getWhoClicked();
 
         if (e.isShiftClick() && e.isLeftClick())

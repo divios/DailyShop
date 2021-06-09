@@ -4,10 +4,7 @@ import io.github.divios.lib.storage.dataManager;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 public class dShop {
 
@@ -22,14 +19,14 @@ public class dShop {
         this.name = name;
         this.type = type;
 
-        gui = new dGui();
+        gui = new dGui(this);
     }
 
     public dShop(String name, dShopT type, String base64) {
         this.name = name;
         this.type = type;
 
-        gui = new dGui(base64);
+        gui = new dGui(base64, this);
     }
 
     /**
@@ -70,11 +67,11 @@ public class dShop {
      * @param uid the UUID to search
      * @return null if it does not exist
      */
-    public synchronized dItem getItem(UUID uid) {
+    public synchronized Optional<dItem> getItem(UUID uid) {
         for (dItem item : items)
             if (item.getUid().equals(uid))
-                return item;
-        return null;
+                return Optional.of(item);
+        return Optional.empty();
     }
 
     /**
@@ -133,7 +130,7 @@ public class dShop {
      * @param base64
      */
     public synchronized void updateGui(String base64) {
-        gui.updateInventory(base64);
+        //gui.updateInventory(base64);
         dManager.updateGui(name, gui);
 
     }
@@ -143,7 +140,7 @@ public class dShop {
      * @param inv
      */
     public synchronized void updateGui(String name, Inventory inv) {
-        gui.updateInventory(name, inv);
+        //gui.updateInventory(name, inv);
         dManager.updateGui(name, gui);
     }
 
