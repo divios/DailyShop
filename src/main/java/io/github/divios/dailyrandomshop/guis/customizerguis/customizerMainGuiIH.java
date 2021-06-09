@@ -46,7 +46,7 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
             Bukkit.getPluginManager().registerEvents(instance, main);
         }
         instance.ditem = ditem.clone();
-        instance.shop = shopsManager.getInstance().getShop(shopName);
+        instance.shop = shopsManager.getInstance().getShop(shopName).get();
         p.openInventory(instance.createInventory());
     }
 

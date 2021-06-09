@@ -1,59 +1,80 @@
 package io.github.divios.lib.itemHolder;
 
-import io.github.divios.core_lib.XCore.XMaterial;
-import io.github.divios.dailyrandomshop.utils.utils;
+import io.github.divios.core_lib.inventory.inventoryUtils;
+import io.github.divios.core_lib.misc.EventListener;
+import io.github.divios.dailyrandomshop.DRShop;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryHolder;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.io.BukkitObjectInputStream;
 import org.bukkit.util.io.BukkitObjectOutputStream;
-import org.jetbrains.annotations.NotNull;
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.AbstractMap;
-import java.util.List;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.IntStream;
 
-public class dGui implements InventoryHolder, Listener {
+public class dGui {
 
+    private static final DRShop plugin = DRShop.getInstance();
+
+    private String title;       // for some reason is throwing noSuchMethod
     private Inventory inv;
-    String title;                     // for some reason is throwing noSuchMethod
+    private final dShop shop;
+
     private boolean available = true;
+    private final Set<Integer> openSlots = new HashSet<>();
+    private final Set<dItem> buttons = new HashSet<>();
 
-    public dGui(String base64) {
-        updateInventory(base64);
-    }
+    private transient EventListener<InventoryClickEvent> clickEvent;
+    private transient EventListener<InventoryDragEvent> dragEvent;
+    private transient EventListener<InventoryOpenEvent> openEvent;
 
-    public dGui(String title, @NotNull List<ItemStack> items) {
-
+    protected dGui(String title, Inventory inv, dShop shop) {
         this.title = title;
-        inv = Bukkit.createInventory(this,
-                !items.isEmpty() ? Math.round(items.size() % 9): 9, title);
-        items.forEach(item -> inv.addItem(item));
+        this.inv = inv;
+        this.shop = shop;
     }
 
-    public dGui() { inv = Bukkit.createInventory(this, 9, title); }
+    protected dGui(String title, int size, dShop shop) {
+        this.title = title;
+        this.inv = Bukkit.createInventory(null, size, title);
+        this.shop = shop;
+
+        IntStream.range(0, size).forEach(openSlots::add);
+
+        initListeners();
+    }
+
+    protected dGui(String base64, dShop shop) {
+        deserialize(base64);
+        this.shop = shop;
+
+        initListeners();
+    }
+
+    public dGui(dShop shop) {
+        this(shop.getName(), 27, shop);
+    }
 
     /**
-     * Open the inventorty for the given player
-     * @param p
+     * Opens the inventory for a player
+     * @param p The player to open the inventory
      */
-    public void open(Player p) {
-        p.openInventory(inv);
-    }
+    public void open(Player p) { p.openInventory(inv); }
 
     /**
-     * Closes the inventory for all the viewers
+     * Closes the inventory for all the current viewers
      */
     public void closeAll() {
         try {
@@ -61,113 +82,165 @@ public class dGui implements InventoryHolder, Listener {
         } catch (Exception ignored) {}
     }
 
-    public void setAvailable(boolean status) {
-        available = status;
-    }
+    /**
+     * Returns the title of this gui
+     * @return The String representing the title
+     */
+    public String getTitle() { return title; }
 
-    public boolean getAvailable() {
-        return available;
-    }
+    /**
+     * Returns a copy of this instance inventory
+     * @return The Copied inventory
+     */
+    public Inventory getInventory() { return inventoryUtils.cloneInventory(inv, title); }
 
-    public String getTitle() {
-        return title;
-    }
+    /**
+     * Checks if the inventory is available
+     * @return true if it is, false if is being edited
+     */
+    public boolean getAvailable() { return available; }
 
-    @Override
-    public Inventory getInventory() {
-        return inv;
+    /**
+     * Sets the availability of the inventory
+     * @param value Boolean
+     */
+    public void setAvailable(boolean value) {
+        available = value;
+        if (!value) closeAll();
     }
 
     /**
-     * Updates the inventory from a base64
-     * @param base64
+     * Adds a button to the inventory
+     * @param item The item to add
+     * @param slot The slot where the item 'll be added
      */
-    public void updateInventory(String base64) {
-        AbstractMap.SimpleEntry<String, Inventory> dese = (AbstractMap.SimpleEntry<String, Inventory>)
-                deserialize(base64);
-        inv = dese.getValue();
-        title = dese.getKey();
+    public void addButton(dItem item, int slot) {
+        dItem cloned = item.clone();
+        cloned.setSlot(slot);
+        buttons.add(item);
+        inv.setItem(slot, cloned.getItem());
     }
 
     /**
-     * Sets this instance inventory holder
-     * @param inv
+     * Removes a slot from the inventory
+     * @param slot The slot which wants to be clear
+     * @return true if an item was successfully removed
      */
-    protected void updateInventory(String title, Inventory inv) {
-        this.title = title;
-        this.inv = inv;
+    public boolean removeButton(int slot) {
+        openSlots.remove(slot);
+        inv.clear(slot);
+        return buttons.removeIf(item -> item.getSlot() == slot);
     }
 
     /**
-     * Gets the inventory serialized
-     * @return the serialized inventory in base64
+     * Gets the button in this object
+     * @return An unmodifiable view of the buttons set
      */
-    public String serialize() {
-        String base64 = null;
-        try {
-            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            BukkitObjectOutputStream BOOS = new BukkitObjectOutputStream(byteArrayOutputStream);
-            BOOS.writeObject(title);
-            BOOS.writeInt(inv.getSize());
-            for (ItemStack item : inv.getContents()) {
-                BOOS.writeObject(utils.isEmpty(item) ? XMaterial.AIR.parseItem():item);
+    public Set<dItem> getButtons() {
+        return Collections.unmodifiableSet(buttons);
+    }
+
+    /**
+     * Gets the openSlots in this object
+     * @return An unmodifiable view of the open Slots
+     */
+    public Set<Integer> getOpenSlots() {
+        return Collections.unmodifiableSet(openSlots);
+    }
+
+
+    private void initListeners() {
+
+        this.clickEvent = new EventListener<>(plugin, InventoryClickEvent.class,
+                EventPriority.HIGHEST, e -> {
+            if (e.getClickedInventory() != inv) return;
+
+            e.setCancelled(true);
+
+            if (openSlots.contains(e.getSlot())) {}
+                //TODO: init transaction
+            else {
+                buttons.stream()
+                        .filter(dItem -> dItem.getSlot() == e.getSlot())
+                        .findFirst()
+                        .orElse(null);
             }
-            BOOS.close();
-            base64 = Base64Coder.encodeLines(byteArrayOutputStream.toByteArray());
+        });
+
+        this.dragEvent = new EventListener<>(plugin, InventoryDragEvent.class,
+                e -> {
+            if (e.getInventory() != inv) return;
+
+            e.setCancelled(true);
+
+        });
+
+        this.openEvent = new EventListener<>(plugin, InventoryOpenEvent.class,
+                EventPriority.HIGHEST, e -> {
+            if (e.getInventory() != inv) return;
+
+            if (!available) {
+                e.setCancelled(true);
+                e.getPlayer().sendMessage("");
+            }
+        });
+
+    }
+
+    /**
+     * Destroys the inventory. In summary, unregisters all the listeners
+     */
+    public void destroy() {
+        clickEvent.unregister();
+        dragEvent.unregister();
+        openEvent.unregister();
+    }
+
+    public String serialize() {
+        try {
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            BukkitObjectOutputStream dataOutput = new BukkitObjectOutputStream(outputStream);
+
+            // Serialize inventory
+            dataOutput.writeObject(inventoryUtils.serialize(inv, title));
+
+            // Serialize openSlots
+            dataOutput.writeObject(openSlots);
+
+            // Serialize buttons
+            dataOutput.writeInt(buttons.size());
+            for (dItem button: buttons)
+                dataOutput.writeObject(button.serialize());
+
+            dataOutput.close();
+            return Base64Coder.encodeLines(outputStream.toByteArray());
 
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new IllegalStateException("Unable to serialize inventory.", e);
         }
-        return base64;
     }
 
-    /**
-     * Deserializes the given base64 to an inventory
-     * @param base64 base64 to deserialize
-     * @return the new inventory
-     */
-    private Map.Entry<String, Inventory> deserialize(String base64) {
-        Inventory inventory = null;
-        String title2;
-
-        BukkitObjectInputStream BOIS = null;
+    private void deserialize(String base64) {
         try {
-            ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(Base64Coder.decodeLines(base64));
-            BOIS = new BukkitObjectInputStream(byteArrayInputStream);
+            Inventory inv;
+            ByteArrayInputStream InputStream = new ByteArrayInputStream(Base64Coder.decodeLines(base64));
+            BukkitObjectInputStream dataInput = new BukkitObjectInputStream(InputStream);
 
-            title = (String) BOIS.readObject();
-            inventory = Bukkit.getServer().createInventory(this, BOIS.readInt(), title);
+            Map.Entry<String, Inventory> s = inventoryUtils.deserialize((String) dataInput.readObject());
+            title = s.getKey();
+            inv = s.getValue();
 
-            int i = 0;
-            while (true) {
-                ItemStack item = (ItemStack) BOIS.readObject();
-                if (!utils.isEmpty(item)) inventory.setItem(i, item);
-                i++;
-            }
+            openSlots.addAll((Set<Integer>) dataInput.readObject());
 
-        } catch (IOException | ClassNotFoundException e) {
-            return new AbstractMap.SimpleEntry<>(title, inventory);
-        } finally {
-            try {
-                BOIS.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            for (int i = 0; i < dataInput.readInt(); i++)
+                buttons.add((dItem) dataInput.readObject());
+
+        } catch (Exception e) {
+            throw new IllegalStateException("Unable to deserialize inventory.", e);
         }
     }
 
-    @EventHandler
-    public void onInventoryClick(InventoryClickEvent e) {
-        if (e.getInventory().getHolder() != this) return;
+ 
 
-        e.setCancelled(true);
-    }
-
-    @EventHandler
-    public void onDragEvent(InventoryDragEvent e) {
-        if (e.getInventory().getHolder() != this) return;
-
-        e.setCancelled(true);
-    }
 
 }

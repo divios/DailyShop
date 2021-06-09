@@ -1,7 +1,6 @@
 package io.github.divios.dailyrandomshop;
 
-import io.github.divios.dailyrandomshop.commands.commandsManager;
-import io.github.divios.dailyrandomshop.commands.tabComplete;
+import io.github.divios.core_lib.commands.CommandManager;
 import io.github.divios.dailyrandomshop.hooks.hooksManager;
 import io.github.divios.dailyrandomshop.utils.conf_updater;
 import io.github.divios.lib.managers.shopsManager;
@@ -25,8 +24,7 @@ public class DRShop extends JavaPlugin {
         dataManager.getInstance();
         shopsManager.getInstance();
 
-        commandsManager.getInstance();
-        tabComplete.getInstance();
+        CommandManager.register(INSTANCE.getCommand("dailyRandomShop"));
 
     }
 

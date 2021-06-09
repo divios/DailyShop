@@ -21,7 +21,7 @@ public class addDailyItemGuiIH {
     private final Player p;
     private final Consumer<ItemStack> consumer;
 
-    public static void openInventory(Player p, Consumer<ItemStack> consumer) {
+    public static void open(Player p, Consumer<ItemStack> consumer) {
         new addDailyItemGuiIH(p,  consumer);
     }
 
@@ -29,10 +29,10 @@ public class addDailyItemGuiIH {
         this.p = p;
         this.consumer = consumer;
 
-        open();
+        body();
     }
 
-    private void open() {
+    private void body() {
 
         InventoryGUI gui =  new InventoryGUI(plugin, 27, conf_msg.ADD_ITEMS_TITLE);
 

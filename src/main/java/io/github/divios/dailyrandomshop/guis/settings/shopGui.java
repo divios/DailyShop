@@ -42,7 +42,7 @@ public class shopGui {
 
     private static List<ItemStack> contents (String name){
         List<ItemStack> items = new ArrayList<>();
-        shopsManager.getInstance().getShop(name)
+        shopsManager.getInstance().getShop(name).get()
                 .getItems().forEach(dItem -> items.add(dItem.getItem()));
 
         return items;
@@ -61,12 +61,12 @@ public class shopGui {
         if (utils.isEmpty(e.getCurrentItem())) return dynamicGui.Response.nu();
 
         Player p = (Player) e.getWhoClicked();
-        dShop shop = sManager.getShop(shopName);
+        dShop shop = sManager.getShop(shopName).get();
         UUID uid = dItem.getUid(e.getCurrentItem());
 
         if (e.isLeftClick())
             customizerMainGuiIH.openInventory((Player) e.getWhoClicked(),
-                    shop.getItem(uid), shop);
+                    shop.getItem(uid).get(), shop);
 
         else if (e.isRightClick())
             new confirmIH(p, (player, aBoolean) -> {
@@ -81,8 +81,8 @@ public class shopGui {
 
     private static dynamicGui.Response nonContentAction(int slot, Player p, String name) {
         if (slot == 52) {
-            addDailyItemGuiIH.openInventory(p, itemStack -> {
-                shopsManager.getInstance().getShop(name)
+            addDailyItemGuiIH.open(p, itemStack -> {
+                shopsManager.getInstance().getShop(name).get()
                         .addItem(new dItem(itemStack));
                 open(p, name);
             });
