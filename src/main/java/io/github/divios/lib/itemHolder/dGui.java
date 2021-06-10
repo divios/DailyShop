@@ -2,6 +2,7 @@ package io.github.divios.lib.itemHolder;
 
 import io.github.divios.core_lib.inventory.inventoryUtils;
 import io.github.divios.core_lib.misc.EventListener;
+import io.github.divios.core_lib.misc.Pair;
 import io.github.divios.dailyrandomshop.DRShop;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.HumanEntity;
@@ -18,9 +19,9 @@ import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.IntStream;
 
@@ -44,26 +45,24 @@ public class dGui {
         this.title = title;
         this.inv = inv;
         this.shop = shop;
+
+        IntStream.range(0, inv.getSize()).forEach(openSlots::add);
+
+        initListeners();
     }
 
     protected dGui(String title, int size, dShop shop) {
-        this.title = title;
-        this.inv = Bukkit.createInventory(null, size, title);
-        this.shop = shop;
-
-        IntStream.range(0, size).forEach(openSlots::add);
-
-        initListeners();
+        this(title, Bukkit.createInventory(null, size, title), shop);
     }
 
-    protected dGui(String base64, dShop shop) {
-        deserialize(base64);
+    private dGui(String base64, dShop shop) {
+        _deserialize(base64);
         this.shop = shop;
 
         initListeners();
     }
 
-    public dGui(dShop shop) {
+    protected dGui(dShop shop) {
         this(shop.getName(), 27, shop);
     }
 
@@ -89,10 +88,45 @@ public class dGui {
     public String getTitle() { return title; }
 
     /**
+     * Sets the inventory title
+     * @param title
+     */
+    public void setTitle(String title) {
+        this.title = title;
+        Inventory temp = Bukkit.createInventory(null, inv.getSize(), title);
+        inventoryUtils.translateContents(inv, temp);
+        inv = temp;
+    }
+
+    /**
      * Returns a copy of this instance inventory
      * @return The Copied inventory
      */
     public Inventory getInventory() { return inventoryUtils.cloneInventory(inv, title); }
+
+    public boolean addRow() {
+        if (inv.getSize() == 54) return false;
+
+        Inventory aux = Bukkit.createInventory(null, inv.getSize() + 9, title);
+        inventoryUtils.translateContents(inv, aux);
+
+        IntStream.range(inv.getSize(), inv.getSize() + 9).forEach(openSlots::add);
+        inv = aux;
+
+        return true;
+    }
+
+    public boolean removeRow() {
+        if (inv.getSize() == 9) return false;
+
+        Inventory aux = Bukkit.createInventory(null, inv.getSize() - 9, title);
+        inventoryUtils.translateContents(inv, aux);
+
+        IntStream.range(inv.getSize() - 9, inv.getSize()).forEach(openSlots::remove);
+        inv = aux;
+
+        return true;
+    }
 
     /**
      * Checks if the inventory is available
@@ -153,17 +187,15 @@ public class dGui {
 
         this.clickEvent = new EventListener<>(plugin, InventoryClickEvent.class,
                 EventPriority.HIGHEST, e -> {
-            if (e.getClickedInventory() != inv) return;
+            if (e.getInventory() != inv) return;
 
             e.setCancelled(true);
 
-            if (openSlots.contains(e.getSlot())) {}
+            if (openSlots.contains(e.getSlot()) &&
+                    shop.getType().equals(dShop.dShopT.buy)) {}
                 //TODO: init transaction
             else {
-                buttons.stream()
-                        .filter(dItem -> dItem.getSlot() == e.getSlot())
-                        .findFirst()
-                        .orElse(null);
+                //TODO: check dItem and see if it has some action
             }
         });
 
@@ -208,9 +240,7 @@ public class dGui {
             dataOutput.writeObject(openSlots);
 
             // Serialize buttons
-            dataOutput.writeInt(buttons.size());
-            for (dItem button: buttons)
-                dataOutput.writeObject(button.serialize());
+            dataOutput.writeObject(buttons);
 
             dataOutput.close();
             return Base64Coder.encodeLines(outputStream.toByteArray());
@@ -220,27 +250,29 @@ public class dGui {
         }
     }
 
-    private void deserialize(String base64) {
+    private void _deserialize(String base64) {
         try {
-            Inventory inv;
             ByteArrayInputStream InputStream = new ByteArrayInputStream(Base64Coder.decodeLines(base64));
             BukkitObjectInputStream dataInput = new BukkitObjectInputStream(InputStream);
 
-            Map.Entry<String, Inventory> s = inventoryUtils.deserialize((String) dataInput.readObject());
-            title = s.getKey();
-            inv = s.getValue();
+            Pair<String, Inventory> s = inventoryUtils.deserialize((String) dataInput.readObject());
+            title = s.get1();
+            inv = s.get2();
 
             openSlots.addAll((Set<Integer>) dataInput.readObject());
 
-            for (int i = 0; i < dataInput.readInt(); i++)
-                buttons.add((dItem) dataInput.readObject());
+            buttons.addAll((Set<dItem>) dataInput.readObject());
+            dataInput.close();
+
 
         } catch (Exception e) {
             throw new IllegalStateException("Unable to deserialize inventory.", e);
         }
     }
 
- 
+    public static dGui deserialize(String base64, dShop shop) { return new dGui(base64, shop); }
+
+    public dGui clone() { return deserialize(this.serialize(), shop); }
 
 
 }

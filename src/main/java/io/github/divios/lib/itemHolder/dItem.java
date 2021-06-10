@@ -28,13 +28,12 @@ public class dItem implements Serializable, Cloneable {
     private String shop = ""; // TODO: not sure
 
     public dItem(@NotNull ItemStack item) {
-        new dItem(item, -1);
+        this(item, -1);
     }
 
     public dItem(@NotNull ItemStack item, int slot) {
-        this.item = new NBTItem(item);
+        setItem(item);
         setSlot(slot);
-        if (getUid() == null) setUid(UUID.randomUUID());
         setRarity(new dRarity());       //Defaults to Common
         setConfirm_gui(true);           // Defaults true
         setEconomy(new vault());        // Default Vault
@@ -279,7 +278,7 @@ public class dItem implements Serializable, Cloneable {
      *
      * @return the uuid of this item
      */
-    public UUID getUid() {
+    public @Nullable UUID getUid() {
         return item.getObject("rds_UUID", UUID.class);
     }
 
@@ -518,6 +517,22 @@ public class dItem implements Serializable, Cloneable {
     @Override
     public int hashCode() {
         return getUid().hashCode();
+    }
+
+    private void writeObject(java.io.ObjectOutputStream out)
+            throws IOException {
+        out.writeObject(this.serialize());
+    }
+    private void readObject(java.io.ObjectInputStream in)
+            throws IOException, ClassNotFoundException {
+        NBTCompound itemData = new NBTContainer(new String(Base64.getDecoder()
+                .decode((String) in.readObject())));
+        ItemStack item = NBTItem.convertNBTtoItem(itemData);
+        setItem(item);
+    }
+    private void readObjectNoData()
+            throws ObjectStreamException {
+
     }
 
 

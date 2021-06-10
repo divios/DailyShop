@@ -78,9 +78,6 @@ public class shopsManagerGui {
         Player p = (Player) e.getWhoClicked();
 
         if (e.isShiftClick() && e.isLeftClick())
-            shop.getGui().open(p);
-
-        else if (e.isShiftClick() && e.isRightClick())
             customizeGui.open(p, shop);
 
         else if (e.getClick().equals(ClickType.MIDDLE)) {
@@ -89,6 +86,7 @@ public class shopsManagerGui {
                     .onComplete((player, s) -> {
                         if (s.isEmpty())
                             return AnvilGUI.Response.text("Cat be empty");
+
                         dManager.renameShop(shop.getName(), s);
                         shop.setName(s);
                         return AnvilGUI.Response.close();

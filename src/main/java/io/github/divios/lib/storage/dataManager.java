@@ -7,6 +7,7 @@ import io.github.divios.dailyrandomshop.DRShop;
 import io.github.divios.lib.itemHolder.dGui;
 import io.github.divios.lib.itemHolder.dItem;
 import io.github.divios.lib.itemHolder.dShop;
+import io.github.divios.lib.storage.migrations.initialMigration;
 import org.bukkit.plugin.Plugin;
 
 import java.sql.PreparedStatement;
@@ -30,6 +31,8 @@ public class dataManager extends DataManagerAbstract{
     public static dataManager getInstance() {
         if (instance == null) {
             instance = new dataManager(new SQLiteConnector(plugin), plugin);
+            instance.databaseConnector.connect(connection ->
+                    initialMigration.migrate(connection, instance.getTablePrefix()));
         }
         return instance;
     }

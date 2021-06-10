@@ -5,15 +5,12 @@ import io.github.divios.core_lib.commands.abstractCommand;
 import io.github.divios.core_lib.commands.cmdTypes;
 import org.bukkit.command.CommandSender;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class helpCmd extends abstractCommand {
 
-    static{
-        new helpCmd();
-    }
-
-    private helpCmd() {
+    public helpCmd() {
         super(cmdTypes.PLAYERS);
     }
 
@@ -29,21 +26,21 @@ public class helpCmd extends abstractCommand {
 
     @Override
     public String getHelp() {
-        return null;
+        return "";
     }
 
     @Override
     public List<String> getPerms() {
+        return new ArrayList<>();
+    }
+
+    @Override
+    public List<String> getTabCompletition(List<String> args) {
         return null;
     }
 
     @Override
-    public List<String> getTabCompletition(String[] args) {
-        return null;
-    }
-
-    @Override
-    public void run(CommandSender sender, String[] args) {
+    public void run(CommandSender sender, List<String> args) {
         CommandManager.getCmds().stream()
                 .filter(absC -> {
                     for (String perms : absC.getPerms())

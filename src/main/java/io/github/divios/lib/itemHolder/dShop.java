@@ -4,6 +4,7 @@ import io.github.divios.lib.storage.dataManager;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
 
+import java.sql.Timestamp;
 import java.util.*;
 
 public class dShop {
@@ -13,7 +14,13 @@ public class dShop {
     private String name;
     private final dShopT type;
     private Set<dItem> items = new LinkedHashSet<>();
-    private final dGui gui;
+    private dGui gui;
+
+    private Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+    private int timer = 24 * 60; // Minutes representing time to pass until reset
+
+    //TODO: add timeStamp and integer representing the minutes that have to pass until
+    // generates new items
 
     public dShop(String name, dShopT type) {
         this.name = name;
@@ -26,7 +33,7 @@ public class dShop {
         this.name = name;
         this.type = type;
 
-        gui = new dGui(base64, this);
+        gui = dGui.deserialize(base64, this);
     }
 
     /**
@@ -126,22 +133,12 @@ public class dShop {
     }
 
     /**
-     * Updates the gui from a base 64
-     * @param base64
-     */
-    public synchronized void updateGui(String base64) {
-        //gui.updateInventory(base64);
-        dManager.updateGui(name, gui);
-
-    }
-
-    /**
      * Updates the gui with the given inv
-     * @param inv
      */
-    public synchronized void updateGui(String name, Inventory inv) {
-        //gui.updateInventory(name, inv);
-        dManager.updateGui(name, gui);
+    public synchronized void updateGui(dGui gui) {
+        this.gui.destroy();
+        this.gui = gui;
+        dataManager.getInstance().updateGui(this.name, this.gui);
     }
 
     /**
