@@ -13,6 +13,8 @@ public class initialMigration {
             statement.execute("CREATE TABLE IF NOT EXISTS " + tablePrefix + "active_shops (" +
                     "name varchar [255], " +
                     "type varchar [255], " +
+                    "timestamp varchar [255], " +
+                    "timer INTEGER, " +
                     "gui varchar [255]" +
                     ")");
         }

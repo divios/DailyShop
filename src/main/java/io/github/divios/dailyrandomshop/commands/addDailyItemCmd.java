@@ -3,11 +3,13 @@ package io.github.divios.dailyrandomshop.commands;
 import io.github.divios.core_lib.commands.abstractCommand;
 import io.github.divios.core_lib.commands.cmdTypes;
 import io.github.divios.core_lib.misc.FormatUtils;
+import io.github.divios.dailyrandomshop.DRShop;
 import io.github.divios.dailyrandomshop.guis.customizerguis.customizerMainGuiIH;
 import io.github.divios.dailyrandomshop.guis.settings.addDailyItemGuiIH;
 import io.github.divios.lib.itemHolder.dItem;
 import io.github.divios.lib.itemHolder.dShop;
 import io.github.divios.lib.managers.shopsManager;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -17,11 +19,7 @@ import java.util.stream.Collectors;
 
 public class addDailyItemCmd extends abstractCommand {
 
-    static {
-        new addDailyItemCmd();
-    }
-
-    private addDailyItemCmd() {
+    public addDailyItemCmd() {
         super(cmdTypes.BOTH);
     }
 
@@ -47,8 +45,8 @@ public class addDailyItemCmd extends abstractCommand {
     }
 
     @Override
-    public List<String> getTabCompletition(String[] args) {
-        if (args.length == 1)
+    public List<String> getTabCompletition(List<String> args) {
+        if (args.size() == 1)
             return shopsManager.getInstance().getShops()
                     .stream()
                     .map(dShop::getName)
@@ -57,12 +55,12 @@ public class addDailyItemCmd extends abstractCommand {
     }
 
     @Override
-    public void run(CommandSender sender, String[] args) {
+    public void run(CommandSender sender, List<String> args) {
         addDailyItemGuiIH.open((Player) sender,
                 itemStack -> customizerMainGuiIH.openInventory(
                                 (Player) sender,
                                 new dItem(itemStack),
-                                args[0]
+                                args.get(0)
                 ));
     }
 }

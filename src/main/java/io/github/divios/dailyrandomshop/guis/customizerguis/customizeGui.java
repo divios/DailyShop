@@ -1,7 +1,6 @@
 package io.github.divios.dailyrandomshop.guis.customizerguis;
 
 import io.github.divios.core_lib.XCore.XMaterial;
-import io.github.divios.core_lib.inventory.inventoryUtils;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.core_lib.misc.Task;
@@ -10,6 +9,7 @@ import io.github.divios.dailyrandomshop.conf_msg;
 import io.github.divios.dailyrandomshop.guis.settings.shopsManagerGui;
 import io.github.divios.dailyrandomshop.utils.utils;
 import io.github.divios.lib.itemHolder.dGui;
+import io.github.divios.lib.itemHolder.dItem;
 import io.github.divios.lib.itemHolder.dShop;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Bukkit;
@@ -19,10 +19,13 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -34,25 +37,27 @@ public class customizeGui implements Listener, InventoryHolder {
 
     private final Player p;
     private final dShop shop;
+    private final dGui _gui;
     private Inventory inv;
-    private String title;
+
     private boolean preventClose = true;
-    private boolean resfreshFlag = false;
+    private boolean refreshFlag = false;
+
     private final Map<Integer, ItemStack> pItems;
 
     private customizeGui(Player p, dShop shop) {
         this.p = p;
         this.shop = shop;
-        this.title = shop.getGui().getTitle();
+        this._gui = shop.getGui().clone();
+        this.inv = shop.getGui().getInventory();
 
         Task.syncDelayed(plugin, () ->
                 Bukkit.getPluginManager().registerEvents(this, plugin), 1L);
 
         pItems = withdrawPlayerItems();
 
-        inv = getInventory();
         addCustomizeItems();
-        refresh();
+        refresh();          // opens the inventory for the player
 
     }
 
@@ -82,7 +87,7 @@ public class customizeGui implements Listener, InventoryHolder {
                 .applyTexture("3edd20be93520949e6ce789dc4f43efaeb28c717ee6bfcbbe02780142f716");
 
         ItemStack deleteRow = new ItemBuilder(XMaterial.PLAYER_HEAD)
-                .setName("&7Deletes a row").setLore("&b&lRemove row")
+                .setName("&b&lRemove row").setLore("&7Deletes a row")
                 .applyTexture("bd8a99db2c37ec71d7199cd52639981a7513ce9cca9626a3936f965b131193");
 
         p.getInventory().setItem(3, back);
@@ -128,28 +133,24 @@ public class customizeGui implements Listener, InventoryHolder {
      * Opens again the inv for the player
      */
     public void refresh() {
+        inv = _gui.getInventory();
         Task.syncDelayed(plugin, () -> {
-            resfreshFlag = true;
+            refreshFlag = true;
             addCustomizeItems();
             p.openInventory(inv);
-            resfreshFlag = false;
+            refreshFlag = false;
         }, 1L);
     }
 
 
     @Override
-    public Inventory getInventory() {
-        dGui gui = shop.getGui();
-        Inventory inventory = Bukkit.createInventory(this,
-                gui.getInventory().getSize(), title);
-
-        inventory.setContents(gui.getInventory().getContents());
-        return inventory;
+    public @NotNull Inventory getInventory() {
+        return shop.getGui().getInventory();
     }
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent e) {
-        if (e.getInventory().getHolder() != this)
+        if (e.getInventory() != inv)
             return;
 
         e.setCancelled(true);
@@ -167,20 +168,17 @@ public class customizeGui implements Listener, InventoryHolder {
             }
 
             else if (e.getSlot() == 5) {   //apply changes
-                shop.updateGui(title, inv);
+                shop.updateGui(_gui);
                 preventClose = false;
                 p.closeInventory();
             }
 
             else if (e.getSlot() == 19) {           //change Name
-                resfreshFlag = true;
+                refreshFlag = true;
                 new AnvilGUI.Builder()
                         .onClose(player -> Task.syncDelayed(plugin, this::refresh, 1L))
                         .onComplete((player, s) -> {
-                            title = FormatUtils.color(s);
-                            Inventory aux = Bukkit.createInventory(this, inv.getSize(), title);
-                            inventoryUtils.translateContents(inv, aux);
-                            inv = aux;
+                            _gui.setTitle(FormatUtils.color(s));
                             refresh();
                             return AnvilGUI.Response.close();
                         })
@@ -191,21 +189,13 @@ public class customizeGui implements Listener, InventoryHolder {
             }
 
             else if (e.getSlot() == 23) {           //quitar row
-                if (inv.getSize() == 9) return;
-
-                Inventory aux = Bukkit.createInventory(this, inv.getSize() - 9, title);
-                inventoryUtils.translateContents(inv, aux);
-                inv = aux;
-                refresh();
+                if (_gui.removeRow())
+                    refresh();
             }
 
             else if (e.getSlot() == 25) {           //ampliar row
-                if (inv.getSize() == 54) return;
-
-                Inventory aux = Bukkit.createInventory(this, inv.getSize() + 9, title);
-                inventoryUtils.translateContents(inv, aux);
-                inv = aux;
-                refresh();
+                if (_gui.addRow())
+                    refresh();
             }
         }
 
@@ -216,12 +206,12 @@ public class customizeGui implements Listener, InventoryHolder {
                 return;
             }
 
-            resfreshFlag = true;
+            refreshFlag = true;
             new miniCustomizeGui(p,
                     utils.isEmpty(e.getCurrentItem()) ?
                          XMaterial.GRASS_BLOCK.parseItem() : e.getCurrentItem().clone(),
                     item -> {
-                        inv.setItem(e.getSlot(), item);
+                        _gui.addButton(new dItem(item), e.getSlot());
                         refresh();
             });
         }
@@ -229,7 +219,7 @@ public class customizeGui implements Listener, InventoryHolder {
 
     @EventHandler
     public void onInventoryDrag(InventoryDragEvent e) {
-        if (e.getInventory().getHolder() != this)
+        if (e.getInventory() != inv)
             return;
 
         e.setCancelled(true);
@@ -237,10 +227,10 @@ public class customizeGui implements Listener, InventoryHolder {
 
     @EventHandler
     public void onInventoryClose(InventoryCloseEvent e) {
-        if (e.getInventory().getHolder() != this)
+        if (e.getInventory() != inv)
             return;
 
-        if (resfreshFlag)
+        if (refreshFlag)
             return;
 
         if (preventClose) {
@@ -262,6 +252,18 @@ public class customizeGui implements Listener, InventoryHolder {
             e.setCancelled(true);
     }
 
+    @EventHandler
+    public void onPlayerLeave(PlayerQuitEvent e) {
+        if (e.getPlayer().getUniqueId().equals(p.getUniqueId()))
+            shop.getGui().setAvailable(true);
+    }
+
+    @EventHandler
+    public void onPlayerKick(PlayerKickEvent e) {
+        if (e.getPlayer().getUniqueId().equals(p.getUniqueId()))
+            shop.getGui().setAvailable(true);
+    }
+
     /**
      * Unregisters all the events of this instance
      */
@@ -270,6 +272,8 @@ public class customizeGui implements Listener, InventoryHolder {
         InventoryClickEvent.getHandlerList().unregister(this);
         InventoryDragEvent.getHandlerList().unregister(this);
         PlayerPickupItemEvent.getHandlerList().unregister(this);
+        PlayerQuitEvent.getHandlerList().unregister(this);
+        PlayerKickEvent.getHandlerList().unregister(this);
     }
 
 }

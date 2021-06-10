@@ -14,11 +14,7 @@ import java.util.stream.Collectors;
 
 public class open extends abstractCommand {
 
-    static {
-        new open();
-    }
-
-    private open() {
+    public open() {
         super(cmdTypes.BOTH);
     }
 
@@ -47,35 +43,35 @@ public class open extends abstractCommand {
     }
 
     @Override
-    public List<String> getTabCompletition(String[] args) {
-        if (args.length == 1)
+    public List<String> getTabCompletition(List<String> args) {
+        if (args.size() == 1)
             return shopsManager.getInstance().getShops()
                     .stream()
                     .map(dShop::getName)
                     .collect(Collectors.toList());
-        else if (args.length == 2)
+        else if (args.size() == 2)
             return Bukkit.getOnlinePlayers()
                     .stream()
-                    .map(Player::getDisplayName)
+                    .map(Player::getName)
                     .collect(Collectors.toList());
         return null;
     }
 
     @Override
-    public void run(CommandSender sender, String[] args) {
+    public void run(CommandSender sender, List<String> args) {
 
-        if (args.length == 2) {
+        if (args.size() == 2) {
             if (!sender.hasPermission("DailyRandomShop.open.others")) {
                 sender.sendMessage("You dont have permission to open shops for others");
                 return;
             }
-            else if (Bukkit.getPlayer(args[1]) == null)
+            else if (Bukkit.getPlayer(args.get(1)) == null)
                 return;
         }
 
-        shopsManager.getInstance().getShop(args[0])
+        shopsManager.getInstance().getShop(args.get(0))
                 .get().getGui()
-                .open(args.length == 2 ? Bukkit.getPlayer(args[1]): (Player) sender);
+                .open(args.size() == 2 ? Bukkit.getPlayer(args.get(1)): (Player) sender);
 
     }
 }
