@@ -3,6 +3,7 @@ package io.github.divios.lib.itemHolder;
 import io.github.divios.core_lib.inventory.inventoryUtils;
 import io.github.divios.core_lib.misc.EventListener;
 import io.github.divios.core_lib.misc.Pair;
+import io.github.divios.core_lib.misc.WeightedRandom;
 import io.github.divios.dailyrandomshop.DRShop;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.HumanEntity;
@@ -12,6 +13,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.io.BukkitObjectInputStream;
 import org.bukkit.util.io.BukkitObjectOutputStream;
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
@@ -19,10 +21,8 @@ import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class dGui {
@@ -47,6 +47,7 @@ public class dGui {
         this.shop = shop;
 
         IntStream.range(0, inv.getSize()).forEach(openSlots::add);
+        renovate();   // not really necessary but why not
 
         initListeners();
     }
@@ -151,7 +152,8 @@ public class dGui {
     public void addButton(dItem item, int slot) {
         dItem cloned = item.clone();
         cloned.setSlot(slot);
-        buttons.add(item);
+        buttons.add(cloned);
+        openSlots.remove(slot);
         inv.setItem(slot, cloned.getItem());
     }
 
@@ -161,9 +163,12 @@ public class dGui {
      * @return true if an item was successfully removed
      */
     public boolean removeButton(int slot) {
-        openSlots.remove(slot);
-        inv.clear(slot);
-        return buttons.removeIf(item -> item.getSlot() == slot);
+        boolean result = buttons.removeIf(item -> item.getSlot() == slot);
+        if (result) {
+            openSlots.add(slot);
+            inv.clear(slot);
+        }
+        return result;
     }
 
     /**
@@ -180,6 +185,58 @@ public class dGui {
      */
     public Set<Integer> getOpenSlots() {
         return Collections.unmodifiableSet(openSlots);
+    }
+
+    /**
+     * Renovates daily items on the openSlots
+     */
+    protected void renovate() {
+
+        IntStream.range(0, inv.getSize()).forEach(i ->   // Removes all the AIR items
+                buttons.stream()
+                .filter(dItem -> dItem.getSlot() == i)
+                .findFirst()
+                .ifPresent(dItem -> {
+                    if (dItem.isAIR()) inv.clear(i);
+                }));
+
+        List<dItem> added = new ArrayList<>();
+        WeightedRandom<dItem> RRM = WeightedRandom.fromCollection(
+                shop.getItems().stream().filter(dItem -> dItem.getRarity().getWeight() != 0)
+                        .collect(Collectors.toList()),  // remove unAvailable
+                dItem::clone,
+                value -> value.getRarity().getWeight()
+        );
+
+        clearDailyItems();
+
+        openSlots.forEach(i -> {
+            inv.clear(i);
+
+            if (added.size() >= shop.getItems().size()) return;
+
+            ItemStack toAdd;
+
+            while(true) {
+                dItem aux = RRM.roll();
+                if (added.contains(aux))
+                    continue;
+                added.add(aux);
+                toAdd = aux.getItem();
+                break;
+            }
+
+            inv.setItem(i, toAdd);
+        });
+
+        Bukkit.broadcastMessage("Renovated items of shop " + shop.getName());
+    }
+
+    /**
+     * Clears all the slots corresponding to daily Items
+     */
+    private void clearDailyItems() {
+        openSlots.forEach(i -> inv.clear(i));
     }
 
 
@@ -272,7 +329,17 @@ public class dGui {
 
     public static dGui deserialize(String base64, dShop shop) { return new dGui(base64, shop); }
 
-    public dGui clone() { return deserialize(this.serialize(), shop); }
+    // Returns a clone of this gui without the daily items
+    public dGui clone() {
+        dGui cloned = deserialize(this.serialize(), shop);
+        cloned.clearDailyItems();
+
+        cloned.getButtons().stream()   // gets the AIR buttons back
+                .filter(dItem::isAIR)
+                .forEach(dItem -> cloned.inv
+                        .setItem(dItem.getSlot(), dItem.getItem()));
+
+        return  cloned; }
 
 
 }

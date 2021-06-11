@@ -6,6 +6,7 @@ import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.core_lib.misc.Task;
 import io.github.divios.dailyrandomshop.DRShop;
 import io.github.divios.dailyrandomshop.conf_msg;
+import io.github.divios.dailyrandomshop.guis.confirmIH;
 import io.github.divios.dailyrandomshop.guis.settings.shopsManagerGui;
 import io.github.divios.dailyrandomshop.utils.utils;
 import io.github.divios.lib.itemHolder.dGui;
@@ -16,6 +17,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
@@ -201,13 +203,26 @@ public class customizeGui implements Listener, InventoryHolder {
 
         else {          //si le da arriba
 
-            if (e.isRightClick()) {
-                inv.clear(e.getSlot());
+            if (utils.isEmpty(e.getCurrentItem())
+                    && e.getClick().equals(ClickType.MIDDLE)) {  //add empty slot
+                _gui.addButton(dItem.empty(), e.getSlot());
+                refresh();
+                return;
+            }
+
+            if (e.isRightClick() && !utils.isEmpty(e.getCurrentItem())) {  // delete item
+                refreshFlag = true;
+                new confirmIH(p, (player, aBoolean) -> {
+                    if (aBoolean) _gui.removeButton(e.getSlot());
+                    refresh();
+                }, e.getCurrentItem(), "&a&lConfirm Action",
+                        "", "");
+                refreshFlag = false;
                 return;
             }
 
             refreshFlag = true;
-            new miniCustomizeGui(p,
+            new miniCustomizeGui(p,         // customize item
                     utils.isEmpty(e.getCurrentItem()) ?
                          XMaterial.GRASS_BLOCK.parseItem() : e.getCurrentItem().clone(),
                     item -> {
