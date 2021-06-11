@@ -1,7 +1,14 @@
 package io.github.divios.lib.itemHolder;
 
+import io.github.divios.core_lib.misc.EventListener;
+import io.github.divios.core_lib.misc.Task;
+import io.github.divios.core_lib.misc.timeStampUtils;
+import io.github.divios.dailyrandomshop.DRShop;
+import io.github.divios.dailyrandomshop.events.deletedShop;
+import io.github.divios.dailyrandomshop.events.reStockShop;
 import io.github.divios.lib.storage.dataManager;
-import org.bukkit.inventory.Inventory;
+import org.bukkit.Bukkit;
+import org.bukkit.event.EventPriority;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.Timestamp;
@@ -9,6 +16,7 @@ import java.util.*;
 
 public class dShop {
 
+    private static final DRShop plugin = DRShop.getInstance();
     private static final dataManager dManager = dataManager.getInstance();
 
     private String name;
@@ -17,7 +25,10 @@ public class dShop {
     private dGui gui;
 
     private Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-    private int timer = 24 * 60; // Minutes representing time to pass until reset
+    private int timer = 24 * 60 * 60; // seconds representing time to pass until reset
+
+    private Task asyncCheck;
+    private EventListener reStock;
 
     //TODO: add timeStamp and integer representing the minutes that have to pass until
     // generates new items
@@ -27,13 +38,51 @@ public class dShop {
         this.type = type;
 
         gui = new dGui(this);
+        initialize();
     }
 
-    public dShop(String name, dShopT type, String base64) {
+    public dShop(String name, dShopT type, String base64, Timestamp timestamp, int timer) {
         this.name = name;
         this.type = type;
+        this.timestamp = timestamp;
+        this.timer = timer;
 
         gui = dGui.deserialize(base64, this);
+        initialize();
+    }
+
+    private void initialize() {
+
+        asyncCheck = Task.asyncRepeating(plugin, () -> {        // forced reStock due to timer
+            if (timeStampUtils.diff(timestamp,
+                    new Timestamp(System.currentTimeMillis())) > timer) {
+
+                gui.renovate();
+                dManager.updateGui(this.name, this.gui);
+                timestamp = new Timestamp(System.currentTimeMillis());
+                dManager.updateTimeStamp(this.name, this.timestamp);
+            }
+        }, 20L, 20L);
+
+        new EventListener<>(plugin, deletedShop.class, EventPriority.LOW, // auto-destroy listener
+                (own, e) -> {
+                    if (!e.isCancelled() && e.getShop().getName().equals(name)) {
+                        asyncCheck.cancel();
+                        reStock.unregister();
+                        own.unregister();
+                    }
+                });
+
+        reStock = new EventListener<>(plugin, reStockShop.class, EventPriority.LOW,  // reStock due to command by player
+                e -> {
+                    if (e.getShop() != this) return;
+                    if (e.isCancelled()) return;
+
+                    gui.renovate();
+                    dManager.updateGui(this.name, this.gui);
+                    timestamp = new Timestamp(System.currentTimeMillis());
+                    dManager.updateTimeStamp(this.name, this.timestamp);
+                });
     }
 
     /**
@@ -138,6 +187,7 @@ public class dShop {
     public synchronized void updateGui(dGui gui) {
         this.gui.destroy();
         this.gui = gui;
+        gui.renovate();
         dataManager.getInstance().updateGui(this.name, this.gui);
     }
 
@@ -148,6 +198,12 @@ public class dShop {
     public synchronized dGui getGui() {
         return gui;
     }
+
+    public synchronized Timestamp getTimestamp() { return this.timestamp; }
+
+    public synchronized int getTimer() { return timer; }
+
+    public synchronized void setTimer(int timer) { this.timer = timer; }
 
     @Override
     public boolean equals(Object o) {

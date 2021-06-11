@@ -74,6 +74,15 @@ public class miniCustomizeGui {
                     inv.open(p);
                 })), 19);
 
+        gui.addButton(ItemButton.create(new ItemBuilder(XMaterial.WHITE_STAINED_GLASS_PANE)
+                .setName("&a&lSet as AIR").setLore("&7Set this slot as air, meaning it will",
+                        "&7be empty but no dailyItem will appear"),
+                e -> {
+                    consumer.accept(XMaterial.AIR.parseItem());
+                    inv.destroy();
+                    preventPicks.unregister();
+                }), 44);
+
         gui.addButton(ItemButton.create(item.clone(), e -> {}), 22);
 
         gui.addButton(ItemButton.create(new ItemBuilder(XMaterial.SPRUCE_SIGN)

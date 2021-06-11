@@ -12,15 +12,15 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class settingsCmd extends abstractCommand {
+public class Manager extends abstractCommand {
 
-    public settingsCmd() {
+    public Manager() {
         super(cmdTypes.PLAYERS);
     }
 
     @Override
     public String getName() {
-        return "settings";
+        return "manager";
     }
 
     @Override
@@ -30,7 +30,7 @@ public class settingsCmd extends abstractCommand {
 
     @Override
     public String getHelp() {
-        return FormatUtils.color("&6&l>> &6/rdshop settings &8 " +
+        return FormatUtils.color("&6&l>> &6/rdshop manager [player]&8 " +
                 "- &7Opens the settings menu");
     }
 
@@ -51,7 +51,6 @@ public class settingsCmd extends abstractCommand {
 
     @Override
     public void run(CommandSender sender, List<String> args) {
-            Bukkit.broadcastMessage("oke");
             shopsManagerGui.open(args.size() > 0 ?
                     Bukkit.getPlayer(args.get(0)) : (Player) sender);
 

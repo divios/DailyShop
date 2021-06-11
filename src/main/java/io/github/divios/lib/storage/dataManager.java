@@ -3,6 +3,7 @@ package io.github.divios.lib.storage;
 import io.github.divios.core_lib.database.DataManagerAbstract;
 import io.github.divios.core_lib.database.DatabaseConnector;
 import io.github.divios.core_lib.database.SQLiteConnector;
+import io.github.divios.core_lib.misc.timeStampUtils;
 import io.github.divios.dailyrandomshop.DRShop;
 import io.github.divios.lib.itemHolder.dGui;
 import io.github.divios.lib.itemHolder.dItem;
@@ -13,6 +14,7 @@ import org.bukkit.plugin.Plugin;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.UUID;
@@ -51,7 +53,9 @@ public class dataManager extends DataManagerAbstract{
                         String name = result.getString("name");
                         dShop shop = new dShop(name,
                                 dShop.dShopT.valueOf(result.getString("type")),
-                                result.getString("gui"));
+                                result.getString("gui"),
+                                timeStampUtils.deserialize(result.getString("timestamp")),
+                                result.getInt("timer"));
 
                         getShop(name, shop::setItems);
                         shops.add(shop);
@@ -84,11 +88,13 @@ public class dataManager extends DataManagerAbstract{
         this.async(() -> this.databaseConnector.connect(connection -> {
 
             String createShop = "INSERT INTO " + this.getTablePrefix() +
-                    "active_shops (name, type, gui) VALUES (?, ?, ?)";
+                    "active_shops (name, type, gui, timestamp, timer) VALUES (?, ?, ?, ?, ?)";
             try (PreparedStatement statement = connection.prepareStatement(createShop)) {
                 statement.setString(1, shop.getName());
                 statement.setString(2, shop.getType().name());
                 statement.setString(3, shop.getGui().serialize());
+                statement.setString(4,timeStampUtils.serialize(shop.getTimestamp()));
+                statement.setInt(5, shop.getTimer());
                 statement.executeUpdate();
             }
 
@@ -185,6 +191,30 @@ public class dataManager extends DataManagerAbstract{
                 statement.executeUpdate();
             }
         }), "guiUpdate");
+    }
+
+    public synchronized void updateTimeStamp(String name, Timestamp timestamp) {
+        this.queueAsync(() -> this.databaseConnector.connect(connection -> {
+            String updateTimeStamp = "UPDATE " + this.getTablePrefix() + "active_shops " +
+                    "SET timestamp = ? WHERE name = ?";
+            try (PreparedStatement statement = connection.prepareStatement(updateTimeStamp)) {
+                statement.setString(1, timeStampUtils.serialize(timestamp));
+                statement.setString(2, name);
+                statement.executeUpdate();
+            }
+        }), "update");
+    }
+
+    public synchronized void updateTimer(String name, int timer) {
+        this.queueAsync(() -> this.databaseConnector.connect(connection -> {
+            String updateTimeStamp = "UPDATE " + this.getTablePrefix() + "active_shops " +
+                    "SET timer = ? WHERE name = ?";
+            try (PreparedStatement statement = connection.prepareStatement(updateTimeStamp)) {
+                statement.setInt(1, timer);
+                statement.setString(2, name);
+                statement.executeUpdate();
+            }
+        }), "update");
     }
 
 
