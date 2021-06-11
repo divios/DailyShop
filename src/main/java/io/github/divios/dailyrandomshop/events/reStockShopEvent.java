@@ -14,7 +14,7 @@ import java.sql.Timestamp;
  * reStock a shop
  */
 
-public class reStockShop extends Event implements Cancellable {
+public class reStockShopEvent extends Event implements Cancellable {
 
     private static final HandlerList HANDLERS_LIST = new HandlerList();
     private boolean isCanceled = false;
@@ -22,7 +22,7 @@ public class reStockShop extends Event implements Cancellable {
     private final dShop reStockedShop;
     private final Timestamp timestamp;
 
-    public reStockShop(dShop reStockedShop) {
+    public reStockShopEvent(dShop reStockedShop) {
         this.reStockedShop = reStockedShop;
         this.timestamp = new Timestamp(System.currentTimeMillis());
 

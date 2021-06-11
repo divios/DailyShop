@@ -1,11 +1,11 @@
 package io.github.divios.lib.managers;
 
-import io.github.divios.dailyrandomshop.events.deletedShop;
+import io.github.divios.dailyrandomshop.events.createdShopEvent;
+import io.github.divios.dailyrandomshop.events.deletedShopEvent;
 import io.github.divios.lib.itemHolder.dShop;
 import io.github.divios.lib.storage.dataManager;
 import org.bukkit.Bukkit;
 
-import java.sql.Timestamp;
 import java.util.*;
 
 public class shopsManager {
@@ -52,6 +52,7 @@ public class shopsManager {
     public synchronized void createShop(String name, dShop.dShopT type) {
         dShop newShop = new dShop(name, type);
         shops.add(newShop);
+        Bukkit.getPluginManager().callEvent(new createdShopEvent(newShop));
         dataManager.getInstance().createShop(newShop);
     }
 
@@ -80,7 +81,7 @@ public class shopsManager {
 
         if (!result.isPresent()) return false;
 
-        deletedShop event = new deletedShop(result.get());
+        deletedShopEvent event = new deletedShopEvent(result.get());
 
         Bukkit.getPluginManager().callEvent(event);     // throw new event
         if (event.isCancelled()) return false;
