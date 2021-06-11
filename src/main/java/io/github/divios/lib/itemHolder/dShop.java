@@ -4,10 +4,9 @@ import io.github.divios.core_lib.misc.EventListener;
 import io.github.divios.core_lib.misc.Task;
 import io.github.divios.core_lib.misc.timeStampUtils;
 import io.github.divios.dailyrandomshop.DRShop;
-import io.github.divios.dailyrandomshop.events.deletedShop;
-import io.github.divios.dailyrandomshop.events.reStockShop;
+import io.github.divios.dailyrandomshop.events.deletedShopEvent;
+import io.github.divios.dailyrandomshop.events.reStockShopEvent;
 import io.github.divios.lib.storage.dataManager;
-import org.bukkit.Bukkit;
 import org.bukkit.event.EventPriority;
 import org.jetbrains.annotations.NotNull;
 
@@ -64,7 +63,7 @@ public class dShop {
             }
         }, 20L, 20L);
 
-        new EventListener<>(plugin, deletedShop.class, EventPriority.LOW, // auto-destroy listener
+        new EventListener<>(plugin, deletedShopEvent.class, EventPriority.LOW, // auto-destroy listener
                 (own, e) -> {
                     if (!e.isCancelled() && e.getShop().getName().equals(name)) {
                         asyncCheck.cancel();
@@ -73,7 +72,7 @@ public class dShop {
                     }
                 });
 
-        reStock = new EventListener<>(plugin, reStockShop.class, EventPriority.LOW,  // reStock due to command by player
+        reStock = new EventListener<>(plugin, reStockShopEvent.class, EventPriority.LOW,  // reStock due to command by player
                 e -> {
                     if (e.getShop() != this) return;
                     if (e.isCancelled()) return;
