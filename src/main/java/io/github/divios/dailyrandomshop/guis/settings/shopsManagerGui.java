@@ -117,6 +117,13 @@ public class shopsManagerGui {
         if (slot == 52) {
             new AnvilGUI.Builder()
                     .onComplete((player, s) -> {
+
+                        if (s.isEmpty())
+                            return AnvilGUI.Response.text("Cat be empty");
+
+                        if (sManager.getShop(s).isPresent())
+                            return AnvilGUI.Response.text("Already exits");
+
                         shopsManager.getInstance().createShop(s, dShop.dShopT.buy);
                         return AnvilGUI.Response.close();
                     })

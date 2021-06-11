@@ -1,8 +1,11 @@
 package io.github.divios.lib.managers;
 
+import io.github.divios.dailyrandomshop.events.deletedShop;
 import io.github.divios.lib.itemHolder.dShop;
 import io.github.divios.lib.storage.dataManager;
+import org.bukkit.Bukkit;
 
+import java.sql.Timestamp;
 import java.util.*;
 
 public class shopsManager {
@@ -72,10 +75,20 @@ public class shopsManager {
      * @return true if succeeded. False if it does not exist
      */
     public synchronized boolean deleteShop(String name) {
-        boolean result = shops.removeIf(dShop -> dShop.getName().equals(name));
-        if (result)
-            dataManager.getInstance().deleteShop(name);
-        return result;
+
+        Optional<dShop> result = getShop(name);
+
+        if (!result.isPresent()) return false;
+
+        deletedShop event = new deletedShop(result.get());
+
+        Bukkit.getPluginManager().callEvent(event);     // throw new event
+        if (event.isCancelled()) return false;
+
+        shops.remove(result.get());
+
+        return true;
+
     }
 
 

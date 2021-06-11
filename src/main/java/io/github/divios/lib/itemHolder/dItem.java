@@ -4,6 +4,7 @@ package io.github.divios.lib.itemHolder;
 import de.tr7zw.nbtapi.NBTCompound;
 import de.tr7zw.nbtapi.NBTContainer;
 import de.tr7zw.nbtapi.NBTItem;
+import io.github.divios.core_lib.XCore.XMaterial;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.dailyrandomshop.economies.economy;
@@ -209,12 +210,14 @@ public class dItem implements Serializable, Cloneable {
      * @param flag
      */
     public void toggleFlag(ItemFlag flag) {
-        ItemStack item = getItem();
+        ItemStack aux = getItem();
 
-        if (ItemUtils.hasItemFlags(item, flag))
-            ItemUtils.removeItemFlags(item, flag);
+        if (ItemUtils.hasItemFlags(aux, flag))
+            ItemUtils.removeItemFlags(aux, flag);
         else
-            ItemUtils.addItemFlags(item, flag);
+            ItemUtils.addItemFlags(aux, flag);
+
+        setItem(aux);
     }
 
     /**
@@ -475,6 +478,10 @@ public class dItem implements Serializable, Cloneable {
         item.setObject("rds_bundle", bundle);
     }
 
+    private void setAIR() { item.setBoolean("rds_AIR", true); }
+
+    public boolean isAIR() { return item.hasKey("rds_AIR"); }
+
     /**
      * Gets item serializable as base64
      * @return
@@ -507,6 +514,15 @@ public class dItem implements Serializable, Cloneable {
         return deserialize(serialize());
     }
 
+    public static dItem empty() {
+        dItem empty = new dItem(new ItemBuilder(XMaterial.GRAY_STAINED_GLASS_PANE)
+                .setName("&c").addItemFlags(ItemFlag.HIDE_ENCHANTS)
+                .addEnchant(Enchantment.DAMAGE_ALL, 1));
+
+        empty.setAIR();
+        return empty;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof dItem))
@@ -519,10 +535,13 @@ public class dItem implements Serializable, Cloneable {
         return getUid().hashCode();
     }
 
+
+    //>>>>>> Serialize stuff <<<<<<//
     private void writeObject(java.io.ObjectOutputStream out)
             throws IOException {
         out.writeObject(this.serialize());
     }
+
     private void readObject(java.io.ObjectInputStream in)
             throws IOException, ClassNotFoundException {
         NBTCompound itemData = new NBTContainer(new String(Base64.getDecoder()
@@ -530,6 +549,7 @@ public class dItem implements Serializable, Cloneable {
         ItemStack item = NBTItem.convertNBTtoItem(itemData);
         setItem(item);
     }
+
     private void readObjectNoData()
             throws ObjectStreamException {
 
