@@ -6,6 +6,7 @@ import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.dailyrandomshop.DRShop;
 import io.github.divios.dailyrandomshop.guis.customizerguis.customizerMainGuiIH;
 import io.github.divios.dailyrandomshop.guis.settings.addDailyItemGuiIH;
+import io.github.divios.dailyrandomshop.guis.settings.shopGui;
 import io.github.divios.lib.itemHolder.dItem;
 import io.github.divios.lib.itemHolder.dShop;
 import io.github.divios.lib.managers.shopsManager;
@@ -17,15 +18,15 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class addDailyItemCmd extends abstractCommand {
+public class add extends abstractCommand {
 
-    public addDailyItemCmd() {
+    public add() {
         super(cmdTypes.BOTH);
     }
 
     @Override
     public String getName() {
-        return "addDailyItemCmd";
+        return "add";
     }
 
     @Override
@@ -35,7 +36,7 @@ public class addDailyItemCmd extends abstractCommand {
 
     @Override
     public String getHelp() {
-        return FormatUtils.color("&6&l>> &6/rdshop addDailyItems &8 " +
+        return FormatUtils.color("&6&l>> &6/rdshop add [shop]&8 " +
                 "- &7Opens the menu to add an item");
     }
 
@@ -57,10 +58,12 @@ public class addDailyItemCmd extends abstractCommand {
     @Override
     public void run(CommandSender sender, List<String> args) {
         addDailyItemGuiIH.open((Player) sender,
-                itemStack -> customizerMainGuiIH.openInventory(
-                                (Player) sender,
-                                new dItem(itemStack),
-                                args.get(0)
-                ));
+                itemStack -> {
+                            dShop shop = shopsManager.getInstance()
+                                    .getShop(args.get(0)).get();
+                            shop.addItem(new dItem(itemStack));
+                            shopGui.open((Player) sender, shop);
+                        }
+                );
     }
 }

@@ -27,6 +27,10 @@ public class shopGui {
     private static final shopsManager sManager = shopsManager.getInstance();
 
     public static void open(Player p, String shop) {
+        sManager.getShop(shop).ifPresent(shop1 -> open(p, shop1));
+    }
+
+    public static void open(Player p, dShop shop) {
         new dynamicGui.Builder()
                 .contents(() -> contents(shop))
                 .addItems((inv, i) -> addItems(inv))
@@ -40,10 +44,9 @@ public class shopGui {
     }
 
 
-    private static List<ItemStack> contents (String name){
+    private static List<ItemStack> contents (dShop shop){
         List<ItemStack> items = new ArrayList<>();
-        shopsManager.getInstance().getShop(name).get()
-                .getItems().forEach(dItem -> items.add(dItem.getItem()));
+        shop.getItems().forEach(dItem -> items.add(dItem.getItem()));
 
         return items;
     }
@@ -55,13 +58,12 @@ public class shopGui {
         inv.setItem(52, addItems);
     }
 
-    private static dynamicGui.Response contentAction(InventoryClickEvent e, String shopName) {
+    private static dynamicGui.Response contentAction(InventoryClickEvent e, dShop shop) {
         e.setCancelled(true);
 
         if (utils.isEmpty(e.getCurrentItem())) return dynamicGui.Response.nu();
 
         Player p = (Player) e.getWhoClicked();
-        dShop shop = sManager.getShop(shopName).get();
         UUID uid = dItem.getUid(e.getCurrentItem());
 
         if (e.isLeftClick())
@@ -72,19 +74,18 @@ public class shopGui {
             new confirmIH(p, (player, aBoolean) -> {
                 if (aBoolean)
                     shop.removeItem(uid);
-                open(p, shopName);
+                open(p, shop.getName());
             }, e.getCurrentItem(),
                     conf_msg.CONFIRM_GUI_NAME, conf_msg.CONFIRM_MENU_YES, conf_msg.CONFIRM_MENU_NO);
 
         return dynamicGui.Response.nu();
     }
 
-    private static dynamicGui.Response nonContentAction(int slot, Player p, String name) {
+    private static dynamicGui.Response nonContentAction(int slot, Player p, dShop shop) {
         if (slot == 52) {
             addDailyItemGuiIH.open(p, itemStack -> {
-                shopsManager.getInstance().getShop(name).get()
-                        .addItem(new dItem(itemStack));
-                open(p, name);
+                shop.addItem(new dItem(itemStack));
+                open(p, shop.getName());
             });
         }
         return dynamicGui.Response.nu();

@@ -7,6 +7,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 public class dRarity {
 
@@ -42,6 +43,12 @@ public class dRarity {
         rarity = rarity.next();
         return this;
     }
+
+    /**
+     * Gets the weight of this rarity
+     * @return
+     */
+    public int getWeight() { return rarity.getWeight(); }
 
     /**
      * Gets the rarity lore
@@ -96,20 +103,28 @@ public class dRarity {
 
 
     private enum rarityT {
-        Common,
-        UnCommon,
-        Rare,
-        Epic,
-        Ancient,
-        Legendary,
-        Mythic,
-        Unavailable;
+        Common(() -> 100),
+        UnCommon(() -> 80),
+        Rare(() -> 60),
+        Epic(() -> 40),
+        Ancient(() -> 20),
+        Legendary(() -> 10),
+        Mythic(() -> 5),
+        Unavailable(() -> 0);
 
         private static final rarityT[] vals = values();
+        private Supplier<Integer> supplier;
 
-        public rarityT next() {
+        rarityT(Supplier<Integer> supplier) {
+            this.supplier = supplier;
+        }
+
+        private int getWeight() { return supplier.get(); }
+
+        private rarityT next() {
             return vals[(this.ordinal()+1) % vals.length];
         }
+
 
     }
 
