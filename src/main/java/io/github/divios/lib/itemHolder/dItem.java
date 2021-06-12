@@ -18,10 +18,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
-import java.util.Base64;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class dItem implements Serializable, Cloneable {
 
@@ -213,9 +210,9 @@ public class dItem implements Serializable, Cloneable {
         ItemStack aux = getItem();
 
         if (ItemUtils.hasItemFlags(aux, flag))
-            ItemUtils.removeItemFlags(aux, flag);
+            aux = ItemUtils.removeItemFlags(aux, flag);
         else
-            ItemUtils.addItemFlags(aux, flag);
+            aux = ItemUtils.addItemFlags(aux, flag);
 
         setItem(aux);
     }
@@ -478,8 +475,30 @@ public class dItem implements Serializable, Cloneable {
         item.setObject("rds_bundle", bundle);
     }
 
+    /**
+     * Returns the action of the dItem
+     * @return Optional.ofNullable(dAction)
+     */
+    public Optional<dGui.dAction> getAction() {
+        return Optional.ofNullable(item.getObject("rds_action", dGui.dAction.class));
+    }
+
+    /**
+     * Sets the action of this item
+     */
+    public void setAction(@Nullable dGui.dAction action) {
+        item.setObject("rds_action", action);
+    }
+
+    /**
+     * Private method to set Item as AIR
+     */
     private void setAIR() { item.setBoolean("rds_AIR", true); }
 
+    /**
+     * Check if an dItem is masked as AIR
+     * @return
+     */
     public boolean isAIR() { return item.hasKey("rds_AIR"); }
 
     /**
