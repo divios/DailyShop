@@ -66,6 +66,7 @@ public class dShop {
         new EventListener<>(plugin, deletedShopEvent.class, EventPriority.LOW, // auto-destroy listener
                 (own, e) -> {
                     if (!e.isCancelled() && e.getShop().getName().equals(name)) {
+                        gui.destroy();
                         asyncCheck.cancel();
                         reStock.unregister();
                         own.unregister();

@@ -205,7 +205,7 @@ public class customizeGui implements Listener, InventoryHolder {
 
             if (utils.isEmpty(e.getCurrentItem())
                     && e.getClick().equals(ClickType.MIDDLE)) {  //add empty slot
-                _gui.addButton(dItem.empty(), e.getSlot());
+                _gui.addButton(dItem.AIR(), e.getSlot());
                 refresh();
                 return;
             }

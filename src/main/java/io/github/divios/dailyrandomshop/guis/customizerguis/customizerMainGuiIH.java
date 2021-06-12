@@ -28,6 +28,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -195,9 +196,7 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
             inv.setItem(j, item);
         }
 
-        if (ditem.getStock() != null) {
-            ditem.setAmount(ditem.getStock());
-        }
+        ditem.getStock().ifPresent(ditem::setAmount);
 
         inv.setItem(4, ditem.getItem());
         inv.setItem(0, changeEcon);
@@ -356,16 +355,16 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
 
         }
 
-        else if (e.getSlot() == 22 && ditem.getCommands() == null) { // Boton de cambiar commands
+        else if (e.getSlot() == 22 && !ditem.getCommands().isPresent()) { // Boton de cambiar commands
             ditem.setCommands(new ArrayList<>());
             refresh(p);
         }
 
-        else if (e.getSlot() == 22 && ditem.getCommands() != null) { // Boton de añadir/quitar commands
+        else if (e.getSlot() == 22 && ditem.getCommands().isPresent()) { // Boton de añadir/quitar commands
             if (e.isLeftClick()) {
                 new ChatPrompt(main, p, (player, s) -> {
                     if (!s.isEmpty()) {
-                        List<String> cmds = ditem.getCommands();
+                        List<String> cmds = ditem.getCommands().get();
                         cmds.add(s);
                         ditem.setCommands(cmds);
                     }
@@ -373,7 +372,7 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
                 }, this::refresh, FormatUtils.color("&7Input new command"), "");
 
             } else if (e.isRightClick() && !e.isShiftClick()) {
-                List<String> cmds = ditem.getCommands();
+                List<String> cmds = ditem.getCommands().get();
 
                 if (!cmds.isEmpty()) {
                     cmds.remove(cmds.size() - 1);
@@ -424,17 +423,17 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
             refresh(p);
         }
 
-        else if (e.getSlot() == 30 && ditem.getPerms() == null) { // Boton de habilitar perms
+        else if (e.getSlot() == 30 && !ditem.getPerms().isPresent()) { // Boton de habilitar perms
             ditem.setPerms(new ArrayList<>());
             refresh(p);
         }
 
-        else if (e.getSlot() == 30 && ditem.getPerms() != null) {  // Boton de añadir/quitar perms
+        else if (e.getSlot() == 30 && ditem.getPerms().isPresent()) {  // Boton de añadir/quitar perms
             if (e.isLeftClick()) {
                 new ChatPrompt(main, p, (player, s) -> {
 
                     if (!s.isEmpty()) {
-                        List<String> perms = ditem.getPerms();
+                        List<String> perms = ditem.getPerms().get();
                         perms.add(s);
                         ditem.setPerms(perms);
                     }
@@ -442,7 +441,7 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
                 }, this::refresh, FormatUtils.color("&7Input permission"), "");
 
             } else if (e.isRightClick() && !e.isShiftClick()) {
-                List<String> s = ditem.getPerms();
+                List<String> s = ditem.getPerms().get();
 
                 if (!s.isEmpty()) {
                     s.remove(s.size() - 1);
@@ -456,8 +455,8 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
 
         }
 
-        else if (e.getSlot() == 31 && ditem.getSetItems() == null && e.isLeftClick()) {  // Boton de edit set
-            if (ditem.getStock() != null) {
+        else if (e.getSlot() == 31 && !ditem.getSetItems().isPresent() && e.isLeftClick()) {  // Boton de edit set
+            if (ditem.getStock().isPresent()) {
                 p.sendMessage(conf_msg.PREFIX + FormatUtils.color("&7You can't enable this when " +
                         "the stock feature is enable"));
                 return;
@@ -466,7 +465,7 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
             refresh(p);
         }
 
-        else if (e.getSlot() == 31 && ditem.getSetItems() != null) {
+        else if (e.getSlot() == 31 && ditem.getSetItems().isPresent()) {
             if (e.isLeftClick()) {
                 new AnvilGUI.Builder()
                         .onClose(player -> Task.syncDelayed(main, () ->

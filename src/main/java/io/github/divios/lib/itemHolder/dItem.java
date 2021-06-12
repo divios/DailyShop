@@ -7,6 +7,8 @@ import de.tr7zw.nbtapi.NBTItem;
 import io.github.divios.core_lib.XCore.XMaterial;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
+import io.github.divios.core_lib.misc.Pair;
+import io.github.divios.dailyrandomshop.conf_msg;
 import io.github.divios.dailyrandomshop.economies.economy;
 import io.github.divios.dailyrandomshop.economies.vault;
 import org.bukkit.Material;
@@ -35,6 +37,8 @@ public class dItem implements Serializable, Cloneable {
         setRarity(new dRarity());       //Defaults to Common
         setConfirm_gui(true);           // Defaults true
         setEconomy(new vault());        // Default Vault
+        setBuyPrice(conf_msg.DEFAULT_PRICE); // Default buy price
+        setSellPrice(-1); // Default sell price //TODO
     }
 
     private dItem() {}
@@ -45,6 +49,17 @@ public class dItem implements Serializable, Cloneable {
      */
     public ItemStack getItem() {
         return item.getItem();
+    }
+
+    /**
+     * Gets the raw item, this is, the item's held
+     * by this instance without all the daily metadata
+     * @return
+     */
+    public ItemStack getRawItem() {
+        dItem cloned = this.clone();
+        //TODO remove all metada of cloned
+        return cloned.getItem();
     }
 
     /**
@@ -115,7 +130,7 @@ public class dItem implements Serializable, Cloneable {
      * Sets the material of the item
      * @param m
      */
-    public void setMaterial(Material m) {
+    public void setMaterial(@NotNull Material m) {
         ItemStack item = getItem();
         item.setType(m);
         setItem(item);
@@ -125,7 +140,7 @@ public class dItem implements Serializable, Cloneable {
      * Gets the material of the item
      * @return
      */
-    public Material getMaterial() {
+    public @NotNull Material getMaterial() {
         return getItem().getType();
     }
 
@@ -192,6 +207,12 @@ public class dItem implements Serializable, Cloneable {
     public int getAmount() {
         return item.getItem().getAmount();
     }
+
+    /**
+     * Returns the max stack size of this item
+     * @return
+     */
+    public int getMaxStackSize() { return item.getItem().getMaxStackSize(); }
 
     /**
      * Return if the item has a flag
@@ -278,7 +299,7 @@ public class dItem implements Serializable, Cloneable {
      *
      * @return the uuid of this item
      */
-    public @Nullable UUID getUid() {
+    public @NotNull UUID getUid() {
         return item.getObject("rds_UUID", UUID.class);
     }
 
@@ -291,7 +312,7 @@ public class dItem implements Serializable, Cloneable {
      * Sets uuid
      * @param uid
      */
-    private void setUid(UUID uid) {
+    private void setUid(@NotNull UUID uid) {
         item.setObject("rds_UUID", uid);
     }
 
@@ -310,10 +331,10 @@ public class dItem implements Serializable, Cloneable {
      * @return returns the stock of the item. Can be null and means that
      * the feature is disabled
      */
-    public @Nullable Integer getStock() {
+    public Optional<Integer> getStock() {
         if (!item.hasKey("rds_stock"))
-            return null;
-        return item.getInteger("rds_stock");
+            return Optional.empty();
+        return Optional.ofNullable(item.getInteger("rds_stock"));
     }
 
     /**
@@ -382,8 +403,8 @@ public class dItem implements Serializable, Cloneable {
      *
      * @return list of Strings representing commands
      */
-    public @Nullable List<String> getCommands() {
-        return item.getObject("rds_cmds", List.class);
+    public Optional<List<String>> getCommands() {
+        return Optional.ofNullable(item.getObject("rds_cmds", List.class));
     }
 
     /**
@@ -400,8 +421,8 @@ public class dItem implements Serializable, Cloneable {
      *
      * @return list of Strings representing permissions
      */
-    public @Nullable List<String> getPerms() {
-        return item.getObject("rds_perms", List.class);
+    public Optional<List<String>> getPerms() {
+        return Optional.ofNullable(item.getObject("rds_perms", List.class));
     }
 
     /**
@@ -443,10 +464,10 @@ public class dItem implements Serializable, Cloneable {
      *
      * @return
      */
-    public @Nullable Integer getSetItems() {
+    public Optional<Integer> getSetItems() {
         if (!item.hasKey("rds_setItems"))
-            return null;
-        return item.getInteger("rds_setItems");
+            return Optional.empty();
+        return Optional.ofNullable(item.getInteger("rds_setItems"));
     }
 
     /**
@@ -462,8 +483,8 @@ public class dItem implements Serializable, Cloneable {
      *
      * @return null if disabled.
      */
-    public @Nullable List<UUID> getBundle() {
-        return item.getObject("rds_bundle", List.class);
+    public Optional<List<UUID>> getBundle() {
+        return Optional.ofNullable(item.getObject("rds_bundle", List.class));
     }
 
     /**
@@ -479,15 +500,17 @@ public class dItem implements Serializable, Cloneable {
      * Returns the action of the dItem
      * @return Optional.ofNullable(dAction)
      */
-    public Optional<dGui.dAction> getAction() {
-        return Optional.ofNullable(item.getObject("rds_action", dGui.dAction.class));
+    public Pair<dGui.dAction, String> getAction() {
+        Pair<dGui.dAction, String> action = item.getObject("rds_action", Pair.class);
+        return action == null ? new Pair<>(dGui.dAction.EMPTY, ""):action;
+
     }
 
     /**
      * Sets the action of this item
      */
-    public void setAction(@Nullable dGui.dAction action) {
-        item.setObject("rds_action", action);
+    public void setAction(@Nullable dGui.dAction action, String s) {
+        item.setObject("rds_action", new Pair<>(action, s));
     }
 
     /**
@@ -533,7 +556,7 @@ public class dItem implements Serializable, Cloneable {
         return deserialize(serialize());
     }
 
-    public static dItem empty() {
+    public static dItem AIR() {
         dItem empty = new dItem(new ItemBuilder(XMaterial.GRAY_STAINED_GLASS_PANE)
                 .setName("&c").addItemFlags(ItemFlag.HIDE_ENCHANTS)
                 .addEnchant(Enchantment.DAMAGE_ALL, 1));
