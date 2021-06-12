@@ -6,6 +6,8 @@ import io.github.divios.core_lib.misc.Msg;
 import io.github.divios.core_lib.misc.Pair;
 import io.github.divios.core_lib.misc.WeightedRandom;
 import io.github.divios.dailyrandomshop.DRShop;
+import io.github.divios.dailyrandomshop.transaction.transaction;
+import io.github.divios.dailyrandomshop.utils.utils;
 import io.github.divios.lib.managers.shopsManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.HumanEntity;
@@ -253,9 +255,14 @@ public class dGui {
 
             if (openSlots.contains(e.getSlot()) &&
                     shop.getType().equals(dShop.dShopT.buy)) {}
-                //TODO: init transaction
+            //transaction.initTransaction(e.getWhoClicked(), );
             else {
-                //TODO: check dItem and see if it has some action
+                if (utils.isEmpty(e.getCurrentItem())) return;
+
+                buttons.stream().filter(dItem -> dItem.getSlot() == e.getSlot())
+                        .findFirst().ifPresent(dItem -> dItem.getAction()
+                        .stream(pair -> pair.get1()
+                                .run((Player) e.getWhoClicked(), pair.get2())));
             }
         });
 
@@ -273,7 +280,7 @@ public class dGui {
 
             if (!available) {
                 e.setCancelled(true);
-                e.getPlayer().sendMessage("");
+                e.getPlayer().sendMessage("The shop is closed... come again in some minutes");
             }
         });
 
@@ -282,7 +289,7 @@ public class dGui {
     /**
      * Destroys the inventory. In summary, unregisters all the listeners
      */
-    public void destroy() {
+    protected void destroy() {
         clickEvent.unregister();
         dragEvent.unregister();
         openEvent.unregister();
@@ -346,7 +353,7 @@ public class dGui {
 
 
 
-    public static enum dAction {
+    public enum dAction {
 
         EMPTY((p,s) -> {}),
         OPEN_SHOP((p, s) -> {shopsManager.getInstance()
