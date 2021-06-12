@@ -45,7 +45,7 @@ public class customizeGui implements Listener, InventoryHolder {
     private boolean preventClose = true;
     private boolean refreshFlag = false;
 
-    private final Map<Integer, ItemStack> pItems;
+    private final Map<Integer, ItemStack> pItems = new LinkedHashMap<>();
 
     private customizeGui(Player p, dShop shop) {
         this.p = p;
@@ -56,7 +56,7 @@ public class customizeGui implements Listener, InventoryHolder {
         Task.syncDelayed(plugin, () ->
                 Bukkit.getPluginManager().registerEvents(this, plugin), 1L);
 
-        pItems = withdrawPlayerItems();
+        withdrawPlayerItems();
 
         addCustomizeItems();
         refresh();          // opens the inventory for the player
@@ -105,19 +105,18 @@ public class customizeGui implements Listener, InventoryHolder {
      *
      * @return the map with the items and it's position
      */
-    private Map<Integer, ItemStack> withdrawPlayerItems() {
-        Map<Integer, ItemStack> items = new LinkedHashMap<>();
+    private void withdrawPlayerItems() {
+
         Inventory pInv = p.getInventory();
 
         IntStream.range(0, 36).forEach(i -> {
             if (utils.isEmpty(pInv.getItem(i)))
                 return;
 
-            items.put(i, pInv.getItem(i));
+            pItems.put(i, pInv.getItem(i));
             pInv.clear(i);
         });
 
-        return items;
     }
 
     /**
@@ -129,6 +128,7 @@ public class customizeGui implements Listener, InventoryHolder {
 
         pItems.forEach((i, item) ->
                 p.getInventory().setItem(i, item));
+        pItems.clear();
     }
 
     /**
@@ -222,11 +222,13 @@ public class customizeGui implements Listener, InventoryHolder {
             }
 
             refreshFlag = true;
+            depositPlayerItems();
             new miniCustomizeGui(p,         // customize item
                     utils.isEmpty(e.getCurrentItem()) ?
                          XMaterial.GRASS_BLOCK.parseItem() : e.getCurrentItem().clone(),
                     item -> {
                         _gui.addButton(new dItem(item), e.getSlot());
+                        withdrawPlayerItems();
                         refresh();
             });
         }
