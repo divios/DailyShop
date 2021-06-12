@@ -11,6 +11,7 @@ import io.github.divios.core_lib.misc.EventListener;
 import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.core_lib.misc.Task;
 import io.github.divios.dailyrandomshop.DRShop;
+import io.github.divios.lib.itemHolder.dItem;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -151,9 +152,18 @@ public class miniCustomizeGui {
 
         }), 28);
 
-        gui.addButton(43, ItemButton.create(new ItemBuilder(XMaterial.STICKY_PISTON)  //TODO
+        gui.addButton(43, ItemButton.create(new ItemBuilder(XMaterial.STICKY_PISTON)
             .setName("&c&lAdd actions").setLore("&7Action to perform when this", "&7item is clicked"),
-                e-> {}));
+                e-> {
+                    preventCloseB = false;
+                    customizeAction.open(p, (dAction, s) -> {
+                        dItem aux = new dItem(item);
+                        aux.setAction(dAction, s);
+                        item = aux.getItem();
+                        refreshItem();
+                        inv.open(p);
+                    });
+                }));
 
         gui.addButton(ItemButton.create(new ItemBuilder(XMaterial.PLAYER_HEAD)
             .setName("&e&lSet material as base64").setLore("&7Set this item's material",
