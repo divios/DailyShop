@@ -26,7 +26,8 @@ public class helpCmd extends abstractCommand {
 
     @Override
     public String getHelp() {
-        return "";
+        return "&6&l>> &6/rdshop manager [player]&8 " +
+                "- &7Opens the settings menu";
     }
 
     @Override
@@ -41,6 +42,7 @@ public class helpCmd extends abstractCommand {
 
     @Override
     public void run(CommandSender sender, List<String> args) {
+        sender.sendMessage("&6&l>>> Daily Random Shop Help <<<");
         CommandManager.getCmds().stream()
                 .filter(absC -> {
                     for (String perms : absC.getPerms())

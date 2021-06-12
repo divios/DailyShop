@@ -7,7 +7,6 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Supplier;
 
 public class dRarity {
 
@@ -55,71 +54,31 @@ public class dRarity {
      * @return
      */
     private String getRarityLore() {
-
-        switch (rarity) {
-            case Common:
-                try {
-                    return conf_msg.RARITY_NAMES.get(0);
-                } catch (Exception ignored) {}
-                return "Common";
-            case UnCommon:
-                try {
-                    return conf_msg.RARITY_NAMES.get(1);
-                } catch (Exception ignored) {}
-                return "UnCommon";
-            case Rare:
-                try {
-                    return conf_msg.RARITY_NAMES.get(2);
-                } catch (Exception ignored) {}
-                return "Rare";
-            case Epic:
-                try {
-                    return conf_msg.RARITY_NAMES.get(3);
-                } catch (Exception ignored) {}
-                return "Epic";
-            case Ancient:
-                try {
-                    return conf_msg.RARITY_NAMES.get(4);
-                } catch (Exception ignored) {}
-                return "Ancient";
-            case Legendary:
-                try {
-                    return conf_msg.RARITY_NAMES.get(5);
-                } catch (Exception ignored) {}
-                return "&6Legendary";
-            case Mythic:
-                try {
-                    return conf_msg.RARITY_NAMES.get(6);
-                } catch (Exception ignored) {}
-                return "Mythic";
-            default:
-                try {
-                    return conf_msg.RARITY_NAMES.get(7);
-                } catch (Exception ignored) {}
-                return "Unavailable";
+        try {
+            return conf_msg.RARITY_NAMES.get(rarity.ordinal());
+        } catch (Exception e) {
+            return rarity.name();
         }
     }
 
 
 
     private enum rarityT {
-        Common(() -> 100),
-        UnCommon(() -> 80),
-        Rare(() -> 60),
-        Epic(() -> 40),
-        Ancient(() -> 20),
-        Legendary(() -> 10),
-        Mythic(() -> 5),
-        Unavailable(() -> 0);
+        Common(100),
+        UnCommon(80),
+        Rare(60),
+        Epic(40),
+        Ancient(20),
+        Legendary(10),
+        Mythic(5),
+        Unavailable(0);
 
         private static final rarityT[] vals = values();
-        private Supplier<Integer> supplier;
+        private final int weight;
 
-        rarityT(Supplier<Integer> supplier) {
-            this.supplier = supplier;
-        }
+        rarityT(Integer weight) { this.weight = weight; }
 
-        private int getWeight() { return supplier.get(); }
+        private int getWeight() { return weight; }
 
         private rarityT next() {
             return vals[(this.ordinal()+1) % vals.length];

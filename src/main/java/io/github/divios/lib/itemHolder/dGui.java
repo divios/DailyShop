@@ -2,9 +2,11 @@ package io.github.divios.lib.itemHolder;
 
 import io.github.divios.core_lib.inventory.inventoryUtils;
 import io.github.divios.core_lib.misc.EventListener;
+import io.github.divios.core_lib.misc.Msg;
 import io.github.divios.core_lib.misc.Pair;
 import io.github.divios.core_lib.misc.WeightedRandom;
 import io.github.divios.dailyrandomshop.DRShop;
+import io.github.divios.lib.managers.shopsManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
@@ -22,6 +24,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.*;
+import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -340,6 +343,29 @@ public class dGui {
                         .setItem(dItem.getSlot(), dItem.getItem()));
 
         return  cloned; }
+
+
+
+    public static enum dAction {
+
+        EMPTY((p,s) -> {}),
+        OPEN_SHOP((p, s) -> {shopsManager.getInstance()
+                .getShop(s).ifPresent(shop1 -> shop1.getGui().open(p));}),
+        RUN_CMD((p, s) -> {Bukkit.dispatchCommand(Bukkit.getConsoleSender(),
+                Msg.singletonMsg(s).add("%player%", p.getName()).build());
+        });
+
+        private final BiConsumer<Player, String> action;
+
+        dAction(BiConsumer<Player, String> action) {
+            this.action = action;
+        }
+
+        public void run(Player p, String s) {
+            action.accept(p, s);
+        }
+
+    }
 
 
 }

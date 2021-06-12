@@ -12,14 +12,12 @@ io/github/divios/dailyrandomshop/economies/playerPointsE.java
  io.github.divios.dailyrandomshop.economies.playerPointsE
 io/github/divios/dailyrandomshop/hooks/bstatsHook.java
  io.github.divios.dailyrandomshop.hooks.bstatsHook
-io/github/divios/dailyrandomshop/events/deletedShop.java
- io.github.divios.dailyrandomshop.events.deletedShop
 io/github/divios/lib/managers/shopsManager.java
  io.github.divios.lib.managers.shopsManager
-io/github/divios/dailyrandomshop/events/reStockShop.java
- io.github.divios.dailyrandomshop.events.reStockShop
 io/github/divios/dailyrandomshop/builders/itemBuildersHooks/itemsBuilderManager.java
  io.github.divios.dailyrandomshop.builders.itemBuildersHooks.itemsBuilderManager
+io/github/divios/dailyrandomshop/events/reStockShopEvent.java
+ io.github.divios.dailyrandomshop.events.reStockShopEvent
 io/github/divios/dailyrandomshop/commands/add.java
  io.github.divios.dailyrandomshop.commands.add
 io/github/divios/dailyrandomshop/builders/itemBuildersHooks/MMOItems.java
@@ -57,6 +55,8 @@ io/github/divios/dailyrandomshop/hooks/playerPointsHook.java
  io.github.divios.dailyrandomshop.hooks.playerPointsHook
 io/github/divios/dailyrandomshop/guis/confirmGui.java
  io.github.divios.dailyrandomshop.guis.confirmGui
+io/github/divios/dailyrandomshop/events/createdShopEvent.java
+ io.github.divios.dailyrandomshop.events.createdShopEvent
 io/github/divios/dailyrandomshop/conf_msg.java
  io.github.divios.dailyrandomshop.conf_msg
 io/github/divios/dailyrandomshop/guis/customizerguis/changeEnchantments.java
@@ -84,7 +84,6 @@ io/github/divios/dailyrandomshop/hooks/shopGuiPlusHook.java
 io/github/divios/lib/itemHolder/dRarity.java
  io.github.divios.lib.itemHolder.dRarity
  io.github.divios.lib.itemHolder.dRarity$1
- io.github.divios.lib.itemHolder.dRarity$2
  io.github.divios.lib.itemHolder.dRarity$rarityT
 io/github/divios/dailyrandomshop/economies/tokenEnchantsE.java
  io.github.divios.dailyrandomshop.economies.tokenEnchantsE
@@ -96,6 +95,7 @@ io/github/divios/lib/itemHolder/dPrice.java
  io.github.divios.lib.itemHolder.dPrice
 io/github/divios/lib/itemHolder/dGui.java
  io.github.divios.lib.itemHolder.dGui
+ io.github.divios.lib.itemHolder.dGui$dAction
 io/github/divios/lib/storage/dataManager.java
  io.github.divios.lib.storage.dataManager
 io/github/divios/dailyrandomshop/hooks/tokenManagerHook.java
@@ -118,5 +118,7 @@ io/github/divios/dailyrandomshop/utils/utils.java
  io.github.divios.dailyrandomshop.utils.utils
 io/github/divios/dailyrandomshop/hooks/MPointsHook.java
  io.github.divios.dailyrandomshop.hooks.MPointsHook
+io/github/divios/dailyrandomshop/events/deletedShopEvent.java
+ io.github.divios.dailyrandomshop.events.deletedShopEvent
 io/github/divios/dailyrandomshop/commands/open.java
  io.github.divios.dailyrandomshop.commands.open
