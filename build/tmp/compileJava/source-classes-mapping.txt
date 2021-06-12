@@ -102,6 +102,8 @@ io/github/divios/dailyrandomshop/hooks/tokenManagerHook.java
  io.github.divios.dailyrandomshop.hooks.tokenManagerHook
 io/github/divios/dailyrandomshop/economies/tokenManagerE.java
  io.github.divios.dailyrandomshop.economies.tokenManagerE
+io/github/divios/dailyrandomshop/guis/customizerguis/customizeAction.java
+ io.github.divios.dailyrandomshop.guis.customizerguis.customizeAction
 io/github/divios/dailyrandomshop/hooks/hooksManager.java
  io.github.divios.dailyrandomshop.hooks.hooksManager
 io/github/divios/dailyrandomshop/DRShop.java
