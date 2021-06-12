@@ -32,7 +32,7 @@ public class miniCustomizeGui {
     private final Consumer<ItemStack> consumer;
     private final InventoryGUI inv;
 
-    private boolean preventCloseB = true;
+    private boolean preventCloseB = false;      // preventClose glitch
 
     private final EventListener<PlayerPickupItemEvent> preventPicks;
     private final EventListener<InventoryCloseEvent> preventClose;
@@ -78,6 +78,7 @@ public class miniCustomizeGui {
         //inv.preventPlayerInvSlots();
         inv.setDestroyOnClose(false);
         inv.open(p);
+        preventCloseB = true;           // prevent close glitch
     }
 
 
@@ -90,7 +91,10 @@ public class miniCustomizeGui {
                 , e -> {
                     preventCloseB = false;
                     new AnvilGUI.Builder()
-                        .onClose((player) -> Task.syncDelayed(plugin, () -> inv.open(p), 1L))
+                        .onClose((player) -> Task.syncDelayed(plugin, () -> {
+                            inv.open(p);
+                            preventCloseB = true;
+                            }, 1L))
                         .onComplete((player, s) -> {
                             item = ItemUtils.setName(item, s);
                             refreshItem();
@@ -100,7 +104,6 @@ public class miniCustomizeGui {
                         .itemLeft(item.clone())
                         .plugin(plugin)
                         .open(p);
-                    preventCloseB = true;
                 }
         ), 10);
 
@@ -113,12 +116,12 @@ public class miniCustomizeGui {
                             item.setType(material);
                         refreshItem();
                         inv.open(p);
+                        preventCloseB = true;
                     });
-                    preventCloseB = true;
                 }
         ), 19);
 
-        gui.addButton(ItemButton.create(new ItemBuilder(XMaterial.NAME_TAG)
+        gui.addButton(ItemButton.create(new ItemBuilder(XMaterial.PAPER)
                 .setName("&b&lAdd/remove Lore").addLore("&7Left Click to add lore",
                         "&7Right Click to remove lore"),
                 e -> {
@@ -127,7 +130,10 @@ public class miniCustomizeGui {
                         new AnvilGUI.Builder()
                                 .onClose(player ->
                                         Task.syncDelayed(plugin, () -> {
-                                            inv.open(p); refreshItem();}, 1L))
+                                            refreshItem();
+                                            inv.open(p);
+                                            preventCloseB = true;
+                                            }, 1L))
                                 .onComplete((player, s) -> {
                                     item = ItemUtils.addLore(item, s);
                                     return AnvilGUI.Response.close();
@@ -141,16 +147,18 @@ public class miniCustomizeGui {
                         item = ItemUtils.removeLore(item, 1);
                         refreshItem();
                     }
-                    preventCloseB = true;
+
 
         }), 28);
 
-        gui.addButton(35, ItemButton.create(new ItemBuilder(XMaterial.STICKY_PISTON)  //TODO
-            .setName("&c&lAdd actions").setLore("Click to add an action", "&7upon click"),
+        gui.addButton(43, ItemButton.create(new ItemBuilder(XMaterial.STICKY_PISTON)  //TODO
+            .setName("&c&lAdd actions").setLore("&7Action to perform when this", "&7item is clicked"),
                 e-> {}));
 
         gui.addButton(ItemButton.create(new ItemBuilder(XMaterial.PLAYER_HEAD)
-            .setName("Set material as base64"), e -> {
+            .setName("&e&lSet material as base64").setLore("&7Set this item's material",
+                        "&7from url or base64").applyTexture("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTljNzY5MDgzMTYzZTlhZWJkOGVkNWQ2NmJlYmNiOWRmMjFjYWJhZTYzYmFhYWEwZDNhYmUxNDIwYTRhYjU4ZiJ9fX0="),
+                e -> {
                 preventCloseB = false;
                 p.closeInventory();
                 new ChatPrompt(plugin, p, (player, s) -> {
@@ -161,7 +169,7 @@ public class miniCustomizeGui {
                     preventCloseB = true;
 
                 }, inv::open, "", FormatUtils.color("Input base64 texture"));
-        }), 35);
+        }), 34);
 
         gui.addButton(ItemButton.create(item.clone(), e -> {}), 22);
 
