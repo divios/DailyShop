@@ -30,13 +30,13 @@ public class DRShop extends JavaPlugin {
         CommandManager.addCommand(new add(), new helpCmd(),
                 new open(), new Manager(), new reStock());
 
-        Pair.deserialize(Pair.of("", "").serialize(), String.class, String.class);
-
     }
 
     @Override
     public void onDisable() {
-
+        shopsManager.getInstance().getShops()       // Updates all the guis before disable
+                .forEach(shop -> dataManager.getInstance()
+                        .syncUpdateGui(shop.getName(), shop.getGui()));
     }
 
     public void realoadPlugin() {
