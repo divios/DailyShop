@@ -14,7 +14,7 @@ import java.sql.Timestamp;
  * Event that fires when a shop is deleted
  */
 
-public class deletedShopEvent extends Event implements Cancellable {
+public class deletedShopEvent extends Event {
 
     private static final HandlerList HANDLERS_LIST = new HandlerList();
     private boolean isCanceled = false;
@@ -31,16 +31,6 @@ public class deletedShopEvent extends Event implements Cancellable {
     public dShop getShop() { return deletedShop; }
 
     public Timestamp getTimestamp() { return timestamp; }
-
-    @Override
-    public boolean isCancelled() {
-        return isCanceled;
-    }
-
-    @Override
-    public void setCancelled(boolean cancel) {
-        this.isCanceled = cancel;
-    }
 
     @NotNull
     @Override

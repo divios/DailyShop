@@ -48,7 +48,7 @@ public class transaction {
                 .replaceAll("\\{amount}", "" + item.getAmount())
                 .replaceAll("\\{price}", "" + s.getPrice())
                 .replaceAll("\\{item}", item.getDisplayName() + FormatUtils.color("&7"))
-                .replaceAll("\\{currency}", "Vault"));  // TODO: get Economies names
+                .replaceAll("\\{currency}", item.getEconomy().getName()));
 
     }
 

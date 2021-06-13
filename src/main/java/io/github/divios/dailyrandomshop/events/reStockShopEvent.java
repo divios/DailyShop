@@ -14,7 +14,7 @@ import java.sql.Timestamp;
  * reStock a shop
  */
 
-public class reStockShopEvent extends Event implements Cancellable {
+public class reStockShopEvent extends Event {
 
     private static final HandlerList HANDLERS_LIST = new HandlerList();
     private boolean isCanceled = false;
@@ -31,16 +31,6 @@ public class reStockShopEvent extends Event implements Cancellable {
     public dShop getShop() { return this.reStockedShop; }
 
     public Timestamp getTimestamp() { return this.timestamp; }
-
-    @Override
-    public boolean isCancelled() {
-        return isCanceled;
-    }
-
-    @Override
-    public void setCancelled(boolean cancel) {
-        this.isCanceled = cancel;
-    }
 
     @NotNull
     @Override
