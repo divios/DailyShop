@@ -79,7 +79,7 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
         ItemStack changeConfirmGui = new ItemBuilder(XMaterial.LEVER.parseItem())
                 .setName(conf_msg.CUSTOMIZE_CHANGE_CONFIRM_GUI)
                 .setLore(Msg.msgList(conf_msg.CUSTOMIZE_CHANGE_CONFIRM_GUI_LORE)
-                        .add("\\{status}", "" + ditem.getConfirm_gui()).build());  //TODO
+                        .add("\\{status}", "" + ditem.getConfirm_gui()).build());
 
         ItemStack customizerItem = new ItemBuilder(XMaterial.ANVIL)   //Done button (anvil)
                 .setName(conf_msg.CUSTOMIZE_CRAFT).addLore(conf_msg.CUSTOMIZE_CRAFT_LORE);
