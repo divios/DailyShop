@@ -59,7 +59,7 @@ public class dShop {
                     new Timestamp(System.currentTimeMillis())) > timer) {
 
                 gui.renovate();
-                dManager.updateGui(this.name, this.gui);
+                dManager.asyncUpdateGui(this.name, this.gui);
                 timestamp = new Timestamp(System.currentTimeMillis());
                 dManager.updateTimeStamp(this.name, this.timestamp);
             }
@@ -73,7 +73,7 @@ public class dShop {
                     .reduce((acum, hash) -> acum += hash).orElse(0);
 
             if (aux != gui_hash[0]) {
-                dManager.updateGui(this.name, gui);
+                dManager.asyncUpdateGui(this.name, gui);
                 gui_hash[0] = aux;
             }
 
@@ -95,7 +95,7 @@ public class dShop {
                     if (e.getShop() != this) return;
 
                     gui.renovate();
-                    dManager.updateGui(this.name, this.gui);
+                    dManager.asyncUpdateGui(this.name, this.gui);
                     timestamp = new Timestamp(System.currentTimeMillis());
                     dManager.updateTimeStamp(this.name, this.timestamp);
                 });
@@ -204,7 +204,7 @@ public class dShop {
         this.gui.destroy();
         this.gui = gui;
         gui.renovate();
-        dataManager.getInstance().updateGui(this.name, this.gui);
+        dataManager.getInstance().asyncUpdateGui(this.name, this.gui);
     }
 
     /**
