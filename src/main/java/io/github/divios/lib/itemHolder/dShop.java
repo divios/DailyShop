@@ -8,6 +8,7 @@ import io.github.divios.dailyrandomshop.events.deletedShopEvent;
 import io.github.divios.dailyrandomshop.events.reStockShopEvent;
 import io.github.divios.lib.storage.dataManager;
 import org.bukkit.event.EventPriority;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.Timestamp;
@@ -27,6 +28,7 @@ public class dShop {
     private int timer = 24 * 60 * 60; // seconds representing time to pass until reset
 
     private Task asyncCheck;
+    private Task asyncUpdate;
     private EventListener reStock;
 
     //TODO: add timeStamp and integer representing the minutes that have to pass until
@@ -63,11 +65,26 @@ public class dShop {
             }
         }, 20L, 20L);
 
+        final int[] gui_hash = {Arrays.stream(gui.getInventory().getContents()).map(ItemStack::hashCode)
+                .reduce((acum, hash) -> acum += hash).orElse(0)};        // get hash based on content an not reference
+
+        asyncUpdate = Task.asyncRepeating(plugin, () -> {
+            int aux = Arrays.stream(gui.getInventory().getContents()).map(ItemStack::hashCode)
+                    .reduce((acum, hash) -> acum += hash).orElse(0);
+
+            if (aux != gui_hash[0]) {
+                dManager.updateGui(this.name, gui);
+                gui_hash[0] = aux;
+            }
+
+        }, 18000L, 18000L);
+
         new EventListener<>(plugin, deletedShopEvent.class, EventPriority.LOW, // auto-destroy listener
                 (own, e) -> {
-                    if (!e.isCancelled() && e.getShop().getName().equals(name)) {
+                    if (e.getShop().getName().equals(name)) {
                         gui.destroy();
                         asyncCheck.cancel();
+                        asyncUpdate.cancel();
                         reStock.unregister();
                         own.unregister();
                     }
@@ -76,7 +93,6 @@ public class dShop {
         reStock = new EventListener<>(plugin, reStockShopEvent.class, EventPriority.LOW,  // reStock due to command by player
                 e -> {
                     if (e.getShop() != this) return;
-                    if (e.isCancelled()) return;
 
                     gui.renovate();
                     dManager.updateGui(this.name, this.gui);
