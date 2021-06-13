@@ -1,18 +1,24 @@
 package io.github.divios.dailyrandomshop.hooks;
 
+import io.github.divios.core_lib.misc.timeStampUtils;
 import io.github.divios.dailyrandomshop.DRShop;
+import io.github.divios.lib.itemHolder.dShop;
+import io.github.divios.lib.managers.shopsManager;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.entity.Player;
+
+import java.sql.Timestamp;
 
 class placeholderApiHook extends PlaceholderExpansion {
 
     private static final DRShop plugin = DRShop.getInstance();
     private static placeholderApiHook instance = null;
 
-    private placeholderApiHook() {};
+    private placeholderApiHook() {
+    }
 
     public static placeholderApiHook getInstance() {
-        if (instance == null ) {
+        if (instance == null) {
             instance = new placeholderApiHook();
             instance.register();
             plugin.getLogger().info("Hooked to PlaceholderAPI");
@@ -28,7 +34,7 @@ class placeholderApiHook extends PlaceholderExpansion {
      * @return true to persist through reloads
      */
     @Override
-    public boolean persist(){
+    public boolean persist() {
         return true;
     }
 
@@ -39,7 +45,7 @@ class placeholderApiHook extends PlaceholderExpansion {
      * @return Always true since it's an internal class.
      */
     @Override
-    public boolean canRegister(){
+    public boolean canRegister() {
         return true;
     }
 
@@ -50,7 +56,7 @@ class placeholderApiHook extends PlaceholderExpansion {
      * @return The name of the author as a String.
      */
     @Override
-    public String getAuthor(){
+    public String getAuthor() {
         return plugin.getDescription().getAuthors().toString();
     }
 
@@ -64,20 +70,20 @@ class placeholderApiHook extends PlaceholderExpansion {
      * @return The identifier in {@code %<identifier>_<value>%} as String.
      */
     @Override
-    public String getIdentifier(){
-        return "DailyRandomShop";
+    public String getIdentifier() {
+        return "DailyShop";
     }
 
     /**
      * This is the version of the expansion.
      * <br>You don't have to use numbers, since it is set as a String.
-     *
+     * <p>
      * For convienience do we return the version from the plugin.yml
      *
      * @return The version as a String.
      */
     @Override
-    public String getVersion(){
+    public String getVersion() {
         return plugin.getDescription().getVersion();
     }
 
@@ -86,29 +92,36 @@ class placeholderApiHook extends PlaceholderExpansion {
      * is found and needs a value.
      * <br>We specify the value identifier in this method.
      * <br>Since version 2.9.1 can you use OfflinePlayers in your requests.
-     *
      */
     @Override
-    public String onPlaceholderRequest(Player player, String identifier){
+    public String onPlaceholderRequest(Player player, String identifier) {
 
-        // %DailyRandomShop_
-        /*if(identifier.equals("time")){
+        dShop shop = null;
 
-            int timeInSeconds = taskManager.getInstance().getTimer();
-            int secondsLeft = timeInSeconds % 3600 % 60;
-            int minutes = (int) Math.floor(timeInSeconds % 3600 / 60F);
-            int hours = (int) Math.floor(timeInSeconds / 3600F);
+        for (dShop _shop : shopsManager.getInstance().getShops()) {
 
-            String HH = ((hours       < 10) ? "0" : "") + hours;
-            String MM = ((minutes     < 10) ? "0" : "") + minutes;
-            String SS = ((secondsLeft < 10) ? "0" : "") + secondsLeft;
+            if (identifier.replace("time_", "")
+                    .equals(_shop.getName())) {
+                shop = _shop;
+                break;
+            }
+        }
 
-            return HH + ":" + MM + ":" + SS;
-        } */
+        if (shop == null) return null;
 
-        // We return null if an invalid placeholder (f.e. %someplugin_placeholder3%)
-        // was provided
-        return null;
+        int timeInSeconds = (int) (shop.getTimer() - timeStampUtils.diff(shop.getTimestamp(),
+                        new Timestamp(System.currentTimeMillis())));
+
+        int secondsLeft = timeInSeconds % 3600 % 60;
+        int minutes = (int) Math.floor(timeInSeconds % 3600 / 60F);
+        int hours = (int) Math.floor(timeInSeconds / 3600F);
+
+        String HH = ((hours < 10) ? "0" : "") + hours;
+        String MM = ((minutes < 10) ? "0" : "") + minutes;
+        String SS = ((secondsLeft < 10) ? "0" : "") + secondsLeft;
+
+        return HH + ":" + MM + ":" + SS;
+
     }
 
 }
