@@ -5,25 +5,23 @@ import me.xanium.gemseconomy.api.GemsEconomyAPI;
 import me.xanium.gemseconomy.currency.Currency;
 import org.bukkit.entity.Player;
 
-public class gemEcon implements economy{
+public class gemEcon extends economy {
 
-    private final Currency currency;
+    private final Currency _currency;
     private transient final static GemsEconomyAPI gemApi = hooksManager.getInstance().getGemsEcon();
 
     public gemEcon(String currency) {
-        this.currency = gemApi.getCurrency(currency);
+        super(currency, currency);
+        this._currency = gemApi.getCurrency(currency);
     }
 
-    @Override
     public boolean hasMoney(Player p, Double price) {
-        return gemApi.getBalance(p.getUniqueId(), currency) > price;
+        return gemApi.getBalance(p.getUniqueId(), _currency) > price;
     }
 
-    @Override
     public void witchDrawMoney(Player p, Double price) {
-        gemApi.withdraw(p.getUniqueId(), price, currency);
+        gemApi.withdraw(p.getUniqueId(), price, _currency);
     }
 
-    @Override
-    public void depositMoney(Player p, Double price) { gemApi.deposit(p.getUniqueId(), price, currency); }
+    public void depositMoney(Player p, Double price) { gemApi.deposit(p.getUniqueId(), price, _currency); }
 }

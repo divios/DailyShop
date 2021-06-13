@@ -70,8 +70,7 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
 
         ItemStack changeEcon = new ItemBuilder(XMaterial.PLAYER_HEAD)     // Change econ
                 .setName(conf_msg.CUSTOMIZE_CHANGE_ECON).addLore(conf_msg.CUSTOMIZE_CHANGE_ECON_LORE)
-                .addLore(Arrays.asList("", "&7Current: " + ditem.getEconomy().getClass().getName()
-                        .replace("io.github.divios.dailyrandomshop.economies.", "&6&l")))
+                .addLore("", "&7Current: &6" + ditem.getEconomy().getName())
                 .applyTexture("e36e94f6c34a35465fce4a90f2e25976389eb9709a12273574ff70fd4daa6852");
 
         ItemStack changeRarity = new ItemBuilder(ditem.getRarity().getAsItem())         // Change rarity

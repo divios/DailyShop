@@ -6,11 +6,9 @@ import io.github.divios.core_lib.inventory.ItemButton;
 import io.github.divios.core_lib.inventory.materialsPrompt;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
-import io.github.divios.core_lib.misc.ChatPrompt;
-import io.github.divios.core_lib.misc.EventListener;
-import io.github.divios.core_lib.misc.FormatUtils;
-import io.github.divios.core_lib.misc.Task;
+import io.github.divios.core_lib.misc.*;
 import io.github.divios.dailyrandomshop.DRShop;
+import io.github.divios.lib.itemHolder.dAction;
 import io.github.divios.lib.itemHolder.dItem;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.entity.Player;
@@ -31,7 +29,7 @@ public class miniCustomizeGui {
     private final Player p;
     private ItemStack item;
     private final Consumer<ItemStack> consumer;
-    private final InventoryGUI inv;
+    private InventoryGUI inv;
 
     private boolean preventCloseB = false;      // preventClose glitch
 
@@ -130,11 +128,7 @@ public class miniCustomizeGui {
                     if (e.isLeftClick()) {
                         new AnvilGUI.Builder()
                                 .onClose(player ->
-                                        Task.syncDelayed(plugin, () -> {
-                                            refreshItem();
-                                            inv.open(p);
-                                            preventCloseB = true;
-                                            }, 1L))
+                                        Task.syncDelayed(plugin, this::refresh, 1L))
                                 .onComplete((player, s) -> {
                                     item = ItemUtils.addLore(item, s);
                                     return AnvilGUI.Response.close();
@@ -152,16 +146,18 @@ public class miniCustomizeGui {
 
         }), 28);
 
+        Pair<dAction, String> action = new dItem(item).getAction();
+
         gui.addButton(43, ItemButton.create(new ItemBuilder(XMaterial.STICKY_PISTON)
-            .setName("&c&lAdd actions").setLore("&7Action to perform when this", "&7item is clicked"),
+            .setName("&c&lAdd actions").setLore("&7Action to perform when this", "&7item is clicked",
+                        "", "&6Current action: &7" + action.get1() + ":" + action.get2()),
                 e-> {
                     preventCloseB = false;
                     customizeAction.open(p, (dAction, s) -> {
                         dItem aux = new dItem(item);
                         aux.setAction(dAction, s);
                         item = aux.getItem();
-                        refreshItem();
-                        inv.open(p);
+                        refresh();
                     });
                 }));
 
@@ -174,9 +170,7 @@ public class miniCustomizeGui {
                 new ChatPrompt(plugin, p, (player, s) -> {
                     item.setType(XMaterial.PLAYER_HEAD.parseMaterial());
                     item = ItemUtils.applyTexture(item, s);
-                    refreshItem();
-                    inv.open(p);
-                    preventCloseB = true;
+                    refresh();
 
                 }, inv::open, "", FormatUtils.color("Input base64 texture"));
         }), 34);
@@ -198,6 +192,15 @@ public class miniCustomizeGui {
 
     private void refreshItem() {
         inv.addButton(ItemButton.create(item.clone(), e -> {}), 22);
+    }
+
+    private void refresh() {
+        preventCloseB = false;
+        inv.destroy();
+        inv = getGui();
+        refreshItem();
+        inv.open(p);
+        preventCloseB = true;
     }
 
     private void preventClose(InventoryCloseEvent e) {

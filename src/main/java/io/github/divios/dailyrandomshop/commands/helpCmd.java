@@ -3,6 +3,7 @@ package io.github.divios.dailyrandomshop.commands;
 import io.github.divios.core_lib.commands.CommandManager;
 import io.github.divios.core_lib.commands.abstractCommand;
 import io.github.divios.core_lib.commands.cmdTypes;
+import io.github.divios.core_lib.misc.FormatUtils;
 import org.bukkit.command.CommandSender;
 
 import java.util.ArrayList;
@@ -26,8 +27,8 @@ public class helpCmd extends abstractCommand {
 
     @Override
     public String getHelp() {
-        return "&6&l>> &6/rdshop manager [player]&8 " +
-                "- &7Opens the settings menu";
+        return FormatUtils.color("&6&l>> &6/rdshop help&8 " +
+                "- &7Shows this prompt");
     }
 
     @Override
@@ -42,7 +43,8 @@ public class helpCmd extends abstractCommand {
 
     @Override
     public void run(CommandSender sender, List<String> args) {
-        sender.sendMessage("&6&l>>> Daily Random Shop Help <<<");
+        sender.sendMessage(FormatUtils.color("&6&l>>>>>>> &6Daily Random Shop Help &6&l<<<<<<<"));
+        sender.sendMessage("");
         CommandManager.getCmds().stream()
                 .filter(absC -> {
                     for (String perms : absC.getPerms())
@@ -51,5 +53,7 @@ public class helpCmd extends abstractCommand {
                     return true;
                 })
                 .forEach(absC -> sender.sendMessage(absC.getHelp()));
+        sender.sendMessage("");
+        sender.sendMessage(FormatUtils.color("&6&l>>>>>>>                      &6&l<<<<<<<"));
     }
 }

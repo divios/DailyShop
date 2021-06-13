@@ -5,7 +5,11 @@ import io.github.divios.dailyrandomshop.hooks.hooksManager;
 import me.realized.tokenmanager.api.TokenManager;
 import org.bukkit.entity.Player;
 
-public class tokenManagerE implements economy{
+public class tokenManagerE extends economy {
+
+    public tokenManagerE() { this(""); }
+
+    public tokenManagerE(String currency) { super(currency, "TokenManager"); }
 
     private transient static final TokenManager api = hooksManager.getInstance().getTokenManagerApi();
 

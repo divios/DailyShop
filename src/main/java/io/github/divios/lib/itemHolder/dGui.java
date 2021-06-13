@@ -6,6 +6,8 @@ import io.github.divios.core_lib.misc.Msg;
 import io.github.divios.core_lib.misc.Pair;
 import io.github.divios.core_lib.misc.WeightedRandom;
 import io.github.divios.dailyrandomshop.DRShop;
+import io.github.divios.dailyrandomshop.lorestategy.loreStrategy;
+import io.github.divios.dailyrandomshop.lorestategy.shopItemsLore;
 import io.github.divios.dailyrandomshop.transaction.transaction;
 import io.github.divios.dailyrandomshop.utils.utils;
 import io.github.divios.lib.managers.shopsManager;
@@ -46,10 +48,14 @@ public class dGui {
     private transient EventListener<InventoryDragEvent> dragEvent;
     private transient EventListener<InventoryOpenEvent> openEvent;
 
+    private final loreStrategy strategy;
+
     protected dGui(String title, Inventory inv, dShop shop) {
         this.title = title;
         this.inv = inv;
         this.shop = shop;
+
+        this.strategy = new shopItemsLore(shop.getType());
 
         IntStream.range(0, inv.getSize()).forEach(openSlots::add);
         renovate();   // not really necessary but why not
@@ -58,12 +64,14 @@ public class dGui {
     }
 
     protected dGui(String title, int size, dShop shop) {
-        this(title, Bukkit.createInventory(null, size, title), shop);
+        this(title,
+                Bukkit.createInventory(null, size, title), shop);
     }
 
     private dGui(String base64, dShop shop) {
         _deserialize(base64);
         this.shop = shop;
+        this.strategy = new shopItemsLore(shop.getType());
 
         initListeners();
     }
@@ -157,7 +165,11 @@ public class dGui {
     public void addButton(dItem item, int slot) {
         dItem cloned = item.clone();
         cloned.setSlot(slot);
+
+        if (buttons.contains(cloned))
+            buttons.removeIf(dItem -> dItem.getSlot() == slot);     // remove to overwrite
         buttons.add(cloned);
+
         openSlots.remove(slot);
         inv.setItem(slot, cloned.getItem());
     }
@@ -209,7 +221,11 @@ public class dGui {
         WeightedRandom<dItem> RRM = WeightedRandom.fromCollection(
                 shop.getItems().stream().filter(dItem -> dItem.getRarity().getWeight() != 0)
                         .collect(Collectors.toList()),  // remove unAvailable
-                dItem::clone,
+                item -> {
+                    dItem cloned = item.clone();
+                    cloned.applyLoreStrategy(strategy);
+                    return cloned;
+                },
                 value -> value.getRarity().getWeight()
         );
 
@@ -261,8 +277,7 @@ public class dGui {
 
                 buttons.stream().filter(dItem -> dItem.getSlot() == e.getSlot())
                         .findFirst().ifPresent(dItem -> dItem.getAction()
-                        .stream(pair -> pair.get1()
-                                .run((Player) e.getWhoClicked(), pair.get2())));
+                        .stream((dAction, s) -> dAction.run((Player) e.getWhoClicked(), s)));
             }
         });
 
@@ -350,29 +365,6 @@ public class dGui {
                         .setItem(dItem.getSlot(), dItem.getItem()));
 
         return  cloned; }
-
-
-
-    public enum dAction {
-
-        EMPTY((p,s) -> {}),
-        OPEN_SHOP((p, s) -> {shopsManager.getInstance()
-                .getShop(s).ifPresent(shop1 -> shop1.getGui().open(p));}),
-        RUN_CMD((p, s) -> {Bukkit.dispatchCommand(Bukkit.getConsoleSender(),
-                Msg.singletonMsg(s).add("%player%", p.getName()).build());
-        });
-
-        private final BiConsumer<Player, String> action;
-
-        dAction(BiConsumer<Player, String> action) {
-            this.action = action;
-        }
-
-        public void run(Player p, String s) {
-            action.accept(p, s);
-        }
-
-    }
 
 
 }

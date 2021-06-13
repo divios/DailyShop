@@ -5,8 +5,10 @@ import io.github.divios.core_lib.inventory.InventoryGUI;
 import io.github.divios.core_lib.inventory.ItemButton;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.misc.EventListener;
+import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.core_lib.misc.Task;
 import io.github.divios.dailyrandomshop.DRShop;
+import io.github.divios.lib.itemHolder.dAction;
 import io.github.divios.lib.itemHolder.dGui;
 import io.github.divios.lib.managers.shopsManager;
 import net.wesjd.anvilgui.AnvilGUI;
@@ -21,16 +23,17 @@ public class customizeAction {
 
     private final Player p;
     private final InventoryGUI inv;
-    private final BiConsumer<dGui.dAction, String> onComplete;
+    private final BiConsumer<dAction, String> onComplete;
 
     private boolean flagPass = false;
 
     private final EventListener<InventoryCloseEvent> preventClose;
 
     private customizeAction(Player p,
-                            BiConsumer<dGui.dAction, String> onComplete) {
+                            BiConsumer<dAction, String> onComplete) {
         this.p = p;
-        this.inv = new InventoryGUI(plugin, 27, "&6&lManager Actions");
+        this.inv = new InventoryGUI(plugin, 27, "&6&lManage Actions");
+        inv.setDestroyOnClose(false);
         this.onComplete = onComplete;
 
         initialize();
@@ -47,65 +50,75 @@ public class customizeAction {
     }
 
     public static void open(Player p,
-                            BiConsumer<dGui.dAction, String> onComplete) {
+                            BiConsumer<dAction, String> onComplete) {
         new customizeAction(p, onComplete);
     }
 
     private void initialize() {
 
         inv.addButton(ItemButton.create(new ItemBuilder(XMaterial.BARRIER)
-                        .setName("&aNo action").setLore("&7Runs command when this", "&7item is clicked"),
+                        .setName("&aNo action").setLore("&7Do nothing when this", "&7item is clicked"),
                 e -> {
                     preventClose.unregister();
-                    onComplete.accept(dGui.dAction.EMPTY, "");
+                    onComplete.accept(dAction.EMPTY, "");
                 }), 0);
 
-        inv.addButton(ItemButton.create(new ItemBuilder(XMaterial.COMMAND_BLOCK)
-            .setName("&aRun command").setLore("&7Runs command when this", "&7item is clicked"),
+        inv.addButton(ItemButton.create(new ItemBuilder(XMaterial.PLAYER_HEAD)
+                                .setName("&aOpen shop").setLore("&7Opens shop when this", "&7item is clicked")
+                                .applyTexture("7e3deb57eaa2f4d403ad57283ce8b41805ee5b6de912ee2b4ea736a9d1f465a7"),
                 e -> {
                     final boolean[] exit = {false};
+                    flagPass = true;
                     new AnvilGUI.Builder()
                             .onClose(player ->
                                 {
-                                if (exit[0]) Task.syncDelayed(plugin, () -> inv.open(player), 1L);
+                                if (!exit[0]) Task.syncDelayed(plugin, () -> {
+                                    inv.open(player);
+                                    flagPass = true;
+                                }, 1L);
                             })
                             .onComplete((player, s) -> {
                                 if (!shopsManager.getInstance().getShop(s).isPresent())
                                     return AnvilGUI.Response.text("That shop doesnt exit");
 
                                 preventClose.unregister();
+                                inv.destroy();
                                 exit[0] = true;
                                 Task.syncDelayed(plugin, () ->
-                                        onComplete.accept(dGui.dAction.OPEN_SHOP, s), 1L);
+                                        onComplete.accept(dAction.OPEN_SHOP, s), 1L);
                                 return AnvilGUI.Response.close();
 
                             })
-                            .title("&a&lInput shop name")
+                            .title(FormatUtils.color("&a&lInput shop name"))
                             .text("Input")
                             .itemLeft(e.getCurrentItem().clone())
                             .plugin(plugin)
                             .open(p);
                 }), 1);
 
-        inv.addButton(ItemButton.create(new ItemBuilder(XMaterial.PLAYER_HEAD)
-                        .setName("&aOpen shop").setLore("&7Opens shop when this", "&7item is clicked")
-                        .applyTexture("7e3deb57eaa2f4d403ad57283ce8b41805ee5b6de912ee2b4ea736a9d1f465a7"),
+        inv.addButton(ItemButton.create(new ItemBuilder(XMaterial.COMMAND_BLOCK)
+                        .setName("&aRun command").setLore("&7Runs command when this", "&7item is clicked"),
                 e -> {
                     final boolean[] exit = {false};
+                    flagPass = true;
                     new AnvilGUI.Builder()
                             .onClose(player ->
                             {
-                                if (exit[0]) Task.syncDelayed(plugin, () -> inv.open(player), 1L);
+                                if (!exit[0]) Task.syncDelayed(plugin, () -> {
+                                    inv.open(player);
+                                    flagPass = true;
+                                }, 1L);
                             })
                             .onComplete((player, s) -> {
                                 preventClose.unregister();
+                                inv.destroy();
                                 exit[0] = true;
                                 Task.syncDelayed(plugin, () ->
-                                        onComplete.accept(dGui.dAction.RUN_CMD, s), 1L);
+                                        onComplete.accept(dAction.RUN_CMD, s), 1L);
                                 return AnvilGUI.Response.close();
 
                             })
-                            .title("&a&lInput command")
+                            .title(FormatUtils.color("&a&lInput command"))
                             .text("Input")
                             .itemLeft(e.getCurrentItem().clone())
                             .plugin(plugin)
