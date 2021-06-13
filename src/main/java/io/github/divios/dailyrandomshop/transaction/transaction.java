@@ -30,7 +30,7 @@ public class transaction {
         }
     }
 
-    public static void initTransaction(Player p, dItem item, dShop shop) throws transactionExc {
+    private static void initTransaction(Player p, dItem item, dShop shop) throws transactionExc {
 
         summary s = printSummary(p, item, shop);
 
