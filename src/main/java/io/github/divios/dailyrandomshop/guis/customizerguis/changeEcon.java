@@ -5,8 +5,11 @@ import io.github.divios.core_lib.XCore.XMaterial;
 import io.github.divios.core_lib.inventory.InventoryGUI;
 import io.github.divios.core_lib.inventory.ItemButton;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
+import io.github.divios.core_lib.itemutils.ItemUtils;
+import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.dailyrandomshop.DRShop;
 import io.github.divios.dailyrandomshop.conf_msg;
+import io.github.divios.dailyrandomshop.economies.*;
 import io.github.divios.dailyrandomshop.hooks.hooksManager;
 import io.github.divios.lib.itemHolder.dItem;
 import me.realized.tokenmanager.api.TokenManager;
@@ -53,42 +56,61 @@ public class changeEcon{
 
         gui.addButton(ItemButton.create(new ItemBuilder(XMaterial.OAK_SIGN)
                 .setName("&c&lReturn"), e -> consumer.accept(item)), 22);
+
         gui.addButton(ItemButton.create(new ItemBuilder(XMaterial.CHEST)
-                .setName("&f&lVault").addLore("&7Click to change"), e -> consumer.accept(item)), slot);
+                .setName("&f&lVault").addLore("&7Click to change"), e -> {
+                item.setEconomy(new vault());
+                consumer.accept(item);
+        }), slot);
         slot++;
 
         if (gemsApi != null)
             for (String s : gemsApi.plugin.getCurrencyManager().getCurrencies().stream()
                     .map(Currency::getPlural).collect(Collectors.toList())) {
                 gui.addButton(ItemButton.create(new ItemBuilder(XMaterial.EMERALD)
-                        .setName("&f&l" + s).addLore("&7Click to change"), e -> consumer.accept(item)), slot);
+                        .setName("&f&l" + s).addLore("&7Click to change"), e -> {
+                    item.setEconomy(new gemEcon(FormatUtils.stripColor(ItemUtils.getName(e.getCurrentItem()))));
+                    consumer.accept(item);
+                }), slot);
                 slot++;
             }
 
         if (tokenEnchantsApi != null) {
             gui.addButton(ItemButton.create(new ItemBuilder(XMaterial.ENCHANTED_BOOK)
-                    .setName("&d&lTokenEnchants").addLore("&7Click to change"), e -> consumer.accept(item)), slot);
+                    .setName("&d&lTokenEnchants").addLore("&7Click to change"), e -> {
+                item.setEconomy(new tokenManagerE());
+                consumer.accept(item);
+            }), slot);
             slot++;
         }
 
 
         if (tokenManagerApi != null) {
             gui.addButton(ItemButton.create(new ItemBuilder(XMaterial.DIAMOND)
-                    .setName("&b&lTokenManager").addLore("&7Click to change"), e -> consumer.accept(item)), slot);
+                    .setName("&b&lTokenManager").addLore("&7Click to change"), e -> {
+                item.setEconomy(new tokenManagerE());
+                consumer.accept(item);
+            }), slot);
             slot++;
         }
 
         if (mPointsAPI != null) {
             for (String s : mPointsAPI.getpointslist()) {
                 gui.addButton(ItemButton.create(new ItemBuilder(XMaterial.SUNFLOWER)
-                        .setName("&f&l" + s).addLore("&7Click to change"), e -> consumer.accept(item)), slot);
+                        .setName("&f&l" + s).addLore("&7Click to change"), e -> {
+                    item.setEconomy(new MPointsE(FormatUtils.stripColor(ItemUtils.getName(e.getCurrentItem()))));
+                    consumer.accept(item);
+                }), slot);
                 slot++;
             }
         }
 
         if (pPointsApi != null) {
             gui.addButton(ItemButton.create(new ItemBuilder(XMaterial.PLAYER_HEAD)
-                    .setName("&f&lPlayerPoints").addLore("&7Click to change"), e -> consumer.accept(item)), slot);
+                    .setName("&f&lPlayerPoints").addLore("&7Click to change"), e -> {
+                item.setEconomy(new playerPointsE());
+                consumer.accept(item);
+            }), slot);
             slot++;
         }
 
