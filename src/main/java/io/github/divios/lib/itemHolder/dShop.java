@@ -68,7 +68,7 @@ public class dShop {
         final int[] gui_hash = {Arrays.stream(gui.getInventory().getContents()).map(ItemStack::hashCode)
                 .reduce((acum, hash) -> acum += hash).orElse(0)};        // get hash based on content an not reference
 
-        asyncUpdate = Task.asyncRepeating(plugin, () -> {
+        asyncUpdate = Task.asyncRepeating(plugin, () -> {       // auto-update gui if any changes where made
             int aux = Arrays.stream(gui.getInventory().getContents()).map(ItemStack::hashCode)
                     .reduce((acum, hash) -> acum += hash).orElse(0);
 
