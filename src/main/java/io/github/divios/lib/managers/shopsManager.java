@@ -84,7 +84,6 @@ public class shopsManager {
         deletedShopEvent event = new deletedShopEvent(result.get());
 
         Bukkit.getPluginManager().callEvent(event);     // throw new event
-        if (event.isCancelled()) return false;
 
         shops.remove(result.get());
 
