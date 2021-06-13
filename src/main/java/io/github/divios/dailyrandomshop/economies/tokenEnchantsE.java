@@ -4,7 +4,11 @@ import com.vk2gpz.tokenenchant.api.TokenEnchantAPI;
 import io.github.divios.dailyrandomshop.hooks.hooksManager;
 import org.bukkit.entity.Player;
 
-public class tokenEnchantsE implements economy {
+public class tokenEnchantsE extends economy {
+
+    public tokenEnchantsE() { this(""); }
+
+    public tokenEnchantsE(String currency) { super(currency, "TokenEnchants"); }
 
     private transient final static TokenEnchantAPI api = hooksManager.getInstance().getTokenEnchantApi();
 

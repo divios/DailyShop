@@ -11,6 +11,7 @@ import io.github.divios.core_lib.misc.Pair;
 import io.github.divios.dailyrandomshop.conf_msg;
 import io.github.divios.dailyrandomshop.economies.economy;
 import io.github.divios.dailyrandomshop.economies.vault;
+import io.github.divios.dailyrandomshop.lorestategy.loreStrategy;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
@@ -124,6 +125,12 @@ public class dItem implements Serializable, Cloneable {
      */
     public @NotNull List<String> getLore() {
         return ItemUtils.getLore(getItem());
+    }
+
+    public void applyLoreStrategy(loreStrategy strategy) {
+        ItemStack aux = getItem();
+        strategy.setLore(aux);
+        setItem(aux);
     }
 
     /**
@@ -368,17 +375,9 @@ public class dItem implements Serializable, Cloneable {
      * @return
      */
     public @NotNull economy getEconomy() {
-        economy econR = new vault();
-        byte [] data = Base64.getDecoder().decode(item.getString("rds_econ"));
-        try {
-            ObjectInputStream ois = new ObjectInputStream(
-                    new ByteArrayInputStream(data));
-            econR = (economy) ois.readObject();
-            ois.close();
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        return econR;
+        if (item.hasKey("rds_econ"))
+            return economy.deserialize(item.getString("rds_econ"));
+        return new vault();
     }
 
     /**
@@ -387,15 +386,7 @@ public class dItem implements Serializable, Cloneable {
      * @param econ
      */
     public void setEconomy(@NotNull economy econ) {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        try {
-            ObjectOutputStream oos = new ObjectOutputStream( baos );
-            oos.writeObject(econ);
-            oos.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        item.setString("rds_econ", Base64.getEncoder().encodeToString(baos.toByteArray()));
+        item.setString("rds_econ", econ.serialize());
     }
 
     /**
@@ -500,17 +491,18 @@ public class dItem implements Serializable, Cloneable {
      * Returns the action of the dItem
      * @return Optional.ofNullable(dAction)
      */
-    public Pair<dGui.dAction, String> getAction() {
-        Pair<dGui.dAction, String> action = item.getObject("rds_action", Pair.class);
-        return action == null ? new Pair<>(dGui.dAction.EMPTY, ""):action;
+    public Pair<dAction, String> getAction() {
+        return item.hasKey("rds_action") ?
+                Pair.deserialize(item.getString("rds_action"), dAction.class, String.class):
+                Pair.of(dAction.EMPTY, "");
 
     }
 
     /**
      * Sets the action of this item
      */
-    public void setAction(@Nullable dGui.dAction action, String s) {
-        item.setObject("rds_action", new Pair<>(action, s));
+    public void setAction(@Nullable dAction action, String s) {
+        item.setString("rds_action", Pair.of(action, s).serialize());
     }
 
     /**
