@@ -40,7 +40,7 @@ public class dataManager extends DataManagerAbstract{
     }
 
 
-    public synchronized void getShops(Consumer<HashSet<dShop>> callback) {
+    public void getShops(Consumer<HashSet<dShop>> callback) {
 
             HashSet<dShop> shops = new LinkedHashSet<>();
 
@@ -66,7 +66,7 @@ public class dataManager extends DataManagerAbstract{
     }
 
 
-    public synchronized void getShop(String name, Consumer<HashSet<dItem>> callback) {
+    public void getShop(String name, Consumer<HashSet<dItem>> callback) {
 
             HashSet<dItem> items = new LinkedHashSet<>();
 
@@ -84,7 +84,7 @@ public class dataManager extends DataManagerAbstract{
             }));
         }
 
-    public synchronized void createShop(dShop shop) {
+    public void createShop(dShop shop) {
         this.async(() -> this.databaseConnector.connect(connection -> {
 
             String createShop = "INSERT INTO " + this.getTablePrefix() +
@@ -109,7 +109,7 @@ public class dataManager extends DataManagerAbstract{
         }));
     }
 
-    public synchronized void renameShop(String oldName, String newName) {
+    public void renameShop(String oldName, String newName) {
         this.async(() -> this.databaseConnector.connect(connection -> {
             String renameShop = "UPDATE " + this.getTablePrefix() + "active_shops" +
                     " SET name = ? WHERE name = ?";
@@ -128,7 +128,7 @@ public class dataManager extends DataManagerAbstract{
         }));
     }
 
-    public synchronized void deleteShop(String name) {
+    public void deleteShop(String name) {
         this.async(() -> this.databaseConnector.connect(connection -> {
             String deleteShop = "DELETE FROM " + this.getTablePrefix() + "active_shops WHERE name = ?";
             try (PreparedStatement statement = connection.prepareStatement(deleteShop)) {
@@ -143,7 +143,7 @@ public class dataManager extends DataManagerAbstract{
         }));
     }
 
-    public synchronized void addItem(String name, dItem item) {
+    public void addItem(String name, dItem item) {
         this.queueAsync(() -> this.databaseConnector.connect(connection -> {
 
             String createShop = "INSERT INTO " + this.getTablePrefix() +
@@ -159,7 +159,7 @@ public class dataManager extends DataManagerAbstract{
         }), "add");
     }
 
-    public synchronized void deleteItem(String name, UUID uid) {
+    public void deleteItem(String name, UUID uid) {
         this.queueAsync(() -> this.databaseConnector.connect(connection -> {
             String deeleteItem = "DELETE FROM " + this.getTablePrefix() + "shop_" + name + " WHERE uuid = ?";
             try (PreparedStatement statement = connection.prepareStatement(deeleteItem)) {
@@ -169,7 +169,7 @@ public class dataManager extends DataManagerAbstract{
         }), "delete");
     }
 
-    public synchronized void updateItem(String name, dItem item) {
+    public void updateItem(String name, dItem item) {
         this.queueAsync(() -> this.databaseConnector.connect(connection -> {
             String updateItem = "UPDATE " + this.getTablePrefix() + "shop_" + name +
                     " SET itemSerial = ? WHERE uuid = ?";
@@ -181,8 +181,8 @@ public class dataManager extends DataManagerAbstract{
         }), "itemUpdate");
     }
 
-    public synchronized void updateGui(String name, dGui gui) {
-        this.queueAsync(() -> this.databaseConnector.connect(connection -> {
+    public void syncUpdateGui(String name, dGui gui ) {
+        this.databaseConnector.connect(connection -> {
             String updateGui = "UPDATE " + this.getTablePrefix() + "active_shops " +
                     "SET gui = ? WHERE name = ?";
             try (PreparedStatement statement = connection.prepareStatement(updateGui)) {
@@ -190,10 +190,14 @@ public class dataManager extends DataManagerAbstract{
                 statement.setString(2, name);
                 statement.executeUpdate();
             }
-        }), "guiUpdate");
+        });
+    }
+    
+    public void asyncUpdateGui(String name, dGui gui) {
+        this.queueAsync(() -> syncUpdateGui(name, gui), "update_gui");
     }
 
-    public synchronized void updateTimeStamp(String name, Timestamp timestamp) {
+    public void updateTimeStamp(String name, Timestamp timestamp) {
         this.queueAsync(() -> this.databaseConnector.connect(connection -> {
             String updateTimeStamp = "UPDATE " + this.getTablePrefix() + "active_shops " +
                     "SET timestamp = ? WHERE name = ?";
@@ -205,7 +209,7 @@ public class dataManager extends DataManagerAbstract{
         }), "update");
     }
 
-    public synchronized void updateTimer(String name, int timer) {
+    public void updateTimer(String name, int timer) {  //TODO: implementar cambiarlo en shopsGui 
         this.queueAsync(() -> this.databaseConnector.connect(connection -> {
             String updateTimeStamp = "UPDATE " + this.getTablePrefix() + "active_shops " +
                     "SET timer = ? WHERE name = ?";
