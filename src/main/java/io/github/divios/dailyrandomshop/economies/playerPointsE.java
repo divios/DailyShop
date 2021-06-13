@@ -5,7 +5,11 @@ import org.black_ixx.playerpoints.PlayerPoints;
 import org.black_ixx.playerpoints.PlayerPointsAPI;
 import org.bukkit.entity.Player;
 
-public class playerPointsE implements economy {
+public class playerPointsE extends economy {
+
+    public playerPointsE() {this(""); }
+
+    public playerPointsE(String currency) { super(currency, "PlayerPoints"); }
 
     private transient static final PlayerPointsAPI api = PlayerPoints.getInstance().getAPI();
 

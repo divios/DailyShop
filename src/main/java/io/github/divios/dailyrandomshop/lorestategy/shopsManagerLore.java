@@ -2,10 +2,10 @@ package io.github.divios.dailyrandomshop.lorestategy;
 
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
+import io.github.divios.lib.itemHolder.dShop;
 import org.bukkit.inventory.ItemStack;
 
 public class shopsManagerLore implements loreStrategy{
-
 
     @Override
     public void setLore(ItemStack item) {
@@ -20,12 +20,12 @@ public class shopsManagerLore implements loreStrategy{
     }
 
     @Override
-    public void removeLore(ItemStack item) {
+    public void removeLore(ItemStack item) {  // Not needed
 
     }
 
     @Override
-    public void update(ItemStack item) {
+    public void update(ItemStack item) {    // Not needed
 
     }
 }

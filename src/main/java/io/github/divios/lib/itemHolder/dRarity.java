@@ -61,7 +61,10 @@ public class dRarity {
         }
     }
 
-
+    @Override
+    public String toString() {
+        return getRarityLore();
+    }
 
     private enum rarityT {
         Common(100),
