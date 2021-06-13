@@ -26,13 +26,11 @@ public class dShop {
 
     private Timestamp timestamp = new Timestamp(System.currentTimeMillis());
     private int timer = 24 * 60 * 60; // seconds representing time to pass until reset
+    private final int[] gui_hash = {0};
 
     private Task asyncCheck;
     private Task asyncUpdate;
     private EventListener reStock;
-
-    //TODO: add timeStamp and integer representing the minutes that have to pass until
-    // generates new items
 
     public dShop(String name, dShopT type) {
         this.name = name;
@@ -65,10 +63,12 @@ public class dShop {
             }
         }, 20L, 20L);
 
-        final int[] gui_hash = {Arrays.stream(gui.getInventory().getContents()).map(ItemStack::hashCode)
-                .reduce((acum, hash) -> acum += hash).orElse(0)};        // get hash based on content an not reference
+              // get hash based on content an not reference
 
         asyncUpdate = Task.asyncRepeating(plugin, () -> {       // auto-update gui if any changes where made
+
+            if (gui.getInventory().getContents().length == 0) return;
+
             int aux = Arrays.stream(gui.getInventory().getContents()).map(ItemStack::hashCode)
                     .reduce((acum, hash) -> acum += hash).orElse(0);
 
