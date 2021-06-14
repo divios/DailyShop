@@ -6,8 +6,11 @@ import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.dailyrandomshop.DRShop;
 import io.github.divios.dailyrandomshop.conf_msg;
+import io.github.divios.dailyrandomshop.economies.economy;
 import io.github.divios.dailyrandomshop.guis.confirmIH;
 import io.github.divios.dailyrandomshop.guis.customizerguis.customizerMainGuiIH;
+import io.github.divios.dailyrandomshop.lorestategy.loreStrategy;
+import io.github.divios.dailyrandomshop.lorestategy.shopItemsManagerLore;
 import io.github.divios.dailyrandomshop.utils.utils;
 import io.github.divios.lib.itemHolder.dItem;
 import io.github.divios.lib.itemHolder.dShop;
@@ -46,7 +49,13 @@ public class shopGui {
 
     private static List<ItemStack> contents (dShop shop) {
         List<ItemStack> items = new ArrayList<>();
-        shop.getItems().forEach(dItem -> items.add(dItem.getItem()));
+        loreStrategy strategy = new shopItemsManagerLore(shop.getType());
+
+        shop.getItems().forEach(dItem -> {
+            ItemStack cloned = dItem.getItem().clone();
+            strategy.setLore(cloned);
+            items.add(cloned);
+        });
 
         return items;
     }
