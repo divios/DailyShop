@@ -18,9 +18,12 @@ public class shopItemsLore implements loreStrategy{
         ItemUtils.translateAllItemData(new ItemBuilder(item)
             .addLore(Msg.singletonMsg(conf_msg.BUY_GUI_ITEMS_LORE_PRICE)
                     .add("\\{price}", "" + (type.equals(dShop.dShopT.buy) ?
-                            new dItem(item).getBuyPrice(): new dItem(item).getSellPrice())).build())
+                            new dItem(item).getBuyPrice().get().getPrice():
+                            new dItem(item).getSellPrice().get().getPrice())).build())
+
             .addLore(Msg.singletonMsg(conf_msg.BUY_GUI_ITEMS_LORE_CURRENCY)
-                    .add("\\{currency}", new dItem(item).getEconomy().getName()).build())   //TODO
+                    .add("\\{currency}", new dItem(item).getEconomy().getName()).build())
+
             .addLore(Msg.singletonMsg(conf_msg.BUY_GUI_ITEMS_LORE_RARITY)
                     .add("\\{rarity}", new dItem(item).getRarity().toString()).build())
                 , item);

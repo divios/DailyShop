@@ -1,5 +1,7 @@
 io/github/divios/dailyrandomshop/transaction/summary.java
  io.github.divios.dailyrandomshop.transaction.summary
+io/github/divios/dailyrandomshop/commands/importShops.java
+ io.github.divios.dailyrandomshop.commands.importShops
 io/github/divios/dailyrandomshop/builders/itemBuildersHooks/itemsBuilder.java
  io.github.divios.dailyrandomshop.builders.itemBuildersHooks.itemsBuilder
 io/github/divios/dailyrandomshop/utils/conf_updater.java
@@ -49,6 +51,8 @@ io/github/divios/dailyrandomshop/transaction/transactionExc.java
  io.github.divios.dailyrandomshop.transaction.transactionExc
  io.github.divios.dailyrandomshop.transaction.transactionExc$1
  io.github.divios.dailyrandomshop.transaction.transactionExc$err
+io/github/divios/dailyrandomshop/lorestategy/shopItemsManagerLore.java
+ io.github.divios.dailyrandomshop.lorestategy.shopItemsManagerLore
 io/github/divios/dailyrandomshop/database/files.java
  io.github.divios.dailyrandomshop.database.files
 io/github/divios/lib/storage/migrations/initialMigration.java
@@ -99,6 +103,9 @@ io/github/divios/lib/itemHolder/dPrice.java
  io.github.divios.lib.itemHolder.dPrice
 io/github/divios/lib/itemHolder/dGui.java
  io.github.divios.lib.itemHolder.dGui
+io/github/divios/dailyrandomshop/events/updateItemEvent.java
+ io.github.divios.dailyrandomshop.events.updateItemEvent
+ io.github.divios.dailyrandomshop.events.updateItemEvent$updatetype
 io/github/divios/lib/storage/dataManager.java
  io.github.divios.lib.storage.dataManager
 io/github/divios/dailyrandomshop/hooks/tokenManagerHook.java
