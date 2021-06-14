@@ -5,6 +5,8 @@ import io.github.divios.core_lib.misc.Msg;
 import io.github.divios.dailyrandomshop.DRShop;
 import io.github.divios.dailyrandomshop.conf_msg;
 import io.github.divios.dailyrandomshop.economies.*;
+import io.github.divios.dailyrandomshop.guis.confirmGui;
+import io.github.divios.dailyrandomshop.guis.confirmIH;
 import io.github.divios.dailyrandomshop.hooks.hooksManager;
 import io.github.divios.dailyrandomshop.utils.utils;
 import io.github.divios.lib.itemHolder.dItem;
@@ -24,7 +26,31 @@ public class transaction {
 
     public static void init(Player p, dItem item, dShop shop) {
         try {
-            initTransaction(p, item, shop);
+
+            if (item.getConfirm_gui()) {
+
+                if (!item.getStock().isPresent() &&
+                        !item.getSetItems().isPresent()) {
+
+                    confirmGui.open(p, item.getItem(),
+                            (p1, item1) -> {
+                                p.closeInventory();
+                                transaction.init(p, new dItem(item1), shop);
+                            }, player -> shop.getGui().open(p));
+
+                } else {
+                    new confirmIH(p, (p1, aBool) -> {
+                        p.closeInventory();
+                        if (aBool)
+                            transaction.init(p1, item, shop);
+                        else
+                            shop.getGui().open(p1);
+                    }, item.getItem(), "", "", "");
+                }
+            }
+
+            else initTransaction(p, item, shop);
+
         } catch (transactionExc transactionExc) {
             transactionExc.sendErrorMsg(p);
         }
@@ -63,10 +89,11 @@ public class transaction {
         if (item.isAIR())
             return s;
 
+        s.setEcon(new vault());
         //s.setEcon(getEconomyStrategy(p, item)); // get item economy //TODO
 
-        boolean[] err = {true};
-        item.getPerms().ifPresent(perms -> perms
+        boolean[] err = {false};
+        item.getPerms().ifPresent(perms -> perms        // perms check
                 .forEach(s1 -> {
                     if (err[0]) return;
 
@@ -77,12 +104,12 @@ public class transaction {
 
         item.getStock().ifPresent(integer -> {
             //s.addRunnable(() -> buyGui.getInstance()      //TODO
-               //     .processNextAmount(dailyItem.getUuid(item)));
+            //     .processNextAmount(dailyItem.getUuid(item)));
             item.setAmount(1);
         });
 
         transactionExc[] err1 = {null};
-        item.getBundle().ifPresent(uuids ->
+        item.getBundle().ifPresent(uuids ->         // bundle check
                 uuids.forEach(uuid -> {
                     IntStream.range(0, item.getAmount())
                             .forEach(value ->
@@ -96,7 +123,7 @@ public class transaction {
                             );
 
                     s.setPrice(shop.getType().equals(dShop.dShopT.sell) ?
-                            item.getSellPrice(): item.getBuyPrice()); //todo
+                            item.getSellPrice() : item.getBuyPrice()); //todo
                 }));
 
         if (err1[0] != null) throw err1[0];
@@ -104,14 +131,14 @@ public class transaction {
         IntStream.range(0, item.getAmount()).forEach(i ->
                 item.getCommands().ifPresent(strings -> strings.forEach(s1 ->
                         Bukkit.dispatchCommand(Bukkit.getConsoleSender(),
-                        Msg.singletonMsg(s1).add("%player%", p.getName())
-                                .build()))));
+                                Msg.singletonMsg(s1).add("%player%", p.getName())
+                                        .build()))));
 
 
         /// A PARTIR DE AQUI YA SOLO COMPROBAR SLOTS Y PRICE ///
 
-            s.setPrice(s.getPrice() + (item.getSetItems().isPresent() ?
-                    item.getSetItems().get(): item.getSetItems().get() * item.getAmount()));
+        s.setPrice(s.getPrice() + (item.getSetItems().isPresent() ?
+                item.getSetItems().get() : item.getSetItems().get() * item.getAmount()));
 
 
         s.setSlots(item.getMaxStackSize() == 1 ?
@@ -123,7 +150,8 @@ public class transaction {
                 ItemStack aux = item.getRawItem();
                 aux.setAmount(1);
                 IntStream.range(0, item.getAmount()).
-                        forEach(i -> p.getInventory().addItem(aux)); });
+                        forEach(i -> p.getInventory().addItem(aux));
+            });
 
         return s;
     }
