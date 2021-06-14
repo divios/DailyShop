@@ -271,7 +271,9 @@ public class dGui {
                         item.setSlot(dItem.getSlot());
                         buttons.remove(dItem);
                         buttons.add(item);
-                        inv.setItem(dItem.getSlot(), item.getItem());
+                        ItemStack itemWithLore = item.getItem().clone();
+                        strategy.setLore(itemWithLore);
+                        inv.setItem(dItem.getSlot(), itemWithLore);
                     }
 
                     else if (type.equals(updateItemEvent.updatetype.NEXT_AMOUNT)) {
