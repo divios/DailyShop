@@ -28,18 +28,25 @@ public class dItem implements Serializable, Cloneable {
     private NBTItem item;
     private String shop = ""; // TODO: not sure
 
+    public static dItem of(ItemStack item) {
+        return new dItem(item);
+    }
+
     public dItem(@NotNull ItemStack item) {
         this(item, -1);
     }
 
     public dItem(@NotNull ItemStack item, int slot) {
-        setItem(item);
-        setSlot(slot);
-        setRarity(new dRarity());       //Defaults to Common
-        setConfirm_gui(true);           // Defaults true
-        setEconomy(new vault());        // Default Vault
-        setBuyPrice(conf_msg.DEFAULT_PRICE); // Default buy price
-        setSellPrice(-1); // Default sell price //TODO
+        this.item = new NBTItem(item);
+        if (getUid() == null) {
+            setUid(UUID.randomUUID());
+            setSlot(slot);
+            setRarity(new dRarity());       //Defaults to Common
+            setConfirm_gui(true);           // Defaults true
+            setEconomy(new vault());        // Default Vault
+            setBuyPrice(conf_msg.DEFAULT_PRICE); // Default buy price
+            setSellPrice(-1); // Default sell price //TODO
+        }
     }
 
     private dItem() {}
@@ -306,7 +313,7 @@ public class dItem implements Serializable, Cloneable {
      *
      * @return the uuid of this item
      */
-    public @NotNull UUID getUid() {
+    public UUID getUid() {
         return item.getObject("rds_UUID", UUID.class);
     }
 
@@ -359,6 +366,7 @@ public class dItem implements Serializable, Cloneable {
      * @return an integer symbolizing a rarity. Use utils to format to itemStack or String
      */
     public @NotNull dRarity getRarity() {
+        if (!item.hasKey("rds_rarity")) return new dRarity();
         return item.getObject("rds_rarity", dRarity.class);
     }
 
