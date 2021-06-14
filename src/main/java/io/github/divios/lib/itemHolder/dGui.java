@@ -6,6 +6,7 @@ import io.github.divios.core_lib.misc.Msg;
 import io.github.divios.core_lib.misc.Pair;
 import io.github.divios.core_lib.misc.WeightedRandom;
 import io.github.divios.dailyrandomshop.DRShop;
+import io.github.divios.dailyrandomshop.events.updateItemEvent;
 import io.github.divios.dailyrandomshop.lorestategy.loreStrategy;
 import io.github.divios.dailyrandomshop.lorestategy.shopItemsLore;
 import io.github.divios.dailyrandomshop.transaction.transaction;
@@ -217,8 +218,7 @@ public class dGui {
                     if (dItem.isAIR()) inv.clear(i);
                 }));
 
-        List<dItem> added = new ArrayList<>();
-        WeightedRandom<dItem> RRM = WeightedRandom.fromCollection(
+        WeightedRandom<dItem> RRM = WeightedRandom.fromCollection(      // create weighted random
                 shop.getItems().stream().filter(dItem -> dItem.getRarity().getWeight() != 0)
                         .collect(Collectors.toList()),  // remove unAvailable
                 item -> {
@@ -234,15 +234,18 @@ public class dGui {
         openSlots.forEach(i -> {
             inv.clear(i);
 
-            if (added.size() >= shop.getItems().size()) return;
+            if (buttons.stream().filter(dItem -> !dItem.isAIR())
+                    .count() >= shop.getItems().size()) return;
 
             ItemStack toAdd;
 
             while(true) {
                 dItem aux = RRM.roll();
-                if (added.contains(aux))
+                if (buttons.stream()
+                        .anyMatch(dItem -> dItem.getUid().equals(aux.getUid())))
                     continue;
-                added.add(aux);
+                aux.setSlot(i);
+                buttons.add(aux);
                 toAdd = aux.getItem();
                 break;
             }
@@ -253,11 +256,53 @@ public class dGui {
         Bukkit.broadcastMessage("Renovated items of shop " + shop.getName());
     }
 
+    protected void updateItem(dItem item, updateItemEvent.updatetype type) {
+
+        if (buttons.stream().noneMatch(dItem -> dItem.getUid().equals(item.getUid()))) return;
+
+        buttons.stream()
+                .filter(dItem -> dItem.getUid().equals(item.getUid()))
+                .findFirst()
+                .ifPresent(dItem -> {
+
+                    if (type.equals(updateItemEvent.updatetype.UPDATE_ITEM)) {
+                        item.setSlot(dItem.getSlot());
+                        buttons.remove(dItem);
+                        buttons.add(item);
+                        inv.setItem(dItem.getSlot(), item.getItem());
+                    }
+
+                    else if (type.equals(updateItemEvent.updatetype.NEXT_AMOUNT)) {
+                        dItem.setStock(dItem.getStock().get() - 1);
+
+                        if (dItem.getStock().get() <= 0) {
+                            buttons.remove(dItem);
+                            inv.setItem(dItem.getSlot(), utils.getRedPane());
+                        } else
+                            inv.getItem(dItem.getSlot()).setAmount(dItem.getStock().get());
+                    }
+
+                    else if (type.equals(updateItemEvent.updatetype.DELETE_ITEM)) {
+                        buttons.stream()
+                                .filter(dItem1 -> dItem1.getUid().equals(item.getUid()))
+                                .findFirst()
+                                .ifPresent(dItem1 -> {
+                                    buttons.remove(dItem1);
+                                    inv.setItem(dItem1.getSlot(), utils.getRedPane());
+                                });
+                    }
+                });
+
+    }
+
     /**
      * Clears all the slots corresponding to daily Items
      */
     private void clearDailyItems() {
-        openSlots.forEach(i -> inv.clear(i));
+        openSlots.forEach(i -> {
+            inv.clear(i);
+            buttons.removeIf(dItem -> dItem.getSlot() == i);
+        });
     }
 
 
@@ -269,11 +314,16 @@ public class dGui {
 
             e.setCancelled(true);
 
+            if (utils.isEmpty(e.getCurrentItem())) return;
+
             if (openSlots.contains(e.getSlot()) &&
-                    shop.getType().equals(dShop.dShopT.buy)) {}
-            //transaction.initTransaction(e.getWhoClicked(), );
+                    shop.getType().equals(dShop.dShopT.buy))
+                    buttons.stream()
+                            .filter(ditem-> ditem.getUid().equals(dItem.of(e.getCurrentItem()).getUid()))
+                            .findFirst()
+                            .ifPresent(dItem -> transaction.init(
+                                    (Player) e.getWhoClicked(), dItem, shop));
             else {
-                if (utils.isEmpty(e.getCurrentItem())) return;
 
                 buttons.stream().filter(dItem -> dItem.getSlot() == e.getSlot())
                         .findFirst().ifPresent(dItem -> dItem.getAction()
