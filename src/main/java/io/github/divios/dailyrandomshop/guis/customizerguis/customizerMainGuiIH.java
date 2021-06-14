@@ -27,8 +27,6 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -41,7 +39,7 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
 
     private customizerMainGuiIH() {}
 
-    public static void openInventory(Player p, dItem ditem, String shopName) {
+    public static void open(Player p, dItem ditem, String shopName) {
         if (instance == null) {
             instance = new customizerMainGuiIH();
             Bukkit.getPluginManager().registerEvents(instance, main);
@@ -51,7 +49,7 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
         p.openInventory(instance.createInventory());
     }
 
-    public static void openInventory(Player p, dItem ditem, dShop shop) {
+    public static void open(Player p, dItem ditem, dShop shop) {
         if (instance == null) {
             instance = new customizerMainGuiIH();
             Bukkit.getPluginManager().registerEvents(instance, main);
@@ -109,13 +107,13 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
 
         ItemStack setAmount = new ItemBuilder(XMaterial.STONE_BUTTON)  //Change amount
                 .setName(conf_msg.CUSTOMIZE_AMOUNT)
-                .setLore(ditem.getStock() != null ?
+                .setLore(ditem.getStock().isPresent() ?
                         Msg.msgList(conf_msg.CUSTOMIZE_AMOUNT_LORE).add("\\{amount}",
                                 "" + ditem.getStock()).build() :
                         conf_msg.CUSTOMIZE_AMOUNT_ENABLE_LORE);
 
         ItemStack addRemoveCommands = XMaterial.COMMAND_BLOCK.parseItem();    //Change command item
-        if (ditem.getCommands() == null) {
+        if (!ditem.getCommands().isPresent()) {
             addRemoveCommands = new ItemBuilder(addRemoveCommands)
                     .setName(conf_msg.CUSTOMIZE_ENABLE_COMMANDS)
                     .setLore(Msg.msgList(conf_msg.CUSTOMIZE_ENABLE_COMMANDS_LORE)
@@ -134,7 +132,7 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
                 .setName(conf_msg.CUSTOMIZE_PERMS)
                 .applyTexture("4e68435e9dd05dbe2e7bb45c5d3c95d0c9d8cb4c062d30e9b4aed1ccfa65a49b");
 
-        if (ditem.getPerms() == null) {
+        if (!ditem.getPerms().isPresent()) {
             perms = new ItemBuilder(perms).addLore(conf_msg.CUSTOMIZE_ENABLE_PERMS_LORE);
         }
         else {
@@ -149,7 +147,7 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
         ItemStack setOfItems = new ItemBuilder(XMaterial.CHEST_MINECART)    //set of items
                 .setName(conf_msg.CUSTOMIZE_SET);
 
-        if (ditem.getSetItems() != null) {
+        if (ditem.getSetItems().isPresent()) {
             setOfItems = new ItemBuilder(setOfItems).addLore(
                     Msg.msgList(conf_msg.CUSTOMIZE_CHANGE_SET_LORE).add("\\{amount}",
                     "" + ditem.getSetItems()).build());
@@ -205,12 +203,12 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
         inv.setItem(19, changeMaterial);
         inv.setItem(27, changeLore);
         inv.setItem(28, editEnchantments);
-        inv.setItem(21, ditem.getSetItems() == null ? setAmount: barrier);
+        inv.setItem(21, !ditem.getSetItems().isPresent() ? setAmount: barrier);
         inv.setItem(22, addRemoveCommands);
         inv.setItem(23, ditem.getItem().getType().getMaxDurability() != 0 ? durability:null);
         inv.setItem(30, perms);
-        inv.setItem(31, ditem.getStock() == null ? setOfItems : barrier);
-        inv.setItem(32, ditem.getBundle() != null ? bundle:null);
+        inv.setItem(31, !ditem.getStock().isPresent() ? setOfItems : barrier);
+        inv.setItem(32, ditem.getBundle().isPresent() ? bundle:null);
         inv.setItem(25, hideEnchants);
         inv.setItem(26, hideAtibutes);
         inv.setItem(35, utils.isPotion(ditem.getItem()) ? hideEffects:null);
@@ -221,7 +219,7 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
     }
 
     private void refresh (Player p) {
-        openInventory(p, ditem, shop.getName());
+        open(p, ditem, shop.getName());
     }
 
     @Override
@@ -316,7 +314,7 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
                 changeEnchantments.openInventory(p, ditem, ditem.getEnchantments(), shop);
         }
 
-        else if (e.getSlot() == 21 && ditem.getStock() != null) { // Boton de cambiar amount
+        else if (e.getSlot() == 21 && ditem.getStock().isPresent()) { // Boton de cambiar amount
             if(e.isLeftClick()) {
                 new AnvilGUI.Builder()
                         .onClose(player -> Task.syncDelayed(main, () ->
@@ -344,7 +342,7 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
         }
 
         else if (e.getSlot() == 21 && ditem.getStock() == null && e.isLeftClick()) { // Boton de cambiar amount
-            if (ditem.getSetItems() != null) {
+            if (ditem.getSetItems().isPresent()) {
                 p.sendMessage(conf_msg.PREFIX + FormatUtils.color("&7You can't enable this when " +
                         "the set feature is enable"));
                 return;
