@@ -6,7 +6,10 @@ import io.github.divios.core_lib.misc.timeStampUtils;
 import io.github.divios.dailyrandomshop.DRShop;
 import io.github.divios.dailyrandomshop.events.deletedShopEvent;
 import io.github.divios.dailyrandomshop.events.reStockShopEvent;
+import io.github.divios.dailyrandomshop.events.updateItemEvent;
+import io.github.divios.dailyrandomshop.utils.utils;
 import io.github.divios.lib.storage.dataManager;
+import org.bukkit.Bukkit;
 import org.bukkit.event.EventPriority;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -31,6 +34,7 @@ public class dShop {
     private Task asyncCheck;
     private Task asyncUpdate;
     private EventListener reStock;
+    private EventListener updateItem;
 
     public dShop(String name, dShopT type) {
         this.name = name;
@@ -63,14 +67,15 @@ public class dShop {
             }
         }, 20L, 20L);
 
-              // get hash based on content an not reference
+        // get hash based on content an not reference
 
         asyncUpdate = Task.asyncRepeating(plugin, () -> {       // auto-update gui if any changes where made
 
             if (gui.getInventory().getContents().length == 0) return;
 
-            int aux = Arrays.stream(gui.getInventory().getContents()).map(ItemStack::hashCode)
-                    .reduce((acum, hash) -> acum += hash).orElse(0);
+            int aux = Arrays.stream(gui.getInventory().getContents())
+                    .mapToInt(value -> utils.isEmpty(value) ? 0:value.hashCode())
+                    .sum();
 
             if (aux != gui_hash[0]) {
                 dManager.asyncUpdateGui(this.name, gui);
@@ -86,6 +91,7 @@ public class dShop {
                         asyncCheck.cancel();
                         asyncUpdate.cancel();
                         reStock.unregister();
+                        updateItem.unregister();
                         own.unregister();
                     }
                 });
@@ -99,10 +105,18 @@ public class dShop {
                     timestamp = new Timestamp(System.currentTimeMillis());
                     dManager.updateTimeStamp(this.name, this.timestamp);
                 });
+
+        updateItem = new EventListener<>(plugin, updateItemEvent.class, EventPriority.HIGHEST,
+                e -> {
+                    if (!e.getShop().getName().equals(this.getName())) return;
+
+                    this.gui.updateItem(e.getItem(), e.getType());
+                });
     }
 
     /**
      * Gets the name of the shop
+     *
      * @return
      */
     public synchronized String getName() {
@@ -111,12 +125,16 @@ public class dShop {
 
     /**
      * Sets the name of the shop
+     *
      * @param name
      */
-    public synchronized void setName(String name) { this.name = name; }
+    public synchronized void setName(String name) {
+        this.name = name;
+    }
 
     /**
      * Gets the type of the shop
+     *
      * @return type of the shop (buy,sell)
      */
     public synchronized dShopT getType() {
@@ -125,6 +143,7 @@ public class dShop {
 
     /**
      * Gets a copy the items in the shop
+     *
      * @return returns a List of dItems. Note that this list is a copy of the original,
      * any change made to it won't affect the original one
      */
@@ -136,6 +155,7 @@ public class dShop {
 
     /**
      * Gets the item by uuid
+     *
      * @param uid the UUID to search
      * @return null if it does not exist
      */
@@ -148,6 +168,7 @@ public class dShop {
 
     /**
      * Checks if the shop has a particular item
+     *
      * @param uid the UUID to check
      * @return true if exits, false if not
      */
@@ -157,6 +178,7 @@ public class dShop {
 
     /**
      * Updates the item of the shop
+     *
      * @param uid
      * @param newItem
      */
@@ -164,6 +186,9 @@ public class dShop {
         items.iterator().forEachRemaining(dItem -> {
             if (dItem.getUid().equals(uid)) {
                 dItem.setItem(newItem.getItem());
+                Bukkit.getPluginManager().callEvent(        // Event to update item
+                        new updateItemEvent(newItem, updateItemEvent.updatetype.UPDATE_ITEM,
+                                this));
                 dManager.updateItem(getName(), dItem);
             }
         });
@@ -178,6 +203,7 @@ public class dShop {
 
     /**
      * Adds an item to this shop
+     *
      * @param item item to be added
      */
     public synchronized void addItem(@NotNull dItem item) {
@@ -187,14 +213,26 @@ public class dShop {
 
     /**
      * Removes an item from the shop
+     *
      * @param uid UUID of the item to be removed
      * @return true if the item was removed. False if not
      */
     public synchronized boolean removeItem(UUID uid) {
-        boolean result = items.removeIf(dItem -> dItem.getUid().equals(uid));
-        if (result)
-            dManager.deleteItem(this.name, uid);
-        return result;
+
+        boolean[] result = {false};
+        items.stream()
+                .filter(dItem -> dItem.getUid().equals(uid))
+                .findFirst()
+                .ifPresent(dItem -> {
+                    dManager.deleteItem(this.name, uid);
+                    items.remove(dItem);
+                    Bukkit.getPluginManager().callEvent(
+                            new updateItemEvent(dItem,
+                                    updateItemEvent.updatetype.DELETE_ITEM, this));
+                    result[0] = true;
+                });
+
+        return result[0];
     }
 
     /**
@@ -209,17 +247,24 @@ public class dShop {
 
     /**
      * Return the dGui of this shop
+     *
      * @return
      */
     public synchronized dGui getGui() {
         return gui;
     }
 
-    public synchronized Timestamp getTimestamp() { return this.timestamp; }
+    public synchronized Timestamp getTimestamp() {
+        return this.timestamp;
+    }
 
-    public synchronized int getTimer() { return timer; }
+    public synchronized int getTimer() {
+        return timer;
+    }
 
-    public synchronized void setTimer(int timer) { this.timer = timer; }
+    public synchronized void setTimer(int timer) {
+        this.timer = timer;
+    }
 
     @Override
     public boolean equals(Object o) {
