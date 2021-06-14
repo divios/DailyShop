@@ -47,7 +47,7 @@ public class confirmGui implements Listener, InventoryHolder {
         p.openInventory(getInventory(item));
     }
 
-    public static void openInventory(
+    public static void open(
             Player p,
             ItemStack item,
             BiConsumer<Player, ItemStack> c,
