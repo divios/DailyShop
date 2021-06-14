@@ -5,11 +5,13 @@ import io.github.divios.core_lib.misc.Msg;
 import io.github.divios.dailyrandomshop.DRShop;
 import io.github.divios.dailyrandomshop.conf_msg;
 import io.github.divios.dailyrandomshop.economies.*;
+import io.github.divios.dailyrandomshop.events.updateItemEvent;
 import io.github.divios.dailyrandomshop.guis.confirmGui;
 import io.github.divios.dailyrandomshop.guis.confirmIH;
 import io.github.divios.dailyrandomshop.hooks.hooksManager;
 import io.github.divios.dailyrandomshop.utils.utils;
 import io.github.divios.lib.itemHolder.dItem;
+import io.github.divios.lib.itemHolder.dPrice;
 import io.github.divios.lib.itemHolder.dShop;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -103,8 +105,9 @@ public class transaction {
         if (err[0]) throw new transactionExc(transactionExc.err.noPerms);
 
         item.getStock().ifPresent(integer -> {
-            //s.addRunnable(() -> buyGui.getInstance()      //TODO
-            //     .processNextAmount(dailyItem.getUuid(item)));
+            s.addRunnable(() -> Bukkit.getPluginManager().callEvent(
+                    new updateItemEvent(item, updateItemEvent.updatetype.NEXT_AMOUNT, shop)));
+
             item.setAmount(1);
         });
 
@@ -123,7 +126,8 @@ public class transaction {
                             );
 
                     s.setPrice(shop.getType().equals(dShop.dShopT.sell) ?
-                            item.getSellPrice() : item.getBuyPrice()); //todo
+                            item.getSellPrice().orElse(dPrice.empty()).getPrice():
+                            item.getBuyPrice().orElse(dPrice.empty()).getPrice()); //todo
                 }));
 
         if (err1[0] != null) throw err1[0];
@@ -137,8 +141,9 @@ public class transaction {
 
         /// A PARTIR DE AQUI YA SOLO COMPROBAR SLOTS Y PRICE ///
 
-        s.setPrice(s.getPrice() + (item.getSetItems().isPresent() ?
-                item.getSetItems().get() : item.getSetItems().get() * item.getAmount()));
+        s.setPrice(s.getPrice() + (item.getSetItems().isPresent() ?   // Todo: distinct between buy and sell price
+                item.getBuyPrice().orElse(dPrice.empty()).getPrice() :
+                item.getBuyPrice().orElse(dPrice.empty()).getPrice() * item.getAmount()));
 
 
         s.setSlots(item.getMaxStackSize() == 1 ?
