@@ -8,9 +8,11 @@ import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.misc.Task;
 import io.github.divios.dailyrandomshop.DRShop;
 import io.github.divios.dailyrandomshop.conf_msg;
+import io.github.divios.dailyrandomshop.events.updateItemEvent;
 import io.github.divios.lib.itemHolder.dItem;
 import io.github.divios.lib.itemHolder.dShop;
 import net.wesjd.anvilgui.AnvilGUI;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -56,10 +58,14 @@ public class changePrice {
                                 return AnvilGUI.Response.text(conf_msg.MSG_NOT_INTEGER);
                             }
 
-                            //item.setPDouble.parseDouble(text))).getItem();
+                            if (shop.getType() == dShop.dShopT.buy)
+                                item.setBuyPrice(Double.parseDouble(text));
+                            else
+                                item.setSellPrice(Double.parseDouble(text));
 
-                            //buyGui.getInstance().updateItem(dailyItem.getUuid(this.item),
-                            //      buyGui.updateAction.update);
+                            Bukkit.getPluginManager().callEvent(
+                                    new updateItemEvent(item,
+                                            updateItemEvent.updatetype.UPDATE_ITEM, shop));
 
                             accept.run();
                             return AnvilGUI.Response.close();
@@ -77,6 +83,7 @@ public class changePrice {
                     AtomicDouble aux = new AtomicDouble();
 
                     new AnvilGUI.Builder()
+                            .onClose(p -> Task.syncDelayed(plugin, back, 1L))
                             .onComplete((player, text) -> {
                                 try {
                                     Double.parseDouble(text);
@@ -96,13 +103,14 @@ public class changePrice {
                                             if (aux.get() >= Double.parseDouble(text1))
                                                 return AnvilGUI.Response.text("Max price can't be lower than min price");
 
-                                            //new dailyItem(this.item)
-                                            //      .addNbt(dailyItem.dMeta.rds_price,
-                                            //          new dailyItem.dailyItemPrice(aux.get(),
-                                            //                    Double.parseDouble(text1))).getItem();
+                                            if (shop.getType() == dShop.dShopT.buy)
+                                                item.setBuyPrice(Double.parseDouble(text), Double.parseDouble(text1));
+                                            else
+                                                item.setSellPrice(Double.parseDouble(text), Double.parseDouble(text1));
 
-                                            //buyGui.getInstance().updateItem(dailyItem.getUuid(this.item),
-                                            //      buyGui.updateAction.update);
+                                            Bukkit.getPluginManager().callEvent(
+                                                    new updateItemEvent(item,
+                                                            updateItemEvent.updatetype.UPDATE_ITEM, shop));
 
                                             accept.run();
                                             return AnvilGUI.Response.close();
@@ -114,9 +122,10 @@ public class changePrice {
                                         .open(p), 1L);
                                 return AnvilGUI.Response.close();
                             })
+                            .onClose(p -> Task.syncDelayed(plugin, back, 1L))
                             .text("input min price")
                             .itemLeft(new ItemStack(XMaterial.EMERALD.parseMaterial()))
-                            .title("Input max price")
+                            .title("Input min price")
                             .plugin(plugin)
                             .open(p);
 
