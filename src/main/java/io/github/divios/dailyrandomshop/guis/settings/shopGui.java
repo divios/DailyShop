@@ -44,7 +44,7 @@ public class shopGui {
     }
 
 
-    private static List<ItemStack> contents (dShop shop){
+    private static List<ItemStack> contents (dShop shop) {
         List<ItemStack> items = new ArrayList<>();
         shop.getItems().forEach(dItem -> items.add(dItem.getItem()));
 
@@ -67,7 +67,7 @@ public class shopGui {
         UUID uid = dItem.getUid(e.getCurrentItem());
 
         if (e.isLeftClick())
-            customizerMainGuiIH.openInventory((Player) e.getWhoClicked(),
+            customizerMainGuiIH.open((Player) e.getWhoClicked(),
                     shop.getItem(uid).get(), shop);
 
         else if (e.isRightClick())
