@@ -256,9 +256,8 @@ public class dItem implements Serializable, Cloneable {
      *
      * @return the price of the item. Can be random price between the values asigned
      */
-    public double getBuyPrice() {
-        return item.getObject("rds_buyPrice", dPrice.class)
-                .generateRandomPrice();
+    public Optional<dPrice> getBuyPrice() {
+        return Optional.ofNullable(item.getObject("rds_buyPrice", dPrice.class));
     }
 
     /**
@@ -281,12 +280,29 @@ public class dItem implements Serializable, Cloneable {
     }
 
     /**
+     * Sets the buy price with a dPrice object
+     * @param price
+     */
+    public void setBuyPrice(dPrice price) {
+        item.setObject("rds_buyPrice", price);
+    }
+
+    /**
+     * Generates a new price
+     */
+    public void generateNewBuyPrice() {
+        getBuyPrice().ifPresent(dPrice -> {
+            dPrice.generateNewPrice();
+            setBuyPrice(dPrice);
+        });
+    }
+
+    /**
      *
      * @return the price of the item. Can be random price between the values asigned
      */
-    public double getSellPrice() {
-        return item.getObject("rds_sellPrice", dPrice.class)
-                .generateRandomPrice();
+    public Optional<dPrice> getSellPrice() {
+        return Optional.ofNullable(item.getObject("rds_sellPrice", dPrice.class));
     }
 
     /**
@@ -306,6 +322,17 @@ public class dItem implements Serializable, Cloneable {
      */
     public void setSellPrice(double minPrice, double maxPrice) {
         item.setObject("rds_sellPrice", new dPrice(minPrice, maxPrice));
+    }
+
+    public void setSellPrice(dPrice price) {
+        item.setObject("rds_sellPrice", price);
+    }
+
+    public void generateNewSellPrice() {
+        getSellPrice().ifPresent(dPrice -> {
+            dPrice.generateNewPrice();
+            setSellPrice(dPrice);
+        });
     }
 
     /**

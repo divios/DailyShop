@@ -165,6 +165,8 @@ public class dGui {
      */
     public void addButton(dItem item, int slot) {
         dItem cloned = item.clone();
+        cloned.generateNewBuyPrice();   // Generate new prices
+        cloned.generateNewSellPrice();
         cloned.setSlot(slot);
 
         if (buttons.contains(cloned))
