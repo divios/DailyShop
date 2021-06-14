@@ -61,7 +61,7 @@ public class changeEnchantments {
     }
 
     private void backAction(Player p) {
-        customizerMainGuiIH.openInventory(p, ditem, shop);
+        customizerMainGuiIH.open(p, ditem, shop);
     }
 
     private dynamicGui.Response contentAction(InventoryClickEvent e) {
@@ -70,7 +70,7 @@ public class changeEnchantments {
 
         new AnvilGUI.Builder()
                 .onClose(player -> Task.syncDelayed(plugin, () ->
-                        customizerMainGuiIH.openInventory(p, ditem, shop), 1L))
+                        customizerMainGuiIH.open(p, ditem, shop), 1L))
                 .onComplete((player, text) -> {
                     try {
                         Integer.parseInt(text);
@@ -116,7 +116,7 @@ public class changeEnchantments {
     private dynamicGui.Response contentActionX(InventoryClickEvent e) {
         String[] entry = FormatUtils.color(e.getCurrentItem().getItemMeta().getDisplayName()).split(":");
         ditem.removeEnchantments(Enchantment.getByName(entry[0]));
-        customizerMainGuiIH.openInventory(p, ditem, instance.shop);
+        customizerMainGuiIH.open(p, ditem, instance.shop);
         return dynamicGui.Response.nu();
     }
 
