@@ -1,9 +1,6 @@
 package io.github.divios.dailyrandomshop.events;
 
-import io.github.divios.dailyrandomshop.DRShop;
 import io.github.divios.lib.itemHolder.dShop;
-import org.bukkit.Bukkit;
-import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;

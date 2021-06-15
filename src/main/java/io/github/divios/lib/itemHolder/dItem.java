@@ -20,8 +20,11 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.ObjectStreamException;
+import java.io.Serializable;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class dItem implements Serializable, Cloneable {
 
@@ -39,6 +42,7 @@ public class dItem implements Serializable, Cloneable {
     public dItem(@NotNull ItemStack item, int slot) {
         this.item = new NBTItem(item);
         if (getUid() == null) {
+            setRawItem(item);
             setUid(UUID.randomUUID());
             setSlot(slot);
             setRarity(new dRarity());       //Defaults to Common
@@ -59,15 +63,17 @@ public class dItem implements Serializable, Cloneable {
         return item.getItem();
     }
 
+    private void setRawItem(@NotNull ItemStack rawItem) {
+        item.setString("rds_rawItem", ItemUtils.serialize(rawItem));
+    }
+
     /**
      * Gets the raw item, this is, the item's held
      * by this instance without all the daily metadata
      * @return
      */
     public ItemStack getRawItem() {
-        dItem cloned = this.clone();
-        //TODO remove all metada of cloned
-        return cloned.getItem();
+        return ItemUtils.deserialize(item.getString("rds_rawItem"));
     }
 
     /**
@@ -107,7 +113,8 @@ public class dItem implements Serializable, Cloneable {
      * @param name
      */
     public void setDisplayName(@NotNull String name) {
-        setItem(new ItemBuilder(getItem()).setName(name));
+        setItem(ItemUtils.setName(getItem(), name));
+        setRawItem(ItemUtils.setName(getRawItem(), name));
     }
 
     /**
@@ -115,7 +122,9 @@ public class dItem implements Serializable, Cloneable {
      * @return
      */
     public String getDisplayName() {
-        return getItem().getItemMeta().getDisplayName();
+        return ItemUtils.getName(getItem()).isEmpty() ?
+                getItem().getType().name():
+                ItemUtils.getName(getItem());
     }
 
     /**
@@ -123,7 +132,8 @@ public class dItem implements Serializable, Cloneable {
      * @param lore
      */
     public void setLore(@NotNull List<String> lore) {
-        setItem(new ItemBuilder(getItem()).setLore(lore));
+        setItem(ItemUtils.setLore(getItem(), lore));
+        setRawItem(ItemUtils.setLore(getRawItem(), lore));
     }
 
     /**
@@ -145,9 +155,8 @@ public class dItem implements Serializable, Cloneable {
      * @param m
      */
     public void setMaterial(@NotNull Material m) {
-        ItemStack item = getItem();
-        item.setType(m);
-        setItem(item);
+        setItem(ItemUtils.setMaterial(getItem(), m));
+        setRawItem(ItemUtils.setMaterial(getRawItem(), m));
     }
 
     /**
@@ -163,9 +172,8 @@ public class dItem implements Serializable, Cloneable {
      * @param durability
      */
     public void setDurability(short durability) {
-        ItemStack item = getItem();
-        item.setDurability((short) (item.getType().getMaxDurability() - durability));
-        setItem(item);
+        setItem(ItemUtils.setDurability(getItem(), (short) (getItem().getType().getMaxDurability() - durability)));
+        setRawItem(ItemUtils.setDurability(getRawItem(), (short) (getRawItem().getType().getMaxDurability() - durability)));
     }
 
     /**
@@ -181,9 +189,8 @@ public class dItem implements Serializable, Cloneable {
      * @param ench
      */
     public void addEnchantments(@NotNull Enchantment ench, int lvl) {
-        ItemStack item = getItem();
-        item.addUnsafeEnchantment(ench, lvl);
-        setItem(item);
+        setItem(ItemUtils.addEnchant(getItem(), ench, lvl));
+        setRawItem(ItemUtils.addEnchant(getRawItem(), ench, lvl));
     }
 
     /**
@@ -191,9 +198,9 @@ public class dItem implements Serializable, Cloneable {
      * @param ench
      */
     public void removeEnchantments(@NotNull Enchantment ench) {
-        ItemStack item = getItem();
-        item.removeEnchantment(ench);
-        setItem(item);
+        setItem(ItemUtils.removeEnchant(getItem(), ench));
+        setRawItem(ItemUtils.removeEnchant(getRawItem(), ench));
+
     }
 
     /**
@@ -242,14 +249,14 @@ public class dItem implements Serializable, Cloneable {
      * @param flag
      */
     public void toggleFlag(ItemFlag flag) {
-        ItemStack aux = getItem();
 
-        if (ItemUtils.hasItemFlags(aux, flag))
-            aux = ItemUtils.removeItemFlags(aux, flag);
-        else
-            aux = ItemUtils.addItemFlags(aux, flag);
-
-        setItem(aux);
+        if (ItemUtils.hasItemFlags(getItem(), flag)) {
+            setItem(ItemUtils.removeItemFlags(getItem(), flag));
+            setRawItem(ItemUtils.removeItemFlags(getRawItem(), flag));
+        } else {
+            setItem(ItemUtils.addItemFlags(getItem(), flag));
+            setRawItem(ItemUtils.addItemFlags(getRawItem(), flag));
+        }
     }
 
     /**
@@ -510,7 +517,11 @@ public class dItem implements Serializable, Cloneable {
      * @return null if disabled.
      */
     public Optional<List<UUID>> getBundle() {
-        return Optional.ofNullable(item.getObject("rds_bundle", List.class));
+        List<String> aux = item.getObject("rds_bundle", List.class);
+        if (aux != null)
+            return Optional.ofNullable(aux.stream().map(UUID::fromString).collect(Collectors.toList()));
+        else
+            return Optional.empty();
     }
 
     /**
@@ -519,7 +530,8 @@ public class dItem implements Serializable, Cloneable {
      * @param bundle null if want to disabled it
      */
     public void setBundle(@Nullable List<UUID> bundle) {
-        item.setObject("rds_bundle", bundle);
+        item.setObject("rds_bundle", bundle.stream()        // Cast to string due to bug
+                .map(UUID::toString).collect(Collectors.toList()));
     }
 
     /**

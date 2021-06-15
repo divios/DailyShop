@@ -16,6 +16,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 
 public class changePrice {
 
@@ -80,6 +82,7 @@ public class changePrice {
                         .setName("&c&lSet interval").addLore("&7The price of the item",
                         "&7will take a random value between", "&7the given interval"),
                 e -> {
+                    AtomicBoolean closeFlag = new AtomicBoolean(false);
                     AtomicDouble aux = new AtomicDouble();
 
                     new AnvilGUI.Builder()
@@ -90,7 +93,7 @@ public class changePrice {
                                 } catch (NumberFormatException err) {
                                     return AnvilGUI.Response.text(conf_msg.MSG_NOT_INTEGER);
                                 }
-
+                                closeFlag.set(true);
                                 aux.set(Double.parseDouble(text));
                                 Task.syncDelayed(plugin, () -> new AnvilGUI.Builder()
                                         .onComplete((player1, text1) -> {
@@ -122,7 +125,10 @@ public class changePrice {
                                         .open(p), 1L);
                                 return AnvilGUI.Response.close();
                             })
-                            .onClose(p -> Task.syncDelayed(plugin, back, 1L))
+                            .onClose(p -> Task.syncDelayed(plugin, () -> {
+                                if (closeFlag.get()) return;
+                                back.run();
+                            }, 1L))
                             .text("input min price")
                             .itemLeft(new ItemStack(XMaterial.EMERALD.parseMaterial()))
                             .title("Input min price")

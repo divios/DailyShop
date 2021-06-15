@@ -9,7 +9,6 @@ import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.core_lib.misc.Task;
 import io.github.divios.dailyrandomshop.DRShop;
 import io.github.divios.lib.itemHolder.dAction;
-import io.github.divios.lib.itemHolder.dGui;
 import io.github.divios.lib.managers.shopsManager;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.entity.Player;

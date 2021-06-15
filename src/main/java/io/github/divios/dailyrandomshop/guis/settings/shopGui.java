@@ -6,7 +6,6 @@ import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.dailyrandomshop.DRShop;
 import io.github.divios.dailyrandomshop.conf_msg;
-import io.github.divios.dailyrandomshop.economies.economy;
 import io.github.divios.dailyrandomshop.guis.confirmIH;
 import io.github.divios.dailyrandomshop.guis.customizerguis.customizerMainGuiIH;
 import io.github.divios.dailyrandomshop.lorestategy.loreStrategy;
@@ -92,7 +91,7 @@ public class shopGui {
 
     private static dynamicGui.Response nonContentAction(int slot, Player p, dShop shop) {
         if (slot == 52) {
-            addDailyItemGuiIH.open(p, itemStack -> {
+            addDailyGuiIH.open(p, shop, itemStack -> {
                 shop.addItem(new dItem(itemStack));
                 open(p, shop.getName());
             });

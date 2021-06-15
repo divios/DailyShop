@@ -3,14 +3,11 @@ package io.github.divios.dailyrandomshop.commands;
 import io.github.divios.core_lib.commands.abstractCommand;
 import io.github.divios.core_lib.commands.cmdTypes;
 import io.github.divios.core_lib.misc.FormatUtils;
-import io.github.divios.dailyrandomshop.DRShop;
-import io.github.divios.dailyrandomshop.guis.customizerguis.customizerMainGuiIH;
-import io.github.divios.dailyrandomshop.guis.settings.addDailyItemGuiIH;
+import io.github.divios.dailyrandomshop.guis.settings.addDailyGuiIH;
 import io.github.divios.dailyrandomshop.guis.settings.shopGui;
 import io.github.divios.lib.itemHolder.dItem;
 import io.github.divios.lib.itemHolder.dShop;
 import io.github.divios.lib.managers.shopsManager;
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -19,6 +16,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class add extends abstractCommand {
+
+    private static final shopsManager sManager = shopsManager.getInstance();
 
     public add() {
         super(cmdTypes.BOTH);
@@ -57,13 +56,15 @@ public class add extends abstractCommand {
 
     @Override
     public void run(CommandSender sender, List<String> args) {
-        addDailyItemGuiIH.open((Player) sender,
-                itemStack -> {
-                            dShop shop = shopsManager.getInstance()
-                                    .getShop(args.get(0)).get();
+
+
+        addDailyGuiIH.open((Player) sender, sManager.getShop(args.get(0)).get(),
+                itemStack ->
+                        sManager.getShop(args.get(0))
+                        .ifPresent(shop -> {
                             shop.addItem(new dItem(itemStack));
                             shopGui.open((Player) sender, shop);
-                        }
+                        })
                 );
     }
 }
