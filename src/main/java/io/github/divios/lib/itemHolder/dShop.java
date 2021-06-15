@@ -11,7 +11,6 @@ import io.github.divios.dailyrandomshop.utils.utils;
 import io.github.divios.lib.storage.dataManager;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventPriority;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.Timestamp;
@@ -148,9 +147,7 @@ public class dShop {
      * any change made to it won't affect the original one
      */
     public synchronized @NotNull Set<dItem> getItems() {
-        Set<dItem> copy = new LinkedHashSet<>();
-        items.forEach(dItem -> copy.add(dItem.clone()));
-        return copy;
+        return Collections.unmodifiableSet(items);
     }
 
     /**
@@ -160,10 +157,9 @@ public class dShop {
      * @return null if it does not exist
      */
     public synchronized Optional<dItem> getItem(UUID uid) {
-        for (dItem item : items)
-            if (item.getUid().equals(uid))
-                return Optional.of(item);
-        return Optional.empty();
+        return items.stream()
+                .filter(dItem -> dItem.getUid().equals(uid))
+                .findFirst();
     }
 
     /**
@@ -173,7 +169,7 @@ public class dShop {
      * @return true if exits, false if not
      */
     public synchronized boolean hasItem(UUID uid) {
-        return getItem(uid) != null;
+        return getItem(uid).isPresent();
     }
 
     /**

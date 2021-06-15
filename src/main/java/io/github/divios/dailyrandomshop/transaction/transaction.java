@@ -1,14 +1,14 @@
 package io.github.divios.dailyrandomshop.transaction;
 
+import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.core_lib.misc.Msg;
 import io.github.divios.dailyrandomshop.DRShop;
 import io.github.divios.dailyrandomshop.conf_msg;
-import io.github.divios.dailyrandomshop.economies.*;
+import io.github.divios.dailyrandomshop.economies.vault;
 import io.github.divios.dailyrandomshop.events.updateItemEvent;
 import io.github.divios.dailyrandomshop.guis.confirmGui;
 import io.github.divios.dailyrandomshop.guis.confirmIH;
-import io.github.divios.dailyrandomshop.hooks.hooksManager;
 import io.github.divios.dailyrandomshop.utils.utils;
 import io.github.divios.lib.itemHolder.dItem;
 import io.github.divios.lib.itemHolder.dPrice;
@@ -17,8 +17,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.AbstractMap;
-import java.util.List;
 import java.util.UUID;
 import java.util.stream.IntStream;
 
@@ -27,56 +25,56 @@ public class transaction {
     private final static DRShop main = DRShop.getInstance();
 
     public static void init(Player p, dItem item, dShop shop) {
-        try {
+        if (item.getConfirm_gui()) {
 
-            if (item.getConfirm_gui()) {
+            if (!item.getStock().isPresent() &&
+                    !item.getSetItems().isPresent()) {
 
-                if (!item.getStock().isPresent() &&
-                        !item.getSetItems().isPresent()) {
+                confirmGui.open(p, item.getItem(),
+                        (p1, item1) -> {
+                            transaction.initTransaction(p, new dItem(item1), shop);
+                        }, player -> shop.getGui().open(p));
 
-                    confirmGui.open(p, item.getItem(),
-                            (p1, item1) -> {
-                                p.closeInventory();
-                                transaction.init(p, new dItem(item1), shop);
-                            }, player -> shop.getGui().open(p));
-
-                } else {
-                    new confirmIH(p, (p1, aBool) -> {
-                        p.closeInventory();
-                        if (aBool)
-                            transaction.init(p1, item, shop);
-                        else
-                            shop.getGui().open(p1);
-                    }, item.getItem(), "", "", "");
-                }
+            } else {
+                new confirmIH(p, (p1, aBool) -> {
+                    if (aBool)
+                        transaction.initTransaction(p1, item, shop);
+                    else
+                        shop.getGui().open(p1);
+                }, item.getItem(), "", "", "");
             }
+        } else initTransaction(p, item, shop);
 
-            else initTransaction(p, item, shop);
-
-        } catch (transactionExc transactionExc) {
-            transactionExc.sendErrorMsg(p);
-        }
     }
 
-    private static void initTransaction(Player p, dItem item, dShop shop) throws transactionExc {
+    private static void initTransaction(Player p, dItem item, dShop shop) {
 
-        summary s = printSummary(p, item, shop);
+        summary s = null;
+        try {
+            s = printSummary(p, item, shop);
 
-        if (!s.getEcon().hasMoney(p, s.getPrice()))
-            throw new transactionExc(transactionExc.err.noMoney);
+            if (!s.getEcon().hasMoney(p, s.getPrice()))
+                throw new transactionExc(transactionExc.err.noMoney);
 
-        if (utils.inventoryFull(p.getInventory()) < s.getSlots())
-            throw new transactionExc(transactionExc.err.noSpace);
+            if (utils.inventoryFull(p.getInventory()) < s.getSlots())
+                throw new transactionExc(transactionExc.err.noSpace);
+
+        } catch (transactionExc e) {
+            e.sendErrorMsg(p);
+            return;
+        }
 
         s.getEcon().witchDrawMoney(p, s.getPrice());
 
         s.getRunnables().forEach(Runnable::run);
 
-        p.sendMessage(conf_msg.PREFIX + conf_msg.MSG_BUY_ITEM
-                .replaceAll("\\{amount}", "" + item.getAmount())
-                .replaceAll("\\{price}", "" + s.getPrice())
-                .replaceAll("\\{item}", item.getDisplayName() + FormatUtils.color("&7"))
-                .replaceAll("\\{currency}", item.getEconomy().getName()));
+        p.sendMessage(Msg.singletonMsg(conf_msg.PREFIX + conf_msg.MSG_BUY_ITEM)
+                .add("\\{amount}", "" + item.getAmount())
+                .add("\\{price}", "" + s.getPrice())
+                .add("\\{item}", item.getDisplayName() + FormatUtils.color("&7"))
+                .add("\\{currency}", item.getEconomy().getName()).build());
+
+        shop.getGui().open(p);
 
     }
 
@@ -126,7 +124,7 @@ public class transaction {
                             );
 
                     s.setPrice(shop.getType().equals(dShop.dShopT.sell) ?
-                            item.getSellPrice().orElse(dPrice.empty()).getPrice():
+                            item.getSellPrice().orElse(dPrice.empty()).getPrice() :
                             item.getBuyPrice().orElse(dPrice.empty()).getPrice()); //todo
                 }));
 

@@ -3,10 +3,10 @@ package io.github.divios.dailyrandomshop.lorestategy;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.Msg;
+import io.github.divios.dailyrandomshop.conf_msg;
 import io.github.divios.lib.itemHolder.dItem;
 import io.github.divios.lib.itemHolder.dShop;
 import org.bukkit.inventory.ItemStack;
-import io.github.divios.dailyrandomshop.conf_msg;
 
 public class shopItemsLore implements loreStrategy{
     private final dShop.dShopT type;

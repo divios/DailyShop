@@ -2,16 +2,16 @@ package io.github.divios.lib.itemHolder;
 
 import io.github.divios.core_lib.inventory.inventoryUtils;
 import io.github.divios.core_lib.misc.EventListener;
-import io.github.divios.core_lib.misc.Msg;
+import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.core_lib.misc.Pair;
 import io.github.divios.core_lib.misc.WeightedRandom;
 import io.github.divios.dailyrandomshop.DRShop;
+import io.github.divios.dailyrandomshop.conf_msg;
 import io.github.divios.dailyrandomshop.events.updateItemEvent;
 import io.github.divios.dailyrandomshop.lorestategy.loreStrategy;
 import io.github.divios.dailyrandomshop.lorestategy.shopItemsLore;
 import io.github.divios.dailyrandomshop.transaction.transaction;
 import io.github.divios.dailyrandomshop.utils.utils;
-import io.github.divios.lib.managers.shopsManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
@@ -28,8 +28,9 @@ import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.*;
-import java.util.function.BiConsumer;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -230,40 +231,31 @@ public class dGui {
                 },
                 value -> value.getRarity().getWeight()
         );
-
+        RRM.removeOnRoll();
         clearDailyItems();
 
-        openSlots.forEach(i -> {
+        int addedButtons = 0;
+        for (int i = 0; i < openSlots.size(); i++) {
             inv.clear(i);
 
-            if (buttons.stream().filter(dItem -> !dItem.isAIR())
-                    .count() >= shop.getItems().size()) return;
+            if (addedButtons >= shop.getItems().size()) break;
 
-            ItemStack toAdd;
+            dItem rolled = RRM.roll();
+            rolled.setSlot(i);
+            buttons.add(rolled);
+            inv.setItem(i, rolled.getItem());
+            addedButtons++;
+        }
 
-            while(true) {
-                dItem aux = RRM.roll();
-                if (buttons.stream()
-                        .anyMatch(dItem -> dItem.getUid().equals(aux.getUid())))
-                    continue;
-                aux.setSlot(i);
-                buttons.add(aux);
-                toAdd = aux.getItem();
-                break;
-            }
-
-            inv.setItem(i, toAdd);
-        });
-
-        Bukkit.broadcastMessage("Renovated items of shop " + shop.getName());
+        Bukkit.broadcastMessage(conf_msg.PREFIX +
+                FormatUtils.color("&7Renovated items of shop " + shop.getName()));
     }
 
     protected void updateItem(dItem item, updateItemEvent.updatetype type) {
 
         if (buttons.stream().noneMatch(dItem -> dItem.getUid().equals(item.getUid()))) return;
 
-        buttons.stream()
-                .filter(dItem -> dItem.getUid().equals(item.getUid()))
+        buttons.stream().filter(dItem -> dItem.getUid().equals(item.getUid()))
                 .findFirst()
                 .ifPresent(dItem -> {
 

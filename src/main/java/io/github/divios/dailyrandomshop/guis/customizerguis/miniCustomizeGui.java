@@ -12,7 +12,6 @@ import io.github.divios.lib.itemHolder.dAction;
 import io.github.divios.lib.itemHolder.dItem;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerKickEvent;

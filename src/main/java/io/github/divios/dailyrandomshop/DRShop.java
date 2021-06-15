@@ -29,6 +29,12 @@ public class DRShop extends JavaPlugin {
         CommandManager.addCommand(new add(), new helpCmd(),
                 new open(), new Manager(), new reStock(), new importShops());
 
+        try {
+            Class.forName("io.github.divios.core_lib.inventory.materialsPrompt");  // loads all materials
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
     }
 
     @Override
