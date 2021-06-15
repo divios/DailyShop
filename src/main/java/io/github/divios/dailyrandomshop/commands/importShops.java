@@ -3,17 +3,18 @@ package io.github.divios.dailyrandomshop.commands;
 import io.github.divios.core_lib.commands.abstractCommand;
 import io.github.divios.core_lib.commands.cmdTypes;
 import io.github.divios.core_lib.misc.FormatUtils;
-import io.github.divios.dailyrandomshop.hooks.hooksManager;
+import io.github.divios.dailyrandomshop.conf_msg;
 import io.github.divios.dailyrandomshop.utils.utils;
 import io.github.divios.lib.itemHolder.dItem;
 import io.github.divios.lib.itemHolder.dShop;
 import io.github.divios.lib.managers.shopsManager;
 import net.brcdev.shopgui.ShopGuiPlusApi;
 import org.black_ixx.bossshop.BossShop;
-import org.black_ixx.bossshop.api.BossShopAPI;
 import org.black_ixx.bossshop.core.BSShop;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
+import org.bukkit.event.inventory.ClickType;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -81,11 +82,27 @@ public class importShops extends abstractCommand {
                 .ifPresent(shop -> {
                     if (args.get(0).equalsIgnoreCase("shopGui+")) {
                         ShopGuiPlusApi.getShop(args.get(2)).getShopItems()
-                                .forEach(shopItem -> shop.addItem(dItem.of(shopItem.getItem())));
+                                .forEach(shopItem -> {
+                                    dItem newItem = dItem.of(shopItem.getItem());
+
+                                    if (newItem.getAmount() != 1)
+                                        newItem.setSetItems(newItem.getAmount());
+
+                                    newItem.setBuyPrice(shopItem.getBuyPrice());
+                                    newItem.setSellPrice(shopItem.getSellPrice());
+                                    shop.addItem(newItem);
+                                });
                     } else
                         ((BossShop) Bukkit.getPluginManager().getPlugin("BossShopPro")).getAPI()
                                 .getShop(args.get(2)).getItems()
-                                .forEach(bsBuy -> shop.addItem(dItem.of(bsBuy.getItem())));
+                                .forEach(bsBuy -> {
+                                    dItem newItem = dItem.of(bsBuy.getItem());
+                                    newItem.setBuyPrice((Double) bsBuy.getPrice(ClickType.LEFT));
+                                    newItem.setSellPrice((Double) bsBuy.getPrice(ClickType.LEFT));
+                                    shop.addItem(newItem);
+                                });
+                    sender.sendMessage(conf_msg.PREFIX +
+                            FormatUtils.color("&7Items imported successfully"));
                 });
     }
 }
