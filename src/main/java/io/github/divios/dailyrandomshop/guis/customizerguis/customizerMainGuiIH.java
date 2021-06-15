@@ -111,11 +111,11 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
                         .map(entry -> "&f&l" + entry.getKey()
                                 .getName() + ":" + entry.getValue()).collect(Collectors.toList()));
 
-        ItemStack setAmount = new ItemBuilder(XMaterial.STONE_BUTTON)  //Change amount
+        ItemStack setStock = new ItemBuilder(XMaterial.STONE_BUTTON)  //Change stock
                 .setName(conf_msg.CUSTOMIZE_AMOUNT)
                 .setLore(ditem.getStock().isPresent() ?
                         Msg.msgList(conf_msg.CUSTOMIZE_AMOUNT_LORE).add("\\{amount}",
-                                "" + ditem.getStock()).build() :
+                                "" + ditem.getStock().get()).build() :
                         conf_msg.CUSTOMIZE_AMOUNT_ENABLE_LORE);
 
         ItemStack addRemoveCommands = XMaterial.COMMAND_BLOCK.parseItem();    //Change command item
@@ -129,7 +129,7 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
                     .setName(conf_msg.CUSTOMIZE_CHANGE_COMMANDS)
                     .setLore(conf_msg.CUSTOMIZE_CHANGE_COMMANDS_LORE)
                     .addLore("")
-                    .addLore(ditem.getCommands()
+                    .addLore(ditem.getCommands().get()
                             .stream().map(s -> FormatUtils.color("&f&l" + s)).collect(Collectors.toList()));
         }
 
@@ -145,7 +145,7 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
             perms = new ItemBuilder(perms)
                     .addLore(conf_msg.CUSTOMIZE_CHANGE_PERMS_LORE)
                     .addLore("")
-                    .addLore(ditem.getPerms()
+                    .addLore(ditem.getPerms().get()
                             .stream().map(s -> FormatUtils.color("&f&l" + s))
                             .collect(Collectors.toList()));
         }
@@ -156,7 +156,7 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
         if (ditem.getSetItems().isPresent()) {
             setOfItems = new ItemBuilder(setOfItems).addLore(
                     Msg.msgList(conf_msg.CUSTOMIZE_CHANGE_SET_LORE).add("\\{amount}",
-                    "" + ditem.getSetItems()).build());
+                    "" + ditem.getSetItems().get()).build());
 
         } else {
             setOfItems = new ItemBuilder(setOfItems)
@@ -210,7 +210,7 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
         inv.setItem(19, changeMaterial);
         inv.setItem(27, changeLore);
         inv.setItem(28, editEnchantments);
-        inv.setItem(21, !ditem.getSetItems().isPresent() ? setAmount: barrier);
+        inv.setItem(21, !ditem.getSetItems().isPresent() ? setStock: barrier);
         inv.setItem(22, addRemoveCommands);
         inv.setItem(23, ditem.getItem().getType().getMaxDurability() != 0 ? durability:null);
         inv.setItem(30, perms);
@@ -352,7 +352,7 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
             }
         }
 
-        else if (e.getSlot() == 21 && ditem.getStock() == null && e.isLeftClick()) { // Boton de cambiar amount
+        else if (e.getSlot() == 21 && !ditem.getStock().isPresent() && e.isLeftClick()) { // Boton de cambiar amount
             if (ditem.getSetItems().isPresent()) {
                 p.sendMessage(conf_msg.PREFIX + FormatUtils.color("&7You can't enable this when " +
                         "the set feature is enable"));
@@ -414,11 +414,11 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
         }
 
         else if (e.getSlot() == 32) {  //boton de bundle
-            /*new changeBundleItem(p, newItem,
-                    (player, itemStack) -> {
-                        newItem = itemStack;
+            new changeBundleItem(p, ditem, shop,
+                    (player, uuids) -> {
+                        ditem.setBundle(uuids);
                         refresh(p);
-                    }, player -> refresh(p)); */
+                    }, this::refresh);
         }
 
         else if (e.getSlot() == 25) { // Boton de hide enchants

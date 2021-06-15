@@ -79,8 +79,6 @@ io/github/divios/dailyrandomshop/economies/vault.java
  io.github.divios.dailyrandomshop.economies.vault
 io/github/divios/dailyrandomshop/economies/econTypes.java
  io.github.divios.dailyrandomshop.economies.econTypes
-io/github/divios/dailyrandomshop/guis/settings/addDailyItemGuiIH.java
- io.github.divios.dailyrandomshop.guis.settings.addDailyItemGuiIH
 io/github/divios/dailyrandomshop/commands/Manager.java
  io.github.divios.dailyrandomshop.commands.Manager
 io/github/divios/dailyrandomshop/guis/settings/shopsManagerGui.java
@@ -89,14 +87,16 @@ io/github/divios/dailyrandomshop/hooks/tokenEnchantsHook.java
  io.github.divios.dailyrandomshop.hooks.tokenEnchantsHook
 io/github/divios/dailyrandomshop/hooks/shopGuiPlusHook.java
  io.github.divios.dailyrandomshop.hooks.shopGuiPlusHook
+io/github/divios/dailyrandomshop/economies/tokenEnchantsE.java
+ io.github.divios.dailyrandomshop.economies.tokenEnchantsE
 io/github/divios/lib/itemHolder/dRarity.java
  io.github.divios.lib.itemHolder.dRarity
  io.github.divios.lib.itemHolder.dRarity$1
  io.github.divios.lib.itemHolder.dRarity$rarityT
-io/github/divios/dailyrandomshop/economies/tokenEnchantsE.java
- io.github.divios.dailyrandomshop.economies.tokenEnchantsE
 io/github/divios/lib/itemHolder/dItem.java
  io.github.divios.lib.itemHolder.dItem
+io/github/divios/dailyrandomshop/guis/customizerguis/changeBundleItem.java
+ io.github.divios.dailyrandomshop.guis.customizerguis.changeBundleItem
 io/github/divios/dailyrandomshop/guis/customizerguis/changeEcon.java
  io.github.divios.dailyrandomshop.guis.customizerguis.changeEcon
 io/github/divios/lib/itemHolder/dPrice.java
@@ -126,6 +126,8 @@ io/github/divios/dailyrandomshop/guis/customizerguis/customizerMainGuiIH.java
  io.github.divios.dailyrandomshop.guis.customizerguis.customizerMainGuiIH
 io/github/divios/dailyrandomshop/commands/reStock.java
  io.github.divios.dailyrandomshop.commands.reStock
+io/github/divios/dailyrandomshop/guis/settings/addDailyGuiIH.java
+ io.github.divios.dailyrandomshop.guis.settings.addDailyGuiIH
 io/github/divios/dailyrandomshop/utils/utils.java
  io.github.divios.dailyrandomshop.utils.utils
 io/github/divios/dailyrandomshop/hooks/MPointsHook.java

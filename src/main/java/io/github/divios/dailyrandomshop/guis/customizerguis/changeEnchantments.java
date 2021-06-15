@@ -114,7 +114,7 @@ public class changeEnchantments {
     }
 
     private dynamicGui.Response contentActionX(InventoryClickEvent e) {
-        String[] entry = FormatUtils.color(e.getCurrentItem().getItemMeta().getDisplayName()).split(":");
+        String[] entry = FormatUtils.stripColor(e.getCurrentItem().getItemMeta().getDisplayName()).split(":");
         ditem.removeEnchantments(Enchantment.getByName(entry[0]));
         customizerMainGuiIH.open(p, ditem, instance.shop);
         return dynamicGui.Response.nu();

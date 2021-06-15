@@ -4,24 +4,26 @@ import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.Msg;
 import io.github.divios.dailyrandomshop.conf_msg;
-import io.github.divios.lib.itemHolder.dGui;
 import io.github.divios.lib.itemHolder.dItem;
 import io.github.divios.lib.itemHolder.dShop;
 import org.bukkit.inventory.ItemStack;
 
-public class shopItemsManagerLore implements loreStrategy{
+public class shopItemsManagerLore implements loreStrategy {
 
     private final dShop.dShopT type;
 
-    public shopItemsManagerLore(dShop.dShopT type) { this.type = type; }
+    public shopItemsManagerLore(dShop.dShopT type) {
+        this.type = type;
+    }
 
     @Override
     public void setLore(ItemStack item) {
 
+
         ItemStack aux = new ItemBuilder(item)
                 .addLore(Msg.singletonMsg(conf_msg.BUY_GUI_ITEMS_LORE_PRICE)
                         .add("\\{price}", "" + (type.equals(dShop.dShopT.buy) ?
-                                dItem.of(item).getBuyPrice().get().getVisualPrice():
+                                dItem.of(item).getBuyPrice().get().getVisualPrice() :
                                 dItem.of(item).getSellPrice().get().getVisualPrice())).build())
 
                 .addLore(Msg.singletonMsg(conf_msg.BUY_GUI_ITEMS_LORE_CURRENCY)

@@ -2,7 +2,6 @@ package io.github.divios.dailyrandomshop.lorestategy;
 
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
-import io.github.divios.lib.itemHolder.dShop;
 import org.bukkit.inventory.ItemStack;
 
 public class shopsManagerLore implements loreStrategy{
