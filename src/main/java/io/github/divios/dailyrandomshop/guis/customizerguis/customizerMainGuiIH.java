@@ -1,6 +1,6 @@
 package io.github.divios.dailyrandomshop.guis.customizerguis;
 
-import io.github.divios.core_lib.XCore.XMaterial;
+import com.cryptomorin.xseries.XMaterial;
 import io.github.divios.core_lib.inventory.materialsPrompt;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;

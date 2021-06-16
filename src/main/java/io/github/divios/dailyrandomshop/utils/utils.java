@@ -1,6 +1,6 @@
 package io.github.divios.dailyrandomshop.utils;
 
-import io.github.divios.core_lib.XCore.XMaterial;
+import com.cryptomorin.xseries.XMaterial;
 import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.dailyrandomshop.DRShop;
 import io.github.divios.dailyrandomshop.conf_msg;
