@@ -1,6 +1,6 @@
 package io.github.divios.lib.itemHolder;
 
-import io.github.divios.core_lib.XCore.XMaterial;
+import com.cryptomorin.xseries.XMaterial;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.dailyrandomshop.conf_msg;
 import org.bukkit.inventory.ItemStack;
