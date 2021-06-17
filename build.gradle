@@ -100,6 +100,7 @@ shadowJar {
     relocate('net.wesjd.anvilgui', 'io.github.divios.DailyRandomShop.shaded.anvilGUI')
     relocate('de.tr7zw.changeme.nbtapi', 'io.github.divios.DailyRandomShop.shaded.nbt-api')
     relocate('io.github.divios.core_lib', 'io.github.divios.DailyRandomShop.shaded.Core_lib')
+    relocate('com.cryptomorin.xseries', 'io.github.divios.DailyRandomShop.shaded.XSeries')
 
     minimize()
 }
