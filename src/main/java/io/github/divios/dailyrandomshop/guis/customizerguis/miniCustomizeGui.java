@@ -10,6 +10,7 @@ import io.github.divios.core_lib.misc.*;
 import io.github.divios.dailyrandomshop.DRShop;
 import io.github.divios.lib.itemHolder.dAction;
 import io.github.divios.lib.itemHolder.dItem;
+import io.github.divios.lib.itemHolder.dShop;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventPriority;
@@ -27,6 +28,7 @@ public class miniCustomizeGui {
 
     private final Player p;
     private ItemStack item;
+    private dShop shop;
     private final Consumer<ItemStack> consumer;
     private InventoryGUI inv;
 
@@ -36,10 +38,12 @@ public class miniCustomizeGui {
     private final EventListener<InventoryCloseEvent> preventClose;
 
     public miniCustomizeGui(Player p,
+                            dShop shop,
                             ItemStack item,
                             Consumer<ItemStack> consumer) {
         this.p = p;
         this.item = item;
+        this.shop = shop;
         this.consumer = consumer;
         this.inv = getGui();
         this.preventPicks = new EventListener<>(plugin,
@@ -152,7 +156,7 @@ public class miniCustomizeGui {
                         "", "&6Current action: &7" + action.get1() + ":" + action.get2()),
                 e-> {
                     preventCloseB = false;
-                    customizeAction.open(p, (dAction, s) -> {
+                    customizeAction.open(p, shop, (dAction, s) -> {
                         dItem aux = new dItem(item);
                         aux.setAction(dAction, s);
                         item = aux.getItem();

@@ -1,6 +1,8 @@
 package io.github.divios.dailyrandomshop.guis.settings;
 
 import com.cryptomorin.xseries.XMaterial;
+import io.github.divios.core_lib.inventory.InventoryGUI;
+import io.github.divios.core_lib.inventory.ItemButton;
 import io.github.divios.core_lib.inventory.dynamicGui;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.misc.FormatUtils;
@@ -50,7 +52,7 @@ public class shopsManagerGui {
         List<ItemStack> iShops = new ArrayList<>();
         shopsManager.getInstance().getShops().forEach(dShop -> {
             ItemStack item = new ItemBuilder(XMaterial.PLAYER_HEAD)
-                    .setName("&f&l" + dShop.getName()).setLore("&6Shop type: &7" + dShop.getType().name())
+                    .setName("&f&l" + dShop.getName())
                     .applyTexture("7e3deb57eaa2f4d403ad57283ce8b41805ee5b6de912ee2b4ea736a9d1f465a7");
 
             loreItem.setLore(item);
@@ -114,24 +116,23 @@ public class shopsManagerGui {
     }
 
     private static dynamicGui.Response nonContentAction(Integer slot, Player p) {
-        if (slot == 52) {
-            new AnvilGUI.Builder()
-                    .onComplete((player, s) -> {
+        new AnvilGUI.Builder()
+                .onComplete((player, s) -> {
 
-                        if (s.isEmpty())
-                            return AnvilGUI.Response.text("Cat be empty");
+                    if (s.isEmpty())
+                        return AnvilGUI.Response.text("Cat be empty");
 
-                        if (sManager.getShop(s).isPresent())
-                            return AnvilGUI.Response.text("Already exits");
+                    if (sManager.getShop(s).isPresent())
+                        return AnvilGUI.Response.text("Already exits");
 
-                        shopsManager.getInstance().createShop(s, dShop.dShopT.buy);
-                        return AnvilGUI.Response.close();
-                    })
-                    .onClose(player -> Task.syncDelayed(plugin, () -> open(p), 1L))
-                    .text("input shop name")
-                    .plugin(plugin)
-                    .open(p);
-        }
+                    shopsManager.getInstance().createShop(s, dShop.dShopT.buy);
+                    return AnvilGUI.Response.close();
+                })
+                .onClose(player -> Task.syncDelayed(plugin, () -> open(p), 1L))
+                .text("input shop name")
+                .plugin(plugin)
+                .open(p);
+
         return dynamicGui.Response.nu();
     }
 

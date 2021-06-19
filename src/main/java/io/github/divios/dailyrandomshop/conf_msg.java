@@ -15,7 +15,7 @@ public class conf_msg {
 
     public static String
             PREFIX, VAULT_CUSTOM_NAME,
-            BUY_GUI_TITLE, BUY_GUI_PAINTING_NAME, BUY_GUI_ARROW_NAME, BUY_GUI_ITEMS_LORE_PRICE, BUY_GUI_ITEMS_LORE_CURRENCY, BUY_GUI_ITEMS_LORE_RARITY, BUY_GUI_ITEMS_LORE_BUY_FOR,
+            BUY_GUI_TITLE, BUY_GUI_PAINTING_NAME, BUY_GUI_ARROW_NAME, BUY_GUI_ITEMS_LORE_BUY_PRICE, BUY_GUI_ITEMS_LORE_SELL_PRICE, BUY_GUI_ITEMS_LORE_CURRENCY, BUY_GUI_ITEMS_LORE_RARITY, BUY_GUI_ITEMS_LORE_BUY_FOR,
             CONFIRM_GUI_NAME, CONFIRM_GUI_ADD_PANE, CONFIRM_GUI_REMOVE_PANE, CONFIRM_GUI_CONFIRM_PANE, CONFIRM_GUI_RETURN_NAME,
             SELL_GUI_TITLE, SELL_PAINTING_NAME, SELL_ARROW_NAME, SELL_ITEM_NAME,
             CONFIRM_MENU_YES, CONFIRM_MENU_NO,
@@ -74,7 +74,8 @@ public class conf_msg {
         BUY_GUI_TITLE = FormatUtils.color(yamlFile.getString("daily-shop-gui-name", "&6&lDailyShop"));
         BUY_GUI_PAINTING_NAME = FormatUtils.color(yamlFile.getString("daily-shop-gui-painting-name", "&c&lWhat is this?"));
         BUY_GUI_PAINTING_LORE = yamlFile.getStringList("daily-shop-gui-painting-lore");
-        BUY_GUI_ITEMS_LORE_PRICE = FormatUtils.color(yamlFile.getString("daily-items-lore-price", "&6Price: &7{price}"));
+        BUY_GUI_ITEMS_LORE_BUY_PRICE = FormatUtils.color(yamlFile.getString("daily-items-lore-buy-price:", "&6Buy price: &7{buyPrice}"));
+        BUY_GUI_ITEMS_LORE_SELL_PRICE = FormatUtils.color(yamlFile.getString("daily-items-lore-sell-price", "&6Sell price: &7{sellPrice}"));
         BUY_GUI_ITEMS_LORE_CURRENCY = FormatUtils.color(yamlFile.getString("daily-items-lore-currency", "&6Currency: &7{currency}"));
         BUY_GUI_ITEMS_LORE_RARITY = FormatUtils.color(yamlFile.getString("daily-items-lore-rarity", "&6Rarity: &7{rarity}"));
         BUY_GUI_ITEMS_LORE_BUY_FOR = FormatUtils.color(yamlFile.getString("daily-items-lore-buy-for", "&6Buy for &7{price}"));

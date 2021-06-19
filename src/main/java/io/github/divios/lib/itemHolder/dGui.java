@@ -10,17 +10,14 @@ import io.github.divios.dailyrandomshop.conf_msg;
 import io.github.divios.dailyrandomshop.events.updateItemEvent;
 import io.github.divios.dailyrandomshop.lorestategy.loreStrategy;
 import io.github.divios.dailyrandomshop.lorestategy.shopItemsLore;
-import io.github.divios.dailyrandomshop.transaction.transaction;
-import io.github.divios.dailyrandomshop.utils.utils;
+import io.github.divios.lib.itemHolder.guis.dBuy;
+import io.github.divios.lib.itemHolder.guis.dSell;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.io.BukkitObjectInputStream;
 import org.bukkit.util.io.BukkitObjectOutputStream;
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
@@ -34,23 +31,23 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class dGui {
+public abstract class dGui {
 
-    private static final DRShop plugin = DRShop.getInstance();
+    protected static final DRShop plugin = DRShop.getInstance();
 
-    private String title;       // for some reason is throwing noSuchMethod
-    private Inventory inv;
-    private final dShop shop;
+    protected String title;       // for some reason is throwing noSuchMethod
+    protected Inventory inv;
+    protected final dShop shop;
 
-    private boolean available = true;
-    private final Set<Integer> openSlots = new HashSet<>();
-    private final Set<dItem> buttons = new HashSet<>();
+    protected boolean available = true;
+    protected final Set<Integer> openSlots = new HashSet<>();
+    protected final Set<dItem> buttons = new HashSet<>();
 
-    private transient EventListener<InventoryClickEvent> clickEvent;
-    private transient EventListener<InventoryDragEvent> dragEvent;
-    private transient EventListener<InventoryOpenEvent> openEvent;
+    protected transient EventListener<InventoryClickEvent> clickEvent;
+    protected transient EventListener<InventoryDragEvent> dragEvent;
+    protected transient EventListener<InventoryOpenEvent> openEvent;
 
-    private final loreStrategy strategy;
+    protected final loreStrategy strategy;
 
     protected dGui(String title, Inventory inv, dShop shop) {
         this.title = title;
@@ -59,7 +56,7 @@ public class dGui {
 
         this.strategy = new shopItemsLore(shop.getType());
 
-        IntStream.range(0, inv.getSize()).forEach(openSlots::add);
+        IntStream.range(0, inv.getSize()).forEach(openSlots::add);  //initializes slots
         renovate();   // not really necessary but why not
 
         initListeners();
@@ -70,7 +67,7 @@ public class dGui {
                 Bukkit.createInventory(null, size, title), shop);
     }
 
-    private dGui(String base64, dShop shop) {
+    protected dGui(String base64, dShop shop) {
         _deserialize(base64);
         this.shop = shop;
         this.strategy = new shopItemsLore(shop.getType());
@@ -86,16 +83,14 @@ public class dGui {
      * Opens the inventory for a player
      * @param p The player to open the inventory
      */
-    public void open(Player p) { p.openInventory(inv); }
+    public void open(Player p) {
+        p.openInventory(inv);
+    }
 
     /**
      * Closes the inventory for all the current viewers
      */
-    public void closeAll() {
-        try {
-            inv.getViewers().forEach(HumanEntity::closeInventory);
-        } catch (Exception ignored) {}
-    }
+    public abstract void closeAll();
 
     /**
      * Returns the title of this gui
@@ -213,13 +208,9 @@ public class dGui {
      */
     protected void renovate() {
 
-        IntStream.range(0, inv.getSize()).forEach(i ->   // Removes all the AIR items
-                buttons.stream()
-                .filter(dItem -> dItem.getSlot() == i)
-                .findFirst()
-                .ifPresent(dItem -> {
-                    if (dItem.isAIR()) inv.clear(i);
-                }));
+        buttons.stream()            // Clear AIR items
+                .filter(dItem::isAIR)
+                .forEach(dItem -> inv.clear(dItem.getSlot()));
 
         WeightedRandom<dItem> RRM = WeightedRandom.fromCollection(      // create weighted random
                 shop.getItems().stream().filter(dItem -> dItem.getRarity().getWeight() != 0)
@@ -240,10 +231,7 @@ public class dGui {
 
             if (addedButtons >= shop.getItems().size()) break;
 
-            dItem rolled = RRM.roll();
-            rolled.setSlot(i);
-            buttons.add(rolled);
-            inv.setItem(i, rolled.getItem());
+            _renovate(RRM.roll(), i);
             addedButtons++;
         }
 
@@ -251,45 +239,9 @@ public class dGui {
                 FormatUtils.color("&7Renovated items of shop " + shop.getName()));
     }
 
-    protected void updateItem(dItem item, updateItemEvent.updatetype type) {
+    protected abstract void _renovate(dItem newItem, int slot);
 
-        if (buttons.stream().noneMatch(dItem -> dItem.getUid().equals(item.getUid()))) return;
-
-        buttons.stream().filter(dItem -> dItem.getUid().equals(item.getUid()))
-                .findFirst()
-                .ifPresent(dItem -> {
-
-                    if (type.equals(updateItemEvent.updatetype.UPDATE_ITEM)) {
-                        item.setSlot(dItem.getSlot());
-                        buttons.remove(dItem);
-                        buttons.add(item);
-                        ItemStack itemWithLore = item.getItem().clone();
-                        strategy.setLore(itemWithLore);
-                        inv.setItem(dItem.getSlot(), itemWithLore);
-                    }
-
-                    else if (type.equals(updateItemEvent.updatetype.NEXT_AMOUNT)) {
-                        dItem.setStock(dItem.getStock().get() - 1);
-
-                        if (dItem.getStock().get() <= 0) {
-                            buttons.remove(dItem);
-                            inv.setItem(dItem.getSlot(), utils.getRedPane());
-                        } else
-                            inv.getItem(dItem.getSlot()).setAmount(dItem.getStock().get());
-                    }
-
-                    else if (type.equals(updateItemEvent.updatetype.DELETE_ITEM)) {
-                        buttons.stream()
-                                .filter(dItem1 -> dItem1.getUid().equals(item.getUid()))
-                                .findFirst()
-                                .ifPresent(dItem1 -> {
-                                    buttons.remove(dItem1);
-                                    inv.setItem(dItem1.getSlot(), utils.getRedPane());
-                                });
-                    }
-                });
-
-    }
+    protected abstract void updateItem(dItem item, updateItemEvent.updatetype type);
 
     /**
      * Clears all the slots corresponding to daily Items
@@ -301,60 +253,12 @@ public class dGui {
         });
     }
 
-
-    private void initListeners() {
-
-        this.clickEvent = new EventListener<>(plugin, InventoryClickEvent.class,
-                EventPriority.HIGHEST, e -> {
-            if (e.getInventory() != inv) return;
-
-            e.setCancelled(true);
-
-            if (utils.isEmpty(e.getCurrentItem())) return;
-
-            if (openSlots.contains(e.getSlot()) &&
-                    shop.getType().equals(dShop.dShopT.buy))
-                    buttons.stream()
-                            .filter(ditem-> ditem.getUid().equals(dItem.of(e.getCurrentItem()).getUid()))
-                            .findFirst()
-                            .ifPresent(dItem -> transaction.init(
-                                    (Player) e.getWhoClicked(), dItem, shop));
-            else {
-
-                buttons.stream().filter(dItem -> dItem.getSlot() == e.getSlot())
-                        .findFirst().ifPresent(dItem -> dItem.getAction()
-                        .stream((dAction, s) -> dAction.run((Player) e.getWhoClicked(), s)));
-            }
-        });
-
-        this.dragEvent = new EventListener<>(plugin, InventoryDragEvent.class,
-                e -> {
-            if (e.getInventory() != inv) return;
-
-            e.setCancelled(true);
-
-        });
-
-        this.openEvent = new EventListener<>(plugin, InventoryOpenEvent.class,
-                EventPriority.HIGHEST, e -> {
-            if (e.getInventory() != inv) return;
-
-            if (!available) {
-                e.setCancelled(true);
-                e.getPlayer().sendMessage("The shop is closed... come again in some minutes");
-            }
-        });
-
-    }
+    protected abstract void initListeners();
 
     /**
      * Destroys the inventory. In summary, unregisters all the listeners
      */
-    protected void destroy() {
-        clickEvent.unregister();
-        dragEvent.unregister();
-        openEvent.unregister();
-    }
+    protected abstract void destroy();
 
     public String serialize() {
         try {
@@ -398,7 +302,12 @@ public class dGui {
         }
     }
 
-    public static dGui deserialize(String base64, dShop shop) { return new dGui(base64, shop); }
+    public static dGui deserialize(String base64, dShop shop) {
+        if (shop.getType().equals(dShop.dShopT.buy))
+            return new dBuy(base64, shop);
+        else
+            return new dSell(base64, shop);
+    }
 
     // Returns a clone of this gui without the daily items
     public dGui clone() {

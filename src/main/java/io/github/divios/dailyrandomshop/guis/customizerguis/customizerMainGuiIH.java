@@ -71,11 +71,11 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
                 .addLore("", "&7Current: &6" + ditem.getEconomy().getName())
                 .applyTexture("e36e94f6c34a35465fce4a90f2e25976389eb9709a12273574ff70fd4daa6852");
 
-        ItemStack changePrice = new ItemBuilder(XMaterial.EMERALD)
+        ItemStack changePrice = new ItemBuilder(XMaterial.EMERALD)      // change price
                 .setName("&a&lChange Price")
-                .addLore("", "&7Current &6" + (shop.getType() == dShop.dShopT.buy ?
-                        ditem.getBuyPrice().get().getVisualPrice():
-                        ditem.getSellPrice().get().getVisualPrice()));
+                .addLore("", "&7Current Buy: &6" + ditem.getBuyPrice().get().getVisualPrice())
+                .addLore("", "&7Current Sell: &6" + ditem.getSellPrice().get().getVisualPrice())
+                .addLore("", "&7Left Click: &7Change buy price", "&7Right Click: &7Change sell price");
 
         ItemStack changeRarity = new ItemBuilder(ditem.getRarity().getAsItem())         // Change rarity
                 .addLore(conf_msg.CUSTOMIZE_CHANGE_RARITY_LORE);
@@ -266,7 +266,8 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
         }
 
         else if (e.getSlot() == 1) {        // boton de cambiar price
-            new changePrice(p, ditem, shop, () -> refresh(p), () -> refresh(p));
+            new changePrice(p, ditem, shop, e.isLeftClick() ? dShop.dShopT.buy: dShop.dShopT.sell
+                    ,() -> refresh(p), () -> refresh(p));
         }
 
         else if (e.getSlot() == 7) {        /* Boton de cambiar confirm Gui */

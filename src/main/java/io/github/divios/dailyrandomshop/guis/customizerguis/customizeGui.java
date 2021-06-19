@@ -29,6 +29,7 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.IntStream;
@@ -170,6 +171,15 @@ public class customizeGui implements Listener, InventoryHolder {
             }
 
             else if (e.getSlot() == 5) {   //apply changes
+
+                if (shop.getType().equals(dShop.dShopT.sell))
+                    if (_gui.getButtons().stream()
+                            .noneMatch(dItem::isSIGN)) {
+                        p.sendMessage(conf_msg.PREFIX + FormatUtils.color("&7There " +
+                                "must be a sign on the gui, you can add one by Q+click on an empty slot"));
+                        return;
+                    }
+
                 shop.updateGui(_gui);
                 preventClose = false;
                 p.closeInventory();
@@ -203,6 +213,20 @@ public class customizeGui implements Listener, InventoryHolder {
 
         else {          //si le da arriba
 
+            if (utils.isEmpty(e.getCurrentItem()) && shop.getType().equals(dShop.dShopT.sell)
+                    && e.isLeftClick() && e.isShiftClick()) {       // adds sign item on sell shops
+
+                if (_gui.getButtons().stream().anyMatch(dItem::isSIGN)) {
+                    p.sendMessage(conf_msg.PREFIX +
+                            FormatUtils.color("&7There is already a sign in the shop"));
+                    return;
+                }
+
+                _gui.addButton(dItem.SIGN(), e.getSlot());
+                refresh();
+                return;
+            }
+
             if (utils.isEmpty(e.getCurrentItem())
                     && e.getClick().equals(ClickType.MIDDLE)) {  //add empty slot
                 _gui.addButton(dItem.AIR(), e.getSlot());
@@ -223,7 +247,7 @@ public class customizeGui implements Listener, InventoryHolder {
 
             refreshFlag = true;
             depositPlayerItems();
-            new miniCustomizeGui(p,         // customize item
+            new miniCustomizeGui(p, shop,        // customize item
                     utils.isEmpty(e.getCurrentItem()) ?
                          XMaterial.GRASS_BLOCK.parseItem() : e.getCurrentItem().clone(),
                     item -> {

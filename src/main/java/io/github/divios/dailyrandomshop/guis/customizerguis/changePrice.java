@@ -26,6 +26,7 @@ public class changePrice {
     private final Player p;
     private final dItem item;
     private final dShop shop;
+    private final dShop.dShopT type;
     private final Runnable accept;
     private final Runnable back;
 
@@ -33,12 +34,14 @@ public class changePrice {
             Player p,
             dItem item,
             dShop shop,
+            dShop.dShopT type,
             Runnable accept,
             Runnable back
     ) {
 
         this.p = p;
         this.item = item;
+        this.type = type;
         this.shop = shop;
         this.accept = accept;
         this.back = back;
@@ -60,7 +63,7 @@ public class changePrice {
                                 return AnvilGUI.Response.text(conf_msg.MSG_NOT_INTEGER);
                             }
 
-                            if (shop.getType() == dShop.dShopT.buy)
+                            if (type == dShop.dShopT.buy)
                                 item.setBuyPrice(Double.parseDouble(text));
                             else
                                 item.setSellPrice(Double.parseDouble(text));
@@ -106,7 +109,7 @@ public class changePrice {
                                             if (aux.get() >= Double.parseDouble(text1))
                                                 return AnvilGUI.Response.text("Max price can't be lower than min price");
 
-                                            if (shop.getType() == dShop.dShopT.buy)
+                                            if (type == dShop.dShopT.buy)
                                                 item.setBuyPrice(Double.parseDouble(text), Double.parseDouble(text1));
                                             else
                                                 item.setSellPrice(Double.parseDouble(text), Double.parseDouble(text1));
