@@ -16,7 +16,8 @@ daily-shop-gui-painting-lore:
   - "&7show up here!"
 # This is the lore that the daily
 # items will display
-daily-items-lore-price: "&6Price: &7{price}"
+daily-items-lore-buy-price: "&6Buy price: &7{buyPrice}"
+daily-items-lore-sell-price: "&6Sell price: &7{sellPrice}"
 daily-items-lore-currency: "&6Currency: &7{currency}"
 daily-items-lore-rarity: "&6Rarity: &7{rarity}"
 daily-items-lore-buy-for: "&6Buy for &7{price}"
