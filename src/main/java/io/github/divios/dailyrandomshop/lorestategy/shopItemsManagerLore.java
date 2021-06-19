@@ -5,6 +5,7 @@ import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.Msg;
 import io.github.divios.dailyrandomshop.conf_msg;
 import io.github.divios.lib.itemHolder.dItem;
+import io.github.divios.lib.itemHolder.dPrice;
 import io.github.divios.lib.itemHolder.dShop;
 import org.bukkit.inventory.ItemStack;
 
@@ -21,10 +22,15 @@ public class shopItemsManagerLore implements loreStrategy {
 
 
         ItemStack aux = new ItemBuilder(item)
-                .addLore(Msg.singletonMsg(conf_msg.BUY_GUI_ITEMS_LORE_PRICE)
-                        .add("\\{price}", "" + (type.equals(dShop.dShopT.buy) ?
-                                dItem.of(item).getBuyPrice().get().getVisualPrice() :
-                                dItem.of(item).getSellPrice().get().getVisualPrice())).build())
+                .addLore(Msg.singletonMsg(conf_msg.BUY_GUI_ITEMS_LORE_BUY_PRICE)
+                        .add("\\{buyPrice}", "" +
+                                dItem.of(item).getBuyPrice().orElse(new dPrice(-1)).getVisualPrice()).build())
+
+                .addLore(Msg.singletonMsg(conf_msg.BUY_GUI_ITEMS_LORE_SELL_PRICE)
+                        .add("\\{sellPrice}", "" +
+                                dItem.of(item).getSellPrice().orElse(new dPrice(-1)).getVisualPrice()).build())
+
+                .addLore("")
 
                 .addLore(Msg.singletonMsg(conf_msg.BUY_GUI_ITEMS_LORE_CURRENCY)
                         .add("\\{currency}", "" + dItem.of(item).getEconomy().getName()).build())

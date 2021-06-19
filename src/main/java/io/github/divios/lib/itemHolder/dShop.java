@@ -8,6 +8,8 @@ import io.github.divios.dailyrandomshop.events.deletedShopEvent;
 import io.github.divios.dailyrandomshop.events.reStockShopEvent;
 import io.github.divios.dailyrandomshop.events.updateItemEvent;
 import io.github.divios.dailyrandomshop.utils.utils;
+import io.github.divios.lib.itemHolder.guis.dBuy;
+import io.github.divios.lib.itemHolder.guis.dSell;
 import io.github.divios.lib.storage.dataManager;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventPriority;
@@ -39,7 +41,9 @@ public class dShop {
         this.name = name;
         this.type = type;
 
-        gui = new dGui(this);
+        if (type.equals(dShopT.buy)) gui = new dBuy(this);
+        else gui = new dSell(this);
+
         initialize();
     }
 

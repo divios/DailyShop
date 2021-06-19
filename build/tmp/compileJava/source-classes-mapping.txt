@@ -47,6 +47,8 @@ io/github/divios/dailyrandomshop/economies/MPointsE.java
  io.github.divios.dailyrandomshop.economies.MPointsE
 io/github/divios/dailyrandomshop/lorestategy/loreStrategy.java
  io.github.divios.dailyrandomshop.lorestategy.loreStrategy
+io/github/divios/lib/itemHolder/guis/dBuy.java
+ io.github.divios.lib.itemHolder.guis.dBuy
 io/github/divios/dailyrandomshop/transaction/transactionExc.java
  io.github.divios.dailyrandomshop.transaction.transactionExc
  io.github.divios.dailyrandomshop.transaction.transactionExc$1
@@ -97,6 +99,8 @@ io/github/divios/lib/itemHolder/dItem.java
  io.github.divios.lib.itemHolder.dItem
 io/github/divios/dailyrandomshop/guis/customizerguis/changeBundleItem.java
  io.github.divios.dailyrandomshop.guis.customizerguis.changeBundleItem
+io/github/divios/lib/itemHolder/guis/dSell.java
+ io.github.divios.lib.itemHolder.guis.dSell
 io/github/divios/dailyrandomshop/guis/customizerguis/changeEcon.java
  io.github.divios.dailyrandomshop.guis.customizerguis.changeEcon
 io/github/divios/lib/itemHolder/dPrice.java

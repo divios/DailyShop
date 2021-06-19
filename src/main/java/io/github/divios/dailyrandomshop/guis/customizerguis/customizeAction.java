@@ -9,6 +9,7 @@ import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.core_lib.misc.Task;
 import io.github.divios.dailyrandomshop.DRShop;
 import io.github.divios.lib.itemHolder.dAction;
+import io.github.divios.lib.itemHolder.dShop;
 import io.github.divios.lib.managers.shopsManager;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.entity.Player;
@@ -21,6 +22,7 @@ public class customizeAction {
     private final static DRShop plugin = DRShop.getInstance();
 
     private final Player p;
+    private dShop shop;
     private final InventoryGUI inv;
     private final BiConsumer<dAction, String> onComplete;
 
@@ -28,9 +30,10 @@ public class customizeAction {
 
     private final EventListener<InventoryCloseEvent> preventClose;
 
-    private customizeAction(Player p,
+    private customizeAction(Player p, dShop shop,
                             BiConsumer<dAction, String> onComplete) {
         this.p = p;
+        this.shop = shop;
         this.inv = new InventoryGUI(plugin, 27, "&6&lManage Actions");
         inv.setDestroyOnClose(false);
         this.onComplete = onComplete;
@@ -48,9 +51,9 @@ public class customizeAction {
                 });
     }
 
-    public static void open(Player p,
+    public static void open(Player p, dShop shop,
                             BiConsumer<dAction, String> onComplete) {
-        new customizeAction(p, onComplete);
+        new customizeAction(p, shop, onComplete);
     }
 
     private void initialize() {
@@ -123,6 +126,13 @@ public class customizeAction {
                             .plugin(plugin)
                             .open(p);
                 }), 2);
+
+        inv.addButton(ItemButton.create(new ItemBuilder(XMaterial.BOOKSHELF)
+                        .setName("&6Show Avariable Items")
+                        .addLore("&7Shows all the items", "&7available on this shop"),
+                e ->
+                onComplete.accept(dAction.SHOW_ALL_ITEMS, shop.getName())), 3);
+
     }
 
 
