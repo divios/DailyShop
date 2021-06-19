@@ -558,10 +558,17 @@ public class dItem implements Serializable, Cloneable {
     private void setAIR() { item.setBoolean("rds_AIR", true); }
 
     /**
+     * private method to set Item as SIGN for dGui sell purposes
+     */
+    private void setSIGN() {item.setBoolean("rds_SIGN", true);}
+
+    /**
      * Check if an dItem is masked as AIR
      * @return
      */
     public boolean isAIR() { return item.hasKey("rds_AIR"); }
+
+    public boolean isSIGN() { return item.hasKey("rds_SIGN"); }
 
     /**
      * Gets item serializable as base64
@@ -602,6 +609,14 @@ public class dItem implements Serializable, Cloneable {
 
         empty.setAIR();
         return empty;
+    }
+
+    public static dItem SIGN() {
+        dItem sign = dItem.of(new ItemBuilder(XMaterial.SPRUCE_SIGN)
+                .setName("&6Current items"));
+
+        sign.setSIGN();
+        return sign;
     }
 
     @Override
