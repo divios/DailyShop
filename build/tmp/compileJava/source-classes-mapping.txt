@@ -75,6 +75,8 @@ io/github/divios/dailyrandomshop/commands/helpCmd.java
  io.github.divios.dailyrandomshop.commands.helpCmd
 io/github/divios/dailyrandomshop/tasks/taskManager.java
  io.github.divios.dailyrandomshop.tasks.taskManager
+io/github/divios/dailyrandomshop/transaction/sellTransaction.java
+ io.github.divios.dailyrandomshop.transaction.sellTransaction
 io/github/divios/dailyrandomshop/hooks/gemsEconomyHook.java
  io.github.divios.dailyrandomshop.hooks.gemsEconomyHook
 io/github/divios/dailyrandomshop/economies/vault.java
