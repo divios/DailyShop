@@ -310,7 +310,7 @@ customize_unavailable_item: "&c&lUNAVAILABLE"
 ######################
 
 message-open-shop: "&7Opening daily shop..."
-message-buy-item: "&7You bought {amount} of {item} for {price} {currency}"
+message-buy-item: "&7You {action} {amount} of {item} for {price} {currency}"
 message-sell-item: "&7You sold all the items for {price}"
 message-not-enough-money: "&7Ey, You dont have enough money to buy this item!"
 message-inventory-full: "&7Ey, You don't have enough space in your inventory!"

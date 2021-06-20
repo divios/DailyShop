@@ -12,6 +12,7 @@ import io.github.divios.lib.itemHolder.guis.dBuy;
 import io.github.divios.lib.itemHolder.guis.dSell;
 import io.github.divios.lib.storage.dataManager;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventPriority;
 import org.jetbrains.annotations.NotNull;
 
@@ -233,6 +234,14 @@ public class dShop {
                 });
 
         return result[0];
+    }
+
+    /**
+     * Shorcut for {@link dGui#open(Player)}
+     * @param p Player to open the gui for
+     */
+    public synchronized void openGui(Player p) {
+        gui.open(p);
     }
 
     /**
