@@ -74,8 +74,8 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
         ItemStack changePrice = new ItemBuilder(XMaterial.EMERALD)      // change price
                 .setName("&a&lChange Price")
                 .addLore("", "&7Current Buy: &6" + ditem.getBuyPrice().get().getVisualPrice())
-                .addLore("", "&7Current Sell: &6" + ditem.getSellPrice().get().getVisualPrice())
-                .addLore("", "&7Left Click: &7Change buy price", "&7Right Click: &7Change sell price");
+                .addLore("&7Current Sell: &6" + ditem.getSellPrice().get().getVisualPrice())
+                .addLore("", "&6Left Click: &7Change buy price", "&6Right Click: &7Change sell price");
 
         ItemStack changeRarity = new ItemBuilder(ditem.getRarity().getAsItem())         // Change rarity
                 .addLore(conf_msg.CUSTOMIZE_CHANGE_RARITY_LORE);
