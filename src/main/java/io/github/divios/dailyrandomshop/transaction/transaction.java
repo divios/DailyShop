@@ -69,6 +69,7 @@ public class transaction {
         s.getRunnables().forEach(Runnable::run);
 
         p.sendMessage(Msg.singletonMsg(conf_msg.PREFIX + conf_msg.MSG_BUY_ITEM)
+                .add("\\{action}", "bought")
                 .add("\\{amount}", "" + item.getAmount())
                 .add("\\{price}", "" + s.getPrice())
                 .add("\\{item}", item.getDisplayName() + FormatUtils.color("&7"))

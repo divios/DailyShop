@@ -3,6 +3,7 @@ package io.github.divios.lib.itemHolder.guis;
 import io.github.divios.core_lib.misc.EventListener;
 import io.github.divios.dailyrandomshop.events.updateItemEvent;
 import io.github.divios.dailyrandomshop.lorestategy.shopItemsLore;
+import io.github.divios.dailyrandomshop.transaction.sellTransaction;
 import io.github.divios.dailyrandomshop.transaction.transaction;
 import io.github.divios.dailyrandomshop.utils.utils;
 import io.github.divios.lib.itemHolder.dGui;
@@ -102,19 +103,21 @@ public class dBuy extends dGui {
 
             if (utils.isEmpty(e.getCurrentItem())) return;
 
-            if (openSlots.contains(e.getSlot()) && e.isLeftClick())
+            if (openSlots.contains(e.getSlot()))
                 buttons.stream()
-                        .filter(ditem -> ditem.getUid().equals(dItem.of(e.getCurrentItem()).getUid()))
+                        .filter(ditem -> ditem.getUid().equals(dItem.getUid(e.getCurrentItem())))
                         .findFirst()
-                        .ifPresent(dItem -> transaction.init(
-                                (Player) e.getWhoClicked(), dItem, shop));
-
-            else if (openSlots.contains(e.getSlot()) && e.isRightClick()) {
-                //TODO: sell things
-            }
+                        .ifPresent(dItem -> {
+                            if (e.isLeftClick())
+                                transaction.init(
+                                    (Player) e.getWhoClicked(), dItem, shop);
+                            else {
+                                sellTransaction.init(
+                                        (Player) e.getWhoClicked(), dItem, shop);
+                            }
+                        });
 
             else {
-
                 buttons.stream().filter(dItem -> dItem.getSlot() == e.getSlot())
                         .findFirst().ifPresent(dItem -> dItem.getAction()
                         .stream((dAction, s) -> dAction.run((Player) e.getWhoClicked(), s)));
