@@ -4,7 +4,7 @@ import io.github.divios.core_lib.database.DataManagerAbstract;
 import io.github.divios.core_lib.database.DatabaseConnector;
 import io.github.divios.core_lib.database.SQLiteConnector;
 import io.github.divios.core_lib.misc.timeStampUtils;
-import io.github.divios.dailyrandomshop.DRShop;
+import io.github.divios.dailyShop.DRShop;
 import io.github.divios.lib.itemHolder.dGui;
 import io.github.divios.lib.itemHolder.dItem;
 import io.github.divios.lib.itemHolder.dShop;

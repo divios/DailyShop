@@ -3,11 +3,11 @@ package io.github.divios.lib.itemHolder;
 import io.github.divios.core_lib.misc.EventListener;
 import io.github.divios.core_lib.misc.Task;
 import io.github.divios.core_lib.misc.timeStampUtils;
-import io.github.divios.dailyrandomshop.DRShop;
-import io.github.divios.dailyrandomshop.events.deletedShopEvent;
-import io.github.divios.dailyrandomshop.events.reStockShopEvent;
-import io.github.divios.dailyrandomshop.events.updateItemEvent;
-import io.github.divios.dailyrandomshop.utils.utils;
+import io.github.divios.dailyShop.DRShop;
+import io.github.divios.dailyShop.events.deletedShopEvent;
+import io.github.divios.dailyShop.events.reStockShopEvent;
+import io.github.divios.dailyShop.events.updateItemEvent;
+import io.github.divios.dailyShop.utils.utils;
 import io.github.divios.lib.itemHolder.guis.dBuy;
 import io.github.divios.lib.itemHolder.guis.dSell;
 import io.github.divios.lib.storage.dataManager;
@@ -252,6 +252,10 @@ public class dShop {
         this.gui = gui;
         gui.renovate();
         dataManager.getInstance().asyncUpdateGui(this.name, this.gui);
+    }
+
+    public synchronized void reload() {
+        this.gui.reload();
     }
 
     /**

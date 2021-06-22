@@ -2,7 +2,7 @@ package io.github.divios.lib.itemHolder;
 
 import com.cryptomorin.xseries.XMaterial;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
-import io.github.divios.dailyrandomshop.conf_msg;
+import io.github.divios.dailyShop.conf_msg;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;

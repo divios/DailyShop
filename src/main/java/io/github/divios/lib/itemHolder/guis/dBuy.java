@@ -1,15 +1,17 @@
 package io.github.divios.lib.itemHolder.guis;
 
 import io.github.divios.core_lib.misc.EventListener;
-import io.github.divios.dailyrandomshop.events.updateItemEvent;
-import io.github.divios.dailyrandomshop.lorestategy.shopItemsLore;
-import io.github.divios.dailyrandomshop.transaction.sellTransaction;
-import io.github.divios.dailyrandomshop.transaction.transaction;
-import io.github.divios.dailyrandomshop.utils.utils;
+import io.github.divios.core_lib.misc.FormatUtils;
+import io.github.divios.dailyShop.conf_msg;
+import io.github.divios.dailyShop.events.updateItemEvent;
+import io.github.divios.dailyShop.lorestategy.shopItemsLore;
+import io.github.divios.dailyShop.transaction.sellTransaction;
+import io.github.divios.dailyShop.transaction.transaction;
+import io.github.divios.dailyShop.utils.utils;
 import io.github.divios.lib.itemHolder.dGui;
 import io.github.divios.lib.itemHolder.dItem;
 import io.github.divios.lib.itemHolder.dShop;
-import org.bukkit.Bukkit;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -18,7 +20,7 @@ import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.stream.IntStream;
+import java.util.ArrayList;
 
 public class dBuy extends dGui {
 
@@ -38,18 +40,23 @@ public class dBuy extends dGui {
 
     @Override
     public void closeAll() {
-        inv.getViewers().forEach(humanEntity -> {
-            try {
-                humanEntity.closeInventory();
-            } catch (Exception ignored) {}
-        });
+        new ArrayList<>(inv.getViewers())
+                .forEach(humanEntity -> {
+                    humanEntity.sendMessage(conf_msg.PREFIX +
+                            FormatUtils.color("This shop is now under maintenance, " +
+                                    "come again in a few minutes"));
+                    humanEntity.closeInventory();
+                });
     }
 
     @Override
     protected void _renovate(dItem newItem, int slot) {
         newItem.setSlot(slot);
         buttons.add(newItem);
-        inv.setItem(slot, newItem.getItem());
+
+        ItemStack itemToAdd = newItem.getItem().clone();
+        new shopItemsLore(shop.getType()).setLore(itemToAdd);
+        inv.setItem(slot, itemToAdd);
     }
 
     @Override
@@ -71,13 +78,13 @@ public class dBuy extends dGui {
 
                     } else if (type.equals(updateItemEvent.updatetype.NEXT_AMOUNT)) {
 
-                        dItem.setStock(dItem.getStock().get() - 1);
+                        dItem.setStock(dItem.getStock().orElse(0) - 1);
 
-                        if (dItem.getStock().get() <= 0) {
-                            buttons.remove(dItem);
-                            inv.setItem(dItem.getSlot(), utils.getRedPane());
-                        } else
-                            inv.getItem(dItem.getSlot()).setAmount(dItem.getStock().get());
+                        if (dItem.getStock().orElse(0) <= 0) {
+                            dItem.setStock(-1);
+                        }
+
+                        updateItem(dItem, updateItemEvent.updatetype.UPDATE_ITEM);
 
                     } else if (type.equals(updateItemEvent.updatetype.DELETE_ITEM)) {
 
@@ -146,6 +153,7 @@ public class dBuy extends dGui {
 
     @Override
     protected void destroy() {
+        closeAll();
         clickEvent.unregister();
         dragEvent.unregister();
         openEvent.unregister();

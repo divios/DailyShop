@@ -1,12 +1,11 @@
 package io.github.divios.lib.itemHolder.guis;
 
 import io.github.divios.core_lib.inventory.inventoryUtils;
-import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.EventListener;
 import io.github.divios.core_lib.misc.FormatUtils;
-import io.github.divios.dailyrandomshop.conf_msg;
-import io.github.divios.dailyrandomshop.events.updateItemEvent;
-import io.github.divios.dailyrandomshop.utils.utils;
+import io.github.divios.dailyShop.conf_msg;
+import io.github.divios.dailyShop.events.updateItemEvent;
+import io.github.divios.dailyShop.utils.utils;
 import io.github.divios.lib.itemHolder.dGui;
 import io.github.divios.lib.itemHolder.dItem;
 import io.github.divios.lib.itemHolder.dShop;
@@ -23,7 +22,6 @@ import org.bukkit.inventory.ItemStack;
 import java.util.HashMap;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.IntStream;
 
 public class dSell extends dGui {
 

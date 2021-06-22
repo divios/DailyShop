@@ -87,20 +87,20 @@ dependencies {
 task updateJars {
     doLast {
         copy {
-            from 'build/libs/DailyRandomShop-' + pluginVersion + "-all.jar"
+            from 'build/libs/DailyShop-' + pluginVersion + "-all.jar"
             into 'C:/Users/serbe/Desktop/server_pruebas2/plugins'
-            rename ("DailyRandomShop-" + pluginVersion + "-all.jar"
-                    , "DailyRandomShop-" + pluginVersion + ".jar")
+            rename ("DailyShop-" + pluginVersion + "-all.jar"
+                    , "DailyShop-" + pluginVersion + ".jar")
         }
     }
 }
 
 shadowJar {
-    relocate('org.bstats', 'io.github.divios.DailyRandomShop.shaded.bstats')
-    relocate('net.wesjd.anvilgui', 'io.github.divios.DailyRandomShop.shaded.anvilGUI')
-    relocate('de.tr7zw.changeme.nbtapi', 'io.github.divios.DailyRandomShop.shaded.nbt-api')
-    relocate('io.github.divios.core_lib', 'io.github.divios.DailyRandomShop.shaded.Core_lib')
-    relocate('com.cryptomorin.xseries', 'io.github.divios.DailyRandomShop.shaded.XSeries')
+    relocate('org.bstats', 'io.github.divios.DailyShop.shaded.bstats')
+    relocate('net.wesjd.anvilgui', 'io.github.divios.DailyShop.shaded.anvilGUI')
+    relocate('de.tr7zw.changeme.nbtapi', 'io.github.divios.DailyShop.shaded.nbt-api')
+    relocate('io.github.divios.core_lib', 'io.github.divios.DailyShop.shaded.Core_lib')
+    relocate('com.cryptomorin.xseries', 'io.github.divios.DailyShop.shaded.XSeries')
 
     minimize()
 }
