@@ -1,6 +1,6 @@
 name: DailyShop
 version: 3.0.0
-main: io.github.divios.dailyrandomshop.DRShop
+main: io.github.divios.dailyShop.DRShop
 api-version: "1.13"
 prefix: DailyShop
 depend: [ Vault ]
@@ -9,24 +9,24 @@ softdepend: [ PlaceholderAPI, GemsEconomy, MMOItems, MMOLib, Oraxen,
 authors: [ Divios ]
 description: Daily random items to buy on a shop
 commands:
-  DailyRandomShop:
+  DailyShop:
     description: Opens diary shop
     default: false
-    aliases: [ DailyShop, randomshop, rdshop ]
-    usage: /rdShop
+    aliases: [ DailyShop, randomshop, dshop, rdshop ]
+    usage: /dShop
 
 permissions:
-  DailyRandomShop.open:
+  DailyShop.open:
     default: op
-  DailyRandomShop.sell:
+  DailyShop.sell:
     default: op
-  DailyRandomShop.addDailyItem:
+  DailyShop.addDailyItem:
     default: op
-  DailyRandomShop.addSellItem:
+  DailyShop.addSellItem:
     default: op
-  DailyRandomShop.settings:
+  DailyShop.settings:
     default: op
-  DailyRandomShop.renovate:
+  DailyShop.renovate:
     default: op
-  DailyRandomShop.reload:
+  DailyShop.reload:
     default: op

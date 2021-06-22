@@ -1,144 +1,146 @@
-io/github/divios/dailyrandomshop/transaction/summary.java
- io.github.divios.dailyrandomshop.transaction.summary
-io/github/divios/dailyrandomshop/commands/importShops.java
- io.github.divios.dailyrandomshop.commands.importShops
-io/github/divios/dailyrandomshop/builders/itemBuildersHooks/itemsBuilder.java
- io.github.divios.dailyrandomshop.builders.itemBuildersHooks.itemsBuilder
-io/github/divios/dailyrandomshop/utils/conf_updater.java
- io.github.divios.dailyrandomshop.utils.conf_updater
-io/github/divios/dailyrandomshop/guis/settings/shopGui.java
- io.github.divios.dailyrandomshop.guis.settings.shopGui
-io/github/divios/dailyrandomshop/guis/customizerguis/changePrice.java
- io.github.divios.dailyrandomshop.guis.customizerguis.changePrice
-io/github/divios/dailyrandomshop/economies/playerPointsE.java
- io.github.divios.dailyrandomshop.economies.playerPointsE
-io/github/divios/dailyrandomshop/hooks/bstatsHook.java
- io.github.divios.dailyrandomshop.hooks.bstatsHook
+io/github/divios/dailyShop/transaction/transactionExc.java
+ io.github.divios.dailyShop.transaction.transactionExc
+ io.github.divios.dailyShop.transaction.transactionExc$1
+ io.github.divios.dailyShop.transaction.transactionExc$err
+io/github/divios/dailyShop/guis/confirmGui.java
+ io.github.divios.dailyShop.guis.confirmGui
+io/github/divios/dailyShop/utils/conf_updater.java
+ io.github.divios.dailyShop.utils.conf_updater
+io/github/divios/dailyShop/commands/reStock.java
+ io.github.divios.dailyShop.commands.reStock
+io/github/divios/dailyShop/economies/economy.java
+ io.github.divios.dailyShop.economies.economy
+io/github/divios/dailyShop/conf_msg.java
+ io.github.divios.dailyShop.conf_msg
+io/github/divios/dailyShop/economies/gemEcon.java
+ io.github.divios.dailyShop.economies.gemEcon
+io/github/divios/dailyShop/hooks/tokenManagerHook.java
+ io.github.divios.dailyShop.hooks.tokenManagerHook
+io/github/divios/dailyShop/guis/settings/shopGui.java
+ io.github.divios.dailyShop.guis.settings.shopGui
 io/github/divios/lib/managers/shopsManager.java
  io.github.divios.lib.managers.shopsManager
 io/github/divios/lib/itemHolder/dAction.java
  io.github.divios.lib.itemHolder.dAction
-io/github/divios/dailyrandomshop/lorestategy/shopItemsLore.java
- io.github.divios.dailyrandomshop.lorestategy.shopItemsLore
-io/github/divios/dailyrandomshop/builders/itemBuildersHooks/itemsBuilderManager.java
- io.github.divios.dailyrandomshop.builders.itemBuildersHooks.itemsBuilderManager
-io/github/divios/dailyrandomshop/events/reStockShopEvent.java
- io.github.divios.dailyrandomshop.events.reStockShopEvent
-io/github/divios/dailyrandomshop/commands/add.java
- io.github.divios.dailyrandomshop.commands.add
-io/github/divios/dailyrandomshop/builders/itemBuildersHooks/MMOItems.java
- io.github.divios.dailyrandomshop.builders.itemBuildersHooks.MMOItems
-io/github/divios/dailyrandomshop/guis/customizerguis/customizeGui.java
- io.github.divios.dailyrandomshop.guis.customizerguis.customizeGui
-io/github/divios/dailyrandomshop/builders/itemBuildersHooks/oraxenItems.java
- io.github.divios.dailyrandomshop.builders.itemBuildersHooks.oraxenItems
-io/github/divios/dailyrandomshop/economies/economy.java
- io.github.divios.dailyrandomshop.economies.economy
-io/github/divios/dailyrandomshop/transaction/transaction.java
- io.github.divios.dailyrandomshop.transaction.transaction
-io/github/divios/dailyrandomshop/guis/customizerguis/miniCustomizeGui.java
- io.github.divios.dailyrandomshop.guis.customizerguis.miniCustomizeGui
+io/github/divios/dailyShop/hooks/tokenEnchantsHook.java
+ io.github.divios.dailyShop.hooks.tokenEnchantsHook
+io/github/divios/dailyShop/guis/customizerguis/customizeAction.java
+ io.github.divios.dailyShop.guis.customizerguis.customizeAction
+io/github/divios/dailyShop/database/files.java
+ io.github.divios.dailyShop.database.files
+io/github/divios/dailyShop/transaction/sellTransaction.java
+ io.github.divios.dailyShop.transaction.sellTransaction
 io/github/divios/lib/itemHolder/dShop.java
  io.github.divios.lib.itemHolder.dShop
  io.github.divios.lib.itemHolder.dShop$dShopT
-io/github/divios/dailyrandomshop/guis/confirmIH.java
- io.github.divios.dailyrandomshop.guis.confirmIH
-io/github/divios/dailyrandomshop/economies/MPointsE.java
- io.github.divios.dailyrandomshop.economies.MPointsE
-io/github/divios/dailyrandomshop/lorestategy/loreStrategy.java
- io.github.divios.dailyrandomshop.lorestategy.loreStrategy
+io/github/divios/dailyShop/commands/importShops.java
+ io.github.divios.dailyShop.commands.importShops
+io/github/divios/dailyShop/guis/customizerguis/customizerMainGuiIH.java
+ io.github.divios.dailyShop.guis.customizerguis.customizerMainGuiIH
 io/github/divios/lib/itemHolder/guis/dBuy.java
  io.github.divios.lib.itemHolder.guis.dBuy
-io/github/divios/dailyrandomshop/transaction/transactionExc.java
- io.github.divios.dailyrandomshop.transaction.transactionExc
- io.github.divios.dailyrandomshop.transaction.transactionExc$1
- io.github.divios.dailyrandomshop.transaction.transactionExc$err
-io/github/divios/dailyrandomshop/lorestategy/shopItemsManagerLore.java
- io.github.divios.dailyrandomshop.lorestategy.shopItemsManagerLore
-io/github/divios/dailyrandomshop/database/files.java
- io.github.divios.dailyrandomshop.database.files
+io/github/divios/dailyShop/commands/add.java
+ io.github.divios.dailyShop.commands.add
+io/github/divios/dailyShop/economies/playerPointsE.java
+ io.github.divios.dailyShop.economies.playerPointsE
+io/github/divios/dailyShop/commands/Manager.java
+ io.github.divios.dailyShop.commands.Manager
+io/github/divios/dailyShop/hooks/hooksManager.java
+ io.github.divios.dailyShop.hooks.hooksManager
 io/github/divios/lib/storage/migrations/initialMigration.java
  io.github.divios.lib.storage.migrations.initialMigration
-io/github/divios/dailyrandomshop/hooks/placeholderApiHook.java
- io.github.divios.dailyrandomshop.hooks.placeholderApiHook
-io/github/divios/dailyrandomshop/hooks/playerPointsHook.java
- io.github.divios.dailyrandomshop.hooks.playerPointsHook
-io/github/divios/dailyrandomshop/guis/confirmGui.java
- io.github.divios.dailyrandomshop.guis.confirmGui
-io/github/divios/dailyrandomshop/events/createdShopEvent.java
- io.github.divios.dailyrandomshop.events.createdShopEvent
-io/github/divios/dailyrandomshop/conf_msg.java
- io.github.divios.dailyrandomshop.conf_msg
-io/github/divios/dailyrandomshop/guis/customizerguis/changeEnchantments.java
- io.github.divios.dailyrandomshop.guis.customizerguis.changeEnchantments
-io/github/divios/dailyrandomshop/commands/helpCmd.java
- io.github.divios.dailyrandomshop.commands.helpCmd
-io/github/divios/dailyrandomshop/tasks/taskManager.java
- io.github.divios.dailyrandomshop.tasks.taskManager
-io/github/divios/dailyrandomshop/transaction/sellTransaction.java
- io.github.divios.dailyrandomshop.transaction.sellTransaction
-io/github/divios/dailyrandomshop/hooks/gemsEconomyHook.java
- io.github.divios.dailyrandomshop.hooks.gemsEconomyHook
-io/github/divios/dailyrandomshop/economies/vault.java
- io.github.divios.dailyrandomshop.economies.vault
-io/github/divios/dailyrandomshop/economies/econTypes.java
- io.github.divios.dailyrandomshop.economies.econTypes
-io/github/divios/dailyrandomshop/commands/Manager.java
- io.github.divios.dailyrandomshop.commands.Manager
-io/github/divios/dailyrandomshop/guis/settings/shopsManagerGui.java
- io.github.divios.dailyrandomshop.guis.settings.shopsManagerGui
-io/github/divios/dailyrandomshop/hooks/tokenEnchantsHook.java
- io.github.divios.dailyrandomshop.hooks.tokenEnchantsHook
-io/github/divios/dailyrandomshop/hooks/shopGuiPlusHook.java
- io.github.divios.dailyrandomshop.hooks.shopGuiPlusHook
-io/github/divios/dailyrandomshop/economies/tokenEnchantsE.java
- io.github.divios.dailyrandomshop.economies.tokenEnchantsE
+io/github/divios/dailyShop/events/deletedShopEvent.java
+ io.github.divios.dailyShop.events.deletedShopEvent
+io/github/divios/dailyShop/events/updateItemEvent.java
+ io.github.divios.dailyShop.events.updateItemEvent
+ io.github.divios.dailyShop.events.updateItemEvent$updatetype
+io/github/divios/dailyShop/utils/utils.java
+ io.github.divios.dailyShop.utils.utils
+io/github/divios/dailyShop/hooks/playerPointsHook.java
+ io.github.divios.dailyShop.hooks.playerPointsHook
+io/github/divios/dailyShop/guis/customizerguis/miniCustomizeGui.java
+ io.github.divios.dailyShop.guis.customizerguis.miniCustomizeGui
+io/github/divios/dailyShop/DRShop.java
+ io.github.divios.dailyShop.DRShop
+io/github/divios/dailyShop/economies/vault.java
+ io.github.divios.dailyShop.economies.vault
+io/github/divios/dailyShop/builders/itemBuildersHooks/itemsBuilder.java
+ io.github.divios.dailyShop.builders.itemBuildersHooks.itemsBuilder
+io/github/divios/dailyShop/guis/customizerguis/changePrice.java
+ io.github.divios.dailyShop.guis.customizerguis.changePrice
+io/github/divios/dailyShop/hooks/shopGuiPlusHook.java
+ io.github.divios.dailyShop.hooks.shopGuiPlusHook
+io/github/divios/dailyShop/commands/reload.java
+ io.github.divios.dailyShop.commands.reload
+io/github/divios/dailyShop/events/reStockShopEvent.java
+ io.github.divios.dailyShop.events.reStockShopEvent
+io/github/divios/dailyShop/economies/tokenEnchantsE.java
+ io.github.divios.dailyShop.economies.tokenEnchantsE
+io/github/divios/dailyShop/guis/customizerguis/changeEcon.java
+ io.github.divios.dailyShop.guis.customizerguis.changeEcon
+io/github/divios/dailyShop/guis/settings/addDailyGuiIH.java
+ io.github.divios.dailyShop.guis.settings.addDailyGuiIH
+io/github/divios/dailyShop/economies/tokenManagerE.java
+ io.github.divios.dailyShop.economies.tokenManagerE
+io/github/divios/dailyShop/guis/customizerguis/changeBundleItem.java
+ io.github.divios.dailyShop.guis.customizerguis.changeBundleItem
+io/github/divios/dailyShop/lorestategy/shopsManagerLore.java
+ io.github.divios.dailyShop.lorestategy.shopsManagerLore
 io/github/divios/lib/itemHolder/dRarity.java
  io.github.divios.lib.itemHolder.dRarity
  io.github.divios.lib.itemHolder.dRarity$1
  io.github.divios.lib.itemHolder.dRarity$rarityT
+io/github/divios/dailyShop/builders/itemBuildersHooks/oraxenItems.java
+ io.github.divios.dailyShop.builders.itemBuildersHooks.oraxenItems
+io/github/divios/dailyShop/hooks/MPointsHook.java
+ io.github.divios.dailyShop.hooks.MPointsHook
 io/github/divios/lib/itemHolder/dItem.java
  io.github.divios.lib.itemHolder.dItem
-io/github/divios/dailyrandomshop/guis/customizerguis/changeBundleItem.java
- io.github.divios.dailyrandomshop.guis.customizerguis.changeBundleItem
+io/github/divios/dailyShop/transaction/summary.java
+ io.github.divios.dailyShop.transaction.summary
+io/github/divios/dailyShop/economies/econTypes.java
+ io.github.divios.dailyShop.economies.econTypes
+io/github/divios/dailyShop/lorestategy/loreStrategy.java
+ io.github.divios.dailyShop.lorestategy.loreStrategy
+io/github/divios/dailyShop/lorestategy/shopItemsManagerLore.java
+ io.github.divios.dailyShop.lorestategy.shopItemsManagerLore
+io/github/divios/dailyShop/economies/MPointsE.java
+ io.github.divios.dailyShop.economies.MPointsE
+io/github/divios/dailyShop/transaction/transaction.java
+ io.github.divios.dailyShop.transaction.transaction
+io/github/divios/dailyShop/commands/helpCmd.java
+ io.github.divios.dailyShop.commands.helpCmd
 io/github/divios/lib/itemHolder/guis/dSell.java
  io.github.divios.lib.itemHolder.guis.dSell
-io/github/divios/dailyrandomshop/guis/customizerguis/changeEcon.java
- io.github.divios.dailyrandomshop.guis.customizerguis.changeEcon
 io/github/divios/lib/itemHolder/dPrice.java
  io.github.divios.lib.itemHolder.dPrice
 io/github/divios/lib/itemHolder/dGui.java
  io.github.divios.lib.itemHolder.dGui
-io/github/divios/dailyrandomshop/events/updateItemEvent.java
- io.github.divios.dailyrandomshop.events.updateItemEvent
- io.github.divios.dailyrandomshop.events.updateItemEvent$updatetype
+io/github/divios/dailyShop/builders/itemBuildersHooks/MMOItems.java
+ io.github.divios.dailyShop.builders.itemBuildersHooks.MMOItems
+io/github/divios/dailyShop/tasks/taskManager.java
+ io.github.divios.dailyShop.tasks.taskManager
 io/github/divios/lib/storage/dataManager.java
  io.github.divios.lib.storage.dataManager
-io/github/divios/dailyrandomshop/hooks/tokenManagerHook.java
- io.github.divios.dailyrandomshop.hooks.tokenManagerHook
-io/github/divios/dailyrandomshop/economies/tokenManagerE.java
- io.github.divios.dailyrandomshop.economies.tokenManagerE
-io/github/divios/dailyrandomshop/guis/customizerguis/customizeAction.java
- io.github.divios.dailyrandomshop.guis.customizerguis.customizeAction
-io/github/divios/dailyrandomshop/hooks/hooksManager.java
- io.github.divios.dailyrandomshop.hooks.hooksManager
-io/github/divios/dailyrandomshop/DRShop.java
- io.github.divios.dailyrandomshop.DRShop
-io/github/divios/dailyrandomshop/lorestategy/shopsManagerLore.java
- io.github.divios.dailyrandomshop.lorestategy.shopsManagerLore
-io/github/divios/dailyrandomshop/economies/gemEcon.java
- io.github.divios.dailyrandomshop.economies.gemEcon
-io/github/divios/dailyrandomshop/guis/customizerguis/customizerMainGuiIH.java
- io.github.divios.dailyrandomshop.guis.customizerguis.customizerMainGuiIH
-io/github/divios/dailyrandomshop/commands/reStock.java
- io.github.divios.dailyrandomshop.commands.reStock
-io/github/divios/dailyrandomshop/guis/settings/addDailyGuiIH.java
- io.github.divios.dailyrandomshop.guis.settings.addDailyGuiIH
-io/github/divios/dailyrandomshop/utils/utils.java
- io.github.divios.dailyrandomshop.utils.utils
-io/github/divios/dailyrandomshop/hooks/MPointsHook.java
- io.github.divios.dailyrandomshop.hooks.MPointsHook
-io/github/divios/dailyrandomshop/events/deletedShopEvent.java
- io.github.divios.dailyrandomshop.events.deletedShopEvent
-io/github/divios/dailyrandomshop/commands/open.java
- io.github.divios.dailyrandomshop.commands.open
+io/github/divios/dailyShop/hooks/bstatsHook.java
+ io.github.divios.dailyShop.hooks.bstatsHook
+io/github/divios/dailyShop/guis/customizerguis/customizeGui.java
+ io.github.divios.dailyShop.guis.customizerguis.customizeGui
+io/github/divios/dailyShop/guis/confirmIH.java
+ io.github.divios.dailyShop.guis.confirmIH
+io/github/divios/dailyShop/hooks/placeholderApiHook.java
+ io.github.divios.dailyShop.hooks.placeholderApiHook
+io/github/divios/dailyShop/builders/itemBuildersHooks/itemsBuilderManager.java
+ io.github.divios.dailyShop.builders.itemBuildersHooks.itemsBuilderManager
+io/github/divios/dailyShop/lorestategy/shopItemsLore.java
+ io.github.divios.dailyShop.lorestategy.shopItemsLore
+io/github/divios/dailyShop/commands/open.java
+ io.github.divios.dailyShop.commands.open
+io/github/divios/dailyShop/hooks/gemsEconomyHook.java
+ io.github.divios.dailyShop.hooks.gemsEconomyHook
+io/github/divios/dailyShop/guis/customizerguis/changeEnchantments.java
+ io.github.divios.dailyShop.guis.customizerguis.changeEnchantments
+io/github/divios/dailyShop/events/createdShopEvent.java
+ io.github.divios.dailyShop.events.createdShopEvent
+io/github/divios/dailyShop/guis/settings/shopsManagerGui.java
+ io.github.divios.dailyShop.guis.settings.shopsManagerGui

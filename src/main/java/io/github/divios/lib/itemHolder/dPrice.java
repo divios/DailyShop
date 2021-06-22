@@ -1,6 +1,6 @@
 package io.github.divios.lib.itemHolder;
 
-import io.github.divios.dailyrandomshop.utils.utils;
+import io.github.divios.dailyShop.utils.utils;
 
 import java.io.Serializable;
 

@@ -21,24 +21,14 @@ debug: false
 timer-duration: 86400
 
 # The default price an item 'll get when added
-# to the shop
-default-price: 500.0
-
-# The number of daily items on the shop, the minimum is 1 and the maximum is 36.
-# If none of them is provided it 'll default to 14
-number-of-daily-items: 14
+# to a shop
+default-buy-price: 500.0
+default-sell-price: 20
 
 # When the currency of an item is set to vault, which is the default, this name
 # 'll appear on the lore. As the default currency usually has a name, this option is included
 # to personalize it
 vault-currency-name: "&7Vault"
-
-# Enable this option to add a button on each shop
-# that will let you travel between them
-enable-connected-shops: false
-
-# On false it won't be possible to access the sell menu
-enable-sell-gui: true
 
 # On false, rarity feature 'll be disabled
 enable-rarity: true

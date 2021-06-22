@@ -1,7 +1,7 @@
 package io.github.divios.lib.managers;
 
-import io.github.divios.dailyrandomshop.events.createdShopEvent;
-import io.github.divios.dailyrandomshop.events.deletedShopEvent;
+import io.github.divios.dailyShop.events.createdShopEvent;
+import io.github.divios.dailyShop.events.deletedShopEvent;
 import io.github.divios.lib.itemHolder.dShop;
 import io.github.divios.lib.storage.dataManager;
 import org.bukkit.Bukkit;
@@ -85,10 +85,15 @@ public class shopsManager {
 
         Bukkit.getPluginManager().callEvent(event);     // throw new event
 
+        // auto-destroy is handled via event on dShop
         shops.remove(result.get());
 
         return true;
 
+    }
+
+    public synchronized void reload() {
+        shops.forEach(dShop::reload);
     }
 
 
