@@ -5,11 +5,11 @@ import io.github.divios.core_lib.misc.EventListener;
 import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.core_lib.misc.Pair;
 import io.github.divios.core_lib.misc.WeightedRandom;
-import io.github.divios.dailyrandomshop.DRShop;
-import io.github.divios.dailyrandomshop.conf_msg;
-import io.github.divios.dailyrandomshop.events.updateItemEvent;
-import io.github.divios.dailyrandomshop.lorestategy.loreStrategy;
-import io.github.divios.dailyrandomshop.lorestategy.shopItemsLore;
+import io.github.divios.dailyShop.DRShop;
+import io.github.divios.dailyShop.conf_msg;
+import io.github.divios.dailyShop.events.updateItemEvent;
+import io.github.divios.dailyShop.lorestategy.loreStrategy;
+import io.github.divios.dailyShop.lorestategy.shopItemsLore;
 import io.github.divios.lib.itemHolder.guis.dBuy;
 import io.github.divios.lib.itemHolder.guis.dSell;
 import org.bukkit.Bukkit;
@@ -215,23 +215,21 @@ public abstract class dGui {
         WeightedRandom<dItem> RRM = WeightedRandom.fromCollection(      // create weighted random
                 shop.getItems().stream().filter(dItem -> dItem.getRarity().getWeight() != 0)
                         .collect(Collectors.toList()),  // remove unAvailable
-                item -> {
-                    dItem cloned = item.clone();
-                    cloned.applyLoreStrategy(strategy);
-                    return cloned;
-                },
-                value -> value.getRarity().getWeight()
+                dItem::clone,
+                value -> DRShop.getInstance().getConfig().getBoolean("enable-rarity", true) ?
+                value.getRarity().getWeight():1     // Get weights depending if rarity enable
         );
-        RRM.removeOnRoll();
         clearDailyItems();
 
         int addedButtons = 0;
-        for (int i = 0; i < openSlots.size(); i++) {
+        for (int i : openSlots.stream().sorted().collect(Collectors.toList())) {
             inv.clear(i);
 
             if (addedButtons >= shop.getItems().size()) break;
 
-            _renovate(RRM.roll(), i);
+            dItem rolled = RRM.roll();
+            _renovate(rolled, i);
+            RRM.remove(rolled);
             addedButtons++;
         }
 
@@ -254,6 +252,12 @@ public abstract class dGui {
     }
 
     protected abstract void initListeners();
+
+    public void reload() {
+        buttons.stream()
+                .filter(dItem -> !dItem.isAIR())
+                .forEach(dItem -> updateItem(dItem, updateItemEvent.updatetype.UPDATE_ITEM));
+    }
 
     /**
      * Destroys the inventory. In summary, unregisters all the listeners
