@@ -8,10 +8,11 @@ import de.tr7zw.nbtapi.NBTItem;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.Pair;
-import io.github.divios.dailyrandomshop.conf_msg;
-import io.github.divios.dailyrandomshop.economies.economy;
-import io.github.divios.dailyrandomshop.economies.vault;
-import io.github.divios.dailyrandomshop.lorestategy.loreStrategy;
+import io.github.divios.dailyShop.DRShop;
+import io.github.divios.dailyShop.conf_msg;
+import io.github.divios.dailyShop.economies.economy;
+import io.github.divios.dailyShop.economies.vault;
+import io.github.divios.dailyShop.lorestategy.loreStrategy;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
@@ -27,6 +28,9 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class dItem implements Serializable, Cloneable {
+
+    private static final long serialVersionUID = 6529685098267757690L;
+    private static final DRShop plugin = DRShop.getInstance();
 
     private NBTItem item;
     private String shop = ""; // TODO: not sure
@@ -48,8 +52,8 @@ public class dItem implements Serializable, Cloneable {
             setRarity(new dRarity());       //Defaults to Common
             setConfirm_gui(true);           // Defaults true
             setEconomy(new vault());        // Default Vault
-            setBuyPrice(conf_msg.DEFAULT_PRICE); // Default buy price
-            setSellPrice(-1); // Default sell price //TODO
+            setBuyPrice(plugin.getConfig().getInt("default-buy-price")); // Default buy price
+            setSellPrice(plugin.getConfig().getInt("default-sell-price")); // Default sell price
         }
     }
 
@@ -142,12 +146,6 @@ public class dItem implements Serializable, Cloneable {
      */
     public @NotNull List<String> getLore() {
         return ItemUtils.getLore(getItem());
-    }
-
-    public void applyLoreStrategy(loreStrategy strategy) {
-        ItemStack aux = getItem();
-        strategy.setLore(aux);
-        setItem(aux);
     }
 
     /**
@@ -417,9 +415,15 @@ public class dItem implements Serializable, Cloneable {
      * @return
      */
     public @NotNull economy getEconomy() {
-        if (item.hasKey("rds_econ"))
-            return economy.deserialize(item.getString("rds_econ"));
-        return new vault();
+        economy econ = new vault();
+        if (item.hasKey("rds_econ")) {
+            econ = economy.deserialize(item.getString("rds_econ"));
+            try {
+                econ.test();
+            } catch (Exception e) { econ = new vault(); }
+        }
+
+        return econ;
     }
 
     /**
@@ -562,6 +566,7 @@ public class dItem implements Serializable, Cloneable {
      */
     private void setSIGN() {item.setBoolean("rds_SIGN", true);}
 
+
     /**
      * Check if an dItem is masked as AIR
      * @return
@@ -595,7 +600,17 @@ public class dItem implements Serializable, Cloneable {
     }
 
     /**
-     * Returns a deep copy of the object
+     * Returns a copy of this dItem but different UUID (generated randomly)
+     * @return
+     */
+    public dItem clone2() {
+        dItem cloned = deserialize(this.serialize());
+        cloned.setUid(UUID.randomUUID());
+        return cloned;
+    }
+
+    /**
+     * Returns a deep copy of the object, same UUID
      * @return
      */
     public dItem clone() {
