@@ -2,58 +2,26 @@
 ####### Menus #######
 #####################
 
-################################
-####### Daily Shop menu ########
-################################
-
-# The name of the daily shop GUI
-daily-shop-gui-name: "&c&lDailyShop"
-# The name and lore of the painting in the middle-top of the GUI
-# where you should expect how to use the shop
-daily-shop-gui-painting-name: "&c&lWhat is this?"
-daily-shop-gui-painting-lore:
-  - "&7Every day new items will"
-  - "&7show up here!"
-# This is the lore that the daily
-# items will display
-daily-items-lore-buy-price: "&6Buy price: &7{buyPrice}"
-daily-items-lore-sell-price: "&6Sell price: &7{sellPrice}"
-daily-items-lore-currency: "&6Currency: &7{currency}"
-daily-items-lore-rarity: "&6Rarity: &7{rarity}"
-daily-items-lore-buy-for: "&6Buy for &7{price}"
-
-  ###############################
-  ####### Sell Shop menu ########
-  ###############################
-
-# The name of the sell GUI
-sell-gui-name: "&3&lMarket"
-# The name and lore of the painting in the middle-top of the GUI
-# where you should expect how to use the shop
-sell-gui-painting-name: "&3&lWhat is this?"
-sell-gui-painting-lore:
-  - "&7Drag and Drop your items"
-  - "&7to sell them!"
-# This is the name that the confirm
-# bottom will have
-sell-item-name: "&3&lTotal money: &7{price}"
 
   ##################################
   ####### Confirm Shop menu ########
   ##################################
 
 # The name of the confirm GUI
-confirm-gui-name: "&2&lConfirm Purchase"
+confirm-gui-buy-name: "&c&lConfirm Purchase"
+confirm-gui-sell-name: "&a&lConfirm sell"
+confirm-gui-action-name: "&6&lConfirm Action"
 #the name of the add/remove panes
 confirm-gui-add-pane: "&a&lAdd"
 confirm-gui-remove-pane: "&c&lRemove"
 #The name of the confirm green pane
 confirm-gui-confirm-pane: "&a&lConfirm"
-#the name of the arrow to return to
-#the daily shop
+
 confirm-gui-return-name: "&c&lReturn"
 confirm-gui-return-pane-lore:
   - "&7Click to go back"
+
+sell-item-name: "&3&lTotal money: &7{price}"
 
   #############################
 ####### Confirm menu ########
@@ -65,19 +33,23 @@ confirm-menu-yes: "&a&lConfirm"
 confirm-manu-no: "&c&lCancel"
 
   ##############################
-####### Settings menu ########
-##############################
+  ####### Shops Manager ########
+  ##############################
 
-# NOTE: This is the menu that prompts when /rdshop settings
-settings-gui-title: "&6&lSettings"
+shops-manager-title: "&f&lShops Manager"
 
-settings-daily-item: "&6&lDaily items"
-settings-daily-items-lore:
-  - "&7Click to manage daily items"
+shops-manager-create: "&f&lCreate Shop"
+shops-manager-rename: "&c&lRename shop"
+shops-manager-new-shop: "&6&lNew shop"
 
-settings-sell-items: "&a&lSell items"
-settings-sell-items-lore:
-  - "&7Click to manage sell items"
+shops-manager-lore:
+  - ""
+  - "&6Left Click: &7Manage items"
+  - "&6Right Click: &7Delete shop"
+  - "&6Middle Click: &7Change shop name"
+  - "&6Q Click: &7Change reset time (Actual: &6{amount} &7)"
+  - ""
+  - "&6Shift Left Click: &7Customize shop appearance"
 
   ##################################
   ####### Adding items menu ########
@@ -108,42 +80,20 @@ add-items-return-lore:
 # NOTE: This is the menu to manage
 # the daily items
 
-daily-items-menu_title: "&6&lDaily items Manager"
+daily-items-menu_title: "&f&lShop Manager"
 
-daily-items-menu-add: "&3&lAdd"
+daily-items-menu-add: "&3&lAdd Item"
 daily_items_menu_add_lore:
-  - "&7Click to add item"
+  - "&7Click to add new item"
 daily-items-menu-next: "&6&lNext"
 daily-items-menu-previous: "&6&lPrevious"
 daily-items-menu-return: "&c&lReturn"
 
-daily-items-menu-items-lore:
-  - "&6> Left Click: &7Customize Item"
-  - "&6> Right Click: &7Remove Item"
-
-# The anvil that appears when changing price
-daily-items-anvil-title: "&6&lSet Price"
-daily-items-anvil-default-text: "Price"
-
-  ################################
-####### Sell items menu ########
-################################
-
-# NOTE: This is the menu to manage
-# the daily items
-
-sell-items-menu_title: "&a&lSell items Manager"
-sell-items-menu-next: "&6&lNext"
-sell-items-menu-previous: "&6&lPrevious"
-sell-items-menu-return: "&c&lReturn"
-
-sell-items-menu-items-lore:
-  - "&6> Left Click: &7Change price"
-  - "&6> Right Click: &7Remove Item"
-
-# The anvil that appears when changing price
-sell-items-anvil-title: "&6&lSet Price"
-sell-items-anvil-default-text: "Price"
+daily-items-lore-buy-price: "&6Buy price: &7{buyPrice}"
+daily-items-lore-sell-price: "&6Sell price: &7{sellPrice}"
+daily-items-lore-currency: "&6Currency: &7{currency}"
+daily-items-lore-rarity: "&6Rarity: &7{rarity}"
+daily-items-lore-buy-for: "&6Buy for &7{price}"
 
   ####################################
 ####### Customize item menu ########
@@ -309,26 +259,18 @@ customize_unavailable_item: "&c&lUNAVAILABLE"
 ###### Messages ######
 ######################
 
-message-open-shop: "&7Opening daily shop..."
 message-buy-item: "&7You {action} {amount} of {item} for {price} {currency}"
-message-sell-item: "&7You sold all the items for {price}"
 message-not-enough-money: "&7Ey, You dont have enough money to buy this item!"
 message-inventory-full: "&7Ey, You don't have enough space in your inventory!"
-message-invalid-item: "&7Ey, we don't accept that item on the market!"
-message-new-daily-items: "&7New items available on the Daily Shop!"
+message-not-enought-item: "&7You dont have this item or the proper amount to sell it"
+message-new-daily-items: "&7Renovated items of shop {shop}"
 message-not-perms: "&7Ey, you dont have permission to do this!"
 message-not-perms-item: "&7Ey, you don't have the perms necessary to buy this item"
-message-error_item_hand: "&7Ey, you need to have an item in your hand"
-message-error_price: "&7Ey, you have to specify a price for the item"
-message-error_adding_item: "&7Something went wrong while adding the item"
-message-added_item: "&7Item added successfully"
-message_removed_item: "&7Removed item successfully"
-message_item_on_sale: "&7Ey! That item is already on sale"
+message-out-of-stock: "&7That item is out of stock"
+message-invalid-buy: "&7That item cannot be bought"
+message-invalid-sell: "&7That item cannot be sell"
 message_not_in_stock: "&7That currency is not available anymore"
-message-sell-items-gui-empty: "&7There are not items registered for sale, you can add one with /rdshop addSellItem"
 message-anvil-error-integer: "Not integer"
 message-add-item-title: "&a&lClick item"
 message-add-item-subtitle: "&7In hand to add it"
 message-timer-expired: "&7Ey! The time to select an item expired, try it again"
-message-not-integer: "Not integer"
-message-reload: "&7Reloaded all files"

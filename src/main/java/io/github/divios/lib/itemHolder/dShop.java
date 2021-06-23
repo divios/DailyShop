@@ -29,8 +29,8 @@ public class dShop {
     private Set<dItem> items = new LinkedHashSet<>();
     private dGui gui;
 
-    private Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-    private int timer = 24 * 60 * 60; // seconds representing time to pass until reset
+    private Timestamp timestamp;
+    private int timer;
     private final int[] gui_hash = {0};
 
     private Task asyncCheck;
@@ -41,9 +41,9 @@ public class dShop {
     public dShop(String name, dShopT type) {
         this.name = name;
         this.type = type;
-
-        if (type.equals(dShopT.buy)) gui = new dBuy(this);
-        else gui = new dSell(this);
+        this.timestamp = new Timestamp(System.currentTimeMillis());
+        this.timer = plugin.getConfig().getInt("timer-duration");  // seconds representing time to pass until reset
+        this.gui = new dBuy(this);
 
         initialize();
     }

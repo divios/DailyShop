@@ -82,14 +82,13 @@ public class shopsManager {
         if (!result.isPresent()) return false;
 
         deletedShopEvent event = new deletedShopEvent(result.get());
-
         Bukkit.getPluginManager().callEvent(event);     // throw new event
 
         // auto-destroy is handled via event on dShop
         shops.remove(result.get());
+        dataManager.getInstance().deleteShop(result.get().getName());
 
         return true;
-
     }
 
     public synchronized void reload() {
