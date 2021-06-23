@@ -2,6 +2,7 @@ package io.github.divios.dailyShop.guis;
 
 import com.cryptomorin.xseries.XMaterial;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
+import io.github.divios.core_lib.misc.Msg;
 import io.github.divios.dailyShop.DRShop;
 import io.github.divios.dailyShop.conf_msg;
 import io.github.divios.dailyShop.utils.utils;
@@ -98,13 +99,14 @@ public class confirmGui implements Listener, InventoryHolder {
                 .setName(conf_msg.CONFIRM_GUI_REMOVE_PANE + " 10");
 
         back = new ItemBuilder(XMaterial.OAK_SIGN)
-                .setName(backLore);
+                .setName(backLore).setLore(conf_msg.CONFIRM_GUI_RETURN_PANE_LORE);
 
         confirm = new ItemBuilder(XMaterial.EMERALD_BLOCK)
                 .setName(confirmLore)
-                .addLore("&6Price: &7" + item.getAmount() * (type.equals(dShop.dShopT.buy) ?
+                .addLore(Msg.singletonMsg(conf_msg.CONFIRM_GUI_CONFIRM_PANE).add("\\{price}",
+                        String.valueOf(item.getAmount() * (type.equals(dShop.dShopT.buy) ?
                         dItem.of(item).getBuyPrice().get().getPrice():
-                        dItem.of(item).getSellPrice().get().getPrice()));
+                        dItem.of(item).getSellPrice().get().getPrice()))).build());
     }
 
     @Override
