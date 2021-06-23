@@ -63,10 +63,12 @@ public class changePrice {
                                 return AnvilGUI.Response.text(conf_msg.MSG_NOT_INTEGER);
                             }
 
+                            double price = Double.parseDouble(text);
+                            if (price <= 0) price = -1;
                             if (type == dShop.dShopT.buy)
-                                item.setBuyPrice(Double.parseDouble(text));
+                                item.setBuyPrice(price);
                             else
-                                item.setSellPrice(Double.parseDouble(text));
+                                item.setSellPrice(price);
 
                             Bukkit.getPluginManager().callEvent(
                                     new updateItemEvent(item,
