@@ -14,7 +14,7 @@ public class conf_updater {
     private static final DRShop main =
             DRShop.getInstance();
 
-    public static final double version = 235.2; //2.3.5B
+    public static final double version = 300; //3.0.0
     public static boolean priceFormat = false;
 
     public static void check() {

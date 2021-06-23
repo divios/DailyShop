@@ -42,7 +42,7 @@ public class add extends abstractCommand {
 
     @Override
     public List<String> getPerms() {
-        return Collections.singletonList("DailyShop.addDailyItem");
+        return Collections.singletonList("DailyRandomShop.addDailyItem");
     }
 
     @Override

@@ -47,7 +47,7 @@ shops-manager-lore:
   - "&6Left Click: &7Manage items"
   - "&6Right Click: &7Delete shop"
   - "&6Middle Click: &7Change shop name"
-  - "&6Q Click: &7Change reset time (Actual: &6{amount} &7)"
+  - "&6Q Click: &7Change reset time (Actual: &6{amount}&7)"
   - ""
   - "&6Shift Left Click: &7Customize shop appearance"
 

@@ -35,7 +35,7 @@ public class reload extends abstractCommand {
 
     @Override
     public List<String> getPerms() {
-        return Collections.singletonList("DailyShop.reload");
+        return Collections.singletonList("DailyRandomShop.reload");
     }
 
     @Override

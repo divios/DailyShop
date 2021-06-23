@@ -444,7 +444,10 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
                         ditem.setPerms(perms);
                     }
                     refresh(p);
-                }, this::refresh, FormatUtils.color("&7Input permission"), "");
+                }, player -> {
+                    player.sendMessage(conf_msg.PREFIX + conf_msg.MSG_TIMER_EXPIRED);
+                    refresh(player);
+                }, FormatUtils.color("&7Input permission"), "");
 
             } else if (e.isRightClick() && !e.isShiftClick()) {
                 List<String> s = ditem.getPerms().get();

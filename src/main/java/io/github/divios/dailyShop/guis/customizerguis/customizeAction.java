@@ -43,7 +43,7 @@ public class customizeAction {
 
         preventClose = new EventListener<>(plugin, InventoryCloseEvent.class,
                 e -> {
-                    if (!e.getPlayer().getUniqueId().equals(p.getUniqueId())) return;
+                    if (e.getInventory() != inv.getInventory()) return;
 
                     if (flagPass) return;
 

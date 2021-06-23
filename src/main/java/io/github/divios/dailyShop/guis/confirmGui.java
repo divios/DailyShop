@@ -35,6 +35,8 @@ public class confirmGui implements Listener, InventoryHolder {
     private  ItemStack rem10;
     private  ItemStack confirm;
     private  ItemStack back;
+    private  ItemStack set64;
+    private  ItemStack set1;
     private final BiConsumer<Player, ItemStack> c;
     private final Consumer<Player> b;
 
@@ -91,6 +93,9 @@ public class confirmGui implements Listener, InventoryHolder {
         add10 = new ItemBuilder(XMaterial.GREEN_STAINED_GLASS_PANE)
                 .setName(conf_msg.CONFIRM_GUI_ADD_PANE + " 10");
 
+        set64 = new ItemBuilder(XMaterial.GREEN_STAINED_GLASS_PANE)
+                .setName("&a&lSet to 64");
+
         rem1 = new ItemBuilder(XMaterial.RED_STAINED_GLASS_PANE)
                 .setName(conf_msg.CONFIRM_GUI_REMOVE_PANE + " 1");
         rem5 = new ItemBuilder(XMaterial.RED_STAINED_GLASS_PANE)
@@ -98,12 +103,15 @@ public class confirmGui implements Listener, InventoryHolder {
         rem10 = new ItemBuilder(XMaterial.RED_STAINED_GLASS_PANE)
                 .setName(conf_msg.CONFIRM_GUI_REMOVE_PANE + " 10");
 
+        set1 = new ItemBuilder(XMaterial.RED_STAINED_GLASS_PANE)
+                .setName("&c&lSet to 1");
+
         back = new ItemBuilder(XMaterial.OAK_SIGN)
                 .setName(backLore).setLore(conf_msg.CONFIRM_GUI_RETURN_PANE_LORE);
 
         confirm = new ItemBuilder(XMaterial.EMERALD_BLOCK)
                 .setName(confirmLore)
-                .addLore(Msg.singletonMsg(conf_msg.CONFIRM_GUI_CONFIRM_PANE).add("\\{price}",
+                .addLore(Msg.singletonMsg(conf_msg.SELL_ITEM_NAME).add("\\{price}",
                         String.valueOf(item.getAmount() * (type.equals(dShop.dShopT.buy) ?
                         dItem.of(item).getBuyPrice().get().getPrice():
                         dItem.of(item).getSellPrice().get().getPrice()))).build());
@@ -120,6 +128,7 @@ public class confirmGui implements Listener, InventoryHolder {
         inv.setItem(24, add1);
         inv.setItem(25, add5);
         inv.setItem(26, add10);
+        inv.setItem(16, set64);
         inv.setItem(36, back);
         inv.setItem(40, confirm);
         inv.setItem(22, item);
@@ -131,18 +140,21 @@ public class confirmGui implements Listener, InventoryHolder {
         int nStack = inv.getItem(22).getAmount();
 
         inv.setItem(18, nStack > 1 ? rem1: XMaterial.AIR.parseItem());
+        inv.setItem(10, nStack > 1 ? set1: XMaterial.AIR.parseItem());
         inv.setItem(19, nStack > 5 ? rem5: XMaterial.AIR.parseItem());
         inv.setItem(20, nStack > 10 ? rem10: XMaterial.AIR.parseItem());
         inv.setItem(24, nStack < 64 ? add1: XMaterial.AIR.parseItem());
         inv.setItem(25, nStack < 60 ? add5: XMaterial.AIR.parseItem());
         inv.setItem(26, nStack < 55 ? add10: XMaterial.AIR.parseItem());
+        inv.setItem(16, nStack < 64 ? set64: XMaterial.AIR.parseItem());
 
 
         inv.setItem(40, new ItemBuilder(XMaterial.EMERALD_BLOCK)
                 .setName(confirmLore)
-                .addLore("&6Price: &7" + nStack * (type.equals(dShop.dShopT.buy) ?
-                        dItem.of(item).getBuyPrice().get().getPrice():
-                        dItem.of(item).getSellPrice().get().getPrice())));
+                .addLore(Msg.singletonMsg(conf_msg.SELL_ITEM_NAME).add("\\{price}",
+                        String.valueOf(nStack * (type.equals(dShop.dShopT.buy) ?
+                                dItem.of(item).getBuyPrice().get().getPrice():
+                                dItem.of(item).getSellPrice().get().getPrice()))).build()));
         p.updateInventory();
     }
 
@@ -162,10 +174,12 @@ public class confirmGui implements Listener, InventoryHolder {
         if (slot == 36) b.accept(p);    /* Boton de back */
         if( slot == 40 ) c.accept(p, item);     /* Boton de confirmar */
 
-        if (slot == 24) item.setAmount(item.getAmount() + 1);
+        if (slot == 10) item.setAmount(1);
+        else if (slot == 24) item.setAmount(item.getAmount() + 1);
         else if (slot == 25) item.setAmount(item.getAmount() + 5);
         else if (slot == 26) item.setAmount(item.getAmount() + 10);
 
+        else if (slot == 16) item.setAmount(64);
         else if (slot == 18) item.setAmount(item.getAmount() - 1);
         else if (slot == 19) item.setAmount(item.getAmount() - 5);
         else if (slot == 20) item.setAmount(item.getAmount() - 10);
