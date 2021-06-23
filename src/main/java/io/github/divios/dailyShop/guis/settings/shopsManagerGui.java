@@ -97,6 +97,24 @@ public class shopsManagerGui {
                     .open(p);
         }
 
+        else if (e.getClick().equals(ClickType.DROP)) {
+            new AnvilGUI.Builder()
+                    .onClose(player -> Task.syncDelayed(plugin, () -> open(p), 1L))
+                    .onComplete((player, s) -> {
+                        int time;
+                        try {
+                            time = Integer.parseInt(s);
+                        } catch (Exception err) {return  AnvilGUI.Response.text(conf_msg.MSG_NOT_INTEGER);}
+
+                        if (time < 50) return AnvilGUI.Response.text("Time cannot be less than 50");
+                        shop.setTimer(time);
+                        return AnvilGUI.Response.close();
+                    })
+                    .itemLeft(XMaterial.CLOCK.parseItem())
+                    .plugin(plugin)
+                    .open(p);
+        }
+
         else if (e.isRightClick()) {
             new confirmIH(p, (player, aBoolean) -> {
                 if (aBoolean)

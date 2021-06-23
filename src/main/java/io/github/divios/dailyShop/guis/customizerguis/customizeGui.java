@@ -185,14 +185,6 @@ public class customizeGui implements Listener, InventoryHolder {
 
             else if (e.getSlot() == 5) {   //apply changes
 
-                if (shop.getType().equals(dShop.dShopT.sell))
-                    if (_gui.getButtons().stream()
-                            .noneMatch(dItem::isSIGN)) {
-                        p.sendMessage(conf_msg.PREFIX + FormatUtils.color("&7There " +
-                                "must be a sign on the gui, you can add one by Q+click on an empty slot"));
-                        return;
-                    }
-
                 shop.updateGui(_gui);
                 preventClose = false;
                 p.closeInventory();
@@ -234,7 +226,7 @@ public class customizeGui implements Listener, InventoryHolder {
             }
 
             if (!utils.isEmpty(e.getCurrentItem()) &&
-                    e.getClick().equals(ClickType.MIDDLE)) {
+                    e.getClick().equals(ClickType.MIDDLE)) {        // copy to clipboard
                 toClone = dItem.of(e.getCurrentItem());
                 return;
             }
