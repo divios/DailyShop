@@ -27,13 +27,13 @@ public class transaction {
     public static void init(Player p, dItem item, dShop shop) {
 
         if (item.getStock().orElse(0) == -1) {
-            p.sendMessage(conf_msg.PREFIX + FormatUtils.color("&7That item is out of stock"));
+            p.sendMessage(conf_msg.PREFIX + conf_msg.MSG_OUT_STOCK);
             shop.openGui(p);
             return;
         }
 
         if (!item.getBuyPrice().isPresent() || item.getBuyPrice().get().getPrice() == -1) {
-            p.sendMessage(conf_msg.PREFIX + FormatUtils.color("&7That item cannot be bought"));
+            p.sendMessage(conf_msg.PREFIX + conf_msg.MSG_INVALID_BUY);
             shop.openGui(p);
             return;
         }
@@ -47,7 +47,7 @@ public class transaction {
                         (p1, item1) -> {
                             transaction.initTransaction(p, new dItem(item1), shop);
                         }, player -> shop.getGui().open(p),
-                        FormatUtils.color("&c&lConfirm Purchase"),
+                        conf_msg.CONFIRM_GUI_BUY_NAME,      //TODO
                         conf_msg.CONFIRM_MENU_YES,
                         conf_msg.CONFIRM_MENU_NO);
 
@@ -57,7 +57,7 @@ public class transaction {
                         transaction.initTransaction(p1, item, shop);
                     else
                         shop.getGui().open(p1);
-                }, item.getItem(), FormatUtils.color("&c&lConfirm Purchase"),
+                }, item.getItem(), conf_msg.CONFIRM_GUI_BUY_NAME,       //TODO
                         conf_msg.CONFIRM_MENU_YES, conf_msg.CONFIRM_MENU_NO);
             }
         } else initTransaction(p, item, shop);

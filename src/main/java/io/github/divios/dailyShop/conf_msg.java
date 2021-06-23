@@ -16,33 +16,31 @@ public class conf_msg {
     public static String
             PREFIX, VAULT_CUSTOM_NAME,
             BUY_GUI_TITLE, BUY_GUI_PAINTING_NAME, BUY_GUI_ARROW_NAME, BUY_GUI_ITEMS_LORE_BUY_PRICE, BUY_GUI_ITEMS_LORE_SELL_PRICE, BUY_GUI_ITEMS_LORE_CURRENCY, BUY_GUI_ITEMS_LORE_RARITY, BUY_GUI_ITEMS_LORE_BUY_FOR,
-            CONFIRM_GUI_NAME, CONFIRM_GUI_ADD_PANE, CONFIRM_GUI_REMOVE_PANE, CONFIRM_GUI_CONFIRM_PANE, CONFIRM_GUI_RETURN_NAME,
-            SELL_GUI_TITLE, SELL_PAINTING_NAME, SELL_ARROW_NAME, SELL_ITEM_NAME,
-            CONFIRM_MENU_YES, CONFIRM_MENU_NO,
-            SETTINGS_GUI_TITLE, SETTINGS_DAILY_ITEM, SETTINGS_SELL_ITEM,
+            CONFIRM_GUI_BUY_NAME, CONFIRM_GUI_SELL_NAME, CONFIRM_GUI_ACTION_NAME, CONFIRM_GUI_ADD_PANE, CONFIRM_GUI_REMOVE_PANE, CONFIRM_GUI_CONFIRM_PANE,
+            CONFIRM_GUI_RETURN_NAME, SELL_ARROW_NAME, SELL_ITEM_NAME, CONFIRM_MENU_YES, CONFIRM_MENU_NO,
             ADD_ITEMS_TITLE, ADD_ITEMS_FROM_ZERO, ADD_ITEMS_FROM_EXISTING, ADD_ITEMS_RETURN,
             DAILY_ITEMS_MENU_TITLE, DAILY_ITEMS_MENU_ADD, DAILY_ITEMS_MENU_NEXT, DAILY_ITEMS_MENU_PREVIOUS, DAILY_ITEMS_MENU_RETURN, DAILY_ITEMS_MENU_ANVIL_TITLE, DAILY_ITEMS_MENU_ANVIL_DEFAULT_TEXT,
             SELL_ITEMS_MENU_TITLE, SELL_ITEMS_MENU_NEXT, SELL_ITEMS_MENU_PREVIOUS, SELL_ITEMS_MENU_RETURN, SELL_ITEMS_MENU_ANVIL_TITLE, SELL_ITEMS_MENU_ANVIL_DEFAULT_TEXT,
+            SHOPS_MANAGER_TITLE, SHOPS_MANAGER_CREATE, SHOPS_MANAGER_RENAME, SHOPS_MANAGER_NEWSHOP,
             CUSTOMIZE_GUI_TITLE, CUSTOMIZE_CRAFT, CUSTOMIZE_RETURN, CUSTOMIZE_MATERIAL, CUSTOMIZE_RENAME, CUSTOMIZE_LORE, CUSTOMIZE_ENCHANTS, CUSTOMIZE_AMOUNT, CUSTOMIZE_ENABLE_COMMANDS, CUSTOMIZE_CHANGE_COMMANDS, CUSTOMIZE_TOGGLE_ENCHANTS,
             CUSTOMIZE_RENAME_ANVIL_TITLE, CUSTOMIZE_RENAME_ANVIL_DEFAULT_TEXT, CUSTOMIZE_CHANGE_LORE_TITLE, CUSTOMIZE_CHANGE_LORE_DEFAULT_TEXT, CUSTOMIZE_SEARCH, CUSTOMIZE_CANCEL_SEARCH, CUSTOMIZE_DURABILITY, CUSTOMIZE_BUNDLE,
             CUSTOMIZE_ADD_COMMANDS_TITLE, CUSTOMIZE_ADD_COMMANDS_DEFAULT_TEXT,
             CUSTOMIZE_TOGGLE_ATTRIBUTES, CUSTOMIZE_TOGGLE_EFFECTS, CUSTOMIZE_CHANGE_ECON, CUSTOMIZE_CHANGE_CONFIRM_GUI, CUSTOMIZE_PERMS, CUSTOMIZE_SET ,CUSTOMIZE_UNAVAILABLE;;
 
-    public static List<String> BUY_GUI_PAINTING_LORE, BUY_GUI_ARROW_LORE,
-            SELL_PAINTING_LORE, SELL_ARROW_LORE,
-            SETTINGS_DAILY_ITEM_LORE, SETTINGS_SELL_ITEM_LORE,
+    public static List<String> BUY_GUI_PAINTING_LORE, BUY_GUI_ARROW_LORE, SELL_ARROW_LORE,
             ADD_ITEMS_FROM_ZERO_LORE, ADD_ITEMS_FROM_EXISTING_LORE, ADD_ITEMS_RETURN_LORE,
             DAILY_ITEMS_MENU_ITEMS_LORE, DAILY_ITEMS_MENU_ADD_LORE,
+            SHOPS_MANAGER_LORE,
             SELL_ITEMS_MENU_ITEMS_LORE, CONFIRM_GUI_RETURN_PANE_LORE, CUSTOMIZE_SEARCH_LORE, CUSTOMIZE_CANCEL_SEARCH_LORE,
             CUSTOMIZE_CRAFT_LORE, CUSTOMIZE_RETURN_LORE, CUSTOMIZE_RENAME_LORE, CUSTOMIZE_MATERIAL_LORE, CUSTOMIZE_LORE_LORE, CUSTOMIZE_ENCHANTS_LORE, CUSTOMIZE_AMOUNT_LORE, CUSTOMIZE_AMOUNT_ENABLE_LORE, CUSTOMIZE_ENABLE_COMMANDS_LORE,
             CUSTOMIZE_CHANGE_COMMANDS_LORE, CUSTOMIZE_TOGGLE_ENCHANTS_LORE, CUSTOMIZE_TOGGLE_ATTRIBUTES_LORE, CUSTOMIZE_TOGGLE_EFFECTS_LORE, CUSTOMIZE_CHANGE_ECON_LORE ,CUSTOMIZE_DURABILITY_LORE, CUSTOMIZE_BUNDLE_LORE,
             CUSTOMIZE_CHANGE_RARITY_LORE, CUSTOMIZE_CHANGE_CONFIRM_GUI_LORE, CUSTOMIZE_ENABLE_PERMS_LORE, CUSTOMIZE_CHANGE_PERMS_LORE, CUSTOMIZE_ENABLE_SET_LORE, CUSTOMIZE_CHANGE_SET_LORE, RARITY_NAMES;
 
     public static String MSG_OPEN_SHOP, MSG_BUY_ITEM, MSG_SELL_ITEMS, MSG_NOT_ENOUGH_MONEY, MSG_INVENTORY_FULL,
-            MSG_INVALID_ITEM, MSG_NOT_PERMS, MSG_NOT_PERMS_ITEM, MSG_ERROR_ITEM_HAND, MSG_ERROR_PRICE,
-            MSG_ERROR_ADDING_ITEM, MSG_ITEM_ADDED, MSG_NEW_DAILY_ITEMS, MSG_SELL_ITEMS_GUI_EMPTY,
-            MSG_ADDED_ITEM, MSG_REMOVED_ITEM, MSG_ITEM_ALREADY_ON_SALE, MSG_NOT_IN_STOCK, MSG_TIMER_EXPIRED,
-            MSG_ADD_ITEM_TITLE, MSG_ADD_ITEM_SUBTITLE, MSG_NOT_INTEGER, MSG_RELOAD;
+            MSG_NOT_PERMS, MSG_NOT_PERMS_ITEM,
+            MSG_NEW_DAILY_ITEMS, MSG_OUT_STOCK, MSG_INVALID_BUY,
+            MSG_TIMER_EXPIRED, MSG_INVALID_SELL, MSG_NOT_ENOUGH_ITEM,
+            MSG_ADD_ITEM_TITLE, MSG_ADD_ITEM_SUBTITLE, MSG_NOT_INTEGER;
 
     public static int N_DAILY_ITEMS, TIMER;
     public static double DEFAULT_PRICE;
@@ -71,9 +69,6 @@ public class conf_msg {
         DEBUG = main.getConfig().getBoolean("debug", false);
         if (N_DAILY_ITEMS <= 0 || N_DAILY_ITEMS > 36) N_DAILY_ITEMS = 14;
 
-        BUY_GUI_TITLE = FormatUtils.color(yamlFile.getString("daily-shop-gui-name", "&6&lDailyShop"));
-        BUY_GUI_PAINTING_NAME = FormatUtils.color(yamlFile.getString("daily-shop-gui-painting-name", "&c&lWhat is this?"));
-        BUY_GUI_PAINTING_LORE = yamlFile.getStringList("daily-shop-gui-painting-lore");
         BUY_GUI_ITEMS_LORE_BUY_PRICE = FormatUtils.color(yamlFile.getString("daily-items-lore-buy-price:", "&6Buy price: &7{buyPrice}"));
         BUY_GUI_ITEMS_LORE_SELL_PRICE = FormatUtils.color(yamlFile.getString("daily-items-lore-sell-price", "&6Sell price: &7{sellPrice}"));
         BUY_GUI_ITEMS_LORE_CURRENCY = FormatUtils.color(yamlFile.getString("daily-items-lore-currency", "&6Currency: &7{currency}"));
@@ -82,28 +77,28 @@ public class conf_msg {
         BUY_GUI_ARROW_NAME = FormatUtils.color(yamlFile.getString("daily-shop-to-sell-name", "&c&lVisit Market"));
         BUY_GUI_ARROW_LORE = yamlFile.getStringList("daily-shop-to-sell-lore");
 
-        CONFIRM_GUI_NAME = FormatUtils.color(yamlFile.getString("confirm-gui-name", "&2&lConfirm Purchase"));
+        CONFIRM_GUI_BUY_NAME = FormatUtils.color(yamlFile.getString("confirm-gui-buy-name", "&c&lConfirm Purchase"));
+        CONFIRM_GUI_SELL_NAME = FormatUtils.color(yamlFile.getString("confirm-gui-sell-name", "&a&lConfirm sell"));
+        CONFIRM_GUI_ACTION_NAME = FormatUtils.color(yamlFile.getString("confirm-gui-action-name", "&6&lConfirm Action"));
         CONFIRM_GUI_ADD_PANE = FormatUtils.color(yamlFile.getString("confirm-gui-add-pane", "&aAdd"));
         CONFIRM_GUI_REMOVE_PANE = FormatUtils.color(yamlFile.getString("confirm-gui-remove-pane", "&cRemove"));
         CONFIRM_GUI_CONFIRM_PANE = FormatUtils.color(yamlFile.getString("confirm-gui-confirm-pane", "&aConfirm"));
         CONFIRM_GUI_RETURN_NAME = FormatUtils.color(yamlFile.getString("confirm-gui-return-name", "&cReturn"));
         CONFIRM_GUI_RETURN_PANE_LORE = yamlFile.getStringList("confirm-gui-return-pane-lore");
 
-        SELL_GUI_TITLE = FormatUtils.color(yamlFile.getString("sell-gui-name", "&3&lMarket"));
-        SELL_PAINTING_NAME = FormatUtils.color(yamlFile.getString("sell-gui-painting-name", "&3&lWhat is this?"));
-        SELL_PAINTING_LORE = yamlFile.getStringList("sell-gui-painting-lore");
-        SELL_ITEM_NAME = FormatUtils.color(yamlFile.getString("sell-item-name"));
+        SELL_ITEM_NAME = FormatUtils.color(yamlFile.getString("sell-item-name", "&3&lTotal money: &7{price}"));
         SELL_ARROW_NAME = FormatUtils.color(yamlFile.getString("sell-to-daily-shop-name", "&3&lReturn to daily shop"));
         SELL_ARROW_LORE = yamlFile.getStringList("sell-to-daily-shop-lore");
 
         CONFIRM_MENU_YES = FormatUtils.color(yamlFile.getString("confirm-menu-yes", "&a&lConfirm"));
         CONFIRM_MENU_NO = FormatUtils.color(yamlFile.getString("confirm-menu-no", "&c&lCancel"));
 
-        SETTINGS_GUI_TITLE = FormatUtils.color(yamlFile.getString("settings-gui-title", "&6&lSettings"));
-        SETTINGS_DAILY_ITEM = FormatUtils.color(yamlFile.getString("settings-daily-item", "&6&lDaily items"));
-        SETTINGS_DAILY_ITEM_LORE = yamlFile.getStringList("settings-daily-items-lore");
-        SETTINGS_SELL_ITEM = FormatUtils.color(yamlFile.getString("settings-sell-items", "&a&lSell items"));
-        SETTINGS_SELL_ITEM_LORE = yamlFile.getStringList("settings-sell-items-lore");
+        SHOPS_MANAGER_TITLE = FormatUtils.color(yamlFile.getString("shops-manager-title", "&f&lShops Manager"));
+        SHOPS_MANAGER_CREATE = FormatUtils.color(yamlFile.getString("shops-manager-create", "&f&lCreate Shop"));
+        SHOPS_MANAGER_RENAME = FormatUtils.color(yamlFile.getString("shops-manager-rename", "&c&lRename shop"));
+        SHOPS_MANAGER_NEWSHOP = FormatUtils.color(yamlFile.getString("shops-manager-new-shop", "&6&lNew shop"));
+        SHOPS_MANAGER_LORE = yamlFile.getStringList("shops-manager-lore");
+
 
         ADD_ITEMS_TITLE = FormatUtils.color(yamlFile.getString("add-items-title", "&3&lCreate Item"));
         ADD_ITEMS_FROM_ZERO = FormatUtils.color(yamlFile.getString("add-items-from-zero", "&c&lCreate item from zero"));
@@ -113,8 +108,8 @@ public class conf_msg {
         ADD_ITEMS_RETURN = FormatUtils.color(yamlFile.getString("add-items-return", "&c&lReturn"));
         ADD_ITEMS_RETURN_LORE = yamlFile.getStringList("add-items-return-lore");
 
-        DAILY_ITEMS_MENU_TITLE = FormatUtils.color(yamlFile.getString("daily-items-menu_title", "&6&lDaily items Manager"));
-        DAILY_ITEMS_MENU_ADD = FormatUtils.color(yamlFile.getString("daily-items-menu-add", "&3&lAdd"));
+        DAILY_ITEMS_MENU_TITLE = FormatUtils.color(yamlFile.getString("daily-items-menu_title", "&f&lShop Manager"));
+        DAILY_ITEMS_MENU_ADD = FormatUtils.color(yamlFile.getString("daily-items-menu-add", "&3&lAdd Item"));
         DAILY_ITEMS_MENU_ADD_LORE = yamlFile.getStringList("daily_items_menu_add_lore");
         DAILY_ITEMS_MENU_NEXT = FormatUtils.color(yamlFile.getString("daily-items-menu_next", "&6&lNext"));
         DAILY_ITEMS_MENU_PREVIOUS = FormatUtils.color(yamlFile.getString("daily-items-menu_previous", "&6&lPrevious"));
@@ -190,24 +185,17 @@ public class conf_msg {
         MSG_SELL_ITEMS = FormatUtils.color(yamlFile.getString("message-sell-item", "&7You sold all the items for {price}"));
         MSG_NOT_ENOUGH_MONEY = FormatUtils.color(yamlFile.getString("message-not-enough-money", "&7Ey! You dont have enough money to buy this item"));
         MSG_INVENTORY_FULL = FormatUtils.color(yamlFile.getString("message-inventory-full", "&7Ey! Your inventory is full!"));
-        MSG_INVALID_ITEM = FormatUtils.color(yamlFile.getString("message-invalid-item", "&7Ey, we don't accept that item on the market!"));
-        MSG_NEW_DAILY_ITEMS = FormatUtils.color(yamlFile.getString("message-new-daily-items", "&7New items available on the Daily Shop!"));
+        MSG_NOT_ENOUGH_ITEM = FormatUtils.color(yamlFile.getString("message-new-daily-items", "&7You dont have this item or the proper amount to sell it"));
+        MSG_NEW_DAILY_ITEMS = FormatUtils.color(yamlFile.getString("message-new-daily-items", "&7Renovated items of shop {shop}"));
         MSG_NOT_PERMS = FormatUtils.color(yamlFile.getString("message-not-perms", "&7Ey, you dont have permission to do this!"));
         MSG_NOT_PERMS_ITEM = FormatUtils.color(yamlFile.getString("message-not-perms-item", "&7Ey, you don't have the perms necessary to buy this item"));
-        MSG_ERROR_ITEM_HAND = FormatUtils.color(yamlFile.getString("message-error_item_hand", "&7Ey, you need to have an item in your hand"));
-        MSG_ERROR_PRICE = FormatUtils.color(yamlFile.getString("message-error_price", "&7Ey, you have to specify a price for the item"));
-        MSG_ERROR_ADDING_ITEM = FormatUtils.color(yamlFile.getString("message-error_adding_item", "&7Something went wrong while adding the item"));
-        MSG_ITEM_ADDED = FormatUtils.color(yamlFile.getString("message-added_item", "&7Item added successfully"));
-        MSG_REMOVED_ITEM = FormatUtils.color(yamlFile.getString("message_removed_item", "&7Removed item successfully"));
-        MSG_ITEM_ALREADY_ON_SALE = FormatUtils.color(yamlFile.getString("message_item_on_sale", "&7Ey! That item is already on sale"));
-        MSG_NOT_IN_STOCK = FormatUtils.color(yamlFile.getString("message_not_in_stock", "&7That item is not in stock anymore, an admin must have take it away"));
-        MSG_SELL_ITEMS_GUI_EMPTY = FormatUtils.color(yamlFile.getString("message-sell-items-gui-empty", "&7There are not items registered for sale, you can add one with /rdshop addSellItem"));
-        MSG_ADDED_ITEM = FormatUtils.color(yamlFile.getString("message-add-daily-item-success", "&7Item added successfully"));
+        MSG_OUT_STOCK = FormatUtils.color(yamlFile.getString("message-out-of-stock", "&7That item is out of stock"));
+        MSG_INVALID_BUY = FormatUtils.color(yamlFile.getString("message-invalid-buy", "&7That item cannot be bought"));
+        MSG_INVALID_SELL = FormatUtils.color(yamlFile.getString("message-invalid-sell", "&7That item cannot be sell"));
         MSG_ADD_ITEM_TITLE = FormatUtils.color(yamlFile.getString("message-add-item-title", "&a&lClick item"));
         MSG_ADD_ITEM_SUBTITLE = FormatUtils.color(yamlFile.getString("message-add-item-subtitle", "&7In hand to add it"));
         MSG_TIMER_EXPIRED = FormatUtils.color(yamlFile.getString("message-timer-expired", "&Ey! The time to select an item expired, try it again"));
         MSG_NOT_INTEGER = FormatUtils.color(yamlFile.getString("message-not-integer", "Not integer"));
-        MSG_RELOAD = FormatUtils.color(yamlFile.getString("message-reload", "&7Reloaded all files"));
     }
 
     public static void createLocales() {

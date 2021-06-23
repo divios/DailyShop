@@ -43,7 +43,7 @@ public class shopGui {
                 .nonContentAction((i, p1) -> nonContentAction(i, p1, shop))
                 .setSearch(false)
                 .back(p1 -> shopsManagerGui.open(p))
-                .title(i -> FormatUtils.color("&f&lShop Manager"))
+                .title(i -> conf_msg.DAILY_ITEMS_MENU_TITLE)
                 .plugin(plugin)
                 .open(p);
     }
@@ -59,7 +59,7 @@ public class shopGui {
         loreStrategy strategy = new shopItemsManagerLore(shop.getType());
 
         inv.setItem(52, new ItemBuilder(XMaterial.ANVIL.parseItem())
-                .setName("&f&lAdd new item"));
+                .setName(conf_msg.DAILY_ITEMS_MENU_ADD).addLore(conf_msg.DAILY_ITEMS_MENU_ADD_LORE));
 
         Task.asyncDelayed(plugin,() -> IntStream.range(0, 45).forEach(value -> {
             ItemStack aux = inv.getItem(value);
@@ -88,7 +88,7 @@ public class shopGui {
                     shop.removeItem(uid);
                 open(p, shop.getName());
             }, e.getCurrentItem(),
-                    conf_msg.CONFIRM_GUI_NAME, conf_msg.CONFIRM_MENU_YES, conf_msg.CONFIRM_MENU_NO);
+                    conf_msg.CONFIRM_GUI_ACTION_NAME, conf_msg.CONFIRM_MENU_YES, conf_msg.CONFIRM_MENU_NO);
 
         return dynamicGui.Response.nu();
     }

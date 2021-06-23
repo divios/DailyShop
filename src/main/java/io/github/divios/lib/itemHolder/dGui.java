@@ -1,10 +1,7 @@
 package io.github.divios.lib.itemHolder;
 
 import io.github.divios.core_lib.inventory.inventoryUtils;
-import io.github.divios.core_lib.misc.EventListener;
-import io.github.divios.core_lib.misc.FormatUtils;
-import io.github.divios.core_lib.misc.Pair;
-import io.github.divios.core_lib.misc.WeightedRandom;
+import io.github.divios.core_lib.misc.*;
 import io.github.divios.dailyShop.DRShop;
 import io.github.divios.dailyShop.conf_msg;
 import io.github.divios.dailyShop.events.updateItemEvent;
@@ -233,8 +230,9 @@ public abstract class dGui {
             addedButtons++;
         }
 
-        Bukkit.broadcastMessage(conf_msg.PREFIX +
-                FormatUtils.color("&7Renovated items of shop " + shop.getName()));
+        Bukkit.broadcastMessage(conf_msg.PREFIX +       // broadcast msg
+                Msg.singletonMsg(conf_msg.MSG_NEW_DAILY_ITEMS)
+                .add("\\{shop}", shop.getName()).build());
     }
 
     protected abstract void _renovate(dItem newItem, int slot);

@@ -42,7 +42,7 @@ public class shopsManagerGui {
                 .nonContentAction(shopsManagerGui::nonContentAction)
                 .back(player -> p.closeInventory())
                 .setSearch(false)
-                .title(i -> FormatUtils.color("&f&lShops Manager"))
+                .title(i -> conf_msg.SHOPS_MANAGER_TITLE)
                 .plugin(plugin)
                 .open(p);
     }
@@ -57,7 +57,7 @@ public class shopsManagerGui {
 
     private static void setItems(Inventory inv) {
         inv.setItem(52, new ItemBuilder(XMaterial.ANVIL)
-                .setName("&f&lCreate Shop"));
+                .setName(conf_msg.SHOPS_MANAGER_CREATE));
 
         Task.asyncDelayed(plugin,() -> IntStream.range(0, 45).forEach(value -> {
             ItemStack aux = inv.getItem(value);
@@ -91,8 +91,8 @@ public class shopsManagerGui {
                         shop.setName(s);
                         return AnvilGUI.Response.close();
                     })
-                    .title(FormatUtils.color("&c&lRename shop"))
-                    .text("Rename Shop")
+                    .title(conf_msg.SHOPS_MANAGER_RENAME)
+                    .text(FormatUtils.stripColor(conf_msg.SHOPS_MANAGER_RENAME))
                     .plugin(plugin)
                     .open(p);
         }
@@ -103,7 +103,7 @@ public class shopsManagerGui {
                     shopsManager.getInstance().deleteShop(shop.getName());
                 open(player);
             }, selected,
-                    conf_msg.CONFIRM_GUI_NAME,
+                    conf_msg.CONFIRM_GUI_ACTION_NAME,
                     conf_msg.CONFIRM_MENU_YES, conf_msg.CONFIRM_MENU_NO);
             return dynamicGui.Response.nu();
         }
@@ -130,8 +130,8 @@ public class shopsManagerGui {
                     return AnvilGUI.Response.close();
                 })
                 .onClose(player -> Task.syncDelayed(plugin, () -> open(p), 1L))
-                .title(FormatUtils.color("&6&lNew shop"))
-                .text("input shop name")
+                .title(conf_msg.SHOPS_MANAGER_NEWSHOP)
+                .text(FormatUtils.stripColor(conf_msg.SHOPS_MANAGER_NEWSHOP))
                 .plugin(plugin)
                 .open(p);
 
