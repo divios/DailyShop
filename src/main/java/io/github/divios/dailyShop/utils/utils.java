@@ -104,7 +104,7 @@ public class utils {
 
     public static ItemStack getRedPane() {
         return new ItemBuilder(XMaterial.RED_STAINED_GLASS_PANE)
-                .setName("&cOut of stock");
+                .setName("&cOut of stock"); //TODO
     }
 
     public static void removeFlag(ItemStack i, ItemFlag f) {

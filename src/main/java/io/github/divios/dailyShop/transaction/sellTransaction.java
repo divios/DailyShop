@@ -23,7 +23,7 @@ public class sellTransaction {
     public static void init(Player p, dItem item, dShop shop) {
 
         if (!item.getSellPrice().isPresent() || item.getSellPrice().get().getPrice() == -1) {
-            p.sendMessage(conf_msg.PREFIX + FormatUtils.color("&7That item cannot be sell"));
+            p.sendMessage(conf_msg.PREFIX + conf_msg.MSG_INVALID_SELL);
             shop.openGui(p);
             return;
         }
@@ -36,7 +36,7 @@ public class sellTransaction {
                         (p1, item1) ->
                                 initTransaction(p, new dItem(item1), shop),
                         player -> shop.getGui().open(p),
-                        FormatUtils.color("&a&lConfirm Sell"),
+                        conf_msg.CONFIRM_GUI_SELL_NAME,
                         conf_msg.CONFIRM_MENU_YES,
                         conf_msg.CONFIRM_MENU_NO);
 
@@ -46,9 +46,10 @@ public class sellTransaction {
                         initTransaction(p1, item, shop);
                     else
                         shop.getGui().open(p1);
-                }, new ItemBuilder(item.getItem().clone()).addLore("&6Price &7: " +
-                            item.getSellPrice().get()),
-                        FormatUtils.color("&a&lConfirm Sell"),
+                }, new ItemBuilder(item.getItem().clone()).addLore(
+                        Msg.singletonMsg(conf_msg.CONFIRM_GUI_CONFIRM_PANE).add("\\{price}",
+                                String.valueOf(item.getSellPrice().get())).build()),
+                        conf_msg.CONFIRM_GUI_SELL_NAME,      //TODO
                         conf_msg.CONFIRM_MENU_YES, conf_msg.CONFIRM_MENU_NO);
             }
         } else initTransaction(p, item, shop);
@@ -71,8 +72,7 @@ public class sellTransaction {
 
         if (similarItems.isEmpty() || similarItems.stream()
                 .mapToInt(ItemStack::getAmount).sum() < item.getAmount())
-            p.sendMessage(conf_msg.PREFIX +
-                FormatUtils.color("&7You dont have this item or the proper amount to sell it"));
+            p.sendMessage(conf_msg.PREFIX + conf_msg.MSG_NOT_ENOUGH_ITEM);
 
         else {
 
