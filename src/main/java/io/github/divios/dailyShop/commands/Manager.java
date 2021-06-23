@@ -36,7 +36,7 @@ public class Manager extends abstractCommand {
 
     @Override
     public List<String> getPerms() {
-        return Collections.singletonList("DailyShop.settings");
+        return Collections.singletonList("DailyRandomShop.settings");
     }
 
     @Override

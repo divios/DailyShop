@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.function.BiConsumer;
+import java.util.stream.IntStream;
 
 
 public class confirmIH {
@@ -52,14 +53,20 @@ public class confirmIH {
 
         InventoryGUI gui = new InventoryGUI(plugin, 27, title);
 
+        IntStream.of(0,1,2,3,4,5,6,7,8,18,19,20,21,22,23,24,25,26).forEach(value -> {
+            gui.addButton(ItemButton.create(new ItemBuilder(XMaterial.GRAY_STAINED_GLASS_PANE)
+                    .setName("&c"), e -> {}), value); });
+
         gui.addButton(ItemButton.create(new ItemBuilder(
-                utils.isEmpty(item) ? XMaterial.AIR.parseItem():item), e -> {}), 4);
+                utils.isEmpty(item) ? XMaterial.AIR.parseItem():item), e -> {}), 13);
 
-        gui.addButton(ItemButton.create(new ItemBuilder(XMaterial.EMERALD_BLOCK)
-                .setName(confirmLore), (e) -> bi.accept(p, true)), 11);
+        IntStream.range(9, 13).forEach(value ->
+                gui.addButton(ItemButton.create(new ItemBuilder(XMaterial.GREEN_STAINED_GLASS_PANE)
+                .setName(confirmLore), (e) -> bi.accept(p, true)), value));
 
-        gui.addButton(ItemButton.create(new ItemBuilder(XMaterial.REDSTONE_BLOCK)
-                .setName(cancelLore), (e) -> bi.accept(p, false)), 15);
+        IntStream.range(14, 18).forEach(value ->
+                gui.addButton(ItemButton.create(new ItemBuilder(XMaterial.RED_STAINED_GLASS_PANE)
+                .setName(cancelLore), (e) -> bi.accept(p, false)), value));
 
         gui.destroysOnClose();
         gui.open(p);

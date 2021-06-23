@@ -44,7 +44,7 @@ public class open extends abstractCommand {
 
     @Override
     public List<String> getPerms() {
-        return Collections.singletonList("DailyShop.open");
+        return Collections.singletonList("DailyRandomShop.open");
     }
 
     @Override
@@ -66,7 +66,7 @@ public class open extends abstractCommand {
     public void run(CommandSender sender, List<String> args) {
 
         if (args.size() == 2) {
-            if (!sender.hasPermission("DailyShop.open.others")) {
+            if (!sender.hasPermission("DailyRandomShop.open.others")) {
                 sender.sendMessage("You dont have permission to open shops for others");
                 return;
             }

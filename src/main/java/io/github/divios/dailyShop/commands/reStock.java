@@ -42,7 +42,7 @@ public class reStock extends abstractCommand {
 
     @Override
     public List<String> getPerms() {
-        return Collections.singletonList("DailyShop.restock");
+        return Collections.singletonList("DailyRandomShop.restock");
     }
 
     @Override
