@@ -19,8 +19,7 @@ public class shopsManagerLore implements loreStrategy{
 
         List<String> placeholder = Msg.msgList(conf_msg.SHOPS_MANAGER_LORE)
                 .add("\\{amount}", "" + shopsManager.getInstance()
-                        .getShop(name).get().getTimer()
-                ).build();
+                        .getShop(name).get().getTimer()).build();
 
         ItemUtils.translateAllItemData(new ItemBuilder(item)
             .addLore(placeholder), item);

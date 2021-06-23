@@ -54,7 +54,7 @@ public class importShops extends abstractCommand {
 
     @Override
     public List<String> getPerms() {
-        return Collections.singletonList("DailyShop.import");
+        return Collections.singletonList("DailyRandomShop.import");
     }
 
     @Override

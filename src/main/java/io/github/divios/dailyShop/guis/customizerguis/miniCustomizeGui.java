@@ -28,7 +28,7 @@ public class miniCustomizeGui {
 
     private final Player p;
     private ItemStack item;
-    private dShop shop;
+    private final dShop shop;
     private final Consumer<ItemStack> consumer;
     private InventoryGUI inv;
 
@@ -77,8 +77,6 @@ public class miniCustomizeGui {
                     own.unregister();
                 });
 
-        //inv.preventPlayerInvSlots();
-        inv.setDestroyOnClose(false);
         inv.open(p);
         preventCloseB = true;           // prevent close glitch
     }
@@ -94,8 +92,7 @@ public class miniCustomizeGui {
                     preventCloseB = false;
                     new AnvilGUI.Builder()
                         .onClose((player) -> Task.syncDelayed(plugin, () -> {
-                            inv.open(p);
-                            preventCloseB = true;
+                            refresh();
                             }, 1L))
                         .onComplete((player, s) -> {
                             item = ItemUtils.setName(item, s);
@@ -117,8 +114,7 @@ public class miniCustomizeGui {
                         if (aBoolean)
                             item.setType(material);
                         refreshItem();
-                        inv.open(p);
-                        preventCloseB = true;
+                        refresh();
                     });
                 }
         ), 19);
@@ -175,7 +171,7 @@ public class miniCustomizeGui {
                     item = ItemUtils.applyTexture(item, s);
                     refresh();
 
-                }, inv::open, "", FormatUtils.color("Input base64 texture"));
+                }, inv::open, FormatUtils.color("&7Input base64 texture"),"");
         }), 34);
 
         gui.addButton(ItemButton.create(item.clone(), e -> {}), 22);
@@ -190,6 +186,7 @@ public class miniCustomizeGui {
                 }), 49);
 
         //gui.preventPlayerInvSlots();
+        gui.setDestroyOnClose(false);
         return gui;
     }
 
@@ -208,11 +205,11 @@ public class miniCustomizeGui {
 
     private void preventClose(InventoryCloseEvent e) {
 
-        if (!e.getPlayer().getUniqueId().equals(p.getUniqueId()))
-            return;
+        if (e.getInventory() != inv.getInventory()) return;
 
         if (!preventCloseB) return;
 
+        preventPicks.unregister();
         Task.syncDelayed(plugin, () -> inv.open(p), 1L);
     }
 }

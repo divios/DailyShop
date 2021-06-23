@@ -43,6 +43,7 @@ public class helpCmd extends abstractCommand {
 
     @Override
     public void run(CommandSender sender, List<String> args) {
+        sender.sendMessage("");
         sender.sendMessage(FormatUtils.color("&6&l>>>>>>> &6Daily Random Shop Help &6&l<<<<<<<"));
         sender.sendMessage("");
         CommandManager.getCmds().stream()

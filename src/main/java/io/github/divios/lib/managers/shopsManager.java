@@ -63,11 +63,9 @@ public class shopsManager {
      * @return shop with the name. Null if it does not exist
      */
     public synchronized Optional<dShop> getShop(String name) {
-        for (dShop dS : shops) {
-            if (dS.getName().equals(name))
-                return Optional.of(dS);
-        }
-        return Optional.empty();
+        return shops.stream()
+                .filter(shop -> shop.getName().equals(name))
+                .findFirst();
     }
 
     /**
@@ -78,15 +76,14 @@ public class shopsManager {
     public synchronized boolean deleteShop(String name) {
 
         Optional<dShop> result = getShop(name);
-
         if (!result.isPresent()) return false;
 
         deletedShopEvent event = new deletedShopEvent(result.get());
         Bukkit.getPluginManager().callEvent(event);     // throw new event
 
         // auto-destroy is handled via event on dShop
-        shops.remove(result.get());
-        dataManager.getInstance().deleteShop(result.get().getName());
+        shops.removeIf(shop -> shop.getName().equals(name));
+        dataManager.getInstance().deleteShop(name);
 
         return true;
     }

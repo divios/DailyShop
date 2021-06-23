@@ -277,6 +277,7 @@ public class dShop {
 
     public synchronized void setTimer(int timer) {
         this.timer = timer;
+        dManager.updateTimer(this.name, this.timer);
     }
 
     @Override

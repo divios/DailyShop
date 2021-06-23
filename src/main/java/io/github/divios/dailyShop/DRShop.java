@@ -28,6 +28,7 @@ public class DRShop extends JavaPlugin {
         CommandManager.register(INSTANCE.getCommand("DailyShop"));
         CommandManager.addCommand(new add(), new helpCmd(),
                 new open(), new Manager(), new reStock(), new importShops(), new reload());
+        CommandManager.setNotPerms(conf_msg.PREFIX + conf_msg.MSG_NOT_PERMS);
 
         try {
             Class.forName("io.github.divios.core_lib.inventory.materialsPrompt");  // loads all materials
