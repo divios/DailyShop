@@ -12,7 +12,7 @@ commands:
   DailyShop:
     description: Opens diary shop
     default: false
-    aliases: [ DailyShop, randomshop, dshop, rdshop ]
+    aliases: [ DailyShop, randomshop, dshop, rdshop, ds ]
     usage: /dShop
 
 permissions:
