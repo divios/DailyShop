@@ -71,7 +71,8 @@ repositories {
 
 dependencies {
     implementation 'org.jetbrains:annotations:20.1.0'
-    compileOnly group: "org.spigotmc", name: "spigot", version: "1.17-R0.1-SNAPSHOT"
+    compileOnly "org.spigotmc:spigot:1.17-R0.1-SNAPSHOT"
+    compileOnly group: "org.spigotmc", name: "spigot-api", version: "1.17-R0.1-SNAPSHOT"
     compileOnly group: "net.Indyuce", name: "MMOItems", version: "5.6"
     compileOnly group: "net.Indyuce", name: "MMOLib", version: "1.7"
     compileOnly 'com.github.MilkBowl:VaultAPI:1.7'
@@ -88,7 +89,25 @@ task updateJars {
     doLast {
         copy {
             from 'build/libs/DailyShop-' + pluginVersion + "-all.jar"
-            into 'C:/Users/serbe/Desktop/server_pruebas2/plugins'
+            into 'C:/Users/serbe/Desktop/server_pruebas2/1.17/plugins'
+            rename ("DailyShop-" + pluginVersion + "-all.jar"
+                    , "DailyShop-" + pluginVersion + ".jar")
+        }
+        copy {
+            from 'build/libs/DailyShop-' + pluginVersion + "-all.jar"
+            into 'C:/Users/serbe/Desktop/server_pruebas2/1.16/plugins'
+            rename ("DailyShop-" + pluginVersion + "-all.jar"
+                    , "DailyShop-" + pluginVersion + ".jar")
+        }
+        copy {
+            from 'build/libs/DailyShop-' + pluginVersion + "-all.jar"
+            into 'C:/Users/serbe/Desktop/server_pruebas2/1.12/plugins'
+            rename ("DailyShop-" + pluginVersion + "-all.jar"
+                    , "DailyShop-" + pluginVersion + ".jar")
+        }
+        copy {
+            from 'build/libs/DailyShop-' + pluginVersion + "-all.jar"
+            into 'C:/Users/serbe/Desktop/server_pruebas2/1.8/plugins'
             rename ("DailyShop-" + pluginVersion + "-all.jar"
                     , "DailyShop-" + pluginVersion + ".jar")
         }

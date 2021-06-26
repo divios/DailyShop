@@ -142,7 +142,7 @@ public class changePrice {
 
                 }), 15);
 
-        gui.addButton(ItemButton.create(new ItemBuilder(XMaterial.OAK_SIGN)
+        gui.addButton(ItemButton.create(new ItemBuilder(XMaterial.OAK_DOOR)
                         .setName(conf_msg.CONFIRM_GUI_RETURN_NAME)
                         .setLore(conf_msg.CONFIRM_GUI_RETURN_PANE_LORE)
                 , e -> back.run()), 22);
