@@ -73,7 +73,7 @@ public class addDailyGuiIH {
                             }, gui::open);
                 }), 13);
 
-        gui.addButton(ItemButton.create(new ItemBuilder(XMaterial.OAK_SIGN)
+        gui.addButton(ItemButton.create(new ItemBuilder(XMaterial.OAK_DOOR)
                         .setName(conf_msg.ADD_ITEMS_RETURN).addLore(conf_msg.ADD_ITEMS_RETURN_LORE)
                 , e -> back.run()), 22);
 

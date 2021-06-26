@@ -104,7 +104,7 @@ public class dBuy extends dGui {
         super.clickEvent = new EventListener<>(plugin, InventoryClickEvent.class,
                 EventPriority.HIGHEST, e -> {
 
-            if (e.getInventory() != inv) return;
+            if (!e.getInventory().equals(inv)) return;
 
             e.setCancelled(true);
 
@@ -134,7 +134,7 @@ public class dBuy extends dGui {
 
         super.dragEvent = new EventListener<>(plugin, InventoryDragEvent.class,
                 e -> {
-                    if (e.getInventory() != inv) return;
+                    if (!e.getInventory().equals(inv)) return;
 
                     e.setCancelled(true);
 
@@ -142,7 +142,7 @@ public class dBuy extends dGui {
 
         super.openEvent = new EventListener<>(plugin, InventoryOpenEvent.class,
                 EventPriority.HIGHEST, e -> {
-            if (e.getInventory() != inv) return;
+            if (!e.getInventory().equals(inv)) return;
 
             if (!available) {
                 e.setCancelled(true);
