@@ -29,6 +29,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class customizerMainGuiIH implements InventoryHolder, Listener {
 
@@ -199,26 +200,39 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
             inv.setItem(j, item);
         }
 
-        inv.setItem(4, ditem.getItem());
-        inv.setItem(0, changeEcon);
-        inv.setItem(1, changePrice);
-        inv.setItem(8, conf_msg.ENABLE_RARITY ? changeRarity:null);
-        inv.setItem(7, changeConfirmGui);
-        inv.setItem(18, rename);
-        inv.setItem(19, changeMaterial);
-        inv.setItem(27, changeLore);
-        inv.setItem(28, editEnchantments);
-        inv.setItem(21, !ditem.getSetItems().isPresent() ? setStock: barrier);
-        inv.setItem(22, addRemoveCommands);
-        inv.setItem(23, ditem.getItem().getType().getMaxDurability() != 0 ? durability:null);
-        inv.setItem(30, perms);
-        inv.setItem(31, !ditem.getStock().isPresent() ? setOfItems : barrier);
-        inv.setItem(32, ditem.getBundle().isPresent() ? bundle:null);
-        inv.setItem(25, hideEnchants);
-        inv.setItem(26, hideAtibutes);
-        inv.setItem(35, utils.isPotion(ditem.getItem()) ? hideEffects:null);
-        inv.setItem(47, returnItem);
-        inv.setItem(49, customizerItem);
+        IntStream.of(0, 1, 2, 9, 18, 38, 22, 31, 14, 51, 52, 53, 44, 35)
+            .forEach(value -> inv.setItem(value, new ItemBuilder(XMaterial.LIGHT_BLUE_STAINED_GLASS_PANE)
+                .setName("&c")));
+
+        IntStream.of(3, 4, 13, 15, 16, 17, 26, 27, 36, 37, 39, 40, 49, 50)
+                .forEach(value -> inv.setItem(value, new ItemBuilder(XMaterial.BLUE_STAINED_GLASS_PANE)
+                        .setName("&c")));
+
+        IntStream.of(10, 11, 12, 19, 20, 21, 28, 29, 30,
+                5, 6, 7, 8, 23, 24, 25, 32, 33, 34, 41, 42, 43, 45, 46, 47, 48)
+                .forEach(value -> inv.setItem(value, new ItemBuilder(XMaterial.GRAY_STAINED_GLASS_PANE)
+                        .setName("&c")));
+
+        inv.setItem(5, ditem.getItem());
+        inv.setItem(23, changeEcon);
+        inv.setItem(24, changePrice);
+        if(conf_msg.ENABLE_RARITY) inv.setItem(25, changeRarity);
+        inv.setItem(34, changeConfirmGui);
+        inv.setItem(10, rename);
+        inv.setItem(11, changeMaterial);
+        inv.setItem(12, changeLore);
+        inv.setItem(21, editEnchantments);
+        inv.setItem(46, !ditem.getSetItems().isPresent() ? setStock: barrier);
+        inv.setItem(47, addRemoveCommands);
+        if (ditem.getItem().getType().getMaxDurability() != 0) inv.setItem(28, durability);
+        inv.setItem(19, perms);
+        inv.setItem(45, !ditem.getStock().isPresent() ? setOfItems : barrier);
+        if (ditem.getBundle().isPresent()) inv.setItem(48, bundle);
+        inv.setItem(32, hideEnchants);
+        inv.setItem(43, hideAtibutes);
+        if (utils.isPotion(ditem.getItem())) inv.setItem(41, hideEffects);
+        inv.setItem(8, returnItem);
+        inv.setItem(7, customizerItem);
 
         return inv;
     }
@@ -245,11 +259,11 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
 
         if (utils.isEmpty(item)) return;
 
-        if (e.getSlot() == 47) { //Boton de retornar
+        if (e.getSlot() == 8) { //Boton de retornar
             shopGui.open(p, shop.getName());
         }
 
-        else if (e.getSlot() == 49) { //Boton de craft
+        else if (e.getSlot() == 7) { //Boton de craft
             if (shop.hasItem(ditem.getUid())) {
                 shop.updateItem(ditem.getUid(), ditem);
             } else {
@@ -259,25 +273,25 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
         }
 
 
-        else if (e.getSlot() == 0) {        /* Boton de cambiar economia */
+        else if (e.getSlot() == 23) {        /* Boton de cambiar economia */
             changeEcon.open(p, ditem, dItem -> refresh(p));
         }
 
-        else if (e.getSlot() == 1) {        // boton de cambiar price
+        else if (e.getSlot() == 24) {        // boton de cambiar price
             new changePrice(p, ditem, shop, e.isLeftClick() ? dShop.dShopT.buy: dShop.dShopT.sell
                     ,() -> refresh(p), () -> refresh(p));
         }
 
-        else if (e.getSlot() == 7) {        /* Boton de cambiar confirm Gui */
+        else if (e.getSlot() == 34) {        /* Boton de cambiar confirm Gui */
             ditem.toggleConfirm_gui();
             refresh(p);
         }
 
-        else if(e.getSlot() == 8 && !utils.isEmpty(e.getCurrentItem())) {    /* Boton de cambiar rarity */
+        else if(e.getSlot() == 25 && !utils.isEmpty(e.getCurrentItem())) {    /* Boton de cambiar rarity */
             ditem.nextRarity();
             refresh(p);
         }
-        else if (e.getSlot() == 18) { // Boton de cambiar nombre
+        else if (e.getSlot() == 10) { // Boton de cambiar nombre
             new AnvilGUI.Builder()
                     .onClose(player ->
                             Task.syncDelayed(main, () -> refresh(player), 1L))
@@ -292,7 +306,7 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
                     .open(p);
         }
 
-        else if (e.getSlot() == 19) { // Boton de cambiar material
+        else if (e.getSlot() == 11) { // Boton de cambiar material
             materialsPrompt.open(main, p, (aBoolean, material) -> {
                 if (aBoolean)
                     ditem.setMaterial(material);
@@ -300,7 +314,7 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
             });
         }
 
-        else if (e.getSlot() == 27) { // Boton de cambiar lore
+        else if (e.getSlot() == 12) { // Boton de cambiar lore
             if (e.isRightClick()) {
                 List<String> lore = ditem.getLore();
                 if (lore.isEmpty()) return;
@@ -318,13 +332,13 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
                 }, this::refresh, conf_msg.CUSTOMIZE_RENAME_ANVIL_TITLE, "");
         }
 
-        else if (e.getSlot() == 28) { // Boton de cambiar enchants
+        else if (e.getSlot() == 21) { // Boton de cambiar enchants
             if (e.isLeftClick()) changeEnchantments.openInventory(p, ditem, shop);
             else if (e.isRightClick() && !ditem.getEnchantments().isEmpty())
                 changeEnchantments.openInventory(p, ditem, ditem.getEnchantments(), shop);
         }
 
-        else if (e.getSlot() == 21 && ditem.getStock().isPresent()) { // Boton de cambiar Stock
+        else if (e.getSlot() == 46 && ditem.getStock().isPresent()) { // Boton de cambiar Stock
             if(e.isLeftClick()) {
                 new AnvilGUI.Builder()
                         .onClose(player -> Task.syncDelayed(main, () ->
@@ -350,7 +364,7 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
             }
         }
 
-        else if (e.getSlot() == 21 && !ditem.getStock().isPresent() && e.isLeftClick()) { // Boton de cambiar Stock
+        else if (e.getSlot() == 46 && !ditem.getStock().isPresent() && e.isLeftClick()) { // Boton de cambiar Stock
             if (ditem.getSetItems().isPresent()) {
                 p.sendMessage(conf_msg.PREFIX + FormatUtils.color("&7You can't enable this when " +
                         "the set feature is enable"));
@@ -361,12 +375,12 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
 
         }
 
-        else if (e.getSlot() == 22 && !ditem.getCommands().isPresent()) { // Boton de cambiar commands
+        else if (e.getSlot() == 47 && !ditem.getCommands().isPresent()) { // Boton de cambiar commands
             ditem.setCommands(new ArrayList<>());
             refresh(p);
         }
 
-        else if (e.getSlot() == 22 && ditem.getCommands().isPresent()) { // Boton de añadir/quitar commands
+        else if (e.getSlot() == 47 && ditem.getCommands().isPresent()) { // Boton de añadir/quitar commands
             if (e.isLeftClick()) {
                 new ChatPrompt(main, p, (player, s) -> {
                     if (!s.isEmpty()) {
