@@ -111,7 +111,6 @@ public class miniCustomizeGui {
                     materialsPrompt.open(plugin, p, (aBoolean, material) -> {
                         if (aBoolean) {
                             item.setType(material.parseMaterial());
-                            p.sendMessage(material.name());
                             if (material.name().contains("GLASS"))
                                 item.setDurability(material.parseItem().getDurability());
                         }

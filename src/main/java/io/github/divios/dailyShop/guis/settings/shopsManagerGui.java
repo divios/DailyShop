@@ -65,7 +65,7 @@ public class shopsManagerGui {
     }
 
     private void createInvs() {
-        IntStream.range(0, items.isEmpty() ? 0 : (int) Math.ceil(items.size() / 32D))
+        IntStream.range(0, items.isEmpty() ? 1 : (int) Math.ceil(items.size() / 32D))
                 .forEach(value -> invs.add(new InventoryGUI(plugin, 54, conf_msg.SHOPS_MANAGER_TITLE)));
 
         final int[] sum = {0};
