@@ -29,8 +29,8 @@ public class reload extends abstractCommand {
 
     @Override
     public String getHelp() {
-        return "&6&l>> &6/rdshop reload&8 " +
-                "- &7Reload plugin";
+        return FormatUtils.color("&8- &6/rdshop reload&8 " +
+                "- &7Reload plugin");
     }
 
     @Override

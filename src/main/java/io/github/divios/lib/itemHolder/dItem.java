@@ -13,6 +13,7 @@ import io.github.divios.dailyShop.conf_msg;
 import io.github.divios.dailyShop.economies.economy;
 import io.github.divios.dailyShop.economies.vault;
 import io.github.divios.dailyShop.lorestategy.loreStrategy;
+import io.github.divios.dailyShop.utils.utils;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
@@ -91,6 +92,31 @@ public class dItem implements Serializable, Cloneable {
     }
 
     /**
+     * Private method to transfer all daily item meta
+     * @param item
+     */
+    private ItemStack copyAllMetadata(@NotNull ItemStack item) {
+        dItem transfer = dItem.of(item);
+        transfer.setUid(getUid());
+        transfer.setDisplayName(getDisplayName());
+        transfer.setLore(getLore());
+        getAction().stream(transfer::setAction);
+        transfer.setStock(getStock().get());
+        transfer.setSetItems(getSetItems().get());
+        transfer.setAmount(getAmount());
+        transfer.setBundle(getBundle().get());
+        transfer.setBuyPrice(getBuyPrice().get());
+        transfer.setSellPrice(getSellPrice().get());
+        transfer.setEconomy(getEconomy());
+        transfer.setDurability(getDurability(), false);
+        transfer.setRarity(getRarity());
+        transfer.setPerms(getPerms().get());
+        transfer.setConfirm_gui(getConfirm_gui());
+
+        return transfer.getItem();
+    }
+
+    /**
      * Sets the slot of this item
      * @param slot
      */
@@ -126,7 +152,7 @@ public class dItem implements Serializable, Cloneable {
      * @return
      */
     public String getDisplayName() {
-        return ItemUtils.getName(getItem()).isEmpty() ?
+        return utils.isEmpty(ItemUtils.getName(getItem())) ?
                 getItem().getType().name():
                 ItemUtils.getName(getItem());
     }
@@ -152,9 +178,12 @@ public class dItem implements Serializable, Cloneable {
      * Sets the material of the item
      * @param m
      */
-    public void setMaterial(@NotNull Material m) {
+    public void setMaterial(@NotNull XMaterial m) {
         setItem(ItemUtils.setMaterial(getItem(), m));
         setRawItem(ItemUtils.setMaterial(getRawItem(), m));
+        if (m.name().contains("GLASS"))
+            setDurability(m.parseItem().getDurability(), true);
+
     }
 
     /**
@@ -169,9 +198,14 @@ public class dItem implements Serializable, Cloneable {
      * Sets the durability of the item
      * @param durability
      */
-    public void setDurability(short durability) {
-        setItem(ItemUtils.setDurability(getItem(), (short) (getItem().getType().getMaxDurability() - durability)));
-        setRawItem(ItemUtils.setDurability(getRawItem(), (short) (getRawItem().getType().getMaxDurability() - durability)));
+    public void setDurability(short durability, boolean glass) {
+        if (!glass) {
+            setItem(ItemUtils.setDurability(getItem(), (short) (getItem().getType().getMaxDurability() - durability)));
+            setRawItem(ItemUtils.setDurability(getRawItem(), (short) (getRawItem().getType().getMaxDurability() - durability)));
+        } else {
+            setItem(ItemUtils.setDurability(getItem(), durability));
+            setRawItem(ItemUtils.setDurability(getRawItem(), durability));
+        }
     }
 
     /**
@@ -627,7 +661,7 @@ public class dItem implements Serializable, Cloneable {
     }
 
     public static dItem SIGN() {
-        dItem sign = dItem.of(new ItemBuilder(XMaterial.SPRUCE_SIGN)
+        dItem sign = dItem.of(new ItemBuilder(XMaterial.OAK_DOOR)
                 .setName("&6Current items"));
 
         sign.setSIGN();

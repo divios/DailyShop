@@ -58,7 +58,7 @@ public class shopGui {
     private static void addItems(Inventory inv, dShop shop) {
         loreStrategy strategy = new shopItemsManagerLore(shop.getType());
 
-        inv.setItem(52, new ItemBuilder(XMaterial.ANVIL.parseItem())
+        inv.setItem(53, new ItemBuilder(XMaterial.ANVIL.parseItem())
                 .setName(conf_msg.DAILY_ITEMS_MENU_ADD).addLore(conf_msg.DAILY_ITEMS_MENU_ADD_LORE));
 
         Task.asyncDelayed(plugin,() -> IntStream.range(0, 45).forEach(value -> {

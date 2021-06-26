@@ -36,7 +36,7 @@ public class add extends abstractCommand {
 
     @Override
     public String getHelp() {
-        return FormatUtils.color("&6&l>> &6/rdshop add [shop]&8 " +
+        return FormatUtils.color("&8- &6/rdshop add [shop]&8 " +
                 "- &7Opens the menu to add an item");
     }
 

@@ -106,7 +106,7 @@ public class confirmGui implements Listener, InventoryHolder {
         set1 = new ItemBuilder(XMaterial.RED_STAINED_GLASS_PANE)
                 .setName("&c&lSet to 1");
 
-        back = new ItemBuilder(XMaterial.OAK_SIGN)
+        back = new ItemBuilder(XMaterial.OAK_DOOR)
                 .setName(backLore).setLore(conf_msg.CONFIRM_GUI_RETURN_PANE_LORE);
 
         confirm = new ItemBuilder(XMaterial.EMERALD_BLOCK)

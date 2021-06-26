@@ -27,7 +27,7 @@ public class helpCmd extends abstractCommand {
 
     @Override
     public String getHelp() {
-        return FormatUtils.color("&6&l>> &6/rdshop help&8 " +
+        return FormatUtils.color("&8- &6/rdshop help&8 " +
                 "- &7Shows this prompt");
     }
 
@@ -44,7 +44,7 @@ public class helpCmd extends abstractCommand {
     @Override
     public void run(CommandSender sender, List<String> args) {
         sender.sendMessage("");
-        sender.sendMessage(FormatUtils.color("&6&l>>>>>>> &6Daily Random Shop Help &6&l<<<<<<<"));
+        sender.sendMessage(FormatUtils.color("&8- &6DailyShop Help"));
         sender.sendMessage("");
         CommandManager.getCmds().stream()
                 .filter(absC -> {

@@ -88,7 +88,7 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
         ItemStack customizerItem = new ItemBuilder(XMaterial.ANVIL)   //Done button (anvil)
                 .setName(conf_msg.CUSTOMIZE_CRAFT).addLore(conf_msg.CUSTOMIZE_CRAFT_LORE);
 
-        ItemStack returnItem = new ItemBuilder(XMaterial.OAK_SIGN)    //Back sign
+        ItemStack returnItem = new ItemBuilder(XMaterial.OAK_DOOR)    //Back sign
                 .setName(conf_msg.CUSTOMIZE_RETURN).setLore(conf_msg.CUSTOMIZE_RETURN_LORE);
 
         ItemStack rename = new ItemBuilder(XMaterial.NAME_TAG)   //Rename item
@@ -400,7 +400,7 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
                         try {
                             Short.parseShort(text);
                         } catch (NumberFormatException err) {return AnvilGUI.Response.text(conf_msg.MSG_NOT_INTEGER);}
-                        ditem.setDurability(Short.parseShort(text));
+                        ditem.setDurability(Short.parseShort(text), false);
                         return AnvilGUI.Response.close();
                     })
                     .text("Change durability")

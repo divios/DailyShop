@@ -77,7 +77,7 @@ public class customizeGui implements Listener, InventoryHolder {
     }
 
     public void addCustomizeItems() {
-        ItemStack back = new ItemBuilder(XMaterial.SPRUCE_SIGN)
+        ItemStack back = new ItemBuilder(XMaterial.OAK_DOOR)
                 .setName("&b&lGo back").setLore("&7Click to go back");
 
         ItemStack complete = new ItemBuilder(XMaterial.ANVIL)
@@ -166,8 +166,8 @@ public class customizeGui implements Listener, InventoryHolder {
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent e) {
-        if (e.getInventory() != inv)
-            return;
+
+        if (!e.getInventory().equals(inv)) return;
 
         e.setCancelled(true);
 
@@ -264,7 +264,7 @@ public class customizeGui implements Listener, InventoryHolder {
 
     @EventHandler
     public void onInventoryDrag(InventoryDragEvent e) {
-        if (e.getInventory() != inv)
+        if (!e.getInventory().equals(inv))
             return;
 
         e.setCancelled(true);
@@ -272,7 +272,7 @@ public class customizeGui implements Listener, InventoryHolder {
 
     @EventHandler
     public void onInventoryClose(InventoryCloseEvent e) {
-        if (e.getInventory() != inv)
+        if (!e.getInventory().equals(inv))
             return;
 
         if (refreshFlag)

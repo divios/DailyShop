@@ -64,8 +64,6 @@ io/github/divios/dailyShop/DRShop.java
  io.github.divios.dailyShop.DRShop
 io/github/divios/dailyShop/economies/vault.java
  io.github.divios.dailyShop.economies.vault
-io/github/divios/dailyShop/builders/itemBuildersHooks/itemsBuilder.java
- io.github.divios.dailyShop.builders.itemBuildersHooks.itemsBuilder
 io/github/divios/dailyShop/guis/customizerguis/changePrice.java
  io.github.divios.dailyShop.guis.customizerguis.changePrice
 io/github/divios/dailyShop/hooks/shopGuiPlusHook.java
@@ -90,8 +88,6 @@ io/github/divios/lib/itemHolder/dRarity.java
  io.github.divios.lib.itemHolder.dRarity
  io.github.divios.lib.itemHolder.dRarity$1
  io.github.divios.lib.itemHolder.dRarity$rarityT
-io/github/divios/dailyShop/builders/itemBuildersHooks/oraxenItems.java
- io.github.divios.dailyShop.builders.itemBuildersHooks.oraxenItems
 io/github/divios/dailyShop/hooks/MPointsHook.java
  io.github.divios.dailyShop.hooks.MPointsHook
 io/github/divios/lib/itemHolder/dItem.java
@@ -116,8 +112,6 @@ io/github/divios/lib/itemHolder/dPrice.java
  io.github.divios.lib.itemHolder.dPrice
 io/github/divios/lib/itemHolder/dGui.java
  io.github.divios.lib.itemHolder.dGui
-io/github/divios/dailyShop/builders/itemBuildersHooks/MMOItems.java
- io.github.divios.dailyShop.builders.itemBuildersHooks.MMOItems
 io/github/divios/dailyShop/tasks/taskManager.java
  io.github.divios.dailyShop.tasks.taskManager
 io/github/divios/lib/storage/dataManager.java
@@ -130,8 +124,6 @@ io/github/divios/dailyShop/guis/confirmIH.java
  io.github.divios.dailyShop.guis.confirmIH
 io/github/divios/dailyShop/hooks/placeholderApiHook.java
  io.github.divios.dailyShop.hooks.placeholderApiHook
-io/github/divios/dailyShop/builders/itemBuildersHooks/itemsBuilderManager.java
- io.github.divios.dailyShop.builders.itemBuildersHooks.itemsBuilderManager
 io/github/divios/dailyShop/lorestategy/shopItemsLore.java
  io.github.divios.dailyShop.lorestategy.shopItemsLore
 io/github/divios/dailyShop/commands/open.java
