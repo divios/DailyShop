@@ -185,7 +185,7 @@ public class conf_msg {
         MSG_SELL_ITEMS = FormatUtils.color(yamlFile.getString("message-sell-item", "&7You sold all the items for {price}"));
         MSG_NOT_ENOUGH_MONEY = FormatUtils.color(yamlFile.getString("message-not-enough-money", "&7Ey! You dont have enough money to buy this item"));
         MSG_INVENTORY_FULL = FormatUtils.color(yamlFile.getString("message-inventory-full", "&7Ey! Your inventory is full!"));
-        MSG_NOT_ENOUGH_ITEM = FormatUtils.color(yamlFile.getString("message-new-daily-items", "&7You dont have this item or the proper amount to sell it"));
+        MSG_NOT_ENOUGH_ITEM = FormatUtils.color(yamlFile.getString("message-not-enought-item", "&7You dont have this item or the proper amount to sell it"));
         MSG_NEW_DAILY_ITEMS = FormatUtils.color(yamlFile.getString("message-new-daily-items", "&7Renovated items of shop {shop}"));
         MSG_NOT_PERMS = FormatUtils.color(yamlFile.getString("message-not-perms", "&7Ey, you dont have permission to do this!"));
         MSG_NOT_PERMS_ITEM = FormatUtils.color(yamlFile.getString("message-not-perms-item", "&7Ey, you don't have the perms necessary to buy this item"));

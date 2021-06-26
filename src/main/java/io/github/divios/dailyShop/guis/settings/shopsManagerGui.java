@@ -52,19 +52,13 @@ public class shopsManagerGui {
                 new ItemBuilder(XMaterial.PLAYER_HEAD)
                 .setName("&f&l" + dShop.getName())
                 .applyTexture("7e3deb57eaa2f4d403ad57283ce8b41805ee5b6de912ee2b4ea736a9d1f465a7"))
+            .peek(loreItem::setLore)
             .collect(Collectors.toList());
     }
 
     private static void setItems(Inventory inv) {
         inv.setItem(52, new ItemBuilder(XMaterial.ANVIL)
                 .setName(conf_msg.SHOPS_MANAGER_CREATE));
-
-        Task.asyncDelayed(plugin,() -> IntStream.range(0, 45).forEach(value -> {
-            ItemStack aux = inv.getItem(value);
-            if (utils.isEmpty(aux)) return;
-            loreItem.setLore(aux);
-            inv.setItem(value, aux);
-        }), 0);
     }
 
     private static dynamicGui.Response contentAction(InventoryClickEvent e) {

@@ -91,9 +91,7 @@ public class miniCustomizeGui {
                 , e -> {
                     preventCloseB = false;
                     new AnvilGUI.Builder()
-                        .onClose((player) -> Task.syncDelayed(plugin, () -> {
-                            refresh();
-                            }, 1L))
+                        .onClose((player) -> Task.syncDelayed(plugin, this::refresh, 1L))
                         .onComplete((player, s) -> {
                             item = ItemUtils.setName(item, s);
                             refreshItem();
@@ -111,9 +109,12 @@ public class miniCustomizeGui {
                 , e -> {
                     preventCloseB = false;
                     materialsPrompt.open(plugin, p, (aBoolean, material) -> {
-                        if (aBoolean)
-                            item.setType(material);
-                        refreshItem();
+                        if (aBoolean) {
+                            item.setType(material.parseMaterial());
+                            p.sendMessage(material.name());
+                            if (material.name().contains("GLASS"))
+                                item.setDurability(material.parseItem().getDurability());
+                        }
                         refresh();
                     });
                 }
@@ -176,7 +177,7 @@ public class miniCustomizeGui {
 
         gui.addButton(ItemButton.create(item.clone(), e -> {}), 22);
 
-        gui.addButton(ItemButton.create(new ItemBuilder(XMaterial.SPRUCE_SIGN)
+        gui.addButton(ItemButton.create(new ItemBuilder(XMaterial.OAK_DOOR)
                 .setName("&b&lGo back").addLore("&7Click to go back")
                 , e-> {
                     preventClose.unregister();
