@@ -5,9 +5,9 @@ import io.github.divios.core_lib.database.DatabaseConnector;
 import io.github.divios.core_lib.database.SQLiteConnector;
 import io.github.divios.core_lib.misc.timeStampUtils;
 import io.github.divios.dailyShop.DRShop;
-import io.github.divios.lib.itemHolder.dGui;
-import io.github.divios.lib.itemHolder.dItem;
-import io.github.divios.lib.itemHolder.dShop;
+import io.github.divios.lib.dLib.dGui;
+import io.github.divios.lib.dLib.dItem;
+import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.storage.migrations.initialMigration;
 import org.bukkit.plugin.Plugin;
 

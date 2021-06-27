@@ -1,4 +1,4 @@
-package io.github.divios.lib.itemHolder;
+package io.github.divios.lib.dLib;
 
 
 import com.cryptomorin.xseries.XMaterial;
@@ -9,10 +9,8 @@ import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.Pair;
 import io.github.divios.dailyShop.DRShop;
-import io.github.divios.dailyShop.conf_msg;
 import io.github.divios.dailyShop.economies.economy;
 import io.github.divios.dailyShop.economies.vault;
-import io.github.divios.dailyShop.lorestategy.loreStrategy;
 import io.github.divios.dailyShop.utils.utils;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;

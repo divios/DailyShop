@@ -6,8 +6,8 @@ import io.github.divios.core_lib.misc.Msg;
 import io.github.divios.dailyShop.DRShop;
 import io.github.divios.dailyShop.conf_msg;
 import io.github.divios.dailyShop.utils.utils;
-import io.github.divios.lib.itemHolder.dItem;
-import io.github.divios.lib.itemHolder.dShop;
+import io.github.divios.lib.dLib.dItem;
+import io.github.divios.lib.dLib.dShop;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -106,10 +106,12 @@ public class confirmGui implements Listener, InventoryHolder {
         set1 = new ItemBuilder(XMaterial.RED_STAINED_GLASS_PANE)
                 .setName("&c&lSet to 1");
 
-        back = new ItemBuilder(XMaterial.OAK_DOOR)
-                .setName(backLore).setLore(conf_msg.CONFIRM_GUI_RETURN_PANE_LORE);
+        back = new ItemBuilder(XMaterial.PLAYER_HEAD)
+                .setName(backLore).setLore(conf_msg.CONFIRM_GUI_RETURN_PANE_LORE)
+                .applyTexture("19bf3292e126a105b54eba713aa1b152d541a1d8938829c56364d178ed22bf");
 
-        confirm = new ItemBuilder(XMaterial.EMERALD_BLOCK)
+        confirm = new ItemBuilder(XMaterial.PLAYER_HEAD)
+                .applyTexture("2a3b8f681daad8bf436cae8da3fe8131f62a162ab81af639c3e0644aa6abac2f")
                 .setName(confirmLore)
                 .addLore(Msg.singletonMsg(conf_msg.SELL_ITEM_NAME).add("\\{price}",
                         String.valueOf(item.getAmount() * (type.equals(dShop.dShopT.buy) ?
@@ -129,7 +131,7 @@ public class confirmGui implements Listener, InventoryHolder {
         inv.setItem(25, add5);
         inv.setItem(26, add10);
         inv.setItem(16, set64);
-        inv.setItem(36, back);
+        inv.setItem(44, back);
         inv.setItem(40, confirm);
         inv.setItem(22, item);
 
@@ -149,7 +151,8 @@ public class confirmGui implements Listener, InventoryHolder {
         inv.setItem(16, nStack < 64 ? set64: XMaterial.AIR.parseItem());
 
 
-        inv.setItem(40, new ItemBuilder(XMaterial.EMERALD_BLOCK)
+        inv.setItem(40, new ItemBuilder(XMaterial.PLAYER_HEAD)
+                .applyTexture("2a3b8f681daad8bf436cae8da3fe8131f62a162ab81af639c3e0644aa6abac2f")
                 .setName(confirmLore)
                 .addLore(Msg.singletonMsg(conf_msg.SELL_ITEM_NAME).add("\\{price}",
                         String.valueOf(nStack * (type.equals(dShop.dShopT.buy) ?
@@ -171,7 +174,7 @@ public class confirmGui implements Listener, InventoryHolder {
         ItemStack item = inv.getItem(22);
         Player p = (Player) e.getWhoClicked();
 
-        if (slot == 36) b.accept(p);    /* Boton de back */
+        if (slot == 44) b.accept(p);    /* Boton de back */
         if( slot == 40 ) c.accept(p, item);     /* Boton de confirmar */
 
         if (slot == 10) item.setAmount(1);

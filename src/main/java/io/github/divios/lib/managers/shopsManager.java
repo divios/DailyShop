@@ -2,7 +2,7 @@ package io.github.divios.lib.managers;
 
 import io.github.divios.dailyShop.events.createdShopEvent;
 import io.github.divios.dailyShop.events.deletedShopEvent;
-import io.github.divios.lib.itemHolder.dShop;
+import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.storage.dataManager;
 import org.bukkit.Bukkit;
 

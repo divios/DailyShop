@@ -1,4 +1,4 @@
-package io.github.divios.lib.itemHolder;
+package io.github.divios.lib.dLib;
 
 import com.cryptomorin.xseries.XMaterial;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
