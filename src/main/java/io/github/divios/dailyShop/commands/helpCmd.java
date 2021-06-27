@@ -6,7 +6,6 @@ import io.github.divios.core_lib.commands.cmdTypes;
 import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.dailyShop.DRShop;
 import org.bukkit.command.CommandSender;
-import org.bukkit.plugin.PluginDescriptionFile;
 
 import java.util.ArrayList;
 import java.util.List;
