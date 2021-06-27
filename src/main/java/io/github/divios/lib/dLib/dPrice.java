@@ -1,4 +1,4 @@
-package io.github.divios.lib.itemHolder;
+package io.github.divios.lib.dLib;
 
 import io.github.divios.dailyShop.utils.utils;
 

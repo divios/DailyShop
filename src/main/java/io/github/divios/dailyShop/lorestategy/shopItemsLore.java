@@ -7,12 +7,10 @@ import io.github.divios.core_lib.misc.Msg;
 import io.github.divios.core_lib.misc.XSymbols;
 import io.github.divios.dailyShop.DRShop;
 import io.github.divios.dailyShop.conf_msg;
-import io.github.divios.lib.itemHolder.dItem;
-import io.github.divios.lib.itemHolder.dPrice;
-import io.github.divios.lib.itemHolder.dShop;
+import io.github.divios.lib.dLib.dItem;
+import io.github.divios.lib.dLib.dPrice;
+import io.github.divios.lib.dLib.dShop;
 import org.bukkit.inventory.ItemStack;
-
-import java.text.Format;
 
 public class shopItemsLore implements loreStrategy {
     private final dShop.dShopT type;

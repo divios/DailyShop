@@ -8,9 +8,9 @@ import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.*;
 import io.github.divios.dailyShop.DRShop;
-import io.github.divios.lib.itemHolder.dAction;
-import io.github.divios.lib.itemHolder.dItem;
-import io.github.divios.lib.itemHolder.dShop;
+import io.github.divios.lib.dLib.dAction;
+import io.github.divios.lib.dLib.dItem;
+import io.github.divios.lib.dLib.dShop;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventPriority;
@@ -21,6 +21,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.function.Consumer;
+import java.util.stream.IntStream;
 
 public class miniCustomizeGui {
 
@@ -86,6 +87,19 @@ public class miniCustomizeGui {
 
         InventoryGUI gui = new InventoryGUI(plugin, 54, "");
 
+        IntStream.of(0, 1, 2, 9, 18, 38, 22, 31, 14, 51, 52, 53, 44, 35)
+                .forEach(value -> gui.getInventory().setItem(value, new ItemBuilder(XMaterial.LIGHT_BLUE_STAINED_GLASS_PANE)
+                        .setName("&c")));
+
+        IntStream.of(3, 4, 13, 15, 16, 17, 26, 27, 36, 37, 39, 40, 49, 50)
+                .forEach(value -> gui.getInventory().setItem(value, new ItemBuilder(XMaterial.BLUE_STAINED_GLASS_PANE)
+                        .setName("&c")));
+
+        IntStream.of(10, 11, 12, 19, 20, 21, 28, 29, 30,
+                5, 6, 7, 8, 23, 24, 25, 32, 33, 34, 41, 42, 43, 45, 46, 47, 48)
+                .forEach(value -> gui.getInventory().setItem(value, new ItemBuilder(XMaterial.GRAY_STAINED_GLASS_PANE)
+                        .setName("&c")));
+
         gui.addButton(ItemButton.create(new ItemBuilder(XMaterial.NAME_TAG)
                 .setName("&b&lChange name").addLore("&7Click to change the item's name")
                 , e -> {
@@ -102,7 +116,7 @@ public class miniCustomizeGui {
                         .plugin(plugin)
                         .open(p);
                 }
-        ), 10);
+        ), 11);
 
         gui.addButton(ItemButton.create(new ItemBuilder(XMaterial.SLIME_BALL)
                 .setName("&b&lChange material").addLore("&7Click to change the item's material")
@@ -117,7 +131,7 @@ public class miniCustomizeGui {
                         refresh();
                     });
                 }
-        ), 19);
+        ), 20);
 
         gui.addButton(ItemButton.create(new ItemBuilder(XMaterial.PAPER)
                 .setName("&b&lAdd/remove Lore").addLore("&7Left Click to add lore",
@@ -143,11 +157,11 @@ public class miniCustomizeGui {
                     }
 
 
-        }), 28);
+        }), 29);
 
         Pair<dAction, String> action = new dItem(item).getAction();
 
-        gui.addButton(43, ItemButton.create(new ItemBuilder(XMaterial.STICKY_PISTON)
+        gui.addButton(24, ItemButton.create(new ItemBuilder(XMaterial.STICKY_PISTON)
             .setName("&c&lAdd actions").setLore("&7Action to perform when this", "&7item is clicked",
                         "", "&6Current action: &7" + action.get1() + ":" + action.get2()),
                 e-> {
@@ -157,7 +171,7 @@ public class miniCustomizeGui {
                         aux.setAction(dAction, s);
                         item = aux.getItem();
                         refresh();
-                    });
+                    }, (p) -> refresh());
                 }));
 
         gui.addButton(ItemButton.create(new ItemBuilder(XMaterial.PLAYER_HEAD)
@@ -172,18 +186,19 @@ public class miniCustomizeGui {
                     refresh();
 
                 }, inv::open, FormatUtils.color("&7Input base64 texture"),"");
-        }), 34);
+        }), 23);
 
-        gui.addButton(ItemButton.create(item.clone(), e -> {}), 22);
+        gui.addButton(ItemButton.create(item.clone(), e -> {}), 5);
 
-        gui.addButton(ItemButton.create(new ItemBuilder(XMaterial.OAK_DOOR)
+        gui.addButton(ItemButton.create(new ItemBuilder(XMaterial.PLAYER_HEAD)
                 .setName("&b&lGo back").addLore("&7Click to go back")
+                        .applyTexture("19bf3292e126a105b54eba713aa1b152d541a1d8938829c56364d178ed22bf")
                 , e-> {
                     preventClose.unregister();
                     consumer.accept(item);
                     inv.destroy();
                     preventPicks.unregister();
-                }), 49);
+                }), 8);
 
         //gui.preventPlayerInvSlots();
         gui.setDestroyOnClose(false);
@@ -191,7 +206,7 @@ public class miniCustomizeGui {
     }
 
     private void refreshItem() {
-        inv.addButton(ItemButton.create(item.clone(), e -> {}), 22);
+        inv.addButton(ItemButton.create(item.clone(), e -> {}), 5);
     }
 
     private void refresh() {
@@ -205,7 +220,7 @@ public class miniCustomizeGui {
 
     private void preventClose(InventoryCloseEvent e) {
 
-        if (e.getInventory() != inv.getInventory()) return;
+        if (!e.getInventory().equals(inv.getInventory())) return;
 
         if (!preventCloseB) return;
 

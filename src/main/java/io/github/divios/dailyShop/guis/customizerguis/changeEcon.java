@@ -4,6 +4,7 @@ import com.vk2gpz.tokenenchant.api.TokenEnchantAPI;
 import com.cryptomorin.xseries.XMaterial;
 import io.github.divios.core_lib.inventory.InventoryGUI;
 import io.github.divios.core_lib.inventory.ItemButton;
+import io.github.divios.core_lib.inventory.inventoryUtils;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.FormatUtils;
@@ -11,7 +12,7 @@ import io.github.divios.dailyShop.DRShop;
 import io.github.divios.dailyShop.conf_msg;
 import io.github.divios.dailyShop.economies.*;
 import io.github.divios.dailyShop.hooks.hooksManager;
-import io.github.divios.lib.itemHolder.dItem;
+import io.github.divios.lib.dLib.dItem;
 import me.realized.tokenmanager.api.TokenManager;
 import me.xanium.gemseconomy.api.GemsEconomyAPI;
 import me.xanium.gemseconomy.currency.Currency;
@@ -21,6 +22,7 @@ import org.bukkit.entity.Player;
 
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class changeEcon{
 
@@ -50,19 +52,29 @@ public class changeEcon{
     private void init() {
 
 
-        InventoryGUI gui = new InventoryGUI(plugin, 27, conf_msg.CUSTOMIZE_CHANGE_ECON);
+        InventoryGUI gui = new InventoryGUI(plugin, 54, conf_msg.CUSTOMIZE_CHANGE_ECON);
 
-        int slot = 0;
+        IntStream.of(0,1, 7, 8, 9, 17, 36, 44, 45, 46, 52, 53)
+                .forEach(value ->
+                        gui.addButton(ItemButton.create(new ItemBuilder(
+                                XMaterial.BLUE_STAINED_GLASS_PANE).setName("&c"), e -> {}), value));
 
-        gui.addButton(ItemButton.create(new ItemBuilder(XMaterial.OAK_DOOR)
-                .setName("&c&lReturn"), e -> consumer.accept(item)), 22);
+        IntStream.of(2, 3, 4, 5, 6, 18, 26, 27, 35, 47, 48, 49, 50)
+                .forEach(value ->
+                        gui.addButton(ItemButton.create(new ItemBuilder(
+                                XMaterial.LIGHT_BLUE_STAINED_GLASS_PANE).setName("&c"), e -> {}), value));
+
+
+        gui.addButton(ItemButton.create(new ItemBuilder(XMaterial.PLAYER_HEAD)
+                .setName("&c&lReturn").applyTexture("19bf3292e126a105b54eba713aa1b152d541a1d8938829c56364d178ed22bf")
+                , e -> consumer.accept(item)), 8);
 
         gui.addButton(ItemButton.create(new ItemBuilder(XMaterial.CHEST)
                 .setName("&f&lVault").addLore("&7Click to change"), e -> {
                 item.setEconomy(new vault());
                 consumer.accept(item);
-        }), slot);
-        slot++;
+        }), inventoryUtils.getFirstEmpty(gui.getInventory()));
+
 
         if (gemsApi != null)
             for (String s : gemsApi.plugin.getCurrencyManager().getCurrencies().stream()
@@ -71,8 +83,7 @@ public class changeEcon{
                         .setName("&f&l" + s).addLore("&7Click to change"), e -> {
                     item.setEconomy(new gemEcon(FormatUtils.stripColor(ItemUtils.getName(e.getCurrentItem()))));
                     consumer.accept(item);
-                }), slot);
-                slot++;
+                }), inventoryUtils.getFirstEmpty(gui.getInventory()));
             }
 
         if (tokenEnchantsApi != null) {
@@ -80,8 +91,7 @@ public class changeEcon{
                     .setName("&d&lTokenEnchants").addLore("&7Click to change"), e -> {
                 item.setEconomy(new tokenManagerE());
                 consumer.accept(item);
-            }), slot);
-            slot++;
+            }), inventoryUtils.getFirstEmpty(gui.getInventory()));
         }
 
 
@@ -90,8 +100,7 @@ public class changeEcon{
                     .setName("&b&lTokenManager").addLore("&7Click to change"), e -> {
                 item.setEconomy(new tokenManagerE());
                 consumer.accept(item);
-            }), slot);
-            slot++;
+            }), inventoryUtils.getFirstEmpty(gui.getInventory()));
         }
 
         if (mPointsAPI != null) {
@@ -100,8 +109,7 @@ public class changeEcon{
                         .setName("&f&l" + s).addLore("&7Click to change"), e -> {
                     item.setEconomy(new MPointsE(FormatUtils.stripColor(ItemUtils.getName(e.getCurrentItem()))));
                     consumer.accept(item);
-                }), slot);
-                slot++;
+                }), inventoryUtils.getFirstEmpty(gui.getInventory()));
             }
         }
 
@@ -110,8 +118,7 @@ public class changeEcon{
                     .setName("&f&lPlayerPoints").addLore("&7Click to change"), e -> {
                 item.setEconomy(new playerPointsE());
                 consumer.accept(item);
-            }), slot);
-            slot++;
+            }), inventoryUtils.getFirstEmpty(gui.getInventory()));
         }
 
         gui.destroysOnClose();

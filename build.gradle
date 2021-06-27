@@ -10,7 +10,7 @@ plugins {
 apply plugin: 'maven-publish'
 
 group = 'io.github.divios'
-def pluginVersion = "3.0"
+def pluginVersion = "3.0.2"
 version = pluginVersion
 
 sourceCompatibility = '1.8'
@@ -122,6 +122,11 @@ shadowJar {
     relocate('com.cryptomorin.xseries', 'io.github.divios.DailyShop.shaded.XSeries')
 
     minimize()
+}
+
+processResources {
+    expand projectVersion: pluginVersion
+
 }
 
 task deploy(dependsOn: ["build", "updateJars"]) {

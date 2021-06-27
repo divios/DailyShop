@@ -9,9 +9,9 @@ import io.github.divios.dailyShop.conf_msg;
 import io.github.divios.dailyShop.guis.confirmIH;
 import io.github.divios.dailyShop.guis.settings.shopsManagerGui;
 import io.github.divios.dailyShop.utils.utils;
-import io.github.divios.lib.itemHolder.dGui;
-import io.github.divios.lib.itemHolder.dItem;
-import io.github.divios.lib.itemHolder.dShop;
+import io.github.divios.lib.dLib.dGui;
+import io.github.divios.lib.dLib.dItem;
+import io.github.divios.lib.dLib.dShop;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -77,11 +77,19 @@ public class customizeGui implements Listener, InventoryHolder {
     }
 
     public void addCustomizeItems() {
-        ItemStack back = new ItemBuilder(XMaterial.OAK_DOOR)
-                .setName("&b&lGo back").setLore("&7Click to go back");
 
-        ItemStack complete = new ItemBuilder(XMaterial.ANVIL)
-                .setName("&b&lApply changes").setLore("&7Click to complete changes");
+
+        IntStream.range(0, 36).forEach(i->
+                p.getInventory().setItem(i,
+                        new ItemBuilder(XMaterial.GRAY_STAINED_GLASS_PANE).setName("&c")));
+
+        ItemStack back = new ItemBuilder(XMaterial.PLAYER_HEAD)
+                .setName("&b&lGo back").setLore("&7Click to go back")
+                .applyTexture("19bf3292e126a105b54eba713aa1b152d541a1d8938829c56364d178ed22bf");
+
+        ItemStack complete = new ItemBuilder(XMaterial.PLAYER_HEAD)
+                .setName("&b&lApply changes").setLore("&7Click to complete changes")
+                .applyTexture("2a3b8f681daad8bf436cae8da3fe8131f62a162ab81af639c3e0644aa6abac2f");
 
         ItemStack rename = new ItemBuilder(XMaterial.NAME_TAG)
                 .setName("&b&lChange title").setLore("&7Click to change the gui title");
@@ -99,11 +107,11 @@ public class customizeGui implements Listener, InventoryHolder {
                         "&7pretty much everything about the shop.", "&7The main idea is to customize",
                         "&7the shop as you want an leave empty the slots", "&7where the daily items will appear",
                         "",
-                        "&6Left click empty slot: &7Adds a new item",
-                        "&6Shift Click empty slot: &7Sets slot as AIR, where no daily items",
+                        "&8- &6Left click empty slot: &7Adds a new item",
+                        "&8- &6Shift Click empty slot: &7Sets slot as AIR, where no daily items",
                             "&7'll appear and is displayed as an empty slot",
-                        "&6Middle click item: &7Copies the item to the clipboard, middle",
-                        "&7click again on empty slot to paste");
+                        "&8- &6Middle click item: &7Copies the item to the clipboard, middle",
+                        "&8- &7click again on empty slot to paste");
 
         p.getInventory().setItem(3, back);
         p.getInventory().setItem(5, complete);

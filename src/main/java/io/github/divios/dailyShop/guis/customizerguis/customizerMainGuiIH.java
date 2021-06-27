@@ -12,8 +12,8 @@ import io.github.divios.dailyShop.DRShop;
 import io.github.divios.dailyShop.conf_msg;
 import io.github.divios.dailyShop.guis.settings.shopGui;
 import io.github.divios.dailyShop.utils.utils;
-import io.github.divios.lib.itemHolder.dItem;
-import io.github.divios.lib.itemHolder.dShop;
+import io.github.divios.lib.dLib.dItem;
+import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.managers.shopsManager;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Bukkit;
@@ -27,6 +27,7 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -86,11 +87,13 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
                 .setLore(Msg.msgList(conf_msg.CUSTOMIZE_CHANGE_CONFIRM_GUI_LORE)
                         .add("\\{status}", "" + ditem.getConfirm_gui()).build());
 
-        ItemStack customizerItem = new ItemBuilder(XMaterial.ANVIL)   //Done button (anvil)
-                .setName(conf_msg.CUSTOMIZE_CRAFT).addLore(conf_msg.CUSTOMIZE_CRAFT_LORE);
+        ItemStack customizerItem = new ItemBuilder(XMaterial.PLAYER_HEAD)   //Done button (anvil)
+                .setName(conf_msg.CUSTOMIZE_CRAFT).addLore(conf_msg.CUSTOMIZE_CRAFT_LORE)
+                .applyTexture("2a3b8f681daad8bf436cae8da3fe8131f62a162ab81af639c3e0644aa6abac2f");
 
-        ItemStack returnItem = new ItemBuilder(XMaterial.OAK_DOOR)    //Back sign
-                .setName(conf_msg.CUSTOMIZE_RETURN).setLore(conf_msg.CUSTOMIZE_RETURN_LORE);
+        ItemStack returnItem = new ItemBuilder(XMaterial.PLAYER_HEAD)    //Back sign
+                .setName(conf_msg.CUSTOMIZE_RETURN).setLore(conf_msg.CUSTOMIZE_RETURN_LORE)
+                .applyTexture("19bf3292e126a105b54eba713aa1b152d541a1d8938829c56364d178ed22bf");
 
         ItemStack rename = new ItemBuilder(XMaterial.NAME_TAG)   //Rename item
                 .setName(conf_msg.CUSTOMIZE_RENAME).setLore(conf_msg.CUSTOMIZE_RENAME_LORE);
@@ -166,7 +169,11 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
 
         ItemStack bundle = new ItemBuilder(XMaterial.ITEM_FRAME)                //bundle
                 .setName("&f&lChange bundle items")
-                .setLore("&6Right Click > &7To change items on the bundle");
+                .setLore("&6Right Click > &7To change items on the bundle")
+                .addLore("")
+                .addLore(ditem.getBundle().orElse(Collections.emptyList()).stream()
+                        .map(uuid -> shop.getItem(uuid).orElse(dItem.AIR()).getDisplayName())
+                        .collect(Collectors.toList()));
 
         ItemStack durability = new ItemBuilder(XMaterial.DAMAGED_ANVIL)
                 .setName(conf_msg.CUSTOMIZE_DURABILITY)
@@ -405,7 +412,7 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
             }
         }
 
-        else if (e.getSlot() == 23) {               //durability
+        else if (e.getSlot() == 28) {               //durability
 
             new AnvilGUI.Builder()
                     .onClose(player -> Task.syncDelayed(main, () ->
@@ -425,7 +432,7 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
 
         }
 
-        else if (e.getSlot() == 32) {  //boton de bundle
+        else if (e.getSlot() == 48) {  //boton de bundle
             new changeBundleItem(p, ditem, shop,
                     (player, uuids) -> {
                         ditem.setBundle(uuids);
@@ -433,22 +440,22 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
                     }, this::refresh);
         }
 
-        else if (e.getSlot() == 25) { // Boton de hide enchants
+        else if (e.getSlot() == 32) { // Boton de hide enchants
             ditem.toggleFlag(ItemFlag.HIDE_ENCHANTS);
             refresh(p);
         }
 
-        else if (e.getSlot() == 26) { // Boton de hide attributes
+        else if (e.getSlot() == 43) { // Boton de hide attributes
             ditem.toggleFlag(ItemFlag.HIDE_ATTRIBUTES);
             refresh(p);
         }
 
-        else if (e.getSlot() == 30 && !ditem.getPerms().isPresent()) { // Boton de habilitar perms
+        else if (e.getSlot() == 19 && !ditem.getPerms().isPresent()) { // Boton de habilitar perms
             ditem.setPerms(new ArrayList<>());
             refresh(p);
         }
 
-        else if (e.getSlot() == 30 && ditem.getPerms().isPresent()) {  // Boton de añadir/quitar perms
+        else if (e.getSlot() == 19 && ditem.getPerms().isPresent()) {  // Boton de añadir/quitar perms
             if (e.isLeftClick()) {
                 new ChatPrompt(main, p, (player, s) -> {
 
@@ -478,7 +485,7 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
 
         }
 
-        else if (e.getSlot() == 31 && !ditem.getSetItems().isPresent() && e.isLeftClick()) {  // Boton de edit set
+        else if (e.getSlot() == 45 && !ditem.getSetItems().isPresent() && e.isLeftClick()) {  // Boton de edit set
             if (ditem.getStock().isPresent()) {
                 p.sendMessage(conf_msg.PREFIX + FormatUtils.color("&7You can't enable this when " +
                         "the stock feature is enable"));
@@ -488,7 +495,7 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
             refresh(p);
         }
 
-        else if (e.getSlot() == 31 && ditem.getSetItems().isPresent()) {
+        else if (e.getSlot() == 45 && ditem.getSetItems().isPresent()) {
             if (e.isLeftClick()) {
                 new AnvilGUI.Builder()
                         .onClose(player -> Task.syncDelayed(main, () ->
@@ -516,7 +523,7 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
             }
         }
 
-        else if (e.getSlot() == 35 && e.getCurrentItem() != null) { // Boton de hide potion effects
+        else if (e.getSlot() == 41 && e.getCurrentItem() != null) { // Boton de hide potion effects
             ditem.toggleFlag(ItemFlag.HIDE_POTION_EFFECTS);
             refresh(p);
         }

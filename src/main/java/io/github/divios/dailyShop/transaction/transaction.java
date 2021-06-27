@@ -1,18 +1,17 @@
 package io.github.divios.dailyShop.transaction;
 
+import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.core_lib.misc.Msg;
 import io.github.divios.dailyShop.DRShop;
 import io.github.divios.dailyShop.conf_msg;
-import io.github.divios.dailyShop.economies.economy;
-import io.github.divios.dailyShop.economies.vault;
 import io.github.divios.dailyShop.events.updateItemEvent;
 import io.github.divios.dailyShop.guis.confirmGui;
 import io.github.divios.dailyShop.guis.confirmIH;
 import io.github.divios.dailyShop.utils.utils;
-import io.github.divios.lib.itemHolder.dItem;
-import io.github.divios.lib.itemHolder.dPrice;
-import io.github.divios.lib.itemHolder.dShop;
+import io.github.divios.lib.dLib.dItem;
+import io.github.divios.lib.dLib.dPrice;
+import io.github.divios.lib.dLib.dShop;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -57,7 +56,9 @@ public class transaction {
                         transaction.initTransaction(p1, item, shop);
                     else
                         shop.getGui().open(p1);
-                }, item.getItem(), conf_msg.CONFIRM_GUI_BUY_NAME,       //TODO
+                }, new ItemBuilder(item.getItem().clone()).addLore(
+                        Msg.singletonMsg(conf_msg.SELL_ITEM_NAME).add("\\{price}",
+                                String.valueOf(item.getSellPrice().get().getPrice())).build()), conf_msg.CONFIRM_GUI_BUY_NAME,       //TODO
                         conf_msg.CONFIRM_MENU_YES, conf_msg.CONFIRM_MENU_NO);
             }
         } else initTransaction(p, item, shop);

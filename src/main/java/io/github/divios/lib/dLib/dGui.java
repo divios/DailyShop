@@ -1,4 +1,4 @@
-package io.github.divios.lib.itemHolder;
+package io.github.divios.lib.dLib;
 
 import io.github.divios.core_lib.inventory.inventoryUtils;
 import io.github.divios.core_lib.misc.*;
@@ -7,8 +7,8 @@ import io.github.divios.dailyShop.conf_msg;
 import io.github.divios.dailyShop.events.updateItemEvent;
 import io.github.divios.dailyShop.lorestategy.loreStrategy;
 import io.github.divios.dailyShop.lorestategy.shopItemsLore;
-import io.github.divios.lib.itemHolder.guis.dBuy;
-import io.github.divios.lib.itemHolder.guis.dSell;
+import io.github.divios.lib.dLib.guis.dBuy;
+import io.github.divios.lib.dLib.guis.dSell;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -65,9 +65,9 @@ public abstract class dGui {
     }
 
     protected dGui(String base64, dShop shop) {
-        _deserialize(base64);
         this.shop = shop;
         this.strategy = new shopItemsLore(shop.getType());
+        _deserialize(base64);
 
         initListeners();
     }
@@ -300,7 +300,12 @@ public abstract class dGui {
 
 
         } catch (Exception e) {
-            throw new IllegalStateException("Unable to deserialize inventory.", e);
+            plugin.getLogger().severe("Unable to deserialize gui of shop "
+                    + shop.getName() + ", setting it to default");
+
+            IntStream.range(0, inv.getSize()).forEach(openSlots::add);
+            this.title = shop.getName();
+            this.inv = Bukkit.createInventory(null, 27, title);
         }
     }
 

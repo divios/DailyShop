@@ -1,10 +1,9 @@
-package io.github.divios.lib.itemHolder;
+package io.github.divios.lib.dLib;
 
 import io.github.divios.core_lib.inventory.dynamicGui;
 import io.github.divios.core_lib.misc.Msg;
 import io.github.divios.core_lib.misc.Task;
 import io.github.divios.dailyShop.DRShop;
-import io.github.divios.dailyShop.guis.settings.shopGui;
 import io.github.divios.dailyShop.lorestategy.loreStrategy;
 import io.github.divios.dailyShop.lorestategy.shopItemsLore;
 import io.github.divios.dailyShop.utils.utils;
