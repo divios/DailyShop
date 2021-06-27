@@ -3,7 +3,6 @@ package io.github.divios.dailyShop.guis.settings;
 import com.cryptomorin.xseries.XMaterial;
 import io.github.divios.core_lib.inventory.InventoryGUI;
 import io.github.divios.core_lib.inventory.ItemButton;
-import io.github.divios.core_lib.inventory.dynamicGui;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.FormatUtils;
@@ -12,24 +11,20 @@ import io.github.divios.dailyShop.DRShop;
 import io.github.divios.dailyShop.conf_msg;
 import io.github.divios.dailyShop.guis.confirmIH;
 import io.github.divios.dailyShop.guis.customizerguis.customizeGui;
-import io.github.divios.dailyShop.guis.customizerguis.customizerMainGuiIH;
 import io.github.divios.dailyShop.lorestategy.loreStrategy;
 import io.github.divios.dailyShop.lorestategy.shopsManagerLore;
 import io.github.divios.dailyShop.utils.utils;
-import io.github.divios.lib.itemHolder.dItem;
-import io.github.divios.lib.itemHolder.dShop;
+import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.managers.shopsManager;
 import io.github.divios.lib.storage.dataManager;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -106,14 +101,18 @@ public class shopsManagerGui {
                         e -> invs.get(index - 1).open(p)), 47);
             }
 
-            inventoryGUI.addButton(new ItemButton(new ItemBuilder(XMaterial.OAK_DOOR)
-                    .setName("&cReturn").setLore("&7Click to return"), e -> {
+            inventoryGUI.addButton(new ItemButton(new ItemBuilder(XMaterial.PLAYER_HEAD)
+                    .setName("&cReturn").setLore("&7Click to return")
+                    .applyTexture("19bf3292e126a105b54eba713aa1b152d541a1d8938829c56364d178ed22bf")
+                    , e -> {
                 Task.syncDelayed(plugin, this::destroyAll, 3L);
                 p.closeInventory();
             }), 8);
 
-            inventoryGUI.addButton(new ItemButton(new ItemBuilder(XMaterial.ANVIL)
-                    .setName(conf_msg.SHOPS_MANAGER_CREATE), e -> nonContentAction()), 53);
+            inventoryGUI.addButton(new ItemButton(new ItemBuilder(XMaterial.PLAYER_HEAD)
+                    .setName(conf_msg.SHOPS_MANAGER_CREATE)
+                    .applyTexture("9b425aa3d94618a87dac9c94f377af6ca4984c07579674fad917f602b7bf235")
+                    , e -> nonContentAction()), 53);
 
             for (int i = 0; i < 54; i++) {
                 if (sum[0] >= items.size()) break;

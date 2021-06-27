@@ -7,9 +7,8 @@ import io.github.divios.dailyShop.conf_msg;
 import io.github.divios.dailyShop.guis.confirmGui;
 import io.github.divios.dailyShop.guis.confirmIH;
 import io.github.divios.dailyShop.utils.utils;
-import io.github.divios.lib.itemHolder.dItem;
-import io.github.divios.lib.itemHolder.dShop;
-import org.bukkit.Bukkit;
+import io.github.divios.lib.dLib.dItem;
+import io.github.divios.lib.dLib.dShop;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -47,8 +46,8 @@ public class sellTransaction {
                     else
                         shop.getGui().open(p1);
                 }, new ItemBuilder(item.getItem().clone()).addLore(
-                        Msg.singletonMsg(conf_msg.CONFIRM_GUI_CONFIRM_PANE).add("\\{price}",
-                                String.valueOf(item.getSellPrice().get())).build()),
+                        Msg.singletonMsg(conf_msg.SELL_ITEM_NAME).add("\\{price}",
+                                String.valueOf(item.getSellPrice().get().getPrice())).build()),
                         conf_msg.CONFIRM_GUI_SELL_NAME,      //TODO
                         conf_msg.CONFIRM_MENU_YES, conf_msg.CONFIRM_MENU_NO);
             }

@@ -9,14 +9,15 @@ import io.github.divios.core_lib.misc.Task;
 import io.github.divios.dailyShop.DRShop;
 import io.github.divios.dailyShop.conf_msg;
 import io.github.divios.dailyShop.events.updateItemEvent;
-import io.github.divios.lib.itemHolder.dItem;
-import io.github.divios.lib.itemHolder.dShop;
+import io.github.divios.lib.dLib.dItem;
+import io.github.divios.lib.dLib.dShop;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.IntStream;
 
 
 public class changePrice {
@@ -52,6 +53,18 @@ public class changePrice {
     public void open() {
 
         InventoryGUI gui = new InventoryGUI(plugin, 27, "&bChange price");
+
+        IntStream.of(0, 1, 9, 18, 19, 7, 8, 17, 25, 26)
+                .forEach(value -> gui.addButton(value, new ItemButton(new ItemBuilder(XMaterial.BLUE_STAINED_GLASS_PANE)
+                        .setName("&c"), e -> {})));
+
+        IntStream.of(2, 3, 5, 6, 10, 16, 20, 21, 23, 24)
+                .forEach(value -> gui.addButton(value, new ItemButton(new ItemBuilder(XMaterial.LIGHT_BLUE_STAINED_GLASS_PANE)
+                        .setName("&c"), e -> {})));
+
+        IntStream.of(4, 12, 13, 14)
+                .forEach(value -> gui.addButton(value, new ItemButton(new ItemBuilder(XMaterial.GRAY_STAINED_GLASS_PANE)
+                        .setName("&c"), e -> {})));
 
         gui.addButton(ItemButton.create(new ItemBuilder(XMaterial.SUNFLOWER)
                         .setName("&6&lSet fixed price").addLore("&7The item 'll always have", "&7the given price"),
@@ -142,9 +155,10 @@ public class changePrice {
 
                 }), 15);
 
-        gui.addButton(ItemButton.create(new ItemBuilder(XMaterial.OAK_DOOR)
+        gui.addButton(ItemButton.create(new ItemBuilder(XMaterial.PLAYER_HEAD)
                         .setName(conf_msg.CONFIRM_GUI_RETURN_NAME)
                         .setLore(conf_msg.CONFIRM_GUI_RETURN_PANE_LORE)
+                .applyTexture("19bf3292e126a105b54eba713aa1b152d541a1d8938829c56364d178ed22bf")
                 , e -> back.run()), 22);
 
         gui.destroysOnClose();
