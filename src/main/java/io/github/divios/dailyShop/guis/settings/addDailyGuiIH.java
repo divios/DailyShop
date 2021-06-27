@@ -9,8 +9,8 @@ import io.github.divios.dailyShop.DRShop;
 import io.github.divios.dailyShop.conf_msg;
 import io.github.divios.dailyShop.guis.customizerguis.changeBundleItem;
 import io.github.divios.dailyShop.utils.utils;
-import io.github.divios.lib.itemHolder.dItem;
-import io.github.divios.lib.itemHolder.dShop;
+import io.github.divios.lib.dLib.dItem;
+import io.github.divios.lib.dLib.dShop;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -73,8 +73,9 @@ public class addDailyGuiIH {
                             }, gui::open);
                 }), 13);
 
-        gui.addButton(ItemButton.create(new ItemBuilder(XMaterial.OAK_DOOR)
+        gui.addButton(ItemButton.create(new ItemBuilder(XMaterial.PLAYER_HEAD)
                         .setName(conf_msg.ADD_ITEMS_RETURN).addLore(conf_msg.ADD_ITEMS_RETURN_LORE)
+                        .applyTexture("19bf3292e126a105b54eba713aa1b152d541a1d8938829c56364d178ed22bf")
                 , e -> back.run()), 22);
 
         IntStream.range(0, 27).forEach(value -> {

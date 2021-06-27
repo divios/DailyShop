@@ -1,4 +1,4 @@
-package io.github.divios.lib.itemHolder.guis;
+package io.github.divios.lib.dLib.guis;
 
 import io.github.divios.core_lib.inventory.inventoryUtils;
 import io.github.divios.core_lib.misc.EventListener;
@@ -6,9 +6,9 @@ import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.dailyShop.conf_msg;
 import io.github.divios.dailyShop.events.updateItemEvent;
 import io.github.divios.dailyShop.utils.utils;
-import io.github.divios.lib.itemHolder.dGui;
-import io.github.divios.lib.itemHolder.dItem;
-import io.github.divios.lib.itemHolder.dShop;
+import io.github.divios.lib.dLib.dGui;
+import io.github.divios.lib.dLib.dItem;
+import io.github.divios.lib.dLib.dShop;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventPriority;
