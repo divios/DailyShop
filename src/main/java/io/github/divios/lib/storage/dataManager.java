@@ -18,9 +18,9 @@ import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.UUID;
-import java.util.function.Consumer;
+import java.util.concurrent.CompletableFuture;
 
-public class dataManager extends DataManagerAbstract{
+public class dataManager extends DataManagerAbstract {
 
     private static final DRShop plugin = DRShop.getInstance();
 
@@ -40,11 +40,13 @@ public class dataManager extends DataManagerAbstract{
     }
 
 
-    public void getShops(Consumer<HashSet<dShop>> callback) {
+    public CompletableFuture<HashSet<dShop>> getShops() {
+
+        return CompletableFuture.supplyAsync(() -> {
 
             HashSet<dShop> shops = new LinkedHashSet<>();
 
-            this.async(() -> this.databaseConnector.connect(connection -> {
+            this.databaseConnector.connect(connection -> {
                 try (Statement statement = connection.createStatement()) {
                     String selectFarms = "SELECT * FROM " + this.getTablePrefix() + "active_shops";
                     ResultSet result = statement.executeQuery(selectFarms);
@@ -57,32 +59,37 @@ public class dataManager extends DataManagerAbstract{
                                 timeStampUtils.deserialize(result.getString("timestamp")),
                                 result.getInt("timer"));
 
-                        getShop(name, shop::setItems);
+                        getShop(name).thenAccept(shop::setItems);
                         shops.add(shop);
                     }
                 }
-                callback.accept(shops);
-            }));
+            });
+            return shops;
+        });
     }
 
 
-    public void getShop(String name, Consumer<HashSet<dItem>> callback) {
+    public CompletableFuture<HashSet<dItem>> getShop(String name) {
+
+        return CompletableFuture.supplyAsync(() -> {
 
             HashSet<dItem> items = new LinkedHashSet<>();
 
-            this.async(() -> this.databaseConnector.connect(connection -> {
+            this.databaseConnector.connect(connection -> {
                 try (Statement statement = connection.createStatement()) {
                     String selectFarms = "SELECT * FROM " + this.getTablePrefix() + "shop_" + name;
                     ResultSet result = statement.executeQuery(selectFarms);
 
                     while (result.next()) {
                         dItem newItem = dItem.deserialize(result.getString("itemSerial"));
-                       items.add(newItem);
+                        items.add(newItem);
                     }
                 }
-                callback.accept(items);
-            }));
-        }
+            });
+            return items;
+        });
+
+    }
 
     public void createShop(dShop shop) {
         this.async(() -> this.databaseConnector.connect(connection -> {
@@ -93,7 +100,7 @@ public class dataManager extends DataManagerAbstract{
                 statement.setString(1, shop.getName());
                 statement.setString(2, shop.getType().name());
                 statement.setString(3, shop.getGui().serialize());
-                statement.setString(4,timeStampUtils.serialize(shop.getTimestamp()));
+                statement.setString(4, timeStampUtils.serialize(shop.getTimestamp()));
                 statement.setInt(5, shop.getTimer());
                 statement.executeUpdate();
             }
@@ -181,7 +188,7 @@ public class dataManager extends DataManagerAbstract{
         }), "itemUpdate");
     }
 
-    public void syncUpdateGui(String name, dGui gui ) {
+    public void syncUpdateGui(String name, dGui gui) {
         this.databaseConnector.connect(connection -> {
             String updateGui = "UPDATE " + this.getTablePrefix() + "active_shops " +
                     "SET gui = ? WHERE name = ?";
@@ -192,7 +199,7 @@ public class dataManager extends DataManagerAbstract{
             }
         });
     }
-    
+
     public void asyncUpdateGui(String name, dGui gui) {
         this.queueAsync(() -> syncUpdateGui(name, gui), "update_gui");
     }
