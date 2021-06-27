@@ -1,7 +1,7 @@
 package io.github.divios.dailyShop.guis.customizerguis;
 
-import com.google.common.util.concurrent.AtomicDouble;
 import com.cryptomorin.xseries.XMaterial;
+import com.google.common.util.concurrent.AtomicDouble;
 import io.github.divios.core_lib.inventory.InventoryGUI;
 import io.github.divios.core_lib.inventory.ItemButton;
 import io.github.divios.core_lib.itemutils.ItemBuilder;

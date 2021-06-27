@@ -19,7 +19,7 @@ public class shopsManager {
         if (instance == null) {
             instance = new shopsManager();
             dataManager.getInstance()
-                    .getShops(dShops -> instance.setShops(dShops));
+                    .getShops().thenAccept(instance::setShops);
         }
         return instance;
     }
