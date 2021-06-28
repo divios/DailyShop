@@ -30,20 +30,13 @@ public enum dAction {
     }),
 
     SHOW_ALL_ITEMS((p, s) -> {
+        loreStrategy strategy = new shopItemsLore(dShop.dShopT.buy);
         new dynamicGui.Builder()
                 .contents(() -> shopsManager.getInstance().getShop(s)
-                        .get().getItems().stream()
-                        .map(dItem -> dItem.getItem().clone()).collect(Collectors.toList()))
-                .addItems((inv, i) -> {
-                    loreStrategy strategy = new shopItemsLore(dShop.dShopT.buy);
-                    Task.asyncDelayed(DRShop.getInstance(), () ->
-                            IntStream.range(0, 45).forEach(value -> {
-                                ItemStack aux = inv.getItem(value);
-                                if (utils.isEmpty(aux)) return;
-                                strategy.setLore(aux);
-                                inv.setItem(value, aux);
-                            }), 0);
-                })
+                        .get().getItems().parallelStream()
+                        .map(dItem -> dItem.getItem().clone())
+                        .peek(strategy::setLore)
+                        .collect(Collectors.toList()))
                 .title(integer -> "&6&l" + shopsManager.getInstance().getShop(s).get().getName() + " items")
                 .back(player -> shopsManager.getInstance().getShop(s).get().openGui(p))
                 .plugin(DRShop.getInstance())

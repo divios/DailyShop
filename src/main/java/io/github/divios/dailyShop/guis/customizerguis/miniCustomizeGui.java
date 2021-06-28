@@ -11,7 +11,6 @@ import io.github.divios.dailyShop.DRShop;
 import io.github.divios.lib.dLib.dAction;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
-import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -104,17 +103,11 @@ public class miniCustomizeGui {
                 .setName("&b&lChange name").addLore("&7Click to change the item's name")
                 , e -> {
                     preventCloseB = false;
-                    new AnvilGUI.Builder()
-                        .onClose((player) -> Task.syncDelayed(plugin, this::refresh, 1L))
-                        .onComplete((player, s) -> {
-                            item = ItemUtils.setName(item, s);
-                            refreshItem();
-                            return AnvilGUI.Response.close();
-                        })
-                        .title(FormatUtils.color("&cSet name"))
-                        .itemLeft(item.clone())
-                        .plugin(plugin)
-                        .open(p);
+                    new ChatPrompt(plugin, p, (player, s) -> {
+                        item = ItemUtils.setName(item, s);
+                        refreshItem();
+                        refresh();
+                    },player -> refresh(), "&6&lInput Item Name", "");
                 }
         ), 11);
 
@@ -139,18 +132,10 @@ public class miniCustomizeGui {
                 e -> {
                     preventCloseB = false;
                     if (e.isLeftClick()) {
-                        new AnvilGUI.Builder()
-                                .onClose(player ->
-                                        Task.syncDelayed(plugin, this::refresh, 1L))
-                                .onComplete((player, s) -> {
-                                    item = ItemUtils.addLore(item, s);
-                                    return AnvilGUI.Response.close();
-                                })
-                                .title(FormatUtils.color("&cAdd lore"))
-                                .text("lore")
-                                .itemLeft(item)
-                                .plugin(plugin)
-                                .open(p);
+                        new ChatPrompt(plugin, p, (player, s) -> {
+                            item = ItemUtils.addLore(item, s);
+                            refresh();
+                        }, player -> refresh(), "&e&lInput Lore", "");
                     } else if (e.isRightClick()) {
                         item = ItemUtils.removeLore(item, 1);
                         refreshItem();

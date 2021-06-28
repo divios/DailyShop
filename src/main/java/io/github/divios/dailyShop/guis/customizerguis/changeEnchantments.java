@@ -3,13 +3,13 @@ package io.github.divios.dailyShop.guis.customizerguis;
 import com.cryptomorin.xseries.XMaterial;
 import io.github.divios.core_lib.inventory.dynamicGui;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
+import io.github.divios.core_lib.misc.ChatPrompt;
 import io.github.divios.core_lib.misc.FormatUtils;
-import io.github.divios.core_lib.misc.Task;
 import io.github.divios.dailyShop.DRShop;
 import io.github.divios.dailyShop.conf_msg;
+import io.github.divios.dailyShop.utils.utils;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
-import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -65,25 +65,17 @@ public class changeEnchantments {
     }
 
     private dynamicGui.Response contentAction(InventoryClickEvent e) {
-        AtomicBoolean response = new AtomicBoolean(false);
+
         String s = FormatUtils.stripColor(e.getCurrentItem().getItemMeta().getDisplayName());
 
-        new AnvilGUI.Builder()
-                .onClose(player -> Task.syncDelayed(plugin, () ->
-                        customizerMainGuiIH.open(p, ditem, shop), 1L))
-                .onComplete((player, text) -> {
-                    try {
-                        Integer.parseInt(text);
-                    } catch (NumberFormatException err) { return AnvilGUI.Response.text(conf_msg.MSG_NOT_INTEGER); }
-                    ditem.addEnchantments(Enchantment.getByName(s), Integer.parseInt(text));
-                    response.set(true);
-                    return AnvilGUI.Response.close();
-                })
-                .text("Set Enchantment lvl")
-                .itemLeft(ditem.getItem().clone())
-                .title("Set Enchantment lvl")
-                .plugin(plugin)
-                .open(p);
+        new ChatPrompt(plugin, p, (player, s1) -> {
+            if (!utils.isInteger(s1)) {
+                utils.sendMsg(p, conf_msg.MSG_NOT_INTEGER);
+                customizerMainGuiIH.open(p, ditem, shop);
+            }
+            ditem.addEnchantments(Enchantment.getByName(s), Integer.parseInt(s1));
+            customizerMainGuiIH.open(p, ditem, shop);
+        }, player -> customizerMainGuiIH.open(p, ditem, shop), "&1&lInput Enchant lvl", "");
 
         return dynamicGui.Response.nu();
     }
