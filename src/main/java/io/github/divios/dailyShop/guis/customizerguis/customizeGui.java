@@ -2,6 +2,7 @@ package io.github.divios.dailyShop.guis.customizerguis;
 
 import com.cryptomorin.xseries.XMaterial;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
+import io.github.divios.core_lib.misc.ChatPrompt;
 import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.core_lib.misc.Task;
 import io.github.divios.dailyShop.DRShop;
@@ -12,7 +13,6 @@ import io.github.divios.dailyShop.utils.utils;
 import io.github.divios.lib.dLib.dGui;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
-import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -200,17 +200,10 @@ public class customizeGui implements Listener, InventoryHolder {
 
             else if (e.getSlot() == 19) {           //change Name
                 refreshFlag = true;
-                new AnvilGUI.Builder()
-                        .onClose(player -> Task.syncDelayed(plugin, this::refresh, 1L))
-                        .onComplete((player, s) -> {
-                            _gui.setTitle(FormatUtils.color(s));
-                            refresh();
-                            return AnvilGUI.Response.close();
-                        })
-                        .text("Input new title")
-                        .itemLeft(XMaterial.NAME_TAG.parseItem())
-                        .plugin(plugin)
-                        .open(p);
+                new ChatPrompt(plugin, p , (player, s) -> {
+                    _gui.setTitle(FormatUtils.color(s));
+                    refresh();
+                }, player -> refresh(), "&5&lInput New Title", "");
             }
 
             else if (e.getSlot() == 23) {           //quitar row

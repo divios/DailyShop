@@ -5,6 +5,7 @@ import io.github.divios.core_lib.inventory.InventoryGUI;
 import io.github.divios.core_lib.inventory.ItemButton;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
+import io.github.divios.core_lib.misc.ChatPrompt;
 import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.core_lib.misc.Task;
 import io.github.divios.dailyShop.DRShop;
@@ -17,7 +18,6 @@ import io.github.divios.dailyShop.utils.utils;
 import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.managers.shopsManager;
 import io.github.divios.lib.storage.dataManager;
-import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -130,54 +130,71 @@ public class shopsManagerGui {
         invs.forEach(InventoryGUI::destroy);
     }
 
+    private void refresh(Player p) {
+        destroyAll();
+        open(p);
+    }
+
     private void contentAction(InventoryClickEvent e) {
         ItemStack selected = e.getCurrentItem();
         dShop shop = sManager.getShop(FormatUtils.stripColor(utils.getDisplayName(selected))).get();
         Player p = (Player) e.getWhoClicked();
 
-        if (e.isShiftClick() && e.isLeftClick())
+        if (e.isShiftClick() && e.isLeftClick()) {
+            destroyAll();
             customizeGui.open(p, shop);
+        }
 
-        else if (e.getClick().equals(ClickType.MIDDLE)) {
-            new AnvilGUI.Builder()
-                    .onClose(player -> Task.syncDelayed(plugin, () -> open(p), 1L))
-                    .onComplete((player, s) -> {
-                        if (s.isEmpty())
-                            return AnvilGUI.Response.text("Cat be empty");
 
-                        dManager.renameShop(shop.getName(), s);
-                        shop.setName(s);
-                        return AnvilGUI.Response.close();
-                    })
-                    .title(conf_msg.SHOPS_MANAGER_RENAME)
-                    .text(FormatUtils.stripColor(conf_msg.SHOPS_MANAGER_RENAME))
-                    .plugin(plugin)
-                    .open(p);
+        else if (e.getClick().equals(ClickType.MIDDLE)) {   // rename
+            new ChatPrompt(plugin, p, (player, s) -> {
+                if (s.isEmpty()) {
+                    utils.sendMsg(p, "&7Cant be empty");
+                    refresh(player);
+                    return;
+                }
+
+                if (s.split("\\s+").length > 1) {
+                    utils.sendMsg(p, "&7Name cannot have white spaces");
+                    refresh(player);
+                    return;
+                }
+
+                if (sManager.getShop(s).isPresent()) {
+                    utils.sendMsg(p, "&7Already Exist");
+                    refresh(player);
+                    return;
+                }
+
+                dManager.renameShop(shop.getName(), s);
+                shop.setName(s);
+                refresh(player);
+            }, this::refresh, "&b&lInput new Shop name", "");
         }
 
         else if (e.getClick().equals(ClickType.DROP)) {
-            new AnvilGUI.Builder()
-                    .onClose(player -> Task.syncDelayed(plugin, () -> open(p), 1L))
-                    .onComplete((player, s) -> {
-                        int time;
-                        try {
-                            time = Integer.parseInt(s);
-                        } catch (Exception err) {return  AnvilGUI.Response.text(conf_msg.MSG_NOT_INTEGER);}
+            new ChatPrompt(plugin, p, (player, s) -> {
+                if (!utils.isInteger(s)) {
+                    utils.sendMsg(p, conf_msg.MSG_NOT_INTEGER);
+                    refresh(player);
+                    return;
+                }
 
-                        if (time < 50) return AnvilGUI.Response.text("Time cannot be less than 50");
-                        shop.setTimer(time);
-                        return AnvilGUI.Response.close();
-                    })
-                    .itemLeft(XMaterial.CLOCK.parseItem())
-                    .plugin(plugin)
-                    .open(p);
+                if (Integer.parseInt(s) < 50) {
+                    utils.sendMsg(p, "&7Time cannot be less than 50");
+                    refresh(player);
+                    return;
+                }
+                shop.setTimer(Integer.parseInt(s));
+                refresh(player);
+            }, this::refresh, "&e&lInput new Timer", "");
         }
 
         else if (e.isRightClick()) {
             new confirmIH(p, (player, aBoolean) -> {
                 if (aBoolean)
                     shopsManager.getInstance().deleteShop(shop.getName());
-                open(player);
+                refresh(player);
             }, selected,
                     conf_msg.CONFIRM_GUI_ACTION_NAME,
                     conf_msg.CONFIRM_MENU_YES, conf_msg.CONFIRM_MENU_NO);
@@ -191,25 +208,29 @@ public class shopsManagerGui {
 
     private void nonContentAction() {
 
-        new AnvilGUI.Builder()
-                .onComplete((player, s) -> {
+        new ChatPrompt(plugin, p, (player, s) -> {
 
-                    if (s.isEmpty())
-                        return AnvilGUI.Response.text("Cat be empty");
+            if (s.isEmpty()) {
+                utils.sendMsg(p, "&7Cant be empty");
+                refresh(player);
+                return;
+            }
 
-                    if (sManager.getShop(s).isPresent())
-                        return AnvilGUI.Response.text("Already exits");
+            if (s.split("\\s+").length > 1) {
+                utils.sendMsg(p, "&7Name cannot have white spaces");
+                refresh(player);
+                return;
+            }
 
-                    shopsManager.getInstance().createShop(s, dShop.dShopT.buy);
-                    Task.syncDelayed(plugin, this::destroyAll, 3L);
-                    Task.syncDelayed(plugin, () -> open(p), 1L);
-                    return AnvilGUI.Response.close();
-                })
-                .onClose(player -> Task.syncDelayed(plugin, () -> open(p), 1L))
-                .title(conf_msg.SHOPS_MANAGER_NEWSHOP)
-                .text(FormatUtils.stripColor(conf_msg.SHOPS_MANAGER_NEWSHOP))
-                .plugin(plugin)
-                .open(p);
+            if (sManager.getShop(s).isPresent()) {
+                utils.sendMsg(p, "&7Already Exist");
+                refresh(player);
+                return;
+            }
+
+            shopsManager.getInstance().createShop(s, dShop.dShopT.buy);
+            refresh(p);
+        }, this::refresh, "&a&lInput New Shop Name", "");
 
     }
 
