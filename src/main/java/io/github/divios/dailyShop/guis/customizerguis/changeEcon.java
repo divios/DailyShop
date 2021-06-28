@@ -59,7 +59,7 @@ public class changeEcon{
                         gui.addButton(ItemButton.create(new ItemBuilder(
                                 XMaterial.BLUE_STAINED_GLASS_PANE).setName("&c"), e -> {}), value));
 
-        IntStream.of(2, 3, 4, 5, 6, 18, 26, 27, 35, 47, 48, 49, 50)
+        IntStream.of(2, 3, 4, 5, 6, 18, 26, 27, 35, 47, 48, 49, 50, 51)
                 .forEach(value ->
                         gui.addButton(ItemButton.create(new ItemBuilder(
                                 XMaterial.LIGHT_BLUE_STAINED_GLASS_PANE).setName("&c"), e -> {}), value));

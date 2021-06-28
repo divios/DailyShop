@@ -185,5 +185,35 @@ public class utils {
         return Math.round(d * Math.pow(10, decimals)) / Math.pow(10, decimals);
     }
 
+    public static boolean isInteger(String s) {
+        try {
+            Integer.parseInt(s);
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean isDouble(String s) {
+        try {
+            Double.parseDouble(s);
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean isShort(String s) {
+        try {
+            Short.parseShort(s);
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
+    }
+
+    public static void sendMsg(Player p, String s) {
+        p.sendMessage(conf_msg.PREFIX + FormatUtils.color(s));
+    }
 
 }
