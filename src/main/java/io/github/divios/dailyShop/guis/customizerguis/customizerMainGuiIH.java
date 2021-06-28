@@ -7,7 +7,6 @@ import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.ChatPrompt;
 import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.core_lib.misc.Msg;
-import io.github.divios.core_lib.misc.Task;
 import io.github.divios.dailyShop.DRShop;
 import io.github.divios.dailyShop.conf_msg;
 import io.github.divios.dailyShop.guis.settings.shopGui;
@@ -15,7 +14,6 @@ import io.github.divios.dailyShop.utils.utils;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.managers.shopsManager;
-import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -299,18 +297,10 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
             refresh(p);
         }
         else if (e.getSlot() == 10) { // Boton de cambiar nombre
-            new AnvilGUI.Builder()
-                    .onClose(player ->
-                            Task.syncDelayed(main, () -> refresh(player), 1L))
-                    .onComplete((player, text) -> {
-                        ditem.setDisplayName(text);
-                        return AnvilGUI.Response.close();
-                    })
-                    .text(conf_msg.CUSTOMIZE_RENAME_ANVIL_DEFAULT_TEXT)
-                    .itemLeft(ditem.getItem().clone())
-                    .title(conf_msg.CUSTOMIZE_RENAME_ANVIL_TITLE)
-                    .plugin(main)
-                    .open(p);
+            new ChatPrompt(main, p, (player, s) -> {
+                ditem.setDisplayName(s);
+                refresh(p);
+            }, this::refresh, "&a&lInput New Name", "");
         }
 
         else if (e.getSlot() == 11) { // Boton de cambiar material
@@ -346,24 +336,13 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
         }
 
         else if (e.getSlot() == 46 && ditem.getStock().isPresent()) { // Boton de cambiar Stock
-            if(e.isLeftClick()) {
-                new AnvilGUI.Builder()
-                        .onClose(player -> Task.syncDelayed(main, () ->
-                                refresh(player), 1L))
-                        .onComplete((player, text) -> {
-                            try {
-                                Integer.parseInt(text);
-                            } catch (NumberFormatException err) {return AnvilGUI.Response.text(conf_msg.MSG_NOT_INTEGER);}
-                            int i = Integer.parseInt(text);
-                            if(i < 1 || i > 64) return AnvilGUI.Response.text("invalid amount");
-                            ditem.setStock(Integer.parseInt(text));
-                            return AnvilGUI.Response.close();
-                        })
-                        .text("Change amount")
-                        .itemLeft(ditem.getItem().clone())
-                        .title(FormatUtils.color("&6Change amount"))
-                        .plugin(main)
-                        .open(p);
+            if (e.isLeftClick()) {
+                new ChatPrompt(main, p, (player, s) -> {
+                    if (utils.isInteger(s)) ditem.setStock(Integer.parseInt(s));
+                    else utils.sendMsg(p, conf_msg.MSG_NOT_INTEGER);
+
+                    refresh(player);
+                }, this::refresh, "&c&lInput Stock number", "");
             }
             else if (e.isRightClick()) {
                 ditem.setStock(null);
@@ -396,7 +375,7 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
                         ditem.setCommands(cmds);
                     }
                     refresh(p);
-                }, this::refresh, FormatUtils.color("&7Input new command"), "");
+                }, this::refresh, "&7&lInput new command", "");
 
             } else if (e.isRightClick() && !e.isShiftClick()) {
                 List<String> cmds = ditem.getCommands().get();
@@ -414,21 +393,12 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
 
         else if (e.getSlot() == 28) {               //durability
 
-            new AnvilGUI.Builder()
-                    .onClose(player -> Task.syncDelayed(main, () ->
-                            refresh(player), 1L))
-                    .onComplete((player, text) -> {
-                        try {
-                            Short.parseShort(text);
-                        } catch (NumberFormatException err) {return AnvilGUI.Response.text(conf_msg.MSG_NOT_INTEGER);}
-                        ditem.setDurability(Short.parseShort(text), false);
-                        return AnvilGUI.Response.close();
-                    })
-                    .text("Change durability")
-                    .itemLeft(ditem.getItem().clone())
-                    .title(FormatUtils.color("&6Change durability"))
-                    .plugin(main)
-                    .open(p);
+            new ChatPrompt(main, p, (player, s) -> {
+                if (utils.isShort(s)) ditem.setDurability(Short.parseShort(s), false);
+                else player.sendMessage(conf_msg.PREFIX + conf_msg.MSG_NOT_INTEGER);
+
+                refresh(player);
+            }, this::refresh, "&c&lInput Durability", "");
 
         }
 
@@ -468,7 +438,7 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
                 }, player -> {
                     player.sendMessage(conf_msg.PREFIX + conf_msg.MSG_TIMER_EXPIRED);
                     refresh(player);
-                }, FormatUtils.color("&7Input permission"), "");
+                }, "&a&lInput permission)", "");
 
             } else if (e.isRightClick() && !e.isShiftClick()) {
                 List<String> s = ditem.getPerms().get();
@@ -497,24 +467,14 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
 
         else if (e.getSlot() == 45 && ditem.getSetItems().isPresent()) {
             if (e.isLeftClick()) {
-                new AnvilGUI.Builder()
-                        .onClose(player -> Task.syncDelayed(main, () ->
-                                refresh(player), 1L))
-                        .onComplete((player, text) -> {
-                            try {
-                                Integer.parseInt(text);
-                            } catch (NumberFormatException err) {return AnvilGUI.Response.text(conf_msg.MSG_NOT_INTEGER);}
-                            int i = Integer.parseInt(text);
-                            if(i < 1 || i > 64) return AnvilGUI.Response.text("invalid amount");
-                            ditem.setSetItems(Integer.parseInt(text));
-                            ditem.setAmount(Integer.parseInt(text));
-                            return AnvilGUI.Response.close();
-                        })
-                        .text("Change amount")
-                        .itemLeft(ditem.getItem().clone())
-                        .title(FormatUtils.color("&6Change amount"))
-                        .plugin(main)
-                        .open(p);
+                new ChatPrompt(main, p, (player, s) -> {
+                    if (!utils.isInteger(s)) player.sendMessage(conf_msg.PREFIX + conf_msg.MSG_NOT_INTEGER);
+                    int i = Integer.parseInt(s);
+                    if(i < 1 || i > 64) player.sendMessage(conf_msg.PREFIX + "Invalid amount");
+                    ditem.setSetItems(i);
+                    ditem.setAmount(i);
+                    refresh(player);
+                }, this::refresh, "&e&lInput Set Amount", "");
             }
             else if (e.isRightClick()) {
                 ditem.setSetItems(null);

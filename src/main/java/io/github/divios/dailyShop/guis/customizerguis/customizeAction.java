@@ -5,14 +5,14 @@ import io.github.divios.core_lib.inventory.InventoryGUI;
 import io.github.divios.core_lib.inventory.ItemButton;
 import io.github.divios.core_lib.inventory.inventoryUtils;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
+import io.github.divios.core_lib.misc.ChatPrompt;
 import io.github.divios.core_lib.misc.EventListener;
-import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.core_lib.misc.Task;
 import io.github.divios.dailyShop.DRShop;
+import io.github.divios.dailyShop.utils.utils;
 import io.github.divios.lib.dLib.dAction;
 import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.managers.shopsManager;
-import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 
@@ -91,62 +91,36 @@ public class customizeAction {
                                 .setName("&aOpen shop").setLore("&7Opens shop when this", "&7item is clicked")
                                 .applyTexture("7e3deb57eaa2f4d403ad57283ce8b41805ee5b6de912ee2b4ea736a9d1f465a7"),
                 e -> {
-                    final boolean[] exit = {false};
                     flagPass = true;
-                    new AnvilGUI.Builder()
-                            .onClose(player ->
-                                {
-                                if (!exit[0]) Task.syncDelayed(plugin, () -> {
-                                    inv.open(player);
-                                    flagPass = true;
-                                }, 1L);
-                            })
-                            .onComplete((player, s) -> {
-                                if (!shopsManager.getInstance().getShop(s).isPresent())
-                                    return AnvilGUI.Response.text("That shop doesnt exit");
-
-                                preventClose.unregister();
-                                inv.destroy();
-                                exit[0] = true;
-                                Task.syncDelayed(plugin, () ->
-                                        onComplete.accept(dAction.OPEN_SHOP, s), 1L);
-                                return AnvilGUI.Response.close();
-
-                            })
-                            .title(FormatUtils.color("&a&lInput shop name"))
-                            .text("Input")
-                            .itemLeft(e.getCurrentItem().clone())
-                            .plugin(plugin)
-                            .open(p);
+                    new ChatPrompt(plugin, p, (player, s) -> {
+                        if (!shopsManager.getInstance().getShop(s).isPresent()) {
+                            utils.sendMsg(p, "&7That shop doesnt exist");
+                            inv.open(player);
+                            flagPass = true;
+                            return;
+                        }
+                        preventClose.unregister();
+                        inv.destroy();
+                        Task.syncDelayed(plugin, () ->
+                                onComplete.accept(dAction.OPEN_SHOP, s), 1L);
+                    }, (player) -> {
+                        inv.open(player);
+                        flagPass = true;
+                    }, "&a&lInput shop name", "");
                 }), inventoryUtils.getFirstEmpty(inv.getInventory()));
 
         inv.addButton(ItemButton.create(new ItemBuilder(XMaterial.COMMAND_BLOCK)
                         .setName("&aRun command").setLore("&7Runs command when this", "&7item is clicked"),
                 e -> {
-                    final boolean[] exit = {false};
                     flagPass = true;
-                    new AnvilGUI.Builder()
-                            .onClose(player ->
-                            {
-                                if (!exit[0]) Task.syncDelayed(plugin, () -> {
-                                    inv.open(player);
-                                    flagPass = true;
-                                }, 1L);
-                            })
-                            .onComplete((player, s) -> {
-                                preventClose.unregister();
-                                inv.destroy();
-                                exit[0] = true;
-                                Task.syncDelayed(plugin, () ->
-                                        onComplete.accept(dAction.RUN_CMD, s), 1L);
-                                return AnvilGUI.Response.close();
-
-                            })
-                            .title(FormatUtils.color("&a&lInput command"))
-                            .text("Input")
-                            .itemLeft(e.getCurrentItem().clone())
-                            .plugin(plugin)
-                            .open(p);
+                    new ChatPrompt(plugin, p , (player, s) -> {
+                        preventClose.unregister();
+                        inv.destroy();
+                        onComplete.accept(dAction.RUN_CMD, s);
+                    }, (player -> {
+                        inv.open(p);
+                        flagPass = true;
+                    }), "", "");
                 }), inventoryUtils.getFirstEmpty(inv.getInventory()));
 
         inv.addButton(ItemButton.create(new ItemBuilder(XMaterial.BOOKSHELF)
