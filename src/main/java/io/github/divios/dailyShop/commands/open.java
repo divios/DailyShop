@@ -39,7 +39,7 @@ public class open extends abstractCommand {
     @Override
     public String getHelp() {
         return FormatUtils.color("&8- &6/rdshop open [shop] [player]&8 " +
-                "- &7Opens a gui for a player or for yourself");
+                "- &7Opens a gui for yourself or for the given player");
     }
 
     @Override

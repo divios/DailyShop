@@ -31,7 +31,7 @@ public class Manager extends abstractCommand {
     @Override
     public String getHelp() {
         return FormatUtils.color("&8- &6/rdshop manager [player]&8 " +
-                "- &7Opens the settings menu");
+                "- &7Opens the shops manager gui");
     }
 
     @Override

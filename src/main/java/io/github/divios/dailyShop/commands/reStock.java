@@ -37,7 +37,7 @@ public class reStock extends abstractCommand {
     @Override
     public String getHelp() {
         return FormatUtils.color("&8- &6/rdshop reStock [shop]&8 " +
-                "- &7Generates new item for the specific shop");
+                "- &7Generates new items for the specific shop");
     }
 
     @Override
