@@ -48,8 +48,8 @@ public class importShops extends abstractCommand {
 
     @Override
     public String getHelp() {
-        return FormatUtils.color("&8- &6/rdshop import [plugin] [shop] [action] [flags] &8 " +
-                "- &7Imports the given shop to sell/buy shops");
+        return FormatUtils.color("&8- &6/rdshop import [plugin] [shop] [_shop] ] &8 " +
+                "- &7Imports the given items _shop to a shop");
     }
 
     @Override
