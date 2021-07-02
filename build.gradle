@@ -10,7 +10,7 @@ plugins {
 apply plugin: 'maven-publish'
 
 group = 'io.github.divios'
-def pluginVersion = "3.0.3"
+def pluginVersion = "3.0.4"
 version = pluginVersion
 
 sourceCompatibility = '1.8'
@@ -89,25 +89,25 @@ task updateJars {
     doLast {
         copy {
             from 'build/libs/DailyShop-' + pluginVersion + "-all.jar"
-            into 'C:/Users/serbe/Desktop/server_pruebas2/1.17/plugins'
+            into 'C:/Users/serbe/Desktop/server_pruebas/1.17/plugins'
             rename ("DailyShop-" + pluginVersion + "-all.jar"
                     , "DailyShop-" + pluginVersion + ".jar")
         }
         copy {
             from 'build/libs/DailyShop-' + pluginVersion + "-all.jar"
-            into 'C:/Users/serbe/Desktop/server_pruebas2/1.16/plugins'
+            into 'C:/Users/serbe/Desktop/server_pruebas/1.16/plugins'
             rename ("DailyShop-" + pluginVersion + "-all.jar"
                     , "DailyShop-" + pluginVersion + ".jar")
         }
         copy {
             from 'build/libs/DailyShop-' + pluginVersion + "-all.jar"
-            into 'C:/Users/serbe/Desktop/server_pruebas2/1.12/plugins'
+            into 'C:/Users/serbe/Desktop/server_pruebas/1.12/plugins'
             rename ("DailyShop-" + pluginVersion + "-all.jar"
                     , "DailyShop-" + pluginVersion + ".jar")
         }
         copy {
             from 'build/libs/DailyShop-' + pluginVersion + "-all.jar"
-            into 'C:/Users/serbe/Desktop/server_pruebas2/1.8/plugins'
+            into 'C:/Users/serbe/Desktop/server_pruebas/1.8/plugins'
             rename ("DailyShop-" + pluginVersion + "-all.jar"
                     , "DailyShop-" + pluginVersion + ".jar")
         }
