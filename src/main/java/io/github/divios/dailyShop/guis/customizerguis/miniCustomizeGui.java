@@ -103,11 +103,11 @@ public class miniCustomizeGui {
                 .setName("&b&lChange name").addLore("&7Click to change the item's name")
                 , e -> {
                     preventCloseB = false;
-                    new ChatPrompt(plugin, p, (player, s) -> {
+                    ChatPrompt.prompt(plugin, p, (s) -> {
                         item = ItemUtils.setName(item, s);
                         refreshItem();
-                        refresh();
-                    },player -> refresh(), "&6&lInput Item Name", "");
+                        Task.syncDelayed(plugin, this::refresh);
+                    }, cause ->Task.syncDelayed(plugin, this::refresh), "&6&lInput Item Name", "");
                 }
         ), 11);
 
@@ -132,9 +132,9 @@ public class miniCustomizeGui {
                 e -> {
                     preventCloseB = false;
                     if (e.isLeftClick()) {
-                        new ChatPrompt(plugin, p, (player, s) -> {
+                        ChatPrompt.prompt(plugin, p, (s) -> {
                             item = ItemUtils.addLore(item, s);
-                            refresh();
+                            Task.syncDelayed(plugin, this::refresh);
                         }, player -> refresh(), "&e&lInput Lore", "");
                     } else if (e.isRightClick()) {
                         item = ItemUtils.removeLore(item, 1);
@@ -165,12 +165,13 @@ public class miniCustomizeGui {
                 e -> {
                 preventCloseB = false;
                 p.closeInventory();
-                new ChatPrompt(plugin, p, (player, s) -> {
+                ChatPrompt.prompt(plugin, p, (s) -> {
                     item.setType(XMaterial.PLAYER_HEAD.parseMaterial());
                     item = ItemUtils.applyTexture(item, s);
-                    refresh();
+                    Task.syncDelayed(plugin, this::refresh);
 
-                }, inv::open, FormatUtils.color("&7Input base64 texture"),"");
+                }, cause -> Task.syncDelayed(plugin, this::refresh),
+                        FormatUtils.color("&7Input base64 texture"),"");
         }), 23);
 
         gui.addButton(ItemButton.create(item.clone(), e -> {}), 5);

@@ -1,6 +1,7 @@
 package io.github.divios.dailyShop;
 
 import io.github.divios.core_lib.commands.CommandManager;
+import io.github.divios.core_lib.misc.Msg;
 import io.github.divios.dailyShop.commands.*;
 import io.github.divios.dailyShop.hooks.hooksManager;
 import io.github.divios.dailyShop.utils.conf_updater;
@@ -30,6 +31,8 @@ public class DRShop extends JavaPlugin {
                 new open(), new Manager(), new reStock(), new importShops(), new reload());
         CommandManager.setNotPerms(conf_msg.PREFIX + conf_msg.MSG_NOT_PERMS);
         CommandManager.setDefault(new helpCmd());
+
+        Msg.setPREFIX(conf_msg.PREFIX);
 
         try {
             Class.forName("io.github.divios.core_lib.inventory.materialsPrompt");  // loads all materials
