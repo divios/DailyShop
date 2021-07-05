@@ -7,6 +7,7 @@ import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.ChatPrompt;
 import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.core_lib.misc.Msg;
+import io.github.divios.core_lib.misc.Task;
 import io.github.divios.dailyShop.DRShop;
 import io.github.divios.dailyShop.conf_msg;
 import io.github.divios.dailyShop.guis.settings.shopGui;
@@ -297,10 +298,10 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
             refresh(p);
         }
         else if (e.getSlot() == 10) { // Boton de cambiar nombre
-            new ChatPrompt(main, p, (player, s) -> {
+            ChatPrompt.prompt(main, p, (s) -> {
                 ditem.setDisplayName(s);
-                refresh(p);
-            }, this::refresh, "&a&lInput New Name", "");
+                Task.syncDelayed(main, () -> refresh(p));
+            },  cause -> Task.syncDelayed(main, () -> refresh(p)), "&a&lInput New Name", "");
         }
 
         else if (e.getSlot() == 11) { // Boton de cambiar material
@@ -319,14 +320,15 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
                 ditem.setLore(lore);
                 refresh(p);
             } else if (e.isLeftClick())
-                new ChatPrompt(main, p, (player, s) -> {
+                ChatPrompt.prompt(main, p, (s) -> {
                     if (!s.isEmpty()) {
                         List<String> lore = ditem.getLore();
                         lore.add(s);
                         ditem.setLore(lore);
                     }
-                    refresh(p);
-                }, this::refresh, conf_msg.CUSTOMIZE_RENAME_ANVIL_TITLE, "");
+                    Task.syncDelayed(main, () -> refresh(p));
+                },  cause -> Task.syncDelayed(main, () -> refresh(p)),
+                        conf_msg.CUSTOMIZE_RENAME_ANVIL_TITLE, "");
         }
 
         else if (e.getSlot() == 21) { // Boton de cambiar enchants
@@ -337,12 +339,12 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
 
         else if (e.getSlot() == 46 && ditem.getStock().isPresent()) { // Boton de cambiar Stock
             if (e.isLeftClick()) {
-                new ChatPrompt(main, p, (player, s) -> {
+                ChatPrompt.prompt(main, p, (s) -> {
                     if (utils.isInteger(s)) ditem.setStock(Integer.parseInt(s));
                     else utils.sendMsg(p, conf_msg.MSG_NOT_INTEGER);
 
-                    refresh(player);
-                }, this::refresh, "&c&lInput Stock number", "");
+                    Task.syncDelayed(main, () -> refresh(p));
+                },  cause -> Task.syncDelayed(main, () -> refresh(p)), "&c&lInput Stock number", "");
             }
             else if (e.isRightClick()) {
                 ditem.setStock(null);
@@ -368,14 +370,14 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
 
         else if (e.getSlot() == 47 && ditem.getCommands().isPresent()) { // Boton de añadir/quitar commands
             if (e.isLeftClick()) {
-                new ChatPrompt(main, p, (player, s) -> {
+                ChatPrompt.prompt(main, p, (s) -> {
                     if (!s.isEmpty()) {
                         List<String> cmds = ditem.getCommands().get();
                         cmds.add(s);
                         ditem.setCommands(cmds);
                     }
-                    refresh(p);
-                }, this::refresh, "&7&lInput new command", "");
+                    Task.syncDelayed(main, () -> refresh(p));
+                }, cause -> Task.syncDelayed(main, () -> refresh(p)),"&7&lInput new command", "");
 
             } else if (e.isRightClick() && !e.isShiftClick()) {
                 List<String> cmds = ditem.getCommands().get();
@@ -393,12 +395,12 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
 
         else if (e.getSlot() == 28) {               //durability
 
-            new ChatPrompt(main, p, (player, s) -> {
+            ChatPrompt.prompt(main, p, (s) -> {
                 if (utils.isShort(s)) ditem.setDurability(Short.parseShort(s), false);
-                else player.sendMessage(conf_msg.PREFIX + conf_msg.MSG_NOT_INTEGER);
+                else p.sendMessage(conf_msg.PREFIX + conf_msg.MSG_NOT_INTEGER);
 
-                refresh(player);
-            }, this::refresh, "&c&lInput Durability", "");
+                Task.syncDelayed(main, () -> refresh(p));
+            },  cause -> Task.syncDelayed(main, () -> refresh(p)), "&c&lInput Durability", "");
 
         }
 
@@ -427,17 +429,17 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
 
         else if (e.getSlot() == 19 && ditem.getPerms().isPresent()) {  // Boton de añadir/quitar perms
             if (e.isLeftClick()) {
-                new ChatPrompt(main, p, (player, s) -> {
+                ChatPrompt.prompt(main, p, (s) -> {
 
                     if (!s.isEmpty()) {
                         List<String> perms = ditem.getPerms().get();
                         perms.add(s);
                         ditem.setPerms(perms);
                     }
-                    refresh(p);
-                }, player -> {
-                    player.sendMessage(conf_msg.PREFIX + conf_msg.MSG_TIMER_EXPIRED);
-                    refresh(player);
+                    Task.syncDelayed(main, () -> refresh(p));
+                }, cause -> {
+                    p.sendMessage(conf_msg.PREFIX + conf_msg.MSG_TIMER_EXPIRED);
+                    Task.syncDelayed(main, () -> refresh(p));
                 }, "&a&lInput permission)", "");
 
             } else if (e.isRightClick() && !e.isShiftClick()) {
@@ -467,14 +469,14 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
 
         else if (e.getSlot() == 45 && ditem.getSetItems().isPresent()) {
             if (e.isLeftClick()) {
-                new ChatPrompt(main, p, (player, s) -> {
-                    if (!utils.isInteger(s)) player.sendMessage(conf_msg.PREFIX + conf_msg.MSG_NOT_INTEGER);
+                ChatPrompt.prompt(main, p, (s) -> {
+                    if (!utils.isInteger(s)) p.sendMessage(conf_msg.PREFIX + conf_msg.MSG_NOT_INTEGER);
                     int i = Integer.parseInt(s);
-                    if(i < 1 || i > 64) player.sendMessage(conf_msg.PREFIX + "Invalid amount");
+                    if(i < 1 || i > 64) p.sendMessage(conf_msg.PREFIX + "Invalid amount");
                     ditem.setSetItems(i);
                     ditem.setAmount(i);
-                    refresh(player);
-                }, this::refresh, "&e&lInput Set Amount", "");
+                    Task.syncDelayed(main, () -> refresh(p));
+                },  cause -> Task.syncDelayed(main, () -> refresh(p)), "&e&lInput Set Amount", "");
             }
             else if (e.isRightClick()) {
                 ditem.setSetItems(null);

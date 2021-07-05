@@ -200,10 +200,11 @@ public class customizeGui implements Listener, InventoryHolder {
 
             else if (e.getSlot() == 19) {           //change Name
                 refreshFlag = true;
-                new ChatPrompt(plugin, p , (player, s) -> {
+                ChatPrompt.prompt(plugin, p , (s) -> {
                     _gui.setTitle(FormatUtils.color(s));
-                    refresh();
-                }, player -> refresh(), "&5&lInput New Title", "");
+                    Task.syncDelayed(plugin, this::refresh);
+                }, cause -> Task.syncDelayed(plugin, this::refresh),
+                        "&5&lInput New Title", "");
             }
 
             else if (e.getSlot() == 23) {           //quitar row

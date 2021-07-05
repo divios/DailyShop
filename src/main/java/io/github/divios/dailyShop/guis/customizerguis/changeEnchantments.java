@@ -5,6 +5,7 @@ import io.github.divios.core_lib.inventory.dynamicGui;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.misc.ChatPrompt;
 import io.github.divios.core_lib.misc.FormatUtils;
+import io.github.divios.core_lib.misc.Task;
 import io.github.divios.dailyShop.DRShop;
 import io.github.divios.dailyShop.conf_msg;
 import io.github.divios.dailyShop.utils.utils;
@@ -68,14 +69,17 @@ public class changeEnchantments {
 
         String s = FormatUtils.stripColor(e.getCurrentItem().getItemMeta().getDisplayName());
 
-        new ChatPrompt(plugin, p, (player, s1) -> {
+        ChatPrompt.prompt(plugin, p, s1 -> {
+
             if (!utils.isInteger(s1)) {
                 utils.sendMsg(p, conf_msg.MSG_NOT_INTEGER);
-                customizerMainGuiIH.open(p, ditem, shop);
+                Task.syncDelayed(plugin, () -> customizerMainGuiIH.open(p, ditem, shop));
             }
             ditem.addEnchantments(Enchantment.getByName(s), Integer.parseInt(s1));
-            customizerMainGuiIH.open(p, ditem, shop);
-        }, player -> customizerMainGuiIH.open(p, ditem, shop), "&1&lInput Enchant lvl", "");
+            Task.syncDelayed(plugin, () -> customizerMainGuiIH.open(p, ditem, shop));
+
+        }, cause -> Task.syncDelayed(plugin, () -> customizerMainGuiIH.open(p, ditem, shop)),
+                "&1&lInput Enchant lvl", "");
 
         return dynamicGui.Response.nu();
     }

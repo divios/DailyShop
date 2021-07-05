@@ -147,47 +147,47 @@ public class shopsManagerGui {
 
 
         else if (e.getClick().equals(ClickType.MIDDLE)) {   // rename
-            new ChatPrompt(plugin, p, (player, s) -> {
+            ChatPrompt.prompt(plugin, p, (s) -> {
                 if (s.isEmpty()) {
                     utils.sendMsg(p, "&7Cant be empty");
-                    refresh(player);
+                    Task.syncDelayed(plugin, () -> refresh(p));
                     return;
                 }
 
                 if (s.split("\\s+").length > 1) {
                     utils.sendMsg(p, "&7Name cannot have white spaces");
-                    refresh(player);
+                    Task.syncDelayed(plugin, () -> refresh(p));
                     return;
                 }
 
                 if (sManager.getShop(s).isPresent()) {
                     utils.sendMsg(p, "&7Already Exist");
-                    refresh(player);
+                    Task.syncDelayed(plugin, () -> refresh(p));
                     return;
                 }
 
                 dManager.renameShop(shop.getName(), s);
                 shop.setName(s);
-                refresh(player);
-            }, this::refresh, "&b&lInput new Shop name", "");
+                Task.syncDelayed(plugin, () -> refresh(p));
+            }, cause -> Task.syncDelayed(plugin, () -> refresh(p)), "&b&lInput new Shop name", "");
         }
 
         else if (e.getClick().equals(ClickType.DROP)) {
-            new ChatPrompt(plugin, p, (player, s) -> {
+            ChatPrompt.prompt(plugin, p, (s) -> {
                 if (!utils.isInteger(s)) {
                     utils.sendMsg(p, conf_msg.MSG_NOT_INTEGER);
-                    refresh(player);
+                    Task.syncDelayed(plugin, () -> refresh(p));
                     return;
                 }
 
                 if (Integer.parseInt(s) < 50) {
                     utils.sendMsg(p, "&7Time cannot be less than 50");
-                    refresh(player);
+                    Task.syncDelayed(plugin, () -> refresh(p));
                     return;
                 }
                 shop.setTimer(Integer.parseInt(s));
-                refresh(player);
-            }, this::refresh, "&e&lInput new Timer", "");
+                Task.syncDelayed(plugin, () -> refresh(p));
+            }, cause -> Task.syncDelayed(plugin, () -> refresh(p)), "&e&lInput new Timer", "");
         }
 
         else if (e.isRightClick()) {
@@ -208,29 +208,29 @@ public class shopsManagerGui {
 
     private void nonContentAction() {
 
-        new ChatPrompt(plugin, p, (player, s) -> {
+        ChatPrompt.prompt(plugin, p, (s) -> {
 
             if (s.isEmpty()) {
                 utils.sendMsg(p, "&7Cant be empty");
-                refresh(player);
+                Task.syncDelayed(plugin, () -> refresh(p));
                 return;
             }
 
             if (s.split("\\s+").length > 1) {
                 utils.sendMsg(p, "&7Name cannot have white spaces");
-                refresh(player);
+                Task.syncDelayed(plugin, () -> refresh(p));
                 return;
             }
 
             if (sManager.getShop(s).isPresent()) {
                 utils.sendMsg(p, "&7Already Exist");
-                refresh(player);
+                Task.syncDelayed(plugin, () -> refresh(p));
                 return;
             }
 
             shopsManager.getInstance().createShop(s, dShop.dShopT.buy);
             refresh(p);
-        }, this::refresh, "&a&lInput New Shop Name", "");
+        }, cause -> Task.syncDelayed(plugin, () -> refresh(p)), "&a&lInput New Shop Name", "");
 
     }
 
