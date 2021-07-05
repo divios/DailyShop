@@ -14,7 +14,7 @@ public class taskManager {
     public static taskManager getInstance() {
         if (instance == null) {
             instance = new taskManager();
-
+            updatePlaceholdersTask.load();
         }
         return instance;
     }

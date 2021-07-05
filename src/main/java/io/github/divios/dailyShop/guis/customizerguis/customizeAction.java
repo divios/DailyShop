@@ -92,10 +92,10 @@ public class customizeAction {
                                 .applyTexture("7e3deb57eaa2f4d403ad57283ce8b41805ee5b6de912ee2b4ea736a9d1f465a7"),
                 e -> {
                     flagPass = true;
-                    new ChatPrompt(plugin, p, (player, s) -> {
+                    ChatPrompt.prompt(plugin, p, (s) -> {
                         if (!shopsManager.getInstance().getShop(s).isPresent()) {
                             utils.sendMsg(p, "&7That shop doesnt exist");
-                            inv.open(player);
+                            Task.syncDelayed(plugin, () -> inv.open(p));
                             flagPass = true;
                             return;
                         }
@@ -103,8 +103,8 @@ public class customizeAction {
                         inv.destroy();
                         Task.syncDelayed(plugin, () ->
                                 onComplete.accept(dAction.OPEN_SHOP, s), 1L);
-                    }, (player) -> {
-                        inv.open(player);
+                    }, (cause) -> {
+                        Task.syncDelayed(plugin, () -> inv.open(p));
                         flagPass = true;
                     }, "&a&lInput shop name", "");
                 }), inventoryUtils.getFirstEmpty(inv.getInventory()));
@@ -113,12 +113,12 @@ public class customizeAction {
                         .setName("&aRun command").setLore("&7Runs command when this", "&7item is clicked"),
                 e -> {
                     flagPass = true;
-                    new ChatPrompt(plugin, p , (player, s) -> {
+                    ChatPrompt.prompt(plugin, p , (s) -> {
                         preventClose.unregister();
                         inv.destroy();
-                        onComplete.accept(dAction.RUN_CMD, s);
+                        Task.syncDelayed(plugin, () -> onComplete.accept(dAction.RUN_CMD, s));
                     }, (player -> {
-                        inv.open(p);
+                        Task.syncDelayed(plugin, () -> inv.open(p));
                         flagPass = true;
                     }), "", "");
                 }), inventoryUtils.getFirstEmpty(inv.getInventory()));

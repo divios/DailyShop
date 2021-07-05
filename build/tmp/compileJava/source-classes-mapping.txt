@@ -59,6 +59,8 @@ io/github/divios/dailyShop/events/updateItemEvent.java
  io.github.divios.dailyShop.events.updateItemEvent$updatetype
 io/github/divios/dailyShop/utils/utils.java
  io.github.divios.dailyShop.utils.utils
+io/github/divios/dailyShop/tasks/updatePlaceholdersTask.java
+ io.github.divios.dailyShop.tasks.updatePlaceholdersTask
 io/github/divios/dailyShop/hooks/playerPointsHook.java
  io.github.divios.dailyShop.hooks.playerPointsHook
 io/github/divios/dailyShop/guis/customizerguis/miniCustomizeGui.java
