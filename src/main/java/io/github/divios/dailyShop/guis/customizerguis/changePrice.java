@@ -87,7 +87,7 @@ public class changePrice {
                             new updateItemEvent(item,
                                     updateItemEvent.updatetype.UPDATE_ITEM, shop)));
 
-                    accept.run();
+                    Task.syncDelayed(plugin, accept);
                 }, cause -> Task.syncDelayed(plugin, back), "&6&lInput new Price", "")), 11);
 
         gui.addButton(ItemButton.create(new ItemBuilder(XMaterial.REPEATER)
@@ -132,7 +132,7 @@ public class changePrice {
                                         new updateItemEvent(item,
                                                 updateItemEvent.updatetype.UPDATE_ITEM, shop)));
 
-                                accept.run();
+                                Task.syncDelayed(plugin, accept);
                             }, player -> Task.syncDelayed(plugin, back),
                             "&6&lInput new Price", "&8Format: minPrice:maxPrice");
 

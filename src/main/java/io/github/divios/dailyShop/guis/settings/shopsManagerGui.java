@@ -229,7 +229,7 @@ public class shopsManagerGui {
             }
 
             shopsManager.getInstance().createShop(s, dShop.dShopT.buy);
-            refresh(p);
+            Task.syncDelayed(plugin, () -> refresh(p));
         }, cause -> Task.syncDelayed(plugin, () -> refresh(p)), "&a&lInput New Shop Name", "");
 
     }
