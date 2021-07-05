@@ -214,6 +214,8 @@ public abstract class dGui {
 
         WeightedRandom<dItem> RRM = WeightedRandom.fromCollection(      // create weighted random
                 shop.getItems().stream().filter(dItem -> dItem.getRarity().getWeight() != 0)
+                        .filter( dItem -> !(dItem.getBuyPrice().get().getPrice() <= 0 &&
+                                dItem.getSellPrice().get().getPrice() <= 0))
                         .collect(Collectors.toList()),  // remove unAvailable
                 dItem::clone,
                 value -> DRShop.getInstance().getConfig().getBoolean("enable-rarity", true) ?
