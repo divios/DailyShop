@@ -1,6 +1,7 @@
 package io.github.divios.dailyShop.transaction;
 
 import io.github.divios.core_lib.itemutils.ItemBuilder;
+import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.core_lib.misc.Msg;
 import io.github.divios.dailyShop.conf_msg;
@@ -10,6 +11,7 @@ import io.github.divios.dailyShop.utils.utils;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Arrays;
@@ -63,46 +65,31 @@ public class sellTransaction {
             }
         }
 
-        List<ItemStack> similarItems = Arrays.stream(p.getInventory().getContents())
-                .filter(itemStack -> !utils.isEmpty(itemStack)
-                        && itemStack.isSimilar(item.getRawItem()))
-                .collect(Collectors.toList());
+        int removed = ItemUtils.count(p.getInventory(), item.getRawItem());
 
-
-        if (similarItems.isEmpty() || similarItems.stream()
-                .mapToInt(ItemStack::getAmount).sum() < item.getAmount())
+        if (removed < item.getAmount())
             p.sendMessage(conf_msg.PREFIX + conf_msg.MSG_NOT_ENOUGH_ITEM);
 
         else {
 
             ItemStack aux = item.getRawItem().clone();
             aux.setAmount(item.getAmount());
-            for (ItemStack similarItem : similarItems) {
 
-                if (aux.getAmount() <= similarItem.getAmount()) {
-                    similarItem.setAmount(similarItem.getAmount() - aux.getAmount());
-                    aux.setAmount(0);
-                    p.updateInventory();
+            ItemUtils.remove(p.getInventory(), item.getRawItem(), item.getAmount());
+            p.updateInventory();
 
-                    item.getEconomy().depositMoney(p, item.getSellPrice().get().getPrice() *
-                            (item.getSetItems().isPresent() ? 1:item.getAmount()));
-                    p.sendMessage(Msg.singletonMsg(conf_msg.PREFIX + conf_msg.MSG_BUY_ITEM)
-                            .add("\\{action}", "sell")
-                            .add("\\{amount}", "" + item.getAmount())
-                            .add("\\{price}", "" + item.getSellPrice().get().getPrice() * item.getAmount())
-                            .add("\\{item}", item.getDisplayName() + FormatUtils.color("&7"))
-                            .add("\\{currency}", item.getEconomy().getName()).build());
-                    shop.openGui(p);
-                    break;
-                }
+            item.getEconomy().depositMoney(p, item.getSellPrice().get().getPrice() *
+                    (item.getSetItems().isPresent() ? 1 : item.getAmount()));
 
-                else {
-                    aux.setAmount(aux.getAmount() - similarItem.getAmount());
-                    similarItem.setAmount(0);
-                    p.updateInventory();
-                }
+            p.sendMessage(Msg.singletonMsg(conf_msg.PREFIX + conf_msg.MSG_BUY_ITEM)
+                    .add("\\{action}", "sell")
+                    .add("\\{amount}", "" + item.getAmount())
+                    .add("\\{price}", "" + item.getSellPrice().get().getPrice() * item.getAmount())
+                    .add("\\{item}", item.getDisplayName() + FormatUtils.color("&7"))
+                    .add("\\{currency}", item.getEconomy().getName()).build());
+            shop.openGui(p);
 
-            }
+
         }
 
     }
