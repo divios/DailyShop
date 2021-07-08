@@ -80,7 +80,7 @@ public class dSell extends dGui {
     @Override
     protected void initListeners() {
 
-        this.clickEvent = new EventListener<>(plugin, InventoryClickEvent.class,
+        this.clickEvent = new EventListener<>(InventoryClickEvent.class,
                 e -> {
 
                     if (e.getInventory() != inventories.get(e.getWhoClicked().getUniqueId())) return;
@@ -114,7 +114,7 @@ public class dSell extends dGui {
 
                 });
 
-        closeEvent = new EventListener<>(plugin, InventoryCloseEvent.class,
+        closeEvent = new EventListener<>(InventoryCloseEvent.class,
                 e -> {
                     if (e.getInventory() != inventories.get(e.getPlayer().getUniqueId())) return;
 
@@ -129,7 +129,7 @@ public class dSell extends dGui {
                 });
 
 
-        this.dragEvent = new EventListener<>(plugin, InventoryDragEvent.class,
+        this.dragEvent = new EventListener<>(InventoryDragEvent.class,
                 e -> {
                     if (e.getInventory() != inventories.get(e.getWhoClicked().getUniqueId())) return;
 
@@ -138,7 +138,7 @@ public class dSell extends dGui {
 
                 });
 
-        this.openEvent = new EventListener<>(plugin, InventoryOpenEvent.class,
+        this.openEvent = new EventListener<>(InventoryOpenEvent.class,
                 EventPriority.HIGHEST, e -> {
             if (e.getInventory() != inv) return;
 

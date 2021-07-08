@@ -10,7 +10,7 @@ plugins {
 apply plugin: 'maven-publish'
 
 group = 'io.github.divios'
-def pluginVersion = "3.0.5"
+def pluginVersion = "3.0.7"
 version = pluginVersion
 
 sourceCompatibility = '1.8'
@@ -80,7 +80,7 @@ dependencies {
     compileOnly 'com.vk2gpz.tokenenchant:TokenEnchantAPI:18.15.2'
     compileOnly 'com.mojang:authlib:1.5.21'
 
-    api 'io.github.divios:core_lib:1.0'
+    api 'io.github.divios:core_lib:2.0'
 
     compileOnly fileTree(dir: 'libs', include: ['*.jar'])
 }
@@ -115,10 +115,10 @@ task updateJars {
 }
 
 shadowJar {
-    relocate('org.bstats', 'io.github.divios.DailyShop.shaded.bstats')
-    relocate('de.tr7zw.changeme.nbtapi', 'io.github.divios.DailyShop.shaded.nbt-api')
-    relocate('io.github.divios.core_lib', 'io.github.divios.DailyShop.shaded.Core_lib')
-    relocate('com.cryptomorin.xseries', 'io.github.divios.DailyShop.shaded.XSeries')
+    relocate('org.bstats', 'io.github.divios.dailyShop.shaded.bstats')
+    relocate('de.tr7zw.changeme.nbtapi', 'io.github.divios.dailyShop.shaded.nbt-api')
+    relocate('io.github.divios.core_lib', 'io.github.divios.dailyShop.shaded.Core_lib')
+    relocate('com.cryptomorin.xseries', 'io.github.divios.dailyShop.shaded.XSeries')
 
     minimize()
 }

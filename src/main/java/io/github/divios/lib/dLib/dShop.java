@@ -63,10 +63,10 @@ public class dShop {
             if (timeStampUtils.diff(timestamp,
                     new Timestamp(System.currentTimeMillis())) > timer) {
 
-                gui.renovate();
-                dManager.asyncUpdateGui(this.name, this.gui);
                 timestamp = new Timestamp(System.currentTimeMillis());
                 dManager.updateTimeStamp(this.name, this.timestamp);
+                gui.renovate();
+                dManager.asyncUpdateGui(this.name, this.gui);
             }
         }, 20L, 20L);
 
@@ -87,7 +87,7 @@ public class dShop {
 
         }, 18000L, 18000L);
 
-        new EventListener<>(plugin, deletedShopEvent.class, EventPriority.LOW, // auto-destroy listener
+        new EventListener<>(deletedShopEvent.class, EventPriority.LOW, // auto-destroy listener
                 (own, e) -> {
                     if (e.getShop().getName().equals(name)) {
                         gui.destroy();
@@ -99,7 +99,7 @@ public class dShop {
                     }
                 });
 
-        reStock = new EventListener<>(plugin, reStockShopEvent.class, EventPriority.LOW,  // reStock due to command by player
+        reStock = new EventListener<>(reStockShopEvent.class, EventPriority.LOW,  // reStock due to command by player
                 e -> {
                     if (e.getShop() != this) return;
 
@@ -109,7 +109,7 @@ public class dShop {
                     dManager.updateTimeStamp(this.name, this.timestamp);
                 });
 
-        updateItem = new EventListener<>(plugin, updateItemEvent.class, EventPriority.HIGHEST,
+        updateItem = new EventListener<>(updateItemEvent.class, EventPriority.HIGHEST,
                 e -> {
                     if (!e.getShop().getName().equals(this.getName())) return;
 

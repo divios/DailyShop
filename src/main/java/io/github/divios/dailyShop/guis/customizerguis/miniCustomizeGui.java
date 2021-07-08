@@ -46,16 +46,16 @@ public class miniCustomizeGui {
         this.shop = shop;
         this.consumer = consumer;
         this.inv = getGui();
-        this.preventPicks = new EventListener<>(plugin,
+        this.preventPicks = new EventListener<>(
                 PlayerPickupItemEvent.class, EventPriority.HIGHEST, e -> {
             if (e.getPlayer().getUniqueId().equals(p.getUniqueId()))
                 e.setCancelled(true);
         });
 
-        this.preventClose = new EventListener<>(plugin, InventoryCloseEvent.class,
+        this.preventClose = new EventListener<>(InventoryCloseEvent.class,
                 EventPriority.HIGHEST, this::preventClose);
 
-        new EventListener<>(plugin, PlayerKickEvent.class,
+        new EventListener<>(PlayerKickEvent.class,
                 (own, e) -> {
                     if (!e.getPlayer().getUniqueId().equals(p.getUniqueId()))
                         return;
@@ -66,7 +66,7 @@ public class miniCustomizeGui {
                     own.unregister();
                 });
 
-        new EventListener<>(plugin, PlayerQuitEvent.class,
+        new EventListener<>(PlayerQuitEvent.class,
                 (own, e) -> {
                     if (!e.getPlayer().getUniqueId().equals(p.getUniqueId()))
                         return;
