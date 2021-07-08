@@ -27,6 +27,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -221,6 +222,7 @@ public abstract class dGui {
                 value -> DRShop.getInstance().getConfig().getBoolean("enable-rarity", true) ?
                 value.getRarity().getWeight():1     // Get weights depending if rarity enable
         );
+
         clearDailyItems();
 
         int addedButtons = 0;
@@ -248,11 +250,18 @@ public abstract class dGui {
      * Clears all the slots corresponding to daily Items
      */
     private void clearDailyItems() {
-        openSlots.forEach(i -> {
-            inv.clear(i);
-            buttons.removeIf(dItem -> dItem.getSlot() == i);
-        });
+
+        for (Iterator<dItem> it = buttons.iterator(); it.hasNext(); ) {
+            dItem ditem = it.next();
+
+            if (openSlots.contains(ditem.getSlot())) {
+                it.remove();
+                inv.clear(ditem.getSlot());
+            }
+
+        }
     }
+
 
     protected abstract void initListeners();
 

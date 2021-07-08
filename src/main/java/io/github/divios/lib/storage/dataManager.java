@@ -27,7 +27,7 @@ public class dataManager extends DataManagerAbstract {
     private static dataManager instance = null;
 
     private dataManager(DatabaseConnector connection, Plugin plugin) {
-        super(connection, plugin);
+        super(connection);
     }
 
     public static dataManager getInstance() {
@@ -151,7 +151,7 @@ public class dataManager extends DataManagerAbstract {
     }
 
     public void addItem(String name, dItem item) {
-        this.queueAsync(() -> this.databaseConnector.connect(connection -> {
+        this.async(() -> this.databaseConnector.connect(connection -> {
 
             String createShop = "INSERT INTO " + this.getTablePrefix() +
                     "shop_" + name + " (itemSerial, uuid) VALUES (?, ?)";
@@ -163,21 +163,21 @@ public class dataManager extends DataManagerAbstract {
                 statement.executeUpdate();
             }
 
-        }), "add");
+        }));
     }
 
     public void deleteItem(String name, UUID uid) {
-        this.queueAsync(() -> this.databaseConnector.connect(connection -> {
+        this.async(() -> this.databaseConnector.connect(connection -> {
             String deeleteItem = "DELETE FROM " + this.getTablePrefix() + "shop_" + name + " WHERE uuid = ?";
             try (PreparedStatement statement = connection.prepareStatement(deeleteItem)) {
                 statement.setString(1, uid.toString());
                 statement.executeUpdate();
             }
-        }), "delete");
+        }));
     }
 
     public void updateItem(String name, dItem item) {
-        this.queueAsync(() -> this.databaseConnector.connect(connection -> {
+        this.async(() -> this.databaseConnector.connect(connection -> {
             String updateItem = "UPDATE " + this.getTablePrefix() + "shop_" + name +
                     " SET itemSerial = ? WHERE uuid = ?";
             try (PreparedStatement statement = connection.prepareStatement(updateItem)) {
@@ -185,7 +185,7 @@ public class dataManager extends DataManagerAbstract {
                 statement.setString(2, item.getUid().toString());
                 statement.executeUpdate();
             }
-        }), "itemUpdate");
+        }));
     }
 
     public void syncUpdateGui(String name, dGui gui) {
@@ -205,7 +205,7 @@ public class dataManager extends DataManagerAbstract {
     }
 
     public void updateTimeStamp(String name, Timestamp timestamp) {
-        this.queueAsync(() -> this.databaseConnector.connect(connection -> {
+        this.async(() -> this.databaseConnector.connect(connection -> {
             String updateTimeStamp = "UPDATE " + this.getTablePrefix() + "active_shops " +
                     "SET timestamp = ? WHERE name = ?";
             try (PreparedStatement statement = connection.prepareStatement(updateTimeStamp)) {
@@ -213,11 +213,11 @@ public class dataManager extends DataManagerAbstract {
                 statement.setString(2, name);
                 statement.executeUpdate();
             }
-        }), "update");
+        }));
     }
 
     public void updateTimer(String name, int timer) {  //TODO: implementar cambiarlo en shopsGui 
-        this.queueAsync(() -> this.databaseConnector.connect(connection -> {
+        this.async(() -> this.databaseConnector.connect(connection -> {
             String updateTimeStamp = "UPDATE " + this.getTablePrefix() + "active_shops " +
                     "SET timer = ? WHERE name = ?";
             try (PreparedStatement statement = connection.prepareStatement(updateTimeStamp)) {
@@ -225,7 +225,7 @@ public class dataManager extends DataManagerAbstract {
                 statement.setString(2, name);
                 statement.executeUpdate();
             }
-        }), "update");
+        }));
     }
 
 
