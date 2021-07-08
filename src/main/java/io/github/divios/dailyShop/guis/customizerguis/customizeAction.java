@@ -47,7 +47,7 @@ public class customizeAction {
         initialize();
         inv.open(p);
 
-        preventClose = new EventListener<>(plugin, InventoryCloseEvent.class,
+        preventClose = new EventListener<>(InventoryCloseEvent.class,
                 e -> {
                     if (!e.getInventory().equals(inv.getInventory())) return;
 
