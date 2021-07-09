@@ -1,5 +1,6 @@
 package io.github.divios.dailyShop;
 
+import io.github.divios.core_lib.Core_lib;
 import io.github.divios.core_lib.commands.CommandManager;
 import io.github.divios.core_lib.misc.Msg;
 import io.github.divios.dailyShop.commands.*;
@@ -17,6 +18,7 @@ public class DRShop extends JavaPlugin {
     public void onEnable() {
         INSTANCE = this;
         INSTANCE.saveDefaultConfig();
+        Core_lib.setPlugin(this);
                                 /* Init hooks  */
         hooksManager.getInstance();
                                 /* Init conf & msgs*/

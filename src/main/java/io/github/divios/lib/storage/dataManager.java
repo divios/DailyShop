@@ -201,7 +201,7 @@ public class dataManager extends DataManagerAbstract {
     }
 
     public void asyncUpdateGui(String name, dGui gui) {
-        this.queueAsync(() -> syncUpdateGui(name, gui), "update_gui");
+        this.async(() -> syncUpdateGui(name, gui));
     }
 
     public void updateTimeStamp(String name, Timestamp timestamp) {
