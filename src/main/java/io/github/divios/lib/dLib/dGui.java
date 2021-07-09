@@ -13,6 +13,7 @@ import io.github.divios.dailyShop.lorestategy.shopItemsLore;
 import io.github.divios.lib.dLib.guis.dBuy;
 import io.github.divios.lib.dLib.guis.dSell;
 import org.bukkit.Bukkit;
+import org.bukkit.craftbukkit.libs.it.unimi.dsi.fastutil.ints.IntSets;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
@@ -41,8 +42,8 @@ public abstract class dGui {
     protected final dShop shop;
 
     protected boolean available = true;
-    protected final Set<Integer> openSlots = new HashSet<>();
-    protected final Set<dItem> buttons = new HashSet<>();
+    protected final Set<Integer> openSlots = Collections.synchronizedSet(new HashSet<>());
+    protected final Set<dItem> buttons = Collections.synchronizedSet(new HashSet<>());
 
     protected transient EventListener<InventoryClickEvent> clickEvent;
     protected transient EventListener<InventoryDragEvent> dragEvent;
