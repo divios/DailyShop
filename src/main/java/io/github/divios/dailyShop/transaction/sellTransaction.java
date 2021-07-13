@@ -7,17 +7,12 @@ import io.github.divios.core_lib.misc.Msg;
 import io.github.divios.dailyShop.conf_msg;
 import io.github.divios.dailyShop.guis.confirmGui;
 import io.github.divios.dailyShop.guis.confirmIH;
-import io.github.divios.dailyShop.utils.utils;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class sellTransaction {
 
@@ -34,8 +29,8 @@ public class sellTransaction {
             if (!item.getSetItems().isPresent()) {
 
                 confirmGui.open(p, item.getItem(), dShop.dShopT.sell,
-                        (p1, item1) ->
-                                initTransaction(p, new dItem(item1), shop),
+                        (item1, amount) ->
+                                initTransaction(p, new dItem(item1), amount, shop),
                         player -> shop.getGui().open(p),
                         conf_msg.CONFIRM_GUI_SELL_NAME,
                         conf_msg.CONFIRM_MENU_YES,
@@ -44,7 +39,7 @@ public class sellTransaction {
             } else {
                 new confirmIH(p, (p1, aBool) -> {
                     if (aBool)
-                        initTransaction(p1, item, shop);
+                        initTransaction(p1, item, item.getAmount(), shop);
                     else
                         shop.getGui().open(p1);
                 }, new ItemBuilder(item.getItem().clone()).addLore(
@@ -53,10 +48,10 @@ public class sellTransaction {
                         conf_msg.CONFIRM_GUI_SELL_NAME,      //TODO
                         conf_msg.CONFIRM_MENU_YES, conf_msg.CONFIRM_MENU_NO);
             }
-        } else initTransaction(p, item, shop);
+        } else initTransaction(p, item, item.getAmount(), shop);
     }
 
-    private static void initTransaction(Player p, dItem item, dShop shop) {
+    private static void initTransaction(Player p, dItem item, int amount, dShop shop) {
 
         for (String perm : item.getPerms().orElse(Collections.emptyList())) {
             if (!p.hasPermission(perm)) {
@@ -67,24 +62,21 @@ public class sellTransaction {
 
         int removed = ItemUtils.count(p.getInventory(), item.getRawItem());
 
-        if (removed < item.getAmount())
+        if (removed < amount)
             p.sendMessage(conf_msg.PREFIX + conf_msg.MSG_NOT_ENOUGH_ITEM);
 
         else {
 
-            ItemStack aux = item.getRawItem().clone();
-            aux.setAmount(item.getAmount());
-
-            ItemUtils.remove(p.getInventory(), item.getRawItem(), item.getAmount());
+            ItemUtils.remove(p.getInventory(), item.getRawItem(), amount);
             p.updateInventory();
 
             item.getEconomy().depositMoney(p, item.getSellPrice().get().getPrice() *
-                    (item.getSetItems().isPresent() ? 1 : item.getAmount()));
+                    (item.getSetItems().isPresent() ? 1 : amount));
 
             p.sendMessage(Msg.singletonMsg(conf_msg.PREFIX + conf_msg.MSG_BUY_ITEM)
                     .add("\\{action}", "sell")
-                    .add("\\{amount}", "" + item.getAmount())
-                    .add("\\{price}", "" + item.getSellPrice().get().getPrice() * item.getAmount())
+                    .add("\\{amount}", "" + amount)
+                    .add("\\{price}", "" + item.getSellPrice().get().getPrice() * amount)
                     .add("\\{item}", item.getDisplayName() + FormatUtils.color("&7"))
                     .add("\\{currency}", item.getEconomy().getName()).build());
             shop.openGui(p);

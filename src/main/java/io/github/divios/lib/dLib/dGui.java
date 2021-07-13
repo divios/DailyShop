@@ -228,6 +228,7 @@ public abstract class dGui {
 
         int addedButtons = 0;
         for (int i : openSlots.stream().sorted().collect(Collectors.toList())) {
+            if (i >= inv.getSize()) break;
             inv.clear(i);
 
             if (addedButtons >= shop.getItems().size()) break;
@@ -318,6 +319,8 @@ public abstract class dGui {
             plugin.getLogger().severe("Unable to deserialize gui of shop "
                     + shop.getName() + ", setting it to default");
 
+            buttons.clear();
+            openSlots.clear();
             IntStream.range(0, inv.getSize()).forEach(openSlots::add);
             this.title = shop.getName();
             this.inv = Bukkit.createInventory(null, 27, title);
