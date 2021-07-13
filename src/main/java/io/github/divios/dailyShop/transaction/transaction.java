@@ -43,8 +43,8 @@ public class transaction {
                     !item.getSetItems().isPresent()) {
 
                 confirmGui.open(p, item.getItem(), dShop.dShopT.buy,
-                        (p1, item1) -> {
-                            transaction.initTransaction(p, new dItem(item1), shop);
+                        (item1, amount) -> {
+                            transaction.initTransaction(p, new dItem(item1), amount, shop);
                         }, player -> shop.getGui().open(p),
                         conf_msg.CONFIRM_GUI_BUY_NAME,      //TODO
                         conf_msg.CONFIRM_MENU_YES,
@@ -53,7 +53,7 @@ public class transaction {
             } else {
                 new confirmIH(p, (p1, aBool) -> {
                     if (aBool)
-                        transaction.initTransaction(p1, item, shop);
+                        transaction.initTransaction(p1, item, 1, shop);
                     else
                         shop.getGui().open(p1);
                 }, new ItemBuilder(item.getItem().clone()).addLore(
@@ -61,15 +61,15 @@ public class transaction {
                                 String.valueOf(item.getSellPrice().get().getPrice())).build()), conf_msg.CONFIRM_GUI_BUY_NAME,       //TODO
                         conf_msg.CONFIRM_MENU_YES, conf_msg.CONFIRM_MENU_NO);
             }
-        } else initTransaction(p, item, shop);
+        } else initTransaction(p, item, 1, shop);
 
     }
 
-    private static void initTransaction(Player p, dItem item, dShop shop) {
+    private static void initTransaction(Player p, dItem item, int amount, dShop shop) {
 
         summary s = null;
         try {
-            s = printSummary(p, item, shop);
+            s = printSummary(p, item, amount, shop);
 
             if (!s.getEcon().hasMoney(p, s.getPrice()))
                 throw new transactionExc(transactionExc.err.noMoney);
@@ -98,10 +98,11 @@ public class transaction {
     }
 
     private static summary printSummary(Player p, UUID uid, dShop shop) throws transactionExc {
-        return printSummary(p, shop.getItem(uid).orElse(dItem.AIR()), shop);
+        return printSummary(p, shop.getItem(uid).orElse(dItem.AIR()),
+                shop.getItem(uid).orElse(dItem.AIR()).getAmount(),  shop);
     }
 
-    private static summary printSummary(Player p, dItem item, dShop shop) throws transactionExc {
+    private static summary printSummary(Player p, dItem item, int amount, dShop shop) throws transactionExc {
 
         summary s = new summary();
 
@@ -118,6 +119,7 @@ public class transaction {
                     if (!p.hasPermission(s1))
                         err[0] = true;
                 }));
+
         if (err[0]) throw new transactionExc(transactionExc.err.noPerms);
 
         item.getStock().ifPresent(integer -> {
@@ -130,7 +132,7 @@ public class transaction {
         transactionExc[] err1 = {null};
         item.getBundle().ifPresent(uuids ->         // bundle check
                 uuids.forEach(uuid -> {
-                    IntStream.range(0, item.getAmount())
+                    IntStream.range(0, amount)
                             .forEach(value ->
                                     {
                                         try {
@@ -146,7 +148,7 @@ public class transaction {
 
         if (err1[0] != null) throw err1[0];
 
-        IntStream.range(0, item.getAmount()).forEach(i ->
+        IntStream.range(0, amount).forEach(i ->
                 item.getCommands().ifPresent(strings -> strings.forEach(s1 ->
                         Bukkit.dispatchCommand(Bukkit.getConsoleSender(),
                                 Msg.singletonMsg(s1).add("%player%", p.getName())
@@ -157,18 +159,18 @@ public class transaction {
 
         s.setPrice(s.getPrice() + (item.getSetItems().isPresent() ?
                 item.getBuyPrice().orElse(dPrice.empty()).getPrice() :
-                item.getBuyPrice().orElse(dPrice.empty()).getPrice() * item.getAmount()));
+                item.getBuyPrice().orElse(dPrice.empty()).getPrice() * amount));
 
 
         s.setSlots(item.getMaxStackSize() == 1 ?
-                s.getSlots() + item.getAmount() : s.getSlots() + 1);
+                s.getSlots() + amount : s.getSlots() + 1);
 
         if (!item.getCommands().isPresent() &&
                 !item.getBundle().isPresent())
             s.addRunnable(() -> {
                 ItemStack aux = item.getRawItem();
                 aux.setAmount(1);
-                IntStream.range(0, item.getAmount()).
+                IntStream.range(0, amount).
                         forEach(i -> p.getInventory().addItem(aux));
             });
 
