@@ -30,7 +30,7 @@ public class shopItemsLore implements loreStrategy {
                                 .add("\\{buyPrice}",
                                         (aux.getBuyPrice().isPresent()
                                         && aux.getBuyPrice().get().getPrice() != -1) ? "" +
-                                        aux.getBuyPrice().orElse(new dPrice(-1)).getVisualPrice()
+                                        aux.getBuyPrice().orElse(new dPrice(-1)).getPrice()
                                         : FormatUtils.color("&c&l" + XSymbols.TIMES_3.parseSymbol())).build())
 
                         .addLore(Msg.singletonMsg(
