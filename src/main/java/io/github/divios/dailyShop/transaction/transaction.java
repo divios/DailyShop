@@ -3,11 +3,11 @@ package io.github.divios.dailyShop.transaction;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.core_lib.misc.Msg;
+import io.github.divios.core_lib.misc.confirmIH;
 import io.github.divios.dailyShop.DRShop;
 import io.github.divios.dailyShop.conf_msg;
 import io.github.divios.dailyShop.events.updateItemEvent;
 import io.github.divios.dailyShop.guis.confirmGui;
-import io.github.divios.dailyShop.guis.confirmIH;
 import io.github.divios.dailyShop.utils.utils;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dPrice;
@@ -51,15 +51,24 @@ public class transaction {
                         conf_msg.CONFIRM_MENU_NO);
 
             } else {
-                new confirmIH(p, (p1, aBool) -> {
-                    if (aBool)
-                        transaction.initTransaction(p1, item, 1, shop);
-                    else
-                        shop.getGui().open(p1);
-                }, new ItemBuilder(item.getItem().clone()).addLore(
-                        Msg.singletonMsg(conf_msg.SELL_ITEM_NAME).add("\\{price}",
-                                String.valueOf(item.getSellPrice().get().getPrice())).build()), conf_msg.CONFIRM_GUI_BUY_NAME,       //TODO
-                        conf_msg.CONFIRM_MENU_YES, conf_msg.CONFIRM_MENU_NO);
+
+                confirmIH.builder()
+                        .withPlayer(p)
+                        .withAction(aBoolean -> {
+                            if (aBoolean)
+                                transaction.initTransaction(p, item, 1, shop);
+                            else
+                                shop.getGui().open(p);
+                        })
+                        .withItem(
+                                new ItemBuilder(item.getItem().clone()).addLore(
+                                        Msg.singletonMsg(conf_msg.SELL_ITEM_NAME).add("\\{price}",
+                                                String.valueOf(item.getSellPrice().get().getPrice())).build()
+                                ))
+                        .withTitle(conf_msg.CONFIRM_GUI_BUY_NAME)
+                        .withConfirmLore(conf_msg.CONFIRM_MENU_YES)
+                        .withCancelLore(conf_msg.CONFIRM_MENU_NO)
+                        .prompt();
             }
         } else initTransaction(p, item, 1, shop);
 
