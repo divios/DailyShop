@@ -37,7 +37,7 @@ public class shopItemsLore implements loreStrategy {
                                         conf_msg.BUY_GUI_ITEMS_LORE_SELL_PRICE)
                                 .add("\\{sellPrice}", (aux.getSellPrice().isPresent()
                                         && aux.getSellPrice().get().getPrice() != -1) ? "" +
-                                        aux.getSellPrice().orElse(new dPrice(-1)).getVisualPrice()
+                                        aux.getSellPrice().orElse(new dPrice(-1)).getPrice()
                                         : FormatUtils.color("&c&l" + XSymbols.TIMES_3.parseSymbol())).build())
 
                         .addLore("");
