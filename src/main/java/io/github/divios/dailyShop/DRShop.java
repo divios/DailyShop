@@ -53,7 +53,7 @@ public class DRShop extends JavaPlugin {
 
     public void reloadPlugin() {
         conf_msg.reload();
-
+        this.reloadConfig();
         //shopsManager.getInstance().reload();
     }
 

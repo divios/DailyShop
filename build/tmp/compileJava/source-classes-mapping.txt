@@ -57,6 +57,8 @@ io/github/divios/dailyShop/events/deletedShopEvent.java
 io/github/divios/dailyShop/events/updateItemEvent.java
  io.github.divios.dailyShop.events.updateItemEvent
  io.github.divios.dailyShop.events.updateItemEvent$updatetype
+io/github/divios/dailyShop/utils/Collections.java
+ io.github.divios.dailyShop.utils.Collections
 io/github/divios/dailyShop/utils/utils.java
  io.github.divios.dailyShop.utils.utils
 io/github/divios/dailyShop/tasks/updatePlaceholdersTask.java
@@ -122,8 +124,6 @@ io/github/divios/dailyShop/hooks/bstatsHook.java
  io.github.divios.dailyShop.hooks.bstatsHook
 io/github/divios/dailyShop/guis/customizerguis/customizeGui.java
  io.github.divios.dailyShop.guis.customizerguis.customizeGui
-io/github/divios/dailyShop/guis/confirmIH.java
- io.github.divios.dailyShop.guis.confirmIH
 io/github/divios/dailyShop/hooks/placeholderApiHook.java
  io.github.divios.dailyShop.hooks.placeholderApiHook
 io/github/divios/dailyShop/lorestategy/shopItemsLore.java
