@@ -234,6 +234,8 @@ public abstract class dGui {
             if (addedButtons >= shop.getItems().size()) break;
 
             dItem rolled = RRM.roll();
+            rolled.generateNewBuyPrice();
+            rolled.generateNewSellPrice();
             _renovate(rolled, i);
             RRM.remove(rolled);
             addedButtons++;

@@ -5,9 +5,9 @@ import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.misc.ChatPrompt;
 import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.core_lib.misc.Task;
+import io.github.divios.core_lib.misc.confirmIH;
 import io.github.divios.dailyShop.DRShop;
 import io.github.divios.dailyShop.conf_msg;
-import io.github.divios.dailyShop.guis.confirmIH;
 import io.github.divios.dailyShop.guis.settings.shopsManagerGui;
 import io.github.divios.dailyShop.utils.utils;
 import io.github.divios.lib.dLib.dGui;
@@ -242,11 +242,19 @@ public class customizeGui implements Listener, InventoryHolder {
 
             if (e.isRightClick() && !utils.isEmpty(e.getCurrentItem())) {  // delete item
                 refreshFlag = true;
-                new confirmIH(p, (player, aBoolean) -> {
-                    if (aBoolean) _gui.removeButton(e.getSlot());
-                    refresh();
-                }, e.getCurrentItem(), "&a&lConfirm Action",
-                        conf_msg.CONFIRM_MENU_YES, conf_msg.CONFIRM_MENU_NO);
+
+                confirmIH.builder()
+                        .withPlayer(p)
+                        .withAction(aBoolean -> {
+                            if (aBoolean) _gui.removeButton(e.getSlot());
+                            refresh();
+                        })
+                        .withItem(e.getCurrentItem())
+                        .withTitle("&a&lConfirm Action")
+                        .withConfirmLore(conf_msg.CONFIRM_MENU_YES)
+                        .withCancelLore(conf_msg.CONFIRM_MENU_YES)
+                        .prompt();
+
                 refreshFlag = false;
                 return;
             }

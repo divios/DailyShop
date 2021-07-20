@@ -45,7 +45,7 @@ public class reload extends abstractCommand {
 
     @Override
     public void run(CommandSender sender, List<String> args) {
-        DRShop.getInstance().reloadConfig();
+        DRShop.getInstance().reloadPlugin();
         Titles.sendTitle((Player) sender, 25, 40, 25,
                 FormatUtils.color("&a&lPlugin Reloaded"), "");
     }
