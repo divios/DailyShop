@@ -1,10 +1,10 @@
 package io.github.divios.dailyShop.tasks;
 
-import io.github.divios.dailyShop.DRShop;
+import io.github.divios.dailyShop.DailyShop;
 
 public class taskManager {
 
-    private static final DRShop main = DRShop.getInstance();
+    private static final DailyShop main = DailyShop.getInstance();
     private static taskManager instance = null;
 
 

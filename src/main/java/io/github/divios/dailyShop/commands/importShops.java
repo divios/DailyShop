@@ -3,7 +3,9 @@ package io.github.divios.dailyShop.commands;
 import io.github.divios.core_lib.commands.abstractCommand;
 import io.github.divios.core_lib.commands.cmdTypes;
 import io.github.divios.core_lib.misc.FormatUtils;
-import io.github.divios.dailyShop.conf_msg;
+import io.github.divios.core_lib.misc.Msg;
+import io.github.divios.dailyShop.DailyShop;
+import io.github.divios.dailyShop.guis.settings.shopGui;
 import io.github.divios.dailyShop.utils.utils;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
@@ -13,8 +15,10 @@ import org.black_ixx.bossshop.BossShop;
 import org.black_ixx.bossshop.core.BSShop;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -66,7 +70,7 @@ public class importShops extends abstractCommand {
                     .map(dShop::getName).collect(Collectors.toList());
         else if (args.size() == 3)
             if (args.get(0).equalsIgnoreCase("shopGui+") && utils.isOperative("ShopGUIPlus"))
-                return List.copyOf(ShopGuiPlusApi.getPlugin().getShopManager().shops.keySet());
+                return new ArrayList<>(ShopGuiPlusApi.getPlugin().getShopManager().shops.keySet());
             else if (utils.isOperative("BossShopPro"))
                 return ((BossShop) Bukkit.getPluginManager().getPlugin("BossShopPro")).getAPI()
                 .getAllShopItems().keySet().stream().map(BSShop::getShopName).collect(Collectors.toList());
@@ -104,8 +108,8 @@ public class importShops extends abstractCommand {
                                     } catch (Exception e) { return; }
                                     shop.addItem(newItem);
                                 });
-                    sender.sendMessage(conf_msg.PREFIX +
-                            FormatUtils.color("&7Items imported successfully"));
+                    Msg.sendMsg((Player) sender, FormatUtils.color("&7Items imported successfully"));
+                    shopGui.open((Player) sender, shop);
                 });
     }
 }

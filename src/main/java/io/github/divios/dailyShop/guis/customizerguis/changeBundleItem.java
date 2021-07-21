@@ -4,7 +4,7 @@ import com.cryptomorin.xseries.XMaterial;
 import io.github.divios.core_lib.inventory.dynamicGui;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
-import io.github.divios.dailyShop.DRShop;
+import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
 import org.bukkit.enchantments.Enchantment;
@@ -86,7 +86,7 @@ public class changeBundleItem {
         }).setSearch(false)
                 .back(back)
                 .title(_i -> "&6Set items on the bundle")
-                .plugin(DRShop.getInstance())
+                .plugin(DailyShop.getInstance())
                 .open(p);
 
     }

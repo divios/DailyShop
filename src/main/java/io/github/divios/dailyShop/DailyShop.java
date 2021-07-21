@@ -4,43 +4,44 @@ import io.github.divios.core_lib.Core_lib;
 import io.github.divios.core_lib.commands.CommandManager;
 import io.github.divios.core_lib.misc.Msg;
 import io.github.divios.dailyShop.commands.*;
+import io.github.divios.dailyShop.files.configManager;
 import io.github.divios.dailyShop.hooks.hooksManager;
-import io.github.divios.dailyShop.utils.conf_updater;
 import io.github.divios.lib.managers.shopsManager;
 import io.github.divios.lib.storage.dataManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class DRShop extends JavaPlugin {
+public class DailyShop extends JavaPlugin {
 
-    private static DRShop INSTANCE;
+    private static DailyShop INSTANCE;
+    public configManager configM;
 
     @Override
     public void onEnable() {
+
         INSTANCE = this;
-        INSTANCE.saveDefaultConfig();
-        Core_lib.setPlugin(this);
+        Core_lib.setPlugin(this);       // Set plugin for aux library
+
                                 /* Init hooks  */
         hooksManager.getInstance();
+
                                 /* Init conf & msgs*/
-        conf_msg.init();
+        configM = configManager.generate();
+
                                 /* Initiate database + getAllItems + timer */
-        conf_updater.check();
         dataManager.getInstance();
         shopsManager.getInstance();
 
+                                /* Register Commands */
         CommandManager.register(INSTANCE.getCommand("DailyShop"));
         CommandManager.addCommand(new add(), new helpCmd(),
-                new open(), new Manager(), new reStock(), new importShops(), new reload());
-        CommandManager.setNotPerms(conf_msg.PREFIX + conf_msg.MSG_NOT_PERMS);
+                new open(), new manager(), new reStock(), new importShops(), new reload());
+
+        CommandManager.setNotPerms(configM.getSettingsYml().PREFIX + configM.getLangYml().MSG_NOT_PERMS);
         CommandManager.setDefault(new helpCmd());
+        Msg.setPREFIX(configM.getSettingsYml().PREFIX);
 
-        Msg.setPREFIX(conf_msg.PREFIX);
-
-        try {
-            Class.forName("io.github.divios.core_lib.inventory.materialsPrompt");  // loads all materials
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
+        try { Class.forName("io.github.divios.core_lib.inventory.materialsPrompt");  // loads all materials
+        } catch (ClassNotFoundException ignored) {}
 
     }
 
@@ -52,12 +53,11 @@ public class DRShop extends JavaPlugin {
     }
 
     public void reloadPlugin() {
-        conf_msg.reload();
-        this.reloadConfig();
+        configM.reload();
         //shopsManager.getInstance().reload();
     }
 
-    public static DRShop getInstance() {
+    public static DailyShop getInstance() {
         return INSTANCE;
     }
 

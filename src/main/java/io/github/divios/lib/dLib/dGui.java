@@ -1,24 +1,30 @@
 package io.github.divios.lib.dLib;
 
+import com.google.common.collect.ContiguousSet;
+import com.google.common.collect.DiscreteDomain;
+import com.google.common.collect.Range;
+import io.github.divios.core_lib.Schedulers;
 import io.github.divios.core_lib.inventory.inventoryUtils;
-import io.github.divios.core_lib.misc.EventListener;
-import io.github.divios.core_lib.misc.Msg;
-import io.github.divios.core_lib.misc.Pair;
-import io.github.divios.core_lib.misc.WeightedRandom;
-import io.github.divios.dailyShop.DRShop;
-import io.github.divios.dailyShop.conf_msg;
+import io.github.divios.core_lib.itemutils.ItemBuilder;
+import io.github.divios.core_lib.itemutils.ItemUtils;
+import io.github.divios.core_lib.misc.*;
+import io.github.divios.core_lib.scheduler.Task;
+import io.github.divios.core_lib.terminable.TerminableConsumer;
+import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.events.updateItemEvent;
 import io.github.divios.dailyShop.lorestategy.loreStrategy;
 import io.github.divios.dailyShop.lorestategy.shopItemsLore;
+import io.github.divios.dailyShop.utils.utils;
 import io.github.divios.lib.dLib.guis.dBuy;
 import io.github.divios.lib.dLib.guis.dSell;
+import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.libs.it.unimi.dsi.fastutil.ints.IntSets;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.io.BukkitObjectInputStream;
 import org.bukkit.util.io.BukkitObjectOutputStream;
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
@@ -35,7 +41,7 @@ import java.util.stream.IntStream;
 
 public abstract class dGui {
 
-    protected static final DRShop plugin = DRShop.getInstance();
+    protected static final DailyShop plugin = DailyShop.getInstance();
 
     protected String title;       // for some reason is throwing noSuchMethod
     protected Inventory inv;
@@ -50,6 +56,7 @@ public abstract class dGui {
     protected transient EventListener<InventoryOpenEvent> openEvent;
 
     protected final loreStrategy strategy;
+    protected Task updateTask;
 
     protected dGui(String title, Inventory inv, dShop shop) {
         this.title = title;
@@ -83,6 +90,7 @@ public abstract class dGui {
 
     /**
      * Opens the inventory for a player
+     *
      * @param p The player to open the inventory
      */
     public void open(Player p) {
@@ -96,12 +104,16 @@ public abstract class dGui {
 
     /**
      * Returns the title of this gui
+     *
      * @return The String representing the title
      */
-    public String getTitle() { return title; }
+    public String getTitle() {
+        return title;
+    }
 
     /**
      * Sets the inventory title
+     *
      * @param title
      */
     public void setTitle(String title) {
@@ -113,9 +125,12 @@ public abstract class dGui {
 
     /**
      * Returns a copy of this instance inventory
+     *
      * @return The Copied inventory
      */
-    public Inventory getInventory() { return inventoryUtils.cloneInventory(inv, title); }
+    public Inventory getInventory() {
+        return inventoryUtils.cloneInventory(inv, title);
+    }
 
     public boolean addRow() {
         if (inv.getSize() == 54) return false;
@@ -143,12 +158,16 @@ public abstract class dGui {
 
     /**
      * Checks if the inventory is available
+     *
      * @return true if it is, false if is being edited
      */
-    public boolean getAvailable() { return available; }
+    public boolean getAvailable() {
+        return available;
+    }
 
     /**
      * Sets the availability of the inventory
+     *
      * @param value Boolean
      */
     public void setAvailable(boolean value) {
@@ -158,6 +177,7 @@ public abstract class dGui {
 
     /**
      * Adds a button to the inventory
+     *
      * @param item The item to add
      * @param slot The slot where the item 'll be added
      */
@@ -177,6 +197,7 @@ public abstract class dGui {
 
     /**
      * Removes a slot from the inventory
+     *
      * @param slot The slot which wants to be clear
      * @return true if an item was successfully removed
      */
@@ -191,6 +212,7 @@ public abstract class dGui {
 
     /**
      * Gets the button in this object
+     *
      * @return An unmodifiable view of the buttons set
      */
     public Set<dItem> getButtons() {
@@ -199,6 +221,7 @@ public abstract class dGui {
 
     /**
      * Gets the openSlots in this object
+     *
      * @return An unmodifiable view of the open Slots
      */
     public Set<Integer> getOpenSlots() {
@@ -216,12 +239,12 @@ public abstract class dGui {
 
         WeightedRandom<dItem> RRM = WeightedRandom.fromCollection(      // create weighted random
                 shop.getItems().stream().filter(dItem -> dItem.getRarity().getWeight() != 0)
-                        .filter( dItem -> !(dItem.getBuyPrice().get().getPrice() <= 0 &&
+                        .filter(dItem -> !(dItem.getBuyPrice().get().getPrice() <= 0 &&
                                 dItem.getSellPrice().get().getPrice() <= 0))
                         .collect(Collectors.toList()),  // remove unAvailable
                 dItem::clone,
-                value -> DRShop.getInstance().getConfig().getBoolean("enable-rarity", true) ?
-                value.getRarity().getWeight():1     // Get weights depending if rarity enable
+                value -> DailyShop.getInstance().getConfig().getBoolean("enable-rarity", true) ?
+                        value.getRarity().getWeight() : 1     // Get weights depending if rarity enable
         );
 
         clearDailyItems();
@@ -241,9 +264,9 @@ public abstract class dGui {
             addedButtons++;
         }
 
-        Bukkit.broadcastMessage(conf_msg.PREFIX +       // broadcast msg
-                Msg.singletonMsg(conf_msg.MSG_NEW_DAILY_ITEMS)
-                .add("\\{shop}", shop.getName()).build());
+        Bukkit.broadcastMessage(plugin.configM.getSettingsYml().PREFIX +       // broadcast msg
+                FormatUtils.color(Msg.singletonMsg(plugin.configM.getLangYml().MSG_RESTOCK)
+                        .add("\\{shop}", shop.getName()).build()));
     }
 
     protected abstract void _renovate(dItem newItem, int slot);
@@ -346,7 +369,7 @@ public abstract class dGui {
                 .forEach(dItem -> cloned.inv
                         .setItem(dItem.getSlot(), dItem.getItem()));
 
-        return  cloned; }
-
+        return cloned;
+    }
 
 }

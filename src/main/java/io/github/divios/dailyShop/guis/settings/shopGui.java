@@ -2,20 +2,18 @@ package io.github.divios.dailyShop.guis.settings;
 
 import com.cryptomorin.xseries.XMaterial;
 import io.github.divios.core_lib.Schedulers;
-import io.github.divios.core_lib.inventory.InventoryGUI;
 import io.github.divios.core_lib.inventory.ItemButton;
 import io.github.divios.core_lib.inventory.builder.inventoryPopulator;
 import io.github.divios.core_lib.inventory.builder.paginatedGui;
-import io.github.divios.core_lib.inventory.inventoryUtils;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
+import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.Task;
 import io.github.divios.core_lib.misc.confirmIH;
-import io.github.divios.dailyShop.DRShop;
-import io.github.divios.dailyShop.conf_msg;
+import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.guis.customizerguis.customizerMainGuiIH;
 import io.github.divios.dailyShop.lorestategy.loreStrategy;
-import io.github.divios.dailyShop.lorestategy.shopItemsLore;
 import io.github.divios.dailyShop.lorestategy.shopItemsManagerLore;
+import io.github.divios.dailyShop.lorestategy.shopsManagerLore;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.managers.shopsManager;
@@ -26,12 +24,10 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 public class shopGui {
 
-    private static final DRShop plugin = DRShop.getInstance();
+    private static final DailyShop plugin = DailyShop.getInstance();
     private static final shopsManager sManager = shopsManager.getInstance();
 
     private paginatedGui inv;
@@ -80,7 +76,7 @@ public class shopGui {
                 )
 
                 .withItems(
-                        shop.getItems().stream()
+                        shop.getItems().stream().parallel()
                                 .map(dItem ->
                                         ItemButton.create(strategy.applyLore(dItem.getItem().clone())
                                                 , this::contentAction))
@@ -88,19 +84,22 @@ public class shopGui {
 
                 .withNextButton(
                         ItemBuilder.of(XMaterial.PLAYER_HEAD)
-                                .setName("&1Next").applyTexture("19bf3292e126a105b54eba713aa1b152d541a1d8938829c56364d178ed22bf")
+                                .setName(plugin.configM.getLangYml().DAILY_ITEMS_NEXT)
+                                .applyTexture("19bf3292e126a105b54eba713aa1b152d541a1d8938829c56364d178ed22bf")
                         , 51
                 )
 
                 .withBackButton(
                         ItemBuilder.of(XMaterial.PLAYER_HEAD)
-                                .setName("&1Previous").applyTexture("bd69e06e5dadfd84e5f3d1c21063f2553b2fa945ee1d4d7152fdc5425bc12a9")
+                                .setName(plugin.configM.getLangYml().DAILY_ITEMS_PREVIOUS)
+                                .applyTexture("bd69e06e5dadfd84e5f3d1c21063f2553b2fa945ee1d4d7152fdc5425bc12a9")
                         , 47
                 )
 
                 .withExitButton(
                         new ItemButton(new ItemBuilder(XMaterial.PLAYER_HEAD)
-                                .setName("&cReturn").setLore("&7Click to return")
+                                .setName(plugin.configM.getLangYml().SHOPS_MANAGER_RETURN)
+                                .setLore("&7Click to return")
                                 .applyTexture("19bf3292e126a105b54eba713aa1b152d541a1d8938829c56364d178ed22bf")
                                 , e -> {
                             Schedulers.sync().runLater(() -> inv.destroy(), 3L);
@@ -112,7 +111,8 @@ public class shopGui {
                         (inventoryGUI, integer) -> {
 
                             inventoryGUI.addButton(new ItemButton(new ItemBuilder(XMaterial.PLAYER_HEAD)
-                                    .setName(conf_msg.DAILY_ITEMS_MENU_ADD).addLore(conf_msg.DAILY_ITEMS_MENU_ADD_LORE)
+                                    .setName(plugin.configM.getLangYml().DAILY_ITEMS_ADD)
+                                    .addLore(plugin.configM.getLangYml().DAILY_ITEMS_ADD_LORE)
                                     .applyTexture("9b425aa3d94618a87dac9c94f377af6ca4984c07579674fad917f602b7bf235"),
                                     e -> addDailyGuiIH.open(p, shop, itemStack -> {
                                         shop.addItem(new dItem(itemStack));
@@ -122,7 +122,7 @@ public class shopGui {
                         }
                 )
 
-                .withTitle("&f&l" + shop.getName())
+                .withTitle("&8" + shop.getName())
 
                 .build();
 
@@ -136,7 +136,7 @@ public class shopGui {
 
         if (e.isLeftClick()) {
 
-            Task.syncDelayed(plugin, () -> inv.destroy(), 3L);
+            Schedulers.sync().runLater(() -> inv.destroy(), 3L);
             customizerMainGuiIH.open((Player) e.getWhoClicked(),
                     shop.getItem(uid).get(), shop);
 
@@ -150,9 +150,10 @@ public class shopGui {
                         Task.syncDelayed(plugin, () -> inv.destroy(), 3L);
                         open(p, shop);
                     })
-                    .withTitle(conf_msg.CONFIRM_GUI_ACTION_NAME)
-                    .withConfirmLore(conf_msg.CONFIRM_MENU_YES)
-                    .withCancelLore(conf_msg.CONFIRM_MENU_NO)
+                    .withTitle(plugin.configM.getLangYml().CONFIRM_GUI_ACTION_NAME)
+                    .withConfirmLore(plugin.configM.getLangYml().CONFIRM_GUI_YES, plugin.configM.getLangYml().CONFIRM_GUI_YES_LORE)
+                    .withCancelLore(plugin.configM.getLangYml().CONFIRM_GUI_NO, plugin.configM.getLangYml().CONFIRM_GUI_NO_LORE)
+                    .withItem(dItem.of(e.getCurrentItem()).getRawItem())
                     .prompt();
 
     }

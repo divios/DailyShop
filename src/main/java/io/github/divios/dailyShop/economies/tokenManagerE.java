@@ -1,6 +1,6 @@
 package io.github.divios.dailyShop.economies;
 
-import io.github.divios.dailyShop.DRShop;
+import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.hooks.hooksManager;
 import me.realized.tokenmanager.api.TokenManager;
 import org.bukkit.entity.Player;
@@ -25,7 +25,7 @@ public class tokenManagerE extends economy {
 
     @Override
     public void witchDrawMoney(Player p, Double price) {
-        DRShop.getInstance().getLogger().info("" + price.longValue());
+        DailyShop.getInstance().getLogger().info("" + price.longValue());
         api.removeTokens(p, price.longValue());
     }
 

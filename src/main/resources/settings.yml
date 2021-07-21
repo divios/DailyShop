@@ -1,0 +1,32 @@
+# Wards Main configuration. Version ${projectVersion}
+# Created by Divios
+# =========================================================
+# Fields Explanation:
+#   <prefix>:
+#       - Prefix to display with every message of this plugin.
+# ============================
+#   <debug>:
+#       - Don't enable it, only useful if the developer asks for it
+# ============================
+#   <default-buy-price>:
+#       - Default buy price for newly created items.
+# ============================
+#   <default-sell-price>:
+#       - Default sell price for newly created items.
+#   <default_timer>:
+#       - Default timer assigned to newly created shops.
+# ============================
+# ============================
+#   <vault-currency-name>:
+#       - Change the name of vault currency when displayed.
+# ============================
+# You must restart for changes to take affect when editing this file!
+# =========================================================
+settings:
+  prefix: "&e&lDailyShop &7> "
+  debug: false
+  default-buy-price: 500.0
+  default-sell-price: 20
+  default_timer: 86400
+  vault_name: "&7Vault"
+

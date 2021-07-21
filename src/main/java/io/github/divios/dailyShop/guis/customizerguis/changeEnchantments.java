@@ -6,8 +6,7 @@ import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.misc.ChatPrompt;
 import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.core_lib.misc.Task;
-import io.github.divios.dailyShop.DRShop;
-import io.github.divios.dailyShop.conf_msg;
+import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.utils.utils;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
@@ -19,11 +18,10 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class changeEnchantments {
 
-    private static final DRShop plugin = DRShop.getInstance();
+    private static final DailyShop plugin = DailyShop.getInstance();
 
     private static changeEnchantments instance = null;
     private static final List<ItemStack> contentsList = contents();
@@ -72,7 +70,7 @@ public class changeEnchantments {
         ChatPrompt.prompt(plugin, p, s1 -> {
 
             if (!utils.isInteger(s1)) {
-                utils.sendMsg(p, conf_msg.MSG_NOT_INTEGER);
+                utils.sendMsg(p, plugin.configM.getLangYml().MSG_NOT_INTEGER);
                 Task.syncDelayed(plugin, () -> customizerMainGuiIH.open(p, ditem, shop));
             }
             ditem.addEnchantments(Enchantment.getByName(s), Integer.parseInt(s1));

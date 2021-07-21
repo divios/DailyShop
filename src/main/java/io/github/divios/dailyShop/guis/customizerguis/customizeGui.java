@@ -2,12 +2,8 @@ package io.github.divios.dailyShop.guis.customizerguis;
 
 import com.cryptomorin.xseries.XMaterial;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
-import io.github.divios.core_lib.misc.ChatPrompt;
-import io.github.divios.core_lib.misc.FormatUtils;
-import io.github.divios.core_lib.misc.Task;
-import io.github.divios.core_lib.misc.confirmIH;
-import io.github.divios.dailyShop.DRShop;
-import io.github.divios.dailyShop.conf_msg;
+import io.github.divios.core_lib.misc.*;
+import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.guis.settings.shopsManagerGui;
 import io.github.divios.dailyShop.utils.utils;
 import io.github.divios.lib.dLib.dGui;
@@ -35,7 +31,7 @@ import java.util.stream.IntStream;
 
 public class customizeGui implements Listener, InventoryHolder {
 
-    private static final DRShop plugin = DRShop.getInstance();
+    private static final DailyShop plugin = DailyShop.getInstance();
 
     private final Player p;
     private final dShop shop;
@@ -67,7 +63,7 @@ public class customizeGui implements Listener, InventoryHolder {
 
     public static void open(Player p, dShop shop) {
         if (!shop.getGui().getAvailable()) {
-            p.sendMessage(conf_msg.PREFIX + FormatUtils.color("&7Someone is already editing this gui"));
+            Msg.sendMsg(p, "&7Someone is already editing this gui");
             return;
         }
         shop.getGui().setAvailable(false);
@@ -103,15 +99,15 @@ public class customizeGui implements Listener, InventoryHolder {
                 .applyTexture("bd8a99db2c37ec71d7199cd52639981a7513ce9cca9626a3936f965b131193");
 
         ItemStack info = new ItemBuilder(XMaterial.PAPER)
-                .setName("&6&lInfo").addLore("&7This is the gui where you can configure",
-                        "&7pretty much everything about the shop.", "&7The main idea is to customize",
-                        "&7the shop as you want an leave empty the slots", "&7where the daily items will appear",
+                .setName("&8> &6Info")
+                .addLore("&7The main idea is to customize",
+                        "&7the shop as you want", "&7an leave empty the slots", "&7where the daily items will appear",
                         "",
-                        "&8- &6Left click empty slot: &7Adds a new item",
-                        "&8- &6Shift Click empty slot: &7Sets slot as AIR, where no daily items",
-                            "&7'll appear and is displayed as an empty slot",
-                        "&8- &6Middle click item: &7Copies the item to the clipboard, middle",
-                        "&8- &7click again on empty slot to paste");
+                        "&8- &6Left click empty slot", "   &7Adds a new item",
+                        "&8- &6Shift Click empty slot", "   &7Sets slot as AIR,", "   &7where no daily items",
+                            "   &7'll appear and is displayed", "   &7as an empty slot",
+                        "&8- &6Middle click item", "   &7Copies the item to the clipboard,",
+                        "   &7middle click again on", "   &7empty slot to paste");
 
         p.getInventory().setItem(3, back);
         p.getInventory().setItem(5, complete);
@@ -251,8 +247,8 @@ public class customizeGui implements Listener, InventoryHolder {
                         })
                         .withItem(e.getCurrentItem())
                         .withTitle("&a&lConfirm Action")
-                        .withConfirmLore(conf_msg.CONFIRM_MENU_YES)
-                        .withCancelLore(conf_msg.CONFIRM_MENU_YES)
+                        .withConfirmLore(plugin.configM.getLangYml().CONFIRM_GUI_YES, plugin.configM.getLangYml().CONFIRM_GUI_YES_LORE)
+                        .withCancelLore(plugin.configM.getLangYml().CONFIRM_GUI_NO, plugin.configM.getLangYml().CONFIRM_GUI_NO_LORE)
                         .prompt();
 
                 refreshFlag = false;

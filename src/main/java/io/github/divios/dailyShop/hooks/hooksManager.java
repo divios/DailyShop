@@ -2,7 +2,7 @@ package io.github.divios.dailyShop.hooks;
 
 import com.vk2gpz.tokenenchant.api.TokenEnchantAPI;
 import io.github.divios.core_lib.hooks.vaultHook;
-import io.github.divios.dailyShop.DRShop;
+import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.utils.utils;
 import me.realized.tokenmanager.api.TokenManager;
 import me.xanium.gemseconomy.api.GemsEconomyAPI;
@@ -12,7 +12,7 @@ import org.black_ixx.playerpoints.PlayerPointsAPI;
 
 public class hooksManager {
 
-    private static final DRShop main = DRShop.getInstance();
+    private static final DailyShop main = DailyShop.getInstance();
     private static hooksManager instance = null;
 
     private hooksManager() {}

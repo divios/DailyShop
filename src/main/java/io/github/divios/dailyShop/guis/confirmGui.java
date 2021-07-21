@@ -7,19 +7,13 @@ import io.github.divios.core_lib.inventory.ItemButton;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.Msg;
-import io.github.divios.dailyShop.DRShop;
-import io.github.divios.dailyShop.conf_msg;
-import io.github.divios.dailyShop.utils.Collections;
+import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -27,27 +21,27 @@ import java.util.stream.IntStream;
 
 public class confirmGui{
 
-    private static final DRShop main = DRShop.getInstance();
+    private static final DailyShop main = DailyShop.getInstance();
 
     private static final ItemStack add1 = new ItemBuilder(XMaterial.GREEN_STAINED_GLASS_PANE)
-                .setName(conf_msg.CONFIRM_GUI_ADD_PANE + " 1");
+                .setName(main.configM.getLangYml().CONFIRM_GUI_ADD_PANE + " 1");
     private static final ItemStack add5 = new ItemBuilder(XMaterial.GREEN_STAINED_GLASS_PANE)
-                .setName(conf_msg.CONFIRM_GUI_ADD_PANE + " 5");
+                .setName(main.configM.getLangYml().CONFIRM_GUI_ADD_PANE + " 5");
     private static final ItemStack add10 = new ItemBuilder(XMaterial.GREEN_STAINED_GLASS_PANE)
-                .setName(conf_msg.CONFIRM_GUI_ADD_PANE + " 10");
+                .setName(main.configM.getLangYml().CONFIRM_GUI_ADD_PANE + " 10");
 
     private static final ItemStack set64 = new ItemBuilder(XMaterial.BLUE_STAINED_GLASS_PANE)
-                .setName(conf_msg.CONFIRM_GUI_ADD_PANE + " 64");
+                .setName(main.configM.getLangYml().CONFIRM_GUI_ADD_PANE + " 64");
 
     private static final ItemStack rem1 = new ItemBuilder(XMaterial.RED_STAINED_GLASS_PANE)
-                .setName(conf_msg.CONFIRM_GUI_REMOVE_PANE + " 1");
+                .setName(main.configM.getLangYml().CONFIRM_GUI_REMOVE_PANE + " 1");
     private static final ItemStack rem5 = new ItemBuilder(XMaterial.RED_STAINED_GLASS_PANE)
-                .setName(conf_msg.CONFIRM_GUI_REMOVE_PANE + " 5");
+                .setName(main.configM.getLangYml().CONFIRM_GUI_REMOVE_PANE + " 5");
     private static final ItemStack rem10 = new ItemBuilder(XMaterial.RED_STAINED_GLASS_PANE)
-                .setName(conf_msg.CONFIRM_GUI_REMOVE_PANE + " 10");
+                .setName(main.configM.getLangYml().CONFIRM_GUI_REMOVE_PANE + " 10");
 
     private static final ItemStack set1 = new ItemBuilder(XMaterial.BLUE_STAINED_GLASS_PANE)
-                .setName(conf_msg.CONFIRM_GUI_REMOVE_PANE + " 64");
+                .setName(main.configM.getLangYml().CONFIRM_GUI_REMOVE_PANE + " 64");
 
     private static final ItemStack blackGlass = new ItemBuilder(XMaterial.BLACK_STAINED_GLASS_PANE)
             .setName("&c");
@@ -168,14 +162,14 @@ public class confirmGui{
         }), 39);
 
         gui.addButton(53, ItemButton.create(new ItemBuilder(XMaterial.PLAYER_HEAD)
-                .setName(backLore).setLore(conf_msg.CONFIRM_GUI_RETURN_PANE_LORE)
+                .setName(backLore).setLore(main.configM.getLangYml().CONFIRM_GUI_RETURN_PANE_LORE)
                 .applyTexture("19bf3292e126a105b54eba713aa1b152d541a1d8938829c56364d178ed22bf"),
                 e -> b.accept((Player) e.getWhoClicked())));
 
         gui.addButton(49, ItemButton.create(new ItemBuilder(XMaterial.PLAYER_HEAD)
                 .applyTexture("2a3b8f681daad8bf436cae8da3fe8131f62a162ab81af639c3e0644aa6abac2f")
                 .setName(confirmLore)
-                .addLore(Msg.singletonMsg(conf_msg.SELL_ITEM_NAME).add("\\{price}",
+                .addLore(Msg.singletonMsg(main.configM.getLangYml().CONFIRM_GUI_BUY_NAME).add("\\{price}",
                         String.valueOf(amount * (type.equals(dShop.dShopT.buy) ?
                                 dItem.of(item).getBuyPrice().get().getPrice():
                                 dItem.of(item).getSellPrice().get().getPrice()))).build()),
@@ -202,7 +196,7 @@ public class confirmGui{
         gui.getInventory().setItem(49, new ItemBuilder(XMaterial.PLAYER_HEAD)
                 .applyTexture("2a3b8f681daad8bf436cae8da3fe8131f62a162ab81af639c3e0644aa6abac2f")
                 .setName(confirmLore)
-                .addLore(Msg.singletonMsg(conf_msg.SELL_ITEM_NAME).add("\\{price}",
+                .addLore(Msg.singletonMsg(main.configM.getLangYml().CONFIRM_GUI_SELL_ITEM).add("\\{price}",
                         String.valueOf(amount * (type.equals(dShop.dShopT.buy) ?
                                 dItem.of(item).getBuyPrice().get().getPrice():
                                 dItem.of(item).getSellPrice().get().getPrice()))).build()));
