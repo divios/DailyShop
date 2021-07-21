@@ -8,7 +8,7 @@ import de.tr7zw.nbtapi.NBTItem;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.Pair;
-import io.github.divios.dailyShop.DRShop;
+import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.economies.economy;
 import io.github.divios.dailyShop.economies.vault;
 import io.github.divios.dailyShop.utils.utils;
@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 public class dItem implements Serializable, Cloneable {
 
     private static final long serialVersionUID = 6529685098267757690L;
-    private static final DRShop plugin = DRShop.getInstance();
+    private static final DailyShop plugin = DailyShop.getInstance();
 
     private NBTItem item;
     private String shop = ""; // TODO: not sure

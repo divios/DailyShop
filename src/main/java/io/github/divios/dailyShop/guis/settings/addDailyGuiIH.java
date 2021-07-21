@@ -5,8 +5,7 @@ import io.github.divios.core_lib.inventory.InventoryGUI;
 import io.github.divios.core_lib.inventory.ItemButton;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.misc.ItemPrompt;
-import io.github.divios.dailyShop.DRShop;
-import io.github.divios.dailyShop.conf_msg;
+import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.guis.customizerguis.changeBundleItem;
 import io.github.divios.dailyShop.utils.utils;
 import io.github.divios.lib.dLib.dItem;
@@ -19,7 +18,7 @@ import java.util.stream.IntStream;
 
 public class addDailyGuiIH {
 
-    private static final DRShop plugin = DRShop.getInstance();
+    private static final DailyShop plugin = DailyShop.getInstance();
 
     private final Player p;
     private final dShop shop;
@@ -45,23 +44,29 @@ public class addDailyGuiIH {
 
     private void body() {
 
-        InventoryGUI gui = new InventoryGUI(plugin, 27, conf_msg.ADD_ITEMS_TITLE);
+        InventoryGUI gui = new InventoryGUI(plugin, 27, plugin.configM.getLangYml().ADD_ITEMS_TITLE);
 
         gui.addButton(ItemButton.create(new ItemBuilder(XMaterial.REDSTONE_TORCH)
-                        .setName(conf_msg.ADD_ITEMS_FROM_ZERO).addLore(conf_msg.ADD_ITEMS_FROM_ZERO_LORE)
+                        .setName(plugin.configM.getLangYml().ADD_ITEMS_FROM_ZERO)
+                        .addLore(plugin.configM.getLangYml().ADD_ITEMS_FROM_ZERO_LORE)
                 , e -> onComplete.accept(XMaterial.GRASS.parseItem())), 11);
 
         gui.addButton(ItemButton.create(new ItemBuilder(XMaterial.HOPPER)
-                        .setName(conf_msg.ADD_ITEMS_FROM_EXISTING).addLore(conf_msg.ADD_ITEMS_FROM_EXISTING_LORE)
+                        .setName(plugin.configM.getLangYml().ADD_ITEMS_FROM_EXISTING)
+                        .addLore(plugin.configM.getLangYml().ADD_ITEMS_FROM_EXISTING_LORE)
                 , e -> {
-                    new ItemPrompt(plugin, p, (player, itemStack) -> onComplete.accept(itemStack),
-                            player -> p.sendMessage(conf_msg.MSG_TIMER_EXPIRED)
-                            , conf_msg.MSG_ADD_ITEM_TITLE, conf_msg.MSG_ADD_ITEM_SUBTITLE);
+                    ItemPrompt.builder()
+                            .withPlayer(p)
+                            .withComplete(onComplete)
+                            .withTitle(plugin.configM.getLangYml().ADD_ITEMS_TITLE)
+                            .build();
+
                     p.closeInventory();
                 }), 15);
 
         gui.addButton(ItemButton.create(new ItemBuilder(XMaterial.CHEST_MINECART)
-                        .setName("&6&lCreate bundle").addLore("&7Create bundle")
+                        .setName(plugin.configM.getLangYml().ADD_ITEMS_FROM_BUNDLE)
+                        .addLore(plugin.configM.getLangYml().ADD_ITEMS_FROM_BUNDLE_LORE)
                 , e -> {
                     new changeBundleItem(p, dItem.of(XMaterial.CHEST_MINECART.parseItem()), shop,
                             (player, uuids) -> {
@@ -74,7 +79,8 @@ public class addDailyGuiIH {
                 }), 13);
 
         gui.addButton(ItemButton.create(new ItemBuilder(XMaterial.PLAYER_HEAD)
-                        .setName(conf_msg.ADD_ITEMS_RETURN).addLore(conf_msg.ADD_ITEMS_RETURN_LORE)
+                        .setName(plugin.configM.getLangYml().ADD_ITEMS_RETURN)
+                        .addLore(plugin.configM.getLangYml().ADD_ITEMS_RETURN_LORE)
                         .applyTexture("19bf3292e126a105b54eba713aa1b152d541a1d8938829c56364d178ed22bf")
                 , e -> back.run()), 22);
 

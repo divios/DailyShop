@@ -4,8 +4,7 @@ import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.core_lib.misc.Msg;
-import io.github.divios.dailyShop.DRShop;
-import io.github.divios.dailyShop.conf_msg;
+import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dPrice;
 import io.github.divios.lib.dLib.dShop;
@@ -14,6 +13,7 @@ import org.bukkit.inventory.ItemStack;
 public class shopItemsManagerLore implements loreStrategy {
 
     private final dShop.dShopT type;
+    private static final DailyShop plugin = DailyShop.getInstance();
 
     public shopItemsManagerLore(dShop.dShopT type) {
         this.type = type;
@@ -21,63 +21,35 @@ public class shopItemsManagerLore implements loreStrategy {
 
     @Override
     public void setLore(ItemStack item) {
-
-
-        ItemBuilder aux = new ItemBuilder(item)
-                .addLore(Msg.singletonMsg(conf_msg.BUY_GUI_ITEMS_LORE_BUY_PRICE)
-                        .add("\\{buyPrice}", "" +
-                                dItem.of(item).getBuyPrice().orElse(new dPrice(-1)).getVisualPrice()).build())
-
-                .addLore(Msg.singletonMsg(conf_msg.BUY_GUI_ITEMS_LORE_SELL_PRICE)
-                        .add("\\{sellPrice}", "" +
-                                dItem.of(item).getSellPrice().orElse(new dPrice(-1)).getVisualPrice()).build())
-
-                .addLore("");
-
-                if (dItem.of(item).getStock().isPresent() && dItem.of(item).getStock().get() != -1) {
-                    aux = aux.addLore(FormatUtils.color("&6Stock: &7") + dItem.of(item).getStock().get());
-                }
-
-                aux = aux.addLore(Msg.singletonMsg(conf_msg.BUY_GUI_ITEMS_LORE_CURRENCY)
-                        .add("\\{currency}", "" + dItem.of(item).getEconomy().getName()).build());
-
-                if (DRShop.getInstance().getConfig().getBoolean("enable-rarity", true))
-                    aux = aux.addLore(Msg.singletonMsg(conf_msg.BUY_GUI_ITEMS_LORE_RARITY)
-                        .add("\\{rarity}", dItem.of(item).getRarity().toString()).build());
-
-                aux = aux.addLore("")
-                .addLore(conf_msg.DAILY_ITEMS_MENU_ITEMS_LORE);
-
-        ItemUtils.translateAllItemData(aux, item);
-
+        ItemUtils.translateAllItemData(applyLore(item), item);
     }
 
     public ItemStack applyLore(ItemStack item) {
 
         ItemBuilder aux = new ItemBuilder(item)
-                .addLore(Msg.singletonMsg(conf_msg.BUY_GUI_ITEMS_LORE_BUY_PRICE)
+                .addLore("")
+                .addLore(Msg.singletonMsg(plugin.configM.getLangYml().DAILY_ITEMS_BUY_PRICE)
                         .add("\\{buyPrice}", "" +
                                 dItem.of(item).getBuyPrice().orElse(new dPrice(-1)).getVisualPrice()).build())
 
-                .addLore(Msg.singletonMsg(conf_msg.BUY_GUI_ITEMS_LORE_SELL_PRICE)
+                .addLore(Msg.singletonMsg(plugin.configM.getLangYml().DAILY_ITEMS_SELL_PRICE)
                         .add("\\{sellPrice}", "" +
                                 dItem.of(item).getSellPrice().orElse(new dPrice(-1)).getVisualPrice()).build())
 
                 .addLore("");
 
         if (dItem.of(item).getStock().isPresent() && dItem.of(item).getStock().get() != -1) {
-            aux = aux.addLore(FormatUtils.color("&6Stock: &7") + dItem.of(item).getStock().get());
+            aux = aux.addLore(plugin.configM.getLangYml().DAILY_ITEMS_STOCK + dItem.of(item).getStock().get());
         }
 
-        aux = aux.addLore(Msg.singletonMsg(conf_msg.BUY_GUI_ITEMS_LORE_CURRENCY)
+        aux = aux.addLore(Msg.singletonMsg(plugin.configM.getLangYml().DAILY_ITEMS_CURRENCY)
                 .add("\\{currency}", "" + dItem.of(item).getEconomy().getName()).build());
 
-        if (DRShop.getInstance().getConfig().getBoolean("enable-rarity", true))
-            aux = aux.addLore(Msg.singletonMsg(conf_msg.BUY_GUI_ITEMS_LORE_RARITY)
+        if (DailyShop.getInstance().getConfig().getBoolean("enable-rarity", true))
+            aux = aux.addLore(Msg.singletonMsg(plugin.configM.getLangYml().DAILY_ITEMS_RARITY)
                     .add("\\{rarity}", dItem.of(item).getRarity().toString()).build());
 
-        aux = aux.addLore("")
-                .addLore(conf_msg.DAILY_ITEMS_MENU_ITEMS_LORE);
+        aux = aux.addLore("").addLore(plugin.configM.getLangYml().DAILY_ITEMS_MANAGER_LORE);
 
         return aux;
     }

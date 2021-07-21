@@ -4,26 +4,36 @@ import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.core_lib.misc.Msg;
-import io.github.divios.dailyShop.conf_msg;
+import io.github.divios.dailyShop.DailyShop;
+import io.github.divios.dailyShop.utils.utils;
+import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.managers.shopsManager;
+import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 
-public class shopsManagerLore implements loreStrategy{
+public class shopsManagerLore implements loreStrategy {
 
     @Override
     public void setLore(ItemStack item) {
+        ItemUtils.translateAllItemData(applyLore(item), item);
+    }
 
-        String name = FormatUtils.stripColor(item.getItemMeta().getDisplayName());
+    @Override
+    public ItemStack applyLore(ItemStack item) {
 
-        List<String> placeholder = Msg.msgList(conf_msg.SHOPS_MANAGER_LORE)
-                .add("\\{amount}", "" + shopsManager.getInstance()
-                        .getShop(name).get().getTimer()).build();
+        String name = FormatUtils.stripColor(item.getItemMeta().getDisplayName().substring(4));
+        dShop shop = shopsManager.getInstance().getShop(name).get();
 
-        ItemUtils.translateAllItemData(new ItemBuilder(item)
-            .addLore(placeholder), item);
+        List<String> placeholder = Msg.msgList(
+                DailyShop.getInstance().configM.getLangYml().SHOPS_MANAGER_LORE)
+                .add("\\{timer}", "" + shop.getTimer())
+                .add("\\{amount}", String.valueOf(shop.getItems().size()))
+                .add("\\{c_timer}", utils.getDiffActualTimer(shop))
+                .build();
 
+        return new ItemBuilder(item).addLore(placeholder);
     }
 
     @Override

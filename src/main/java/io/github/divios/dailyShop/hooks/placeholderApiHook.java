@@ -1,7 +1,8 @@
 package io.github.divios.dailyShop.hooks;
 
 import io.github.divios.core_lib.misc.timeStampUtils;
-import io.github.divios.dailyShop.DRShop;
+import io.github.divios.dailyShop.DailyShop;
+import io.github.divios.dailyShop.utils.utils;
 import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.managers.shopsManager;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
@@ -11,7 +12,7 @@ import java.sql.Timestamp;
 
 class placeholderApiHook extends PlaceholderExpansion {
 
-    private static final DRShop plugin = DRShop.getInstance();
+    private static final DailyShop plugin = DailyShop.getInstance();
     private static placeholderApiHook instance = null;
 
     private placeholderApiHook() {
@@ -109,18 +110,7 @@ class placeholderApiHook extends PlaceholderExpansion {
 
         if (shop == null) return null;
 
-        int timeInSeconds = (int) (shop.getTimer() - timeStampUtils.diff(shop.getTimestamp(),
-                        new Timestamp(System.currentTimeMillis())));
-
-        int secondsLeft = timeInSeconds % 3600 % 60;
-        int minutes = (int) Math.floor(timeInSeconds % 3600 / 60F);
-        int hours = (int) Math.floor(timeInSeconds / 3600F);
-
-        String HH = ((hours < 10) ? "0" : "") + hours;
-        String MM = ((minutes < 10) ? "0" : "") + minutes;
-        String SS = ((secondsLeft < 10) ? "0" : "") + secondsLeft;
-
-        return HH + ":" + MM + ":" + SS;
+        return utils.getDiffActualTimer(shop);
 
     }
 

@@ -8,7 +8,7 @@ import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.misc.ChatPrompt;
 import io.github.divios.core_lib.misc.EventListener;
 import io.github.divios.core_lib.misc.Task;
-import io.github.divios.dailyShop.DRShop;
+import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.utils.utils;
 import io.github.divios.lib.dLib.dAction;
 import io.github.divios.lib.dLib.dShop;
@@ -22,7 +22,7 @@ import java.util.stream.IntStream;
 
 public class customizeAction {
 
-    private final static DRShop plugin = DRShop.getInstance();
+    private final static DailyShop plugin = DailyShop.getInstance();
 
     private final Player p;
     private final dShop shop;

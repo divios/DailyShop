@@ -4,8 +4,7 @@ import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.core_lib.misc.Msg;
 import io.github.divios.core_lib.misc.confirmIH;
-import io.github.divios.dailyShop.DRShop;
-import io.github.divios.dailyShop.conf_msg;
+import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.events.updateItemEvent;
 import io.github.divios.dailyShop.guis.confirmGui;
 import io.github.divios.dailyShop.utils.utils;
@@ -21,18 +20,18 @@ import java.util.stream.IntStream;
 
 public class transaction {
 
-    private final static DRShop main = DRShop.getInstance();
+    private final static DailyShop plugin = DailyShop.getInstance();
 
     public static void init(Player p, dItem item, dShop shop) {
 
         if (item.getStock().orElse(0) == -1) {
-            p.sendMessage(conf_msg.PREFIX + conf_msg.MSG_OUT_STOCK);
+            Msg.sendMsg(p, plugin.configM.getLangYml().MSG_OUT_STOCK);
             shop.openGui(p);
             return;
         }
 
         if (!item.getBuyPrice().isPresent() || item.getBuyPrice().get().getPrice() == -1) {
-            p.sendMessage(conf_msg.PREFIX + conf_msg.MSG_INVALID_BUY);
+            Msg.sendMsg(p, plugin.configM.getLangYml().MSG_INVALID_BUY);
             shop.openGui(p);
             return;
         }
@@ -46,9 +45,9 @@ public class transaction {
                         (item1, amount) -> {
                             transaction.initTransaction(p, new dItem(item1), amount, shop);
                         }, player -> shop.getGui().open(p),
-                        conf_msg.CONFIRM_GUI_BUY_NAME,      //TODO
-                        conf_msg.CONFIRM_MENU_YES,
-                        conf_msg.CONFIRM_MENU_NO);
+                        plugin.configM.getLangYml().CONFIRM_GUI_BUY_NAME,
+                        plugin.configM.getLangYml().CONFIRM_GUI_YES,
+                        plugin.configM.getLangYml().CONFIRM_GUI_NO);
 
             } else {
 
@@ -62,12 +61,13 @@ public class transaction {
                         })
                         .withItem(
                                 new ItemBuilder(item.getItem().clone()).addLore(
-                                        Msg.singletonMsg(conf_msg.SELL_ITEM_NAME).add("\\{price}",
+                                        Msg.singletonMsg(plugin.configM.getLangYml().CONFIRM_GUI_SELL_ITEM)
+                                                .add("\\{price}",
                                                 String.valueOf(item.getSellPrice().get().getPrice())).build()
                                 ))
-                        .withTitle(conf_msg.CONFIRM_GUI_BUY_NAME)
-                        .withConfirmLore(conf_msg.CONFIRM_MENU_YES)
-                        .withCancelLore(conf_msg.CONFIRM_MENU_NO)
+                        .withTitle(plugin.configM.getLangYml().CONFIRM_GUI_BUY_NAME)
+                        .withConfirmLore(plugin.configM.getLangYml().CONFIRM_GUI_YES, plugin.configM.getLangYml().CONFIRM_GUI_YES_LORE)
+                        .withCancelLore(plugin.configM.getLangYml().CONFIRM_GUI_NO, plugin.configM.getLangYml().CONFIRM_GUI_NO_LORE)
                         .prompt();
             }
         } else initTransaction(p, item, 1, shop);
@@ -95,7 +95,7 @@ public class transaction {
 
         s.getRunnables().forEach(Runnable::run);
 
-        p.sendMessage(Msg.singletonMsg(conf_msg.PREFIX + conf_msg.MSG_BUY_ITEM)
+        Msg.sendMsg(p, Msg.singletonMsg(plugin.configM.getLangYml().MSG_BUY_ITEM)
                 .add("\\{action}", "bought")
                 .add("\\{amount}", "" + item.getAmount())
                 .add("\\{price}", "" + s.getPrice())

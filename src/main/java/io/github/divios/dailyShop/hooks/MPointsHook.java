@@ -1,11 +1,11 @@
 package io.github.divios.dailyShop.hooks;
 
-import io.github.divios.dailyShop.DRShop;
+import io.github.divios.dailyShop.DailyShop;
 import me.yic.mpoints.MPointsAPI;
 
 public class MPointsHook {
 
-    private static final DRShop plugin = DRShop.getInstance();
+    private static final DailyShop plugin = DailyShop.getInstance();
     private static MPointsAPI api = null;
 
     public static void hook() {

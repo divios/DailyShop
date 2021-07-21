@@ -8,8 +8,7 @@ import io.github.divios.core_lib.inventory.inventoryUtils;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.FormatUtils;
-import io.github.divios.dailyShop.DRShop;
-import io.github.divios.dailyShop.conf_msg;
+import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.economies.*;
 import io.github.divios.dailyShop.hooks.hooksManager;
 import io.github.divios.lib.dLib.dItem;
@@ -26,7 +25,7 @@ import java.util.stream.IntStream;
 
 public class changeEcon{
 
-    private static final DRShop plugin = DRShop.getInstance();
+    private static final DailyShop plugin = DailyShop.getInstance();
 
     private static final GemsEconomyAPI gemsApi = hooksManager.getInstance().getGemsEcon();
     private static final TokenEnchantAPI tokenEnchantsApi = hooksManager.getInstance().getTokenEnchantApi();
@@ -52,7 +51,7 @@ public class changeEcon{
     private void init() {
 
 
-        InventoryGUI gui = new InventoryGUI(plugin, 54, conf_msg.CUSTOMIZE_CHANGE_ECON);
+        InventoryGUI gui = new InventoryGUI(plugin, 54, plugin.configM.getLangYml().CUSTOMIZE_ECON_NAME);
 
         IntStream.of(0,1, 7, 8, 9, 17, 36, 44, 45, 46, 52, 53)
                 .forEach(value ->

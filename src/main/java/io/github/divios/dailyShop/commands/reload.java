@@ -4,7 +4,7 @@ import com.cryptomorin.xseries.messages.Titles;
 import io.github.divios.core_lib.commands.abstractCommand;
 import io.github.divios.core_lib.commands.cmdTypes;
 import io.github.divios.core_lib.misc.FormatUtils;
-import io.github.divios.dailyShop.DRShop;
+import io.github.divios.dailyShop.DailyShop;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -45,7 +45,7 @@ public class reload extends abstractCommand {
 
     @Override
     public void run(CommandSender sender, List<String> args) {
-        DRShop.getInstance().reloadPlugin();
+        DailyShop.getInstance().reloadPlugin();
         Titles.sendTitle((Player) sender, 25, 40, 25,
                 FormatUtils.color("&a&lPlugin Reloaded"), "");
     }

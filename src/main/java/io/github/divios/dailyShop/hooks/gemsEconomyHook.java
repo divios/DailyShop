@@ -1,11 +1,11 @@
 package io.github.divios.dailyShop.hooks;
 
-import io.github.divios.dailyShop.DRShop;
+import io.github.divios.dailyShop.DailyShop;
 import me.xanium.gemseconomy.api.GemsEconomyAPI;
 
 class gemsEconomyHook {
 
-    private static final DRShop main = DRShop.getInstance();
+    private static final DailyShop main = DailyShop.getInstance();
     private static GemsEconomyAPI gemsEcon = null;
 
     private gemsEconomyHook() {};

@@ -1,0 +1,129 @@
+# Daily Shop Lang
+# Customize it to your liking
+# =========================================================
+lang:
+  confirm_gui:
+    buy_name: "&8Confirm Purchase"
+    sell_name: "&8Confirm sell"
+    action_name: "&8Confirm Action"
+    add_pane: "&8- &aAdd"
+    remove_pane: "&8- &cRemove"
+    return_name: "&8> &cReturn"
+    return_pane_lore: "&7Click to go back"
+    sell_item: "&8- &7Total money: &3{price}"
+    yes_name: "&8> &aConfirm"
+    yes_lore: "&8- &7Click here to confirm|&7this action"
+    no_name: "&8> &cCancel"
+    no_lore: "&8- &7Click here to abort|&7this action"
+  shops_manager:
+    title: "&8Shops Manager"
+    create: "&8> &aCreate Shop"
+    create_lore: "&7Create a new shop"
+    return: "&8> &cReturn"
+    return_lore: "&7Click to close the menu"
+    lore: "&7Shop basic info||&7Timer: &e{timer}|&7Current Timer: &e{c_timer}|&7Items: &e{amount}||&8- &9LEFT CLICK|  &7Manage items||&8- &9RIGHT CLICK|  &7Delete shop||&8- &9MIDDLE CLICK|  &7Change shop name||&8- &9SHIFT LEFT CLICK|  &7Customize shop||&8- &9Q + CLICK|   &7Change timer"
+  add_item_gui:
+    title: "&8Create Item"
+    from_zero: "&8> &cCreate item from zero"
+    from_zero_lore: "&7Create an item|&7from GRASS material"
+    from_existing: "&8> &aCreate item from existing"
+    from_existing_lore: "&7Create an item from|&7an existing item"
+    bundle: "&8> &6Bundle"
+    bundle_lore: "&7Create a bundle item"
+    return: "&cClose"
+    return_lore: "&7Close this menu"
+  daily_items_menu:
+    title: "&8Shop Manager"
+    add: "&8> &eAdd Item"
+    add_lore: "&7Click to add new item"
+    next: "&8> &3Next"
+    previous: "&8> &3Previous"
+    return: "&8> &cReturn"
+    buy_price: "&8- &7Buy price: &6{buyPrice}"
+    sell_price: "&8- &7Sell price: &6{sellPrice}"
+    stock: "&8- &7Stock: &6"
+    currency: "&8- &7Currency: &6{currency}"
+    rarity: "&8- &7Rarity: &6{rarity}"
+    buy_for: "&8- &7Buy for &6{price}"
+    manager_items_lore: "&8- &9LEFT CLICK|  &7Customize item||&8- &9RIGHT CLICK|  &7Delete item"
+  customize_menu:
+    title: "&8Customize Item"
+    craft: "&8> &aCraft item"
+    craft_lore: "&7Click to finish customizing|&7and add the item|&7to the shop"
+    return: "&8> &cClose"
+    return_lore: "&7Click to close the menu|&7and cancel all changes"
+    unavailable: "&cUNAVAILABLE"
+    econ:
+      name: "&f&lChange currency"
+      lore: "&7Click to change the item currency"
+    rarity:
+      name: "&7Click to change item rarity"
+      types: "&7Common|&dUncommon|&5Rare|&5Epic|&9Ancient|&eMythic|&cUnavailable"
+    search:
+      name: "&b&lSearch"
+      lore: "&7Click to search item"
+      cancel: "&c&lCancel search"
+    confirm_gui:
+      name: "&f&lEnable/disable confirm Gui"
+      lore: "&7Click to allow/disable the|&7confirm gui for this item||&6Status: &7{status}"
+    rename:
+      name: "&f&lRename"
+      lore: "&7Click to change the item name"
+      title: "&6&lInput the new lore"
+    material:
+      name: "&f&lChange Material"
+      lore: "&7Click to change the item material"
+    lore:
+      name: "&f&lChange Lore"
+      lore: "&6> Left Click: &7to add lore|&6> Right Click: &7to remove lore"
+      title: "&6&lInput new Lore"
+    enchants:
+      name: "&f&lEdit enchantments"
+      lore: "&6> Left Click: &7to add Enchantment|&6> Right Click: &7to remove Enchantment"
+    stock:
+      name: "&f&lSet Stock"
+      lore: "&6> Left Click: &7Enable feature|&7This option will make the item have limited stock"
+      lore_on: "&6> Left Click: &7Change current amount|&6> Right Click: &7Disable feature||&6Current stock: &7{amount}"
+    bundle:
+      name: "&f&lChange bundle items"
+      lore: "&6Right Click > &7To change items on the bundle"
+    durability:
+      name: "&fChange item Durability"
+      lore: "&6Right Click > &7To change items durability"
+    commands:
+      name: "&f&lSet Item Reward as Commands"
+      lore: "&6> Left Click: &7Enable feature||&7This option will execute|&7commands upon purchase"
+      name_on: "&f&lSet commands to run"
+      lore_on: "&6> Left Click: &7Add command to item|&6> Right Click: &7Remove command|&6> Shift Right Click: &7Disable feature|&7You can use %player%|&7to get the player's name"
+      title: "&e&lInput new command"
+    perms:
+      name: "&f&lEdit permissions"
+      lore: "&6Left click: &7Enable feature||&7Enable this option to allow players to purchase|&7this item if they have certain permissions"
+      lore_on: "&6> Left Click: &7Add Permission to the list|&6> Right Click: &7Remove permission from list|&6> Shift Right Click: &7Disable Feature"
+    set:
+      name: "&f&lEdit set"
+      lore: "&6> Left Click: &7Enable feature||&7Enable this option to lock the amount|&7of an item for a given price"
+      lore_on: "&6> Left Click: &7Change set amount|&6> Right Click: &7Disable Feature||&6Current amount: &7{amount}"
+    toggle:
+      enchants:
+        name: "&f&lMake enchant visible/invisible"
+        lore: "&6> Left Click: &7Toggle status||&6Status &7{status}"
+      attributes:
+        name: "&f&lMake attributes visible/invisible"
+        lore: "&6> Left Click: &7Toggle status||&6Status &7{status}"
+      effects:
+        name: "&f&lMake potion effects visible/invisible"
+        lore: "&6> Left Click: &7Toggle status||&6Status &7{status}"
+  messages:
+    buy_item: "&7You {action} {amount} of {item} for {price} {currency}"
+    not_enough_money: "&7Ey, You dont have enough money to buy this item!"
+    inventory_full: "&7Ey, You don't have enough space in your inventory!"
+    not_enough_items: "&7You dont have this item or the proper amount to sell it"
+    restock: "&7Renovated items of shop {shop}"
+    not_perms: "&7Ey, you dont have permission to do this!"
+    not_perms_item: "&7Ey, you don't have the perms necessary to buy this item"
+    out_of_stock: "&7That item is out of stock"
+    invalid_buy: "&7That item is out of stock"
+    invalid_sell: "&7That item cannot be sell"
+    currency_error: "&7That currency is not available anymore"
+    not_integer: "&7Not integer"

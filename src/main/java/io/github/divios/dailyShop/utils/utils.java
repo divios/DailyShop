@@ -3,8 +3,10 @@ package io.github.divios.dailyShop.utils;
 import com.cryptomorin.xseries.XMaterial;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.misc.FormatUtils;
-import io.github.divios.dailyShop.DRShop;
-import io.github.divios.dailyShop.conf_msg;
+import io.github.divios.core_lib.misc.Msg;
+import io.github.divios.core_lib.misc.timeStampUtils;
+import io.github.divios.dailyShop.DailyShop;
+import io.github.divios.lib.dLib.dShop;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -15,6 +17,7 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -22,7 +25,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class utils {
 
-    private static final DRShop main = DRShop.getInstance();
+    private static final DailyShop plugin = DailyShop.getInstance();
 
     public static void translateAllItemData(ItemStack recipient, ItemStack receiver) {
         try {
@@ -102,6 +105,7 @@ public class utils {
         return null;
     }
 
+    @Deprecated
     public static ItemStack getRedPane() {
         return new ItemBuilder(XMaterial.RED_STAINED_GLASS_PANE)
                 .setName("&cOut of stock"); //TODO
@@ -138,11 +142,11 @@ public class utils {
     }
 
     public static void noPerms(CommandSender p) {
-        p.sendMessage(conf_msg.PREFIX + conf_msg.MSG_NOT_PERMS);
+        Msg.sendMsg((Player) p, plugin.configM.getLangYml().MSG_NOT_PERMS);
     }
 
     public static void noCmd(CommandSender p) {
-        p.sendMessage(conf_msg.PREFIX + FormatUtils.color("&7Console is no allow to do this command"));
+        Msg.sendMsg((Player) p, "&7Console is no allow to do this command");
     }
 
 
@@ -213,7 +217,23 @@ public class utils {
     }
 
     public static void sendMsg(Player p, String s) {
-        p.sendMessage(conf_msg.PREFIX + FormatUtils.color(s));
+        Msg.sendMsg(p, s);
+    }
+
+    public static String getDiffActualTimer(dShop shop) {
+
+        int timeInSeconds = (int) (shop.getTimer() - timeStampUtils.diff(shop.getTimestamp(),
+                new Timestamp(System.currentTimeMillis())));
+
+        int secondsLeft = timeInSeconds % 3600 % 60;
+        int minutes = (int) Math.floor(timeInSeconds % 3600 / 60F);
+        int hours = (int) Math.floor(timeInSeconds / 3600F);
+
+        String HH = ((hours < 10) ? "0" : "") + hours;
+        String MM = ((minutes < 10) ? "0" : "") + minutes;
+        String SS = ((secondsLeft < 10) ? "0" : "") + secondsLeft;
+
+        return HH + ":" + MM + ":" + SS;
     }
 
 }

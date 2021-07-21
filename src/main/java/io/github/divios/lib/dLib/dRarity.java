@@ -2,13 +2,15 @@ package io.github.divios.lib.dLib;
 
 import com.cryptomorin.xseries.XMaterial;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
-import io.github.divios.dailyShop.conf_msg;
+import io.github.divios.dailyShop.DailyShop;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class dRarity {
+
+    private static final DailyShop plugin = DailyShop.getInstance();
 
     private transient static final List<ItemStack> items = new ArrayList<ItemStack>() {{
         add(XMaterial.GRAY_DYE.parseItem());
@@ -55,7 +57,7 @@ public class dRarity {
      */
     private String getRarityLore() {
         try {
-            return conf_msg.RARITY_NAMES.get(rarity.ordinal());
+            return plugin.configM.getLangYml().CUSTOMIZE_RARITY_TYPES.get(rarity.ordinal());
         } catch (Exception e) {
             return rarity.name();
         }

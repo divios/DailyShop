@@ -12,9 +12,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class Manager extends abstractCommand {
+public class manager extends abstractCommand {
 
-    public Manager() {
+    public manager() {
         super(cmdTypes.PLAYERS);
     }
 
@@ -25,7 +25,9 @@ public class Manager extends abstractCommand {
 
     @Override
     public boolean validArgs(List<String> args) {
-        return true;
+        if (args.size() == 0) return true;
+
+        return Bukkit.getPlayer(args.get(0)) != null;
     }
 
     @Override
