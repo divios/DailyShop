@@ -1,12 +1,12 @@
 package io.github.divios.dailyShop.hooks;
 
-import io.github.divios.dailyShop.DRShop;
+import io.github.divios.dailyShop.DailyShop;
 import org.black_ixx.playerpoints.PlayerPoints;
 import org.black_ixx.playerpoints.PlayerPointsAPI;
 
 public class playerPointsHook {
 
-    private static final DRShop plugin = DRShop.getInstance();
+    private static final DailyShop plugin = DailyShop.getInstance();
     private static PlayerPointsAPI api = null;
 
     public static void hook() {

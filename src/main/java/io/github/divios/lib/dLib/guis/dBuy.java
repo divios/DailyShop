@@ -2,7 +2,7 @@ package io.github.divios.lib.dLib.guis;
 
 import io.github.divios.core_lib.misc.EventListener;
 import io.github.divios.core_lib.misc.FormatUtils;
-import io.github.divios.dailyShop.conf_msg;
+import io.github.divios.core_lib.misc.Msg;
 import io.github.divios.dailyShop.events.updateItemEvent;
 import io.github.divios.dailyShop.lorestategy.shopItemsLore;
 import io.github.divios.dailyShop.transaction.sellTransaction;
@@ -41,9 +41,8 @@ public class dBuy extends dGui {
     public void closeAll() {
         new ArrayList<>(inv.getViewers())
                 .forEach(humanEntity -> {
-                    humanEntity.sendMessage(conf_msg.PREFIX +
-                            FormatUtils.color("This shop is now under maintenance, " +
-                                    "come again in a few minutes"));
+                    Msg.sendMsg((Player) humanEntity, "This shop is now under maintenance, " +
+                                    "come again in a few minutes");
                     humanEntity.closeInventory();
                 });
     }
@@ -150,12 +149,14 @@ public class dBuy extends dGui {
         });
     }
 
+
     @Override
     protected void destroy() {
         closeAll();
         clickEvent.unregister();
         dragEvent.unregister();
         openEvent.unregister();
+        if (updateTask != null) updateTask.stop();
     }
 
 

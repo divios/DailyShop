@@ -1,11 +1,11 @@
 package io.github.divios.dailyShop.hooks;
 
 import com.vk2gpz.tokenenchant.api.TokenEnchantAPI;
-import io.github.divios.dailyShop.DRShop;
+import io.github.divios.dailyShop.DailyShop;
 
 public class tokenEnchantsHook {
 
-    private static final DRShop main = DRShop.getInstance();
+    private static final DailyShop main = DailyShop.getInstance();
     private static TokenEnchantAPI teAPI = null;
 
     static void hook() {

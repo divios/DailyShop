@@ -1,9 +1,8 @@
 package io.github.divios.dailyShop.tasks;
 
-import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.Task;
-import io.github.divios.dailyShop.DRShop;
+import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.lib.managers.shopsManager;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.Inventory;
@@ -13,7 +12,7 @@ import java.util.stream.IntStream;
 
 public class updatePlaceholdersTask {
 
-    public static final DRShop plugin = DRShop.getInstance();
+    public static final DailyShop plugin = DailyShop.getInstance();
     public static final shopsManager SManager = shopsManager.getInstance();
 
     private static boolean load = false;

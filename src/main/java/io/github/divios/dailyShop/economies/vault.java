@@ -1,6 +1,6 @@
 package io.github.divios.dailyShop.economies;
 
-import io.github.divios.dailyShop.conf_msg;
+import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.hooks.hooksManager;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.entity.Player;
@@ -14,7 +14,7 @@ public class vault extends economy {
     }
 
     public vault(String currency) {
-        super(currency, conf_msg.VAULT_CUSTOM_NAME);
+        super(currency, DailyShop.getInstance().configM.getSettingsYml().VAULT_NAME);
     }
 
     @Override

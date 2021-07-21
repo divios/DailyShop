@@ -2,19 +2,15 @@ package io.github.divios.lib.dLib;
 
 import io.github.divios.core_lib.inventory.dynamicGui;
 import io.github.divios.core_lib.misc.Msg;
-import io.github.divios.core_lib.misc.Task;
-import io.github.divios.dailyShop.DRShop;
+import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.lorestategy.loreStrategy;
 import io.github.divios.dailyShop.lorestategy.shopItemsLore;
-import io.github.divios.dailyShop.utils.utils;
 import io.github.divios.lib.managers.shopsManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 public enum dAction {
 
@@ -39,7 +35,7 @@ public enum dAction {
                         .collect(Collectors.toList()))
                 .title(integer -> "&6&l" + shopsManager.getInstance().getShop(s).get().getName() + " items")
                 .back(player -> shopsManager.getInstance().getShop(s).get().openGui(p))
-                .plugin(DRShop.getInstance())
+                .plugin(DailyShop.getInstance())
                 .setSearch(false)
                 .open(p);
     });

@@ -4,7 +4,7 @@ import io.github.divios.core_lib.commands.CommandManager;
 import io.github.divios.core_lib.commands.abstractCommand;
 import io.github.divios.core_lib.commands.cmdTypes;
 import io.github.divios.core_lib.misc.FormatUtils;
-import io.github.divios.dailyShop.DRShop;
+import io.github.divios.dailyShop.DailyShop;
 import org.bukkit.command.CommandSender;
 
 import java.util.ArrayList;
@@ -46,7 +46,7 @@ public class helpCmd extends abstractCommand {
     public void run(CommandSender sender, List<String> args) {
         sender.sendMessage("");
         sender.sendMessage(FormatUtils.color("&6&lDailyShop Help &7Version &6" +
-                DRShop.getInstance().getDescription().getVersion()));
+                DailyShop.getInstance().getDescription().getVersion()));
         CommandManager.getCmds().stream()
                 .filter(absC -> {
                     for (String perms : absC.getPerms())

@@ -3,7 +3,7 @@ package io.github.divios.lib.dLib.guis;
 import io.github.divios.core_lib.inventory.inventoryUtils;
 import io.github.divios.core_lib.misc.EventListener;
 import io.github.divios.core_lib.misc.FormatUtils;
-import io.github.divios.dailyShop.conf_msg;
+import io.github.divios.core_lib.misc.Msg;
 import io.github.divios.dailyShop.events.updateItemEvent;
 import io.github.divios.dailyShop.utils.utils;
 import io.github.divios.lib.dLib.dGui;
@@ -102,8 +102,7 @@ public class dSell extends dGui {
                             if (utils.isEmpty(e.getCurrentItem())) return;
 
                             e.setCancelled(true);
-                            e.getWhoClicked().sendMessage(conf_msg.PREFIX +
-                                    FormatUtils.color("&7This shop doesnt admit that item"));
+                            Msg.sendMsg((Player) e.getWhoClicked(), "&7This shop doesnt admit that item");
                         }
 
                         else if (e.isShiftClick()) {          // Si hace shift click
