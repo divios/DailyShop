@@ -1,14 +1,11 @@
 package io.github.divios.dailyShop.hooks;
 
-import io.github.divios.core_lib.misc.timeStampUtils;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.utils.utils;
 import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.managers.shopsManager;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.entity.Player;
-
-import java.sql.Timestamp;
 
 class placeholderApiHook extends PlaceholderExpansion {
 

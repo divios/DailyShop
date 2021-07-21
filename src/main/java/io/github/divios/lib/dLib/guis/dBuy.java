@@ -1,7 +1,6 @@
 package io.github.divios.lib.dLib.guis;
 
 import io.github.divios.core_lib.misc.EventListener;
-import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.core_lib.misc.Msg;
 import io.github.divios.dailyShop.events.updateItemEvent;
 import io.github.divios.dailyShop.lorestategy.shopItemsLore;
