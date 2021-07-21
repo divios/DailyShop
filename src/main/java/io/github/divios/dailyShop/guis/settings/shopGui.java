@@ -6,23 +6,17 @@ import io.github.divios.core_lib.inventory.ItemButton;
 import io.github.divios.core_lib.inventory.builder.inventoryPopulator;
 import io.github.divios.core_lib.inventory.builder.paginatedGui;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
-import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.Task;
 import io.github.divios.core_lib.misc.confirmIH;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.guis.customizerguis.customizerMainGuiIH;
-import io.github.divios.dailyShop.lorestategy.loreStrategy;
 import io.github.divios.dailyShop.lorestategy.shopItemsManagerLore;
-import io.github.divios.dailyShop.lorestategy.shopsManagerLore;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.managers.shopsManager;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 public class shopGui {

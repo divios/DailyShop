@@ -2,7 +2,6 @@ package io.github.divios.dailyShop.lorestategy;
 
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
-import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.core_lib.misc.Msg;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.lib.dLib.dItem;
