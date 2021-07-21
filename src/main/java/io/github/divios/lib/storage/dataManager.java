@@ -4,12 +4,11 @@ import io.github.divios.core_lib.database.DataManagerAbstract;
 import io.github.divios.core_lib.database.DatabaseConnector;
 import io.github.divios.core_lib.database.SQLiteConnector;
 import io.github.divios.core_lib.misc.timeStampUtils;
-import io.github.divios.dailyShop.DRShop;
+import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.lib.dLib.dGui;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.storage.migrations.initialMigration;
-import org.bukkit.plugin.Plugin;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -22,17 +21,17 @@ import java.util.concurrent.CompletableFuture;
 
 public class dataManager extends DataManagerAbstract {
 
-    private static final DRShop plugin = DRShop.getInstance();
+    private static final DailyShop plugin = DailyShop.getInstance();
 
     private static dataManager instance = null;
 
-    private dataManager(DatabaseConnector connection, Plugin plugin) {
+    private dataManager(DatabaseConnector connection) {
         super(connection);
     }
 
     public static dataManager getInstance() {
         if (instance == null) {
-            instance = new dataManager(new SQLiteConnector(plugin), plugin);
+            instance = new dataManager(new SQLiteConnector(plugin));
             instance.databaseConnector.connect(connection ->
                     initialMigration.migrate(connection, instance.getTablePrefix()));
         }
@@ -216,7 +215,7 @@ public class dataManager extends DataManagerAbstract {
         }));
     }
 
-    public void updateTimer(String name, int timer) {  //TODO: implementar cambiarlo en shopsGui 
+    public void updateTimer(String name, int timer) {
         this.async(() -> this.databaseConnector.connect(connection -> {
             String updateTimeStamp = "UPDATE " + this.getTablePrefix() + "active_shops " +
                     "SET timer = ? WHERE name = ?";

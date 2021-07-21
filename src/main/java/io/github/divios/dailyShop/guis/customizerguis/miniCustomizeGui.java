@@ -7,7 +7,7 @@ import io.github.divios.core_lib.inventory.materialsPrompt;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.*;
-import io.github.divios.dailyShop.DRShop;
+import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.lib.dLib.dAction;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
@@ -24,7 +24,7 @@ import java.util.stream.IntStream;
 
 public class miniCustomizeGui {
 
-    private static final DRShop plugin = DRShop.getInstance();
+    private static final DailyShop plugin = DailyShop.getInstance();
 
     private final Player p;
     private ItemStack item;

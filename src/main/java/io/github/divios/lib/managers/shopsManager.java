@@ -1,7 +1,7 @@
 package io.github.divios.lib.managers;
 
 import io.github.divios.core_lib.misc.Task;
-import io.github.divios.dailyShop.DRShop;
+import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.events.createdShopEvent;
 import io.github.divios.dailyShop.events.deletedShopEvent;
 import io.github.divios.lib.dLib.dShop;
@@ -54,7 +54,7 @@ public class shopsManager {
     public synchronized void createShop(String name, dShop.dShopT type) {
         dShop newShop = new dShop(name, type);
         shops.add(newShop);
-        Task.syncDelayed(DRShop.getInstance(), () ->
+        Task.syncDelayed(DailyShop.getInstance(), () ->
                 Bukkit.getPluginManager().callEvent(new createdShopEvent(newShop)));
         dataManager.getInstance().createShop(newShop);
     }

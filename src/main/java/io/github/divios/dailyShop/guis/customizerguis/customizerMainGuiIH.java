@@ -8,8 +8,7 @@ import io.github.divios.core_lib.misc.ChatPrompt;
 import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.core_lib.misc.Msg;
 import io.github.divios.core_lib.misc.Task;
-import io.github.divios.dailyShop.DRShop;
-import io.github.divios.dailyShop.conf_msg;
+import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.guis.settings.shopGui;
 import io.github.divios.dailyShop.utils.utils;
 import io.github.divios.lib.dLib.dItem;
@@ -33,7 +32,7 @@ import java.util.stream.IntStream;
 
 public class customizerMainGuiIH implements InventoryHolder, Listener {
 
-    private static final DRShop main = DRShop.getInstance();
+    private static final DailyShop main = DailyShop.getInstance();
     private static customizerMainGuiIH instance = null;
     private dItem ditem;
     private dShop shop;
@@ -62,13 +61,14 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
 
     private Inventory createInventory() {
 
-        Inventory inv = Bukkit.createInventory(instance, 54, conf_msg.CUSTOMIZE_GUI_TITLE);
+        Inventory inv = Bukkit.createInventory(instance, 54, FormatUtils.color(main.configM.getLangYml().CUSTOMIZE_TITLE));
 
         ItemStack barrier = new ItemBuilder(XMaterial.BARRIER.parseItem())
-                .setName(conf_msg.CUSTOMIZE_UNAVAILABLE);
+                .setName(main.configM.getLangYml().CUSTOMIZE_UNAVAILABLE);
 
         ItemStack changeEcon = new ItemBuilder(XMaterial.PLAYER_HEAD)     // Change econ
-                .setName(conf_msg.CUSTOMIZE_CHANGE_ECON).addLore(conf_msg.CUSTOMIZE_CHANGE_ECON_LORE)
+                .setName(main.configM.getLangYml().CUSTOMIZE_ECON_NAME)
+                .addLore(main.configM.getLangYml().CUSTOMIZE_ECON_LORE)
                 .addLore("", "&7Current: &6" + ditem.getEconomy().getName())
                 .applyTexture("e36e94f6c34a35465fce4a90f2e25976389eb9709a12273574ff70fd4daa6852");
 
@@ -79,58 +79,62 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
                 .addLore("", "&6Left Click: &7Change buy price", "&6Right Click: &7Change sell price");
 
         ItemStack changeRarity = new ItemBuilder(ditem.getRarity().getAsItem())         // Change rarity
-                .addLore(conf_msg.CUSTOMIZE_CHANGE_RARITY_LORE);
+                .addLore(main.configM.getLangYml().CUSTOMIZE_RARITY_NAME);
 
         ItemStack changeConfirmGui = new ItemBuilder(XMaterial.LEVER.parseItem())
-                .setName(conf_msg.CUSTOMIZE_CHANGE_CONFIRM_GUI)
-                .setLore(Msg.msgList(conf_msg.CUSTOMIZE_CHANGE_CONFIRM_GUI_LORE)
+                .setName(main.configM.getLangYml().CUSTOMIZE_CONFIRM_GUI_NAME)
+                .setLore(Msg.msgList(main.configM.getLangYml().CUSTOMIZE_CONFIRM_GUI_LORE)
                         .add("\\{status}", "" + ditem.getConfirm_gui()).build());
 
         ItemStack customizerItem = new ItemBuilder(XMaterial.PLAYER_HEAD)   //Done button (anvil)
-                .setName(conf_msg.CUSTOMIZE_CRAFT).addLore(conf_msg.CUSTOMIZE_CRAFT_LORE)
+                .setName(main.configM.getLangYml().CUSTOMIZE_CRAFT)
+                .addLore(main.configM.getLangYml().CUSTOMIZE_CRAFT_LORE)
                 .applyTexture("2a3b8f681daad8bf436cae8da3fe8131f62a162ab81af639c3e0644aa6abac2f");
 
         ItemStack returnItem = new ItemBuilder(XMaterial.PLAYER_HEAD)    //Back sign
-                .setName(conf_msg.CUSTOMIZE_RETURN).setLore(conf_msg.CUSTOMIZE_RETURN_LORE)
+                .setName(main.configM.getLangYml().CUSTOMIZE_RETURN)
+                .setLore(main.configM.getLangYml().CUSTOMIZE_RETURN_LORE)
                 .applyTexture("19bf3292e126a105b54eba713aa1b152d541a1d8938829c56364d178ed22bf");
 
         ItemStack rename = new ItemBuilder(XMaterial.NAME_TAG)   //Rename item
-                .setName(conf_msg.CUSTOMIZE_RENAME).setLore(conf_msg.CUSTOMIZE_RENAME_LORE);
+                .setName(main.configM.getLangYml().CUSTOMIZE_RENAME_NAME)
+                .setLore(main.configM.getLangYml().CUSTOMIZE_RENAME_LORE);
 
         ItemStack changeMaterial = new ItemBuilder(XMaterial.SLIME_BALL)   //Change material
-                .setName(conf_msg.CUSTOMIZE_MATERIAL).setLore(conf_msg.CUSTOMIZE_MATERIAL_LORE);
+                .setName(main.configM.getLangYml().CUSTOMIZE_MATERIAL_NAME)
+                .setLore(main.configM.getLangYml().CUSTOMIZE_MATERIAL_LORE);
 
         ItemStack changeLore = new ItemBuilder(XMaterial.PLAYER_HEAD)   //Change lore
-                .setName(conf_msg.CUSTOMIZE_LORE)
-                .addLore(conf_msg.CUSTOMIZE_LORE_LORE)
+                .setName(main.configM.getLangYml().CUSTOMIZE_LORE_NAME)
+                .addLore(main.configM.getLangYml().CUSTOMIZE_LORE_LORE)
                 .addLore("")
                 .addLore(ItemUtils.getLore(ditem.getItem()))
                 .applyTexture("c6692f99cc6d78242304110553589484298b2e4a0233b76753f888e207ef5");
 
         ItemStack editEnchantments = new ItemBuilder(XMaterial.ENCHANTING_TABLE)  //Change enchants
-                .setName(conf_msg.CUSTOMIZE_ENCHANTS)
-                .addLore(conf_msg.CUSTOMIZE_ENCHANTS_LORE)
+                .setName(main.configM.getLangYml().CUSTOMIZE_ENCHANTS_NAME)
+                .addLore(main.configM.getLangYml().CUSTOMIZE_ENCHANTS_LORE)
                 .addLore(ditem.getItem().getEnchantments().entrySet().stream()
                         .map(entry -> "&f&l" + entry.getKey()
                                 .getName() + ":" + entry.getValue()).collect(Collectors.toList()));
 
         ItemStack setStock = new ItemBuilder(XMaterial.STONE_BUTTON)  //Change stock
-                .setName(conf_msg.CUSTOMIZE_AMOUNT)
+                .setName(main.configM.getLangYml().CUSTOMIZE_STOCK_NAME)
                 .setLore(ditem.getStock().isPresent() ?
-                        Msg.msgList(conf_msg.CUSTOMIZE_AMOUNT_LORE).add("\\{amount}",
+                        Msg.msgList(main.configM.getLangYml().CUSTOMIZE_STOCK_LORE_ON).add("\\{amount}",
                                 "" + ditem.getStock().get()).build() :
-                        conf_msg.CUSTOMIZE_AMOUNT_ENABLE_LORE);
+                        main.configM.getLangYml().CUSTOMIZE_STOCK_LORE);
 
         ItemStack addRemoveCommands = XMaterial.COMMAND_BLOCK.parseItem();    //Change command item
         if (!ditem.getCommands().isPresent()) {
             addRemoveCommands = new ItemBuilder(addRemoveCommands)
-                    .setName(conf_msg.CUSTOMIZE_ENABLE_COMMANDS)
-                    .setLore(Msg.msgList(conf_msg.CUSTOMIZE_ENABLE_COMMANDS_LORE)
+                    .setName(main.configM.getLangYml().CUSTOMIZE_COMMANDS_NAME)
+                    .setLore(Msg.msgList(main.configM.getLangYml().CUSTOMIZE_COMMANDS_LORE)
                         .add("\\{status}", "false").build());
         } else {                                                                //add/remove commands
             addRemoveCommands = new ItemBuilder(addRemoveCommands)
-                    .setName(conf_msg.CUSTOMIZE_CHANGE_COMMANDS)
-                    .setLore(conf_msg.CUSTOMIZE_CHANGE_COMMANDS_LORE)
+                    .setName(main.configM.getLangYml().CUSTOMIZE_COMMANDS_NAME_ON)
+                    .setLore(main.configM.getLangYml().CUSTOMIZE_COMMANDS_LORE_ON)
                     .addLore("")
                     .addLore(ditem.getCommands().get()
                             .stream().map(s -> FormatUtils.color("&f&l" + s)).collect(Collectors.toList()));
@@ -138,15 +142,15 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
 
 
         ItemStack perms = new ItemBuilder(XMaterial.PLAYER_HEAD.parseItem())   //add remove perms
-                .setName(conf_msg.CUSTOMIZE_PERMS)
+                .setName(main.configM.getLangYml().CUSTOMIZE_PERMS_NAME)
                 .applyTexture("4e68435e9dd05dbe2e7bb45c5d3c95d0c9d8cb4c062d30e9b4aed1ccfa65a49b");
 
         if (!ditem.getPerms().isPresent()) {
-            perms = new ItemBuilder(perms).addLore(conf_msg.CUSTOMIZE_ENABLE_PERMS_LORE);
+            perms = new ItemBuilder(perms).addLore(main.configM.getLangYml().CUSTOMIZE_PERMS_LORE);
         }
         else {
             perms = new ItemBuilder(perms)
-                    .addLore(conf_msg.CUSTOMIZE_CHANGE_PERMS_LORE)
+                    .addLore(main.configM.getLangYml().CUSTOMIZE_PERMS_LORE_ON)
                     .addLore("")
                     .addLore(ditem.getPerms().get()
                             .stream().map(s -> FormatUtils.color("&f&l" + s))
@@ -154,16 +158,16 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
         }
 
         ItemStack setOfItems = new ItemBuilder(XMaterial.CHEST_MINECART)    //set of items
-                .setName(conf_msg.CUSTOMIZE_SET);
+                .setName(main.configM.getLangYml().CUSTOMIZE_SET_NAME);
 
         if (ditem.getSetItems().isPresent()) {
             setOfItems = new ItemBuilder(setOfItems).addLore(
-                    Msg.msgList(conf_msg.CUSTOMIZE_CHANGE_SET_LORE).add("\\{amount}",
+                    Msg.msgList(main.configM.getLangYml().CUSTOMIZE_SET_LORE_ON).add("\\{amount}",
                     "" + ditem.getSetItems().get()).build());
 
         } else {
             setOfItems = new ItemBuilder(setOfItems)
-                    .addLore(conf_msg.CUSTOMIZE_ENABLE_SET_LORE);
+                    .addLore(main.configM.getLangYml().CUSTOMIZE_SET_LORE);
         }
 
         ItemStack bundle = new ItemBuilder(XMaterial.ITEM_FRAME)                //bundle
@@ -175,28 +179,28 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
                         .collect(Collectors.toList()));
 
         ItemStack durability = new ItemBuilder(XMaterial.DAMAGED_ANVIL)
-                .setName(conf_msg.CUSTOMIZE_DURABILITY)
-                .setLore(conf_msg.CUSTOMIZE_DURABILITY_LORE);
+                .setName(main.configM.getLangYml().CUSTOMIZE_DURABILITY_NAME)
+                .setLore(main.configM.getLangYml().CUSTOMIZE_DURABILITY_LORE);
 
         ItemFlag f = ItemFlag.HIDE_ENCHANTS;
 
         ItemStack hideEnchants = new ItemBuilder(XMaterial.BLACK_BANNER)   //add/remove enchants visible
-                .setName(conf_msg.CUSTOMIZE_TOGGLE_ENCHANTS)
-                .setLore(Msg.msgList(conf_msg.CUSTOMIZE_TOGGLE_ENCHANTS_LORE)
+                .setName(main.configM.getLangYml().CUSTOMIZE_TOGGLE_ENCHANTS_NAME)
+                .setLore(Msg.msgList(main.configM.getLangYml().CUSTOMIZE_TOGGLE_ENCHANTS_LORE)
                 .add("\\{status}", "" + ditem.hasFlag(f)).build());
 
         f = ItemFlag.HIDE_ATTRIBUTES;
 
         ItemStack hideAtibutes = new ItemBuilder(XMaterial.BOOKSHELF)    //add/remove attributes
-                .setName(conf_msg.CUSTOMIZE_TOGGLE_ATTRIBUTES)
-                .setLore(Msg.msgList(conf_msg.CUSTOMIZE_TOGGLE_ATTRIBUTES_LORE)
+                .setName(main.configM.getLangYml().CUSTOMIZE_TOGGLE_ATTIBUTES_NAME)
+                .setLore(Msg.msgList(main.configM.getLangYml().CUSTOMIZE_TOGGLE_ATTIBUTES_LORE)
                     .add("\\{status}", "" + ditem.hasFlag(f)).build());
 
         f = ItemFlag.HIDE_POTION_EFFECTS;
 
         ItemStack hideEffects = new ItemBuilder(XMaterial.CAULDRON)     //add/remove effects
-                .setName(conf_msg.CUSTOMIZE_TOGGLE_EFFECTS)
-                .addLore(Msg.msgList(conf_msg.CUSTOMIZE_TOGGLE_EFFECTS_LORE)
+                .setName(main.configM.getLangYml().CUSTOMIZE_TOGGLE_EFFECTS_NAME)
+                .addLore(Msg.msgList(main.configM.getLangYml().CUSTOMIZE_TOGGLE_EFFECTS_LORE)
                     .add("\\{status}", "" + ditem.hasFlag(f)).build());
 
         Integer[] auxList = {3, 5, 13};
@@ -222,7 +226,7 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
         inv.setItem(5, ditem.getItem());
         inv.setItem(23, changeEcon);
         inv.setItem(24, changePrice);
-        if(conf_msg.ENABLE_RARITY) inv.setItem(25, changeRarity);
+        inv.setItem(25, changeRarity);
         inv.setItem(34, changeConfirmGui);
         inv.setItem(10, rename);
         inv.setItem(11, changeMaterial);
@@ -328,7 +332,7 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
                     }
                     Task.syncDelayed(main, () -> refresh(p));
                 },  cause -> Task.syncDelayed(main, () -> refresh(p)),
-                        conf_msg.CUSTOMIZE_RENAME_ANVIL_TITLE, "");
+                        main.configM.getLangYml().CUSTOMIZE_RENAME_TITLE, "");
         }
 
         else if (e.getSlot() == 21) { // Boton de cambiar enchants
@@ -341,7 +345,7 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
             if (e.isLeftClick()) {
                 ChatPrompt.prompt(main, p, (s) -> {
                     if (utils.isInteger(s)) ditem.setStock(Integer.parseInt(s));
-                    else utils.sendMsg(p, conf_msg.MSG_NOT_INTEGER);
+                    else utils.sendMsg(p, main.configM.getLangYml().MSG_NOT_INTEGER);
 
                     Task.syncDelayed(main, () -> refresh(p));
                 },  cause -> Task.syncDelayed(main, () -> refresh(p)), "&c&lInput Stock number", "");
@@ -354,8 +358,8 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
 
         else if (e.getSlot() == 46 && !ditem.getStock().isPresent() && e.isLeftClick()) { // Boton de cambiar Stock
             if (ditem.getSetItems().isPresent()) {
-                p.sendMessage(conf_msg.PREFIX + FormatUtils.color("&7You can't enable this when " +
-                        "the set feature is enable"));
+                Msg.sendMsg(p, "&7You can't enable this when " +
+                        "the set feature is enable");
                 return;
             }
             ditem.setStock(1);
@@ -397,7 +401,7 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
 
             ChatPrompt.prompt(main, p, (s) -> {
                 if (utils.isShort(s)) ditem.setDurability(Short.parseShort(s), false);
-                else p.sendMessage(conf_msg.PREFIX + conf_msg.MSG_NOT_INTEGER);
+                else Msg.sendMsg(p, main.configM.getLangYml().MSG_NOT_INTEGER);
 
                 Task.syncDelayed(main, () -> refresh(p));
             },  cause -> Task.syncDelayed(main, () -> refresh(p)), "&c&lInput Durability", "");
@@ -429,18 +433,19 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
 
         else if (e.getSlot() == 19 && ditem.getPerms().isPresent()) {  // Boton de añadir/quitar perms
             if (e.isLeftClick()) {
-                ChatPrompt.prompt(main, p, (s) -> {
-
-                    if (!s.isEmpty()) {
-                        List<String> perms = ditem.getPerms().get();
-                        perms.add(s);
-                        ditem.setPerms(perms);
-                    }
-                    Task.syncDelayed(main, () -> refresh(p));
-                }, cause -> {
-                    p.sendMessage(conf_msg.PREFIX + conf_msg.MSG_TIMER_EXPIRED);
-                    Task.syncDelayed(main, () -> refresh(p));
-                }, "&a&lInput permission)", "");
+                ChatPrompt.builder()
+                        .withPlayer(p)
+                        .withResponse(s -> {
+                            if (!s.isEmpty()) {
+                                List<String> perms = ditem.getPerms().get();
+                                perms.add(s);
+                                ditem.setPerms(perms);
+                            }
+                            Task.syncDelayed(main, () -> refresh(p));
+                        })
+                        .withCancel(cancelReason -> Task.syncDelayed(main, () -> refresh(p)))
+                        .withTitle("&a&lInput permission")
+                        .prompt();
 
             } else if (e.isRightClick() && !e.isShiftClick()) {
                 List<String> s = ditem.getPerms().get();
@@ -459,8 +464,7 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
 
         else if (e.getSlot() == 45 && !ditem.getSetItems().isPresent() && e.isLeftClick()) {  // Boton de edit set
             if (ditem.getStock().isPresent()) {
-                p.sendMessage(conf_msg.PREFIX + FormatUtils.color("&7You can't enable this when " +
-                        "the stock feature is enable"));
+                Msg.sendMsg(p, "&7You can't enable this when the stock feature is enable");
                 return;
             }
             ditem.setSetItems(1);
@@ -469,14 +473,21 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
 
         else if (e.getSlot() == 45 && ditem.getSetItems().isPresent()) {
             if (e.isLeftClick()) {
-                ChatPrompt.prompt(main, p, (s) -> {
-                    if (!utils.isInteger(s)) p.sendMessage(conf_msg.PREFIX + conf_msg.MSG_NOT_INTEGER);
-                    int i = Integer.parseInt(s);
-                    if(i < 1 || i > 64) p.sendMessage(conf_msg.PREFIX + "Invalid amount");
-                    ditem.setSetItems(i);
-                    ditem.setAmount(i);
-                    Task.syncDelayed(main, () -> refresh(p));
-                },  cause -> Task.syncDelayed(main, () -> refresh(p)), "&e&lInput Set Amount", "");
+
+                ChatPrompt.builder()
+                        .withPlayer(p)
+                        .withResponse(s -> {
+                            if (!utils.isInteger(s)) Msg.sendMsg(p, main.configM.getLangYml().MSG_NOT_INTEGER);
+                            int i = Integer.parseInt(s);
+                            if(i < 1 || i > 64) Msg.sendMsg(p, "&7Invalid amount");
+                            ditem.setSetItems(i);
+                            ditem.setAmount(i);
+                            Task.syncDelayed(main, () -> refresh(p));
+                        })
+                        .withCancel(cancelReason -> Task.syncDelayed(main, () -> refresh(p)))
+                        .withTitle("&e&lInput Set Amount")
+                        .prompt();
+
             }
             else if (e.isRightClick()) {
                 ditem.setSetItems(null);

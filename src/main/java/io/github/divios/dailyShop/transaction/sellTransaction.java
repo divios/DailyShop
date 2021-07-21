@@ -5,7 +5,7 @@ import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.core_lib.misc.Msg;
 import io.github.divios.core_lib.misc.confirmIH;
-import io.github.divios.dailyShop.conf_msg;
+import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.guis.confirmGui;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
@@ -15,10 +15,12 @@ import java.util.Collections;
 
 public class sellTransaction {
 
+    private static final DailyShop plugin = DailyShop.getInstance();
+
     public static void init(Player p, dItem item, dShop shop) {
 
         if (!item.getSellPrice().isPresent() || item.getSellPrice().get().getPrice() == -1) {
-            p.sendMessage(conf_msg.PREFIX + conf_msg.MSG_INVALID_SELL);
+            Msg.sendMsg(p, plugin.configM.getLangYml().MSG_INVALID_SELL);
             shop.openGui(p);
             return;
         }
@@ -31,9 +33,9 @@ public class sellTransaction {
                         (item1, amount) ->
                                 initTransaction(p, new dItem(item1), amount, shop),
                         player -> shop.getGui().open(p),
-                        conf_msg.CONFIRM_GUI_SELL_NAME,
-                        conf_msg.CONFIRM_MENU_YES,
-                        conf_msg.CONFIRM_MENU_NO);
+                        plugin.configM.getLangYml().CONFIRM_GUI_SELL_NAME,
+                        plugin.configM.getLangYml().CONFIRM_GUI_YES,
+                        plugin.configM.getLangYml().CONFIRM_GUI_NO);
 
             } else {
 
@@ -42,7 +44,8 @@ public class sellTransaction {
                         .withItem(
                                 new ItemBuilder(item.getItem().clone())
                                         .addLore(
-                                                Msg.singletonMsg(conf_msg.SELL_ITEM_NAME).add("\\{price}",
+                                                Msg.singletonMsg(plugin.configM.getLangYml().CONFIRM_GUI_SELL_ITEM)
+                                                        .add("\\{price}",
                                                         String.valueOf(item.getSellPrice().get().getPrice())).build()))
                         .withAction(aBoolean -> {
                             if (aBoolean)
@@ -50,9 +53,9 @@ public class sellTransaction {
                             else
                                 shop.getGui().open(p);
                         })
-                        .withTitle(conf_msg.CONFIRM_GUI_SELL_NAME)
-                        .withCancelLore(conf_msg.CONFIRM_MENU_NO)
-                        .withConfirmLore(conf_msg.CONFIRM_MENU_YES)
+                        .withTitle(plugin.configM.getLangYml().CONFIRM_GUI_SELL_NAME)
+                        .withConfirmLore(plugin.configM.getLangYml().CONFIRM_GUI_YES, plugin.configM.getLangYml().CONFIRM_GUI_YES_LORE)
+                        .withCancelLore(plugin.configM.getLangYml().CONFIRM_GUI_NO, plugin.configM.getLangYml().CONFIRM_GUI_NO_LORE)
                         .prompt();
             }
         } else initTransaction(p, item, item.getAmount(), shop);
@@ -62,7 +65,7 @@ public class sellTransaction {
 
         for (String perm : item.getPerms().orElse(Collections.emptyList())) {
             if (!p.hasPermission(perm)) {
-                p.sendMessage(conf_msg.PREFIX + conf_msg.MSG_NOT_PERMS_ITEM);
+                Msg.sendMsg(p, plugin.configM.getLangYml().MSG_NOT_PERMS_ITEM);
                 return;
             }
         }
@@ -70,7 +73,7 @@ public class sellTransaction {
         int removed = ItemUtils.count(p.getInventory(), item.getRawItem());
 
         if (removed < amount)
-            p.sendMessage(conf_msg.PREFIX + conf_msg.MSG_NOT_ENOUGH_ITEM);
+            Msg.sendMsg(p, plugin.configM.getLangYml().MSG_NOT_ITEMS);
 
         else {
 
@@ -80,7 +83,7 @@ public class sellTransaction {
             item.getEconomy().depositMoney(p, item.getSellPrice().get().getPrice() *
                     (item.getSetItems().isPresent() ? 1 : amount));
 
-            p.sendMessage(Msg.singletonMsg(conf_msg.PREFIX + conf_msg.MSG_BUY_ITEM)
+            Msg.sendMsg(p, Msg.singletonMsg(plugin.configM.getLangYml().MSG_BUY_ITEM)
                     .add("\\{action}", "sell")
                     .add("\\{amount}", "" + amount)
                     .add("\\{price}", "" + item.getSellPrice().get().getPrice() * amount)

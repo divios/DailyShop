@@ -1,6 +1,6 @@
 name: DailyShop
 version: ${projectVersion}
-main: io.github.divios.dailyShop.DRShop
+main: io.github.divios.dailyShop.DailyShop
 api-version: "1.13"
 prefix: DailyShop
 depend: [ Vault ]

@@ -3,7 +3,7 @@ package io.github.divios.lib.dLib;
 import io.github.divios.core_lib.misc.EventListener;
 import io.github.divios.core_lib.misc.Task;
 import io.github.divios.core_lib.misc.timeStampUtils;
-import io.github.divios.dailyShop.DRShop;
+import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.events.deletedShopEvent;
 import io.github.divios.dailyShop.events.reStockShopEvent;
 import io.github.divios.dailyShop.events.updateItemEvent;
@@ -20,7 +20,7 @@ import java.util.*;
 
 public class dShop {
 
-    private static final DRShop plugin = DRShop.getInstance();
+    private static final DailyShop plugin = DailyShop.getInstance();
     private static final dataManager dManager = dataManager.getInstance();
 
     private String name;
@@ -41,7 +41,7 @@ public class dShop {
         this.name = name;
         this.type = type;
         this.timestamp = new Timestamp(System.currentTimeMillis());
-        this.timer = plugin.getConfig().getInt("timer-duration");  // seconds representing time to pass until reset
+        this.timer = plugin.configM.getSettingsYml().DEFAULT_TIMER;  // seconds representing time to pass until reset
         this.gui = new dBuy(this);
 
         initialize();

@@ -1,7 +1,7 @@
 package io.github.divios.dailyShop.guis.settings;
 
 import com.cryptomorin.xseries.XMaterial;
-import io.github.divios.core_lib.inventory.InventoryGUI;
+import io.github.divios.core_lib.Schedulers;
 import io.github.divios.core_lib.inventory.ItemButton;
 import io.github.divios.core_lib.inventory.builder.inventoryPopulator;
 import io.github.divios.core_lib.inventory.builder.paginatedGui;
@@ -11,8 +11,7 @@ import io.github.divios.core_lib.misc.ChatPrompt;
 import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.core_lib.misc.Task;
 import io.github.divios.core_lib.misc.confirmIH;
-import io.github.divios.dailyShop.DRShop;
-import io.github.divios.dailyShop.conf_msg;
+import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.guis.customizerguis.customizeGui;
 import io.github.divios.dailyShop.lorestategy.loreStrategy;
 import io.github.divios.dailyShop.lorestategy.shopsManagerLore;
@@ -26,13 +25,12 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 public class shopsManagerGui {
 
-    private static final DRShop plugin = DRShop.getInstance();
+    private static final DailyShop plugin = DailyShop.getInstance();
     private static final shopsManager sManager = shopsManager.getInstance();
     private static final dataManager dManager = dataManager.getInstance();
 
@@ -45,6 +43,7 @@ public class shopsManagerGui {
         this.p = p;
 
         createInvs();
+        updateTask();
     }
 
     public static void open(Player p) {
@@ -76,11 +75,10 @@ public class shopsManagerGui {
                 .withItems(
                         shopsManager.getInstance().getShops().stream()
                                 .map(dShop -> ItemButton.create(
-                                        ItemBuilder.of(XMaterial.PLAYER_HEAD)
-                                                .setName("&f&l" + dShop.getName())
-                                                .applyTexture("7e3deb57eaa2f4d403ad57283ce8b41805ee5b6de912ee2b4ea736a9d1f465a7"),
+                                        strategy.applyLore(ItemBuilder.of(XMaterial.PLAYER_HEAD)
+                                                .setName("&8> &6" + dShop.getName())
+                                                .applyTexture("7e3deb57eaa2f4d403ad57283ce8b41805ee5b6de912ee2b4ea736a9d1f465a7")),
                                         this::contentAction))
-                                .peek(itemButton -> strategy.setLore(itemButton.getItem()))
                 )
 
                 .withNextButton(ItemBuilder.of(XMaterial.PLAYER_HEAD)
@@ -94,14 +92,16 @@ public class shopsManagerGui {
                 .withButtons((inventoryGUI, integer) -> {
 
                     inventoryGUI.addButton(new ItemButton(new ItemBuilder(XMaterial.PLAYER_HEAD)
-                            .setName(conf_msg.SHOPS_MANAGER_CREATE)
+                            .setName(plugin.configM.getLangYml().SHOPS_MANAGER_CREATE)
+                            .addLore(plugin.configM.getLangYml().SHOPS_MANAGER_CREATE_LORE)
                             .applyTexture("9b425aa3d94618a87dac9c94f377af6ca4984c07579674fad917f602b7bf235")
                             , e -> nonContentAction()), 53);
                 })
 
                 .withExitButton(
                         new ItemButton(new ItemBuilder(XMaterial.PLAYER_HEAD)
-                                .setName("&cReturn").setLore("&7Click to return")
+                                .setName(plugin.configM.getLangYml().SHOPS_MANAGER_RETURN)
+                                .setLore(plugin.configM.getLangYml().SHOPS_MANAGER_RETURN_LORE)
                                 .applyTexture("19bf3292e126a105b54eba713aa1b152d541a1d8938829c56364d178ed22bf")
                                 , e -> {
                             Task.syncDelayed(plugin, () -> inv.destroy() , 3L);
@@ -110,7 +110,7 @@ public class shopsManagerGui {
                         , 8
                 )
 
-                .withTitle(conf_msg.SHOPS_MANAGER_TITLE)
+                .withTitle(plugin.configM.getLangYml().SHOPS_MANAGER_TITLE)
 
                 .build();
 
@@ -126,7 +126,7 @@ public class shopsManagerGui {
     private void contentAction(InventoryClickEvent e) {
 
         ItemStack selected = e.getCurrentItem();
-        dShop shop = sManager.getShop(FormatUtils.stripColor(utils.getDisplayName(selected))).get();
+        dShop shop = sManager.getShop(FormatUtils.stripColor(utils.getDisplayName(selected).substring(4))).get();
         Player p = (Player) e.getWhoClicked();
 
         if (e.isShiftClick() && e.isLeftClick()) {
@@ -172,7 +172,7 @@ public class shopsManagerGui {
                     .withResponse(s -> {
 
                         if (!utils.isInteger(s)) {
-                            utils.sendMsg(p, conf_msg.MSG_NOT_INTEGER);
+                            utils.sendMsg(p, plugin.configM.getLangYml().MSG_NOT_INTEGER);
                             Task.syncDelayed(plugin, () -> refresh(p));
                             return;
                         }
@@ -200,9 +200,9 @@ public class shopsManagerGui {
                         refresh(p);
                     })
                     .withItem(selected)
-                    .withTitle(conf_msg.CONFIRM_GUI_ACTION_NAME)
-                    .withConfirmLore(conf_msg.CONFIRM_MENU_YES)
-                    .withCancelLore(conf_msg.CONFIRM_MENU_NO)
+                    .withTitle(plugin.configM.getLangYml().CONFIRM_GUI_ACTION_NAME)
+                    .withConfirmLore(plugin.configM.getLangYml().CONFIRM_GUI_YES, plugin.configM.getLangYml().CONFIRM_GUI_YES_LORE)
+                    .withCancelLore(plugin.configM.getLangYml().CONFIRM_GUI_NO, plugin.configM.getLangYml().CONFIRM_GUI_NO_LORE)
                     .prompt();
 
         } else shopGui.open(p, shop.getName());
@@ -238,6 +238,50 @@ public class shopsManagerGui {
                 .withCancel(cancelReason -> Task.syncDelayed(plugin, () -> refresh(p)))
                 .withTitle("&a&lInput New Shop Name")
                 .prompt();
+
+    }
+
+    static List<Integer> itemSlots = null;
+    private void updateTask() {
+
+        Schedulers.builder()
+                .sync()
+                .afterAndEvery(20)
+                .consume(task -> {
+
+                    if (inv.getInvs().stream()
+                            .allMatch(invI -> invI.getInventory().getViewers().isEmpty())) {
+                        task.close();
+                        return;
+                    }
+
+                    if (itemSlots == null) {            // Populate slots
+
+                        itemSlots = new ArrayList<>();
+                        List<List<Integer>> masks = inv.getPopulator().getMasks();
+                        for (int i = 0; i < 6; i++)
+                            for (int j = 0; j < 9; j++) {
+                                int mask = masks.get(i).get(j);
+                                if (mask == 1) continue;
+                                itemSlots.add(i * 9 + j);
+                            }
+
+                    }
+
+                    loreStrategy stategy = new shopsManagerLore();
+                    inv.getInvs().forEach(inventoryGUI -> {
+                        itemSlots.forEach(slot -> {
+                            ItemStack itemToUpdate = inventoryGUI.getInventory().getItem(slot);
+                            if (ItemUtils.isEmpty(itemToUpdate)) return;
+
+                            ItemStack newItem = stategy.applyLore(ItemBuilder.of(itemToUpdate.clone()).setLore(Collections.emptyList()));
+
+                            inventoryGUI.getInventory().setItem(slot, newItem);
+
+                        });
+                    });
+
+                });
 
     }
 

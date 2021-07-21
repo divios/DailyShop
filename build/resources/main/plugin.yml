@@ -1,6 +1,6 @@
 name: DailyShop
-version: 3.0.9
-main: io.github.divios.dailyShop.DRShop
+version: 3.1
+main: io.github.divios.dailyShop.DailyShop
 api-version: "1.13"
 prefix: DailyShop
 depend: [ Vault ]

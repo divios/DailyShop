@@ -1,9 +1,13 @@
 io/github/divios/lib/dLib/dAction.java
  io.github.divios.lib.dLib.dAction
+io/github/divios/dailyShop/files/configManager.java
+ io.github.divios.dailyShop.files.configManager
 io/github/divios/dailyShop/transaction/transactionExc.java
  io.github.divios.dailyShop.transaction.transactionExc
  io.github.divios.dailyShop.transaction.transactionExc$1
  io.github.divios.dailyShop.transaction.transactionExc$err
+io/github/divios/dailyShop/files/resource.java
+ io.github.divios.dailyShop.files.resource
 io/github/divios/dailyShop/guis/confirmGui.java
  io.github.divios.dailyShop.guis.confirmGui
 io/github/divios/lib/dLib/guis/dBuy.java
@@ -12,14 +16,10 @@ io/github/divios/lib/dLib/dGui.java
  io.github.divios.lib.dLib.dGui
 io/github/divios/lib/dLib/dItem.java
  io.github.divios.lib.dLib.dItem
-io/github/divios/dailyShop/utils/conf_updater.java
- io.github.divios.dailyShop.utils.conf_updater
 io/github/divios/dailyShop/commands/reStock.java
  io.github.divios.dailyShop.commands.reStock
 io/github/divios/dailyShop/economies/economy.java
  io.github.divios.dailyShop.economies.economy
-io/github/divios/dailyShop/conf_msg.java
- io.github.divios.dailyShop.conf_msg
 io/github/divios/dailyShop/economies/gemEcon.java
  io.github.divios.dailyShop.economies.gemEcon
 io/github/divios/dailyShop/hooks/tokenManagerHook.java
@@ -36,6 +36,10 @@ io/github/divios/dailyShop/database/files.java
  io.github.divios.dailyShop.database.files
 io/github/divios/dailyShop/transaction/sellTransaction.java
  io.github.divios.dailyShop.transaction.sellTransaction
+io/github/divios/dailyShop/files/settingsResource.java
+ io.github.divios.dailyShop.files.settingsResource
+io/github/divios/dailyShop/commands/manager.java
+ io.github.divios.dailyShop.commands.manager
 io/github/divios/dailyShop/commands/importShops.java
  io.github.divios.dailyShop.commands.importShops
 io/github/divios/dailyShop/guis/customizerguis/customizerMainGuiIH.java
@@ -46,14 +50,16 @@ io/github/divios/lib/dLib/guis/dSell.java
  io.github.divios.lib.dLib.guis.dSell
 io/github/divios/dailyShop/economies/playerPointsE.java
  io.github.divios.dailyShop.economies.playerPointsE
-io/github/divios/dailyShop/commands/Manager.java
- io.github.divios.dailyShop.commands.Manager
 io/github/divios/dailyShop/hooks/hooksManager.java
  io.github.divios.dailyShop.hooks.hooksManager
 io/github/divios/lib/storage/migrations/initialMigration.java
  io.github.divios.lib.storage.migrations.initialMigration
 io/github/divios/dailyShop/events/deletedShopEvent.java
  io.github.divios.dailyShop.events.deletedShopEvent
+io/github/divios/dailyShop/files/langResource.java
+ io.github.divios.dailyShop.files.langResource
+io/github/divios/dailyShop/DailyShop.java
+ io.github.divios.dailyShop.DailyShop
 io/github/divios/dailyShop/events/updateItemEvent.java
  io.github.divios.dailyShop.events.updateItemEvent
  io.github.divios.dailyShop.events.updateItemEvent$updatetype
@@ -67,8 +73,6 @@ io/github/divios/dailyShop/hooks/playerPointsHook.java
  io.github.divios.dailyShop.hooks.playerPointsHook
 io/github/divios/dailyShop/guis/customizerguis/miniCustomizeGui.java
  io.github.divios.dailyShop.guis.customizerguis.miniCustomizeGui
-io/github/divios/dailyShop/DRShop.java
- io.github.divios.dailyShop.DRShop
 io/github/divios/dailyShop/economies/vault.java
  io.github.divios.dailyShop.economies.vault
 io/github/divios/lib/dLib/dShop.java

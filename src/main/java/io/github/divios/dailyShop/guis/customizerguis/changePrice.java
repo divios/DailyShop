@@ -6,8 +6,7 @@ import io.github.divios.core_lib.inventory.ItemButton;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.misc.ChatPrompt;
 import io.github.divios.core_lib.misc.Task;
-import io.github.divios.dailyShop.DRShop;
-import io.github.divios.dailyShop.conf_msg;
+import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.events.updateItemEvent;
 import io.github.divios.dailyShop.utils.utils;
 import io.github.divios.lib.dLib.dItem;
@@ -20,7 +19,7 @@ import java.util.stream.IntStream;
 
 public class changePrice {
 
-    private static final DRShop plugin = DRShop.getInstance();
+    private static final DailyShop plugin = DailyShop.getInstance();
 
     private final Player p;
     private final dItem item;
@@ -139,8 +138,8 @@ public class changePrice {
                 }), 15);
 
         gui.addButton(ItemButton.create(new ItemBuilder(XMaterial.PLAYER_HEAD)
-                        .setName(conf_msg.CONFIRM_GUI_RETURN_NAME)
-                        .setLore(conf_msg.CONFIRM_GUI_RETURN_PANE_LORE)
+                        .setName(plugin.configM.getLangYml().CONFIRM_GUI_RETURN_NAME)
+                        .setLore(plugin.configM.getLangYml().CONFIRM_GUI_RETURN_PANE_LORE)
                         .applyTexture("19bf3292e126a105b54eba713aa1b152d541a1d8938829c56364d178ed22bf")
                 , e -> back.run()), 22);
 

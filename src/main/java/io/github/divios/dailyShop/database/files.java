@@ -1,13 +1,13 @@
 package io.github.divios.dailyShop.database;
 
-import io.github.divios.dailyShop.DRShop;
+import io.github.divios.dailyShop.DailyShop;
 
 import java.io.File;
 import java.io.IOException;
 
 public class files {
 
-    private static final DRShop main = DRShop.getInstance();
+    private static final DailyShop main = DailyShop.getInstance();
 
     public static void createdb() throws IOException {
         File localeDirectory = new File(main.getDataFolder() + File.separator + "locales");
