@@ -69,14 +69,17 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
         ItemStack changeEcon = new ItemBuilder(XMaterial.PLAYER_HEAD)     // Change econ
                 .setName(main.configM.getLangYml().CUSTOMIZE_ECON_NAME)
                 .addLore(main.configM.getLangYml().CUSTOMIZE_ECON_LORE)
-                .addLore("", "&7Current: &6" + ditem.getEconomy().getName())
+                .addLore("", "&7Current: &e" + ditem.getEconomy().getName())
                 .applyTexture("e36e94f6c34a35465fce4a90f2e25976389eb9709a12273574ff70fd4daa6852");
 
         ItemStack changePrice = new ItemBuilder(XMaterial.EMERALD)      // change price
-                .setName("&a&lChange Price")
-                .addLore("", "&7Current Buy: &6" + ditem.getBuyPrice().get().getVisualPrice())
-                .addLore("&7Current Sell: &6" + ditem.getSellPrice().get().getVisualPrice())
-                .addLore("", "&6Left Click: &7Change buy price", "&6Right Click: &7Change sell price");
+                .setName(main.configM.getLangYml().CUSTOMIZE_PRICE_NAME)
+                .addLore(
+                        Msg.msgList(main.configM.getLangYml().CUSTOMIZE_PRICE_LORE)
+                        .add("\\{buy_price}", ditem.getBuyPrice().get().getVisualPrice())
+                        .add("\\{sell_price}", ditem.getSellPrice().get().getVisualPrice())
+                        .build()
+                );
 
         ItemStack changeRarity = new ItemBuilder(ditem.getRarity().getAsItem())         // Change rarity
                 .addLore(main.configM.getLangYml().CUSTOMIZE_RARITY_NAME);

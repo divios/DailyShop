@@ -57,6 +57,10 @@ public class DailyShop extends JavaPlugin {
         //shopsManager.getInstance().reload();
     }
 
+    public static shopsManager getShopsManager() {
+        return shopsManager.getInstance();
+    }
+
     public static DailyShop getInstance() {
         return INSTANCE;
     }

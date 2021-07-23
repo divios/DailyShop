@@ -11,9 +11,9 @@ lang:
     return_name: "&8> &cReturn"
     return_pane_lore: "&7Click to go back"
     sell_item: "&8- &7Total money: &3{price}"
-    yes_name: "&8> &aConfirm"
+    yes_name: "&aYES"
     yes_lore: "&8- &7Click here to confirm|&7this action"
-    no_name: "&8> &cCancel"
+    no_name: "&cNO"
     no_lore: "&8- &7Click here to abort|&7this action"
   shops_manager:
     title: "&8Shops Manager"
@@ -39,12 +39,12 @@ lang:
     next: "&8> &3Next"
     previous: "&8> &3Previous"
     return: "&8> &cReturn"
-    buy_price: "&8- &7Buy price: &6{buyPrice}"
-    sell_price: "&8- &7Sell price: &6{sellPrice}"
-    stock: "&8- &7Stock: &6"
-    currency: "&8- &7Currency: &6{currency}"
-    rarity: "&8- &7Rarity: &6{rarity}"
-    buy_for: "&8- &7Buy for &6{price}"
+    buy_price: "&8- &7Buy price: &e{buyPrice}"
+    sell_price: "&8- &7Sell price: &e{sellPrice}"
+    stock: "&8- &7Stock: &e"
+    currency: "&8- &7Currency: &e{currency}"
+    rarity: "&8- &7Rarity: &e{rarity}"
+    buy_for: "&8- &7Buy for &e{price}"
     manager_items_lore: "&8- &9LEFT CLICK|  &7Customize item||&8- &9RIGHT CLICK|  &7Delete item"
   customize_menu:
     title: "&8Customize Item"
@@ -55,9 +55,12 @@ lang:
     unavailable: "&cUNAVAILABLE"
     econ:
       name: "&f&lChange currency"
-      lore: "&7Click to change the item currency"
+      lore: "&7Click to change the|&7item's currency"
+    price:
+      name: "&f&lChange Price"
+      lore: "|&7Buy price: &e{buy_price}|&7Sell price: &e{sell_price}||&8- &9LEFT CLICK|  &7Change buy price||&8- &9RIGHT CLICK|  &7Change sell price"
     rarity:
-      name: "&7Click to change item rarity"
+      name: "&7Click to change|&7item's rarity"
       types: "&7Common|&dUncommon|&5Rare|&5Epic|&9Ancient|&eMythic|&cUnavailable"
     search:
       name: "&b&lSearch"
@@ -65,55 +68,55 @@ lang:
       cancel: "&c&lCancel search"
     confirm_gui:
       name: "&f&lEnable/disable confirm Gui"
-      lore: "&7Click to allow/disable the|&7confirm gui for this item||&6Status: &7{status}"
+      lore: "&7Click to allow/disable the|&7confirm gui for this item||&7Status: &e{status}"
     rename:
       name: "&f&lRename"
-      lore: "&7Click to change the item name"
+      lore: "&7Click to change|&7the item's name"
       title: "&6&lInput the new lore"
     material:
       name: "&f&lChange Material"
-      lore: "&7Click to change the item material"
+      lore: "&7Click to change|&7the item's material"
     lore:
       name: "&f&lChange Lore"
-      lore: "&6> Left Click: &7to add lore|&6> Right Click: &7to remove lore"
+      lore: "|&8- &9LEFT CLICK|  &7Add lore||&8- &9RIGHT CLICK|  &7Remove lore"
       title: "&6&lInput new Lore"
     enchants:
       name: "&f&lEdit enchantments"
-      lore: "&6> Left Click: &7to add Enchantment|&6> Right Click: &7to remove Enchantment"
+      lore: "|&8- &9LEFT CLICK|  &7Add Enchantment||&8- &9RIGHT CLICK|  &7Remove Enchantment"
     stock:
       name: "&f&lSet Stock"
-      lore: "&6> Left Click: &7Enable feature|&7This option will make the item have limited stock"
-      lore_on: "&6> Left Click: &7Change current amount|&6> Right Click: &7Disable feature||&6Current stock: &7{amount}"
+      lore: "|&8- &9LEFT CLICK|  &7Enable feature||&7This option will make|&7the item have limited stock"
+      lore_on: "|&8- &9LEFT CLICK|  &7Change current amount||&8- &9RIGHT CLICK|  &7Disable feature||&7Current stock: &e{amount}"
     bundle:
       name: "&f&lChange bundle items"
-      lore: "&6Right Click > &7To change items on the bundle"
+      lore: "|&8- &9LEFT CLICK|  &7Change items on bundle"
     durability:
       name: "&fChange item Durability"
-      lore: "&6Right Click > &7To change items durability"
+      lore: "|&8- &9LEFT CLICK|  &7Change item durability"
     commands:
       name: "&f&lSet Item Reward as Commands"
-      lore: "&6> Left Click: &7Enable feature||&7This option will execute|&7commands upon purchase"
+      lore: "|&8- &9LEFT CLICK|  &7Enable feature||&7This option will execute|&7commands upon purchase"
       name_on: "&f&lSet commands to run"
-      lore_on: "&6> Left Click: &7Add command to item|&6> Right Click: &7Remove command|&6> Shift Right Click: &7Disable feature|&7You can use %player%|&7to get the player's name"
+      lore_on: "|&8- &9LEFT CLICK|   &7Add command to item||&8- &9RIGHT CLICK|  &7Remove command||&8- &9SHIFT RIGHT CLICK|  &7Disable feature||&7You can use &e%player%|&7to get the player's name"
       title: "&e&lInput new command"
     perms:
       name: "&f&lEdit permissions"
-      lore: "&6Left click: &7Enable feature||&7Enable this option to allow players to purchase|&7this item if they have certain permissions"
-      lore_on: "&6> Left Click: &7Add Permission to the list|&6> Right Click: &7Remove permission from list|&6> Shift Right Click: &7Disable Feature"
+      lore: "|&8- &9LEFT CLICK|  &7Enable feature||&7Enable this option to allow players to purchase|&7this item if they have certain permissions"
+      lore_on: "|&8- &9LEFT CLICK|  &7Add Permission to the list||&8- &9RIGHT CLICK|  &7Remove permission from list||&8- &9SHIFT RIGHT CLICK|  &7Disable Feature"
     set:
       name: "&f&lEdit set"
-      lore: "&6> Left Click: &7Enable feature||&7Enable this option to lock the amount|&7of an item for a given price"
-      lore_on: "&6> Left Click: &7Change set amount|&6> Right Click: &7Disable Feature||&6Current amount: &7{amount}"
+      lore: "|&8- &9LEFT CLICK|  &7Enable feature||&7Enable this option to lock the amount|&7of an item for a given price"
+      lore_on: "|&8- &9LEFT CLICK|  &7Change set amount||&8- &9RIGHT CLICK|  &7Disable Feature||&7Current amount: &e{amount}"
     toggle:
       enchants:
         name: "&f&lMake enchant visible/invisible"
-        lore: "&6> Left Click: &7Toggle status||&6Status &7{status}"
+        lore: "|&8- &9LEFT CLICK|  &7Toggle status||&7Status &e{status}"
       attributes:
         name: "&f&lMake attributes visible/invisible"
-        lore: "&6> Left Click: &7Toggle status||&6Status &7{status}"
+        lore: "|&8- &9LEFT CLICK|  &7Toggle status||&7Status &e{status}"
       effects:
         name: "&f&lMake potion effects visible/invisible"
-        lore: "&6> Left Click: &7Toggle status||&6Status &7{status}"
+        lore: "|&8- &9LEFT CLICK|  &7Toggle status||&7Status &e{status}"
   messages:
     buy_item: "&7You {action} {amount} of {item} for {price} {currency}"
     not_enough_money: "&7Ey, You dont have enough money to buy this item!"
