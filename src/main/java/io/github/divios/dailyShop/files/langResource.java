@@ -68,14 +68,17 @@ public class langResource extends resource{
 
     public String CUSTOMIZE_UNAVAILABLE;
 
+    public String CUSTOMIZE_PRICE_NAME;
+    public List<String> CUSTOMIZE_PRICE_LORE;
+
     public String CUSTOMIZE_ECON_NAME;
     public List<String> CUSTOMIZE_ECON_LORE;
 
-    public String CUSTOMIZE_RARITY_NAME;
+    public List<String> CUSTOMIZE_RARITY_NAME;
     public List<String> CUSTOMIZE_RARITY_TYPES;
 
     public String CUSTOMIZE_SEARCH_NAME;
-    public List<String> CUSTOMIZE_SEARC_LORE;
+    public List<String> CUSTOMIZE_SEARCH_LORE;
     public String CUSTOMIZE_SEARCH_CANCEL;
 
     public String CUSTOMIZE_CONFIRM_GUI_NAME;
@@ -198,12 +201,14 @@ public class langResource extends resource{
         CUSTOMIZE_RETURN = yaml.getString("lang.customize_menu.return");
         CUSTOMIZE_RETURN_LORE = parseLore(yaml.getString("lang.customize_menu.return_lore"));
         CUSTOMIZE_UNAVAILABLE = yaml.getString("lang.customize_menu.unavailable");
+        CUSTOMIZE_PRICE_NAME = yaml.getString("lang.customize_menu.price.name");
+        CUSTOMIZE_PRICE_LORE = parseLore(yaml.getString("lang.customize_menu.price.lore"));
         CUSTOMIZE_ECON_NAME = yaml.getString("lang.customize_menu.econ.name");
         CUSTOMIZE_ECON_LORE = parseLore(yaml.getString("lang.customize_menu.econ.lore"));
-        CUSTOMIZE_RARITY_NAME = yaml.getString("lang.customize_menu.rarity.name");
+        CUSTOMIZE_RARITY_NAME = parseLore(yaml.getString("lang.customize_menu.rarity.name"));
         CUSTOMIZE_RARITY_TYPES = parseLore(yaml.getString("lang.customize_menu.rarity.types"));
         CUSTOMIZE_SEARCH_NAME = yaml.getString("lang.customize_menu.search.name");
-        CUSTOMIZE_SEARC_LORE = parseLore(yaml.getString("lang.customize_menu.search.lore"));
+        CUSTOMIZE_SEARCH_LORE = parseLore(yaml.getString("lang.customize_menu.search.lore"));
         CUSTOMIZE_SEARCH_CANCEL = yaml.getString("lang.customize_menu.search.cancel");
         CUSTOMIZE_CONFIRM_GUI_NAME = yaml.getString("lang.customize_menu.confirm_gui.name");
         CUSTOMIZE_CONFIRM_GUI_LORE = parseLore(yaml.getString("lang.customize_menu.confirm_gui.lore"));
