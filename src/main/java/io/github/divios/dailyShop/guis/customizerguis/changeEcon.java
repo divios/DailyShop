@@ -43,6 +43,7 @@ public class changeEcon{
         this.consumer = consumer;
     }
 
+    @Deprecated
     public static void open(Player p, dItem item, Consumer<dItem> consumer) {
         changeEcon instance = new changeEcon(p, item, consumer);
         instance.init();

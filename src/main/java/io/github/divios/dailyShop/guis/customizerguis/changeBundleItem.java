@@ -27,6 +27,7 @@ public class changeBundleItem {
     private final BiConsumer<Player, List<UUID>> confirm;
     private final Consumer<Player> back;
 
+    @Deprecated
     public changeBundleItem(
             Player p,
             dItem item,
