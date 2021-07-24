@@ -1,5 +1,5 @@
 name: DailyShop
-version: 3.1
+version: 3.2
 main: io.github.divios.dailyShop.DailyShop
 api-version: "1.13"
 prefix: DailyShop

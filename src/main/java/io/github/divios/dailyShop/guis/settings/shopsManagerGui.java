@@ -73,7 +73,7 @@ public class shopsManagerGui {
                 )
 
                 .withItems(
-                        shopsManager.getInstance().getShops().stream()
+                        shopsManager.getInstance().getShops().stream().parallel()
                                 .map(dShop -> ItemButton.create(
                                         strategy.applyLore(ItemBuilder.of(XMaterial.PLAYER_HEAD)
                                                 .setName("&8> &6" + dShop.getName())
@@ -269,7 +269,7 @@ public class shopsManagerGui {
                     }
 
                     loreStrategy stategy = new shopsManagerLore();
-                    inv.getInvs().forEach(inventoryGUI -> {
+                    inv.getInvs().stream().parallel().forEach(inventoryGUI -> {
                         itemSlots.forEach(slot -> {
                             ItemStack itemToUpdate = inventoryGUI.getInventory().getItem(slot);
                             if (ItemUtils.isEmpty(itemToUpdate)) return;
