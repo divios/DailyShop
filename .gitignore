@@ -116,3 +116,9 @@ buildNumber.properties
 # Common working directory
 run/
 /gradle.properties
+/build/resources/main/lang.yml
+/build/tmp/jar/MANIFEST.MF
+/build/tmp/shadowJar/MANIFEST.MF
+/build/resources/main/plugin.yml
+/build/resources/main/settings.yml
+/build/tmp/compileJava/source-classes-mapping.txt
