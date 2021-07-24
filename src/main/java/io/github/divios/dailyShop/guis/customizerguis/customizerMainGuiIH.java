@@ -291,8 +291,17 @@ public class customizerMainGuiIH implements InventoryHolder, Listener {
         }
 
         else if (e.getSlot() == 24) {        // boton de cambiar price
-            new changePrice(p, ditem, shop, e.isLeftClick() ? dShop.dShopT.buy: dShop.dShopT.sell
-                    ,() -> refresh(p), () -> refresh(p));
+
+            changePrice.builder()
+                    .withPlayer(p)
+                    .withType(e.isLeftClick() ? dShop.dShopT.buy : dShop.dShopT.sell)
+                    .withItem(ditem)
+                    .withAccept(dItem -> {
+                        ditem = dItem;
+                        refresh(p);
+                    })
+                    .withBack(() -> refresh(p))
+                    .prompt();
         }
 
         else if (e.getSlot() == 34) {        /* Boton de cambiar confirm Gui */
