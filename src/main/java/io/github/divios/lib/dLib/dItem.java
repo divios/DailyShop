@@ -51,8 +51,8 @@ public class dItem implements Serializable, Cloneable {
             setRarity(new dRarity());       //Defaults to Common
             setConfirm_gui(true);           // Defaults true
             setEconomy(new vault());        // Default Vault
-            setBuyPrice(plugin.getConfig().getInt("default-buy-price")); // Default buy price
-            setSellPrice(plugin.getConfig().getInt("default-sell-price")); // Default sell price
+            setBuyPrice(plugin.configM.getSettingsYml().DEFAULT_BUY); // Default buy price
+            setSellPrice(plugin.configM.getSettingsYml().DEFAULT_SELL); // Default sell price
         }
     }
 
