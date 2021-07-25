@@ -89,7 +89,7 @@ public class changeEcon{
         if (tokenEnchantsApi != null) {
             gui.addButton(ItemButton.create(new ItemBuilder(XMaterial.ENCHANTED_BOOK)
                     .setName("&d&lTokenEnchants").addLore("&7Click to change"), e -> {
-                item.setEconomy(new tokenManagerE());
+                item.setEconomy(new tokenEnchantsE());
                 consumer.accept(item);
             }), inventoryUtils.getFirstEmpty(gui.getInventory()));
         }
