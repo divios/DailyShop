@@ -450,9 +450,8 @@ public class dItem implements Serializable, Cloneable {
         economy econ = new vault();
         if (item.hasKey("rds_econ")) {
             econ = economy.deserialize(item.getString("rds_econ"));
-            try {
-                econ.test();
-            } catch (Exception e) { econ = new vault(); }
+            try { econ.test(); }
+            catch (NoClassDefFoundError e) { econ = new vault(); }
         }
 
         return econ;
