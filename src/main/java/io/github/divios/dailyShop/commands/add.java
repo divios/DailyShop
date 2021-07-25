@@ -31,7 +31,9 @@ public class add extends abstractCommand {
 
     @Override
     public boolean validArgs(List<String> args) {
-        return true;
+        if (args.size() == 0) return false;
+
+        return sManager.getShop(args.get(0)).isPresent();
     }
 
     @Override
