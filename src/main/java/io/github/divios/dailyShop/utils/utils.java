@@ -106,7 +106,7 @@ public class utils {
 
     @Deprecated
     public static ItemStack getRedPane() {
-        return new ItemBuilder(XMaterial.RED_STAINED_GLASS_PANE)
+        return ItemBuilder.of(XMaterial.RED_STAINED_GLASS_PANE)
                 .setName("&cOut of stock"); //TODO
     }
 

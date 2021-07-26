@@ -46,49 +46,68 @@ public class addDailyGuiIH {
 
         InventoryGUI gui = new InventoryGUI(plugin, 27, plugin.configM.getLangYml().ADD_ITEMS_TITLE);
 
-        gui.addButton(ItemButton.create(new ItemBuilder(XMaterial.REDSTONE_TORCH)
-                        .setName(plugin.configM.getLangYml().ADD_ITEMS_FROM_ZERO)
-                        .addLore(plugin.configM.getLangYml().ADD_ITEMS_FROM_ZERO_LORE)
-                , e -> onComplete.accept(XMaterial.GRASS.parseItem())), 11);
 
-        gui.addButton(ItemButton.create(new ItemBuilder(XMaterial.HOPPER)
-                        .setName(plugin.configM.getLangYml().ADD_ITEMS_FROM_EXISTING)
-                        .addLore(plugin.configM.getLangYml().ADD_ITEMS_FROM_EXISTING_LORE)
-                , e -> {
-                    ItemPrompt.builder()
-                            .withPlayer(p)
-                            .withComplete(onComplete)
-                            .withTitle(plugin.configM.getLangYml().ADD_ITEMS_TITLE)
-                            .build();
+        gui.addButton(
+                ItemButton.create(
+                        ItemBuilder.of(XMaterial.REDSTONE_TORCH)
+                                .setName(plugin.configM.getLangYml().ADD_ITEMS_FROM_ZERO)
+                                .addLore(plugin.configM.getLangYml().ADD_ITEMS_FROM_ZERO_LORE)
+                        , e -> onComplete.accept(XMaterial.GRASS.parseItem())), 11);
 
-                    p.closeInventory();
-                }), 15);
 
-        gui.addButton(ItemButton.create(new ItemBuilder(XMaterial.CHEST_MINECART)
-                        .setName(plugin.configM.getLangYml().ADD_ITEMS_FROM_BUNDLE)
-                        .addLore(plugin.configM.getLangYml().ADD_ITEMS_FROM_BUNDLE_LORE)
-                , e -> {
-                    new changeBundleItem(p, dItem.of(XMaterial.CHEST_MINECART.parseItem()), shop,
-                            (player, uuids) -> {
-                                gui.destroy();
-                                dItem newBundle = dItem.of(XMaterial.CHEST_MINECART.parseItem());
-                                newBundle.setBundle(uuids);
-                                shop.addItem(newBundle);
-                                shopGui.open(p, shop);
-                            }, gui::open);
-                }), 13);
+        gui.addButton(
+                ItemButton.create(
+                        ItemBuilder.of(XMaterial.HOPPER)
+                                .setName(plugin.configM.getLangYml().ADD_ITEMS_FROM_EXISTING)
+                                .addLore(plugin.configM.getLangYml().ADD_ITEMS_FROM_EXISTING_LORE)
+                        , e -> {
+                            ItemPrompt.builder()
+                                    .withPlayer(p)
+                                    .withComplete(onComplete)
+                                    .withTitle(plugin.configM.getLangYml().ADD_ITEMS_TITLE)
+                                    .build();
 
-        gui.addButton(ItemButton.create(new ItemBuilder(XMaterial.PLAYER_HEAD)
-                        .setName(plugin.configM.getLangYml().ADD_ITEMS_RETURN)
-                        .addLore(plugin.configM.getLangYml().ADD_ITEMS_RETURN_LORE)
-                        .applyTexture("19bf3292e126a105b54eba713aa1b152d541a1d8938829c56364d178ed22bf")
-                , e -> back.run()), 22);
+                            p.closeInventory();
+                        }), 15);
+
+
+        gui.addButton(
+                ItemButton.create(
+                        ItemBuilder.of(XMaterial.CHEST_MINECART)
+                                .setName(plugin.configM.getLangYml().ADD_ITEMS_FROM_BUNDLE)
+                                .addLore(plugin.configM.getLangYml().ADD_ITEMS_FROM_BUNDLE_LORE)
+                        , e ->
+                                changeBundleItem.builder()
+                                        .withPlayer(p)
+                                        .withItem(dItem.of(XMaterial.CHEST_MINECART.parseItem()))
+                                        .withShop(shop)
+                                        .withConfirm(uuids -> {
+                                            gui.destroy();
+                                            dItem newBundle = dItem.of(XMaterial.CHEST_MINECART.parseItem());
+                                            newBundle.setBundle(uuids);
+                                            shop.addItem(newBundle);
+                                            shopGui.open(p, shop);
+                                        })
+                                        .withBack(() -> gui.open(p))
+                                        .prompt()), 13);
+
+
+        gui.addButton(
+                ItemButton.create(
+                        ItemBuilder.of(XMaterial.PLAYER_HEAD)
+                                .setName(plugin.configM.getLangYml().ADD_ITEMS_RETURN)
+                                .addLore(plugin.configM.getLangYml().ADD_ITEMS_RETURN_LORE)
+                                .applyTexture("19bf3292e126a105b54eba713aa1b152d541a1d8938829c56364d178ed22bf")
+                        , e -> back.run()), 22);
+
 
         IntStream.range(0, 27).forEach(value -> {
             if (utils.isEmpty(gui.getInventory().getItem(value)))
-                gui.addButton(ItemButton.create(new ItemBuilder(XMaterial.GRAY_STAINED_GLASS_PANE)
-                        , e -> {
-                        }), value);
+                gui.addButton(
+                        ItemButton.create(
+                                ItemBuilder.of(XMaterial.GRAY_STAINED_GLASS_PANE)
+                                , e -> {
+                                }), value);
         });
 
 

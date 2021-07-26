@@ -37,7 +37,7 @@ public class updatePlaceholdersTask {
                     ItemStack replace;
                     if (ItemUtils.isEmpty(toReplace)) return;
 
-                    /*replace = new ItemBuilder(toReplace.clone())
+                    /*replace = ItemBuilder.of(toReplace.clone())
                             .setName() */
 
                 });

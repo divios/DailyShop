@@ -32,7 +32,7 @@ public class shopsManagerLore implements loreStrategy {
                 .add("\\{c_timer}", utils.getDiffActualTimer(shop))
                 .build();
 
-        return new ItemBuilder(item).addLore(placeholder);
+        return ItemBuilder.of(item).addLore(placeholder);
     }
 
     @Override
