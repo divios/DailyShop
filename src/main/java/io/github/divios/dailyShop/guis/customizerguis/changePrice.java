@@ -66,7 +66,7 @@ public class changePrice {
                 .scheme(13, 13, 5, 5, 5, 5, 13, 13)
                 .apply(gui.getInventory());
 
-        gui.addButton(ItemButton.create(new ItemBuilder(XMaterial.SUNFLOWER)
+        gui.addButton(ItemButton.create(ItemBuilder.of(XMaterial.SUNFLOWER)
                         .setName("&6&lSet fixed price").addLore("&7The item 'll always have", "&7the given price"),
 
                 e ->
@@ -95,7 +95,7 @@ public class changePrice {
 
                 11);
 
-        gui.addButton(ItemButton.create(new ItemBuilder(XMaterial.REPEATER)
+        gui.addButton(ItemButton.create(ItemBuilder.of(XMaterial.REPEATER)
                         .setName("&c&lSet interval").addLore("&7The price of the item",
                         "&7will take a random value between", "&7the given interval"),
                 e -> {

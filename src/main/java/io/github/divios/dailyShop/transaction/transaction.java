@@ -55,15 +55,15 @@ public class transaction {
                         .withPlayer(p)
                         .withAction(aBoolean -> {
                             if (aBoolean)
-                                transaction.initTransaction(p, item, 1, shop);
+                                transaction.initTransaction(p, item, item.getAmount(), shop);
                             else
                                 shop.getGui().open(p);
                         })
                         .withItem(
-                                new ItemBuilder(item.getItem().clone()).addLore(
+                                ItemBuilder.of(item.getItem().clone()).addLore(
                                         Msg.singletonMsg(plugin.configM.getLangYml().CONFIRM_GUI_SELL_ITEM)
                                                 .add("\\{price}",
-                                                String.valueOf(item.getSellPrice().get().getPrice())).build()
+                                                        String.valueOf(item.getSellPrice().get().getPrice())).build()
                                 ))
                         .withTitle(plugin.configM.getLangYml().CONFIRM_GUI_BUY_NAME)
                         .withConfirmLore(plugin.configM.getLangYml().CONFIRM_GUI_YES, plugin.configM.getLangYml().CONFIRM_GUI_YES_LORE)
@@ -108,7 +108,7 @@ public class transaction {
 
     private static summary printSummary(Player p, UUID uid, dShop shop) throws transactionExc {
         return printSummary(p, shop.getItem(uid).orElse(dItem.AIR()),
-                shop.getItem(uid).orElse(dItem.AIR()).getAmount(),  shop);
+                shop.getItem(uid).orElse(dItem.AIR()).getAmount(), shop);
     }
 
     private static summary printSummary(Player p, dItem item, int amount, dShop shop) throws transactionExc {
@@ -159,9 +159,10 @@ public class transaction {
 
         IntStream.range(0, amount).forEach(i ->
                 item.getCommands().ifPresent(strings -> strings.forEach(s1 ->
-                        Bukkit.dispatchCommand(Bukkit.getConsoleSender(),
-                                Msg.singletonMsg(s1).add("%player%", p.getName())
-                                        .build()))));
+                        s.addRunnable(() ->
+                                Bukkit.dispatchCommand(Bukkit.getConsoleSender(),
+                                        Msg.singletonMsg(s1).add("%player%", p.getName())
+                                                .build())))));
 
 
         /// A PARTIR DE AQUI YA SOLO COMPROBAR SLOTS Y PRICE ///

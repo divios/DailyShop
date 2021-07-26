@@ -42,7 +42,7 @@ public class sellTransaction {
                 confirmIH.builder()
                         .withPlayer(p)
                         .withItem(
-                                new ItemBuilder(item.getItem().clone())
+                                ItemBuilder.of(item.getItem().clone())
                                         .addLore(
                                                 Msg.singletonMsg(plugin.configM.getLangYml().CONFIRM_GUI_SELL_ITEM)
                                                         .add("\\{price}",
