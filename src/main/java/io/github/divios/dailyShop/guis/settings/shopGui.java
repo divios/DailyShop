@@ -9,7 +9,7 @@ import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.misc.Task;
 import io.github.divios.core_lib.misc.confirmIH;
 import io.github.divios.dailyShop.DailyShop;
-import io.github.divios.dailyShop.guis.customizerguis.customizerMainGuiIH;
+import io.github.divios.dailyShop.guis.customizerguis.CustomizerMenu;
 import io.github.divios.dailyShop.lorestategy.shopItemsManagerLore;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
@@ -91,23 +91,26 @@ public class shopGui {
                 )
 
                 .withExitButton(
-                        new ItemButton(new ItemBuilder(XMaterial.PLAYER_HEAD)
-                                .setName(plugin.configM.getLangYml().SHOPS_MANAGER_RETURN)
-                                .setLore("&7Click to return")
-                                .applyTexture("19bf3292e126a105b54eba713aa1b152d541a1d8938829c56364d178ed22bf")
+                        ItemButton.create(
+                                ItemBuilder.of(XMaterial.PLAYER_HEAD)
+                                        .setName(plugin.configM.getLangYml().SHOPS_MANAGER_RETURN)
+                                        .setLore("&7Click to return")
+                                        .applyTexture("19bf3292e126a105b54eba713aa1b152d541a1d8938829c56364d178ed22bf")
                                 , e -> {
-                            Schedulers.sync().runLater(() -> inv.destroy(), 3L);
-                            shopsManagerGui.open(p);
-                        }), 8
+                                    Schedulers.sync().runLater(() -> inv.destroy(), 3L);
+                                    shopsManagerGui.open(p);
+                                }), 8
                 )
 
                 .withButtons(
                         (inventoryGUI, integer) -> {
 
-                            inventoryGUI.addButton(new ItemButton(new ItemBuilder(XMaterial.PLAYER_HEAD)
-                                    .setName(plugin.configM.getLangYml().DAILY_ITEMS_ADD)
-                                    .addLore(plugin.configM.getLangYml().DAILY_ITEMS_ADD_LORE)
-                                    .applyTexture("9b425aa3d94618a87dac9c94f377af6ca4984c07579674fad917f602b7bf235"),
+                            inventoryGUI.addButton(ItemButton.create(
+                                    ItemBuilder.of(XMaterial.PLAYER_HEAD)
+                                            .setName(plugin.configM.getLangYml().DAILY_ITEMS_ADD)
+                                            .addLore(plugin.configM.getLangYml().DAILY_ITEMS_ADD_LORE)
+                                            .applyTexture("9b425aa3d94618a87dac9c94f377af6ca4984c07579674fad917f602b7bf235"),
+
                                     e -> addDailyGuiIH.open(p, shop, itemStack -> {
                                         shop.addItem(new dItem(itemStack));
                                         refresh();
@@ -130,9 +133,12 @@ public class shopGui {
 
         if (e.isLeftClick()) {
 
-            Schedulers.sync().runLater(() -> inv.destroy(), 3L);
-            customizerMainGuiIH.open((Player) e.getWhoClicked(),
-                    shop.getItem(uid).get(), shop);
+            Schedulers.sync().runLater(() -> inv.destroy(), 1L);
+            CustomizerMenu.builder()
+                    .withPlayer(p)
+                    .withShop(shop)
+                    .withItem(shop.getItem(uid).orElse(null))
+                    .prompt();
 
         } else if (e.isRightClick())
 

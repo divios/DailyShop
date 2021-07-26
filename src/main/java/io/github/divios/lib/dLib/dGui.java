@@ -140,6 +140,7 @@ public abstract class dGui {
         Inventory aux = Bukkit.createInventory(null, inv.getSize() - 9, title);
         inventoryUtils.translateContents(inv, aux);
 
+        buttons.removeIf(dItem -> dItem.getSlot() >= aux.getSize());
         IntStream.range(inv.getSize() - 9, inv.getSize()).forEach(openSlots::remove);
         inv = aux;
 

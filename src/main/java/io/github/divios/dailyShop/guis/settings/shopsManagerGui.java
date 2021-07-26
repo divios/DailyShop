@@ -91,7 +91,7 @@ public class shopsManagerGui {
 
                 .withButtons((inventoryGUI, integer) -> {
 
-                    inventoryGUI.addButton(new ItemButton(new ItemBuilder(XMaterial.PLAYER_HEAD)
+                    inventoryGUI.addButton(ItemButton.create(ItemBuilder.of(XMaterial.PLAYER_HEAD)
                             .setName(plugin.configM.getLangYml().SHOPS_MANAGER_CREATE)
                             .addLore(plugin.configM.getLangYml().SHOPS_MANAGER_CREATE_LORE)
                             .applyTexture("9b425aa3d94618a87dac9c94f377af6ca4984c07579674fad917f602b7bf235")
@@ -99,7 +99,7 @@ public class shopsManagerGui {
                 })
 
                 .withExitButton(
-                        new ItemButton(new ItemBuilder(XMaterial.PLAYER_HEAD)
+                        ItemButton.create(ItemBuilder.of(XMaterial.PLAYER_HEAD)
                                 .setName(plugin.configM.getLangYml().SHOPS_MANAGER_RETURN)
                                 .setLore(plugin.configM.getLangYml().SHOPS_MANAGER_RETURN_LORE)
                                 .applyTexture("19bf3292e126a105b54eba713aa1b152d541a1d8938829c56364d178ed22bf")

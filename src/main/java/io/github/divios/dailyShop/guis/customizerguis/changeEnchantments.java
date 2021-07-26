@@ -1,6 +1,8 @@
 package io.github.divios.dailyShop.guis.customizerguis;
 
 import com.cryptomorin.xseries.XMaterial;
+import com.google.common.base.Preconditions;
+import io.github.divios.core_lib.Schedulers;
 import io.github.divios.core_lib.inventory.dynamicGui;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.misc.ChatPrompt;
@@ -23,32 +25,58 @@ public class changeEnchantments {
 
     private static final DailyShop plugin = DailyShop.getInstance();
 
-    private static changeEnchantments instance = null;
     private static final List<ItemStack> contentsList = contents();
-    private Player p;
-    private dItem ditem;
-    private dShop shop;
+    private final Player p;
+    private final dItem ditem;
+    private final dShop shop;
     private Map<Enchantment, Integer> e;
 
-    private changeEnchantments () {}
+    private changeEnchantments (
+            Player p,
+            dItem ditem,
+            dShop shop
+    ) {
+        this.p = p;
+        this.ditem = ditem;
+        this.shop = shop;
 
-    public static void openInventory(Player p, dItem ditem, dShop shop) {
-        instance = new changeEnchantments();
-        instance.p = p;
-        instance.ditem = ditem;
-        instance.shop = shop;
         new dynamicGui.Builder()
-                .contents(instance::getContents)
-                .contentAction(instance::contentAction)
-                .back(instance::backAction)
+                .contents(this::getContents)
+                .contentAction(this::contentAction)
+                .back(this::backAction)
                 .plugin(plugin)
                 .open(p);
+    }
+
+    private changeEnchantments (
+            Player p,
+            dItem ditem,
+            dShop shop,
+            Map<Enchantment, Integer> e
+    ) {
+        this.p = p;
+        this.ditem = ditem;
+        this.shop = shop;
+        this.e = e;
+
+        new dynamicGui.Builder()
+                .contents(this::contentsX)
+                .contentAction(this::contentActionX)
+                .back(this::backAction)
+                .plugin(plugin)
+                //.preventClose()
+                .open(p);
+    }
+
+    @Deprecated
+    public static void openInventory(Player p, dItem ditem, dShop shop) {
+        new changeEnchantments(p, ditem, shop);
     }
 
     private static List<ItemStack> contents() {
         List<ItemStack> contents = new ArrayList<>();
         for(Enchantment e : Enchantment.values()) {
-            ItemStack item = new ItemBuilder(XMaterial.BOOK.parseItem())
+            ItemStack item = ItemBuilder.of(XMaterial.BOOK.parseItem())
                     .setName("&f&l" + e.getName());
             contents.add(item);
         }
@@ -60,7 +88,7 @@ public class changeEnchantments {
     }
 
     private void backAction(Player p) {
-        customizerMainGuiIH.open(p, ditem, shop);
+        CustomizerMenu.open(p, ditem, shop);
     }
 
     private dynamicGui.Response contentAction(InventoryClickEvent e) {
@@ -71,36 +99,25 @@ public class changeEnchantments {
 
             if (!utils.isInteger(s1)) {
                 utils.sendMsg(p, plugin.configM.getLangYml().MSG_NOT_INTEGER);
-                Task.syncDelayed(plugin, () -> customizerMainGuiIH.open(p, ditem, shop));
+                Schedulers.sync().run(()  -> CustomizerMenu.open(p, ditem, shop));
             }
             ditem.addEnchantments(Enchantment.getByName(s), Integer.parseInt(s1));
-            Task.syncDelayed(plugin, () -> customizerMainGuiIH.open(p, ditem, shop));
+                    Schedulers.sync().run(()  -> CustomizerMenu.open(p, ditem, shop));
 
-        }, cause -> Task.syncDelayed(plugin, () -> customizerMainGuiIH.open(p, ditem, shop)),
+        }, cause -> Schedulers.sync().run(() -> CustomizerMenu.open(p, ditem, shop)),
                 "&1&lInput Enchant lvl", "");
 
         return dynamicGui.Response.nu();
     }
 
     public static void openInventory(Player p, dItem ditem, Map<Enchantment, Integer> e, dShop shop) {
-        instance = new changeEnchantments();
-        instance.p = p;
-        instance.ditem = ditem;
-        instance.e = e;
-        instance.shop = shop;
-        new dynamicGui.Builder()
-                .contents(instance::contentsX)
-                .contentAction(instance::contentActionX)
-                .back(instance::backAction)
-                .plugin(plugin)
-                //.preventClose()
-                .open(p);
+        new changeEnchantments(p, ditem, shop, e);
     }
 
     private List<ItemStack> contentsX() {
         List<ItemStack> contents = new ArrayList<>();
         for(Map.Entry<Enchantment, Integer> e : e.entrySet()) {
-            ItemStack item = new ItemBuilder(XMaterial.ENCHANTED_BOOK.parseItem())
+            ItemStack item = ItemBuilder.of(XMaterial.ENCHANTED_BOOK.parseItem())
                     .setName("&f&l" + e.getKey().getName() + ":" + e.getValue());
             contents.add(item);
         }
@@ -110,8 +127,50 @@ public class changeEnchantments {
     private dynamicGui.Response contentActionX(InventoryClickEvent e) {
         String[] entry = FormatUtils.stripColor(e.getCurrentItem().getItemMeta().getDisplayName()).split(":");
         ditem.removeEnchantments(Enchantment.getByName(entry[0]));
-        customizerMainGuiIH.open(p, ditem, instance.shop);
+        CustomizerMenu.open(p, ditem, shop);
         return dynamicGui.Response.nu();
+
+
     }
 
+    public static changeEnchantmentsBuilder builder() { return new changeEnchantmentsBuilder(); }
+
+    public static final class changeEnchantmentsBuilder {
+        private Player p;
+        private dItem ditem;
+        private dShop shop;
+        private Map<Enchantment, Integer> e;
+
+        private changeEnchantmentsBuilder() { }
+
+        public changeEnchantmentsBuilder withPlayer(Player p) {
+            this.p = p;
+            return this;
+        }
+
+        public changeEnchantmentsBuilder withDitem(dItem ditem) {
+            this.ditem = ditem;
+            return this;
+        }
+
+        public changeEnchantmentsBuilder withShop(dShop shop) {
+            this.shop = shop;
+            return this;
+        }
+
+        public changeEnchantmentsBuilder withEnchants(Map<Enchantment, Integer> e) {
+            this.e = e;
+            return this;
+        }
+
+        public changeEnchantments prompt() {
+
+            Preconditions.checkNotNull(p, "player null");
+            Preconditions.checkNotNull(ditem, "item null");
+            Preconditions.checkNotNull(shop, "shop null");
+
+            if (e == null) return new changeEnchantments(p, ditem, shop);
+            else return new changeEnchantments(p, ditem, shop, e);
+        }
+    }
 }

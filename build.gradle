@@ -85,6 +85,10 @@ dependencies {
     compileOnly fileTree(dir: 'libs', include: ['*.jar'])
 }
 
+java {
+    withSourcesJar()
+}
+
 task updateJars {
     doLast {
         copy {

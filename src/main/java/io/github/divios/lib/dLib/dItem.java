@@ -649,7 +649,7 @@ public class dItem implements Serializable, Cloneable {
     }
 
     public static dItem AIR() {
-        dItem empty = new dItem(new ItemBuilder(XMaterial.GRAY_STAINED_GLASS_PANE)
+        dItem empty = new dItem(ItemBuilder.of(XMaterial.GRAY_STAINED_GLASS_PANE)
                 .setName("&c").addItemFlags(ItemFlag.HIDE_ENCHANTS)
                 .addEnchant(Enchantment.DAMAGE_ALL, 1));
 
@@ -658,7 +658,7 @@ public class dItem implements Serializable, Cloneable {
     }
 
     public static dItem SIGN() {
-        dItem sign = dItem.of(new ItemBuilder(XMaterial.OAK_DOOR)
+        dItem sign = dItem.of(ItemBuilder.of(XMaterial.OAK_DOOR)
                 .setName("&6Current items"));
 
         sign.setSIGN();

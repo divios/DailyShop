@@ -24,16 +24,16 @@ public class changeBundleItem {
     private final Player p;
     private final dItem item;
     private final dShop shop;
-    private final BiConsumer<Player, List<UUID>> confirm;
-    private final Consumer<Player> back;
+    private final Consumer<List<UUID>> confirm;
+    private final Runnable back;
 
     @Deprecated
     public changeBundleItem(
             Player p,
             dItem item,
             dShop shop,
-            BiConsumer<Player, List<UUID>> confirm,
-            Consumer<Player> back
+            Consumer<List<UUID>> confirm,
+            Runnable back
     ) {
         this.p = p;
         this.item = item.clone();
@@ -65,7 +65,7 @@ public class changeBundleItem {
                             }).collect(Collectors.toList());
 
                 }).addItems((inventory, integer) ->
-                inventory.setItem(47, new ItemBuilder(XMaterial.EMERALD_BLOCK)
+                inventory.setItem(47, ItemBuilder.of(XMaterial.EMERALD_BLOCK)
                         .setName("&6&lConfirm").setLore("&7Click to confirm")))
 
                 .contentAction(event -> {
@@ -80,16 +80,56 @@ public class changeBundleItem {
                 }).nonContentAction((integer, player) -> {
 
             if (integer == 47) {
-                confirm.accept(p, added);
+                confirm.accept(added);
             }
             return dynamicGui.Response.nu();
 
         }).setSearch(false)
-                .back(back)
+                .back(player -> back.run())
                 .title(_i -> "&6Set items on the bundle")
                 .plugin(DailyShop.getInstance())
                 .open(p);
 
     }
 
+    public static changeBundleItemBuilder builder() { return new changeBundleItemBuilder(); }
+
+    public static final class changeBundleItemBuilder {
+        private Player p;
+        private dItem item;
+        private dShop shop;
+        private Consumer<List<UUID>> confirm;
+        private Runnable back;
+
+        private changeBundleItemBuilder() {}
+
+        public changeBundleItemBuilder withPlayer(Player p) {
+            this.p = p;
+            return this;
+        }
+
+        public changeBundleItemBuilder withItem(dItem item) {
+            this.item = item;
+            return this;
+        }
+
+        public changeBundleItemBuilder withShop(dShop shop) {
+            this.shop = shop;
+            return this;
+        }
+
+        public changeBundleItemBuilder withConfirm(Consumer<List<UUID>> confirm) {
+            this.confirm = confirm;
+            return this;
+        }
+
+        public changeBundleItemBuilder withBack(Runnable back) {
+            this.back = back;
+            return this;
+        }
+
+        public changeBundleItem prompt() {
+            return new changeBundleItem(p, item, shop, confirm, back);
+        }
+    }
 }

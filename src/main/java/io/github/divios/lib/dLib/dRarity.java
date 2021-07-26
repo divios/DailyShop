@@ -33,7 +33,7 @@ public class dRarity {
      * @return
      */
     public ItemStack getAsItem() {
-        return new ItemBuilder(items.get(rarity.ordinal()).clone())
+        return ItemBuilder.of(items.get(rarity.ordinal()).clone())
                 .setName(getRarityLore());
     }
 
