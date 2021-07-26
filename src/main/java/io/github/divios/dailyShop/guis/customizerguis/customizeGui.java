@@ -77,28 +77,28 @@ public class customizeGui implements Listener, InventoryHolder {
 
         IntStream.range(0, 36).forEach(i->
                 p.getInventory().setItem(i,
-                        new ItemBuilder(XMaterial.GRAY_STAINED_GLASS_PANE).setName("&c")));
+                        ItemBuilder.of(XMaterial.GRAY_STAINED_GLASS_PANE).setName("&c")));
 
-        ItemStack back = new ItemBuilder(XMaterial.PLAYER_HEAD)
+        ItemStack back = ItemBuilder.of(XMaterial.PLAYER_HEAD)
                 .setName("&b&lGo back").setLore("&7Click to go back")
                 .applyTexture("19bf3292e126a105b54eba713aa1b152d541a1d8938829c56364d178ed22bf");
 
-        ItemStack complete = new ItemBuilder(XMaterial.PLAYER_HEAD)
+        ItemStack complete = ItemBuilder.of(XMaterial.PLAYER_HEAD)
                 .setName("&b&lApply changes").setLore("&7Click to complete changes")
                 .applyTexture("2a3b8f681daad8bf436cae8da3fe8131f62a162ab81af639c3e0644aa6abac2f");
 
-        ItemStack rename = new ItemBuilder(XMaterial.NAME_TAG)
+        ItemStack rename = ItemBuilder.of(XMaterial.NAME_TAG)
                 .setName("&b&lChange title").setLore("&7Click to change the gui title");
 
-        ItemStack addRow = new ItemBuilder(XMaterial.PLAYER_HEAD)
+        ItemStack addRow = ItemBuilder.of(XMaterial.PLAYER_HEAD)
                 .setName("&b&lAdd row").setLore("&7Adds a row")
                 .applyTexture("3edd20be93520949e6ce789dc4f43efaeb28c717ee6bfcbbe02780142f716");
 
-        ItemStack deleteRow = new ItemBuilder(XMaterial.PLAYER_HEAD)
+        ItemStack deleteRow = ItemBuilder.of(XMaterial.PLAYER_HEAD)
                 .setName("&b&lRemove row").setLore("&7Deletes a row")
                 .applyTexture("bd8a99db2c37ec71d7199cd52639981a7513ce9cca9626a3936f965b131193");
 
-        ItemStack info = new ItemBuilder(XMaterial.PAPER)
+        ItemStack info = ItemBuilder.of(XMaterial.PAPER)
                 .setName("&8> &6Info")
                 .addLore("&7The main idea is to customize",
                         "&7the shop as you want", "&7an leave empty the slots", "&7where the daily items will appear",

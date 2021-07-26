@@ -23,27 +23,27 @@ public class confirmGui{
 
     private static final DailyShop main = DailyShop.getInstance();
 
-    private static final ItemStack add1 = new ItemBuilder(XMaterial.GREEN_STAINED_GLASS_PANE)
+    private static final ItemStack add1 = ItemBuilder.of(XMaterial.GREEN_STAINED_GLASS_PANE)
                 .setName(main.configM.getLangYml().CONFIRM_GUI_ADD_PANE + " 1");
-    private static final ItemStack add5 = new ItemBuilder(XMaterial.GREEN_STAINED_GLASS_PANE)
+    private static final ItemStack add5 = ItemBuilder.of(XMaterial.GREEN_STAINED_GLASS_PANE)
                 .setName(main.configM.getLangYml().CONFIRM_GUI_ADD_PANE + " 5");
-    private static final ItemStack add10 = new ItemBuilder(XMaterial.GREEN_STAINED_GLASS_PANE)
+    private static final ItemStack add10 = ItemBuilder.of(XMaterial.GREEN_STAINED_GLASS_PANE)
                 .setName(main.configM.getLangYml().CONFIRM_GUI_ADD_PANE + " 10");
 
-    private static final ItemStack set64 = new ItemBuilder(XMaterial.BLUE_STAINED_GLASS_PANE)
+    private static final ItemStack set64 = ItemBuilder.of(XMaterial.BLUE_STAINED_GLASS_PANE)
                 .setName(main.configM.getLangYml().CONFIRM_GUI_ADD_PANE + " 64");
 
-    private static final ItemStack rem1 = new ItemBuilder(XMaterial.RED_STAINED_GLASS_PANE)
+    private static final ItemStack rem1 = ItemBuilder.of(XMaterial.RED_STAINED_GLASS_PANE)
                 .setName(main.configM.getLangYml().CONFIRM_GUI_REMOVE_PANE + " 1");
-    private static final ItemStack rem5 = new ItemBuilder(XMaterial.RED_STAINED_GLASS_PANE)
+    private static final ItemStack rem5 = ItemBuilder.of(XMaterial.RED_STAINED_GLASS_PANE)
                 .setName(main.configM.getLangYml().CONFIRM_GUI_REMOVE_PANE + " 5");
-    private static final ItemStack rem10 = new ItemBuilder(XMaterial.RED_STAINED_GLASS_PANE)
+    private static final ItemStack rem10 = ItemBuilder.of(XMaterial.RED_STAINED_GLASS_PANE)
                 .setName(main.configM.getLangYml().CONFIRM_GUI_REMOVE_PANE + " 10");
 
-    private static final ItemStack set1 = new ItemBuilder(XMaterial.BLUE_STAINED_GLASS_PANE)
+    private static final ItemStack set1 = ItemBuilder.of(XMaterial.BLUE_STAINED_GLASS_PANE)
                 .setName(main.configM.getLangYml().CONFIRM_GUI_REMOVE_PANE + " 64");
 
-    private static final ItemStack blackGlass = new ItemBuilder(XMaterial.BLACK_STAINED_GLASS_PANE)
+    private static final ItemStack blackGlass = ItemBuilder.of(XMaterial.BLACK_STAINED_GLASS_PANE)
             .setName("&c");
 
     private static final int MAX_AMOUNT = 64 * 9 * 4;
@@ -161,12 +161,12 @@ public class confirmGui{
             update();
         }), 39);
 
-        gui.addButton(53, ItemButton.create(new ItemBuilder(XMaterial.PLAYER_HEAD)
+        gui.addButton(53, ItemButton.create(ItemBuilder.of(XMaterial.PLAYER_HEAD)
                 .setName(backLore).setLore(main.configM.getLangYml().CONFIRM_GUI_RETURN_PANE_LORE)
                 .applyTexture("19bf3292e126a105b54eba713aa1b152d541a1d8938829c56364d178ed22bf"),
                 e -> b.accept((Player) e.getWhoClicked())));
 
-        gui.addButton(49, ItemButton.create(new ItemBuilder(XMaterial.PLAYER_HEAD)
+        gui.addButton(49, ItemButton.create(ItemBuilder.of(XMaterial.PLAYER_HEAD)
                 .applyTexture("2a3b8f681daad8bf436cae8da3fe8131f62a162ab81af639c3e0644aa6abac2f")
                 .setName(confirmLore)
                 .addLore(Msg.singletonMsg(main.configM.getLangYml().CONFIRM_GUI_BUY_NAME).add("\\{price}",
@@ -193,7 +193,7 @@ public class confirmGui{
         inv.setItem(44, amount < MAX_AMOUNT - 10 ? add10: blackGlass);
         inv.setItem(41, amount < MAX_AMOUNT - 64 ? set64: blackGlass);
 
-        gui.getInventory().setItem(49, new ItemBuilder(XMaterial.PLAYER_HEAD)
+        gui.getInventory().setItem(49, ItemBuilder.of(XMaterial.PLAYER_HEAD)
                 .applyTexture("2a3b8f681daad8bf436cae8da3fe8131f62a162ab81af639c3e0644aa6abac2f")
                 .setName(confirmLore)
                 .addLore(Msg.singletonMsg(main.configM.getLangYml().CONFIRM_GUI_SELL_ITEM).add("\\{price}",

@@ -25,7 +25,7 @@ public class shopItemsManagerLore implements loreStrategy {
 
     public ItemStack applyLore(ItemStack item) {
 
-        ItemBuilder aux = new ItemBuilder(item)
+        ItemBuilder aux = ItemBuilder.of(item)
                 .addLore("")
                 .addLore(Msg.singletonMsg(plugin.configM.getLangYml().DAILY_ITEMS_BUY_PRICE)
                         .add("\\{buyPrice}", "" +
