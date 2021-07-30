@@ -309,7 +309,7 @@ public class CustomizerMenu {
         inv.addButton(                                                  // Rarity
                 ItemButton.create(
                         ItemBuilder.of(item.getRarity().getAsItem())
-                                .setName(plugin.configM.getLangYml().CUSTOMIZE_PRICE_NAME)
+                                .setName(item.getRarity().toString())
                                 .addLore(plugin.configM.getLangYml().CUSTOMIZE_RARITY_NAME)
 
                         , e -> {
