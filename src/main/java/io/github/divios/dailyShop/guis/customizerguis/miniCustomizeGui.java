@@ -2,6 +2,7 @@ package io.github.divios.dailyShop.guis.customizerguis;
 
 import com.cryptomorin.xseries.XMaterial;
 import com.google.common.base.Preconditions;
+import io.github.divios.core_lib.Schedulers;
 import io.github.divios.core_lib.inventory.InventoryGUI;
 import io.github.divios.core_lib.inventory.ItemButton;
 import io.github.divios.core_lib.inventory.materialsPrompt;
@@ -134,12 +135,21 @@ public class miniCustomizeGui {
                 e -> {
                     preventCloseB = false;
                     if (e.isLeftClick()) {
-                        ChatPrompt.prompt(plugin, p, (s) -> {
-                            item = ItemUtils.addLore(item, s);
-                            Task.syncDelayed(plugin, this::refresh);
-                        }, player -> refresh(), "&e&lInput Lore", "");
+                        ChatPrompt.builder()
+                                .withPlayer(p)
+                                .withResponse(s -> {
+                                    item = ItemUtils.addLore(item, s);
+                                    Schedulers.sync().run(this::refresh);
+                                })
+                                .withCancel(cancelReason -> refresh())
+                                .withTitle("&e&lInput Lore")
+                                .prompt();
+
                     } else if (e.isRightClick()) {
-                        item = ItemUtils.removeLore(item, 1);
+
+                        if (ItemUtils.getLore(item).isEmpty()) return;
+
+                        item = ItemUtils.removeLore(item, ItemUtils.getLore(item).size() - 1);
                         refreshItem();
                     }
 

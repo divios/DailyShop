@@ -44,6 +44,10 @@ public class changeBundleItem {
         open();
     }
 
+    public static changeBundleItemBuilder builder() {
+        return new changeBundleItemBuilder();
+    }
+
     private void open() {
 
         List<UUID> added = item.getBundle().orElse(new ArrayList<>());
@@ -92,8 +96,6 @@ public class changeBundleItem {
 
     }
 
-    public static changeBundleItemBuilder builder() { return new changeBundleItemBuilder(); }
-
     public static final class changeBundleItemBuilder {
         private Player p;
         private dItem item;
@@ -101,7 +103,8 @@ public class changeBundleItem {
         private Consumer<List<UUID>> confirm;
         private Runnable back;
 
-        private changeBundleItemBuilder() {}
+        private changeBundleItemBuilder() {
+        }
 
         public changeBundleItemBuilder withPlayer(Player p) {
             this.p = p;
