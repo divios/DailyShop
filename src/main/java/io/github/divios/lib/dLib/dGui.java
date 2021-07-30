@@ -242,12 +242,15 @@ public abstract class dGui {
 
         int addedButtons = 0;
         for (int i : openSlots.stream().sorted().collect(Collectors.toList())) {
-            if (i >= inv.getSize()) break;
+
+            if (i >= inv.getSize()) continue;
             inv.clear(i);
 
             if (addedButtons >= shop.getItems().size()) break;
 
             dItem rolled = RRM.roll();
+            if (rolled == null) break;
+
             rolled.generateNewBuyPrice();
             rolled.generateNewSellPrice();
             _renovate(rolled, i);
