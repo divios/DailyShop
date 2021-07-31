@@ -7,10 +7,7 @@ import io.github.divios.core_lib.inventory.builder.inventoryPopulator;
 import io.github.divios.core_lib.inventory.builder.paginatedGui;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
-import io.github.divios.core_lib.misc.ChatPrompt;
-import io.github.divios.core_lib.misc.FormatUtils;
-import io.github.divios.core_lib.misc.Task;
-import io.github.divios.core_lib.misc.confirmIH;
+import io.github.divios.core_lib.misc.*;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.guis.customizerguis.customizeGui;
 import io.github.divios.dailyShop.lorestategy.loreStrategy;
@@ -33,6 +30,8 @@ public class shopsManagerGui {
     private static final DailyShop plugin = DailyShop.getInstance();
     private static final shopsManager sManager = shopsManager.getInstance();
     private static final dataManager dManager = dataManager.getInstance();
+
+    private static final String SHOP_META = "dShopID";
 
     private static final loreStrategy strategy = new shopsManagerLore();
     private paginatedGui inv;
@@ -77,7 +76,8 @@ public class shopsManagerGui {
                                 .map(dShop -> ItemButton.create(
                                         strategy.applyLore(ItemBuilder.of(XMaterial.PLAYER_HEAD)
                                                 .setName("&8> &6" + dShop.getName())
-                                                .applyTexture("7e3deb57eaa2f4d403ad57283ce8b41805ee5b6de912ee2b4ea736a9d1f465a7")),
+                                                .applyTexture("7e3deb57eaa2f4d403ad57283ce8b41805ee5b6de912ee2b4ea736a9d1f465a7")
+                                                .setMetadata(SHOP_META, dShop.getName())),
                                         this::contentAction))
                 )
 
@@ -126,7 +126,13 @@ public class shopsManagerGui {
     private void contentAction(InventoryClickEvent e) {
 
         ItemStack selected = e.getCurrentItem();
-        dShop shop = sManager.getShop(FormatUtils.stripColor(utils.getDisplayName(selected).substring(4))).get();
+
+        if (!sManager.getShop(ItemUtils.getMetadata(selected, SHOP_META, String.class)).isPresent()) {      // PreConditions
+            Msg.sendMsg(p, "&7That shop doesn't exist anymore");
+            return;
+        }
+
+        dShop shop = sManager.getShop(ItemUtils.getMetadata(selected, SHOP_META, String.class)).get();
         Player p = (Player) e.getWhoClicked();
 
         if (e.isShiftClick() && e.isLeftClick()) {
