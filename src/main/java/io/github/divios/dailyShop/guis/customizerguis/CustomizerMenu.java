@@ -83,13 +83,26 @@ public class CustomizerMenu {
 
         inv.getInventory().setItem(5, item.getRawItem());             // The item itself
 
-        inv.addButton(                                                  // Done button
+        inv.addButton(                                                  // Craft button
                 ItemButton.create(
                         ItemBuilder.of(XMaterial.PLAYER_HEAD)
                                 .setName(plugin.configM.getLangYml().CUSTOMIZE_CRAFT)
                                 .addLore(plugin.configM.getLangYml().CUSTOMIZE_CRAFT_LORE)
                                 .applyTexture("2a3b8f681daad8bf436cae8da3fe8131f62a162ab81af639c3e0644aa6abac2f")
                         , e -> {
+
+                            // Preconditions of some features
+
+                            if (item.getCommands().isPresent() && item.getCommands().get().isEmpty())
+                                item.setCommands(null);
+
+                            if (item.getPerms().isPresent() && item.getPerms().get().isEmpty())
+                                item.setPerms(null);
+
+                            if (item.getBundle().isPresent() && item.getBundle().get().isEmpty())
+                                item.setBundle(null);
+
+                            // Check to update or add item
                             if (shop.hasItem(item.getUid())) {
                                 shop.updateItem(item.getUid(), item);
                             } else {
