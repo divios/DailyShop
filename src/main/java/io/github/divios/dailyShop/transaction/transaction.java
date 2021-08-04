@@ -97,7 +97,7 @@ public class transaction {
 
         Msg.sendMsg(p, Msg.singletonMsg(plugin.configM.getLangYml().MSG_BUY_ITEM)
                 .add("\\{action}", "bought")
-                .add("\\{amount}", "" + item.getAmount())
+                .add("\\{amount}", "" + amount)
                 .add("\\{price}", "" + s.getPrice())
                 .add("\\{item}", item.getDisplayName() + FormatUtils.color("&7"))
                 .add("\\{currency}", s.getEcon().getName()).build());

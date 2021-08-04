@@ -58,7 +58,7 @@ public abstract class economy implements Serializable {
             return (economy) object;
 
         } catch (Exception e) {
-            throw new IllegalStateException("Unable to deserialize economy.", e);
+            return new vault();
         }
     }
 }
