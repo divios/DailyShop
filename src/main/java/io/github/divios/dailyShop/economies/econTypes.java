@@ -6,5 +6,6 @@ public enum econTypes {
     tokenEnchants,
     tokenManager,
     MPoints,
-    playerPoints
+    playerPoints,
+    ultraEconomy
 }

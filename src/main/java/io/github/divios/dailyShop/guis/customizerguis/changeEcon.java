@@ -8,10 +8,12 @@ import io.github.divios.core_lib.inventory.inventoryUtils;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.FormatUtils;
+import io.github.divios.core_lib.misc.Msg;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.economies.*;
 import io.github.divios.dailyShop.hooks.hooksManager;
 import io.github.divios.lib.dLib.dItem;
+import me.TechsCode.UltraEconomy.UltraEconomyAPI;
 import me.realized.tokenmanager.api.TokenManager;
 import me.xanium.gemseconomy.api.GemsEconomyAPI;
 import me.xanium.gemseconomy.currency.Currency;
@@ -32,6 +34,7 @@ public class changeEcon{
     private static final TokenManager tokenManagerApi = hooksManager.getInstance().getTokenManagerApi();
     private static final MPointsAPI mPointsAPI = hooksManager.getInstance().getMPointsApi();
     private static final PlayerPointsAPI pPointsApi = hooksManager.getInstance().getPlayerPointsApi();
+    private static final UltraEconomyAPI uEconApi = hooksManager.getInstance().getUltraEconomyApi();
 
     private final dItem item;
     private final Player p;
@@ -122,6 +125,16 @@ public class changeEcon{
                 item.setEconomy(new playerPointsE());
                 consumer.accept(item);
             }), inventoryUtils.getFirstEmpty(gui.getInventory()));
+        }
+
+        if (uEconApi != null) {
+            uEconApi.getCurrencies().forEach(currency -> {
+                gui.addButton(ItemButton.create(ItemBuilder.of(XMaterial.TRIPWIRE_HOOK)
+                        .setName("&f&l" + currency.getName()).addLore("&7Click to change"), e -> {
+                    item.setEconomy(new ultraEconomyE(currency.getName()));
+                    consumer.accept(item);
+                }), inventoryUtils.getFirstEmpty(gui.getInventory()));
+            });
         }
 
         gui.destroysOnClose();
