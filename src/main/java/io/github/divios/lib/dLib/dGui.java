@@ -340,9 +340,11 @@ public abstract class dGui {
 
             buttons.clear();
             openSlots.clear();
-            IntStream.range(0, inv.getSize()).forEach(openSlots::add);
             this.title = shop.getName();
             this.inv = Bukkit.createInventory(null, 27, title);
+            IntStream.range(0, inv.getSize()).forEach(openSlots::add);
+
+
         }
     }
 
