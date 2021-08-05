@@ -79,7 +79,6 @@ public class changePrice {
                                         Task.syncDelayed(plugin, back, 0L);
                                         return;
                                     }
-                                    p.sendMessage(s);
                                     double price = Double.parseDouble(s);
                                     if (price <= 0) price = -1;
 
