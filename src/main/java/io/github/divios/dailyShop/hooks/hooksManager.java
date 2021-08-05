@@ -4,6 +4,7 @@ import com.vk2gpz.tokenenchant.api.TokenEnchantAPI;
 import io.github.divios.core_lib.hooks.vaultHook;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.utils.utils;
+import me.TechsCode.UltraEconomy.UltraEconomyAPI;
 import me.realized.tokenmanager.api.TokenManager;
 import me.xanium.gemseconomy.api.GemsEconomyAPI;
 import me.yic.mpoints.MPointsAPI;
@@ -52,6 +53,9 @@ public class hooksManager {
         if (utils.isOperative("ShopGUIPlus"))
             shopGuiPlusHook.hook();
 
+        if (utils.isOperative("UltraEconomy"))
+            UltraEconomyHook.hook();
+
         gemsEconomyHook.getInstance();
         bstatsHook.init();
     }
@@ -69,6 +73,8 @@ public class hooksManager {
     public MPointsAPI getMPointsApi() { return MPointsHook.getApi(); }
 
     public PlayerPointsAPI getPlayerPointsApi() { return  playerPointsHook.getApi(); }
+
+    public UltraEconomyAPI getUltraEconomyApi() { return UltraEconomyHook.getApi(); }
 
     public Object getShopGuiPlusApi() { return shopGuiPlusHook.getApi(); }
 }
