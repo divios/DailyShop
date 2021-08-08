@@ -12,7 +12,7 @@ public abstract class abstractSyncMenu implements syncMenu {
     protected final Map<UUID, dGui> guis;
     protected dGui base;
     protected final Semaphore turn;
-    protected boolean isAvailable = true;
+    protected boolean isAvailable = true;   // TODO
 
     protected abstractSyncMenu() {
         this.guis = createMap();
