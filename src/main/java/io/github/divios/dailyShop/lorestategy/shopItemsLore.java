@@ -60,7 +60,8 @@ public class shopItemsLore implements loreStrategy {
         newItem = newItem.addLore(Msg.singletonMsg(plugin.configM.getLangYml().DAILY_ITEMS_RARITY)
                 .add("\\{rarity}", aux.getRarity().toString()).build());
 
-        return newItem;
+
+        return newItem.addLore(plugin.configM.getLangYml().SHOPS_ITEMS_LORE);
     }
 
     @Override
