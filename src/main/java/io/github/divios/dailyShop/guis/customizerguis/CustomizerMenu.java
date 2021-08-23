@@ -44,7 +44,7 @@ public class CustomizerMenu {
             dShop shop
     ) {
         this.p = p;
-        this.item = item;
+        this.item = item.clone();
         this.shop = shop;
 
         build();
