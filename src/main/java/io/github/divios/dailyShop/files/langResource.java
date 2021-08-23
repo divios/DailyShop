@@ -20,6 +20,10 @@ public class langResource extends resource{
     public String CONFIRM_GUI_NO;
     public List<String> CONFIRM_GUI_NO_LORE;
 
+    // SHOPS ITEMS
+
+    public List<String> SHOPS_ITEMS_LORE;
+
     // SHOPS MANAGER
 
     public String SHOPS_MANAGER_TITLE;
@@ -163,6 +167,8 @@ public class langResource extends resource{
         CONFIRM_GUI_YES_LORE = parseLore(yaml.getString("lang.confirm_gui.yes_lore"));
         CONFIRM_GUI_NO = yaml.getString("lang.confirm_gui.no_name");
         CONFIRM_GUI_NO_LORE = parseLore(yaml.getString("lang.confirm_gui.no_lore"));
+
+        SHOPS_ITEMS_LORE = parseLore(yaml.getString("lang.shop_items.lore"));
 
         SHOPS_MANAGER_TITLE = yaml.getString("lang.shops_manager.title");
         SHOPS_MANAGER_CREATE = yaml.getString("lang.shops_manager.create");
