@@ -11,7 +11,6 @@ import java.sql.Timestamp;
 
 public class updateItemEvent extends Event {
     private static final HandlerList HANDLERS_LIST = new HandlerList();
-    private boolean isCanceled = false;
 
     private final dItem item;
 

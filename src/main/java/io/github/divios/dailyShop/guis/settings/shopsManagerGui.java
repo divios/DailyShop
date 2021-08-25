@@ -137,7 +137,7 @@ public class shopsManagerGui {
 
         if (e.isShiftClick() && e.isLeftClick()) {
             inv.destroy();
-            customizeGui.open(p, shop);
+            shop.customizeGui(p);
 
         } else if (e.getClick().equals(ClickType.MIDDLE)) {   // rename
 
@@ -211,7 +211,7 @@ public class shopsManagerGui {
                     .withCancelLore(plugin.configM.getLangYml().CONFIRM_GUI_NO, plugin.configM.getLangYml().CONFIRM_GUI_NO_LORE)
                     .prompt();
 
-        } else shopGui.open(p, shop.getName());
+        } else shop.manageItems(p);
     }
 
     private void nonContentAction() {

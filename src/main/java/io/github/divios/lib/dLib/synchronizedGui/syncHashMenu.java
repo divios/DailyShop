@@ -1,33 +1,31 @@
 package io.github.divios.lib.dLib.synchronizedGui;
 
+import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import io.github.divios.lib.dLib.dGui;
+import io.github.divios.lib.dLib.dShop;
+import io.github.divios.lib.dLib.synchronizedGui.singleGui.singleGui;
 
-import java.util.Map;
 import java.util.UUID;
 
 public class syncHashMenu extends abstractSyncMenu {
 
-    private syncHashMenu() {
-        super();
+    private syncHashMenu(dShop shop) {
+        super(shop);
     }
 
-    public static syncMenu create() {
-        return new syncHashMenu();
+    public static syncMenu create(dShop shop) {
+        return new syncHashMenu(shop);
     }
 
-    public static syncMenu fromJson(String json) {
-        // TODO
-        return null;
+    public static syncMenu fromJson(String json, dShop shop) {
+        syncHashMenu newMenu = new syncHashMenu(shop);
+        newMenu.base = singleGui.fromJson(json, shop);
+        return newMenu;
     }
 
     @Override
-    protected Map<UUID, dGui> createMap() {
+    protected BiMap<UUID, singleGui> createMap() {
         return HashBiMap.create();
     }
 
-    @Override
-    public String toJson() {
-        return null;
-    }
 }
