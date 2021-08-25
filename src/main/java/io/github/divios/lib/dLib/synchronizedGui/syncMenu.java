@@ -1,12 +1,10 @@
 package io.github.divios.lib.dLib.synchronizedGui;
 
-import io.github.divios.dailyShop.events.updateItemEvent;
-import io.github.divios.lib.dLib.dGui;
-import io.github.divios.lib.dLib.dItem;
+import io.github.divios.lib.dLib.dShop;
+import io.github.divios.lib.dLib.synchronizedGui.singleGui.singleGui;
 import org.bukkit.entity.Player;
 
 import java.util.Collection;
-import java.util.Set;
 import java.util.UUID;
 
 public interface syncMenu {
@@ -15,20 +13,24 @@ public interface syncMenu {
 
     void renovate();
 
-    dGui get(UUID key);
+    singleGui get(UUID key);
 
     int size();
 
-    Collection<dGui> getMenus();
+    Collection<singleGui> getMenus();
 
     void invalidate(UUID key);
 
     void invalidateAll();
 
-    void manageItems(Player p);
+    void destroy();
 
     void customizeGui(Player p);
 
+    dShop getShop();
+
     String toJson();
+
+    int hashCode();
 
 }

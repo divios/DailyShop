@@ -32,7 +32,7 @@ public class sellTransaction {
                 confirmGui.open(p, item.getItem(), dShop.dShopT.sell,
                         (item1, amount) ->
                                 initTransaction(p, new dItem(item1), amount, shop),
-                        player -> shop.getGui().open(p),
+                        player -> shop.open(p),
                         plugin.configM.getLangYml().CONFIRM_GUI_SELL_NAME,
                         plugin.configM.getLangYml().CONFIRM_GUI_YES,
                         plugin.configM.getLangYml().CONFIRM_GUI_NO);
@@ -51,7 +51,7 @@ public class sellTransaction {
                             if (aBoolean)
                                 initTransaction(p, item, item.getAmount(), shop);
                             else
-                                shop.getGui().open(p);
+                                shop.open(p);
                         })
                         .withTitle(plugin.configM.getLangYml().CONFIRM_GUI_SELL_NAME)
                         .withConfirmLore(plugin.configM.getLangYml().CONFIRM_GUI_YES, plugin.configM.getLangYml().CONFIRM_GUI_YES_LORE)

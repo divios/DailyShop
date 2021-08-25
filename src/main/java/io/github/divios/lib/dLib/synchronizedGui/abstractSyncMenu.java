@@ -1,101 +1,193 @@
 package io.github.divios.lib.dLib.synchronizedGui;
 
-import io.github.divios.lib.dLib.dGui;
+import com.google.common.base.Objects;
+import com.google.common.collect.BiMap;
+import io.github.divios.core_lib.Events;
+import io.github.divios.core_lib.event.SingleSubscription;
+import io.github.divios.core_lib.event.Subscription;
+import io.github.divios.core_lib.misc.Msg;
+import io.github.divios.dailyShop.events.reStockShopEvent;
+import io.github.divios.dailyShop.events.updateItemEvent;
+import io.github.divios.dailyShop.events.updateShopEvent;
+import io.github.divios.dailyShop.guis.customizerguis.customizeGui;
+import io.github.divios.dailyShop.guis.settings.shopGui;
+import io.github.divios.lib.dLib.dItem;
+import io.github.divios.lib.dLib.dShop;
+import io.github.divios.lib.dLib.synchronizedGui.singleGui.singleGui;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-import java.util.concurrent.Semaphore;
 
 public abstract class abstractSyncMenu implements syncMenu {
 
-    protected final Map<UUID, dGui> guis;
-    protected dGui base;
-    protected final Semaphore turn;
-    protected boolean isAvailable = true;   // TODO
+    protected final dShop shop;
+    protected final BiMap<UUID, singleGui> guis;
+    protected singleGui base;
+    private boolean isAvailable = true;
 
-    protected abstractSyncMenu() {
+    private final Set<SingleSubscription> listeners = new HashSet<>();
+
+    protected abstractSyncMenu(dShop shop) {
+        this.shop = shop;
         this.guis = createMap();
 
-        this.turn = new Semaphore(1);
+        ready();
     }
 
-    protected abstract Map<UUID, dGui> createMap();
+    /**
+     * Inits listeners
+     */
+
+    private void ready() {
+
+        listeners.add(
+                Events.subscribe(reStockShopEvent.class)
+                        .filter(o -> o.getShop().equals(shop))
+                        .handler(o -> renovate())
+        );
+
+        listeners.add(
+                Events.subscribe(updateItemEvent.class)
+                        .filter(o -> o.getShop().equals(shop))
+                        .handler(o -> this.updateItems(o.getItem(), o.getType()))
+        );
+
+        listeners.add(
+                Events.subscribe(updateShopEvent.class)
+                        .filter(o -> o.getShop().equals(shop))
+                        .handler(o -> {
+                                    if (o.isResponse()) updateBase(o);
+                                    isAvailable = true;
+                                }
+                        )
+
+        );
+
+        listeners.add(
+                Events.subscribe(InventoryCloseEvent.class)
+                    .handler(this::checkClosedInv)
+        );
+
+    }
+
+    /**
+     * Synchronized method to check for a closed inventory
+     * @param o The InventoryCloseEvent triggered
+     */
+    private synchronized void checkClosedInv(InventoryCloseEvent o) {
+        singleGui gui = guis.get(o.getPlayer().getUniqueId());
+
+        if (gui != null) invalidate(o.getPlayer().getUniqueId());
+    }
+
+    /**
+     * Synchronized method to update the base when the listener is trigger
+     *
+     * @param o
+     */
+    private synchronized void updateBase(updateShopEvent o) {
+        base = singleGui.create(null, o.getInv(), shop);
+        renovate();
+    }
+
+    protected abstract BiMap<UUID, singleGui> createMap();
 
     @Override
-    public void generate(Player p) {
-        acquire();
-        dGui newGui = base.clone();
-        guis.put(p.getUniqueId(), newGui);
-        newGui.open(p);
-        turn.release();
+    public synchronized void generate(Player p) {
+        if (!isAvailable) {
+            Msg.sendMsg(p, "The shop is currently under maintenance, come again later");
+            return;
+        }
+        guis.put(p.getUniqueId(), singleGui.create(p, base, shop));
     }
 
     @Override
-    public dGui get(UUID key) {
+    public synchronized @Nullable singleGui get(UUID key) {
         return guis.get(key);
     }
 
     @Override
-    public Collection<dGui> getMenus() {
-        acquire();
-        Collection<dGui> guis = Collections.unmodifiableCollection(this.guis.values());
-        turn.release();
-        return guis;
+    public synchronized Collection<singleGui> getMenus() {
+        return Collections.unmodifiableCollection(this.guis.values());
     }
 
     @Override
-    public int size() {
+    public synchronized int size() {
         return guis.size();
     }
 
     @Override
-    public void invalidate(UUID key) {
-        dGui removed = guis.remove(key);
+    public synchronized void invalidate(UUID key) {
+        singleGui removed = guis.remove(key);
         if (removed == null) return;
-        // destroy gui //TODO
+        removed.destroy();
     }
 
     @Override
-    public void invalidateAll() {
-        // close all guis TODO
-        this.guis.clear();
+    public synchronized void invalidateAll() {
+        guis.values().forEach(singleGui::destroy);
+        guis.clear();
     }
 
     @Override
-    public void renovate() {
-        acquire();
+    public synchronized void destroy() {
+        invalidateAll();
+        listeners.forEach(Subscription::unregister);
+        listeners.clear();
+        base.destroy();
+    }
+
+    @Override
+    public synchronized void renovate() {
         Set<UUID> players = guis.keySet();
-        // close all inventories
-        //base.renovate();
-        // update all inventories with the base // TODO
-        turn.release();
-
-        players.forEach(uuid -> {           // re-opens inventory for all
-            Player p = Bukkit.getPlayer(uuid);
-            if (p == null) return;
-            this.generate(p);
-        });
+        invalidateAll();                                            // close all inventories
+        base.renovate();                                            // Renovates base
+        players.forEach(uuid -> Optional.ofNullable(Bukkit.getPlayer(uuid)).ifPresent(this::generate));
+        // TODO broadcast msg??
     }
 
     @Override
-    public void manageItems(Player p) {
-        // Open inventory manager TODO
+    public synchronized void customizeGui(Player p) {
+        if (!isAvailable) {
+            Msg.sendMsg(p, "Someone is already editing this shop");
+            return;
+        }
+        isAvailable = false;
+        invalidateAll();                                            // Close all inventories
+        customizeGui.open(p, shop, base.getInventory());
     }
 
     @Override
-    public void customizeGui(Player p) {
-        acquire();
-        // close al inventories and open gui TODO
-        turn.release();
+    public dShop getShop() {
+        return shop;
     }
 
     @Override
-    public abstract String toJson();
+    public String toJson() {
+        return base.toJson();
+    }
 
-    private void acquire() {
-        try { turn.acquire(); }
-        catch (Exception e) { e.printStackTrace(); }
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(shop, base);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof syncMenu)) return false;
+
+        syncMenu gui = (syncMenu) o;
+
+        return shop.equals(gui.getShop())
+                && guis.hashCode() == gui.getMenus().hashCode();
+    }
+
+    private synchronized void updateItems(dItem item, updateItemEvent.updatetype type) {
+        base.updateItem(item, type);
+        guis.forEach((uuid, singleGui) -> singleGui.updateItem(item, type));
     }
 
 

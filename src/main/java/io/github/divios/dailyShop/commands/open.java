@@ -73,8 +73,7 @@ public class open extends abstractCommand {
         }
 
         shopsManager.getInstance().getShop(args.get(0))
-                .get().getGui()
-                .open(args.size() == 2 ? Bukkit.getPlayer(args.get(1)): (Player) sender);
+                .get().open(args.size() == 2 ? Bukkit.getPlayer(args.get(1)): (Player) sender);
 
     }
 }

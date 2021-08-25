@@ -62,7 +62,7 @@ public class reStock extends abstractCommand {
         shopsManager.getInstance().getShop(args.get(0))
                 .ifPresent(shop -> {
                     Bukkit.getPluginManager().callEvent(new reStockShopEvent(shop));
-                    shop.getGui().open((Player) sender);
+                    shop.open((Player) sender);
                         }
                 );
 
