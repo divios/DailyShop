@@ -1,14 +1,15 @@
 package io.github.divios.lib.dLib;
 
-import io.github.divios.core_lib.misc.EventListener;
-import io.github.divios.core_lib.misc.Task;
+import io.github.divios.core_lib.Events;
+import io.github.divios.core_lib.Schedulers;
 import io.github.divios.core_lib.misc.timeStampUtils;
+import io.github.divios.core_lib.scheduler.Task;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.events.deletedShopEvent;
-import io.github.divios.dailyShop.events.reStockShopEvent;
 import io.github.divios.dailyShop.events.updateItemEvent;
-import io.github.divios.dailyShop.utils.utils;
-import io.github.divios.lib.dLib.guis.dBuy;
+import io.github.divios.dailyShop.guis.settings.shopGui;
+import io.github.divios.lib.dLib.synchronizedGui.syncHashMenu;
+import io.github.divios.lib.dLib.synchronizedGui.syncMenu;
 import io.github.divios.lib.storage.dataManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -26,25 +27,22 @@ public class dShop {
     private String name;
     private final dShopT type;
     private Set<dItem> items = new LinkedHashSet<>();
-    private dGui gui;
+    private final syncMenu guis;
 
     private Timestamp timestamp;
     private int timer;
     private final int[] gui_hash = {0};
 
-    private Task asyncCheck;
-    private Task asyncUpdate;
-    private EventListener reStock;
-    private EventListener updateItem;
+    private final Set<Task> tasks = new HashSet<>();
 
     public dShop(String name, dShopT type) {
         this.name = name;
         this.type = type;
         this.timestamp = new Timestamp(System.currentTimeMillis());
         this.timer = plugin.configM.getSettingsYml().DEFAULT_TIMER;  // seconds representing time to pass until reset
-        this.gui = new dBuy(this);
+        this.guis = syncHashMenu.create(this);
 
-        initialize();
+        ready();
     }
 
     public dShop(String name, dShopT type, String base64, Timestamp timestamp, int timer) {
@@ -53,69 +51,59 @@ public class dShop {
         this.timestamp = timestamp;
         this.timer = timer;
 
-        gui = dGui.deserialize(base64, this);
-        initialize();
+        guis = syncHashMenu.fromJson(base64, this);
+        ready();
     }
 
-    private void initialize() {
+    private void ready() {
 
-        asyncCheck = Task.asyncRepeating(plugin, () -> {        // forced reStock due to timer
-            if (timeStampUtils.diff(timestamp,
-                    new Timestamp(System.currentTimeMillis())) > timer) {
+        tasks.add(
+                Schedulers.async().runRepeating(() -> {
 
-                timestamp = new Timestamp(System.currentTimeMillis());
-                dManager.updateTimeStamp(this.name, this.timestamp);
-                gui.renovate();
-                dManager.asyncUpdateGui(this.name, this.gui);
-            }
-        }, 20L, 20L);
+                    if (timeStampUtils.diff(timestamp,
+                            new Timestamp(System.currentTimeMillis())) > timer) {
+
+                        timestamp = new Timestamp(System.currentTimeMillis());
+                        dManager.updateTimeStamp(this.name, this.timestamp);
+                        guis.renovate();
+                        dManager.asyncUpdateGui(this.name, this.guis);
+                    }
+                }, 20, 20)
+        );
 
         // get hash based on content an not reference
 
-        asyncUpdate = Task.asyncRepeating(plugin, () -> {       // auto-update gui if any changes where made
+        tasks.add(
+                Schedulers.async().runRepeating(() -> {      // auto-update gui if any changes where made
 
-            if (gui.getInventory().getContents().length == 0) return;
+                    int hash = guis.hashCode();
+                    if (hash != gui_hash[0]) {
+                        dManager.asyncUpdateGui(this.name, guis);
+                        gui_hash[0] = hash;
+                    }
 
-            int aux = Arrays.stream(gui.getInventory().getContents())
-                    .mapToInt(value -> utils.isEmpty(value) ? 0:value.hashCode())
-                    .sum();
+                }, 18000L, 18000L)
+        );
 
-            if (aux != gui_hash[0]) {
-                dManager.asyncUpdateGui(this.name, gui);
-                gui_hash[0] = aux;
-            }
-
-        }, 18000L, 18000L);
-
-        new EventListener<>(deletedShopEvent.class, EventPriority.LOW, // auto-destroy listener
-                (own, e) -> {
+        Events.subscribe(deletedShopEvent.class, EventPriority.LOW)     // auto-destroy listener
+                .biHandler((own, e) -> {
                     if (e.getShop().getName().equals(name)) {
-                        gui.destroy();
-                        asyncCheck.cancel();
-                        asyncUpdate.cancel();
-                        reStock.unregister();
-                        updateItem.unregister();
+                        destroy();
                         own.unregister();
                     }
                 });
 
-        reStock = new EventListener<>(reStockShopEvent.class, EventPriority.LOW,  // reStock due to command by player
-                e -> {
-                    if (e.getShop() != this) return;
-
-                    gui.renovate();
-                    dManager.asyncUpdateGui(this.name, this.gui);
-                    timestamp = new Timestamp(System.currentTimeMillis());
-                    dManager.updateTimeStamp(this.name, this.timestamp);
-                });
-
-        updateItem = new EventListener<>(updateItemEvent.class, EventPriority.HIGHEST,
-                e -> {
-                    if (!e.getShop().getName().equals(this.getName())) return;
-
-                    this.gui.updateItem(e.getItem(), e.getType());
-                });
     }
+
+    public void open(Player p) {
+        guis.generate(p);
+    }
+
+    public void manageItems(Player p) {
+        shopGui.open(p, this);
+    }
+
+    public void customizeGui(Player p) { guis.customizeGui(p); }
 
     /**
      * Gets the name of the shop
@@ -236,25 +224,12 @@ public class dShop {
     }
 
     /**
-     * Shorcut for {@link dGui#open(Player)}
+     * Shorcut for {@link dInventory#open(Player)}
+     *
      * @param p Player to open the gui for
      */
     public synchronized void openGui(Player p) {
-        gui.open(p);
-    }
-
-    /**
-     * Updates the gui with the given inv
-     */
-    public synchronized void updateGui(dGui gui) {
-        this.gui.destroy();
-        this.gui = gui;
-        gui.renovate();
-        dataManager.getInstance().asyncUpdateGui(this.name, this.gui);
-    }
-
-    public synchronized void reload() {
-        this.gui.reload();
+        guis.generate(p);
     }
 
     /**
@@ -262,8 +237,8 @@ public class dShop {
      *
      * @return
      */
-    public synchronized dGui getGui() {
-        return gui;
+    public synchronized syncMenu getGuis() {
+        return guis;
     }
 
     public synchronized Timestamp getTimestamp() {
@@ -277,6 +252,12 @@ public class dShop {
     public synchronized void setTimer(int timer) {
         this.timer = timer;
         dManager.updateTimer(this.name, this.timer);
+    }
+
+    public synchronized void destroy() {
+        guis.destroy();
+        tasks.forEach(Task::stop);
+        tasks.clear();
     }
 
     @Override
