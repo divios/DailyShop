@@ -1,28 +1,39 @@
 package io.github.divios.lib.dLib.synchronizedGui.singleGui;
 
-import io.github.divios.core_lib.inventory.InventoryGUI;
 import io.github.divios.dailyShop.events.updateItemEvent;
+import io.github.divios.lib.dLib.dInventory;
 import io.github.divios.lib.dLib.dItem;
+import io.github.divios.lib.dLib.dShop;
 import org.bukkit.entity.Player;
 
 public interface singleGui {
 
-    static singleGui create(Player p, singleGui base) {
-        return new singleGuiImpl(p, base);
+    static singleGui fromJson(String json, dShop shop) {
+        return new singleGuiImpl(null, shop, dInventory.fromJson(json, shop));
     }
 
-    void updateItem(dItem item, updateItemEvent.updatetype type);
+    static singleGui create(Player p, singleGui base, dShop shop) {
+        return new singleGuiImpl(p, shop, base);
+    }
 
-    void updatePlaceholders();
+    static singleGui create(Player p, dInventory inv, dShop shop) { return new singleGuiImpl(p, shop, inv); }
+
+    void updateItem(dItem item, updateItemEvent.updatetype type);
 
     void renovate();
 
     Player getPlayer();
 
-    InventoryGUI getInventory();
+    dInventory getInventory();
+
+    dShop getShop();
 
     void destroy();
 
-    singleGui clone();
+    default String toJson() {
+        return getInventory().toJson();
+    }
+
+    int hashCode();
 
 }

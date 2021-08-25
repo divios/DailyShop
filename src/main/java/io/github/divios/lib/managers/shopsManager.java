@@ -91,10 +91,4 @@ public class shopsManager {
         return true;
     }
 
-    public synchronized void reload() {
-        shops.forEach(dShop::reload);
-    }
-
-
-
 }

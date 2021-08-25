@@ -5,9 +5,10 @@ import io.github.divios.core_lib.database.DatabaseConnector;
 import io.github.divios.core_lib.database.SQLiteConnector;
 import io.github.divios.core_lib.misc.timeStampUtils;
 import io.github.divios.dailyShop.DailyShop;
-import io.github.divios.lib.dLib.dGui;
+import io.github.divios.lib.dLib.dInventory;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
+import io.github.divios.lib.dLib.synchronizedGui.syncMenu;
 import io.github.divios.lib.storage.migrations.initialMigration;
 
 import java.sql.PreparedStatement;
@@ -98,7 +99,7 @@ public class dataManager extends DataManagerAbstract {
             try (PreparedStatement statement = connection.prepareStatement(createShop)) {
                 statement.setString(1, shop.getName());
                 statement.setString(2, shop.getType().name());
-                statement.setString(3, shop.getGui().serialize());
+                statement.setString(3, shop.getGuis().toJson());
                 statement.setString(4, timeStampUtils.serialize(shop.getTimestamp()));
                 statement.setInt(5, shop.getTimer());
                 statement.executeUpdate();
@@ -187,19 +188,19 @@ public class dataManager extends DataManagerAbstract {
         }));
     }
 
-    public void syncUpdateGui(String name, dGui gui) {
+    public void syncUpdateGui(String name, syncMenu gui) {
         this.databaseConnector.connect(connection -> {
             String updateGui = "UPDATE " + this.getTablePrefix() + "active_shops " +
                     "SET gui = ? WHERE name = ?";
             try (PreparedStatement statement = connection.prepareStatement(updateGui)) {
-                statement.setString(1, gui.serialize());
+                statement.setString(1, gui.toJson());
                 statement.setString(2, name);
                 statement.executeUpdate();
             }
         });
     }
 
-    public void asyncUpdateGui(String name, dGui gui) {
+    public void asyncUpdateGui(String name, syncMenu gui) {
         this.async(() -> syncUpdateGui(name, gui));
     }
 
