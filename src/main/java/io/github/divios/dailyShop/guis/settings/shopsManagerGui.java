@@ -7,9 +7,11 @@ import io.github.divios.core_lib.inventory.builder.inventoryPopulator;
 import io.github.divios.core_lib.inventory.builder.paginatedGui;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
-import io.github.divios.core_lib.misc.*;
+import io.github.divios.core_lib.misc.ChatPrompt;
+import io.github.divios.core_lib.misc.Msg;
+import io.github.divios.core_lib.misc.Task;
+import io.github.divios.core_lib.misc.confirmIH;
 import io.github.divios.dailyShop.DailyShop;
-import io.github.divios.dailyShop.guis.customizerguis.customizeGui;
 import io.github.divios.dailyShop.lorestategy.loreStrategy;
 import io.github.divios.dailyShop.lorestategy.shopsManagerLore;
 import io.github.divios.dailyShop.utils.utils;
@@ -137,7 +139,7 @@ public class shopsManagerGui {
 
         if (e.isShiftClick() && e.isLeftClick()) {
             inv.destroy();
-            customizeGui.open(p, shop);
+            shop.customizeGui(p);
 
         } else if (e.getClick().equals(ClickType.MIDDLE)) {   // rename
 
@@ -211,7 +213,7 @@ public class shopsManagerGui {
                     .withCancelLore(plugin.configM.getLangYml().CONFIRM_GUI_NO, plugin.configM.getLangYml().CONFIRM_GUI_NO_LORE)
                     .prompt();
 
-        } else shopGui.open(p, shop.getName());
+        } else shop.manageItems(p);
     }
 
     private void nonContentAction() {
