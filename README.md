@@ -5,3 +5,6 @@ This is not the only feature, the plugin is built with a in-game gui to customiz
 
 ## How does it work?
 Every shop has an internal (customizable) timer. When it reachs 0, the shop cleans up the current items and replace them with random new items. Collected items can have weight, which means that some items are more likely to appear than others.
+
+## Notes:
+Although the plugin is open source, it uses a private lib repository internally, so you won't be able to compile the plugin yourself. The purpose of this open source is to collaborate or verify and learn from the code, which is something that has served me more than once and has allowed me to develop better programming skills. Making this repository public is an act of gratitude to that cause.
