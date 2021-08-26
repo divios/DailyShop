@@ -7,6 +7,10 @@ import org.bukkit.entity.Player;
 import java.util.Collection;
 import java.util.UUID;
 
+/**
+ * Interface declaring the contract of a syncMenu
+ */
+
 public interface syncMenu {
 
     void generate(Player p);
