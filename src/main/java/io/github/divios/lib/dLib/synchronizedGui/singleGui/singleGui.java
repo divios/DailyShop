@@ -6,6 +6,10 @@ import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
 import org.bukkit.entity.Player;
 
+/**
+ * Contract of a singleGui
+ */
+
 public interface singleGui {
 
     static singleGui fromJson(String json, dShop shop) {
@@ -23,6 +27,8 @@ public interface singleGui {
     void renovate();
 
     Player getPlayer();
+
+    dInventory getBase();
 
     dInventory getInventory();
 

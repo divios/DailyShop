@@ -6,6 +6,8 @@ import io.github.divios.core_lib.Events;
 import io.github.divios.core_lib.event.SingleSubscription;
 import io.github.divios.core_lib.event.Subscription;
 import io.github.divios.core_lib.misc.Msg;
+import io.github.divios.core_lib.utils.Log;
+import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.events.reStockShopEvent;
 import io.github.divios.dailyShop.events.updateItemEvent;
 import io.github.divios.dailyShop.events.updateShopEvent;
@@ -21,12 +23,21 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
+/**
+ * Abstract class that represents the basic operations of a syncMenu.
+ * Handles automatically the creation of new guis and making sure it stays on sync
+ * with the others.
+ * <p>
+ * Listens to event for updateItem, reStockShop and updateShop.
+ * <p>
+ * Children of this class only have to implement {@link #createMap() }
+ */
+
 public abstract class abstractSyncMenu implements syncMenu {
 
     protected final dShop shop;
     protected final BiMap<UUID, singleGui> guis;
     protected singleGui base;
-    private boolean isAvailable = true;
 
     private final Set<SingleSubscription> listeners = new HashSet<>();
 
@@ -58,23 +69,20 @@ public abstract class abstractSyncMenu implements syncMenu {
         listeners.add(
                 Events.subscribe(updateShopEvent.class)
                         .filter(o -> o.getShop().equals(shop))
-                        .handler(o -> {
-                                    if (o.isResponse()) updateBase(o);
-                                    isAvailable = true;
-                                }
-                        )
-
+                        .filter(updateShopEvent::isResponse)
+                        .handler(this::updateBase)
         );
 
         listeners.add(
                 Events.subscribe(InventoryCloseEvent.class)
-                    .handler(this::checkClosedInv)
+                        .handler(this::checkClosedInv)
         );
 
     }
 
     /**
      * Synchronized method to check for a closed inventory
+     *
      * @param o The InventoryCloseEvent triggered
      */
     private synchronized void checkClosedInv(InventoryCloseEvent o) {
@@ -93,14 +101,15 @@ public abstract class abstractSyncMenu implements syncMenu {
         renovate();
     }
 
+    private synchronized void updateItems(dItem item, updateItemEvent.updatetype type) {
+        base.updateItem(item, type);
+        guis.forEach((uuid, singleGui) -> singleGui.updateItem(item, type));
+    }
+
     protected abstract BiMap<UUID, singleGui> createMap();
 
     @Override
     public synchronized void generate(Player p) {
-        if (!isAvailable) {
-            Msg.sendMsg(p, "The shop is currently under maintenance, come again later");
-            return;
-        }
         guis.put(p.getUniqueId(), singleGui.create(p, base, shop));
     }
 
@@ -142,21 +151,19 @@ public abstract class abstractSyncMenu implements syncMenu {
 
     @Override
     public synchronized void renovate() {
-        Set<UUID> players = guis.keySet();
+        Set<UUID> players = new HashSet<>(guis.keySet());
         invalidateAll();                                            // close all inventories
         base.renovate();                                            // Renovates base
         players.forEach(uuid -> Optional.ofNullable(Bukkit.getPlayer(uuid)).ifPresent(this::generate));
-        // TODO broadcast msg??
+        Msg.broadcast(
+                Msg.singletonMsg(DailyShop.getInstance().configM.getLangYml().MSG_RESTOCK)
+                        .add("\\{shop}", shop.getName())
+                        .build()
+        );
     }
 
     @Override
-    public synchronized void customizeGui(Player p) {
-        if (!isAvailable) {
-            Msg.sendMsg(p, "Someone is already editing this shop");
-            return;
-        }
-        isAvailable = false;
-        invalidateAll();                                            // Close all inventories
+    public synchronized void customizeGui(Player p) {         // Close all inventories
         customizeGui.open(p, shop, base.getInventory());
     }
 
@@ -184,11 +191,5 @@ public abstract class abstractSyncMenu implements syncMenu {
         return shop.equals(gui.getShop())
                 && guis.hashCode() == gui.getMenus().hashCode();
     }
-
-    private synchronized void updateItems(dItem item, updateItemEvent.updatetype type) {
-        base.updateItem(item, type);
-        guis.forEach((uuid, singleGui) -> singleGui.updateItem(item, type));
-    }
-
 
 }
