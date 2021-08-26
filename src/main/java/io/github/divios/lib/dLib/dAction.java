@@ -18,7 +18,7 @@ public enum dAction {
     }),
     OPEN_SHOP((p, s) -> {
         shopsManager.getInstance()
-                .getShop(s).ifPresent(shop1 -> shop1.getGui().open(p));
+                .getShop(s).ifPresent(shop1 -> shop1.getGuis().generate(p));
     }),
     RUN_CMD((p, s) -> {
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(),

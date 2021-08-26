@@ -1,5 +1,6 @@
 package io.github.divios.dailyShop.transaction;
 
+import io.github.divios.core_lib.Schedulers;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.core_lib.misc.Msg;
@@ -44,7 +45,7 @@ public class transaction {
                 confirmGui.open(p, item.getItem(), dShop.dShopT.buy,
                         (item1, amount) -> {
                             transaction.initTransaction(p, new dItem(item1), amount, shop);
-                        }, player -> shop.getGui().open(p),
+                        }, player -> shop.open(p),
                         plugin.configM.getLangYml().CONFIRM_GUI_BUY_NAME,
                         plugin.configM.getLangYml().CONFIRM_GUI_YES,
                         plugin.configM.getLangYml().CONFIRM_GUI_NO);
@@ -57,7 +58,7 @@ public class transaction {
                             if (aBoolean)
                                 transaction.initTransaction(p, item, item.getAmount(), shop);
                             else
-                                shop.getGui().open(p);
+                                shop.open(p);
                         })
                         .withItem(
                                 ItemBuilder.of(item.getItem().clone()).addLore(
@@ -102,7 +103,7 @@ public class transaction {
                 .add("\\{item}", item.getDisplayName() + FormatUtils.color("&7"))
                 .add("\\{currency}", s.getEcon().getName()).build());
 
-        shop.getGui().open(p);
+        Schedulers.sync().runLater(() -> shop.open(p), 1L);
 
     }
 
