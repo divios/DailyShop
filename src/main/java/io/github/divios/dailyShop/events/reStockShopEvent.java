@@ -10,7 +10,7 @@ import java.sql.Timestamp;
 
 /**
  * Event that fires when a player manually
- * reStock a shop
+ * reStock a shop or when the timer expires
  */
 
 public class reStockShopEvent extends Event {

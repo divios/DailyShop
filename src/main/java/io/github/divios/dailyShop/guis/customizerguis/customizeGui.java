@@ -2,11 +2,15 @@ package io.github.divios.dailyShop.guis.customizerguis;
 
 import com.cryptomorin.xseries.XMaterial;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
-import io.github.divios.core_lib.misc.*;
+import io.github.divios.core_lib.misc.ChatPrompt;
+import io.github.divios.core_lib.misc.FormatUtils;
+import io.github.divios.core_lib.misc.Task;
+import io.github.divios.core_lib.misc.confirmIH;
 import io.github.divios.dailyShop.DailyShop;
+import io.github.divios.dailyShop.events.updateShopEvent;
 import io.github.divios.dailyShop.guis.settings.shopsManagerGui;
 import io.github.divios.dailyShop.utils.utils;
-import io.github.divios.lib.dLib.dGui;
+import io.github.divios.lib.dLib.dInventory;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
 import org.bukkit.Bukkit;
@@ -35,7 +39,7 @@ public class customizeGui implements Listener, InventoryHolder {
 
     private final Player p;
     private final dShop shop;
-    private final dGui _gui;
+    private final dInventory _gui;
     private Inventory inv;
 
     private boolean preventClose = true;
@@ -45,11 +49,11 @@ public class customizeGui implements Listener, InventoryHolder {
 
     private final Map<Integer, ItemStack> pItems = new LinkedHashMap<>();
 
-    private customizeGui(Player p, dShop shop) {
+    private customizeGui(Player p, dShop shop, dInventory inv) {
         this.p = p;
         this.shop = shop;
-        this._gui = shop.getGui().clone();
-        this.inv = shop.getGui().getInventory();
+        this._gui = inv.skeleton();
+        this.inv = inv.clone().getInventory();
 
         Task.syncDelayed(plugin, () ->
                 Bukkit.getPluginManager().registerEvents(this, plugin), 1L);
@@ -61,15 +65,8 @@ public class customizeGui implements Listener, InventoryHolder {
 
     }
 
-    public static void open(Player p, dShop shop) {
-        if (!shop.getGui().getAvailable()) {
-            Msg.sendMsg(p, "&7Someone is already editing this gui");
-            return;
-        }
-        shop.getGui().setAvailable(false);
-        shop.getGui().closeAll();               //Close all viewers
-
-        new customizeGui(p, shop);
+    public static void open(Player p, dShop shop, dInventory inv) {
+        new customizeGui(p, shop, inv);
     }
 
     public void addCustomizeItems() {
@@ -165,7 +162,7 @@ public class customizeGui implements Listener, InventoryHolder {
 
     @Override
     public @NotNull Inventory getInventory() {
-        return shop.getGui().getInventory();
+        return inv;
     }
 
     @EventHandler
@@ -183,13 +180,14 @@ public class customizeGui implements Listener, InventoryHolder {
                 return;
 
             if (e.getSlot() == 3) {  //back
+                Bukkit.getPluginManager().callEvent(new updateShopEvent(shop, _gui, false));
                 preventClose = false;
                 p.closeInventory();
             }
 
             else if (e.getSlot() == 5) {   //apply changes
 
-                shop.updateGui(_gui);
+                Bukkit.getPluginManager().callEvent(new updateShopEvent(shop, _gui, true));
                 preventClose = false;
                 p.closeInventory();
             }
@@ -289,7 +287,7 @@ public class customizeGui implements Listener, InventoryHolder {
             return;
         }
 
-        shop.getGui().setAvailable(true);
+
         depositPlayerItems();
 
         unregisterAll();
@@ -305,14 +303,18 @@ public class customizeGui implements Listener, InventoryHolder {
 
     @EventHandler
     public void onPlayerLeave(PlayerQuitEvent e) {
-        if (e.getPlayer().getUniqueId().equals(p.getUniqueId()))
-            shop.getGui().setAvailable(true);
+        if (e.getPlayer().getUniqueId().equals(p.getUniqueId())) {
+
+        }
+
     }
 
     @EventHandler
     public void onPlayerKick(PlayerKickEvent e) {
-        if (e.getPlayer().getUniqueId().equals(p.getUniqueId()))
-            shop.getGui().setAvailable(true);
+        if (e.getPlayer().getUniqueId().equals(p.getUniqueId())) {
+
+        }
+
     }
 
     /**
