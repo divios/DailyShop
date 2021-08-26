@@ -8,6 +8,7 @@ import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.core_lib.misc.Msg;
 import io.github.divios.core_lib.misc.Pair;
 import io.github.divios.core_lib.misc.WeightedRandom;
+import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.events.updateItemEvent;
 import io.github.divios.dailyShop.lorestategy.loreStrategy;
@@ -116,6 +117,8 @@ public class dInventory {
      * @return The inventory this object holds
      */
     public Inventory getInventory() { return inv; }
+
+    public int getSize() { return inv.getSize(); }
 
     public boolean addRow() {
         if (inv.getSize() == 54) return false;
@@ -248,11 +251,12 @@ public class dInventory {
         inv.setItem(slot, itemToAdd);
     }
 
-    protected void updateItem(dItem item, updateItemEvent.updatetype type) {
+    public void updateItem(dItem item, updateItemEvent.updatetype type) {
 
         if (buttons.stream().noneMatch(dItem -> dItem.getUid().equals(item.getUid()))) return;
 
-        buttons.stream().filter(dItem -> dItem.getUid().equals(item.getUid()))
+        buttons.stream()
+                .filter(dItem -> dItem.getUid().equals(item.getUid()))
                 .findFirst()
                 .ifPresent(dItem -> {
 
@@ -260,13 +264,14 @@ public class dInventory {
 
                         item.setSlot(dItem.getSlot());
                         buttons.remove(dItem);
-                        buttons.add(item);
+                        buttons.add(item.clone());
                         ItemStack itemWithLore = item.getItem().clone();
                         strategy.setLore(itemWithLore);
                         inv.setItem(dItem.getSlot(), itemWithLore);
 
                     } else if (type.equals(updateItemEvent.updatetype.NEXT_AMOUNT)) {
 
+                        Log.warn(String.valueOf(dItem.getStock().get()));
                         dItem.setStock(dItem.getStock().orElse(0) - 1);
 
                         if (dItem.getStock().orElse(0) <= 0) {
@@ -348,12 +353,6 @@ public class dInventory {
 
         if (!utils.isOperative("PlaceholderAPI")) return;       // If placeholderApi is not available, break
 
-    }
-
-    public void reload() {
-        buttons.stream()
-                .filter(dItem -> !dItem.isAIR())
-                .forEach(dItem -> updateItem(dItem, updateItemEvent.updatetype.UPDATE_ITEM));
     }
 
     /**

@@ -1,5 +1,6 @@
 package io.github.divios.dailyShop.transaction;
 
+import io.github.divios.core_lib.Schedulers;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.core_lib.misc.Msg;
@@ -102,7 +103,7 @@ public class transaction {
                 .add("\\{item}", item.getDisplayName() + FormatUtils.color("&7"))
                 .add("\\{currency}", s.getEcon().getName()).build());
 
-        shop.open(p);
+        Schedulers.sync().runLater(() -> shop.open(p), 1L);
 
     }
 
