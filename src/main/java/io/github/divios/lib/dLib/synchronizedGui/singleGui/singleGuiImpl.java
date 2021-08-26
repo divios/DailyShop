@@ -1,6 +1,5 @@
 package io.github.divios.lib.dLib.synchronizedGui.singleGui;
 
-import io.github.divios.core_lib.scheduler.Task;
 import io.github.divios.dailyShop.events.updateItemEvent;
 import io.github.divios.dailyShop.utils.utils;
 import io.github.divios.lib.dLib.dInventory;
@@ -24,7 +23,6 @@ public class singleGuiImpl implements singleGui {
     private final dShop shop;
     private final dInventory base;
     private final dInventory own;
-    private Task updateTask = null;
 
     protected singleGuiImpl(Player p, dShop shop, singleGui base) {
         this(p, shop, base.getInventory());
