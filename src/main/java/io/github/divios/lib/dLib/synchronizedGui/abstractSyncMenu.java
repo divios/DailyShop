@@ -141,7 +141,7 @@ public abstract class abstractSyncMenu implements syncMenu {
 
     @Override
     public synchronized void destroy() {
-        invalidateAll();
+        guis.keySet().forEach(uuid -> Bukkit.getPlayer(uuid).closeInventory());     // Triggers invalidate
         listeners.forEach(Subscription::unregister);
         listeners.clear();
         base.destroy();
