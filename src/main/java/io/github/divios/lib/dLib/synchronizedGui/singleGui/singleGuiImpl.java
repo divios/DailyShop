@@ -1,19 +1,28 @@
 package io.github.divios.lib.dLib.synchronizedGui.singleGui;
 
+import io.github.divios.core_lib.itemutils.ItemBuilder;
+import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.dailyShop.events.updateItemEvent;
+import io.github.divios.dailyShop.lorestategy.loreStrategy;
+import io.github.divios.dailyShop.lorestategy.shopItemsLore;
 import io.github.divios.dailyShop.utils.utils;
 import io.github.divios.lib.dLib.dInventory;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.dLib.synchronizedGui.taskPool.updatePool;
+import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.stream.IntStream;
 
 /**
  * Class that holds a {@link dInventory} for a unique player and
  * also its base.
- *
+ * <p>
  * Subscribes to the updatePool to update placeholders
  */
 
@@ -41,8 +50,33 @@ public class singleGuiImpl implements singleGui {
     }
 
     @Override
-    public void updateItem(dItem item, updateItemEvent.updatetype type) {
+    public synchronized void updateItem(dItem item, updateItemEvent.updatetype type) {
         own.updateItem(item, type);
+    }
+
+    @Override
+    public synchronized void updateTask() {
+
+        loreStrategy strategy = new shopItemsLore();
+        IntStream.range(0, own.getSize())
+                .parallel()
+                .filter(value -> !ItemUtils.isEmpty(own.getInventory().getItem(value)))
+                .forEach(value -> {
+
+                    Inventory inv = own.getInventory();
+                    ItemStack oldItem = base.getOpenSlots().contains(value) ?
+                            strategy.applyLore(base.getButtons().get(value).getItem().clone())
+                            : base.getInventory().getItem(value);
+                    ItemBuilder newItem = ItemBuilder.of(oldItem.clone()).setLore(Collections.emptyList());
+
+                    newItem = newItem.setName(PlaceholderAPI.setPlaceholders(p, ItemUtils.getName(oldItem)));
+
+                    for (String s : ItemUtils.getLore(oldItem))
+                        newItem = newItem.addLore(PlaceholderAPI.setPlaceholders(p, s));
+
+                    inv.setItem(value, newItem);
+
+                });
     }
 
     @Override
@@ -84,6 +118,8 @@ public class singleGuiImpl implements singleGui {
     }
 
     @Override
-    public singleGui clone() { return singleGui.fromJson(toJson(), getShop()); }
+    public singleGui clone() {
+        return singleGui.fromJson(toJson(), getShop());
+    }
 
 }
