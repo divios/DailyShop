@@ -59,7 +59,6 @@ public class singleGuiImpl implements singleGui {
 
         loreStrategy strategy = new shopItemsLore();
         IntStream.range(0, own.getSize())
-                .parallel()
                 .filter(value -> !ItemUtils.isEmpty(own.getInventory().getItem(value)))
                 .forEach(value -> {
 
@@ -80,7 +79,7 @@ public class singleGuiImpl implements singleGui {
     }
 
     @Override
-    public void renovate() {
+    public synchronized void renovate() {
         own.renovate();
     }
 
@@ -105,20 +104,20 @@ public class singleGuiImpl implements singleGui {
     }
 
     @Override
-    public void destroy() {
+    public synchronized void destroy() {
         own.destroy();
         updatePool.cancel(this);
     }
 
     @Override
-    public int hashCode() {
+    public synchronized int hashCode() {
         return Arrays.stream(own.getInventory().getContents())
                 .mapToInt(value -> utils.isEmpty(value) ? 0 : value.hashCode())
                 .sum();
     }
 
     @Override
-    public singleGui clone() {
+    public synchronized singleGui clone() {
         return singleGui.fromJson(toJson(), getShop());
     }
 
