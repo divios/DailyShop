@@ -232,9 +232,6 @@ public class dInventory {
             addedButtons++;
         }
 
-        Bukkit.broadcastMessage(plugin.configM.getSettingsYml().PREFIX +       // broadcast msg
-                FormatUtils.color(Msg.singletonMsg(plugin.configM.getLangYml().MSG_RESTOCK)
-                        .add("\\{shop}", shop.getName()).build()));
     }
 
     protected void _renovate(dItem newItem, int slot) {
