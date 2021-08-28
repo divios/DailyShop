@@ -6,6 +6,7 @@ import io.github.divios.core_lib.Events;
 import io.github.divios.core_lib.event.SingleSubscription;
 import io.github.divios.core_lib.event.Subscription;
 import io.github.divios.core_lib.misc.Msg;
+import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.events.reStockShopEvent;
 import io.github.divios.dailyShop.events.updateItemEvent;
@@ -40,8 +41,13 @@ public abstract class abstractSyncMenu implements syncMenu {
     private final Set<SingleSubscription> listeners = new HashSet<>();
 
     protected abstractSyncMenu(dShop shop) {
+        this(shop, singleGui.create(shop));
+    }
+
+    protected abstractSyncMenu(dShop shop, singleGui gui) {
         this.shop = shop;
         this.guis = createMap();
+        this.base = gui;
 
         ready();
     }
@@ -109,6 +115,7 @@ public abstract class abstractSyncMenu implements syncMenu {
     @Override
     public synchronized void generate(Player p) {
         guis.put(p.getUniqueId(), singleGui.create(p, base, shop));
+        //Log.warn(String.valueOf(size()));
     }
 
     @Override
@@ -119,11 +126,6 @@ public abstract class abstractSyncMenu implements syncMenu {
     @Override
     public synchronized Collection<singleGui> getMenus() {
         return Collections.unmodifiableCollection(this.guis.values());
-    }
-
-    @Override
-    public synchronized int size() {
-        return guis.size();
     }
 
     @Override
