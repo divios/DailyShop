@@ -16,6 +16,8 @@ public interface singleGui {
         return new singleGuiImpl(null, shop, dInventory.fromJson(json, shop));
     }
 
+    static singleGui create(dShop shop) { return new singleGuiImpl(null, shop, new dInventory(shop.getName(), 27, shop)); }
+
     static singleGui create(Player p, singleGui base, dShop shop) {
         return new singleGuiImpl(p, shop, base);
     }
@@ -23,6 +25,8 @@ public interface singleGui {
     static singleGui create(Player p, dInventory inv, dShop shop) { return new singleGuiImpl(p, shop, inv); }
 
     void updateItem(dItem item, updateItemEvent.updatetype type);
+
+    void updateTask();
 
     void renovate();
 
