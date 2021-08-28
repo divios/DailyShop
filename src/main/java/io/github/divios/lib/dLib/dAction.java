@@ -26,7 +26,7 @@ public enum dAction {
     }),
 
     SHOW_ALL_ITEMS((p, s) -> {
-        loreStrategy strategy = new shopItemsLore(dShop.dShopT.buy);
+        loreStrategy strategy = new shopItemsLore();
         new dynamicGui.Builder()
                 .contents(() -> shopsManager.getInstance().getShop(s)
                         .get().getItems().parallelStream()
