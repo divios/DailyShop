@@ -46,7 +46,8 @@ public class reload extends abstractCommand {
     @Override
     public void run(CommandSender sender, List<String> args) {
         DailyShop.getInstance().reloadPlugin();
-        Titles.sendTitle((Player) sender, 25, 40, 25,
+        if (sender instanceof Player) Titles.sendTitle((Player) sender, 25, 40, 25,
                 FormatUtils.color("&a&lPlugin Reloaded"), "");
+        else sender.sendMessage("Plugin Reloaded");
     }
 }
