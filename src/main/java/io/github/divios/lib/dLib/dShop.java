@@ -65,7 +65,7 @@ public class dShop {
 
                         timestamp = new Timestamp(System.currentTimeMillis());
                         dManager.updateTimeStamp(this.name, this.timestamp);
-                        guis.renovate();
+                        Schedulers.sync().runLater(guis::renovate, 1L);
                         dManager.asyncUpdateGui(this.name, this.guis);
                     }
                 }, 20, 20)
