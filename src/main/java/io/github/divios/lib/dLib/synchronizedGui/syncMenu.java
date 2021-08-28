@@ -19,7 +19,7 @@ public interface syncMenu {
 
     singleGui get(UUID key);
 
-    int size();
+    default int size() { return getMenus().size(); }
 
     Collection<singleGui> getMenus();
 
