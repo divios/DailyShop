@@ -30,10 +30,7 @@ import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -46,7 +43,7 @@ public class dInventory {
     protected final dShop shop;
 
     protected final Set<Integer> openSlots = Collections.synchronizedSet(new HashSet<>());
-    protected final Set<dItem> buttons = Collections.synchronizedSet(new HashSet<>());
+    protected final Map<Integer, dItem> buttons = Collections.synchronizedMap(new HashMap<>());
 
     private final Set<SingleSubscription> listeners = new HashSet<>();
     protected final loreStrategy strategy;
@@ -56,7 +53,7 @@ public class dInventory {
         this.inv = inv;
         this.shop = shop;
 
-        this.strategy = new shopItemsLore(shop.getType());
+        this.strategy = new shopItemsLore();
 
         IntStream.range(0, inv.getSize()).forEach(openSlots::add);  //initializes slots
         renovate();   // not really necessary but why not
@@ -65,13 +62,12 @@ public class dInventory {
     }
 
     public dInventory(String title, int size, dShop shop) {
-        this(title,
-                Bukkit.createInventory(null, size, title), shop);
+        this(title, Bukkit.createInventory(null, size, title), shop);
     }
 
     public dInventory(String base64, dShop shop) {
         this.shop = shop;
-        this.strategy = new shopItemsLore(shop.getType());
+        this.strategy = new shopItemsLore();
         _deserialize(base64);
 
         ready();
@@ -138,7 +134,7 @@ public class dInventory {
         Inventory aux = Bukkit.createInventory(null, inv.getSize() - 9, title);
         inventoryUtils.translateContents(inv, aux);
 
-        buttons.removeIf(dItem -> dItem.getSlot() >= aux.getSize());
+        buttons.entrySet().removeIf(entry -> entry.getKey() >= aux.getSize());
         IntStream.range(inv.getSize() - 9, inv.getSize()).forEach(openSlots::remove);
         inv = aux;
 
@@ -157,9 +153,7 @@ public class dInventory {
         cloned.generateNewSellPrice();
         cloned.setSlot(slot);
 
-        if (buttons.contains(cloned))
-            buttons.removeIf(dItem -> dItem.getSlot() == slot);     // remove to overwrite
-        buttons.add(cloned);
+        buttons.put(slot, cloned);
 
         openSlots.remove(slot);
         inv.setItem(slot, cloned.getItem());
@@ -171,9 +165,9 @@ public class dInventory {
      * @param slot The slot which wants to be clear
      * @return true if an item was successfully removed
      */
-    public boolean removeButton(int slot) {
-        boolean result = buttons.removeIf(item -> item.getSlot() == slot);
-        if (result) {
+    public dItem removeButton(int slot) {
+        dItem result = buttons.remove(slot);
+        if (result != null) {
             openSlots.add(slot);
             inv.clear(slot);
         }
@@ -185,8 +179,8 @@ public class dInventory {
      *
      * @return An unmodifiable view of the buttons set
      */
-    public Set<dItem> getButtons() {
-        return Collections.unmodifiableSet(buttons);
+    public Map<Integer, dItem> getButtons() {
+        return Collections.unmodifiableMap(buttons);
     }
 
     /**
@@ -203,9 +197,10 @@ public class dInventory {
      */
     public void renovate() {
 
-        buttons.stream()            // Clear AIR items
-                .filter(dItem::isAIR)
-                .forEach(dItem -> inv.clear(dItem.getSlot()));
+        buttons.entrySet()
+                .stream()
+                .filter(entry -> entry.getValue().isAIR())
+                .forEach(entry -> inv.clear(entry.getKey()));  // Clear AIR items
 
         WeightedRandom<dItem> RRM = WeightedRandom.fromCollection(      // create weighted random
                 shop.getItems().stream().filter(dItem -> dItem.getRarity().getWeight() != 0)
@@ -244,34 +239,35 @@ public class dInventory {
 
     protected void _renovate(dItem newItem, int slot) {
         newItem.setSlot(slot);
-        buttons.add(newItem);
+        buttons.put(slot, newItem);
 
         ItemStack itemToAdd = newItem.getItem().clone();
-        new shopItemsLore(shop.getType()).setLore(itemToAdd);
+        new shopItemsLore().setLore(itemToAdd);
         inv.setItem(slot, itemToAdd);
     }
 
     public void updateItem(dItem item, updateItemEvent.updatetype type) {
 
-        if (buttons.stream().noneMatch(dItem -> dItem.getUid().equals(item.getUid()))) return;
+        if (buttons.values().stream().noneMatch(dItem -> dItem.getUid().equals(item.getUid()))) return;
 
-        buttons.stream()
+        buttons.values().stream()
                 .filter(dItem -> dItem.getUid().equals(item.getUid()))
                 .findFirst()
                 .ifPresent(dItem -> {
 
+                    int slot = dItem.getSlot();
                     if (type.equals(updateItemEvent.updatetype.UPDATE_ITEM)) {
 
-                        item.setSlot(dItem.getSlot());
-                        buttons.remove(dItem);
-                        buttons.add(item.clone());
+                        item.setSlot(slot);
+                        buttons.remove(slot);
+                        buttons.put(slot, item.clone());
                         ItemStack itemWithLore = item.getItem().clone();
                         strategy.setLore(itemWithLore);
-                        inv.setItem(dItem.getSlot(), itemWithLore);
+                        inv.setItem(slot, itemWithLore);
 
                     } else if (type.equals(updateItemEvent.updatetype.NEXT_AMOUNT)) {
 
-                        Log.warn(String.valueOf(dItem.getStock().get()));
+                        //Log.warn(String.valueOf(dItem.getStock().get()));
                         dItem.setStock(dItem.getStock().orElse(0) - 1);
 
                         if (dItem.getStock().orElse(0) <= 0) {
@@ -282,13 +278,8 @@ public class dInventory {
 
                     } else if (type.equals(updateItemEvent.updatetype.DELETE_ITEM)) {
 
-                        buttons.stream()
-                                .filter(dItem1 -> dItem1.getUid().equals(item.getUid()))
-                                .findFirst()
-                                .ifPresent(dItem1 -> {
-                                    buttons.remove(dItem1);
-                                    inv.setItem(dItem1.getSlot(), utils.getRedPane());
-                                });
+                        dItem removed = removeButton(slot);
+                        if (removed != null) inv.setItem(slot, utils.getRedPane());
                     }
                 });
     }
@@ -299,12 +290,12 @@ public class dInventory {
 
     private void clearDailyItems() {
 
-        for (Iterator<dItem> it = buttons.iterator(); it.hasNext(); ) {
-            dItem ditem = it.next();
+        for (Iterator<Map.Entry<Integer, dItem>> it = buttons.entrySet().iterator(); it.hasNext(); ) {
+            Map.Entry<Integer, dItem> entry = it.next();
 
-            if (openSlots.contains(ditem.getSlot())) {
+            if (openSlots.contains(entry.getKey())) {
                 it.remove();
-                inv.clear(ditem.getSlot());
+                inv.clear(entry.getKey());
             }
 
         }
@@ -323,7 +314,7 @@ public class dInventory {
                             if (utils.isEmpty(e.getCurrentItem())) return;
 
                             if (openSlots.contains(e.getSlot()))
-                                buttons.stream()
+                                buttons.values().stream()
                                         .filter(ditem -> ditem.getUid().equals(dItem.getUid(e.getCurrentItem())))
                                         .findFirst()
                                         .ifPresent(dItem -> {
@@ -337,9 +328,10 @@ public class dInventory {
                                         });
 
                             else {
-                                buttons.stream().filter(dItem -> dItem.getSlot() == e.getSlot())
-                                        .findFirst().ifPresent(dItem -> dItem.getAction()
-                                        .stream((dAction, s) -> dAction.run((Player) e.getWhoClicked(), s)));
+                                dItem item = buttons.get(e.getSlot());
+                                if (item != null)
+                                    item.getAction().stream((dAction, s) -> dAction.run((Player) e.getWhoClicked(), s));
+
                             }
 
                         })
@@ -388,13 +380,17 @@ public class dInventory {
                 inv = s.get2();
 
                 openSlots.addAll((Set<Integer>) dataInput.readObject());
-                buttons.addAll((Set<dItem>) dataInput.readObject());
+
+                Object o = dataInput.readObject();
+                if (o instanceof Set) ((Set<dItem>) o).forEach(dItem -> buttons.put(dItem.getSlot(), dItem));
+                else buttons.putAll((Map<Integer, dItem>) o);
             }
 
         } catch (Exception e) {
             plugin.getLogger().severe("Unable to deserialize gui of shop "
                     + shop.getName() + ", setting it to default");
 
+            e.printStackTrace();
             buttons.clear();
             openSlots.clear();
             this.title = shop.getName();
@@ -414,10 +410,10 @@ public class dInventory {
         dInventory cloned = fromJson(this.toJson(), shop);
         cloned.clearDailyItems();
 
-        cloned.getButtons().stream()   // gets the AIR buttons back
-                .filter(dItem::isAIR)
-                .forEach(dItem -> cloned.inv
-                        .setItem(dItem.getSlot(), dItem.getItem()));
+        cloned.getButtons().entrySet().stream()   // gets the AIR buttons back
+                .filter(entry -> entry.getValue().isAIR())
+                .forEach(entry -> cloned.inv
+                        .setItem(entry.getKey(), entry.getValue().getItem()));
 
         return cloned;
     }
