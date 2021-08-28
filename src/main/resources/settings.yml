@@ -20,6 +20,9 @@
 #   <vault-currency-name>:
 #       - Change the name of vault currency when displayed.
 # ============================
+#   <integer-bal>
+#        - If false, round prices like 20.0 would be displayed as 20, if true: 20.0
+# ============================
 # You must restart for changes to take affect when editing this file!
 # =========================================================
 settings:
@@ -29,4 +32,5 @@ settings:
   default-sell-price: 20
   default_timer: 86400
   vault_name: "&7Vault"
+  integer-bal: true
 
