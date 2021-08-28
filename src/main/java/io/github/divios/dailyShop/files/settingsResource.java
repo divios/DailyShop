@@ -10,6 +10,7 @@ public class settingsResource extends resource{
     public double DEFAULT_SELL;
     public int DEFAULT_TIMER;
     public String VAULT_NAME;
+    public boolean INTEGER_VAL;
 
     protected settingsResource() {
         super("settings.yml");
@@ -24,6 +25,7 @@ public class settingsResource extends resource{
         DEFAULT_SELL = yaml.getDouble("settings.default-sell-price");
         DEFAULT_TIMER = yaml.getInt("settings.default_timer");
         VAULT_NAME = FormatUtils.color(yaml.getString("settings.vault_name"));
+        INTEGER_VAL = yaml.getBoolean("settings.integer-bal");
 
     }
 
