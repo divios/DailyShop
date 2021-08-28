@@ -6,6 +6,7 @@ import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.core_lib.misc.Msg;
 import io.github.divios.core_lib.misc.XSymbols;
 import io.github.divios.dailyShop.DailyShop;
+import io.github.divios.dailyShop.utils.PriceFormatter;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dPrice;
 import io.github.divios.lib.dLib.dShop;
@@ -13,11 +14,8 @@ import org.bukkit.inventory.ItemStack;
 
 public class shopItemsLore implements loreStrategy {
     private static final DailyShop plugin = DailyShop.getInstance();
-    private final dShop.dShopT type;
 
-    public shopItemsLore(dShop.dShopT type) {
-        this.type = type;
-    }
+    public shopItemsLore() {}
 
     @Override
     public void setLore(ItemStack item) {
@@ -34,15 +32,15 @@ public class shopItemsLore implements loreStrategy {
                         plugin.configM.getLangYml().DAILY_ITEMS_BUY_PRICE)
                         .add("\\{buyPrice}",
                                 (aux.getBuyPrice().isPresent()
-                                        && aux.getBuyPrice().get().getPrice() != -1) ? "" +
-                                        aux.getBuyPrice().orElse(new dPrice(-1)).getPrice()
+                                        && aux.getBuyPrice().get().getPrice() != -1) ?
+                                        PriceFormatter.format(aux.getBuyPrice().orElse(new dPrice(-1)).getPrice())
                                         : FormatUtils.color("&c&l" + XSymbols.TIMES_3.parseSymbol())).build())
 
                 .addLore(Msg.singletonMsg(
                         plugin.configM.getLangYml().DAILY_ITEMS_SELL_PRICE)
                         .add("\\{sellPrice}", (aux.getSellPrice().isPresent()
-                                && aux.getSellPrice().get().getPrice() != -1) ? "" +
-                                aux.getSellPrice().orElse(new dPrice(-1)).getPrice()
+                                && aux.getSellPrice().get().getPrice() != -1) ?
+                                PriceFormatter.format(aux.getSellPrice().orElse(new dPrice(-1)).getPrice())
                                 : FormatUtils.color("&c&l" + XSymbols.TIMES_3.parseSymbol())).build())
 
                 .addLore("");
