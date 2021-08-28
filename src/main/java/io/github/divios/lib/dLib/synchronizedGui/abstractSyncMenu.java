@@ -96,11 +96,12 @@ public abstract class abstractSyncMenu implements syncMenu {
     }
 
     /**
-     * Synchronized method to update the base when the listener is trigger
+     * Synchronized method to update the base when the listener is triggered
      *
      * @param o
      */
     private synchronized void updateBase(updateShopEvent o) {
+        base.destroy();
         base = singleGui.create(null, o.getInv(), shop);
         renovate();
     }
