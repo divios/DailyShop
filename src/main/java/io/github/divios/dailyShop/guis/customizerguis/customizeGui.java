@@ -214,21 +214,8 @@ public class customizeGui implements Listener, InventoryHolder {
 
         else {          //si le da arriba
 
-            if (toClone != null && utils.isEmpty(e.getCurrentItem())
-                && e.getClick().equals(ClickType.MIDDLE)) {     // paste clipboard
-                _gui.addButton(toClone.clone2(), e.getSlot());
-                refresh();
-                return;
-            }
-
-            if (!utils.isEmpty(e.getCurrentItem()) &&
-                    e.getClick().equals(ClickType.MIDDLE)) {        // copy to clipboard
-                toClone = dItem.of(e.getCurrentItem());
-                return;
-            }
-
             if (utils.isEmpty(e.getCurrentItem())
-                    && e.isShiftClick()) {  //add empty slot
+                    && e.isLeftClick()) {  //add empty slot
                 _gui.addButton(dItem.AIR(), e.getSlot());
                 refresh();
                 return;
@@ -253,16 +240,6 @@ public class customizeGui implements Listener, InventoryHolder {
                 return;
             }
 
-            refreshFlag = true;
-            depositPlayerItems();
-            new miniCustomizeGui(p, shop,        // customize item
-                    utils.isEmpty(e.getCurrentItem()) ?
-                         XMaterial.GRASS_BLOCK.parseItem() : e.getCurrentItem().clone(),
-                    item -> {
-                        _gui.addButton(new dItem(item), e.getSlot());
-                        withdrawPlayerItems();
-                        refresh();
-            });
         }
     }
 

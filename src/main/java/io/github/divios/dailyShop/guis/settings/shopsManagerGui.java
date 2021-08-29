@@ -93,22 +93,35 @@ public class shopsManagerGui {
 
                 .withButtons((inventoryGUI, integer) -> {
 
-                    inventoryGUI.addButton(ItemButton.create(ItemBuilder.of(XMaterial.PLAYER_HEAD)
-                            .setName(plugin.configM.getLangYml().SHOPS_MANAGER_CREATE)
-                            .addLore(plugin.configM.getLangYml().SHOPS_MANAGER_CREATE_LORE)
-                            .applyTexture("9b425aa3d94618a87dac9c94f377af6ca4984c07579674fad917f602b7bf235")
-                            , e -> nonContentAction()), 53);
+                    inventoryGUI.addButton(
+
+                            shopsManager.getInstance().getShops().size() >= 1 ?
+
+                                    ItemButton.create(
+                                            ItemBuilder.of(XMaterial.RED_STAINED_GLASS_PANE)
+                                                    .setName("&cUnavailable")
+                                                    .addLore("&7The free version", "&7is limited to", "&7only one shop")
+                                            , e -> {
+                                            })
+                                    :
+                                    ItemButton.create(
+                                            ItemBuilder.of(XMaterial.PLAYER_HEAD)
+                                                    .setName(plugin.configM.getLangYml().SHOPS_MANAGER_CREATE)
+                                                    .addLore(plugin.configM.getLangYml().SHOPS_MANAGER_CREATE_LORE)
+                                                    .applyTexture("9b425aa3d94618a87dac9c94f377af6ca4984c07579674fad917f602b7bf235")
+                                            , e -> nonContentAction()),
+                            53);
                 })
 
                 .withExitButton(
                         ItemButton.create(ItemBuilder.of(XMaterial.PLAYER_HEAD)
-                                .setName(plugin.configM.getLangYml().SHOPS_MANAGER_RETURN)
-                                .setLore(plugin.configM.getLangYml().SHOPS_MANAGER_RETURN_LORE)
-                                .applyTexture("19bf3292e126a105b54eba713aa1b152d541a1d8938829c56364d178ed22bf")
+                                        .setName(plugin.configM.getLangYml().SHOPS_MANAGER_RETURN)
+                                        .setLore(plugin.configM.getLangYml().SHOPS_MANAGER_RETURN_LORE)
+                                        .applyTexture("19bf3292e126a105b54eba713aa1b152d541a1d8938829c56364d178ed22bf")
                                 , e -> {
-                            Task.syncDelayed(plugin, () -> inv.destroy() , 3L);
-                            p.closeInventory();
-                        })
+                                    Task.syncDelayed(plugin, () -> inv.destroy(), 3L);
+                                    p.closeInventory();
+                                })
                         , 8
                 )
 
@@ -250,6 +263,7 @@ public class shopsManagerGui {
     }
 
     static List<Integer> itemSlots = null;
+
     private void updateTask() {
 
         Schedulers.builder()

@@ -6,7 +6,6 @@ import io.github.divios.core_lib.inventory.ItemButton;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.misc.ItemPrompt;
 import io.github.divios.dailyShop.DailyShop;
-import io.github.divios.dailyShop.guis.customizerguis.changeBundleItem;
 import io.github.divios.dailyShop.utils.utils;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
@@ -69,28 +68,6 @@ public class addDailyGuiIH {
 
                             p.closeInventory();
                         }), 15);
-
-
-        gui.addButton(
-                ItemButton.create(
-                        ItemBuilder.of(XMaterial.CHEST_MINECART)
-                                .setName(plugin.configM.getLangYml().ADD_ITEMS_FROM_BUNDLE)
-                                .addLore(plugin.configM.getLangYml().ADD_ITEMS_FROM_BUNDLE_LORE)
-                        , e ->
-                                changeBundleItem.builder()
-                                        .withPlayer(p)
-                                        .withItem(dItem.of(XMaterial.CHEST_MINECART.parseItem()))
-                                        .withShop(shop)
-                                        .withConfirm(uuids -> {
-                                            gui.destroy();
-                                            dItem newBundle = dItem.of(XMaterial.CHEST_MINECART.parseItem());
-                                            newBundle.setBundle(uuids);
-                                            shop.addItem(newBundle);
-                                            shopGui.open(p, shop);
-                                        })
-                                        .withBack(() -> gui.open(p))
-                                        .prompt()), 13);
-
 
         gui.addButton(
                 ItemButton.create(

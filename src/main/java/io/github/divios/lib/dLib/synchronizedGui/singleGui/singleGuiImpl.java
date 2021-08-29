@@ -44,7 +44,7 @@ public class singleGuiImpl implements singleGui {
         this.own = base.clone();
 
         if (p != null) {
-            if (utils.isOperative("PlaceholderAPI")) updatePool.subscribe(this);
+            //if (utils.isOperative("PlaceholderAPI")) updatePool.subscribe(this);
             this.own.open(p);
         }
     }
@@ -106,7 +106,7 @@ public class singleGuiImpl implements singleGui {
     @Override
     public synchronized void destroy() {
         own.destroy();
-        updatePool.cancel(this);
+        //updatePool.cancel(this);
     }
 
     @Override
