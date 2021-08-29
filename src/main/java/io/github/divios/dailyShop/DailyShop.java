@@ -8,11 +8,13 @@ import io.github.divios.dailyShop.files.configManager;
 import io.github.divios.dailyShop.hooks.hooksManager;
 import io.github.divios.lib.managers.shopsManager;
 import io.github.divios.lib.storage.dataManager;
+import me.pikamug.localelib.LocaleManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class DailyShop extends JavaPlugin {
 
     private static DailyShop INSTANCE;
+    private LocaleManager localeManager;
     public configManager configM;
 
     @Override
@@ -20,6 +22,8 @@ public class DailyShop extends JavaPlugin {
 
         INSTANCE = this;
         Core_lib.setPlugin(this);       // Set plugin for aux library
+
+        localeManager = new LocaleManager();
 
                                 /* Init hooks  */
         hooksManager.getInstance();
@@ -65,4 +69,7 @@ public class DailyShop extends JavaPlugin {
         return INSTANCE;
     }
 
+    public LocaleManager getLocaleManager() {
+        return localeManager;
+    }
 }
