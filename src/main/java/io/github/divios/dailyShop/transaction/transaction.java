@@ -5,6 +5,7 @@ import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.core_lib.misc.Msg;
 import io.github.divios.core_lib.misc.confirmIH;
+import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.events.updateItemEvent;
 import io.github.divios.dailyShop.guis.confirmGui;
@@ -12,10 +13,15 @@ import io.github.divios.dailyShop.utils.utils;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dPrice;
 import io.github.divios.lib.dLib.dShop;
+import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.chat.TranslatableComponent;
 import org.bukkit.Bukkit;
+import org.bukkit.craftbukkit.v1_17_R1.util.CraftChatMessage;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 import java.util.stream.IntStream;
 
@@ -96,12 +102,23 @@ public class transaction {
 
         s.getRunnables().forEach(Runnable::run);
 
-        Msg.sendMsg(p, Msg.singletonMsg(plugin.configM.getLangYml().MSG_BUY_ITEM)
+        List<String> msg = Arrays.asList(Msg.singletonMsg(plugin.configM.getLangYml().MSG_BUY_ITEM)
                 .add("\\{action}", "bought")
                 .add("\\{amount}", "" + amount)
                 .add("\\{price}", "" + s.getPrice())
-                .add("\\{item}", item.getDisplayName() + FormatUtils.color("&7"))
-                .add("\\{currency}", s.getEcon().getName()).build());
+                .add("\\{currency}", s.getEcon().getName()).build().split("\\{item}"));
+
+        if (msg.size() == 1) {
+            Msg.sendMsg(p, msg.get(0));
+        } else {
+
+            if (!item.getItem().getItemMeta().getDisplayName().isEmpty())
+                Msg.sendMsg(p, msg.get(0) + item.getDisplayName() + "&7" + msg.get(1));
+            else
+                DailyShop.getInstance().getLocaleManager().sendMessage(p,
+                        FormatUtils.color(DailyShop.getInstance().configM.getSettingsYml().PREFIX +
+                                msg.get(0) + "<item>" + "&7" + msg.get(1)), item.getItem().getType(), (short) 0, null);
+        }
 
         Schedulers.sync().runLater(() -> shop.open(p), 1L);
 
