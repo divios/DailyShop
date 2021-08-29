@@ -79,6 +79,7 @@ dependencies {
     compileOnly 'me.clip:placeholderapi:2.10.9'
     compileOnly group: 'com.vk2gpz.tokenenchant', name: 'TokenEnchantAPI', version: '18.18.1'
     compileOnly 'com.mojang:authlib:1.5.21'
+    implementation 'com.github.PikaMug:LocaleLib:2.2'
 
     api 'io.github.divios:core_lib:2.0'
 
@@ -123,6 +124,7 @@ shadowJar {
     relocate('de.tr7zw.changeme.nbtapi', 'io.github.divios.dailyShop.shaded.nbt-api')
     relocate('io.github.divios.core_lib', 'io.github.divios.dailyShop.shaded.Core_lib')
     relocate('com.cryptomorin.xseries', 'io.github.divios.dailyShop.shaded.XSeries')
+
 
     minimize()
 }
