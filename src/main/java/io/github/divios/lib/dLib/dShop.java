@@ -31,7 +31,6 @@ public class dShop {
 
     private Timestamp timestamp;
     private int timer;
-    private final int[] gui_hash = {0};
 
     private final Set<Task> tasks = new HashSet<>();
 
@@ -75,13 +74,7 @@ public class dShop {
 
         tasks.add(
                 Schedulers.async().runRepeating(() -> {      // auto-update gui if any changes where made
-
-                    int hash = guis.hashCode();
-                    if (hash != gui_hash[0]) {
-                        dManager.asyncUpdateGui(this.name, guis);
-                        gui_hash[0] = hash;
-                    }
-
+                    dManager.asyncUpdateGui(this.name, guis);
                 }, 18000L, 18000L)
         );
 

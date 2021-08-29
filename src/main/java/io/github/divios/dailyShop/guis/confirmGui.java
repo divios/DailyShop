@@ -23,27 +23,27 @@ public class confirmGui{
 
     private static final DailyShop main = DailyShop.getInstance();
 
-    private static final ItemStack add1 = ItemBuilder.of(XMaterial.GREEN_STAINED_GLASS_PANE)
+    private final ItemStack add1 = ItemBuilder.of(XMaterial.GREEN_STAINED_GLASS_PANE)
             .setName(main.configM.getLangYml().CONFIRM_GUI_ADD_PANE + " 1");
-    private static final ItemStack add5 = ItemBuilder.of(XMaterial.GREEN_STAINED_GLASS_PANE)
+    private final ItemStack add5 = ItemBuilder.of(XMaterial.GREEN_STAINED_GLASS_PANE)
             .setName(main.configM.getLangYml().CONFIRM_GUI_ADD_PANE + " 5");
-    private static final ItemStack add10 = ItemBuilder.of(XMaterial.GREEN_STAINED_GLASS_PANE)
+    private final ItemStack add10 = ItemBuilder.of(XMaterial.GREEN_STAINED_GLASS_PANE)
             .setName(main.configM.getLangYml().CONFIRM_GUI_ADD_PANE + " 10");
 
-    private static final ItemStack set64 = ItemBuilder.of(XMaterial.BLUE_STAINED_GLASS_PANE)
+    private final ItemStack set64 = ItemBuilder.of(XMaterial.BLUE_STAINED_GLASS_PANE)
             .setName(main.configM.getLangYml().CONFIRM_GUI_ADD_PANE + " 64");
 
-    private static final ItemStack rem1 = ItemBuilder.of(XMaterial.RED_STAINED_GLASS_PANE)
+    private final ItemStack rem1 = ItemBuilder.of(XMaterial.RED_STAINED_GLASS_PANE)
             .setName(main.configM.getLangYml().CONFIRM_GUI_REMOVE_PANE + " 1");
-    private static final ItemStack rem5 = ItemBuilder.of(XMaterial.RED_STAINED_GLASS_PANE)
+    private final ItemStack rem5 = ItemBuilder.of(XMaterial.RED_STAINED_GLASS_PANE)
             .setName(main.configM.getLangYml().CONFIRM_GUI_REMOVE_PANE + " 5");
-    private static final ItemStack rem10 = ItemBuilder.of(XMaterial.RED_STAINED_GLASS_PANE)
+    private final ItemStack rem10 = ItemBuilder.of(XMaterial.RED_STAINED_GLASS_PANE)
             .setName(main.configM.getLangYml().CONFIRM_GUI_REMOVE_PANE + " 10");
 
-    private static final ItemStack set1 = ItemBuilder.of(XMaterial.BLUE_STAINED_GLASS_PANE)
+    private final ItemStack set1 = ItemBuilder.of(XMaterial.BLUE_STAINED_GLASS_PANE)
             .setName(main.configM.getLangYml().CONFIRM_GUI_REMOVE_PANE + " 64");
 
-    private static final ItemStack blackGlass = ItemBuilder.of(XMaterial.BLACK_STAINED_GLASS_PANE)
+    private final ItemStack blackGlass = ItemBuilder.of(XMaterial.BLACK_STAINED_GLASS_PANE)
             .setName("&c");
 
     private static final int MAX_AMOUNT = 64 * 9 * 4;

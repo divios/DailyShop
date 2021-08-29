@@ -110,7 +110,7 @@ public class singleGuiImpl implements singleGui {
     }
 
     @Override
-    public synchronized int hashCode() {
+    public synchronized int hash() {
         return Arrays.stream(own.getInventory().getContents())
                 .mapToInt(value -> utils.isEmpty(value) ? 0 : value.hashCode())
                 .sum();

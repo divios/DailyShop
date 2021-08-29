@@ -20,7 +20,7 @@ import java.util.stream.IntStream;
 
 public class updatePool {
 
-    private static final Set<singleGui> bucket = new HashSet<>();
+    private static final Set<singleGui> bucket = Collections.synchronizedSet(new HashSet<>());
 
     static {
         Schedulers.async().runRepeating(() -> bucket.stream().parallel().forEach(singleGui::updateTask),
