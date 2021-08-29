@@ -44,6 +44,6 @@ public interface singleGui {
         return getInventory().toJson();
     }
 
-    int hashCode();
+    int hash();
 
 }

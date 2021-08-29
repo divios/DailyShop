@@ -10,15 +10,22 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 public abstract class economy implements Serializable {
 
     protected final String currency;
-    private final String name;
+    private final Supplier<String> name;
 
-    public economy(String currency, String name) {
+    protected economy(String currency, Supplier<String> name) {
         this.currency = currency;
         this.name = name;
+    }
+
+    protected economy(String currency, String name) {
+        this.currency = currency;
+        this.name = () -> name;
     }
 
     public abstract void test();
@@ -26,7 +33,7 @@ public abstract class economy implements Serializable {
     public abstract void witchDrawMoney(Player p, Double price);
     public abstract void depositMoney(Player p, Double price);
 
-    public String getName() { return name; }
+    public String getName() { return name.get(); }
 
     public String serialize() {
         try {
