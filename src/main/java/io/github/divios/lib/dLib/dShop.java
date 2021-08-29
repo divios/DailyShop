@@ -61,7 +61,7 @@ public class dShop {
                 Schedulers.async().runRepeating(() -> {
 
                     if (timeStampUtils.diff(timestamp,
-                            new Timestamp(System.currentTimeMillis())) > timer) {
+                            new Timestamp(System.currentTimeMillis())) >= timer) {
 
                         timestamp = new Timestamp(System.currentTimeMillis());
                         dManager.updateTimeStamp(this.name, this.timestamp);

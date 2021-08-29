@@ -282,21 +282,6 @@ public class CustomizerMenu {
                 21
         );
 
-        inv.addButton(                                                  // Econ
-                ItemButton.create(
-                        ItemBuilder.of(XMaterial.PLAYER_HEAD)
-                                .setName(plugin.configM.getLangYml().CUSTOMIZE_ECON_NAME)
-                                .addLore(plugin.configM.getLangYml().CUSTOMIZE_ECON_LORE)
-                                .addLore("", "&7Current: &e" + item.getEconomy().getName())
-                                .applyTexture("e36e94f6c34a35465fce4a90f2e25976389eb9709a12273574ff70fd4daa6852")
-                        , e ->
-                                changeEcon.builder()
-                                        .withPlayer(p)
-                                        .withItem(item)
-                                        .withConsumer(dItem -> refresh())
-                                        .prompt()
-                ), 23
-        );
 
         inv.addButton(                                                  // Price
                 ItemButton.create(
@@ -566,39 +551,6 @@ public class CustomizerMenu {
                         }
                 ), 47
         );
-
-        inv.addButton(                                                  // Bundle
-                ItemButton.create(
-                        item.getBundle().isPresent() ?
-                                ItemBuilder.of(XMaterial.ITEM_FRAME)  //Change stock
-                                        .setName("&f&lChange bundle items")
-                                        .setLore("&6Right Click > &7To change items on the bundle")
-                                        .addLore("")
-                                        .addLore(item.getBundle().orElse(Collections.emptyList()).stream()
-                                                .map(uuid -> shop.getItem(uuid).orElse(dItem.AIR()).getDisplayName())
-                                                .collect(Collectors.toList()))
-                                :
-                                ItemBuilder.of(XMaterial.GRAY_STAINED_GLASS_PANE).setName("&c")
-
-                        , e -> {
-
-                            if (!item.getBundle().isPresent()) return;
-
-                            changeBundleItem.builder()
-                                    .withPlayer(p)
-                                    .withItem(item)
-                                    .withShop(shop)
-                                    .withConfirm(uuids -> {
-                                        item.setBundle(uuids);
-                                        refresh();
-                                    })
-                                    .withBack(this::refresh)
-                                    .prompt();
-
-                        }
-                ), 48
-        );
-
 
     }
 
