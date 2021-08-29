@@ -4,6 +4,7 @@ import io.github.divios.core_lib.Events;
 import io.github.divios.core_lib.event.SingleSubscription;
 import io.github.divios.core_lib.event.Subscription;
 import io.github.divios.core_lib.inventory.inventoryUtils;
+import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.core_lib.misc.Msg;
 import io.github.divios.core_lib.misc.Pair;
@@ -112,9 +113,13 @@ public class dInventory {
      *
      * @return The inventory this object holds
      */
-    public Inventory getInventory() { return inv; }
+    public Inventory getInventory() {
+        return inv;
+    }
 
-    public int getSize() { return inv.getSize(); }
+    public int getSize() {
+        return inv.getSize();
+    }
 
     public boolean addRow() {
         if (inv.getSize() == 54) return false;
@@ -256,10 +261,8 @@ public class dInventory {
                     if (type.equals(updateItemEvent.updatetype.UPDATE_ITEM)) {
 
                         item.setSlot(slot);
-                        buttons.remove(slot);
                         buttons.put(slot, item.clone());
-                        ItemStack itemWithLore = item.getItem().clone();
-                        strategy.setLore(itemWithLore);
+                        ItemStack itemWithLore = strategy.applyLore(item.getItem().clone());
                         inv.setItem(slot, itemWithLore);
 
                     } else if (type.equals(updateItemEvent.updatetype.NEXT_AMOUNT)) {
@@ -304,25 +307,19 @@ public class dInventory {
         listeners.add(
                 Events.subscribe(InventoryClickEvent.class, EventPriority.HIGHEST)
                         .filter(e -> e.getInventory().equals(inv))
+                        .filter(e -> !ItemUtils.isEmpty(e.getCurrentItem()))
                         .handler(e -> {
 
                             e.setCancelled(true);
 
-                            if (utils.isEmpty(e.getCurrentItem())) return;
+                            if (openSlots.contains(e.getSlot())) {
 
-                            if (openSlots.contains(e.getSlot()))
-                                buttons.values().stream()
-                                        .filter(ditem -> ditem.getUid().equals(dItem.getUid(e.getCurrentItem())))
-                                        .findFirst()
-                                        .ifPresent(dItem -> {
-                                            if (e.isLeftClick())
-                                                transaction.init(
-                                                        (Player) e.getWhoClicked(), dItem, shop);
-                                            else {
-                                                sellTransaction.init(
-                                                        (Player) e.getWhoClicked(), dItem, shop);
-                                            }
-                                        });
+                                if (e.isLeftClick())
+                                    transaction.init((Player) e.getWhoClicked(), buttons.get(e.getSlot()), shop);
+                                else
+                                    sellTransaction.init((Player) e.getWhoClicked(), buttons.get(e.getSlot()), shop);
+
+                            }
 
                             else {
                                 dItem item = buttons.get(e.getSlot());
