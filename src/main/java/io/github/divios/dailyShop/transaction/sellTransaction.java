@@ -11,7 +11,9 @@ import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
 import org.bukkit.entity.Player;
 
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 public class sellTransaction {
 
@@ -83,13 +85,24 @@ public class sellTransaction {
             item.getEconomy().depositMoney(p, item.getSellPrice().get().getPrice() *
                     (item.getSetItems().isPresent() ? 1 : amount));
 
-            Msg.sendMsg(p, Msg.singletonMsg(plugin.configM.getLangYml().MSG_BUY_ITEM)
+            List<String> msg = Arrays.asList(Msg.singletonMsg(plugin.configM.getLangYml().MSG_BUY_ITEM)
                     .add("\\{action}", "sell")
                     .add("\\{amount}", "" + amount)
                     .add("\\{price}", "" + item.getSellPrice().get().getPrice() * amount)
-                    .add("\\{item}", item.getDisplayName() + FormatUtils.color("&7"))
-                    .add("\\{currency}", item.getEconomy().getName()).build());
-            shop.openGui(p);
+                    .add("\\{currency}", item.getEconomy().getName()).build().split("\\{item}"));
+
+            if (msg.size() == 1) {
+                Msg.sendMsg(p, msg.get(0));
+            } else {
+
+                if (!item.getItem().getItemMeta().getDisplayName().isEmpty())
+                    Msg.sendMsg(p, msg.get(0) + item.getDisplayName() + "&7" + msg.get(1));
+                else
+                    DailyShop.getInstance().getLocaleManager().sendMessage(p,
+                            FormatUtils.color(DailyShop.getInstance().configM.getSettingsYml().PREFIX +
+                                    msg.get(0) + "<item>" + "&7" + msg.get(1)), item.getItem().getType(), (short) 0, null);
+            }
+                shop.openGui(p);
 
 
         }
