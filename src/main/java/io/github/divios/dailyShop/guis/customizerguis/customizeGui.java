@@ -216,7 +216,7 @@ public class customizeGui implements Listener, InventoryHolder {
 
             if (toClone != null && utils.isEmpty(e.getCurrentItem())
                 && e.getClick().equals(ClickType.MIDDLE)) {     // paste clipboard
-                _gui.addButton(toClone.clone2(), e.getSlot());
+                _gui.addButton(toClone.copy(), e.getSlot());
                 refresh();
                 return;
             }
