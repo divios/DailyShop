@@ -67,7 +67,7 @@ public abstract class abstractSyncMenu implements syncMenu {
         listeners.add(
                 Events.subscribe(updateItemEvent.class)
                         .filter(o -> o.getShop().equals(shop))
-                        .handler(o -> this.updateItems(o.getItem(), o.getType()))
+                        .handler(this::updateItems)
         );
 
         listeners.add(
@@ -106,9 +106,9 @@ public abstract class abstractSyncMenu implements syncMenu {
         renovate();
     }
 
-    private synchronized void updateItems(dItem item, updateItemEvent.updatetype type) {
-        base.updateItem(item, type);
-        guis.forEach((uuid, singleGui) -> singleGui.updateItem(item, type));
+    private synchronized void updateItems(updateItemEvent o) {
+        base.updateItem(o);
+        guis.forEach((uuid, singleGui) -> singleGui.updateItem(o));
     }
 
     protected abstract BiMap<UUID, singleGui> createMap();

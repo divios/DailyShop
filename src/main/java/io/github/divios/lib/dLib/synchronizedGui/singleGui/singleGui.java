@@ -13,7 +13,7 @@ import org.bukkit.entity.Player;
 public interface singleGui {
 
     static singleGui fromJson(String json, dShop shop) {
-        return new singleGuiImpl(null, shop, dInventory.fromJson(json, shop));
+        return new singleGuiImpl(null, shop, dInventory.fromBase64(json, shop));
     }
 
     static singleGui create(dShop shop) { return new singleGuiImpl(null, shop, new dInventory(shop.getName(), 27, shop)); }
@@ -24,7 +24,7 @@ public interface singleGui {
 
     static singleGui create(Player p, dInventory inv, dShop shop) { return new singleGuiImpl(p, shop, inv); }
 
-    void updateItem(dItem item, updateItemEvent.updatetype type);
+    void updateItem(updateItemEvent o);
 
     void updateTask();
 
@@ -41,7 +41,7 @@ public interface singleGui {
     void destroy();
 
     default String toJson() {
-        return getInventory().toJson();
+        return getInventory().toBase64();
     }
 
     int hash();

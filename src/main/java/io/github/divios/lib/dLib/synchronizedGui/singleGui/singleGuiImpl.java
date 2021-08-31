@@ -1,13 +1,15 @@
 package io.github.divios.lib.dLib.synchronizedGui.singleGui;
 
+import io.github.divios.core_lib.Events;
+import io.github.divios.core_lib.event.SingleSubscription;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
+import io.github.divios.dailyShop.events.searchStockEvent;
 import io.github.divios.dailyShop.events.updateItemEvent;
 import io.github.divios.dailyShop.lorestategy.loreStrategy;
 import io.github.divios.dailyShop.lorestategy.shopItemsLore;
 import io.github.divios.dailyShop.utils.utils;
 import io.github.divios.lib.dLib.dInventory;
-import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.dLib.synchronizedGui.taskPool.updatePool;
 import me.clip.placeholderapi.PlaceholderAPI;
@@ -17,6 +19,8 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.stream.IntStream;
 
 /**
@@ -32,6 +36,7 @@ public class singleGuiImpl implements singleGui {
     private final dShop shop;
     private final dInventory base;
     private final dInventory own;
+    private final Set<SingleSubscription> events = new HashSet<>();
 
     protected singleGuiImpl(Player p, dShop shop, singleGui base) {
         this(p, shop, base.getInventory());
@@ -45,13 +50,31 @@ public class singleGuiImpl implements singleGui {
 
         if (p != null) {
             if (utils.isOperative("PlaceholderAPI")) updatePool.subscribe(this);
+            updateTask();
             this.own.open(p);
-        }
+        } else ready();
+    }
+
+    private void ready() {
+
+        events.add(
+                Events.subscribe(searchStockEvent.class)                // Respond to search events
+                        .filter(o -> o.getShop().equals(shop))
+                        .handler(o ->
+                                own.getButtons().values().stream()
+                                        .filter(dItem -> dItem.getUid().equals(o.getUuid()))
+                                        .findFirst()
+                                        .ifPresent(dItem -> {
+                                            if (!dItem.hasStock()) o.respond(-1);
+                                            else o.respond(dItem.getStock().get(o.getPlayer()));
+                                        }))
+        );
+
     }
 
     @Override
-    public synchronized void updateItem(dItem item, updateItemEvent.updatetype type) {
-        own.updateItem(item, type);
+    public synchronized void updateItem(updateItemEvent o) {
+        own.updateItem(p, o.getPlayer(), o.getItem(), o.getType());
     }
 
     @Override
@@ -64,7 +87,7 @@ public class singleGuiImpl implements singleGui {
 
                     Inventory inv = own.getInventory();
                     ItemStack oldItem = base.getOpenSlots().contains(value) ?
-                            strategy.applyLore(base.getButtons().get(value).getItem().clone())
+                            strategy.applyLore(base.getButtons().get(value).getItem().clone(), p)
                             : base.getInventory().getItem(value);
                     ItemBuilder newItem = ItemBuilder.of(oldItem.clone()).setLore(Collections.emptyList());
 
@@ -80,7 +103,7 @@ public class singleGuiImpl implements singleGui {
 
     @Override
     public synchronized void renovate() {
-        own.renovate();
+        own.renovate(p);
     }
 
     @Override
@@ -105,6 +128,7 @@ public class singleGuiImpl implements singleGui {
 
     @Override
     public synchronized void destroy() {
+        events.forEach(SingleSubscription::unregister);
         own.destroy();
         updatePool.cancel(this);
     }
