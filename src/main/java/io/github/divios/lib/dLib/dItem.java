@@ -8,10 +8,13 @@ import de.tr7zw.nbtapi.NBTItem;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.Pair;
+import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.economies.economy;
 import io.github.divios.dailyShop.economies.vault;
 import io.github.divios.dailyShop.utils.utils;
+import io.github.divios.lib.dLib.stock.dStock;
+import io.github.divios.lib.dLib.stock.factory.dStockFactory;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
@@ -19,6 +22,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
 import java.io.IOException;
 import java.io.ObjectStreamException;
@@ -28,11 +32,11 @@ import java.util.stream.Collectors;
 
 public class dItem implements Serializable, Cloneable {
 
-    private static final long serialVersionUID = 6529685098267757690L;
+    private static final long serialVersionUID = 6529685098267757690L;  // Avoid problems with serialization
     private static final DailyShop plugin = DailyShop.getInstance();
 
     private NBTItem item;
-    private String shop = ""; // TODO: not sure
+    private dStock stock = null;
 
     public static dItem of(ItemStack item) {
         return new dItem(item);
@@ -43,17 +47,7 @@ public class dItem implements Serializable, Cloneable {
     }
 
     public dItem(@NotNull ItemStack item, int slot) {
-        this.item = new NBTItem(item);
-        if (getUid() == null) {
-            setRawItem(item);
-            setUid(UUID.randomUUID());
-            setSlot(slot);
-            setRarity(new dRarity());       //Defaults to Common
-            setConfirm_gui(true);           // Defaults true
-            setEconomy(new vault());        // Default Vault
-            setBuyPrice(plugin.configM.getSettingsYml().DEFAULT_BUY); // Default buy price
-            setSellPrice(plugin.configM.getSettingsYml().DEFAULT_SELL); // Default sell price
-        }
+        setItem(item, slot);
     }
 
     private dItem() {}
@@ -63,6 +57,7 @@ public class dItem implements Serializable, Cloneable {
      * @return the ItemStack that this instance holds
      */
     public ItemStack getItem() {
+        saveStock();
         return item.getItem();
     }
 
@@ -83,10 +78,24 @@ public class dItem implements Serializable, Cloneable {
      *
      * @param item the new item to be held by this instance
      */
-    public void setItem(@NotNull ItemStack item) {
+    public void setItem(@NotNull ItemStack item, int slot) {
         this.item = new NBTItem(item);
-        if (getUid() == null)
+        if (getUid() == null) {
+            setRawItem(item);
             setUid(UUID.randomUUID());
+            setSlot(slot);
+            setRarity(new dRarity());       //Defaults to Common
+            setConfirm_gui(true);           // Defaults true
+            setEconomy(new vault());        // Default Vault
+            setBuyPrice(plugin.configM.getSettingsYml().DEFAULT_BUY); // Default buy price
+            setSellPrice(plugin.configM.getSettingsYml().DEFAULT_SELL); // Default sell price
+        }
+
+        stock = retrieveStock();
+    }
+
+    public void setItem(@NotNull ItemStack item) {
+        setItem(item, -1);
     }
 
     /**
@@ -99,7 +108,7 @@ public class dItem implements Serializable, Cloneable {
         transfer.setDisplayName(getDisplayName());
         transfer.setLore(getLore());
         getAction().stream(transfer::setAction);
-        transfer.setStock(getStock().get());
+        transfer.setStock(getStock());
         transfer.setSetItems(getSetItems().get());
         transfer.setAmount(getAmount());
         transfer.setBundle(getBundle().get());
@@ -399,8 +408,13 @@ public class dItem implements Serializable, Cloneable {
      *
      * @param stock the stock to set
      */
-    public void setStock(@Nullable Integer stock) {
-        item.setInteger("rds_stock", stock);
+    public void setStock(@Nullable dStock stock) {
+        this.stock = stock;
+    }
+
+
+    public boolean hasStock() {
+        return stock != null;
     }
 
     /**
@@ -409,10 +423,37 @@ public class dItem implements Serializable, Cloneable {
      * @return returns the stock of the item. Can be null and means that
      * the feature is disabled
      */
-    public Optional<Integer> getStock() {
-        if (!item.hasKey("rds_stock"))
-            return Optional.empty();
-        return Optional.ofNullable(item.getInteger("rds_stock"));
+    public dStock getStock() {
+        return stock;
+    }
+
+    /**
+     * Gets the deserialized stock from the item nbt
+     */
+    private dStock retrieveStock() {
+
+        if (!item.hasKey("rds_stock")) return null;
+
+        try {                                               // Convert legacy Stock
+            item.getString("rds_stock");
+        } catch (ClassCastException e) {
+            int legacyStock = item.getInteger("rds_stock");
+            item.setString("rds_stock", dStockFactory.GLOBAL(legacyStock).toBase64());
+        }
+
+        String base64 = item.getString("rds_stock");
+        if (base64 == null || base64.isEmpty()) {               // Legacy stock
+            return dStockFactory.GLOBAL(item.getInteger("rds_stock"));
+        }
+
+        return dStock.fromBase64(base64);
+    }
+
+    /**
+     * Saves the stock as base64
+     */
+    private void saveStock() {
+        item.setString("rds_stock", stock == null ? null: stock.toBase64());    // Check null to reset Stock
     }
 
     /**
@@ -606,13 +647,17 @@ public class dItem implements Serializable, Cloneable {
 
     public boolean isSIGN() { return item.hasKey("rds_SIGN"); }
 
+    public String toJson() {
+        saveStock();            // Save stock before serializing the hold item
+        return NBTItem.convertItemtoNBT(item.getItem()).toString();
+    }
+
     /**
      * Gets item serializable as base64
      * @return
      */
-    public String serialize() {
-        NBTCompound itemData = NBTItem.convertItemtoNBT(item.getItem());
-        return Base64.getEncoder().encodeToString(itemData.toString().getBytes());
+    public String toBase64() {
+        return Base64Coder.encodeString(toJson());
     }
 
     /**
@@ -620,23 +665,25 @@ public class dItem implements Serializable, Cloneable {
      * @param base64
      * @return dItem constructed
      */
-    public static dItem deserialize(String base64) {
-        NBTCompound itemData = new NBTContainer(new String(Base64.getDecoder().decode(base64)));
+    public static dItem fromBase64(String base64) {
+        return fromJson(Base64Coder.decodeString(base64));
+    }
+
+    public static dItem fromJson(String json) {
+        NBTCompound itemData = new NBTContainer(json);
         ItemStack item = NBTItem.convertNBTtoItem(itemData);
 
-        dItem newItem = new dItem();
-        newItem.setItem(item);
-
-        return newItem;
+        return new dItem(item);
     }
 
     /**
      * Returns a copy of this dItem but different UUID (generated randomly)
      * @return
      */
-    public dItem clone2() {
-        dItem cloned = deserialize(this.serialize());
+    public dItem copy() {
+        dItem cloned = fromJson(toJson());
         cloned.setUid(UUID.randomUUID());
+        cloned.setStock(getStock());
         return cloned;
     }
 
@@ -644,8 +691,9 @@ public class dItem implements Serializable, Cloneable {
      * Returns a deep copy of the object, same UUID
      * @return
      */
+    @Override
     public dItem clone() {
-        return deserialize(serialize());
+        return fromJson(toJson());
     }
 
     public static dItem AIR() {
@@ -655,14 +703,6 @@ public class dItem implements Serializable, Cloneable {
 
         empty.setAIR();
         return empty;
-    }
-
-    public static dItem SIGN() {
-        dItem sign = dItem.of(ItemBuilder.of(XMaterial.OAK_DOOR)
-                .setName("&6Current items"));
-
-        sign.setSIGN();
-        return sign;
     }
 
     @Override
@@ -681,7 +721,7 @@ public class dItem implements Serializable, Cloneable {
     //>>>>>> Serialize stuff <<<<<<//
     private void writeObject(java.io.ObjectOutputStream out)
             throws IOException {
-        out.writeObject(this.serialize());
+        out.writeObject(this.toBase64());
     }
 
     private void readObject(java.io.ObjectInputStream in)
@@ -696,6 +736,5 @@ public class dItem implements Serializable, Cloneable {
             throws ObjectStreamException {
 
     }
-
 
 }
