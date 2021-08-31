@@ -13,13 +13,16 @@ import io.github.divios.core_lib.misc.ChatPrompt;
 import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.core_lib.misc.Msg;
 import io.github.divios.core_lib.misc.Task;
+import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.guis.settings.shopGui;
 import io.github.divios.dailyShop.utils.utils;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
+import io.github.divios.lib.dLib.stock.factory.dStockFactory;
 import io.github.divios.lib.managers.shopsManager;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemFlag;
 import org.jetbrains.annotations.NotNull;
 
@@ -418,7 +421,7 @@ public class CustomizerMenu {
 
         inv.addButton(                                                  // Set
                 ItemButton.create(
-                        item.getStock().isPresent() ?
+                        item.hasStock() ?
                                 ItemBuilder.of(XMaterial.BARRIER).setName(plugin.configM.getLangYml().CUSTOMIZE_UNAVAILABLE)
                                 :
                                 item.getSetItems().isPresent() ?
@@ -433,10 +436,10 @@ public class CustomizerMenu {
 
                         , e -> {
 
-                            if (item.getStock().isPresent()) return;
+                            if (item.hasStock()) return;
 
                             if (!item.getSetItems().isPresent() && e.isLeftClick()) {  // Boton de edit set
-                                if (item.getStock().isPresent()) {
+                                if (item.hasStock()) {
                                     Msg.sendMsg(p, "&7You can't enable this when the stock feature is enable");
                                     return;
                                 }
@@ -475,11 +478,13 @@ public class CustomizerMenu {
                         item.getSetItems().isPresent() ?
                                 ItemBuilder.of(XMaterial.BARRIER).setName(plugin.configM.getLangYml().CUSTOMIZE_UNAVAILABLE)
                                 :
-                                item.getStock().isPresent() ?
+                                item.hasStock() ?
                                         ItemBuilder.of(XMaterial.STONE_BUTTON)  //Change stock
                                                 .setName(plugin.configM.getLangYml().CUSTOMIZE_STOCK_NAME)
-                                                .setLore(Msg.msgList(plugin.configM.getLangYml().CUSTOMIZE_STOCK_LORE_ON).add("\\{amount}",
-                                                        "" + item.getStock().get()).build())
+                                                .setLore(Msg.msgList(plugin.configM.getLangYml().CUSTOMIZE_STOCK_LORE_ON)
+                                                        .add("\\{amount}", "" + item.getStock().getDefault())
+                                                        .add("\\{stock_type}", item.getStock().getName())
+                                                        .build())
                                         :
                                         ItemBuilder.of(XMaterial.STONE_BUTTON)  //Change stock
                                                 .setName(plugin.configM.getLangYml().CUSTOMIZE_STOCK_NAME)
@@ -489,12 +494,21 @@ public class CustomizerMenu {
 
                             if (item.getSetItems().isPresent()) return;
 
-                            if (e.isLeftClick()) {
+                            if (e.getClick().equals(ClickType.DROP)) {
+                                int defaultStock = item.getStock().getDefault();
+                                item.setStock(
+                                        item.getStock().getName().equals("INDIVIDUAL") ?
+                                                dStockFactory.GLOBAL(defaultStock):dStockFactory.INDIVIDUAL(defaultStock)
+                                );
+                                refresh();
+                            }
+
+                            else if (e.isLeftClick()) {
 
                                 ChatPrompt.builder()
                                         .withPlayer(p)
                                         .withResponse(s -> {
-                                            if (utils.isInteger(s)) item.setStock(Integer.parseInt(s));
+                                            if (utils.isInteger(s)) item.setStock(dStockFactory.INDIVIDUAL(Integer.parseInt(s)));
                                             else utils.sendMsg(p, plugin.configM.getLangYml().MSG_NOT_INTEGER);
 
                                             Task.syncDelayed(plugin, this::refresh);
@@ -514,14 +528,14 @@ public class CustomizerMenu {
         inv.addButton(                                                  // Commands
                 ItemButton.create(
                         item.getCommands().isPresent() ?
-                                ItemBuilder.of(XMaterial.COMMAND_BLOCK)  //Change stock
+                                ItemBuilder.of(XMaterial.COMMAND_BLOCK)  //Change commands
                                         .setName(plugin.configM.getLangYml().CUSTOMIZE_COMMANDS_NAME_ON)
                                         .setLore(plugin.configM.getLangYml().CUSTOMIZE_COMMANDS_LORE_ON)
                                         .addLore("")
                                         .addLore(item.getCommands().get()
                                                 .stream().map(s -> FormatUtils.color("&f&l" + s)).collect(Collectors.toList()))
                                 :
-                                ItemBuilder.of(XMaterial.COMMAND_BLOCK)  //Change stock
+                                ItemBuilder.of(XMaterial.COMMAND_BLOCK)  //set commands
                                         .setName(plugin.configM.getLangYml().CUSTOMIZE_COMMANDS_NAME)
                                         .setLore(Msg.msgList(plugin.configM.getLangYml().CUSTOMIZE_COMMANDS_LORE)
                                                 .add("\\{status}", "false").build())
