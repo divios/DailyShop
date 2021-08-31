@@ -20,7 +20,7 @@ public class shopsManagerLore implements loreStrategy {
     }
 
     @Override
-    public ItemStack applyLore(ItemStack item) {
+    public ItemStack applyLore(ItemStack item, Object... data) {
 
         String name = FormatUtils.stripColor(item.getItemMeta().getDisplayName().substring(4));
         dShop shop = shopsManager.getInstance().getShop(name).get();

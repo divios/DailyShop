@@ -10,6 +10,7 @@ import io.github.divios.dailyShop.utils.PriceFormatter;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dPrice;
 import io.github.divios.lib.dLib.dShop;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 public class shopItemsLore implements loreStrategy {
@@ -23,7 +24,9 @@ public class shopItemsLore implements loreStrategy {
     }
 
     @Override
-    public ItemStack applyLore(ItemStack item) {
+    public ItemStack applyLore(ItemStack item, Object... data) {
+
+        Player p = (Player) data[0];
         dItem aux = dItem.of(item);
 
         ItemBuilder newItem = ItemBuilder.of(item)
@@ -45,11 +48,11 @@ public class shopItemsLore implements loreStrategy {
 
                 .addLore("");
 
-        if (aux.getStock().isPresent()) {
+        if (aux.hasStock() && p != null) {
             newItem = newItem.addLore(plugin.configM.getLangYml().DAILY_ITEMS_STOCK +
-                    (aux.getStock().get() == -1 ?
+                    (aux.getStock().get(p) == -1 ?
                             FormatUtils.color("&c" + XSymbols.TIMES_3.parseSymbol()):
-                            aux.getStock().get()));
+                            aux.getStock().get(p)));
         }
 
         newItem = newItem.addLore(Msg.singletonMsg(plugin.configM.getLangYml().DAILY_ITEMS_CURRENCY)

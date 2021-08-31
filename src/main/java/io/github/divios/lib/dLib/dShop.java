@@ -26,7 +26,7 @@ public class dShop {
 
     private String name;
     private final dShopT type;
-    private Set<dItem> items = new LinkedHashSet<>();
+    private final Map<UUID, dItem> items = new HashMap<>();
     private final syncMenu guis;
 
     private Timestamp timestamp;
@@ -132,7 +132,7 @@ public class dShop {
      * any change made to it won't affect the original one
      */
     public synchronized @NotNull Set<dItem> getItems() {
-        return Collections.unmodifiableSet(items);
+        return Collections.unmodifiableSet(new HashSet<>(items.values()));
     }
 
     /**
@@ -142,9 +142,7 @@ public class dShop {
      * @return null if it does not exist
      */
     public synchronized Optional<dItem> getItem(UUID uid) {
-        return items.stream()
-                .filter(dItem -> dItem.getUid().equals(uid))
-                .findFirst();
+        return Optional.ofNullable(items.get(uid));
     }
 
     /**
@@ -164,22 +162,21 @@ public class dShop {
      * @param newItem
      */
     public synchronized void updateItem(UUID uid, dItem newItem) {
-        items.iterator().forEachRemaining(dItem -> {
-            if (dItem.getUid().equals(uid)) {
-                dItem.setItem(newItem.getItem());
-                Bukkit.getPluginManager().callEvent(        // Event to update item
-                        new updateItemEvent(newItem, updateItemEvent.updatetype.UPDATE_ITEM,
-                                this));
-                dManager.updateItem(getName(), dItem);
-            }
-        });
+        if (!items.containsKey(uid))
+            return; // Throw error
+
+        items.put(uid, newItem);
+        Bukkit.getPluginManager().callEvent(new updateItemEvent(newItem, updateItemEvent.updatetype.UPDATE_ITEM, this));    // Event to update item
+        dManager.updateItem(getName(), newItem);
+
+
     }
 
     /**
      * Sets the items of this shop
      */
     public synchronized void setItems(@NotNull HashSet<dItem> items) {
-        this.items = items;
+        items.forEach(dItem -> this.items.put(dItem.getUid(), dItem));
     }
 
     /**
@@ -188,7 +185,7 @@ public class dShop {
      * @param item item to be added
      */
     public synchronized void addItem(@NotNull dItem item) {
-        items.add(item);
+        items.put(item.getUid(), item);
         dManager.addItem(this.name, item);
     }
 
@@ -200,20 +197,12 @@ public class dShop {
      */
     public synchronized boolean removeItem(UUID uid) {
 
-        boolean[] result = {false};
-        items.stream()
-                .filter(dItem -> dItem.getUid().equals(uid))
-                .findFirst()
-                .ifPresent(dItem -> {
-                    dManager.deleteItem(this.name, uid);
-                    items.remove(dItem);
-                    Bukkit.getPluginManager().callEvent(
-                            new updateItemEvent(dItem,
-                                    updateItemEvent.updatetype.DELETE_ITEM, this));
-                    result[0] = true;
-                });
+        dItem removed = items.remove(uid);
 
-        return result[0];
+        if (removed == null) return false;
+        dManager.deleteItem(this.name, uid);
+        Bukkit.getPluginManager().callEvent(new updateItemEvent(removed, updateItemEvent.updatetype.DELETE_ITEM, this));
+        return true;
     }
 
     /**
