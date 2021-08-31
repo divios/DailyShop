@@ -2,6 +2,7 @@ package io.github.divios.dailyShop.events;
 
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.ItemStack;
@@ -14,19 +15,33 @@ public class updateItemEvent extends Event {
 
     private final dItem item;
 
+    private final Player p;
     private final updatetype type;
     private final dShop shop;
     private final Timestamp timestamp;
 
     public updateItemEvent(ItemStack item, updatetype type, dShop shop) {
-        this(new dItem(item), type, shop);
+        this(null, new dItem(item), type, shop);
     }
 
     public updateItemEvent(dItem item, updatetype type, dShop shop) {
+        this(null, item, type, shop);
+    }
+
+    public updateItemEvent(Player p, ItemStack item, updatetype type, dShop shop) {
+        this(p, new dItem(item), type, shop);
+    }
+
+    public updateItemEvent(Player p, dItem item, updatetype type, dShop shop) {
+        this.p = p;
         this.item = item;
         this.type = type;
         this.shop = shop;
         this.timestamp = new Timestamp(System.currentTimeMillis());
+    }
+
+    public Player getPlayer() {
+        return p;
     }
 
     public dItem getItem() { return this.item; }
