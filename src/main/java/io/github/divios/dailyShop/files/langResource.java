@@ -146,6 +146,7 @@ public class langResource extends resource{
     public String MSG_INVALID_BUY;
     public String MSG_INVALID_SELL;
     public String MSG_CURRENCY_ERROR;
+    public String MSG_INVALID_OPERATION;
     public String MSG_NOT_INTEGER;
 
     protected langResource() {
@@ -264,6 +265,7 @@ public class langResource extends resource{
         MSG_INVALID_BUY = yaml.getString("lang.messages.invalid_buy");
         MSG_INVALID_SELL = yaml.getString("lang.messages.invalid_sell");
         MSG_CURRENCY_ERROR = yaml.getString("lang.messages.currency_error");
+        MSG_INVALID_OPERATION = yaml.getString("lang.messages.invalid_operation");
         MSG_NOT_INTEGER = yaml.getString("lang.messages.not_integer");
 
     }
