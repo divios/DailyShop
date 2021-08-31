@@ -72,6 +72,11 @@ public class open extends abstractCommand {
             }
         }
 
+        if (!(sender instanceof Player)) {
+            sender.sendMessage("You cannot open a shop to yourself from console");
+            return;
+        }
+
         shopsManager.getInstance().getShop(args.get(0))
                 .get().open(args.size() == 2 ? Bukkit.getPlayer(args.get(1)): (Player) sender);
 
