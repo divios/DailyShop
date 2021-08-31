@@ -32,8 +32,13 @@ public class sellTransaction {
             if (!item.getSetItems().isPresent()) {
 
                 confirmGui.open(p, item.getItem(), dShop.dShopT.sell,
-                        (item1, amount) ->
-                                initTransaction(p, new dItem(item1), amount, shop),
+                        (item1, amount) -> {
+                            if (!shop.getItem(item.getUid()).isPresent()) {     // Last check
+                                Msg.sendMsg(p, plugin.configM.getLangYml().MSG_INVALID_OPERATION);
+                                return;
+                            }
+                            initTransaction(p, new dItem(item1), amount, shop);
+                        },
                         player -> shop.open(p),
                         plugin.configM.getLangYml().CONFIRM_GUI_SELL_NAME,
                         plugin.configM.getLangYml().CONFIRM_GUI_YES,
@@ -50,8 +55,13 @@ public class sellTransaction {
                                                         .add("\\{price}",
                                                         String.valueOf(item.getSellPrice().get().getPrice())).build()))
                         .withAction(aBoolean -> {
-                            if (aBoolean)
+                            if (aBoolean) {
+                                if (!shop.getItem(item.getUid()).isPresent()) {     // Last check
+                                    Msg.sendMsg(p, plugin.configM.getLangYml().MSG_INVALID_OPERATION);
+                                    return;
+                                }
                                 initTransaction(p, item, item.getAmount(), shop);
+                            }
                             else
                                 shop.open(p);
                         })
