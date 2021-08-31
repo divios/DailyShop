@@ -51,10 +51,17 @@ public class manager extends abstractCommand {
         return null;
     }
 
+
     @Override
     public void run(CommandSender sender, List<String> args) {
-            shopsManagerGui.open(args.size() > 0 ?
-                    Bukkit.getPlayer(args.get(0)) : (Player) sender);
+
+        if (!(sender instanceof Player)) {
+            sender.sendMessage("You cannot open a shop to yourself from console");
+            return;
+        }
+
+        shopsManagerGui.open(args.size() > 0 ?
+                Bukkit.getPlayer(args.get(0)) : (Player) sender);
 
     }
 }
