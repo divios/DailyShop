@@ -7,12 +7,14 @@ import io.github.divios.core_lib.misc.Msg;
 import io.github.divios.core_lib.misc.confirmIH;
 import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
+import io.github.divios.dailyShop.events.searchStockEvent;
 import io.github.divios.dailyShop.events.updateItemEvent;
 import io.github.divios.dailyShop.guis.confirmGui;
 import io.github.divios.dailyShop.utils.utils;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dPrice;
 import io.github.divios.lib.dLib.dShop;
+import io.github.divios.lib.dLib.stock.dStock;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.chat.TranslatableComponent;
 import org.bukkit.Bukkit;
@@ -23,6 +25,10 @@ import org.bukkit.inventory.ItemStack;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.stream.IntStream;
 
 public class transaction {
@@ -31,7 +37,7 @@ public class transaction {
 
     public static void init(Player p, dItem item, dShop shop) {
 
-        if (item.getStock().orElse(0) == -1) {
+        if (item.hasStock() && item.getStock().get(p) == -1) {
             Msg.sendMsg(p, plugin.configM.getLangYml().MSG_OUT_STOCK);
             shop.openGui(p);
             return;
@@ -45,11 +51,15 @@ public class transaction {
 
         if (item.getConfirm_gui()) {
 
-            if (!item.getStock().isPresent() &&
+            if (!item.hasStock() &&
                     !item.getSetItems().isPresent()) {
 
                 confirmGui.open(p, item.getItem(), dShop.dShopT.buy,
                         (item1, amount) -> {
+                            if (!lastCheck(p, shop, item)) {     // Last check
+                                Msg.sendMsg(p, plugin.configM.getLangYml().MSG_INVALID_OPERATION);
+                                return;
+                            }
                             transaction.initTransaction(p, new dItem(item1), amount, shop);
                         }, player -> shop.open(p),
                         plugin.configM.getLangYml().CONFIRM_GUI_BUY_NAME,
@@ -61,8 +71,15 @@ public class transaction {
                 confirmIH.builder()
                         .withPlayer(p)
                         .withAction(aBoolean -> {
-                            if (aBoolean)
+                            if (aBoolean) {
+
+                                if (!lastCheck(p, shop, item)
+                                ) {     // Last check
+                                    Msg.sendMsg(p, plugin.configM.getLangYml().MSG_INVALID_OPERATION);
+                                    return;
+                                }
                                 transaction.initTransaction(p, item, item.getAmount(), shop);
+                            }
                             else
                                 shop.open(p);
                         })
@@ -149,12 +166,12 @@ public class transaction {
 
         if (err[0]) throw new transactionExc(transactionExc.err.noPerms);
 
-        item.getStock().ifPresent(integer -> {
+        if (item.hasStock()) {
             s.addRunnable(() -> Bukkit.getPluginManager().callEvent(
-                    new updateItemEvent(item, updateItemEvent.updatetype.NEXT_AMOUNT, shop)));
+                    new updateItemEvent(p, item, updateItemEvent.updatetype.NEXT_AMOUNT, shop)));
 
             item.setAmount(1);
-        });
+        }
 
         transactionExc[] err1 = {null};
         item.getBundle().ifPresent(uuids ->         // bundle check
@@ -203,6 +220,26 @@ public class transaction {
             });
 
         return s;
+    }
+
+    private static boolean lastCheck(Player p, dShop shop, dItem item) {
+
+        boolean result = true;
+
+        if (item.hasStock())  {
+            CompletableFuture<Integer> callback = dStock.searchStock(p, shop, item.getUid());
+            try {
+                int c = callback.get(2, TimeUnit.SECONDS);
+                result = c > 0;
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            } catch (TimeoutException e) {
+                Log.warn("timeout");
+                result = false;
+            }
+        }
+        return shop.getItem(item.getUid()).isPresent() && result;
+
     }
 
 }
