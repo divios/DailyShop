@@ -6,7 +6,9 @@ public interface loreStrategy {
 
     void setLore(ItemStack item);
 
-    ItemStack applyLore(ItemStack item);
+    default ItemStack applyLore(ItemStack item) { return applyLore(item, null); }
+
+    ItemStack applyLore(ItemStack item, Object... data);
 
     void removeLore(ItemStack item);
 

@@ -5,8 +5,6 @@ import io.github.divios.core_lib.event.SingleSubscription;
 import io.github.divios.core_lib.event.Subscription;
 import io.github.divios.core_lib.inventory.inventoryUtils;
 import io.github.divios.core_lib.itemutils.ItemUtils;
-import io.github.divios.core_lib.misc.FormatUtils;
-import io.github.divios.core_lib.misc.Msg;
 import io.github.divios.core_lib.misc.Pair;
 import io.github.divios.core_lib.misc.WeightedRandom;
 import io.github.divios.core_lib.utils.Log;
@@ -17,6 +15,7 @@ import io.github.divios.dailyShop.lorestategy.shopItemsLore;
 import io.github.divios.dailyShop.transaction.sellTransaction;
 import io.github.divios.dailyShop.transaction.transaction;
 import io.github.divios.dailyShop.utils.utils;
+import io.github.divios.lib.dLib.stock.dStock;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventPriority;
@@ -57,8 +56,6 @@ public class dInventory {
         this.strategy = new shopItemsLore();
 
         IntStream.range(0, inv.getSize()).forEach(openSlots::add);  //initializes slots
-        renovate();   // not really necessary but why not
-
         ready();
     }
 
@@ -113,13 +110,9 @@ public class dInventory {
      *
      * @return The inventory this object holds
      */
-    public Inventory getInventory() {
-        return inv;
-    }
+    public Inventory getInventory() { return inv; }
 
-    public int getSize() {
-        return inv.getSize();
-    }
+    public int getSize() { return inv.getSize(); }
 
     public boolean addRow() {
         if (inv.getSize() == 54) return false;
@@ -200,7 +193,7 @@ public class dInventory {
     /**
      * Renovates daily items on the openSlots
      */
-    public void renovate() {
+    public void renovate(Player p) {
 
         buttons.entrySet()
                 .stream()
@@ -232,23 +225,20 @@ public class dInventory {
 
             rolled.generateNewBuyPrice();
             rolled.generateNewSellPrice();
-            _renovate(rolled, i);
+            _renovate(p, rolled, i);
             RRM.remove(rolled);
             addedButtons++;
         }
 
     }
 
-    protected void _renovate(dItem newItem, int slot) {
+    protected void _renovate(Player p, dItem newItem, int slot) {
         newItem.setSlot(slot);
         buttons.put(slot, newItem);
-
-        ItemStack itemToAdd = newItem.getItem().clone();
-        new shopItemsLore().setLore(itemToAdd);
-        inv.setItem(slot, itemToAdd);
+        inv.setItem(slot, new shopItemsLore().applyLore(newItem.getItem().clone(), p));
     }
 
-    public void updateItem(dItem item, updateItemEvent.updatetype type) {
+    public void updateItem(Player own, Player p, dItem item, updateItemEvent.updatetype type) {
 
         if (buttons.values().stream().noneMatch(dItem -> dItem.getUid().equals(item.getUid()))) return;
 
@@ -262,19 +252,18 @@ public class dInventory {
 
                         item.setSlot(slot);
                         buttons.put(slot, item.clone());
-                        ItemStack itemWithLore = strategy.applyLore(item.getItem().clone());
-                        inv.setItem(slot, itemWithLore);
+                        inv.setItem(slot, strategy.applyLore(item.getItem().clone(), own));
 
                     } else if (type.equals(updateItemEvent.updatetype.NEXT_AMOUNT)) {
 
-                        //Log.warn(String.valueOf(dItem.getStock().get()));
-                        dItem.setStock(dItem.getStock().orElse(0) - 1);
+                        dStock stock = dItem.getStock();
+                        stock.decrement(p);
 
-                        if (dItem.getStock().orElse(0) <= 0) {
-                            dItem.setStock(-1);
+                        if (stock.get(p) <= 0) {
+                            stock.set(p, -1);
                         }
 
-                        updateItem(dItem, updateItemEvent.updatetype.UPDATE_ITEM);
+                        updateItem(own, p, dItem, updateItemEvent.updatetype.UPDATE_ITEM);
 
                     } else if (type.equals(updateItemEvent.updatetype.DELETE_ITEM)) {
 
@@ -349,7 +338,7 @@ public class dInventory {
         listeners.clear();
     }
 
-    public String toJson() {
+    public String toBase64() {
         try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
             try (BukkitObjectOutputStream dataOutput = new BukkitObjectOutputStream(outputStream)) {
                 // Serialize inventory
@@ -395,13 +384,13 @@ public class dInventory {
         }
     }
 
-    public static dInventory fromJson(String base64, dShop shop) {
+    public static dInventory fromBase64(String base64, dShop shop) {
         return new dInventory(base64, shop);
     }
 
     // Returns a clone of this gui without the daily items
     public dInventory skeleton() {
-        dInventory cloned = fromJson(this.toJson(), shop);
+        dInventory cloned = fromBase64(this.toBase64(), shop);
         cloned.clearDailyItems();
 
         cloned.getButtons().entrySet().stream()   // gets the AIR buttons back
@@ -413,7 +402,7 @@ public class dInventory {
     }
 
     public dInventory clone() {
-        return fromJson(toJson(), shop);
+        return fromBase64(toBase64(), shop);
     }
 
 }

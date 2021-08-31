@@ -88,7 +88,7 @@ lang:
     stock:
       name: "&f&lSet Stock"
       lore: "|&8- &9LEFT CLICK|  &7Enable feature||&7This option will make|&7the item have limited stock"
-      lore_on: "|&8- &9LEFT CLICK|  &7Change current amount||&8- &9RIGHT CLICK|  &7Disable feature||&7Current stock: &e{amount}"
+      lore_on: "|&8- &9LEFT CLICK|  &7Change current amount||&8- &9RIGHT CLICK|  &7Disable feature||&8- &9Q + CLICK|  &7Toggle Stock|  &7Type: &e{stock_type}||&7Current stock: &e{amount}"
     bundle:
       name: "&f&lChange bundle items"
       lore: "|&8- &9LEFT CLICK|  &7Change items on bundle"
@@ -131,4 +131,5 @@ lang:
     invalid_buy: "&7That item is out of stock"
     invalid_sell: "&7That item cannot be sell"
     currency_error: "&7That currency is not available anymore"
+    invalid_operation: "&7That item is not longer available"
     not_integer: "&7Not integer"
