@@ -23,30 +23,31 @@ public class shopItemsManagerLore implements loreStrategy {
         ItemUtils.translateAllItemData(applyLore(item), item);
     }
 
-    public ItemStack applyLore(ItemStack item) {
+    public ItemStack applyLore(ItemStack item, Object... data) {
 
+        dItem ditem = dItem.of(item);
         ItemBuilder aux = ItemBuilder.of(item)
                 .addLore("")
                 .addLore(Msg.singletonMsg(plugin.configM.getLangYml().DAILY_ITEMS_BUY_PRICE)
                         .add("\\{buyPrice}", "" +
-                                dItem.of(item).getBuyPrice().orElse(new dPrice(-1)).getVisualPrice()).build())
+                                ditem.getBuyPrice().orElse(new dPrice(-1)).getVisualPrice()).build())
 
                 .addLore(Msg.singletonMsg(plugin.configM.getLangYml().DAILY_ITEMS_SELL_PRICE)
                         .add("\\{sellPrice}", "" +
-                                dItem.of(item).getSellPrice().orElse(new dPrice(-1)).getVisualPrice()).build())
+                                ditem.getSellPrice().orElse(new dPrice(-1)).getVisualPrice()).build())
 
                 .addLore("");
 
-        if (dItem.of(item).getStock().isPresent() && dItem.of(item).getStock().get() != -1) {
-            aux = aux.addLore(plugin.configM.getLangYml().DAILY_ITEMS_STOCK + dItem.of(item).getStock().get());
+        if (ditem.hasStock()) {
+            aux = aux.addLore(plugin.configM.getLangYml().DAILY_ITEMS_STOCK + ditem.getStock().getDefault() + " (" + ditem.getStock().getName() + ")");
         }
 
         aux = aux.addLore(Msg.singletonMsg(plugin.configM.getLangYml().DAILY_ITEMS_CURRENCY)
-                .add("\\{currency}", "" + dItem.of(item).getEconomy().getName()).build());
+                .add("\\{currency}", "" + ditem.getEconomy().getName()).build());
 
         if (DailyShop.getInstance().getConfig().getBoolean("enable-rarity", true))
             aux = aux.addLore(Msg.singletonMsg(plugin.configM.getLangYml().DAILY_ITEMS_RARITY)
-                    .add("\\{rarity}", dItem.of(item).getRarity().toString()).build());
+                    .add("\\{rarity}", ditem.getRarity().toString()).build());
 
         aux = aux.addLore("").addLore(plugin.configM.getLangYml().DAILY_ITEMS_MANAGER_LORE);
 
