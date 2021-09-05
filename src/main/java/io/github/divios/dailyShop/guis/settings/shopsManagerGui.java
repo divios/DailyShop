@@ -164,7 +164,7 @@ public class shopsManagerGui {
                         Pattern pattern = Pattern.compile("[^a-z0-9 ]", Pattern.CASE_INSENSITIVE);
                         Matcher m = pattern.matcher("I am a string");
                         if (m.find()) {
-                            utils.sendMsg(p, "&7Name cannot contain special caharacters");
+                            utils.sendMsg(p, "&7Name cannot contain special characters");
                             Task.syncDelayed(plugin, () -> refresh(p));
                             return;
                         }
@@ -176,7 +176,7 @@ public class shopsManagerGui {
                         }
 
                         dManager.renameShop(shop.getName(), s);
-                        shop.setName(s);
+                        shop.setName(s.toLowerCase());
                         Task.syncDelayed(plugin, () -> refresh(p));
                     })
                     .withCancel(cancelReason -> Task.syncDelayed(plugin, () -> refresh(p)))
