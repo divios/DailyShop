@@ -74,7 +74,7 @@ public class singleGuiImpl implements singleGui {
 
     @Override
     public synchronized void updateItem(updateItemEvent o) {
-        own.updateItem(p, o.getPlayer(), o.getItem(), o.getType());
+        own.updateItem(p, o);
     }
 
     @Override
