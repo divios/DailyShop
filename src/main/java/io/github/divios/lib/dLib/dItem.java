@@ -8,7 +8,6 @@ import de.tr7zw.nbtapi.NBTItem;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.Pair;
-import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.economies.economy;
 import io.github.divios.dailyShop.economies.vault;
@@ -606,7 +605,8 @@ public class dItem implements Serializable, Cloneable {
      * @param bundle null if want to disabled it
      */
     public void setBundle(@Nullable List<UUID> bundle) {
-        item.setObject("rds_bundle", bundle.stream()        // Cast to string due to bug
+        if (bundle == null) item.removeKey("rds_bundle");
+        else item.setObject("rds_bundle", bundle.stream()        // Cast to string due to bug
                 .map(UUID::toString).collect(Collectors.toList()));
     }
 
