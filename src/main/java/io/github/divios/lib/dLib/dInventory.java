@@ -1,5 +1,6 @@
 package io.github.divios.lib.dLib;
 
+import com.google.common.collect.Sets;
 import io.github.divios.core_lib.Events;
 import io.github.divios.core_lib.event.SingleSubscription;
 import io.github.divios.core_lib.event.Subscription;
@@ -7,7 +8,6 @@ import io.github.divios.core_lib.inventory.inventoryUtils;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.Pair;
 import io.github.divios.core_lib.misc.WeightedRandom;
-import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.events.updateItemEvent;
 import io.github.divios.dailyShop.lorestategy.loreStrategy;
@@ -22,7 +22,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.io.BukkitObjectInputStream;
 import org.bukkit.util.io.BukkitObjectOutputStream;
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
@@ -31,6 +30,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -42,8 +42,8 @@ public class dInventory {
     protected Inventory inv;
     protected final dShop shop;
 
-    protected final Set<Integer> openSlots = Collections.synchronizedSet(new HashSet<>());
-    protected final Map<Integer, dItem> buttons = Collections.synchronizedMap(new HashMap<>());
+    protected final Set<Integer> openSlots = Sets.newConcurrentHashSet();
+    protected final Map<Integer, dItem> buttons = new ConcurrentHashMap<>();
 
     private final Set<SingleSubscription> listeners = new HashSet<>();
     protected final loreStrategy strategy;
@@ -238,34 +238,35 @@ public class dInventory {
         inv.setItem(slot, new shopItemsLore().applyLore(newItem.getItem().clone(), p));
     }
 
-    public void updateItem(Player own, Player p, dItem item, updateItemEvent.updatetype type) {
+    public void updateItem(Player own, updateItemEvent o) {
 
-        if (buttons.values().stream().noneMatch(dItem -> dItem.getUid().equals(item.getUid()))) return;
+        if (buttons.values().stream().noneMatch(dItem -> dItem.getUid().equals(o.getItem().getUid()))) return;
 
         buttons.values().stream()
-                .filter(dItem -> dItem.getUid().equals(item.getUid()))
+                .filter(dItem -> dItem.getUid().equals(o.getItem().getUid()))
                 .findFirst()
                 .ifPresent(dItem -> {
 
                     int slot = dItem.getSlot();
-                    if (type.equals(updateItemEvent.updatetype.UPDATE_ITEM)) {
+                    if (o.getType().equals(updateItemEvent.updatetype.UPDATE_ITEM)) {
 
-                        item.setSlot(slot);
-                        buttons.put(slot, item.clone());
-                        inv.setItem(slot, strategy.applyLore(item.getItem().clone(), own));
+                        o.getItem().setSlot(slot);
+                        buttons.put(slot, o.getItem().clone());
+                        inv.setItem(slot, strategy.applyLore(o.getItem().getItem().clone(), own));
 
-                    } else if (type.equals(updateItemEvent.updatetype.NEXT_AMOUNT)) {
+                    } else if (o.getType().equals(updateItemEvent.updatetype.NEXT_AMOUNT)) {
 
                         dStock stock = dItem.getStock();
-                        stock.decrement(p);
+                        stock.decrement(o.getPlayer(), o.getAmount());
 
-                        if (stock.get(p) <= 0) {
-                            stock.set(p, -1);
+                        if (stock.get(o.getPlayer()) <= 0) {
+                            stock.set(o.getPlayer(), -1);
                         }
 
-                        updateItem(own, p, dItem, updateItemEvent.updatetype.UPDATE_ITEM);
+                        Bukkit.getPluginManager().callEvent(new updateItemEvent(dItem, o.getAmount(), updateItemEvent.updatetype.UPDATE_ITEM, o.getShop()));
 
-                    } else if (type.equals(updateItemEvent.updatetype.DELETE_ITEM)) {
+
+                    } else if (o.getType().equals(updateItemEvent.updatetype.DELETE_ITEM)) {
 
                         dItem removed = removeButton(slot);
                         if (removed != null) inv.setItem(slot, utils.getRedPane());
