@@ -23,7 +23,7 @@ public class sellTransaction {
 
         if (!item.getSellPrice().isPresent() || item.getSellPrice().get().getPrice() == -1) {
             Msg.sendMsg(p, plugin.configM.getLangYml().MSG_INVALID_SELL);
-            shop.openGui(p);
+            shop.openShop(p);
             return;
         }
 
@@ -39,7 +39,7 @@ public class sellTransaction {
                             }
                             initTransaction(p, new dItem(item1), amount, shop);
                         },
-                        player -> shop.open(p),
+                        player -> shop.openShop(p),
                         plugin.configM.getLangYml().CONFIRM_GUI_SELL_NAME,
                         plugin.configM.getLangYml().CONFIRM_GUI_YES,
                         plugin.configM.getLangYml().CONFIRM_GUI_NO);
@@ -63,7 +63,7 @@ public class sellTransaction {
                                 initTransaction(p, item, item.getAmount(), shop);
                             }
                             else
-                                shop.open(p);
+                                shop.openShop(p);
                         })
                         .withTitle(plugin.configM.getLangYml().CONFIRM_GUI_SELL_NAME)
                         .withConfirmLore(plugin.configM.getLangYml().CONFIRM_GUI_YES, plugin.configM.getLangYml().CONFIRM_GUI_YES_LORE)
@@ -96,7 +96,7 @@ public class sellTransaction {
                     (item.getSetItems().isPresent() ? 1 : amount));
 
             List<String> msg = Arrays.asList(Msg.singletonMsg(plugin.configM.getLangYml().MSG_BUY_ITEM)
-                    .add("\\{action}", "sell")
+                    .add("\\{action}", plugin.configM.getLangYml().MSG_SELL_ACTION)
                     .add("\\{amount}", "" + amount)
                     .add("\\{price}", "" + item.getSellPrice().get().getPrice() * amount)
                     .add("\\{currency}", item.getEconomy().getName()).build().split("\\{item}"));
@@ -112,7 +112,7 @@ public class sellTransaction {
                             FormatUtils.color(DailyShop.getInstance().configM.getSettingsYml().PREFIX +
                                     msg.get(0) + "<item>" + "&7" + msg.get(1)), item.getItem().getType(), (short) 0, null);
             }
-                shop.openGui(p);
+                shop.openShop(p);
 
 
         }

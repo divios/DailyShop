@@ -25,6 +25,9 @@ public class transactionExc extends Exception{
             case noSpace:
                 Msg.sendMsg(p, plugin.configM.getLangYml().MSG_INV_FULL);
                 break;
+            case noStock:
+                Msg.sendMsg(p, plugin.configM.getLangYml().MSG_NOT_STOCK);
+                break;
         }
 
     }
@@ -32,7 +35,8 @@ public class transactionExc extends Exception{
     public enum err {
         noPerms,
         noMoney,
-        noSpace
+        noSpace,
+        noStock
     }
 
 }

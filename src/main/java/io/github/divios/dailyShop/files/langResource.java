@@ -12,6 +12,7 @@ public class langResource extends resource{
     public String CONFIRM_GUI_ACTION_NAME;
     public String CONFIRM_GUI_ADD_PANE;
     public String CONFIRM_GUI_REMOVE_PANE;
+    public String CONFIRM_GUI_SET_PANE;
     public String CONFIRM_GUI_RETURN_NAME;
     public String CONFIRM_GUI_RETURN_PANE_LORE;
     public String CONFIRM_GUI_SELL_ITEM;
@@ -135,10 +136,13 @@ public class langResource extends resource{
 
     // MESSAGES
 
+    public String MSG_BUY_ACTION;
+    public String MSG_SELL_ACTION;
     public String MSG_BUY_ITEM;
     public String MSG_NOT_MONEY;
     public String MSG_INV_FULL;
     public String MSG_NOT_ITEMS;
+    public String MSG_NOT_STOCK;
     public String MSG_RESTOCK;
     public String MSG_NOT_PERMS;
     public String MSG_NOT_PERMS_ITEM;
@@ -161,6 +165,7 @@ public class langResource extends resource{
         CONFIRM_GUI_ACTION_NAME = yaml.getString("lang.confirm_gui.action_name");
         CONFIRM_GUI_ADD_PANE = yaml.getString("lang.confirm_gui.add_pane");
         CONFIRM_GUI_REMOVE_PANE = yaml.getString("lang.confirm_gui.remove_pane");
+        CONFIRM_GUI_SET_PANE = yaml.getString("lang.confirm_gui.set_pane");
         CONFIRM_GUI_RETURN_NAME = yaml.getString("lang.confirm_gui.return_name");
         CONFIRM_GUI_RETURN_PANE_LORE = yaml.getString("lang.confirm_gui.return_pane_lore");
         CONFIRM_GUI_SELL_ITEM = yaml.getString("lang.confirm_gui.sell_item");
@@ -254,10 +259,13 @@ public class langResource extends resource{
         CUSTOMIZE_TOGGLE_EFFECTS_NAME = yaml.getString("lang.customize_menu.toggle.effects.name");
         CUSTOMIZE_TOGGLE_EFFECTS_LORE = parseLore(yaml.getString("lang.customize_menu.toggle.effects.lore"));
 
+        MSG_BUY_ACTION = yaml.getString("lang.messages.buy_action");
+        MSG_SELL_ACTION = yaml.getString("lang.messages.sell_action");
         MSG_BUY_ITEM = yaml.getString("lang.messages.buy_item");
         MSG_NOT_MONEY = yaml.getString("lang.messages.not_enough_money");
         MSG_INV_FULL = yaml.getString("lang.messages.inventory_full");
         MSG_NOT_ITEMS = yaml.getString("lang.messages.not_enough_items");
+        MSG_NOT_STOCK = yaml.getString("lang.messages.not_stock");
         MSG_RESTOCK = yaml.getString("lang.messages.restock");
         MSG_NOT_PERMS = yaml.getString("lang.messages.not_perms");
         MSG_NOT_PERMS_ITEM = yaml.getString("lang.messages.not_perms_item");
