@@ -18,6 +18,7 @@ import io.github.divios.dailyShop.utils.utils;
 import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.managers.shopsManager;
 import io.github.divios.lib.storage.dataManager;
+import jdk.jpackage.internal.Log;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -26,6 +27,8 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class shopsManagerGui {
 
@@ -152,7 +155,7 @@ public class shopsManagerGui {
 
         if (e.isShiftClick() && e.isLeftClick()) {
             inv.destroy();
-            shop.customizeGui(p);
+            shop.openCustomizeGui(p);
 
         } else if (e.getClick().equals(ClickType.MIDDLE)) {   // rename
 
@@ -161,7 +164,7 @@ public class shopsManagerGui {
                     .withResponse(s -> {
 
                         if (s.isEmpty()) {
-                            utils.sendMsg(p, "&7Cant be empty");
+                            utils.sendMsg(p, "&7Can't be empty");
                             Task.syncDelayed(plugin, () -> refresh(p));
                             return;
                         }
@@ -172,14 +175,22 @@ public class shopsManagerGui {
                             return;
                         }
 
+                        Pattern pattern = Pattern.compile("[!@#$%&*()_+=|<>?{}\\[\\]~-]");
+                        Matcher m = pattern.matcher(s);
+                        if (m.find()) {
+                            utils.sendMsg(p, "&7Name cannot contain special characters");
+                            Task.syncDelayed(plugin, () -> refresh(p));
+                            return;
+                        }
+
                         if (sManager.getShop(s).isPresent()) {
                             utils.sendMsg(p, "&7Already Exist");
                             Task.syncDelayed(plugin, () -> refresh(p));
                             return;
                         }
 
-                        dManager.renameShop(shop.getName(), s);
-                        shop.setName(s);
+                        dManager.renameShop(shop.getName(), s.toLowerCase());
+                        shop.setName(s.toLowerCase());
                         Task.syncDelayed(plugin, () -> refresh(p));
                     })
                     .withCancel(cancelReason -> Task.syncDelayed(plugin, () -> refresh(p)))
@@ -249,6 +260,14 @@ public class shopsManagerGui {
 
                     if (sManager.getShop(s).isPresent()) {
                         utils.sendMsg(p, "&7Already Exist");
+                        Task.syncDelayed(plugin, () -> refresh(p));
+                        return;
+                    }
+
+                    Pattern pattern = Pattern.compile("[!@#$%&*()_+=|<>?{}\\[\\]~-]");
+                    Matcher m = pattern.matcher(s);
+                    if (m.find()) {
+                        utils.sendMsg(p, "&7Name cannot contain special characters");
                         Task.syncDelayed(plugin, () -> refresh(p));
                         return;
                     }

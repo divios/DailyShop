@@ -62,8 +62,7 @@ public class CustomizerMenu {
 
     private void build() {      // TODO
 
-        inv = new InventoryGUI(plugin, 54,
-                FormatUtils.color(plugin.configM.getLangYml().CUSTOMIZE_TITLE));
+        inv = new InventoryGUI(plugin, 54, FormatUtils.color(plugin.configM.getLangYml().CUSTOMIZE_TITLE));
 
         inventoryPopulator.builder()
                 .ofGlass()

@@ -7,9 +7,11 @@ import io.github.divios.core_lib.inventory.ItemButton;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.Msg;
+import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
@@ -46,11 +48,15 @@ public class confirmGui{
     private final ItemStack blackGlass = ItemBuilder.of(XMaterial.BLACK_STAINED_GLASS_PANE)
             .setName("&c");
 
+    private final ItemStack setPane = ItemBuilder.of(XMaterial.YELLOW_STAINED_GLASS_PANE)
+            .setName(main.configM.getLangYml().CONFIRM_GUI_SET_PANE);
+
     private static final int MAX_AMOUNT = 64 * 9 * 4;
 
     private final BiConsumer<ItemStack, Integer> c;
     private final Consumer<Player> b;
 
+    private final Player p;
     private final ItemStack item;
     private final dShop.dShopT type;
 
@@ -71,6 +77,7 @@ public class confirmGui{
             String acceptLore,
             String backLore
     ) {
+        this.p = p;
         this.c = accept;
         this.b = back;
         this.title = title;
@@ -161,6 +168,21 @@ public class confirmGui{
             update();
         }), 39);
 
+        gui.addButton(ItemButton.create(setPane, e -> {
+
+            if (type == dShop.dShopT.buy) return;
+            int count = ItemUtils.count(p.getInventory(), dItem.of(item).getRawItem());
+
+            if (count == 0)  {}
+
+            else if (count < amount)
+                remItem(amount - count);
+            else if (count > amount)
+                addItem(count - amount);
+
+            update();
+        }), 40);
+
         gui.addButton(53, ItemButton.create(ItemBuilder.of(XMaterial.PLAYER_HEAD)
                         .setName(backLore).setLore(main.configM.getLangYml().CONFIRM_GUI_RETURN_PANE_LORE)
                         .applyTexture("19bf3292e126a105b54eba713aa1b152d541a1d8938829c56364d178ed22bf"),
@@ -192,6 +214,7 @@ public class confirmGui{
         inv.setItem(43, amount < MAX_AMOUNT - 5 ? add5: blackGlass);
         inv.setItem(44, amount < MAX_AMOUNT - 10 ? add10: blackGlass);
         inv.setItem(41, amount < MAX_AMOUNT - 64 ? set64: blackGlass);
+        if (type == dShop.dShopT.buy) inv.setItem(40, blackGlass);
 
         gui.getInventory().setItem(49, ItemBuilder.of(XMaterial.PLAYER_HEAD)
                 .applyTexture("2a3b8f681daad8bf436cae8da3fe8131f62a162ab81af639c3e0644aa6abac2f")

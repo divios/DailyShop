@@ -35,29 +35,24 @@ public class transaction {
 
         if (item.hasStock() && item.getStock().get(p) == -1) {
             Msg.sendMsg(p, plugin.configM.getLangYml().MSG_OUT_STOCK);
-            shop.openGui(p);
+            shop.openShop(p);
             return;
         }
 
         if (!item.getBuyPrice().isPresent() || item.getBuyPrice().get().getPrice() == -1) {
             Msg.sendMsg(p, plugin.configM.getLangYml().MSG_INVALID_BUY);
-            shop.openGui(p);
+            shop.openShop(p);
             return;
         }
 
         if (item.getConfirm_gui()) {
 
-            if (!item.hasStock() &&
-                    !item.getSetItems().isPresent()) {
+            if (!item.getSetItems().isPresent()) {
 
                 confirmGui.open(p, item.getItem(), dShop.dShopT.buy,
                         (item1, amount) -> {
-                            if (!lastCheck(p, shop, item)) {     // Last check
-                                Msg.sendMsg(p, plugin.configM.getLangYml().MSG_INVALID_OPERATION);
-                                return;
-                            }
                             transaction.initTransaction(p, new dItem(item1), amount, shop);
-                        }, player -> shop.open(p),
+                        }, player -> shop.openShop(p),
                         plugin.configM.getLangYml().CONFIRM_GUI_BUY_NAME,
                         plugin.configM.getLangYml().CONFIRM_GUI_YES,
                         plugin.configM.getLangYml().CONFIRM_GUI_NO);
@@ -68,16 +63,10 @@ public class transaction {
                         .withPlayer(p)
                         .withAction(aBoolean -> {
                             if (aBoolean) {
-
-                                if (!lastCheck(p, shop, item)
-                                ) {     // Last check
-                                    Msg.sendMsg(p, plugin.configM.getLangYml().MSG_INVALID_OPERATION);
-                                    return;
-                                }
                                 transaction.initTransaction(p, item, item.getAmount(), shop);
                             }
                             else
-                                shop.open(p);
+                                shop.openShop(p);
                         })
                         .withItem(
                                 ItemBuilder.of(item.getItem().clone()).addLore(
@@ -111,12 +100,19 @@ public class transaction {
             return;
         }
 
+        if (!lastCheck(p, shop, item, amount)
+        ) {     // Last check
+            Msg.sendMsg(p, plugin.configM.getLangYml().MSG_INVALID_OPERATION);
+            shop.openShop(p);
+            return;
+        }
+
         s.getEcon().witchDrawMoney(p, s.getPrice());
 
         s.getRunnables().forEach(Runnable::run);
 
         List<String> msg = Arrays.asList(Msg.singletonMsg(plugin.configM.getLangYml().MSG_BUY_ITEM)
-                .add("\\{action}", "bought")
+                .add("\\{action}", plugin.configM.getLangYml().MSG_BUY_ACTION)
                 .add("\\{amount}", "" + amount)
                 .add("\\{price}", "" + s.getPrice())
                 .add("\\{currency}", s.getEcon().getName()).build().split("\\{item}"));
@@ -133,7 +129,7 @@ public class transaction {
                                 msg.get(0) + "<item>" + "&7" + msg.get(1)), item.getItem().getType(), (short) 0, null);
         }
 
-        Schedulers.sync().runLater(() -> shop.open(p), 1L);
+        Schedulers.sync().runLater(() -> shop.openShop(p), 1L);
 
     }
 
@@ -162,11 +158,23 @@ public class transaction {
 
         if (err[0]) throw new transactionExc(transactionExc.err.noPerms);
 
-        if (item.hasStock()) {
-            s.addRunnable(() -> Bukkit.getPluginManager().callEvent(
-                    new updateItemEvent(p, item, updateItemEvent.updatetype.NEXT_AMOUNT, shop)));
+        if (item.hasStock()) {                          // Stock check
 
-            item.setAmount(1);
+            int stock = 0;
+            try {
+                stock = dStock.searchStock(p, shop, item.getUid()).get(4, TimeUnit.SECONDS);
+            } catch (InterruptedException | ExecutionException | TimeoutException e) {
+                Log.severe("There was a problem searching for a stock for the player " + p.getDisplayName());
+                e.printStackTrace();
+            }
+
+            if (stock < amount) {
+                throw new transactionExc(transactionExc.err.noStock);
+            }
+
+            s.addRunnable(() -> Bukkit.getPluginManager().callEvent(
+                    new updateItemEvent(p, item, amount, updateItemEvent.updatetype.NEXT_AMOUNT, shop)));
+
         }
 
         transactionExc[] err1 = {null};
@@ -218,7 +226,7 @@ public class transaction {
         return s;
     }
 
-    private static boolean lastCheck(Player p, dShop shop, dItem item) {
+    private static boolean lastCheck(Player p, dShop shop, dItem item, int amount) {
 
         boolean result = true;
 
@@ -226,7 +234,7 @@ public class transaction {
             CompletableFuture<Integer> callback = dStock.searchStock(p, shop, item.getUid());
             try {
                 int c = callback.get(2, TimeUnit.SECONDS);
-                result = c > 0;
+                result = c > 0 && c >= amount;
             } catch (InterruptedException | ExecutionException e) {
                 e.printStackTrace();
             } catch (TimeoutException e) {
