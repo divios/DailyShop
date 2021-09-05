@@ -67,7 +67,7 @@ public class shopsManager {
      */
     public synchronized Optional<dShop> getShop(String name) {
         return shops.stream()
-                .filter(shop -> shop.getName().equals(name))
+                .filter(shop -> shop.getName().equalsIgnoreCase(name))
                 .findFirst();
     }
 
