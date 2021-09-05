@@ -18,6 +18,7 @@ import io.github.divios.dailyShop.utils.utils;
 import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.managers.shopsManager;
 import io.github.divios.lib.storage.dataManager;
+import jdk.jpackage.internal.Log;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -161,8 +162,8 @@ public class shopsManagerGui {
                             return;
                         }
 
-                        Pattern pattern = Pattern.compile("[^a-z0-9 ]", Pattern.CASE_INSENSITIVE);
-                        Matcher m = pattern.matcher("I am a string");
+                        Pattern pattern = Pattern.compile("[!@#$%&*()_+=|<>?{}\\[\\]~-]");
+                        Matcher m = pattern.matcher(s);
                         if (m.find()) {
                             utils.sendMsg(p, "&7Name cannot contain special characters");
                             Task.syncDelayed(plugin, () -> refresh(p));
@@ -175,7 +176,7 @@ public class shopsManagerGui {
                             return;
                         }
 
-                        dManager.renameShop(shop.getName(), s);
+                        dManager.renameShop(shop.getName(), s.toLowerCase());
                         shop.setName(s.toLowerCase());
                         Task.syncDelayed(plugin, () -> refresh(p));
                     })
@@ -246,6 +247,14 @@ public class shopsManagerGui {
 
                     if (sManager.getShop(s).isPresent()) {
                         utils.sendMsg(p, "&7Already Exist");
+                        Task.syncDelayed(plugin, () -> refresh(p));
+                        return;
+                    }
+
+                    Pattern pattern = Pattern.compile("[!@#$%&*()_+=|<>?{}\\[\\]~-]");
+                    Matcher m = pattern.matcher(s);
+                    if (m.find()) {
+                        utils.sendMsg(p, "&7Name cannot contain special characters");
                         Task.syncDelayed(plugin, () -> refresh(p));
                         return;
                     }
