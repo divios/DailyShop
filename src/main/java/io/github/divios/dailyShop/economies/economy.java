@@ -10,7 +10,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
-import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 public abstract class economy implements Serializable {

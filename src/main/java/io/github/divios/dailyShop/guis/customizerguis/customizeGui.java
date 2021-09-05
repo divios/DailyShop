@@ -17,7 +17,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
@@ -72,7 +71,7 @@ public class customizeGui implements Listener, InventoryHolder {
     public void addCustomizeItems() {
 
 
-        IntStream.range(0, 36).forEach(i->
+        IntStream.range(0, 36).forEach(i ->
                 p.getInventory().setItem(i,
                         ItemBuilder.of(XMaterial.GRAY_STAINED_GLASS_PANE).setName("&c")));
 
@@ -102,7 +101,7 @@ public class customizeGui implements Listener, InventoryHolder {
                         "",
                         "&8- &6Left click empty slot", "   &7Adds a new item",
                         "&8- &6Shift Click empty slot", "   &7Sets slot as AIR,", "   &7where no daily items",
-                            "   &7'll appear and is displayed", "   &7as an empty slot",
+                        "   &7'll appear and is displayed", "   &7as an empty slot",
                         "&8- &6Middle click item", "   &7Copies the item to the clipboard,",
                         "   &7middle click again on", "   &7empty slot to paste");
 
@@ -183,36 +182,26 @@ public class customizeGui implements Listener, InventoryHolder {
                 Bukkit.getPluginManager().callEvent(new updateShopEvent(shop, _gui, false));
                 preventClose = false;
                 p.closeInventory();
-            }
-
-            else if (e.getSlot() == 5) {   //apply changes
+            } else if (e.getSlot() == 5) {   //apply changes
 
                 Bukkit.getPluginManager().callEvent(new updateShopEvent(shop, _gui, true));
                 preventClose = false;
                 p.closeInventory();
-            }
-
-            else if (e.getSlot() == 19) {           //change Name
+            } else if (e.getSlot() == 19) {           //change Name
                 refreshFlag = true;
-                ChatPrompt.prompt(plugin, p , (s) -> {
-                    _gui.setTitle(FormatUtils.color(s));
-                    Task.syncDelayed(plugin, this::refresh);
-                }, cause -> Task.syncDelayed(plugin, this::refresh),
+                ChatPrompt.prompt(plugin, p, (s) -> {
+                            _gui.setTitle(FormatUtils.color(s));
+                            Task.syncDelayed(plugin, this::refresh);
+                        }, cause -> Task.syncDelayed(plugin, this::refresh),
                         "&5&lInput New Title", "");
-            }
-
-            else if (e.getSlot() == 23) {           //quitar row
+            } else if (e.getSlot() == 23) {           //quitar row
                 if (_gui.removeRow())
                     refresh();
-            }
-
-            else if (e.getSlot() == 25) {           //ampliar row
+            } else if (e.getSlot() == 25) {           //ampliar row
                 if (_gui.addRow())
                     refresh();
             }
-        }
-
-        else {          //si le da arriba
+        } else {          //si le da arriba
 
             if (utils.isEmpty(e.getCurrentItem())
                     && e.isLeftClick()) {  //add empty slot

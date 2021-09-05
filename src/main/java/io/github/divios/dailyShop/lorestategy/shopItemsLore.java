@@ -9,7 +9,6 @@ import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.utils.PriceFormatter;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dPrice;
-import io.github.divios.lib.dLib.dShop;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
