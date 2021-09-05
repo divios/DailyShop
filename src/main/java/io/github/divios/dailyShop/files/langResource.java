@@ -135,10 +135,13 @@ public class langResource extends resource{
 
     // MESSAGES
 
+    public String MSG_BUY_ACTION;
+    public String MSG_SELL_ACTION;
     public String MSG_BUY_ITEM;
     public String MSG_NOT_MONEY;
     public String MSG_INV_FULL;
     public String MSG_NOT_ITEMS;
+    public String MSG_NOT_STOCK;
     public String MSG_RESTOCK;
     public String MSG_NOT_PERMS;
     public String MSG_NOT_PERMS_ITEM;
@@ -254,10 +257,13 @@ public class langResource extends resource{
         CUSTOMIZE_TOGGLE_EFFECTS_NAME = yaml.getString("lang.customize_menu.toggle.effects.name");
         CUSTOMIZE_TOGGLE_EFFECTS_LORE = parseLore(yaml.getString("lang.customize_menu.toggle.effects.lore"));
 
+        MSG_BUY_ACTION = yaml.getString("lang.messages.buy_action");
+        MSG_SELL_ACTION = yaml.getString("lang.messages.sell_action");
         MSG_BUY_ITEM = yaml.getString("lang.messages.buy_item");
         MSG_NOT_MONEY = yaml.getString("lang.messages.not_enough_money");
         MSG_INV_FULL = yaml.getString("lang.messages.inventory_full");
         MSG_NOT_ITEMS = yaml.getString("lang.messages.not_enough_items");
+        MSG_NOT_STOCK = yaml.getString("lang.messages.not_stock");
         MSG_RESTOCK = yaml.getString("lang.messages.restock");
         MSG_NOT_PERMS = yaml.getString("lang.messages.not_perms");
         MSG_NOT_PERMS_ITEM = yaml.getString("lang.messages.not_perms_item");
