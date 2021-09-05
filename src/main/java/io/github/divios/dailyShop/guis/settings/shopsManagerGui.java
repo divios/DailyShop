@@ -26,6 +26,8 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class shopsManagerGui {
 
@@ -139,7 +141,7 @@ public class shopsManagerGui {
 
         if (e.isShiftClick() && e.isLeftClick()) {
             inv.destroy();
-            shop.customizeGui(p);
+            shop.openCustomizeGui(p);
 
         } else if (e.getClick().equals(ClickType.MIDDLE)) {   // rename
 
@@ -148,13 +150,21 @@ public class shopsManagerGui {
                     .withResponse(s -> {
 
                         if (s.isEmpty()) {
-                            utils.sendMsg(p, "&7Cant be empty");
+                            utils.sendMsg(p, "&7Can't be empty");
                             Task.syncDelayed(plugin, () -> refresh(p));
                             return;
                         }
 
                         if (s.split("\\s+").length > 1) {
                             utils.sendMsg(p, "&7Name cannot have white spaces");
+                            Task.syncDelayed(plugin, () -> refresh(p));
+                            return;
+                        }
+
+                        Pattern pattern = Pattern.compile("[^a-z0-9 ]", Pattern.CASE_INSENSITIVE);
+                        Matcher m = pattern.matcher("I am a string");
+                        if (m.find()) {
+                            utils.sendMsg(p, "&7Name cannot contain special caharacters");
                             Task.syncDelayed(plugin, () -> refresh(p));
                             return;
                         }
