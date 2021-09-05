@@ -33,7 +33,7 @@ public enum dAction {
                         .map(dItem -> strategy.applyLore(dItem.getItem().clone(), p))
                         .collect(Collectors.toList()))
                 .title(integer -> "&6&l" + shopsManager.getInstance().getShop(s).get().getName() + " items")
-                .back(player -> shopsManager.getInstance().getShop(s).get().openGui(p))
+                .back(player -> shopsManager.getInstance().getShop(s).get().openShop(p))
                 .plugin(DailyShop.getInstance())
                 .setSearch(false)
                 .open(p);

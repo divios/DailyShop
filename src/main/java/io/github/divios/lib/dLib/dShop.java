@@ -88,15 +88,27 @@ public class dShop {
 
     }
 
-    public void open(Player p) {
+    /**
+     * Opens the actual shop for the player
+     * @param p
+     */
+    public void openShop(Player p) {
         guis.generate(p);
     }
 
+    /**
+     * Opens the gui to manage the items of this shop
+     * @param p
+     */
     public void manageItems(Player p) {
         shopGui.open(p, this);
     }
 
-    public void customizeGui(Player p) { guis.customizeGui(p); }
+    /**
+     * Opens the gui to customize the display of this shop
+     * @param p
+     */
+    public void openCustomizeGui(Player p) { guis.customizeGui(p); }
 
     /**
      * Gets the name of the shop
@@ -205,14 +217,6 @@ public class dShop {
         return true;
     }
 
-    /**
-     * Shorcut for {@link dInventory#open(Player)}
-     *
-     * @param p Player to open the gui for
-     */
-    public synchronized void openGui(Player p) {
-        guis.generate(p);
-    }
 
     /**
      * Return the dGui of this shop
