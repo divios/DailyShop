@@ -48,6 +48,9 @@ public class confirmGui{
     private final ItemStack blackGlass = ItemBuilder.of(XMaterial.BLACK_STAINED_GLASS_PANE)
             .setName("&c");
 
+    private final ItemStack setPane = ItemBuilder.of(XMaterial.YELLOW_STAINED_GLASS_PANE)
+            .setName(main.configM.getLangYml().CONFIRM_GUI_SET_PANE);
+
     private static final int MAX_AMOUNT = 64 * 9 * 4;
 
     private final BiConsumer<ItemStack, Integer> c;
@@ -165,7 +168,7 @@ public class confirmGui{
             update();
         }), 39);
 
-        gui.addButton(ItemButton.create(XMaterial.YELLOW_STAINED_GLASS_PANE.parseItem(), e -> {
+        gui.addButton(ItemButton.create(setPane, e -> {
 
             if (type == dShop.dShopT.buy) return;
             int count = ItemUtils.count(p.getInventory(), dItem.of(item).getRawItem());

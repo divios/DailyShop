@@ -10,6 +10,7 @@ lang:
     action_name: "&8Confirm Action"
     add_pane: "&8- &aAdd"
     remove_pane: "&8- &cRemove"
+    set_pane: "&8- &eSet to your maximum"
     return_name: "&8> &cReturn"
     return_pane_lore: "&7Click to go back"
     sell_item: "&8- &7Total money: &3{price}"
