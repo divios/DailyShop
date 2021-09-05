@@ -120,10 +120,13 @@ lang:
         name: "&f&lMake potion effects visible/invisible"
         lore: "|&8- &9LEFT CLICK|  &7Toggle status||&7Status &e{status}"
   messages:
+    buy_action: "buy"
+    sell_action: "sell"
     buy_item: "&7You {action} {amount} of {item} for {price} {currency}"
     not_enough_money: "&7Ey, You dont have enough money to buy this item!"
     inventory_full: "&7Ey, You don't have enough space in your inventory!"
     not_enough_items: "&7You dont have this item or the proper amount to sell it"
+    not_stock: "There is not enough stock for that amount"
     restock: "&7Renovated items of shop {shop}"
     not_perms: "&7Ey, you dont have permission to do this!"
     not_perms_item: "&7Ey, you don't have the perms necessary to buy this item"
