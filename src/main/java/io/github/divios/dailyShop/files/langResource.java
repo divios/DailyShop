@@ -12,6 +12,7 @@ public class langResource extends resource{
     public String CONFIRM_GUI_ACTION_NAME;
     public String CONFIRM_GUI_ADD_PANE;
     public String CONFIRM_GUI_REMOVE_PANE;
+    public String CONFIRM_GUI_SET_PANE;
     public String CONFIRM_GUI_RETURN_NAME;
     public String CONFIRM_GUI_RETURN_PANE_LORE;
     public String CONFIRM_GUI_SELL_ITEM;
@@ -164,6 +165,7 @@ public class langResource extends resource{
         CONFIRM_GUI_ACTION_NAME = yaml.getString("lang.confirm_gui.action_name");
         CONFIRM_GUI_ADD_PANE = yaml.getString("lang.confirm_gui.add_pane");
         CONFIRM_GUI_REMOVE_PANE = yaml.getString("lang.confirm_gui.remove_pane");
+        CONFIRM_GUI_SET_PANE = yaml.getString("lang.confirm_gui.set_pane");
         CONFIRM_GUI_RETURN_NAME = yaml.getString("lang.confirm_gui.return_name");
         CONFIRM_GUI_RETURN_PANE_LORE = yaml.getString("lang.confirm_gui.return_pane_lore");
         CONFIRM_GUI_SELL_ITEM = yaml.getString("lang.confirm_gui.sell_item");
