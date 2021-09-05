@@ -30,23 +30,27 @@ public interface dStock {
 
     Integer get(UUID p);
 
+    boolean exists(UUID uuid);
+
     default Integer get(Player p) { return get(p.getUniqueId()); }
 
     void set(UUID p, int stock);
 
     default void set(Player p, int stock) { set(p.getUniqueId(), stock); }
 
-    boolean exists(UUID uuid);
-
     default boolean exists(Player p) { return exists(p.getUniqueId()); }
 
-    default void increment(Player p) { increment(p.getUniqueId()); }
+    default void increment(Player p) { increment(p.getUniqueId(), 1); }
 
-    void increment(UUID p);
+    default void increment(Player p, int amount) { increment(p.getUniqueId(), amount); }
 
-    default void decrement(Player p) { decrement(p.getUniqueId()); }
+    void increment(UUID p, int amount);
 
-    void decrement(UUID p);
+    default void decrement(Player p) { decrement(p.getUniqueId(), 1); }
+
+    default void decrement(Player p, int amount) { decrement(p.getUniqueId(), amount); }
+
+    void decrement(UUID p, int amount);
 
     default void reset(Player p) { reset(p.getUniqueId()); }
 
