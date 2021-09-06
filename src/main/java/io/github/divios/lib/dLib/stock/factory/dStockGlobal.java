@@ -1,7 +1,5 @@
 package io.github.divios.lib.dLib.stock.factory;
 
-import io.github.divios.core_lib.utils.Log;
-
 import java.util.UUID;
 
 final class dStockGlobal extends dStockAbstract {
