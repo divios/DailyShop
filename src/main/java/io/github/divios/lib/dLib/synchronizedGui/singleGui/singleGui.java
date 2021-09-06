@@ -2,7 +2,6 @@ package io.github.divios.lib.dLib.synchronizedGui.singleGui;
 
 import io.github.divios.dailyShop.events.updateItemEvent;
 import io.github.divios.lib.dLib.dInventory;
-import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
 import org.bukkit.entity.Player;
 

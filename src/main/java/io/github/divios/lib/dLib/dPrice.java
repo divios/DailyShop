@@ -1,5 +1,6 @@
 package io.github.divios.lib.dLib;
 
+import io.github.divios.dailyShop.utils.PriceWrapper;
 import io.github.divios.dailyShop.utils.utils;
 
 import java.io.Serializable;
@@ -51,9 +52,9 @@ public class dPrice implements Serializable {
      */
     public String getVisualPrice() {
         if (randomFlag)
-            return minPrice + " - " + maxPrice;
+            return PriceWrapper.format(minPrice) + " - " + PriceWrapper.format(maxPrice);
         else
-            return "" + actualPrice;
+            return PriceWrapper.format(actualPrice);
     }
 
 

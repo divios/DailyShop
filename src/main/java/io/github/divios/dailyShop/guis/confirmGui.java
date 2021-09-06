@@ -7,11 +7,12 @@ import io.github.divios.core_lib.inventory.ItemButton;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.Msg;
-import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
+import io.github.divios.dailyShop.utils.PriceWrapper;
+import io.github.divios.dailyShop.utils.utils;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
-import org.bukkit.entity.Item;
+import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
@@ -19,9 +20,10 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class confirmGui{
+public class confirmGui {
 
     private static final DailyShop main = DailyShop.getInstance();
 
@@ -168,14 +170,26 @@ public class confirmGui{
             update();
         }), 39);
 
+        gui.addButton(ItemButton.create(ItemBuilder.of(XMaterial.BOOK)
+                        .setName(main.configM.getLangYml().CONFIRM_GUI_STATS_NAME)
+                        .setLore(main.configM.getLangYml().CONFIRM_GUI_STATS_LORE.stream()
+                                .map(s -> {
+                                    String s1 = s
+                                            .replaceAll("\\{economy}", String.valueOf(dItem.of(item).getEconomy().getBalance(p)))
+                                            .replaceAll("\\{economy_name}", dItem.of(item).getEconomy().getName());
+                                    if (!utils.isOperative("PlaceholderAPI")) return s1;
+                                    return PlaceholderAPI.setPlaceholders(p, s1);
+                                }).collect(Collectors.toList()))
+                , e -> {
+                }), 45);
+
         gui.addButton(ItemButton.create(setPane, e -> {
 
             if (type == dShop.dShopT.buy) return;
             int count = ItemUtils.count(p.getInventory(), dItem.of(item).getRawItem());
 
-            if (count == 0)  {}
-
-            else if (count < amount)
+            if (count == 0) {
+            } else if (count < amount)
                 remItem(amount - count);
             else if (count > amount)
                 addItem(count - amount);
@@ -193,7 +207,7 @@ public class confirmGui{
                         .setName(confirmLore)
                         .addLore(Msg.singletonMsg(main.configM.getLangYml().CONFIRM_GUI_BUY_NAME).add("\\{price}",
                                 String.valueOf(amount * (type.equals(dShop.dShopT.buy) ?
-                                        dItem.of(item).getBuyPrice().get().getPrice():
+                                        dItem.of(item).getBuyPrice().get().getPrice() :
                                         dItem.of(item).getSellPrice().get().getPrice()))).build()),
                 e -> c.accept(item, amount)));
 
@@ -206,22 +220,22 @@ public class confirmGui{
         amount = ItemUtils.count(gui.getInventory(), item);
         Inventory inv = gui.getInventory();
 
-        inv.setItem(36, amount > 1 ? rem1: blackGlass);
-        inv.setItem(37, amount > 5 ? rem5: blackGlass);
-        inv.setItem(38, amount > 10 ? rem10: blackGlass);
-        inv.setItem(39, amount > 1 ? set1: blackGlass);
-        inv.setItem(42, amount < MAX_AMOUNT ? add1: blackGlass);
-        inv.setItem(43, amount < MAX_AMOUNT - 5 ? add5: blackGlass);
-        inv.setItem(44, amount < MAX_AMOUNT - 10 ? add10: blackGlass);
-        inv.setItem(41, amount < MAX_AMOUNT - 64 ? set64: blackGlass);
+        inv.setItem(36, amount > 1 ? rem1 : blackGlass);
+        inv.setItem(37, amount > 5 ? rem5 : blackGlass);
+        inv.setItem(38, amount > 10 ? rem10 : blackGlass);
+        inv.setItem(39, amount > 64 ? set1 : blackGlass);
+        inv.setItem(42, amount < MAX_AMOUNT ? add1 : blackGlass);
+        inv.setItem(43, amount < MAX_AMOUNT - 5 ? add5 : blackGlass);
+        inv.setItem(44, amount < MAX_AMOUNT - 10 ? add10 : blackGlass);
+        inv.setItem(41, amount < MAX_AMOUNT - 64 ? set64 : blackGlass);
         if (type == dShop.dShopT.buy) inv.setItem(40, blackGlass);
 
         gui.getInventory().setItem(49, ItemBuilder.of(XMaterial.PLAYER_HEAD)
                 .applyTexture("2a3b8f681daad8bf436cae8da3fe8131f62a162ab81af639c3e0644aa6abac2f")
                 .setName(confirmLore)
                 .addLore(Msg.singletonMsg(main.configM.getLangYml().CONFIRM_GUI_SELL_ITEM).add("\\{price}",
-                        String.valueOf(amount * (type.equals(dShop.dShopT.buy) ?
-                                dItem.of(item).getBuyPrice().get().getPrice():
+                        PriceWrapper.format(amount * (type.equals(dShop.dShopT.buy) ?
+                                dItem.of(item).getBuyPrice().get().getPrice() :
                                 dItem.of(item).getSellPrice().get().getPrice()))).build()));
 
     }

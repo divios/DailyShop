@@ -13,7 +13,6 @@ import io.github.divios.core_lib.misc.ChatPrompt;
 import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.core_lib.misc.Msg;
 import io.github.divios.core_lib.misc.Task;
-import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.guis.settings.shopGui;
 import io.github.divios.dailyShop.utils.utils;
