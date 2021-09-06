@@ -29,4 +29,9 @@ public class gemEcon extends economy {
     }
 
     public void depositMoney(Player p, Double price) { gemApi.deposit(p.getUniqueId(), price, _currency); }
+
+    @Override
+    public double getBalance(Player p) {
+        return gemApi.getBalance(p.getUniqueId(), _currency);
+    }
 }
