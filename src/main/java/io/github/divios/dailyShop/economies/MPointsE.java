@@ -31,4 +31,9 @@ public class MPointsE extends economy {
     public void depositMoney(Player p, Double price) {
         api.changebalance(super.currency, p.getUniqueId(), p.getName(), BigDecimal.valueOf(price), true);
     }
+
+    @Override
+    public double getBalance(Player p) {
+        return api.getbalance(super.currency, p.getUniqueId()).doubleValue();
+    }
 }

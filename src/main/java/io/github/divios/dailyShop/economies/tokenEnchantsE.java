@@ -31,4 +31,9 @@ public class tokenEnchantsE extends economy {
     public void depositMoney(Player p, Double price) {
         api.addTokens(p, price);
     }
+
+    @Override
+    public double getBalance(Player p) {
+        return api.getTokens(p);
+    }
 }

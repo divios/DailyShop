@@ -10,7 +10,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
-import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 public abstract class economy implements Serializable {
@@ -29,9 +28,14 @@ public abstract class economy implements Serializable {
     }
 
     public abstract void test();
+
     public abstract boolean hasMoney(Player p, Double price);
+
     public abstract void witchDrawMoney(Player p, Double price);
+
     public abstract void depositMoney(Player p, Double price);
+
+    public abstract double getBalance(Player p);
 
     public String getName() { return name.get(); }
 
