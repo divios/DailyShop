@@ -18,7 +18,6 @@ import io.github.divios.dailyShop.utils.utils;
 import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.managers.shopsManager;
 import io.github.divios.lib.storage.dataManager;
-import jdk.jpackage.internal.Log;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
