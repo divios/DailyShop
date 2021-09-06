@@ -46,4 +46,11 @@ public class ultraEconomyE extends economy{
         if (account == null) return;
         account.getBalance(currency).addHand(price.floatValue());
     }
+
+    @Override
+    public double getBalance(Player p) {
+        return api.getAccounts().stream()
+                .filter(account1 -> account1.getUuid().equals(p.getUniqueId()))
+                .findFirst().get().getBalance(currency).getOnHand();
+    }
 }

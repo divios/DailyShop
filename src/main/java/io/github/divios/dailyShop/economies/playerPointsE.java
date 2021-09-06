@@ -32,4 +32,9 @@ public class playerPointsE extends economy {
     public void depositMoney(Player p, Double price) {
         api.giveAsync(p.getUniqueId(), (int) Math.round(price));
     }
+
+    @Override
+    public double getBalance(Player p) {
+        return api.look(p.getUniqueId());
+    }
 }

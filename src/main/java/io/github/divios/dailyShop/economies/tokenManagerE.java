@@ -33,4 +33,9 @@ public class tokenManagerE extends economy {
     public void depositMoney(Player p, Double price) {
         api.addTokens(p, price.longValue());
     }
+
+    @Override
+    public double getBalance(Player p) {
+        return api.getTokens(p).getAsLong();
+    }
 }
