@@ -4,6 +4,7 @@ import io.github.divios.core_lib.commands.abstractCommand;
 import io.github.divios.core_lib.commands.cmdTypes;
 import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.core_lib.misc.Msg;
+import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.guis.settings.shopGui;
 import io.github.divios.dailyShop.utils.utils;
 import io.github.divios.lib.dLib.dItem;
@@ -100,11 +101,19 @@ public class importShops extends abstractCommand {
                                 .forEach(bsBuy -> {
                                     dItem newItem = dItem.of(bsBuy.getItem());
 
-                                    if (bsBuy.getPrice(ClickType.LEFT) == null) return;
                                     try {
-                                        newItem.setBuyPrice(Double.valueOf((Integer) bsBuy.getPrice(ClickType.LEFT)));
-                                        newItem.setSellPrice(Double.valueOf((Integer) bsBuy.getPrice(ClickType.LEFT)));
-                                    } catch (Exception e) { return; }
+                                        newItem.setBuyPrice(Double.parseDouble(
+                                                String.valueOf(bsBuy.getPrice(null) == null ?
+                                                        bsBuy.getPrice(ClickType.LEFT):bsBuy.getPrice(null))
+                                        ));
+                                        newItem.setSellPrice(Double.parseDouble(
+                                                String.valueOf(bsBuy.getPrice(null) == null ?
+                                                        bsBuy.getPrice(ClickType.RIGHT):bsBuy.getPrice(null))
+                                        ));
+                                    } catch (Exception e) {
+                                        Log.info("Could not import item of name " + bsBuy.getName());
+                                        return;
+                                    }
                                     shop.addItem(newItem);
                                 });
                     Msg.sendMsg((Player) sender, FormatUtils.color("&7Items imported successfully"));
