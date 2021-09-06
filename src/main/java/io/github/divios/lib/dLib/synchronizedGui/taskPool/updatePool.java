@@ -4,18 +4,14 @@ import com.google.common.collect.Sets;
 import io.github.divios.core_lib.Schedulers;
 import io.github.divios.lib.dLib.synchronizedGui.singleGui.singleGui;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class updatePool {
 
     private static final Set<singleGui> bucket = Sets.newConcurrentHashSet();
 
     static {
-        Schedulers.async().runRepeating(() -> bucket.stream().parallel().forEach(singleGui::updateTask),
+        Schedulers.async().runRepeating(() -> bucket.forEach(singleGui::updateTask),
                 10L, 10L);
     }
 
