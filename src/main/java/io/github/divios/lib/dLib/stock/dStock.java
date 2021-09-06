@@ -3,7 +3,6 @@ package io.github.divios.lib.dLib.stock;
 import com.google.gson.GsonBuilder;
 import io.github.divios.dailyShop.events.searchStockEvent;
 import io.github.divios.dailyShop.utils.InterfaceAdapter;
-import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
