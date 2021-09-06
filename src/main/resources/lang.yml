@@ -1,9 +1,12 @@
 # Daily Shop Lang
 # Customize it to your liking
+#
+# lang.confirm_gui.stats_lore works with placeHolderApi placeholders if installed
 # =========================================================
 lang:
   shop_items:
-    lore: "|&7Left Click: &eBuy item|&7Right Click: &eSell item"
+    lore: "|&8- &7Buy price: &e{buyPrice}|&8- &7Sell price: &e{sellPrice}||&8- &7Currency: &e{currency}|&8- &7Rarity: &e{rarity}||&7Left Click: &eBuy item|&7Right Click: &eSell item"
+    stock: "&8- &7Stock: &e"
   confirm_gui:
     buy_name: "&8Confirm Purchase"
     sell_name: "&8Confirm sell"
@@ -18,6 +21,8 @@ lang:
     yes_lore: "&8- &7Click here to confirm|&7this action"
     no_name: "&cNO"
     no_lore: "&8- &7Click here to abort|&7this action"
+    stats_name: "&8- &eStats"
+    stats_lore: "&8Your money: &e{economy} {economy_name}"       # Works with PAPI placeholders
   shops_manager:
     title: "&8Shops Manager"
     create: "&8> &aCreate Shop"
@@ -45,7 +50,7 @@ lang:
     buy_price: "&8- &7Buy price: &e{buyPrice}"
     sell_price: "&8- &7Sell price: &e{sellPrice}"
     stock: "&8- &7Stock: &e"
-    currency: "&8- &7Currency: &e{currency}"
+    currency: "8- &7Currency: &e{currency}"
     rarity: "&8- &7Rarity: &e{rarity}"
     buy_for: "&8- &7Buy for &e{price}"
     manager_items_lore: "&8- &9LEFT CLICK|  &7Customize item||&8- &9RIGHT CLICK|  &7Delete item"
@@ -127,7 +132,7 @@ lang:
     not_enough_money: "&7Ey, You dont have enough money to buy this item!"
     inventory_full: "&7Ey, You don't have enough space in your inventory!"
     not_enough_items: "&7You dont have this item or the proper amount to sell it"
-    not_stock: "There is not enough stock for that amount"
+    not_stock: "&7There is not enough stock for that amount"
     restock: "&7Renovated items of shop {shop}"
     not_perms: "&7Ey, you dont have permission to do this!"
     not_perms_item: "&7Ey, you don't have the perms necessary to buy this item"
