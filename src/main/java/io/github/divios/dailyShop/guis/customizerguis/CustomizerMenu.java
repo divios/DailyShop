@@ -97,8 +97,11 @@ public class CustomizerMenu {
                             if (item.getCommands().isPresent() && item.getCommands().get().isEmpty())
                                 item.setCommands(null);
 
-                            if (item.getPerms().isPresent() && item.getPerms().get().isEmpty())
-                                item.setPerms(null);
+                            if (item.getPermsBuy().isPresent() && item.getPermsBuy().get().isEmpty())
+                                item.setPermsBuy(null);
+
+                            if (item.getPermsSell().isPresent() && item.getPermsSell().get().isEmpty())
+                                item.setPermsSell(null);
 
                             if (item.getBundle().isPresent() && item.getBundle().get().isEmpty())
                                 item.setBundle(null);
@@ -196,61 +199,15 @@ public class CustomizerMenu {
 
         inv.addButton(                                                  // Perms
                 ItemButton.create(
-                        item.getPerms().isPresent() ?
-                                ItemBuilder.of(XMaterial.PLAYER_HEAD)
-                                        .setName(plugin.configM.getLangYml().CUSTOMIZE_PERMS_NAME)
-                                        .applyTexture("4e68435e9dd05dbe2e7bb45c5d3c95d0c9d8cb4c062d30e9b4aed1ccfa65a49b")
-                                        .addLore(plugin.configM.getLangYml().CUSTOMIZE_PERMS_LORE_ON)
-                                        .addLore("")
-                                        .addLore(item.getPerms().get()
-                                                .stream().map(s -> FormatUtils.color("&f&l" + s))
-                                                .collect(Collectors.toList()))
-                                :
-                                ItemBuilder.of(XMaterial.PLAYER_HEAD)
-                                        .setName(plugin.configM.getLangYml().CUSTOMIZE_PERMS_NAME)
-                                        .applyTexture("4e68435e9dd05dbe2e7bb45c5d3c95d0c9d8cb4c062d30e9b4aed1ccfa65a49b")
-                                        .addLore(plugin.configM.getLangYml().CUSTOMIZE_PERMS_LORE)
-
-                        , e -> {
-
-                            if (!item.getPerms().isPresent()) { // Boton de habilitar perms
-                                item.setPerms(new ArrayList<>());
-                                refresh();
-
-                            } else if (item.getPerms().isPresent()) {  // Boton de añadir/quitar perms
-                                if (e.isLeftClick())
-
-                                    ChatPrompt.builder()
-                                            .withPlayer(p)
-                                            .withResponse(s -> {
-                                                if (!s.isEmpty()) {
-                                                    List<String> perms = item.getPerms().get();
-                                                    perms.add(s);
-                                                    item.setPerms(perms);
-                                                }
-                                                Schedulers.sync().run(this::refresh);
-                                            })
-                                            .withCancel(cancelReason -> Schedulers.sync().run(this::refresh))
-                                            .withTitle("&a&lInput permission")
-                                            .prompt();
-
-                                else if (e.isRightClick() && !e.isShiftClick()) {
-                                    List<String> s = item.getPerms().get();
-
-                                    if (!s.isEmpty()) {
-                                        s.remove(s.size() - 1);
-                                        item.setPerms(s);
-                                    }
-                                    refresh();
-                                } else if (e.isShiftClick() && e.isRightClick()) {
-                                    item.setPerms(null);
-                                    refresh();
-                                }
-
-                            }
-                        }),
-                19
-        );
+                        ItemBuilder.of(XMaterial.BOOKSHELF)
+                            .setName(plugin.configM.getLangYml().CUSTOMIZE_PERMS_NAME)
+                            .setLore(plugin.configM.getLangYml().CUSTOMIZE_PERMS_LORE_DEFAULT)
+                        , e ->
+                                customizePerms.builder()
+                                        .withPlayer(p)
+                                        .withItem(item)
+                                        .withBack((dItem) -> new CustomizerMenu(p, dItem, shop))
+                                        .open()), 19);
 
         inv.addButton(                                                  // Enchantments
                 ItemButton.create(
@@ -496,17 +453,16 @@ public class CustomizerMenu {
                                 int defaultStock = item.getStock().getDefault();
                                 item.setStock(
                                         item.getStock().getName().equals("INDIVIDUAL") ?
-                                                dStockFactory.GLOBAL(defaultStock):dStockFactory.INDIVIDUAL(defaultStock)
+                                                dStockFactory.GLOBAL(defaultStock) : dStockFactory.INDIVIDUAL(defaultStock)
                                 );
                                 refresh();
-                            }
-
-                            else if (e.isLeftClick()) {
+                            } else if (e.isLeftClick()) {
 
                                 ChatPrompt.builder()
                                         .withPlayer(p)
                                         .withResponse(s -> {
-                                            if (utils.isInteger(s)) item.setStock(dStockFactory.INDIVIDUAL(Integer.parseInt(s)));
+                                            if (utils.isInteger(s))
+                                                item.setStock(dStockFactory.INDIVIDUAL(Integer.parseInt(s)));
                                             else utils.sendMsg(p, plugin.configM.getLangYml().MSG_NOT_INTEGER);
 
                                             Task.syncDelayed(plugin, this::refresh);

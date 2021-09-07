@@ -123,6 +123,9 @@ public class langResource extends resource{
     public String CUSTOMIZE_COMMANDS_TITLE;
 
     public String CUSTOMIZE_PERMS_NAME;
+    public String CUSTOMIZE_PERMS_NAME_BUY;
+    public String CUSTOMIZE_PERMS_NAME_SELL;
+    public List<String> CUSTOMIZE_PERMS_LORE_DEFAULT;
     public List<String> CUSTOMIZE_PERMS_LORE;
     public List<String> CUSTOMIZE_PERMS_LORE_ON;
 
@@ -253,6 +256,9 @@ public class langResource extends resource{
         CUSTOMIZE_COMMANDS_LORE_ON = parseLore(yaml.getString("lang.customize_menu.commands.lore_on"));
         CUSTOMIZE_COMMANDS_TITLE = yaml.getString("lang.customize_menu.commands.title");
         CUSTOMIZE_PERMS_NAME = yaml.getString("lang.customize_menu.perms.name");
+        CUSTOMIZE_PERMS_NAME_BUY = yaml.getString("lang.customize_menu.perms.name_buy");
+        CUSTOMIZE_PERMS_NAME_SELL = yaml.getString("lang.customize_menu.perms.name_sell");
+        CUSTOMIZE_PERMS_LORE_DEFAULT = parseLore(yaml.getString("lang.customize_menu.perms.lore_default"));
         CUSTOMIZE_PERMS_LORE = parseLore(yaml.getString("lang.customize_menu.perms.lore"));
         CUSTOMIZE_PERMS_LORE_ON = parseLore(yaml.getString("lang.customize_menu.perms.lore_on"));
         CUSTOMIZE_SET_NAME = yaml.getString("lang.customize_menu.set.name");
