@@ -148,7 +148,7 @@ public class transaction {
         s.setEcon(item.getEconomy());
 
         boolean[] err = {false};
-        item.getPerms().ifPresent(perms -> perms        // perms check
+        item.getPermsBuy().ifPresent(perms -> perms        // perms check
                 .forEach(s1 -> {
                     if (err[0]) return;
 

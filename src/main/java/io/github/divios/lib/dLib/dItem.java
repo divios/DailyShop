@@ -90,6 +90,7 @@ public class dItem implements Serializable, Cloneable {
             setSellPrice(plugin.configM.getSettingsYml().DEFAULT_SELL); // Default sell price
         }
 
+        migratePerms();
         stock = retrieveStock();
     }
 
@@ -116,7 +117,8 @@ public class dItem implements Serializable, Cloneable {
         transfer.setEconomy(getEconomy());
         transfer.setDurability(getDurability(), false);
         transfer.setRarity(getRarity());
-        transfer.setPerms(getPerms().get());
+        transfer.setPermsBuy(getPermsBuy().get());
+        transfer.setPermsSell(getPermsSell().get());
         transfer.setConfirm_gui(getConfirm_gui());
 
         return transfer.getItem();
@@ -524,22 +526,48 @@ public class dItem implements Serializable, Cloneable {
         item.setObject("rds_cmds", commands);
     }
 
-    /**
-     * Gets permissions that a player needs to buy/sell this item
-     *
-     * @return list of Strings representing permissions
-     */
-    public Optional<List<String>> getPerms() {
-        return Optional.ofNullable(item.getObject("rds_perms", List.class));
+
+    private void migratePerms() {
+        if (item.hasKey("rds_perms"))  {
+            setPermsBuy(item.getObject("rds_perms", List.class));
+            item.removeKey("rds_perms");
+        }
     }
 
     /**
-     * Sets the permission that a player needs to buy/sell this item
+     * Gets permissions that a player needs to buy this item
+     *
+     * @return list of Strings representing permissions
+     */
+    public Optional<List<String>> getPermsBuy() {
+        return Optional.ofNullable(item.getObject("rds_perms_buy", List.class));
+    }
+
+    /**
+     * Sets the permission that a player needs to buy this item
      *
      * @param perms a list of Strings representing permissions
      */
-    public void setPerms(@Nullable List<String> perms) {
-        item.setObject("rds_perms", perms);
+    public void setPermsBuy(@Nullable List<String> perms) {
+        item.setObject("rds_perms_buy", perms);
+    }
+
+    /**
+     * Gets permissions that a player needs to buy this item
+     *
+     * @return list of Strings representing permissions
+     */
+    public Optional<List<String>> getPermsSell() {
+        return Optional.ofNullable(item.getObject("rds_perms_sell", List.class));
+    }
+
+    /**
+     * Sets the permission that a player needs to buy this item
+     *
+     * @param perms a list of Strings representing permissions
+     */
+    public void setPermsSell(@Nullable List<String> perms) {
+        item.setObject("rds_perms_sell", perms);
     }
 
     /**
