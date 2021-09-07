@@ -75,7 +75,7 @@ public class sellTransaction {
 
     private static void initTransaction(Player p, dItem item, int amount, dShop shop) {
 
-        for (String perm : item.getPerms().orElse(Collections.emptyList())) {
+        for (String perm : item.getPermsSell().orElse(Collections.emptyList())) {
             if (!p.hasPermission(perm)) {
                 Msg.sendMsg(p, plugin.configM.getLangYml().MSG_NOT_PERMS_ITEM);
                 return;
