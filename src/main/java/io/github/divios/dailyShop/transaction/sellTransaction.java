@@ -21,6 +21,11 @@ public class sellTransaction {
 
     public static void init(Player p, dItem item, dShop shop) {
 
+        if (p.hasPermission("dailyrandomshop." + shop.getName() + ".negate.sell") && !p.isOp()) {
+            Msg.sendMsg(p, plugin.configM.getLangYml().MSG_INVALIDATE_SELL);
+            return;
+        }
+
         if (!item.getSellPrice().isPresent() || item.getSellPrice().get().getPrice() == -1) {
             Msg.sendMsg(p, plugin.configM.getLangYml().MSG_INVALID_SELL);
             shop.openShop(p);
@@ -75,7 +80,7 @@ public class sellTransaction {
 
     private static void initTransaction(Player p, dItem item, int amount, dShop shop) {
 
-        for (String perm : item.getPerms().orElse(Collections.emptyList())) {
+        for (String perm : item.getPermsSell().orElse(Collections.emptyList())) {
             if (!p.hasPermission(perm)) {
                 Msg.sendMsg(p, plugin.configM.getLangYml().MSG_NOT_PERMS_ITEM);
                 return;

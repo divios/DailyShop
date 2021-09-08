@@ -33,6 +33,11 @@ public class transaction {
 
     public static void init(Player p, dItem item, dShop shop) {
 
+        if (p.hasPermission("dailyrandomshop." + shop.getName() + ".negate.buy") && !p.isOp()) {
+            Msg.sendMsg(p, plugin.configM.getLangYml().MSG_INVALIDATE_BUY);
+            return;
+        }
+
         if (item.hasStock() && item.getStock().get(p) == -1) {
             Msg.sendMsg(p, plugin.configM.getLangYml().MSG_OUT_STOCK);
             shop.openShop(p);
@@ -148,7 +153,7 @@ public class transaction {
         s.setEcon(item.getEconomy());
 
         boolean[] err = {false};
-        item.getPerms().ifPresent(perms -> perms        // perms check
+        item.getPermsBuy().ifPresent(perms -> perms        // perms check
                 .forEach(s1 -> {
                     if (err[0]) return;
 
