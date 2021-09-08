@@ -1,7 +1,11 @@
 package io.github.divios.dailyShop.guis.settings;
 
 import com.cryptomorin.xseries.XMaterial;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+import io.github.divios.core_lib.Events;
 import io.github.divios.core_lib.Schedulers;
+import io.github.divios.core_lib.inventory.InventoryGUI;
 import io.github.divios.core_lib.inventory.ItemButton;
 import io.github.divios.core_lib.inventory.builder.inventoryPopulator;
 import io.github.divios.core_lib.inventory.builder.paginatedGui;
@@ -16,13 +20,18 @@ import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.managers.shopsManager;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryOpenEvent;
 
+import java.util.Optional;
 import java.util.UUID;
 
 public class shopGui {
 
     private static final DailyShop plugin = DailyShop.getInstance();
     private static final shopsManager sManager = shopsManager.getInstance();
+
+    private static final BiMap<UUID, Integer> cache = HashBiMap.create();
 
     private paginatedGui inv;
     private final Player p;
@@ -37,6 +46,31 @@ public class shopGui {
         this.strategy = new shopItemsManagerLore(shop.getType());
 
         createGuis();
+
+        if (cache.containsKey(p.getUniqueId())) {
+            if (cache.get(p.getUniqueId()) >= inv.getInvs().size())
+                inv.open(p);
+            else
+                inv.open(p, cache.get(p.getUniqueId()));
+        } else
+            inv.open(p);
+
+
+        Events.subscribe(InventoryOpenEvent.class)
+                .filter(o -> o.getPlayer().equals(p))
+                .biHandler((e, o) -> {
+
+                    Optional<InventoryGUI> x = inv.getInvs().stream()
+                            .filter(inventoryGUI -> inventoryGUI.getInventory().equals(o.getInventory()))
+                            .findFirst();
+
+                    if (x.isPresent())
+                        cache.put(p.getUniqueId(), inv.getInvs().indexOf(x.get()));
+                    else
+                        e.unregister();
+
+                });
+
     }
 
     public static void open(Player p, String shop) {
@@ -98,6 +132,7 @@ public class shopGui {
                                         .applyTexture("19bf3292e126a105b54eba713aa1b152d541a1d8938829c56364d178ed22bf")
                                 , e -> {
                                     Schedulers.sync().runLater(() -> inv.destroy(), 3L);
+                                    cache.remove(p.getUniqueId());
                                     shopsManagerGui.open(p);
                                 }), 8
                 )
@@ -123,7 +158,6 @@ public class shopGui {
 
                 .build();
 
-        inv.open(p);
     }
 
     private void contentAction(InventoryClickEvent e) {
