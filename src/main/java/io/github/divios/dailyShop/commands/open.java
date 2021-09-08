@@ -3,6 +3,8 @@ package io.github.divios.dailyShop.commands;
 import io.github.divios.core_lib.commands.abstractCommand;
 import io.github.divios.core_lib.commands.cmdTypes;
 import io.github.divios.core_lib.misc.FormatUtils;
+import io.github.divios.core_lib.misc.Msg;
+import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.managers.shopsManager;
 import org.bukkit.Bukkit;
@@ -14,6 +16,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class open extends abstractCommand {
+
+    private static final DailyShop plugin = DailyShop.getInstance();
 
     public open() {
         super(cmdTypes.BOTH);
@@ -44,7 +48,7 @@ public class open extends abstractCommand {
 
     @Override
     public List<String> getPerms() {
-        return Collections.singletonList("DailyRandomShop.open");
+        return Collections.emptyList();
     }
 
     @Override
@@ -72,8 +76,13 @@ public class open extends abstractCommand {
             }
         }
 
-        if (!(sender instanceof Player)) {
-            sender.sendMessage("You cannot open a shop to yourself from console");
+        if (!(sender instanceof Player) && args.size() == 1) {
+            sender.sendMessage("DailyShop > You cannot open a shop to yourself from console");
+            return;
+        }
+
+        if (!sender.hasPermission("dailyrandomshop.open." + args.get(0))) {
+            Msg.sendMsg((Player) sender, plugin.configM.getLangYml().MSG_PERMS_OPEN_SHOP);
             return;
         }
 

@@ -123,6 +123,9 @@ public class langResource extends resource{
     public String CUSTOMIZE_COMMANDS_TITLE;
 
     public String CUSTOMIZE_PERMS_NAME;
+    public String CUSTOMIZE_PERMS_NAME_BUY;
+    public String CUSTOMIZE_PERMS_NAME_SELL;
+    public List<String> CUSTOMIZE_PERMS_LORE_DEFAULT;
     public List<String> CUSTOMIZE_PERMS_LORE;
     public List<String> CUSTOMIZE_PERMS_LORE_ON;
 
@@ -152,6 +155,9 @@ public class langResource extends resource{
     public String MSG_OUT_STOCK;
     public String MSG_INVALID_BUY;
     public String MSG_INVALID_SELL;
+    public String MSG_INVALIDATE_BUY;
+    public String MSG_INVALIDATE_SELL;
+    public String MSG_PERMS_OPEN_SHOP;
     public String MSG_CURRENCY_ERROR;
     public String MSG_INVALID_OPERATION;
     public String MSG_NOT_INTEGER;
@@ -253,6 +259,9 @@ public class langResource extends resource{
         CUSTOMIZE_COMMANDS_LORE_ON = parseLore(yaml.getString("lang.customize_menu.commands.lore_on"));
         CUSTOMIZE_COMMANDS_TITLE = yaml.getString("lang.customize_menu.commands.title");
         CUSTOMIZE_PERMS_NAME = yaml.getString("lang.customize_menu.perms.name");
+        CUSTOMIZE_PERMS_NAME_BUY = yaml.getString("lang.customize_menu.perms.name_buy");
+        CUSTOMIZE_PERMS_NAME_SELL = yaml.getString("lang.customize_menu.perms.name_sell");
+        CUSTOMIZE_PERMS_LORE_DEFAULT = parseLore(yaml.getString("lang.customize_menu.perms.lore_default"));
         CUSTOMIZE_PERMS_LORE = parseLore(yaml.getString("lang.customize_menu.perms.lore"));
         CUSTOMIZE_PERMS_LORE_ON = parseLore(yaml.getString("lang.customize_menu.perms.lore_on"));
         CUSTOMIZE_SET_NAME = yaml.getString("lang.customize_menu.set.name");
@@ -278,6 +287,9 @@ public class langResource extends resource{
         MSG_OUT_STOCK = yaml.getString("lang.messages.out_of_stock");
         MSG_INVALID_BUY = yaml.getString("lang.messages.invalid_buy");
         MSG_INVALID_SELL = yaml.getString("lang.messages.invalid_sell");
+        MSG_INVALIDATE_BUY = yaml.getString("lang.messages.invalidate_buy");
+        MSG_INVALIDATE_SELL = yaml.getString("lang.messages.invalidate_sell");
+        MSG_PERMS_OPEN_SHOP = yaml.getString("lang.messages.perms_shop");
         MSG_CURRENCY_ERROR = yaml.getString("lang.messages.currency_error");
         MSG_INVALID_OPERATION = yaml.getString("lang.messages.invalid_operation");
         MSG_NOT_INTEGER = yaml.getString("lang.messages.not_integer");

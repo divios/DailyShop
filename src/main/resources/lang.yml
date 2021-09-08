@@ -50,7 +50,7 @@ lang:
     buy_price: "&8- &7Buy price: &e{buyPrice}"
     sell_price: "&8- &7Sell price: &e{sellPrice}"
     stock: "&8- &7Stock: &e"
-    currency: "8- &7Currency: &e{currency}"
+    currency: "&8- &7Currency: &e{currency}"
     rarity: "&8- &7Rarity: &e{rarity}"
     buy_for: "&8- &7Buy for &e{price}"
     manager_items_lore: "&8- &9LEFT CLICK|  &7Customize item||&8- &9RIGHT CLICK|  &7Delete item"
@@ -109,6 +109,9 @@ lang:
       title: "&e&lInput new command"
     perms:
       name: "&f&lEdit permissions"
+      name_buy: "&f&lEdit Buy permissions"
+      name_sell: "&f&lEdit Sell permissions"
+      lore_default: "&7Click to edit|&7the item's permissions"
       lore: "|&8- &9LEFT CLICK|  &7Enable feature||&7Enable this option to allow players to purchase|&7this item if they have certain permissions"
       lore_on: "|&8- &9LEFT CLICK|  &7Add Permission to the list||&8- &9RIGHT CLICK|  &7Remove permission from list||&8- &9SHIFT RIGHT CLICK|  &7Disable Feature"
     set:
@@ -139,6 +142,9 @@ lang:
     out_of_stock: "&7That item is out of stock"
     invalid_buy: "&7That item is out of stock"
     invalid_sell: "&7That item cannot be sell"
+    invalidate_buy: "You don't have the permissions to purchase items from this shop"
+    invalidate_sell: "You don't have the permissions to sell items from this shop"
+    perms_shop: "You don't have enough permissions to open this shop"
     currency_error: "&7That currency is not available anymore"
     invalid_operation: "&7That item is not longer available"
     not_integer: "&7Not integer"

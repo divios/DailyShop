@@ -6,6 +6,7 @@ import io.github.divios.dailyShop.DailyShop;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class dRarity {
@@ -69,21 +70,21 @@ public class dRarity {
     }
 
     private enum rarityT {
-        Common(100),
-        UnCommon(80),
-        Rare(60),
-        Epic(40),
-        Ancient(20),
-        Legendary(10),
-        Mythic(5),
-        Unavailable(0);
+        Common,
+        UnCommon,
+        Rare,
+        Epic,
+        Ancient,
+        Legendary,
+        Mythic,
+        Unavailable;
 
+        private static final List<Integer> weights = Arrays.asList(100, 80, 60, 40, 20, 10, 5, 0);
         private static final rarityT[] vals = values();
-        private final int weight;
 
-        rarityT(Integer weight) { this.weight = weight; }
+        rarityT() {}
 
-        private int getWeight() { return weight; }
+        private int getWeight() { return weights.get(this.ordinal()); }
 
         private rarityT next() {
             return vals[(this.ordinal()+1) % vals.length];
