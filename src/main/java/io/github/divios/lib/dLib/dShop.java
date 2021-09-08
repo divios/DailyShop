@@ -26,7 +26,7 @@ public class dShop {
 
     private String name;
     private final dShopT type;
-    private final Map<UUID, dItem> items = new HashMap<>();
+    private final Map<UUID, dItem> items = new LinkedHashMap<>();
     private final syncMenu guis;
 
     private Timestamp timestamp;
@@ -144,7 +144,7 @@ public class dShop {
      * any change made to it won't affect the original one
      */
     public synchronized @NotNull Set<dItem> getItems() {
-        return Collections.unmodifiableSet(new HashSet<>(items.values()));
+        return Collections.unmodifiableSet(new LinkedHashSet<>(items.values()));
     }
 
     /**
