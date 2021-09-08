@@ -7,6 +7,8 @@ import io.github.divios.lib.managers.shopsManager;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.entity.Player;
 
+import java.util.Optional;
+
 class placeholderApiHook extends PlaceholderExpansion {
 
     private static final DailyShop plugin = DailyShop.getInstance();
@@ -94,20 +96,8 @@ class placeholderApiHook extends PlaceholderExpansion {
     @Override
     public String onPlaceholderRequest(Player player, String identifier) {
 
-        dShop shop = null;
-
-        for (dShop _shop : shopsManager.getInstance().getShops()) {
-
-            if (identifier.replace("time_", "")
-                    .equals(_shop.getName())) {
-                shop = _shop;
-                break;
-            }
-        }
-
-        if (shop == null) return null;
-
-        return utils.getDiffActualTimer(shop);
+        Optional<dShop> shop = shopsManager.getInstance().getShop(identifier.replace("time_", ""));
+        return shop.map(utils::getDiffActualTimer).orElse(null);
 
     }
 
