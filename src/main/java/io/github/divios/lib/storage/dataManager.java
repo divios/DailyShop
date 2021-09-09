@@ -51,7 +51,7 @@ public class dataManager extends DataManagerAbstract {
                     ResultSet result = statement.executeQuery(selectFarms);
 
                     while (result.next()) {
-                        String name = result.getString("name").toLowerCase();
+                        String name = result.getString("name");
                         dShop shop = new dShop(name,
                                 dShop.dShopT.valueOf(result.getString("type")),
                                 result.getString("gui"),
