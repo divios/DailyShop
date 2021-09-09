@@ -96,7 +96,7 @@ class placeholderApiHook extends PlaceholderExpansion {
     @Override
     public String onPlaceholderRequest(Player player, String identifier) {
 
-        Optional<dShop> shop = shopsManager.getInstance().getShop(identifier.replace("time_", ""));
+        Optional<dShop> shop = shopsManager.getInstance().getShop(identifier.replace("time_", "").toLowerCase());
         return shop.map(utils::getDiffActualTimer).orElse(null);
 
     }
