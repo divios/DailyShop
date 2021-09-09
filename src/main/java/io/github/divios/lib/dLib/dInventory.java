@@ -16,6 +16,7 @@ import io.github.divios.dailyShop.transaction.sellTransaction;
 import io.github.divios.dailyShop.transaction.transaction;
 import io.github.divios.dailyShop.utils.utils;
 import io.github.divios.lib.dLib.stock.dStock;
+import me.realized.tokenmanager.util.Log;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventPriority;
@@ -110,9 +111,13 @@ public class dInventory {
      *
      * @return The inventory this object holds
      */
-    public Inventory getInventory() { return inv; }
+    public Inventory getInventory() {
+        return inv;
+    }
 
-    public int getSize() { return inv.getSize(); }
+    public int getSize() {
+        return inv.getSize();
+    }
 
     public boolean addRow() {
         if (inv.getSize() == 54) return false;
@@ -195,19 +200,22 @@ public class dInventory {
      */
     public void renovate(Player p) {
 
+        //shop.getItems().forEach(dItem -> Log.info(dItem.getDisplayName() + ": " + dItem.getRarity() + " - " + dItem.getRarity().getWeight()));
+        //Log.info("---------------------------------------\n");
+
         buttons.entrySet()
                 .stream()
                 .filter(entry -> entry.getValue().isAIR())
                 .forEach(entry -> inv.clear(entry.getKey()));  // Clear AIR items
 
         WeightedRandom<dItem> RRM = WeightedRandom.fromCollection(      // create weighted random
-                shop.getItems().stream().filter(dItem -> dItem.getRarity().getWeight() != 0)
+                shop.getItems().stream()
+                        .filter(dItem -> dItem.getRarity().getWeight() != 0)
                         .filter(dItem -> !(dItem.getBuyPrice().get().getPrice() <= 0 &&
                                 dItem.getSellPrice().get().getPrice() <= 0))
                         .collect(Collectors.toList()),  // remove unAvailable
                 dItem::clone,
-                value -> DailyShop.getInstance().getConfig().getBoolean("enable-rarity", true) ?
-                        value.getRarity().getWeight() : 1     // Get weights depending if rarity enable
+                value -> value.getRarity().getWeight()     // Get weights depending if rarity enable
         );
 
         clearDailyItems();
@@ -227,6 +235,11 @@ public class dInventory {
             rolled.generateNewSellPrice();
             _renovate(p, rolled, i);
             RRM.remove(rolled);
+            /*Log.info("---------------------------------------\n");
+            Log.info("Rolled " + rolled.getDisplayName());
+            RRM.getPercentages().forEach((dItem, aDouble) -> {
+                Log.info(dItem.getDisplayName() + " Percentage: " + aDouble);
+            }); */
             addedButtons++;
         }
 
@@ -309,9 +322,7 @@ public class dInventory {
                                 else
                                     sellTransaction.init((Player) e.getWhoClicked(), buttons.get(e.getSlot()), shop);
 
-                            }
-
-                            else {
+                            } else {
                                 dItem item = buttons.get(e.getSlot());
                                 if (item != null)
                                     item.getAction().stream((dAction, s) -> dAction.run((Player) e.getWhoClicked(), s));
