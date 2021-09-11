@@ -61,7 +61,7 @@ public class CustomizerMenu {
         return new newCustomizerMenuBuilder();
     }
 
-    private void build() {      // TODO
+    private void build() {
 
         inv = new InventoryGUI(plugin, 54, FormatUtils.color(plugin.configM.getLangYml().CUSTOMIZE_TITLE));
 
@@ -290,8 +290,6 @@ public class CustomizerMenu {
                                         .withResponse(s -> {
                                             if (utils.isShort(s)) item.setDurability(Short.parseShort(s), false);
                                             else Msg.sendMsg(p, plugin.configM.getLangYml().MSG_NOT_INTEGER);
-
-
                                         })
                                         .withCancel(cancelReason -> Schedulers.sync().run(this::refresh))
                                         .withTitle("&c&lInput Durability")
@@ -384,6 +382,7 @@ public class CustomizerMenu {
                                     return;
                                 }
                                 item.setSetItems(1);
+                                item.setAmount(1);
                                 refresh();
                             } else if (item.getSetItems().isPresent()) {
                                 if (e.isLeftClick()) {

@@ -10,21 +10,25 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.function.Supplier;
 
 public abstract class economy implements Serializable {
 
     protected final String currency;
     private final Supplier<String> name;
+    private final econTypes key;
 
-    protected economy(String currency, Supplier<String> name) {
+    protected economy(String currency, Supplier<String> name, econTypes key) {
         this.currency = currency;
         this.name = name;
+        this.key = key;
     }
 
-    protected economy(String currency, String name) {
+    protected economy(String currency, String name, econTypes key) {
         this.currency = currency;
         this.name = () -> name;
+        this.key = key;
     }
 
     public abstract void test();
@@ -37,18 +41,29 @@ public abstract class economy implements Serializable {
 
     public abstract double getBalance(Player p);
 
-    public String getName() { return name.get(); }
+    public String getName() {
+        return name.get();
+    }
+
+    public String getCurrency() {
+        return currency;
+    }
+
+    public String getKey() {
+        return key.name();
+    }
 
     public String serialize() {
-        try {
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            BukkitObjectOutputStream dataOutput = new BukkitObjectOutputStream(outputStream);
 
-            dataOutput.writeObject(this.getClass().getName());
-            dataOutput.writeObject(this.currency);
+        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+            try (BukkitObjectOutputStream dataOutput = new BukkitObjectOutputStream(outputStream)) {
 
-            dataOutput.close();
-            return Base64Coder.encodeLines(outputStream.toByteArray());
+                dataOutput.writeObject(getKey());
+                dataOutput.writeObject(this.currency);
+
+                dataOutput.close();
+                return Base64Coder.encodeLines(outputStream.toByteArray());
+            }
 
         } catch (IOException e) {
             throw new IllegalStateException("Unable to serialize economy.", e);
@@ -56,20 +71,26 @@ public abstract class economy implements Serializable {
     }
 
     public static economy deserialize(String base64) {
-        try {
 
-            ByteArrayInputStream InputStream = new ByteArrayInputStream(Base64Coder.decodeLines(base64));
-            BukkitObjectInputStream dataInput = new BukkitObjectInputStream(InputStream);
+        try (ByteArrayInputStream InputStream = new ByteArrayInputStream(Base64Coder.decodeLines(base64))) {
+            try (BukkitObjectInputStream dataInput = new BukkitObjectInputStream(InputStream)) {
+                String key = (String) dataInput.readObject();
+                String currency = (String) dataInput.readObject();
 
-            Class<?> clazz = Class.forName((String) dataInput.readObject());
-            Constructor<?> ctor = clazz.getConstructor(String.class);
-            Object object = ctor.newInstance(dataInput.readObject());
-            dataInput.close();
-
-            return (economy) object;
+                return getFromKey(key, currency);
+            }
 
         } catch (Exception e) {
             return new vault();
         }
     }
+
+    public static economy getFromKey(String key, String currency) {
+        try {
+            return econTypes.valueOf(key).getEconomy(currency);
+        } catch (Exception e) {
+            return new vault();
+        }
+    }
+
 }
