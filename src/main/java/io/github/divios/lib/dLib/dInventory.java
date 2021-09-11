@@ -16,7 +16,6 @@ import io.github.divios.dailyShop.transaction.sellTransaction;
 import io.github.divios.dailyShop.transaction.transaction;
 import io.github.divios.dailyShop.utils.utils;
 import io.github.divios.lib.dLib.stock.dStock;
-import me.realized.tokenmanager.util.Log;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventPriority;
@@ -211,8 +210,8 @@ public class dInventory {
         WeightedRandom<dItem> RRM = WeightedRandom.fromCollection(      // create weighted random
                 shop.getItems().stream()
                         .filter(dItem -> dItem.getRarity().getWeight() != 0)
-                        .filter(dItem -> !(dItem.getBuyPrice().get().getPrice() <= 0 &&
-                                dItem.getSellPrice().get().getPrice() <= 0))
+                        .filter(dItem -> !(dItem.getBuyPrice().get().getPrice() < 0 &&
+                                dItem.getSellPrice().get().getPrice() < 0))
                         .collect(Collectors.toList()),  // remove unAvailable
                 dItem::clone,
                 value -> value.getRarity().getWeight()     // Get weights depending if rarity enable
@@ -314,6 +313,8 @@ public class dInventory {
                         .handler(e -> {
 
                             e.setCancelled(true);
+
+                            if (e.getSlot() != e.getRawSlot()) return;
 
                             if (openSlots.contains(e.getSlot())) {
 

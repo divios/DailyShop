@@ -1,9 +1,12 @@
 package io.github.divios.lib.dLib;
 
+import io.github.divios.core_lib.misc.FormatUtils;
+import io.github.divios.core_lib.misc.XSymbols;
 import io.github.divios.dailyShop.utils.PriceWrapper;
 import io.github.divios.dailyShop.utils.utils;
 
 import java.io.Serializable;
+import java.text.Format;
 
 public class dPrice implements Serializable {
 
@@ -54,10 +57,16 @@ public class dPrice implements Serializable {
         if (randomFlag)
             return PriceWrapper.format(minPrice) + " - " + PriceWrapper.format(maxPrice);
         else
-            return PriceWrapper.format(actualPrice);
+            if (actualPrice == -1) return FormatUtils.color("&c" + XSymbols.TIMES_3.parseSymbol());
+            else return PriceWrapper.format(actualPrice);
     }
 
-
+    @Override
+    public String toString() {
+        if (randomFlag)
+            return minPrice + " : " + maxPrice;
+        else return String.valueOf(actualPrice);
+    }
 
 
 
