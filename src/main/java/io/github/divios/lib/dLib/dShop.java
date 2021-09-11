@@ -187,7 +187,8 @@ public class dShop {
     /**
      * Sets the items of this shop
      */
-    public synchronized void setItems(@NotNull HashSet<dItem> items) {
+    public synchronized void setItems(@NotNull Set<dItem> items) {
+        this.items.clear();
         items.forEach(dItem -> this.items.put(dItem.getUid(), dItem));
     }
 
