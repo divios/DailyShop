@@ -256,9 +256,12 @@ public class dItem implements Serializable, Cloneable {
      * @param amount
      */
     public void setAmount(int amount) {
-        ItemStack auxI = item.getItem();
+        ItemStack auxI = getItem();
         auxI.setAmount(amount);
-        this.item = new NBTItem(auxI);
+        ItemStack auxE = getRawItem();
+        auxE.setAmount(amount);
+        setItem(auxI);
+        setRawItem(auxE);
     }
 
     /**
@@ -400,7 +403,7 @@ public class dItem implements Serializable, Cloneable {
      * Sets uuid
      * @param uid
      */
-    private void setUid(@NotNull UUID uid) {
+    public void setUid(@NotNull UUID uid) {
         item.setObject("rds_UUID", uid);
     }
 
