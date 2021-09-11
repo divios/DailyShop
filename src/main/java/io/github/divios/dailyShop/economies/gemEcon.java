@@ -11,7 +11,7 @@ public class gemEcon extends economy {
     private transient final static GemsEconomyAPI gemApi = hooksManager.getInstance().getGemsEcon();
 
     public gemEcon(String currency) {
-        super(currency, currency);
+        super(currency, currency, econTypes.gemsEconomy);
         this._currency = gemApi.getCurrency(currency);
     }
 

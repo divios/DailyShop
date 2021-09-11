@@ -12,7 +12,7 @@ public class ultraEconomyE extends economy{
     private final Currency currency;
 
     public ultraEconomyE(String currency) {
-        super(currency, currency);
+        super(currency, currency, econTypes.ultraEconomy);
         this.currency = api.getCurrencies().name(currency).get();
     }
 

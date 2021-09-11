@@ -9,7 +9,7 @@ public class tokenManagerE extends economy {
 
     public tokenManagerE() { this(""); }
 
-    public tokenManagerE(String currency) { super(currency, "TokenManager"); }
+    public tokenManagerE(String currency) { super(currency, "TokenManager", econTypes.tokenManager); }
 
     private transient static final TokenManager api = hooksManager.getInstance().getTokenManagerApi();
 

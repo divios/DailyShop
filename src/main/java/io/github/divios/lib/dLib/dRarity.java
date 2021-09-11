@@ -29,6 +29,12 @@ public class dRarity {
 
     public dRarity() {}
 
+    public static dRarity fromKey(String key) {
+        dRarity dRarity = new dRarity();
+        dRarity.rarity = rarityT.valueOf(key);
+        return dRarity;
+    }
+
     /**
      * Gets the rarity as an item
      * @return
@@ -63,6 +69,8 @@ public class dRarity {
             return rarity.name();
         }
     }
+
+    public String getKey() { return rarity.name(); }
 
     @Override
     public String toString() {
