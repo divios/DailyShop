@@ -38,7 +38,7 @@ public class DailyShop extends JavaPlugin {
                                 /* Register Commands */
         CommandManager.register(INSTANCE.getCommand("DailyShop"));
         CommandManager.addCommand(new add(), new helpCmd(),
-                new open(), new manager(), new reStock(), new importShops(), new reload());
+                new open(), new manager(), new reStock(), new importShops(), new reload(), new parser());
 
         CommandManager.setNotPerms(configM.getSettingsYml().PREFIX + configM.getLangYml().MSG_NOT_PERMS);
         CommandManager.setDefault(new helpCmd());
