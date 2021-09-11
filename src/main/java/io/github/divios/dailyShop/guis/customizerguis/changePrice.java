@@ -76,7 +76,7 @@ public class changePrice {
                                         return;
                                     }
                                     double price = Double.parseDouble(s);
-                                    if (price <= 0) price = -1;
+                                    if (price < 0) price = -1;
 
                                     if (type == dShop.dShopT.buy)
                                         item.setBuyPrice(price);
