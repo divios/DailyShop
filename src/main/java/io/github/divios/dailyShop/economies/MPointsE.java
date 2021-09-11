@@ -10,7 +10,7 @@ public class MPointsE extends economy {
 
     private transient static final MPointsAPI api = hooksManager.getInstance().getMPointsApi();
 
-    public MPointsE(String point) { super(point, point); }
+    public MPointsE(String point) { super(point, point, econTypes.MPoints); }
 
     @Override
     public void test() {
