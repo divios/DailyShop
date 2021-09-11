@@ -9,7 +9,7 @@ public class playerPointsE extends economy {
 
     public playerPointsE() {this(""); }
 
-    public playerPointsE(String currency) { super(currency, "PlayerPoints"); }
+    public playerPointsE(String currency) { super(currency, "PlayerPoints", econTypes.playerPoints); }
 
     private transient static final PlayerPointsAPI api = PlayerPoints.getInstance().getAPI();
 
