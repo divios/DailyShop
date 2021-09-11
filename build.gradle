@@ -1,3 +1,5 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ConfigureShadowRelocation
+
 plugins {
     id 'java'
     id "idea"
@@ -10,7 +12,7 @@ plugins {
 apply plugin: 'maven-publish'
 
 group = 'io.github.divios'
-def pluginVersion = "3.4.7"
+def pluginVersion = "3.4.8"
 version = pluginVersion
 
 sourceCompatibility = '1.8'
@@ -61,7 +63,15 @@ repositories {
     }
 
     maven {
-        url repsyUrl
+        url repsyUrlCore
+        credentials {
+            username repsyUsername
+            password repsyPassword
+        }
+    }
+
+    maven {
+        url repsyUrldShopParser
         credentials {
             username repsyUsername
             password repsyPassword
@@ -80,10 +90,31 @@ dependencies {
     compileOnly group: 'com.vk2gpz.tokenenchant', name: 'TokenEnchantAPI', version: '18.18.1'
     compileOnly 'com.mojang:authlib:1.5.21'
     implementation 'com.github.PikaMug:LocaleLib:2.2'
+    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.12.5'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.5'
 
+    compileOnly 'io.github.divios:DailyShopParser:1.0-SNAPSHOT'
     api 'io.github.divios:core_lib:2.0'
 
     compileOnly fileTree(dir: 'libs', include: ['*.jar'])
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+        }
+    }
+
+    repositories {
+        maven {
+            url repsyUrldShop
+            credentials {
+                username repsyUsername
+                password repsyPassword
+            }
+        }
+    }
 }
 
 java {
@@ -124,9 +155,16 @@ shadowJar {
     relocate('de.tr7zw.changeme.nbtapi', 'io.github.divios.dailyShop.shaded.nbt-api')
     relocate('io.github.divios.core_lib', 'io.github.divios.dailyShop.shaded.Core_lib')
     relocate('com.cryptomorin.xseries', 'io.github.divios.dailyShop.shaded.XSeries')
+    relocate('com.fasterxml.jackson', 'io.github.divios.dailyShop.shaded.jackson')
 
 
     minimize()
+}
+
+task relocateShadowJar(type: ConfigureShadowRelocation) {
+    target = tasks.shadowJar
+    prefix = "myapp" // Default value is "shadow"
+
 }
 
 processResources {
