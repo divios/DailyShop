@@ -59,12 +59,13 @@ public class dShop {
         tasks.add(
                 Schedulers.async().runRepeating(() -> {
 
-                    if (timeStampUtils.diff(timestamp,
-                            new Timestamp(System.currentTimeMillis())) > timer) {
+                    if (timer == -1) return;
+
+                    if (timeStampUtils.diff(timestamp, new Timestamp(System.currentTimeMillis())) > timer) {
 
                         timestamp = new Timestamp(System.currentTimeMillis());
                         dManager.updateTimeStamp(this.name, this.timestamp);
-                        Schedulers.sync().runLater(guis::renovate, 1L);
+                        Schedulers.sync().runLater(guis::reStock, 1L);
                         dManager.asyncUpdateGui(this.name, this.guis);
                     }
                 }, 20, 20)
@@ -124,7 +125,7 @@ public class dShop {
      *
      * @param name
      */
-    public synchronized void setName(String name) {
+    public synchronized void rename(String name) {
         this.name = name;
     }
 

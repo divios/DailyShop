@@ -181,14 +181,13 @@ public class customizeGui implements Listener, InventoryHolder {
                 return;
 
             if (e.getSlot() == 3) {  //back
-                Bukkit.getPluginManager().callEvent(new updateShopEvent(shop, _gui, false));
                 preventClose = false;
                 p.closeInventory();
             }
 
             else if (e.getSlot() == 5) {   //apply changes
 
-                Bukkit.getPluginManager().callEvent(new updateShopEvent(shop, _gui, true));
+                Bukkit.getPluginManager().callEvent(new updateShopEvent(shop, _gui));
                 preventClose = false;
                 p.closeInventory();
             }
