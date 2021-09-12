@@ -18,27 +18,31 @@ public class updateShopEvent extends Event {
     private static final HandlerList HANDLERS_LIST = new HandlerList();
 
     private final dShop shop;
-    private final dInventory inv;
-    private final boolean response;
+    private final dInventory newInv;
+    private final boolean silent;
     private final Timestamp timestamp;
 
-    public updateShopEvent(dShop shop, dInventory newInv, boolean response) {
+    public updateShopEvent(dShop shop, dInventory newInv, boolean silent) {
         this.shop = shop;
-        inv = newInv;
-        this.response = response;
+        this.newInv = newInv;
+        this.silent = silent;
         timestamp = new Timestamp(System.currentTimeMillis());
+    }
+
+    public updateShopEvent(dShop shop, dInventory newInv) {
+        this(shop, newInv, false);
     }
 
     public dShop getShop() {
         return shop;
     }
 
-    public dInventory getInv() {
-        return inv;
+    public dInventory getNewInv() {
+        return newInv;
     }
 
-    public boolean isResponse() {
-        return response;
+    public boolean isSilent() {
+        return silent;
     }
 
     public Timestamp getTimestamp() {
