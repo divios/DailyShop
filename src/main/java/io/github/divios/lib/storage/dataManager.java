@@ -32,15 +32,12 @@ public class dataManager extends DataManagerAbstract {
     public static dataManager getInstance() {
         if (instance == null) {
             instance = new dataManager(new SQLiteConnector(plugin));
-            instance.databaseConnector.connect(connection ->
-                    initialMigration.migrate(connection, instance.getTablePrefix()));
+            instance.databaseConnector.connect(connection -> initialMigration.migrate(connection, instance.getTablePrefix()));
         }
         return instance;
     }
 
-
     public CompletableFuture<HashSet<dShop>> getShops() {
-
         return CompletableFuture.supplyAsync(() -> {
 
             HashSet<dShop> shops = new LinkedHashSet<>();
@@ -69,7 +66,6 @@ public class dataManager extends DataManagerAbstract {
 
 
     public CompletableFuture<HashSet<dItem>> getShop(String name) {
-
         return CompletableFuture.supplyAsync(() -> {
 
             HashSet<dItem> items = new LinkedHashSet<>();
@@ -90,8 +86,8 @@ public class dataManager extends DataManagerAbstract {
 
     }
 
-    public void createShop(dShop shop) {
-        this.async(() -> this.databaseConnector.connect(connection -> {
+    public CompletableFuture<Void> createShop(dShop shop) {
+        return CompletableFuture.runAsync(() -> this.databaseConnector.connect(connection -> {
 
             String createShop = "INSERT INTO " + this.getTablePrefix() +
                     "active_shops (name, type, gui, timestamp, timer) VALUES (?, ?, ?, ?, ?)";
@@ -115,8 +111,8 @@ public class dataManager extends DataManagerAbstract {
         }));
     }
 
-    public void renameShop(String oldName, String newName) {
-        this.async(() -> this.databaseConnector.connect(connection -> {
+    public CompletableFuture<Void> renameShop(String oldName, String newName) {
+        return CompletableFuture.runAsync(() -> this.databaseConnector.connect(connection -> {
             String renameShop = "UPDATE " + this.getTablePrefix() + "active_shops" +
                     " SET name = ? WHERE name = ?";
             try (PreparedStatement statement = connection.prepareStatement(renameShop)) {
@@ -134,8 +130,8 @@ public class dataManager extends DataManagerAbstract {
         }));
     }
 
-    public void deleteShop(String name) {
-        this.async(() -> this.databaseConnector.connect(connection -> {
+    public CompletableFuture<Void> deleteShop(String name) {
+        return CompletableFuture.runAsync(() -> this.databaseConnector.connect(connection -> {
             String deleteShop = "DELETE FROM " + this.getTablePrefix() + "active_shops WHERE name = ?";
             try (PreparedStatement statement = connection.prepareStatement(deleteShop)) {
                 statement.setString(1, name);
@@ -149,8 +145,8 @@ public class dataManager extends DataManagerAbstract {
         }));
     }
 
-    public void addItem(String name, dItem item) {
-        this.async(() -> this.databaseConnector.connect(connection -> {
+    public CompletableFuture<Void> addItem(String name, dItem item) {
+        return CompletableFuture.runAsync(() -> this.databaseConnector.connect(connection -> {
 
             String createShop = "INSERT INTO " + this.getTablePrefix() +
                     "shop_" + name + " (itemSerial, uuid) VALUES (?, ?)";
@@ -165,8 +161,8 @@ public class dataManager extends DataManagerAbstract {
         }));
     }
 
-    public void deleteItem(String name, UUID uid) {
-        this.async(() -> this.databaseConnector.connect(connection -> {
+    public CompletableFuture<Void> deleteItem(String name, UUID uid) {
+        return CompletableFuture.runAsync(() -> this.databaseConnector.connect(connection -> {
             String deeleteItem = "DELETE FROM " + this.getTablePrefix() + "shop_" + name + " WHERE uuid = ?";
             try (PreparedStatement statement = connection.prepareStatement(deeleteItem)) {
                 statement.setString(1, uid.toString());
@@ -175,8 +171,8 @@ public class dataManager extends DataManagerAbstract {
         }));
     }
 
-    public void updateItem(String name, dItem item) {
-        this.async(() -> this.databaseConnector.connect(connection -> {
+    public CompletableFuture<Void> updateItem(String name, dItem item) {
+        return CompletableFuture.runAsync(() -> this.databaseConnector.connect(connection -> {
             String updateItem = "UPDATE " + this.getTablePrefix() + "shop_" + name +
                     " SET itemSerial = ? WHERE uuid = ?";
             try (PreparedStatement statement = connection.prepareStatement(updateItem)) {
@@ -199,12 +195,12 @@ public class dataManager extends DataManagerAbstract {
         });
     }
 
-    public void asyncUpdateGui(String name, syncMenu gui) {
-        this.async(() -> syncUpdateGui(name, gui));
+    public CompletableFuture<Void> asyncUpdateGui(String name, syncMenu gui) {
+        return CompletableFuture.runAsync(() -> syncUpdateGui(name, gui));
     }
 
-    public void updateTimeStamp(String name, Timestamp timestamp) {
-        this.async(() -> this.databaseConnector.connect(connection -> {
+    public CompletableFuture<Void> updateTimeStamp(String name, Timestamp timestamp) {
+        return CompletableFuture.runAsync(() -> this.databaseConnector.connect(connection -> {
             String updateTimeStamp = "UPDATE " + this.getTablePrefix() + "active_shops " +
                     "SET timestamp = ? WHERE name = ?";
             try (PreparedStatement statement = connection.prepareStatement(updateTimeStamp)) {
@@ -215,8 +211,8 @@ public class dataManager extends DataManagerAbstract {
         }));
     }
 
-    public void updateTimer(String name, int timer) {
-        this.async(() -> this.databaseConnector.connect(connection -> {
+    public CompletableFuture<Void> updateTimer(String name, int timer) {
+        return CompletableFuture.runAsync(() -> this.databaseConnector.connect(connection -> {
             String updateTimeStamp = "UPDATE " + this.getTablePrefix() + "active_shops " +
                     "SET timer = ? WHERE name = ?";
             try (PreparedStatement statement = connection.prepareStatement(updateTimeStamp)) {
