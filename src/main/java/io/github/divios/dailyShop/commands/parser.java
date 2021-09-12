@@ -3,13 +3,9 @@ package io.github.divios.dailyShop.commands;
 import io.github.divios.core_lib.commands.abstractCommand;
 import io.github.divios.core_lib.commands.cmdTypes;
 import io.github.divios.core_lib.misc.Msg;
-import io.github.divios.dailyShop.utils.utils;
-import io.github.divios.dailyshopparser.Api;
-import io.github.divios.dailyshopparser.DailyShopParser;
 import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.managers.shopsManager;
-import me.realized.tokenmanager.util.Log;
-import org.bukkit.Bukkit;
+import io.github.divios.lib.storage.parser.ParserApi;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -69,17 +65,10 @@ public class parser extends abstractCommand {
     @Override
     public void run(CommandSender sender, List<String> args) {
 
-        if (!utils.isOperative("DailyShopParser")) {
-            if (sender instanceof Player) Msg.sendMsg((Player) sender, "You need the parser module installed to run this action, you can get it here");
-            else sender.sendMessage("You don't have the parser module installed to run this action, you can get it here");
-            return;
-        }
-
-        Api api = DailyShopParser.getApi();
         dShop shop = shopsManager.getInstance().getShop(args.get(1)).orElse(null);
 
         if (args.get(0).equals("parse")) {
-            api.deserialize(args.get(1));
+            ParserApi.deserialize(args.get(1));
             if (sender instanceof Player) Msg.sendMsg((Player) sender, "Parsed all items correctly");
         }
 
@@ -88,7 +77,7 @@ public class parser extends abstractCommand {
                 sender.sendMessage("That shop doesn't exist");
                 return;
             }
-            api.serialize(shop);
+            ParserApi.serialize(shop);
             if (sender instanceof Player) Msg.sendMsg((Player) sender, "Converted all items correctly");
         }
 
