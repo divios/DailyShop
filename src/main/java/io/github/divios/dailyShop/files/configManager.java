@@ -1,7 +1,13 @@
 package io.github.divios.dailyShop.files;
 
+import io.github.divios.dailyShop.DailyShop;
+import io.github.divios.dailyShop.utils.FileUtils;
+
+import java.io.File;
+
 public class configManager {
 
+    private static final DailyShop main = DailyShop.getInstance();
     private final langResource langYml;
     private final settingsResource settingsYml;
 
@@ -10,8 +16,12 @@ public class configManager {
     }
 
     private configManager() {
+
+        FileUtils.createParentDirectory();
         langYml = new langResource();
         settingsYml = new settingsResource();
+        FileUtils.createParserFolder();
+        FileUtils.createDatabaseFile();
     }
 
     public synchronized langResource getLangYml() {
