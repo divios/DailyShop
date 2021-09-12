@@ -1,5 +1,6 @@
 package io.github.divios.lib.dLib.synchronizedGui;
 
+import io.github.divios.lib.dLib.dInventory;
 import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.dLib.synchronizedGui.singleGui.singleGui;
 import org.bukkit.entity.Player;
@@ -15,7 +16,9 @@ public interface syncMenu {
 
     void generate(Player p);
 
-    void renovate();
+    default void reStock() { reStock(false); }
+
+    void reStock(boolean silent);
 
     singleGui get(UUID key);
 
@@ -30,6 +33,8 @@ public interface syncMenu {
     void destroy();
 
     void customizeGui(Player p);
+
+    dInventory getDefault();
 
     dShop getShop();
 
