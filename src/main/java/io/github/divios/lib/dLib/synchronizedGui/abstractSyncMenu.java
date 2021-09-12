@@ -11,6 +11,7 @@ import io.github.divios.dailyShop.events.reStockShopEvent;
 import io.github.divios.dailyShop.events.updateItemEvent;
 import io.github.divios.dailyShop.events.updateShopEvent;
 import io.github.divios.dailyShop.guis.customizerguis.customizeGui;
+import io.github.divios.lib.dLib.dInventory;
 import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.dLib.synchronizedGui.singleGui.singleGui;
 import org.bukkit.Bukkit;
@@ -59,7 +60,7 @@ public abstract class abstractSyncMenu implements syncMenu {
         listeners.add(
                 Events.subscribe(reStockShopEvent.class)
                         .filter(o -> o.getShop().equals(shop))
-                        .handler(o -> renovate())
+                        .handler(o -> reStock())
         );
 
         listeners.add(
@@ -71,7 +72,6 @@ public abstract class abstractSyncMenu implements syncMenu {
         listeners.add(
                 Events.subscribe(updateShopEvent.class)
                         .filter(o -> o.getShop().equals(shop))
-                        .filter(updateShopEvent::isResponse)
                         .handler(this::updateBase)
         );
 
@@ -100,8 +100,8 @@ public abstract class abstractSyncMenu implements syncMenu {
      */
     private synchronized void updateBase(updateShopEvent o) {
         base.destroy();
-        base = singleGui.create(null, o.getInv(), shop);
-        renovate();
+        base = singleGui.create(null, o.getNewInv(), shop);
+        reStock(o.isSilent());
     }
 
     private synchronized void updateItems(updateItemEvent o) {
@@ -149,12 +149,13 @@ public abstract class abstractSyncMenu implements syncMenu {
     }
 
     @Override
-    public synchronized void renovate() {
+    public synchronized void reStock(boolean silent) {
         Set<UUID> players = new HashSet<>(guis.keySet());
         invalidateAll();                                            // close all inventories
         base.renovate();                                            // Renovates base
         players.forEach(uuid -> Optional.ofNullable(Bukkit.getPlayer(uuid)).ifPresent(this::generate));
-        Msg.broadcast(
+        if (!silent)
+            Msg.broadcast(
                 Msg.singletonMsg(DailyShop.getInstance().configM.getLangYml().MSG_RESTOCK)
                         .add("\\{shop}", shop.getName())
                         .build()
@@ -162,9 +163,12 @@ public abstract class abstractSyncMenu implements syncMenu {
     }
 
     @Override
-    public synchronized void customizeGui(Player p) {         // Close all inventories
+    public synchronized void customizeGui(Player p) {
         customizeGui.open(p, shop, base.getInventory());
     }
+
+    @Override
+    public dInventory getDefault() {  return base.getBase(); }
 
     @Override
     public dShop getShop() {
