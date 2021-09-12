@@ -1,5 +1,7 @@
 package io.github.divios.dailyShop.hooks;
 
+import io.github.divios.core_lib.misc.XSymbols;
+import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.utils.utils;
 import io.github.divios.lib.dLib.dShop;
@@ -96,7 +98,8 @@ class placeholderApiHook extends PlaceholderExpansion {
     @Override
     public String onPlaceholderRequest(Player player, String identifier) {
 
-        Optional<dShop> shop = shopsManager.getInstance().getShop(identifier.replace("time_", "").toLowerCase());
+        Optional<dShop> shop = shopsManager.getInstance().getShop(identifier.replace("time_", ""));
+        if (shop.isPresent() && shop.get().getTimer() == -1) return XSymbols.TIMES_3.parseSymbol();
         return shop.map(utils::getDiffActualTimer).orElse(null);
 
     }

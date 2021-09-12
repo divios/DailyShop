@@ -4,6 +4,7 @@ import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.core_lib.misc.Msg;
+import io.github.divios.core_lib.misc.XSymbols;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.utils.utils;
 import io.github.divios.lib.dLib.dShop;
@@ -27,9 +28,9 @@ public class shopsManagerLore implements loreStrategy {
 
         List<String> placeholder = Msg.msgList(
                 DailyShop.getInstance().configM.getLangYml().SHOPS_MANAGER_LORE)
-                .add("\\{timer}", "" + shop.getTimer())
+                .add("\\{timer}", String.valueOf(shop.getTimer()))
                 .add("\\{amount}", String.valueOf(shop.getItems().size()))
-                .add("\\{c_timer}", utils.getDiffActualTimer(shop))
+                .add("\\{c_timer}", shop.getTimer() == -1 ? XSymbols.TIMES_3.parseSymbol() : utils.getDiffActualTimer(shop))
                 .build();
 
         return ItemBuilder.of(item).addLore(placeholder);
