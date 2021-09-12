@@ -65,7 +65,7 @@ public class sellTransaction {
                                     Msg.sendMsg(p, plugin.configM.getLangYml().MSG_INVALID_OPERATION);
                                     return;
                                 }
-                                initTransaction(p, item, item.getAmount(), shop);
+                                initTransaction(p, item, item.getQuantity(), shop);
                             }
                             else
                                 shop.openShop(p);
@@ -75,7 +75,7 @@ public class sellTransaction {
                         .withCancelLore(plugin.configM.getLangYml().CONFIRM_GUI_NO, plugin.configM.getLangYml().CONFIRM_GUI_NO_LORE)
                         .prompt();
             }
-        } else initTransaction(p, item, item.getAmount(), shop);
+        } else initTransaction(p, item, item.getQuantity(), shop);
     }
 
     private static void initTransaction(Player p, dItem item, int amount, dShop shop) {
