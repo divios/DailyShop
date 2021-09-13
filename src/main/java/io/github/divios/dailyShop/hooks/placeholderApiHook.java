@@ -1,7 +1,6 @@
 package io.github.divios.dailyShop.hooks;
 
 import io.github.divios.core_lib.misc.XSymbols;
-import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.utils.utils;
 import io.github.divios.lib.dLib.dShop;
