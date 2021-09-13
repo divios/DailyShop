@@ -8,6 +8,7 @@ import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.events.deletedShopEvent;
 import io.github.divios.dailyShop.events.updateItemEvent;
 import io.github.divios.dailyShop.guis.settings.shopGui;
+import io.github.divios.dailyShop.utils.FutureUtils;
 import io.github.divios.lib.dLib.synchronizedGui.syncHashMenu;
 import io.github.divios.lib.dLib.synchronizedGui.syncMenu;
 import io.github.divios.lib.storage.dataManager;
@@ -18,6 +19,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.sql.Timestamp;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 
 public class dShop {
 
@@ -49,6 +51,17 @@ public class dShop {
         this.type = type;
         this.timestamp = timestamp;
         this.timer = timer;
+
+        guis = syncHashMenu.fromJson(base64, this);
+        ready();
+    }
+
+    public dShop(String name, dShopT type, String base64, Timestamp timestamp, int timer, Set<dItem> items) {
+        this.name = name;
+        this.type = type;
+        this.timestamp = timestamp;
+        this.timer = timer;
+        setItems(items);
 
         guis = syncHashMenu.fromJson(base64, this);
         ready();
@@ -185,12 +198,14 @@ public class dShop {
 
     }
 
+
     /**
      * Sets the items of this shop
      */
     public synchronized void setItems(@NotNull Set<dItem> items) {
+        if (!this.items.isEmpty()) FutureUtils.waitFor(dManager.deleteAllItems(name));
         this.items.clear();
-        items.forEach(dItem -> this.items.put(dItem.getUid(), dItem));
+        items.forEach(this::addItem);
     }
 
     /**

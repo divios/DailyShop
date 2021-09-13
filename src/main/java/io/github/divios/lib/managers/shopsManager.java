@@ -14,15 +14,14 @@ import java.util.concurrent.CompletableFuture;
 public class shopsManager {
 
     private static shopsManager instance = null;
-    private HashSet<dShop> shops = new LinkedHashSet<>();
+    private Set<dShop> shops = new LinkedHashSet<>();
 
     private shopsManager() {}
 
     public static shopsManager getInstance() {
         if (instance == null) {
             instance = new shopsManager();
-            dataManager.getInstance()
-                    .getShops().thenAccept(instance::setShops);
+            dataManager.getInstance().getShops().thenAccept(instance::setShops);
         }
         return instance;
     }
@@ -41,7 +40,7 @@ public class shopsManager {
      * Sets the shops. Private
      * @param shops
      */
-    private synchronized void setShops(HashSet<dShop> shops) {
+    private synchronized void setShops(Set<dShop> shops) {
         this.shops = shops;
     }
 
