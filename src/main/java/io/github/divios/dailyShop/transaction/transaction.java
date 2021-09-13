@@ -243,7 +243,6 @@ public class transaction {
             } catch (InterruptedException | ExecutionException e) {
                 e.printStackTrace();
             } catch (TimeoutException e) {
-                Log.warn("timeout");
                 result = false;
             }
         }
