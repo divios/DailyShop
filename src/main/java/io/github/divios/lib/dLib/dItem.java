@@ -662,7 +662,7 @@ public class dItem implements Serializable, Cloneable {
     /**
      * Private method to set Item as AIR
      */
-    private void setAIR() { item.setBoolean("rds_AIR", true); }
+    public void setAIR() { item.setBoolean("rds_AIR", true); }
 
     /**
      * private method to set Item as SIGN for dGui sell purposes
