@@ -68,7 +68,7 @@ public class transaction {
                         .withPlayer(p)
                         .withAction(aBoolean -> {
                             if (aBoolean) {
-                                transaction.initTransaction(p, item, item.getAmount(), shop);
+                                transaction.initTransaction(p, item, item.getQuantity(), shop);
                             }
                             else
                                 shop.openShop(p);
@@ -140,7 +140,7 @@ public class transaction {
 
     private static summary printSummary(Player p, UUID uid, dShop shop) throws transactionExc {
         return printSummary(p, shop.getItem(uid).orElse(dItem.AIR()),
-                shop.getItem(uid).orElse(dItem.AIR()).getAmount(), shop);
+                shop.getItem(uid).orElse(dItem.AIR()).getQuantity(), shop);
     }
 
     private static summary printSummary(Player p, dItem item, int amount, dShop shop) throws transactionExc {
@@ -243,7 +243,6 @@ public class transaction {
             } catch (InterruptedException | ExecutionException e) {
                 e.printStackTrace();
             } catch (TimeoutException e) {
-                Log.warn("timeout");
                 result = false;
             }
         }

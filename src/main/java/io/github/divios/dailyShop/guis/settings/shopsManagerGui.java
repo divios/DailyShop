@@ -189,7 +189,7 @@ public class shopsManagerGui {
                         }
 
                         dManager.renameShop(shop.getName(), s.toLowerCase());
-                        shop.setName(s.toLowerCase());
+                        shop.rename(s.toLowerCase());
                         Task.syncDelayed(plugin, () -> refresh(p));
                     })
                     .withCancel(cancelReason -> Task.syncDelayed(plugin, () -> refresh(p)))
@@ -208,7 +208,7 @@ public class shopsManagerGui {
                             return;
                         }
 
-                        if (Integer.parseInt(s) < 50) {
+                        if (Integer.parseInt(s) < 50 && Integer.parseInt(s) != -1) {
                             utils.sendMsg(p, "&7Time cannot be less than 50");
                             Task.syncDelayed(plugin, () -> refresh(p));
                             return;

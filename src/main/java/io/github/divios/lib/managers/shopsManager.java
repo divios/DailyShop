@@ -9,6 +9,7 @@ import io.github.divios.lib.storage.dataManager;
 import org.bukkit.Bukkit;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
 public class shopsManager {
 
@@ -49,14 +50,21 @@ public class shopsManager {
      *
      * @param name the name of the shop
      * @param type the type of the shop
+     * @return CompletableFuture that ends when the shop is added to the database
+     *
      */
 
-    public synchronized void createShop(String name, dShop.dShopT type) {
+    public synchronized CompletableFuture<Void> createShop(String name, dShop.dShopT type) {
         dShop newShop = new dShop(name, type);
         shops.add(newShop);
-        Task.syncDelayed(DailyShop.getInstance(), () ->
-                Bukkit.getPluginManager().callEvent(new createdShopEvent(newShop)));
-        dataManager.getInstance().createShop(newShop);
+        Task.syncDelayed(DailyShop.getInstance(), () -> Bukkit.getPluginManager().callEvent(new createdShopEvent(newShop)));
+        return dataManager.getInstance().createShop(newShop);
+    }
+
+    public synchronized CompletableFuture<Void> createShop(dShop newShop) {
+        shops.add(newShop);
+        Task.syncDelayed(DailyShop.getInstance(), () -> Bukkit.getPluginManager().callEvent(new createdShopEvent(newShop)));
+        return dataManager.getInstance().createShop(newShop);
     }
 
     /**
@@ -74,21 +82,20 @@ public class shopsManager {
     /**
      * Deletes a shop by name
      * @param name name of the shop to be deleted
-     * @return true if succeeded. False if it does not exist
+     * @return returns a completableFuture that ends when the shop is deleted
+     * from the database
      */
-    public synchronized boolean deleteShop(String name) {
+    public synchronized CompletableFuture<Void> deleteShop(String name) {
 
         Optional<dShop> result = getShop(name);
-        if (!result.isPresent()) return false;
+        if (!result.isPresent()) return CompletableFuture.completedFuture(null);
 
         deletedShopEvent event = new deletedShopEvent(result.get());
         Bukkit.getPluginManager().callEvent(event);     // throw new event
 
         // auto-destroy is handled via event on dShop
         shops.removeIf(shop -> shop.getName().equals(name));
-        dataManager.getInstance().deleteShop(name);
-
-        return true;
+        return dataManager.getInstance().deleteShop(name);
     }
 
 }

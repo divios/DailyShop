@@ -11,6 +11,7 @@ import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.managers.shopsManager;
 import net.brcdev.shopgui.ShopGuiPlusApi;
+import net.brcdev.shopgui.shop.ShopManager;
 import org.black_ixx.bossshop.BossShop;
 import org.black_ixx.bossshop.core.BSShop;
 import org.bukkit.Bukkit;
@@ -22,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 public class importShops extends abstractCommand {
@@ -45,8 +47,7 @@ public class importShops extends abstractCommand {
             if (!utils.isOperative("BossShopPro")) return false;
 
         return (args.get(0).equalsIgnoreCase("shopGui+")
-                || args.get(0).equalsIgnoreCase("BossShop")) &&
-                shopsManager.getInstance().getShop(args.get(1)).isPresent();
+                || args.get(0).equalsIgnoreCase("BossShop"));
 
     }
 
@@ -81,15 +82,28 @@ public class importShops extends abstractCommand {
     @Override
     public void run(CommandSender sender, List<String> args) {
 
+        dShop _shop = shopsManager.getInstance().getShop(args.get(1)).orElse(null);
+        if (_shop == null) {
+            try {
+                shopsManager.getInstance().createShop(args.get(1), dShop.dShopT.buy).get();
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
+        }
+
         shopsManager.getInstance().getShop(args.get(1))
                 .ifPresent(shop -> {
+
                     if (args.get(0).equalsIgnoreCase("shopGui+")) {
                         ShopGuiPlusApi.getShop(args.get(2)).getShopItems()
                                 .forEach(shopItem -> {
+
+                                    if (shopItem.getType().equals(ShopManager.ItemType.DUMMY)) return;
+
                                     dItem newItem = dItem.of(shopItem.getItem());
 
-                                    if (newItem.getAmount() != 1)
-                                        newItem.setSetItems(newItem.getAmount());
+                                    if (newItem.getQuantity() != 1)
+                                        newItem.setSetItems(newItem.getQuantity());
 
                                     newItem.setBuyPrice(shopItem.getBuyPrice());
                                     newItem.setSellPrice(shopItem.getSellPrice());
