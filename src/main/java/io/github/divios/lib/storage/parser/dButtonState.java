@@ -24,6 +24,7 @@ public class dButtonState {
     private Map<String, Integer> enchantments = new HashMap<>();
     private String action;
     private int slot;
+    private Boolean air;
     private JsonObject nbt;
 
 
@@ -44,6 +45,7 @@ public class dButtonState {
             else action = dAction.name() + ":" + s;
         });
         slot = item.getSlot();
+        air = item.isAIR();
 
         NBTItem nbtItem = new NBTItem(item.getItem());
         nbt = new Gson().fromJson(nbtItem.toString(), JsonObject.class);
@@ -56,6 +58,7 @@ public class dButtonState {
         nbt.remove("rds_buyPrice");
         nbt.remove("rds_stock");
         nbt.remove("rds_cmds");
+        nbt.remove("rds_AIR");
         nbt.remove("rds_action");
         nbt.remove("dailySlots");
         nbt.remove("rds_setItems");
@@ -72,6 +75,7 @@ public class dButtonState {
 
         if (enchantments.isEmpty()) enchantments = null;
         if (nbt.size() == 0) nbt = null;
+        if (!air) air = null;
 
     }
 
@@ -125,6 +129,7 @@ public class dButtonState {
         dItem newItem = dItem.of(item.getItem().clone());
         newItem.setUid(uuid);
         newItem.setQuantity(quantity);
+        if (air != null && air) newItem.setAIR();
         newItem.setSlot(slot);
 
         if (enchantments != null)
