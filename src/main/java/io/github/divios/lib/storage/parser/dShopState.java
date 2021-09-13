@@ -1,5 +1,6 @@
 package io.github.divios.lib.storage.parser;
 
+import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.dailyShop.events.updateShopEvent;
 import io.github.divios.lib.dLib.dInventory;
 import io.github.divios.lib.dLib.dItem;
@@ -15,7 +16,7 @@ public class dShopState {
     private final Map<UUID, dButtonState> display_items = new LinkedHashMap<>();
 
     public dShopState(String name, Integer size, Collection<dItem> items) {
-        this.name = name;
+        this.name = FormatUtils.unColor(name);
         this.size = size;
 
         items.stream()
@@ -37,10 +38,7 @@ public class dShopState {
 
     public void apply(dShop shop) {
 
-        if (!shop.getName().equals(name))
-            shop.rename(name);
-
-        dInventory newInv = new dInventory(name, size, shop);
+        dInventory newInv = new dInventory(FormatUtils.color(name), size, shop);
         display_items.entrySet().stream()
                 .filter(entry -> entry.getValue().getSlot() < size)
                 .map(entry -> entry.getValue().parseItem(entry.getKey()))
