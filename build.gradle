@@ -12,7 +12,7 @@ plugins {
 apply plugin: 'maven-publish'
 
 group = 'io.github.divios'
-def pluginVersion = "3.4.8"
+def pluginVersion = "3.4.9"
 version = pluginVersion
 
 sourceCompatibility = '1.8'
@@ -90,10 +90,7 @@ dependencies {
     compileOnly group: 'com.vk2gpz.tokenenchant', name: 'TokenEnchantAPI', version: '18.18.1'
     compileOnly 'com.mojang:authlib:1.5.21'
     implementation 'com.github.PikaMug:LocaleLib:2.2'
-    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.12.5'
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.5'
 
-    compileOnly 'io.github.divios:DailyShopParser:1.0-SNAPSHOT'
     api 'io.github.divios:core_lib:2.0'
 
     compileOnly fileTree(dir: 'libs', include: ['*.jar'])
@@ -168,7 +165,10 @@ task relocateShadowJar(type: ConfigureShadowRelocation) {
 }
 
 processResources {
-    expand projectVersion: pluginVersion
+    filesNotMatching(["*.db"]) {
+        expand projectVersion: pluginVersion
+    }
+
 
 }
 

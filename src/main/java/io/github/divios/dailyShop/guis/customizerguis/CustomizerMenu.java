@@ -382,7 +382,7 @@ public class CustomizerMenu {
                                     return;
                                 }
                                 item.setSetItems(1);
-                                item.setAmount(1);
+                                item.setQuantity(1);
                                 refresh();
                             } else if (item.getSetItems().isPresent()) {
                                 if (e.isLeftClick()) {
@@ -395,7 +395,7 @@ public class CustomizerMenu {
                                                 int i = Integer.parseInt(s);
                                                 if (i < 1 || i > 64) Msg.sendMsg(p, "&7Invalid amount");
                                                 item.setSetItems(i);
-                                                item.setAmount(i);
+                                                item.setQuantity(i);
                                                 Schedulers.sync().run(this::refresh);
                                             })
                                             .withCancel(cancelReason -> Schedulers.sync().run(this::refresh))
@@ -404,7 +404,7 @@ public class CustomizerMenu {
 
                                 } else if (e.isRightClick()) {
                                     item.setSetItems(null);
-                                    item.setAmount(1);
+                                    item.setQuantity(1);
                                     refresh();
                                 }
                             }

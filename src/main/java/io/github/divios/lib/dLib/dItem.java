@@ -110,7 +110,7 @@ public class dItem implements Serializable, Cloneable {
         getAction().stream(transfer::setAction);
         transfer.setStock(getStock());
         transfer.setSetItems(getSetItems().get());
-        transfer.setAmount(getAmount());
+        transfer.setQuantity(getQuantity());
         transfer.setBundle(getBundle().get());
         transfer.setBuyPrice(getBuyPrice().get());
         transfer.setSellPrice(getSellPrice().get());
@@ -255,7 +255,7 @@ public class dItem implements Serializable, Cloneable {
      * Sets the amount of the item
      * @param amount
      */
-    public void setAmount(int amount) {
+    public void setQuantity(int amount) {
         ItemStack auxI = getItem();
         auxI.setAmount(amount);
         ItemStack auxE = getRawItem();
@@ -268,7 +268,7 @@ public class dItem implements Serializable, Cloneable {
      * Gets the amount of the item
      * @return
      */
-    public int getAmount() {
+    public int getQuantity() {
         return item.getItem().getAmount();
     }
 
@@ -662,7 +662,7 @@ public class dItem implements Serializable, Cloneable {
     /**
      * Private method to set Item as AIR
      */
-    private void setAIR() { item.setBoolean("rds_AIR", true); }
+    public void setAIR() { item.setBoolean("rds_AIR", true); }
 
     /**
      * private method to set Item as SIGN for dGui sell purposes
@@ -703,6 +703,7 @@ public class dItem implements Serializable, Cloneable {
     public static dItem fromJson(String json) {
         NBTCompound itemData = new NBTContainer(json);
         ItemStack item = NBTItem.convertNBTtoItem(itemData);
+        if (item == null) return null;
 
         return new dItem(item);
     }
