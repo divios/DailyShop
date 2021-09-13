@@ -3,8 +3,6 @@ package io.github.divios.dailyShop.files;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.utils.FileUtils;
 
-import java.io.File;
-
 public class configManager {
 
     private static final DailyShop main = DailyShop.getInstance();

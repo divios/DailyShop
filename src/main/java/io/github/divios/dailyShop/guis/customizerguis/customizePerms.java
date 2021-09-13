@@ -9,7 +9,6 @@ import io.github.divios.core_lib.misc.ChatPrompt;
 import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.lib.dLib.dItem;
-import io.github.divios.lib.dLib.dShop;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
