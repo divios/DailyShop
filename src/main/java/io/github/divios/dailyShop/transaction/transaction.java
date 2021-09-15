@@ -13,6 +13,8 @@ import io.github.divios.dailyShop.utils.utils;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dPrice;
 import io.github.divios.lib.dLib.dShop;
+import io.github.divios.lib.dLib.log.dLog;
+import io.github.divios.lib.dLib.log.options.dLogEntry;
 import io.github.divios.lib.dLib.stock.dStock;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -121,6 +123,18 @@ public class transaction {
                 .add("\\{amount}", "" + amount)
                 .add("\\{price}", "" + s.getPrice())
                 .add("\\{currency}", s.getEcon().getName()).build().split("\\{item}"));
+
+        dLog.log(
+                dLogEntry.builder()
+                        .withPlayer(p)
+                        .withShopID(shop.getName())
+                        .withItemUUID(item.getUid())
+                        .withRawItem(item.getRawItem())
+                        .withQuantity(amount)
+                        .withType(dShop.dShopT.buy)
+                        .withPrice(s.getPrice())
+                        .build()
+        );
 
         if (msg.size() == 1) {
             Msg.sendMsg(p, msg.get(0));
