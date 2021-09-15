@@ -28,28 +28,8 @@ public class ParserApi {
 
         shop.getItems().forEach(dItem -> itemsCollect.put(dItem.getUid(), dItemState.of(dItem.getItem())));
 
-        String json = new GsonBuilder()
-                .create().toJson(new jsonEntry(shop.getName(), itemsCollect, shop));
-
         File data = new File(DailyShop.getInstance().getDataFolder() + File.separator + "parser", shop.getName() + ".yml");
-        if (!data.exists()) {
-            FileUtils.createFile(data);
-        }
-
-        Map map = new GsonBuilder().registerTypeAdapter(new TypeToken<Map <String, Object>>(){}.getType(),  new MapDeserializerDoubleAsIntFix())
-                .create().fromJson(json, new TypeToken<Map<String, Object>>(){}.getType());
-
-        DumperOptions options = new DumperOptions();
-        options.setIndent(2);
-        options.setAllowUnicode(true);
-        options.setPrettyFlow(true);
-        options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
-
-        try (FileWriter fw = new FileWriter(data)) {
-            new Yaml(options).dump(map, fw);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        FileUtils.toYaml(new jsonEntry(shop.getName(), itemsCollect, shop), data);
 
         Log.info("Converted all items correctly of shop " + shop.getName() + " into the file " + data.getPath());
 
@@ -145,53 +125,5 @@ public class ParserApi {
         }
 
     }
-
-    public static class MapDeserializerDoubleAsIntFix implements JsonDeserializer<Map<String, Object>>{
-
-        @Override  @SuppressWarnings("unchecked")
-        public Map<String, Object> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-            return (Map<String, Object>) read(json);
-        }
-
-        public Object read(JsonElement in) {
-
-            if(in.isJsonArray()){
-                List<Object> list = new ArrayList<Object>();
-                JsonArray arr = in.getAsJsonArray();
-                for (JsonElement anArr : arr) {
-                    list.add(read(anArr));
-                }
-                return list;
-            }else if(in.isJsonObject()){
-                Map<String, Object> map = new LinkedTreeMap<>();
-                JsonObject obj = in.getAsJsonObject();
-                Set<Map.Entry<String, JsonElement>> entitySet = obj.entrySet();
-                for(Map.Entry<String, JsonElement> entry: entitySet){
-                    map.put(entry.getKey(), read(entry.getValue()));
-                }
-                return map;
-            }else if( in.isJsonPrimitive()){
-                JsonPrimitive prim = in.getAsJsonPrimitive();
-                if(prim.isBoolean()){
-                    return prim.getAsBoolean();
-                }else if(prim.isString()){
-                    return prim.getAsString();
-                }else if(prim.isNumber()){
-
-                    Number num = prim.getAsNumber();
-                    // here you can handle double int/long values
-                    // and return any type you want
-                    // this solution will transform 3.0 float to long values
-                    if(Math.ceil(num.doubleValue())  == num.longValue())
-                        return num.longValue();
-                    else{
-                        return num.doubleValue();
-                    }
-                }
-            }
-            return null;
-        }
-    }
-
 
 }
