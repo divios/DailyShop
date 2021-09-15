@@ -9,6 +9,8 @@ import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.guis.confirmGui;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
+import io.github.divios.lib.dLib.log.dLog;
+import io.github.divios.lib.dLib.log.options.dLogEntry;
 import org.bukkit.entity.Player;
 
 import java.util.Arrays;
@@ -105,6 +107,18 @@ public class sellTransaction {
                     .add("\\{amount}", "" + amount)
                     .add("\\{price}", "" + item.getSellPrice().get().getPrice() * amount)
                     .add("\\{currency}", item.getEconomy().getName()).build().split("\\{item}"));
+
+            dLog.log(
+                    dLogEntry.builder()
+                            .withPlayer(p)
+                            .withShopID(shop.getName())
+                            .withItemUUID(item.getUid())
+                            .withRawItem(item.getRawItem())
+                            .withQuantity(amount)
+                            .withType(dShop.dShopT.sell)
+                            .withPrice(item.getSellPrice().get().getPrice() * amount)
+                            .build()
+            );
 
             if (msg.size() == 1) {
                 Msg.sendMsg(p, msg.get(0));
