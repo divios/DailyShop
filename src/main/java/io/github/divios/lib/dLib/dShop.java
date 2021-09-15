@@ -203,7 +203,7 @@ public class dShop {
      * Sets the items of this shop
      */
     public synchronized void setItems(@NotNull Set<dItem> items) {
-        if (!this.items.isEmpty()) FutureUtils.waitFor(dManager.deleteAllItems(name));
+        FutureUtils.waitFor(dManager.deleteAllItems(name));
         this.items.clear();
         items.forEach(this::addItem);
     }
