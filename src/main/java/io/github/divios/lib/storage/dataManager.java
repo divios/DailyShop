@@ -1,12 +1,12 @@
 package io.github.divios.lib.storage;
 
-import io.github.divios.core_lib.Schedulers;
 import io.github.divios.core_lib.database.DataManagerAbstract;
 import io.github.divios.core_lib.database.DatabaseConnector;
 import io.github.divios.core_lib.database.SQLiteConnector;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.timeStampUtils;
 import io.github.divios.dailyShop.DailyShop;
+import io.github.divios.dailyShop.utils.FutureUtils;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.dLib.log.options.dLogEntry;
@@ -56,9 +56,9 @@ public class dataManager extends DataManagerAbstract {
                                 dShop.dShopT.valueOf(result.getString("type")),
                                 result.getString("gui"),
                                 timeStampUtils.deserialize(result.getString("timestamp")),
-                                result.getInt("timer"));
+                                result.getInt("timer"),
+                                FutureUtils.waitFor(getShop(name)));
 
-                        getShop(name).thenAccept(dItems -> Schedulers.sync().runLater(() -> shop.setItems(dItems), 1L));
                         shops.add(shop);
                     }
                 }
