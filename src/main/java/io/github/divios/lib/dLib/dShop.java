@@ -2,10 +2,13 @@ package io.github.divios.lib.dLib;
 
 import io.github.divios.core_lib.Events;
 import io.github.divios.core_lib.Schedulers;
+import io.github.divios.core_lib.event.SingleSubscription;
+import io.github.divios.core_lib.event.Subscription;
 import io.github.divios.core_lib.misc.timeStampUtils;
 import io.github.divios.core_lib.scheduler.Task;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.events.deletedShopEvent;
+import io.github.divios.dailyShop.events.reStockShopEvent;
 import io.github.divios.dailyShop.events.updateItemEvent;
 import io.github.divios.dailyShop.guis.settings.shopGui;
 import io.github.divios.dailyShop.utils.FutureUtils;
@@ -35,6 +38,7 @@ public class dShop {
     private int timer;
 
     private final Set<Task> tasks = new HashSet<>();
+    private final Set<Subscription> listeners = new HashSet<>();
 
     public dShop(String name, dShopT type) {
         this.name = name;
@@ -73,14 +77,9 @@ public class dShop {
                 Schedulers.async().runRepeating(() -> {
 
                     if (timer == -1) return;
+                    if (timeStampUtils.diff(timestamp, new Timestamp(System.currentTimeMillis())) > timer)
+                        reStock();
 
-                    if (timeStampUtils.diff(timestamp, new Timestamp(System.currentTimeMillis())) > timer) {
-
-                        timestamp = new Timestamp(System.currentTimeMillis());
-                        dManager.updateTimeStamp(this.name, this.timestamp);
-                        Schedulers.sync().runLater(guis::reStock, 1L);
-                        dManager.asyncUpdateGui(this.name, this.guis);
-                    }
                 }, 20, 20)
         );
 
@@ -100,6 +99,19 @@ public class dShop {
                     }
                 });
 
+        listeners.add(
+                Events.subscribe(reStockShopEvent.class)
+                        .filter(o -> o.getShop().equals(this))
+                        .handler(e -> reStock())
+        );
+
+    }
+
+    private void reStock() {
+        timestamp = new Timestamp(System.currentTimeMillis());
+        dManager.updateTimeStamp(this.name, this.timestamp);
+        Schedulers.sync().runLater(guis::reStock, 1L);
+        dManager.asyncUpdateGui(this.name, this.guis);
     }
 
     /**
@@ -261,6 +273,8 @@ public class dShop {
         guis.destroy();
         tasks.forEach(Task::stop);
         tasks.clear();
+        listeners.forEach(Subscription::unregister);
+        listeners.clear();
     }
 
     @Override
