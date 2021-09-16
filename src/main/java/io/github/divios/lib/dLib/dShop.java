@@ -65,7 +65,7 @@ public class dShop {
         this.type = type;
         this.timestamp = timestamp;
         this.timer = timer;
-        setItems(items);
+        items.forEach(dItem -> this.items.put(dItem.getUid(), dItem));
 
         guis = syncHashMenu.fromJson(base64, this);
         ready();
@@ -215,9 +215,20 @@ public class dShop {
      * Sets the items of this shop
      */
     public synchronized void setItems(@NotNull Set<dItem> items) {
-        FutureUtils.waitFor(dManager.deleteAllItems(name));
-        this.items.clear();
-        items.forEach(this::addItem);
+
+        Map<UUID, dItem> newItems = new HashMap<>();
+        items.forEach(dItem -> newItems.put(dItem.getUid(), dItem));            // Cache values for a O(1) search
+
+        for (Iterator<Map.Entry<UUID, dItem>> it = this.items.entrySet().iterator(); it.hasNext(); ) {          // Remove items that are not on the newItems list
+            Map.Entry<UUID, dItem> entry = it.next();
+            if (newItems.containsKey(entry.getKey())) continue;
+
+            Bukkit.getPluginManager().callEvent(new updateItemEvent(entry.getValue(), updateItemEvent.updatetype.DELETE_ITEM, this));
+            dManager.deleteItem(name, entry.getKey());
+            it.remove();
+        }
+
+        items.forEach(this::addItem);       // Replace the old values for the new ones
     }
 
     /**
