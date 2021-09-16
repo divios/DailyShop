@@ -50,8 +50,10 @@ public class singleGuiImpl implements singleGui {
         this.own = base.clone();
 
         if (p != null) {
-            if (utils.isOperative("PlaceholderAPI")) updatePool.subscribe(this);
-            updateTask();
+            if (utils.isOperative("PlaceholderAPI")) {
+                updatePool.subscribe(this);
+                updateTask();
+            }
             this.own.open(p);
         } else ready();
     }
