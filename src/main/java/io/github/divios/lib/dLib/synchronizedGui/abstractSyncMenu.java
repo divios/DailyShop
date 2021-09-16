@@ -58,12 +58,6 @@ public abstract class abstractSyncMenu implements syncMenu {
     private void ready() {
 
         listeners.add(
-                Events.subscribe(reStockShopEvent.class)
-                        .filter(o -> o.getShop().equals(shop))
-                        .handler(o -> reStock())
-        );
-
-        listeners.add(
                 Events.subscribe(updateItemEvent.class)
                         .filter(o -> o.getShop().equals(shop))
                         .handler(this::updateItems)

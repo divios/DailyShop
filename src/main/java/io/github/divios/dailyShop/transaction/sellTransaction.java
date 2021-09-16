@@ -6,7 +6,9 @@ import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.core_lib.misc.Msg;
 import io.github.divios.core_lib.misc.confirmIH;
 import io.github.divios.dailyShop.DailyShop;
-import io.github.divios.dailyShop.guis.confirmGui;
+import io.github.divios.dailyShop.guis.confirmGuiBuy;
+import io.github.divios.dailyShop.guis.confirmGuiSell;
+import io.github.divios.dailyShop.utils.PriceWrapper;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.dLib.log.dLog;
@@ -38,13 +40,13 @@ public class sellTransaction {
 
             if (!item.getSetItems().isPresent()) {
 
-                confirmGui.open(p, item.getItem(), dShop.dShopT.sell,
+                confirmGuiSell.open(shop, p, item, dShop.dShopT.sell,
                         (item1, amount) -> {
                             if (!shop.getItem(item.getUid()).isPresent()) {     // Last check
                                 Msg.sendMsg(p, plugin.configM.getLangYml().MSG_INVALID_OPERATION);
                                 return;
                             }
-                            initTransaction(p, new dItem(item1), amount, shop);
+                            initTransaction(p, item, amount, shop);
                         },
                         player -> shop.openShop(p),
                         plugin.configM.getLangYml().CONFIRM_GUI_SELL_NAME,
@@ -105,7 +107,7 @@ public class sellTransaction {
             List<String> msg = Arrays.asList(Msg.singletonMsg(plugin.configM.getLangYml().MSG_BUY_ITEM)
                     .add("\\{action}", plugin.configM.getLangYml().MSG_SELL_ACTION)
                     .add("\\{amount}", "" + amount)
-                    .add("\\{price}", "" + item.getSellPrice().get().getPrice() * amount)
+                    .add("\\{price}", "" + PriceWrapper.format(item.getSellPrice().get().getPrice() * amount))
                     .add("\\{currency}", item.getEconomy().getName()).build().split("\\{item}"));
 
             dLog.log(
