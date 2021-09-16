@@ -175,7 +175,7 @@ public abstract class abstractConfirmGui {
         gui = new InventoryGUI(main, 54, title);
 
         gui.setDestroyOnClose(true);
-        gui.setOnDestroy(() -> Schedulers.sync().runLater(this::removeAllItems, 1L));
+        gui.setOnDestroy(() -> Schedulers.sync().runLater(this::removeAllItems, 2L));
 
         gui.getInventory().setItem(22, item);
 
