@@ -3,6 +3,7 @@ package io.github.divios.dailyShop.guis;
 import com.cryptomorin.xseries.XMaterial;
 import de.tr7zw.nbtapi.NBTItem;
 import io.github.divios.core_lib.Events;
+import io.github.divios.core_lib.Schedulers;
 import io.github.divios.core_lib.event.Subscription;
 import io.github.divios.core_lib.inventory.InventoryGUI;
 import io.github.divios.core_lib.inventory.ItemButton;
@@ -19,6 +20,7 @@ import io.github.divios.lib.dLib.stock.dStock;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
@@ -57,8 +59,10 @@ public class confirmGuiBuy extends abstractConfirmGui {
             p.getInventory().setItem(slot, i.getItem());
         }
 
-        Log.info(String.valueOf(amount));
+
         if (amount != 0) buyCache.put(p.getUniqueId(), new cacheEntry(item.getRawItem().clone(), amount));
+
+
     }
 
     public static void open(
@@ -100,8 +104,9 @@ public class confirmGuiBuy extends abstractConfirmGui {
                 .addLore(
                         Msg.singletonMsg(main.configM.getLangYml().CONFIRM_GUI_SELL_ITEM)
                                 .add("\\{price}",
-                                        PriceWrapper.format(added * dItem.getBuyPrice().get().getPrice())).build()
-                        , "&8- &7Quantity: &8" + added
+                                        PriceWrapper.format(added * dItem.getBuyPrice().get().getPrice()))
+                                .add("\\{quantity}", String.valueOf(added))
+                                .build()
                 )
         );
 
