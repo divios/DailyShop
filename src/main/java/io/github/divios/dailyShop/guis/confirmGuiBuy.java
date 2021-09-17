@@ -102,7 +102,7 @@ public class confirmGuiBuy extends abstractConfirmGui {
         gui.getInventory().setItem(39, ItemBuilder.of(XMaterial.GREEN_STAINED_GLASS)
                 .setName(confirmLore)
                 .addLore(
-                        Msg.singletonMsg(main.configM.getLangYml().CONFIRM_GUI_SELL_ITEM)
+                        Msg.msgList(main.configM.getLangYml().CONFIRM_GUI_SELL_ITEM)
                                 .add("\\{price}",
                                         PriceWrapper.format(added * dItem.getBuyPrice().get().getPrice()))
                                 .add("\\{quantity}", String.valueOf(added))
@@ -138,8 +138,10 @@ public class confirmGuiBuy extends abstractConfirmGui {
         if (added >= limit) return;
         NBTItem toAdd = new NBTItem(item.clone());
         toAdd.setBoolean("rds_temp_item", true);
-        IntStream.range(0, limit - added).forEach(value -> p.getInventory().addItem(toAdd.getItem()));
-        added = limit;
+
+        while(p.getInventory().addItem(toAdd.getItem()).isEmpty() || added < limit)
+            added += 1;
+
     }
 
     @Override
