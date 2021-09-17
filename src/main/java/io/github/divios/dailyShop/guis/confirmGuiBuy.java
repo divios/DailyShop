@@ -144,7 +144,6 @@ public class confirmGuiBuy extends abstractConfirmGui {
             if (added >= limit) break;
         }
 
-
     }
 
     @Override
