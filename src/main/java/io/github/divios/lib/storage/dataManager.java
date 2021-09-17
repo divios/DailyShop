@@ -3,8 +3,10 @@ package io.github.divios.lib.storage;
 import io.github.divios.core_lib.database.DataManagerAbstract;
 import io.github.divios.core_lib.database.DatabaseConnector;
 import io.github.divios.core_lib.database.SQLiteConnector;
+import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.timeStampUtils;
 import io.github.divios.dailyShop.DailyShop;
+import io.github.divios.dailyShop.utils.FutureUtils;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.dLib.synchronizedGui.syncMenu;
@@ -14,9 +16,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.Timestamp;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.UUID;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 public class dataManager extends DataManagerAbstract {
@@ -37,10 +39,10 @@ public class dataManager extends DataManagerAbstract {
         return instance;
     }
 
-    public CompletableFuture<HashSet<dShop>> getShops() {
+    public CompletableFuture<Set<dShop>> getShops() {
         return CompletableFuture.supplyAsync(() -> {
 
-            HashSet<dShop> shops = new LinkedHashSet<>();
+            Set<dShop> shops = new LinkedHashSet<>();
 
             this.databaseConnector.connect(connection -> {
                 try (Statement statement = connection.createStatement()) {
@@ -53,9 +55,9 @@ public class dataManager extends DataManagerAbstract {
                                 dShop.dShopT.valueOf(result.getString("type")),
                                 result.getString("gui"),
                                 timeStampUtils.deserialize(result.getString("timestamp")),
-                                result.getInt("timer"));
+                                result.getInt("timer"),
+                                FutureUtils.waitFor(getShop(name)));
 
-                        getShop(name).thenAccept(shop::setItems);
                         shops.add(shop);
                     }
                 }
@@ -65,10 +67,10 @@ public class dataManager extends DataManagerAbstract {
     }
 
 
-    public CompletableFuture<HashSet<dItem>> getShop(String name) {
+    public CompletableFuture<Set<dItem>> getShop(String name) {
         return CompletableFuture.supplyAsync(() -> {
 
-            HashSet<dItem> items = new LinkedHashSet<>();
+            Set<dItem> items = new LinkedHashSet<>();
 
             this.databaseConnector.connect(connection -> {
                 try (Statement statement = connection.createStatement()) {
@@ -90,7 +92,7 @@ public class dataManager extends DataManagerAbstract {
     public CompletableFuture<Void> createShop(dShop shop) {
         return CompletableFuture.runAsync(() -> this.databaseConnector.connect(connection -> {
 
-            String createShop = "INSERT INTO " + this.getTablePrefix() +
+            String createShop = "INSERT OR REPLACE INTO " + this.getTablePrefix() +
                     "active_shops (name, type, gui, timestamp, timer) VALUES (?, ?, ?, ?, ?)";
             try (PreparedStatement statement = connection.prepareStatement(createShop)) {
                 statement.setString(1, shop.getName());
@@ -105,7 +107,7 @@ public class dataManager extends DataManagerAbstract {
                 statement.execute("CREATE TABLE IF NOT EXISTS " + this.getTablePrefix() + "shop_"
                         + shop.getName() + "(" +
                         "itemSerial varchar [255], " +
-                        "uuid varchar [255] " +
+                        "uuid varchar [255] PRIMARY KEY" +
                         ")");
             }
 
@@ -149,7 +151,7 @@ public class dataManager extends DataManagerAbstract {
     public CompletableFuture<Void> addItem(String name, dItem item) {
         return CompletableFuture.runAsync(() -> this.databaseConnector.connect(connection -> {
 
-            String createShop = "INSERT INTO " + this.getTablePrefix() +
+            String createShop = "INSERT OR REPLACE INTO " + this.getTablePrefix() +
                     "shop_" + name + " (itemSerial, uuid) VALUES (?, ?)";
             try (PreparedStatement statement = connection.prepareStatement(createShop)) {
 
@@ -162,13 +164,31 @@ public class dataManager extends DataManagerAbstract {
         }));
     }
 
-    public CompletableFuture<Void> deleteItem(String name, UUID uid) {
+    public CompletableFuture<Void> deleteItem(String shopName, UUID uid) {
         return CompletableFuture.runAsync(() -> this.databaseConnector.connect(connection -> {
-            String deeleteItem = "DELETE FROM " + this.getTablePrefix() + "shop_" + name + " WHERE uuid = ?";
+            String deeleteItem = "DELETE FROM " + this.getTablePrefix() + "shop_" + shopName + " WHERE uuid = ?";
             try (PreparedStatement statement = connection.prepareStatement(deeleteItem)) {
                 statement.setString(1, uid.toString());
                 statement.executeUpdate();
             }
+        }));
+    }
+
+    public CompletableFuture<Void> deleteAllItems(String shopName) {
+        return CompletableFuture.runAsync(() -> this.databaseConnector.connect(connection -> {
+
+            try (Statement statement = connection.createStatement()) {
+                statement.execute("DROP TABLE " + this.getTablePrefix() + "shop_" + shopName);
+            }
+
+            try (Statement statement = connection.createStatement()) {
+                statement.execute("CREATE TABLE IF NOT EXISTS " + this.getTablePrefix() + "shop_"
+                        + shopName + "(" +
+                        "itemSerial varchar [255] , " +
+                        "uuid varchar [255] PRIMARY KEY" +
+                        ")");
+            }
+
         }));
     }
 
@@ -223,6 +243,5 @@ public class dataManager extends DataManagerAbstract {
             }
         }));
     }
-
 
 }

@@ -2,9 +2,7 @@ package io.github.divios.dailyShop.utils;
 
 import io.github.divios.core_lib.Schedulers;
 import io.github.divios.dailyShop.DailyShop;
-import io.github.divios.dailyShop.events.updateShopEvent;
 import io.github.divios.lib.managers.shopsManager;
-import org.bukkit.Bukkit;
 
 import java.io.File;
 import java.io.IOException;

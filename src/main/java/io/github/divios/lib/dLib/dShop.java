@@ -2,12 +2,16 @@ package io.github.divios.lib.dLib;
 
 import io.github.divios.core_lib.Events;
 import io.github.divios.core_lib.Schedulers;
+import io.github.divios.core_lib.event.SingleSubscription;
+import io.github.divios.core_lib.event.Subscription;
 import io.github.divios.core_lib.misc.timeStampUtils;
 import io.github.divios.core_lib.scheduler.Task;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.events.deletedShopEvent;
+import io.github.divios.dailyShop.events.reStockShopEvent;
 import io.github.divios.dailyShop.events.updateItemEvent;
 import io.github.divios.dailyShop.guis.settings.shopGui;
+import io.github.divios.dailyShop.utils.FutureUtils;
 import io.github.divios.lib.dLib.synchronizedGui.syncHashMenu;
 import io.github.divios.lib.dLib.synchronizedGui.syncMenu;
 import io.github.divios.lib.storage.dataManager;
@@ -18,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.sql.Timestamp;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 
 public class dShop {
 
@@ -33,6 +38,7 @@ public class dShop {
     private int timer;
 
     private final Set<Task> tasks = new HashSet<>();
+    private final Set<Subscription> listeners = new HashSet<>();
 
     public dShop(String name, dShopT type) {
         this.name = name;
@@ -54,19 +60,26 @@ public class dShop {
         ready();
     }
 
+    public dShop(String name, dShopT type, String base64, Timestamp timestamp, int timer, Set<dItem> items) {
+        this.name = name;
+        this.type = type;
+        this.timestamp = timestamp;
+        this.timer = timer;
+        items.forEach(dItem -> this.items.put(dItem.getUid(), dItem));
+
+        guis = syncHashMenu.fromJson(base64, this);
+        ready();
+    }
+
     private void ready() {
 
         tasks.add(
                 Schedulers.async().runRepeating(() -> {
 
-                    if (timeStampUtils.diff(timestamp,
-                            new Timestamp(System.currentTimeMillis())) > timer) {
+                    if (timer == -1) return;
+                    if (timeStampUtils.diff(timestamp, new Timestamp(System.currentTimeMillis())) > timer)
+                        reStock();
 
-                        timestamp = new Timestamp(System.currentTimeMillis());
-                        dManager.updateTimeStamp(this.name, this.timestamp);
-                        Schedulers.sync().runLater(guis::reStock, 1L);
-                        dManager.asyncUpdateGui(this.name, this.guis);
-                    }
                 }, 20, 20)
         );
 
@@ -86,6 +99,19 @@ public class dShop {
                     }
                 });
 
+        listeners.add(
+                Events.subscribe(reStockShopEvent.class)
+                        .filter(o -> o.getShop().equals(this))
+                        .handler(e -> reStock())
+        );
+
+    }
+
+    private void reStock() {
+        timestamp = new Timestamp(System.currentTimeMillis());
+        dManager.updateTimeStamp(this.name, this.timestamp);
+        Schedulers.sync().runLater(guis::reStock, 1L);
+        dManager.asyncUpdateGui(this.name, this.guis);
     }
 
     /**
@@ -184,12 +210,25 @@ public class dShop {
 
     }
 
+
     /**
      * Sets the items of this shop
      */
     public synchronized void setItems(@NotNull Set<dItem> items) {
-        this.items.clear();
-        items.forEach(dItem -> this.items.put(dItem.getUid(), dItem));
+
+        Map<UUID, dItem> newItems = new HashMap<>();
+        items.forEach(dItem -> newItems.put(dItem.getUid(), dItem));            // Cache values for a O(1) search
+
+        for (Iterator<Map.Entry<UUID, dItem>> it = this.items.entrySet().iterator(); it.hasNext(); ) {          // Remove items that are not on the newItems list
+            Map.Entry<UUID, dItem> entry = it.next();
+            if (newItems.containsKey(entry.getKey())) continue;
+
+            Bukkit.getPluginManager().callEvent(new updateItemEvent(entry.getValue(), updateItemEvent.updatetype.DELETE_ITEM, this));
+            dManager.deleteItem(name, entry.getKey());
+            it.remove();
+        }
+
+        items.forEach(this::addItem);       // Replace the old values for the new ones
     }
 
     /**
@@ -245,6 +284,8 @@ public class dShop {
         guis.destroy();
         tasks.forEach(Task::stop);
         tasks.clear();
+        listeners.forEach(Subscription::unregister);
+        listeners.clear();
     }
 
     @Override

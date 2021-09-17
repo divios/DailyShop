@@ -15,7 +15,7 @@ public class langResource extends resource{
     public String CONFIRM_GUI_SET_PANE;
     public String CONFIRM_GUI_RETURN_NAME;
     public String CONFIRM_GUI_RETURN_PANE_LORE;
-    public String CONFIRM_GUI_SELL_ITEM;
+    public List<String> CONFIRM_GUI_SELL_ITEM;
     public String CONFIRM_GUI_YES;
     public List<String> CONFIRM_GUI_YES_LORE;
     public String CONFIRM_GUI_NO;
@@ -177,7 +177,7 @@ public class langResource extends resource{
         CONFIRM_GUI_SET_PANE = yaml.getString("lang.confirm_gui.set_pane");
         CONFIRM_GUI_RETURN_NAME = yaml.getString("lang.confirm_gui.return_name");
         CONFIRM_GUI_RETURN_PANE_LORE = yaml.getString("lang.confirm_gui.return_pane_lore");
-        CONFIRM_GUI_SELL_ITEM = yaml.getString("lang.confirm_gui.sell_item");
+        CONFIRM_GUI_SELL_ITEM = parseLore(yaml.getString("lang.confirm_gui.sell_item"));
         CONFIRM_GUI_YES = yaml.getString("lang.confirm_gui.yes_name");
         CONFIRM_GUI_YES_LORE = parseLore(yaml.getString("lang.confirm_gui.yes_lore"));
         CONFIRM_GUI_NO = yaml.getString("lang.confirm_gui.no_name");
