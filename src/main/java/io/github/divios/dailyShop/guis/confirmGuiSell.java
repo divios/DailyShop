@@ -67,7 +67,7 @@ public class confirmGuiSell extends abstractConfirmGui {
                 .addLore(
                         Msg.msgList(main.configM.getLangYml().CONFIRM_GUI_SELL_ITEM)
                                 .add("\\{price}",
-                                        PriceWrapper.format(added * dItem.getBuyPrice().get().getPrice()))
+                                        PriceWrapper.format(added * dItem.getSellPrice().get().getPrice()))
                                 .add("\\{quantity}", String.valueOf(added))
                                 .build()
                 )
