@@ -79,7 +79,7 @@ public class transaction {
                         })
                         .withItem(
                                 ItemBuilder.of(item.getItem().clone()).addLore(
-                                        Msg.singletonMsg(plugin.configM.getLangYml().CONFIRM_GUI_SELL_ITEM)
+                                        Msg.msgList(plugin.configM.getLangYml().CONFIRM_GUI_SELL_ITEM)
                                                 .add("\\{price}",
                                                         String.valueOf(item.getSellPrice().get().getPrice())).build()
                                 ))
