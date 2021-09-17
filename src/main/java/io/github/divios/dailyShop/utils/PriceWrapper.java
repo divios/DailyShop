@@ -1,7 +1,5 @@
 package io.github.divios.dailyShop.utils;
 
-import io.github.divios.dailyShop.DailyShop;
-
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Locale;

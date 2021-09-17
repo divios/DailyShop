@@ -8,7 +8,8 @@ import io.github.divios.core_lib.misc.confirmIH;
 import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.events.updateItemEvent;
-import io.github.divios.dailyShop.guis.confirmGui;
+import io.github.divios.dailyShop.guis.confirmGuiBuy;
+import io.github.divios.dailyShop.utils.PriceWrapper;
 import io.github.divios.dailyShop.utils.utils;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dPrice;
@@ -35,6 +36,7 @@ public class transaction {
 
         if (p.hasPermission("dailyrandomshop." + shop.getName() + ".negate.buy") && !p.isOp()) {
             Msg.sendMsg(p, plugin.configM.getLangYml().MSG_INVALIDATE_BUY);
+            shop.openShop(p);
             return;
         }
 
@@ -54,9 +56,9 @@ public class transaction {
 
             if (!item.getSetItems().isPresent()) {
 
-                confirmGui.open(p, item.getItem(), dShop.dShopT.buy,
+                confirmGuiBuy.open(shop, p, item, dShop.dShopT.buy,
                         (item1, amount) -> {
-                            transaction.initTransaction(p, new dItem(item1), amount, shop);
+                            transaction.initTransaction(p, item, amount, shop);
                         }, player -> shop.openShop(p),
                         plugin.configM.getLangYml().CONFIRM_GUI_BUY_NAME,
                         plugin.configM.getLangYml().CONFIRM_GUI_YES,
@@ -75,7 +77,7 @@ public class transaction {
                         })
                         .withItem(
                                 ItemBuilder.of(item.getItem().clone()).addLore(
-                                        Msg.singletonMsg(plugin.configM.getLangYml().CONFIRM_GUI_SELL_ITEM)
+                                        Msg.msgList(plugin.configM.getLangYml().CONFIRM_GUI_SELL_ITEM)
                                                 .add("\\{price}",
                                                         String.valueOf(item.getSellPrice().get().getPrice())).build()
                                 ))
@@ -119,7 +121,7 @@ public class transaction {
         List<String> msg = Arrays.asList(Msg.singletonMsg(plugin.configM.getLangYml().MSG_BUY_ITEM)
                 .add("\\{action}", plugin.configM.getLangYml().MSG_BUY_ACTION)
                 .add("\\{amount}", "" + amount)
-                .add("\\{price}", "" + s.getPrice())
+                .add("\\{price}", "" + PriceWrapper.format(s.getPrice()))
                 .add("\\{currency}", s.getEcon().getName()).build().split("\\{item}"));
 
         if (msg.size() == 1) {
@@ -134,7 +136,7 @@ public class transaction {
                                 msg.get(0) + "<item>" + "&7" + msg.get(1)), item.getItem().getType(), (short) 0, null);
         }
 
-        Schedulers.sync().runLater(() -> shop.openShop(p), 1L);
+        Schedulers.sync().run(() -> shop.openShop(p));
 
     }
 

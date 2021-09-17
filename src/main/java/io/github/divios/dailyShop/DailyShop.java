@@ -47,13 +47,15 @@ public class DailyShop extends JavaPlugin {
         try { Class.forName("io.github.divios.core_lib.inventory.materialsPrompt");  // loads all materials
         } catch (ClassNotFoundException ignored) {}
 
+        try { Class.forName("io.github.divios.dailyShop.guis.confirmGuiBuy");  // loads Events
+        } catch (ClassNotFoundException ignored) {}
+
     }
 
     @Override
     public void onDisable() {
         shopsManager.getInstance().getShops()       // Updates all the guis before disable
-                .forEach(shop -> dataManager.getInstance()
-                        .syncUpdateGui(shop.getName(), shop.getGuis()));
+                .forEach(shop -> dataManager.getInstance().syncUpdateGui(shop.getName(), shop.getGuis()));
     }
 
     public void reloadPlugin() {
