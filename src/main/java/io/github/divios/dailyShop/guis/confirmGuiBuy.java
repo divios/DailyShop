@@ -139,8 +139,10 @@ public class confirmGuiBuy extends abstractConfirmGui {
         NBTItem toAdd = new NBTItem(item.clone());
         toAdd.setBoolean("rds_temp_item", true);
 
-        while(p.getInventory().addItem(toAdd.getItem()).isEmpty() || added < limit)
+        while(p.getInventory().addItem(toAdd.getItem()).isEmpty()) {
             added += 1;
+            if (added >= limit) break;
+        }
 
     }
 
