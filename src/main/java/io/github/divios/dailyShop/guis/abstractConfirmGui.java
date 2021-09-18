@@ -48,7 +48,7 @@ public abstract class abstractConfirmGui {
                         if (nbtItem.hasKey("rds_temp_item")) item.setAmount(0);
                     }
                     cacheEntry entryb = buyCache.get(e.getEntity().getUniqueId());
-                    if (entryb != null) {
+                    if (entryb != null && entryb.getQuantity() > 0) {
                         int quantity = entryb.getQuantity();
                         while (quantity > 64) {
                             e.getDrops().add(ItemBuilder.of(entryb.getItem()).setCount(64));
@@ -59,7 +59,7 @@ public abstract class abstractConfirmGui {
                     }
 
                     cacheEntry entry = sellCache.get(e.getEntity().getUniqueId());
-                    if (entry != null) {
+                    if (entry != null && entry.getQuantity() > 0) {
                         int quantity = entry.getQuantity();
                         while (quantity > 64) {
                             e.getDrops().add(ItemBuilder.of(entry.getItem()).setCount(64));
@@ -84,13 +84,13 @@ public abstract class abstractConfirmGui {
                         if (new NBTItem(item).hasKey("rds_temp_item")) item.setAmount(0);
                     }
                     cacheEntry entryb = buyCache.get(e.getPlayer().getUniqueId());
-                    if (entryb != null) {
+                    if (entryb != null && entryb.getQuantity() > 0) {
                         entryb.restore(e.getPlayer());
                         buyCache.remove(e.getPlayer().getUniqueId());
                     }
 
                     cacheEntry entry = sellCache.get(e.getPlayer().getUniqueId());
-                    if (entry != null) {
+                    if (entry != null && entry.getQuantity() > 0) {
                         entry.restore(e.getPlayer());
                         sellCache.remove(e.getPlayer().getUniqueId());
                     }
