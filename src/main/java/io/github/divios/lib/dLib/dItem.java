@@ -14,6 +14,8 @@ import io.github.divios.dailyShop.economies.vault;
 import io.github.divios.dailyShop.utils.utils;
 import io.github.divios.lib.dLib.stock.dStock;
 import io.github.divios.lib.dLib.stock.factory.dStockFactory;
+import net.Indyuce.mmoitems.MMOItems;
+import net.Indyuce.mmoitems.api.Type;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
@@ -70,7 +72,20 @@ public class dItem implements Serializable, Cloneable {
      * @return
      */
     public ItemStack getRawItem() {
-        return ItemUtils.deserialize(item.getString("rds_rawItem"));
+
+        ItemStack rawItem = ItemUtils.deserialize(item.getString("rds_rawItem"));
+        if (utils.isOperative("MMOItems")) {
+            try {
+                net.mmogroup.mmolib.api.item.NBTItem mmoitem = net.mmogroup.mmolib.api.item.NBTItem.get(rawItem);
+                if (mmoitem.hasType()) {
+                    return MMOItems.plugin.getItem(Type.get(mmoitem.getType()), mmoitem.getString("MMOITEMS_ITEM_ID"));
+                }
+            } catch (Exception e) {
+                return rawItem;
+            }
+        }
+
+        return rawItem;
     }
 
     /**
