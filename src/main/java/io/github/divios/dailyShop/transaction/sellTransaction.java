@@ -91,14 +91,16 @@ public class sellTransaction {
             }
         }
 
-        int removed = ItemUtils.count(p.getInventory(), item.getRawItem());
+        int removed = ItemUtils.count(p.getInventory(), item.getRawItem(), confirmGuiSell.getComparison(item.getItem()));
 
-        if (removed < amount)
+        if (removed < amount) {
             Msg.sendMsg(p, plugin.configM.getLangYml().MSG_NOT_ITEMS);
+        }
+
 
         else {
 
-            ItemUtils.remove(p.getInventory(), item.getRawItem(), amount);
+            ItemUtils.remove(p.getInventory(), item.getRawItem(), amount, confirmGuiSell.getComparison(item.getItem()));
             p.updateInventory();
 
             item.getEconomy().depositMoney(p, item.getSellPrice().get().getPrice() *

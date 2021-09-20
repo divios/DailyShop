@@ -34,7 +34,7 @@ public abstract class abstractConfirmGui {
 
     protected static final DailyShop main = DailyShop.getInstance();
 
-    protected static final Map<UUID, cacheEntry> sellCache = new ConcurrentHashMap<>();
+    protected static final Map<UUID, List<ItemStack>> sellCache = new ConcurrentHashMap<>();
     protected static final Map<UUID, cacheEntry> buyCache = new ConcurrentHashMap<>();
 
     static {
@@ -58,16 +58,12 @@ public abstract class abstractConfirmGui {
                         buyCache.remove(e.getEntity().getUniqueId());
                     }
 
-                    cacheEntry entry = sellCache.get(e.getEntity().getUniqueId());
-                    if (entry != null && entry.getQuantity() > 0) {
-                        int quantity = entry.getQuantity();
-                        while (quantity > 64) {
-                            e.getDrops().add(ItemBuilder.of(entry.getItem()).setCount(64));
-                            quantity -= 64;
-                        }
-                        e.getDrops().add(ItemBuilder.of(entry.getItem()).setCount(quantity));
-                        sellCache.remove(e.getEntity().getUniqueId());
-                    }
+                    List<ItemStack> removedItems = sellCache.remove(e.getEntity().getUniqueId());
+                    if (removedItems == null) return;
+                    removedItems.forEach(itemStack -> {
+                        if (!ItemUtils.isEmpty(itemStack))
+                            ItemUtils.give(e.getEntity(), itemStack);
+                    });
 
                 });
 
@@ -89,11 +85,12 @@ public abstract class abstractConfirmGui {
                         buyCache.remove(e.getPlayer().getUniqueId());
                     }
 
-                    cacheEntry entry = sellCache.get(e.getPlayer().getUniqueId());
-                    if (entry != null && entry.getQuantity() > 0) {
-                        entry.restore(e.getPlayer());
-                        sellCache.remove(e.getPlayer().getUniqueId());
-                    }
+                    List<ItemStack> removedItems = sellCache.remove(e.getPlayer().getUniqueId());
+                    if (removedItems == null) return;
+                    removedItems.forEach(itemStack -> {
+                        if (!ItemUtils.isEmpty(itemStack))
+                            ItemUtils.give(e.getPlayer(), itemStack);
+                    });
 
                 });
     }
@@ -123,7 +120,7 @@ public abstract class abstractConfirmGui {
     protected final ItemStack setPane = ItemBuilder.of(XMaterial.YELLOW_STAINED_GLASS)
             .setName(main.configM.getLangYml().CONFIRM_GUI_SET_PANE);
 
-    protected static final int MAX_AMOUNT = 64 * 9 * 4;
+    protected static final int MAX_ITEMS_AMOUNT = 64 * 9 * 4;
 
     protected final BiConsumer<ItemStack, Integer> c;
     protected final Consumer<Player> b;
@@ -141,7 +138,6 @@ public abstract class abstractConfirmGui {
     protected InventoryGUI gui;
 
     protected int stock;
-    protected int maxPriceAmount;
 
     protected abstractConfirmGui(
             dShop shop,
