@@ -2,16 +2,9 @@ package io.github.divios.dailyShop.guis;
 
 import com.cryptomorin.xseries.XMaterial;
 import de.tr7zw.nbtapi.NBTItem;
-import io.github.divios.core_lib.Events;
-import io.github.divios.core_lib.Schedulers;
-import io.github.divios.core_lib.event.Subscription;
-import io.github.divios.core_lib.inventory.InventoryGUI;
-import io.github.divios.core_lib.inventory.ItemButton;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.Msg;
-import io.github.divios.core_lib.utils.Log;
-import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.utils.FutureUtils;
 import io.github.divios.dailyShop.utils.PriceWrapper;
 import io.github.divios.lib.dLib.dItem;
@@ -19,15 +12,9 @@ import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.dLib.stock.dStock;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.player.PlayerDropItemEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.stream.IntStream;
@@ -81,30 +68,48 @@ public class confirmGuiBuy extends abstractConfirmGui {
 
 
     private int getMinLimit() {
-        int stockLimit = dItem.hasStock() ? FutureUtils.waitFor(dStock.searchStock(p, shop, dItem.getUid())) : MAX_AMOUNT;
+        int stockLimit = dItem.hasStock() ? FutureUtils.waitFor(dStock.searchStock(p, shop, dItem.getUid())) : MAX_ITEMS_AMOUNT;
         int balanceLimit = (int) Math.floor(dItem.getEconomy().getBalance(p) / dItem.getBuyPrice().get().getPrice());
+        int inventoryLimit = added + getInventoryLimit();
 
-        return Math.min(balanceLimit, Math.min(MAX_AMOUNT, stockLimit));
+        int minLimit = Math.min(inventoryLimit, Math.min(balanceLimit, stockLimit));
+
+        return minLimit;
+
+    }
+
+    private int getInventoryLimit() {
+        int limit = 0;
+        Inventory playerMockInventory = Bukkit.createInventory(null, 36);
+
+        for (int i = 0; i < 36; i++) {
+            playerMockInventory.setItem(i, p.getInventory().getItem(i));
+        }
+
+        while (playerMockInventory.addItem(item).isEmpty()) {
+            limit++;
+        }
+        return limit;
     }
 
     @Override
     protected void update() {
 
         Inventory inv = gui.getInventory();
+        int limit = getMinLimit();
 
         inv.setItem(20, added >= 1 ? rem1 : XMaterial.AIR.parseItem());
         inv.setItem(19, added >= 10 ? rem5 : XMaterial.AIR.parseItem());
         inv.setItem(18, added >= 64 ? rem10 : XMaterial.AIR.parseItem());
-        inv.setItem(24, added <= getMinLimit() - 1 ? add1 : XMaterial.AIR.parseItem());
-        inv.setItem(25, added <= getMinLimit() - 10 ? add5 : XMaterial.AIR.parseItem());
-        inv.setItem(26, added <= getMinLimit() - 64 ? add10 : XMaterial.AIR.parseItem());
+        inv.setItem(24, added <= limit - 1 ? add1 : XMaterial.AIR.parseItem());
+        inv.setItem(25, added <= limit - 10 ? add5 : XMaterial.AIR.parseItem());
+        inv.setItem(26, added <= limit - 64 ? add10 : XMaterial.AIR.parseItem());
 
         gui.getInventory().setItem(39, ItemBuilder.of(XMaterial.GREEN_STAINED_GLASS)
                 .setName(confirmLore)
                 .addLore(
                         Msg.msgList(main.configM.getLangYml().CONFIRM_GUI_SELL_ITEM)
-                                .add("\\{price}",
-                                        PriceWrapper.format(added * dItem.getBuyPrice().get().getPrice()))
+                                .add("\\{price}", PriceWrapper.format(added * dItem.getBuyPrice().get().getPrice()))
                                 .add("\\{quantity}", String.valueOf(added))
                                 .build()
                 )
