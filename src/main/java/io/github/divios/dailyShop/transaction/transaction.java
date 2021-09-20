@@ -22,6 +22,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -237,12 +238,7 @@ public class transaction {
 
         if (!item.getCommands().isPresent() &&
                 !item.getBundle().isPresent())
-            s.addRunnable(() -> {
-                ItemStack aux = item.getRawItem();
-                aux.setAmount(1);
-                IntStream.range(0, amount).
-                        forEach(i -> p.getInventory().addItem(aux));
-            });
+            s.addRunnable(() -> IntStream.range(0, amount).forEach(i -> p.getInventory().addItem(ItemBuilder.of(item.getRawItem()).setCount(1))));
 
         return s;
     }
