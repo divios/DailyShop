@@ -18,7 +18,7 @@ import java.util.*;
 public class dButtonState {
 
     private String name;
-    private List<String> lore;
+    private List<String> lore = new ArrayList<>();
     private Material material;
     private Integer quantity;
     private Map<String, Integer> enchantments = new HashMap<>();
@@ -35,7 +35,9 @@ public class dButtonState {
     public dButtonState(dItem item) {
 
         name = FormatUtils.unColor(ItemUtils.getName(item.getItem()));
-        lore = item.getLore().isEmpty() ? null : item.getLore();
+        List<String> coloredLore = ItemUtils.getLore(item.getItem());
+        coloredLore.forEach(s -> lore.add(FormatUtils.unColor(s)));
+        if (lore.isEmpty()) lore = null;
         material = item.getMaterial();
         quantity = item.getQuantity();
         item.getEnchantments().forEach((enchantment, integer) -> enchantments.put(enchantment.getName(), integer));
