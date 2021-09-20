@@ -5,6 +5,7 @@ import com.cryptomorin.xseries.XMaterial;
 import de.tr7zw.nbtapi.NBTCompound;
 import de.tr7zw.nbtapi.NBTContainer;
 import de.tr7zw.nbtapi.NBTItem;
+import io.github.divios.core_lib.cache.Lazy;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.Pair;
@@ -14,6 +15,7 @@ import io.github.divios.dailyShop.economies.vault;
 import io.github.divios.dailyShop.utils.utils;
 import io.github.divios.lib.dLib.stock.dStock;
 import io.github.divios.lib.dLib.stock.factory.dStockFactory;
+import net.Indyuce.mmoitems.MMOItems;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
@@ -36,6 +38,7 @@ public class dItem implements Serializable, Cloneable {
 
     private NBTItem item;
     private dStock stock = null;
+    private Lazy<ItemStack> rawItem;
 
     public static dItem of(ItemStack item) {
         return new dItem(item);
@@ -62,6 +65,7 @@ public class dItem implements Serializable, Cloneable {
 
     private void setRawItem(@NotNull ItemStack rawItem) {
         item.setString("rds_rawItem", ItemUtils.serialize(rawItem));
+        this.rawItem = Lazy.suppliedBy(() -> ItemUtils.deserialize(item.getString("rds_rawItem")));
     }
 
     /**
@@ -70,7 +74,22 @@ public class dItem implements Serializable, Cloneable {
      * @return
      */
     public ItemStack getRawItem() {
-        return ItemUtils.deserialize(item.getString("rds_rawItem"));
+
+        if (utils.isOperative("MMOItems") && io.lumine.mythic.lib.api.item.NBTItem.get(rawItem.get()).hasType()) {
+            try {
+
+                io.lumine.mythic.lib.api.item.NBTItem mmoitem = io.lumine.mythic.lib.api.item.NBTItem.get(rawItem.get().clone());
+                String type = mmoitem.getType();
+                String id = mmoitem.getString("MMOITEMS_ITEM_ID");
+
+                return MMOItems.plugin.getItem(net.Indyuce.mmoitems.api.Type.get(type), id);
+
+            } catch (Exception e) {
+                return rawItem.get();
+            }
+        }
+
+        return rawItem.get();
     }
 
     /**
@@ -90,6 +109,7 @@ public class dItem implements Serializable, Cloneable {
             setSellPrice(plugin.configM.getSettingsYml().DEFAULT_SELL); // Default sell price
         }
 
+        rawItem = Lazy.suppliedBy(() -> ItemUtils.deserialize(this.item.getString("rds_rawItem")));
         migratePerms();
         stock = retrieveStock();
     }
@@ -713,7 +733,7 @@ public class dItem implements Serializable, Cloneable {
      * @return
      */
     public dItem copy() {
-        dItem cloned = fromJson(toJson());
+        dItem cloned = new dItem(getItem());
         cloned.setUid(UUID.randomUUID());
         cloned.setStock(getStock());
         return cloned;
@@ -725,7 +745,7 @@ public class dItem implements Serializable, Cloneable {
      */
     @Override
     public dItem clone() {
-        return fromJson(toJson());
+        return new dItem(getItem());
     }
 
     public static dItem AIR() {
