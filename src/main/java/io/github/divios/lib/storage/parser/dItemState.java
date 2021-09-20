@@ -19,7 +19,7 @@ import java.util.*;
 public class dItemState {
 
     private String name;
-    private List<String> lore;
+    private List<String> lore = new ArrayList<>();
     private Material material;
     private Integer quantity;
     private Map<String, Integer> enchantments = new HashMap<>();
@@ -33,7 +33,8 @@ public class dItemState {
     private dItemState(ItemStack item) {
 
         name = FormatUtils.unColor(ItemUtils.getName(item));
-        lore = ItemUtils.getLore(item);
+        List<String> coloredLore = ItemUtils.getLore(item);
+        coloredLore.forEach(s -> lore.add(FormatUtils.unColor(s)));
         material = ItemUtils.getMaterial(item);
         quantity = item.getAmount();
         dailyShop_meta = dItemMetaState.of(item);
@@ -76,6 +77,7 @@ public class dItemState {
         if (quantity != null && quantity == 1) quantity = null;
         if (enchantments.isEmpty()) enchantments = null;
         if (nbt.size() == 0) nbt = null;
+
     }
 
     public String getName() {
