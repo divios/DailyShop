@@ -92,7 +92,6 @@ public class ParserApi {
 
     }
 
-
     private static final class jsonEntry {
 
         private final String id;

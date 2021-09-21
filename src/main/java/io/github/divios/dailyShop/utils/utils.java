@@ -235,4 +235,8 @@ public class utils {
         return HH + ":" + MM + ":" + SS;
     }
 
+    public static boolean playerIsOnline(Player player) {
+        return Bukkit.getPlayer(player.getUniqueId()) != null;
+    }
+
 }

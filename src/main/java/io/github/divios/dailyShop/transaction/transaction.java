@@ -8,9 +8,9 @@ import io.github.divios.core_lib.misc.confirmIH;
 import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.events.updateItemEvent;
-import io.github.divios.dailyShop.guis.confirmGuiBuy;
 import io.github.divios.dailyShop.utils.PriceWrapper;
 import io.github.divios.dailyShop.utils.utils;
+import io.github.divios.lib.dLib.confirmMenu.buyConfirmMenu;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dPrice;
 import io.github.divios.lib.dLib.dShop;
@@ -19,10 +19,8 @@ import io.github.divios.lib.dLib.log.options.dLogEntry;
 import io.github.divios.lib.dLib.stock.dStock;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -59,13 +57,13 @@ public class transaction {
 
             if (!item.getSetItems().isPresent()) {
 
-                confirmGuiBuy.open(shop, p, item, dShop.dShopT.buy,
-                        (item1, amount) -> {
-                            transaction.initTransaction(p, item, amount, shop);
-                        }, player -> shop.openShop(p),
-                        plugin.configM.getLangYml().CONFIRM_GUI_BUY_NAME,
-                        plugin.configM.getLangYml().CONFIRM_GUI_YES,
-                        plugin.configM.getLangYml().CONFIRM_GUI_NO);
+                buyConfirmMenu.builder()
+                        .withShop(shop)
+                        .withPlayer(p)
+                        .withItem(item)
+                        .withOnCompleteAction(integer -> initTransaction(p, item, integer, shop))
+                        .withFallback(() -> shop.openShop(p))
+                        .prompt();
 
             } else {
 
