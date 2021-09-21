@@ -44,7 +44,13 @@ public class sellTransaction {
     }
 
     private void initTransaction() {
-        if (checkPriceAndPermsConditions()) return;
+        try {
+           checkPriceAndPermsConditions())
+        } catch (Exception errorMsg) {
+           Msg.sendMsg(p, errorMsg.getMessage());
+           shop.open(p);
+           return;
+        }
 
         if (item.isConfirmGuiEnabled()) {
             if (!item.getSetItems().isPresent())
@@ -56,7 +62,12 @@ public class sellTransaction {
     }
 
     private void runTransaction() {
-        if (!checkItemsPermsAndAmountConditions()) return;
+        try {
+            checkItemsPermsAndAmountConditions());
+        } catch (Exception errorMsg) {
+            Msg.sendMsg(p, errorMsg.getMessage());
+            return;
+        }
         removeItemsFromPlayer();
         depositMoney();
         logTransaction();
@@ -65,19 +76,14 @@ public class sellTransaction {
     }
 
 
-    private boolean checkPriceAndPermsConditions() {
-        boolean result = true;
+    private void checkPriceAndPermsConditions() throws Exception {
         if (hasNegatePermission() && !p.isOp()) {
-            Msg.sendMsg(p, plugin.configM.getLangYml().MSG_INVALIDATE_SELL);
-            result = false;
+            throw new Exception(plugin.configM.getLangYml().MSG_INVALIDATE_SELL));
         }
 
         if (invalidSellPrice()) {
-            Msg.sendMsg(p, plugin.configM.getLangYml().MSG_INVALID_SELL);
-            shop.openShop(p);
-            result = false;
+            throw new Exception(plugin.configM.getLangYml().MSG_INVALID_SELL));
         }
-        return result;
     }
 
     private void openConfirmMenu() {
@@ -112,15 +118,9 @@ public class sellTransaction {
             shop.openShop(p);
     }
 
-    private boolean checkItemsPermsAndAmountConditions() {
-        try {
-            hasNecessaryPermissions();
-            hasEnoughItems();
-        } catch (Exception conditionErrorMsg) {
-            Msg.sendMsg(p, conditionErrorMsg.getMessage());
-            return false;
-        }
-        return true;
+    private boolean checkItemsPermsAndAmountConditions() throws Exception {
+        hasNecessaryPermissions();
+        hasEnoughItems();
     }
 
     private void removeItemsFromPlayer() {
