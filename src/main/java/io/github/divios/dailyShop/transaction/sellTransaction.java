@@ -6,9 +6,9 @@ import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.core_lib.misc.Msg;
 import io.github.divios.core_lib.misc.confirmIH;
 import io.github.divios.dailyShop.DailyShop;
-import io.github.divios.dailyShop.guis.confirmGuiBuy;
-import io.github.divios.dailyShop.guis.confirmGuiSell;
+import io.github.divios.dailyShop.utils.CompareItemUtils;
 import io.github.divios.dailyShop.utils.PriceWrapper;
+import io.github.divios.lib.dLib.confirmMenu.sellConfirmMenu;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.dLib.log.dLog;
@@ -40,18 +40,13 @@ public class sellTransaction {
 
             if (!item.getSetItems().isPresent()) {
 
-                confirmGuiSell.open(shop, p, item, dShop.dShopT.sell,
-                        (item1, amount) -> {
-                            if (!shop.getItem(item.getUid()).isPresent()) {     // Last check
-                                Msg.sendMsg(p, plugin.configM.getLangYml().MSG_INVALID_OPERATION);
-                                return;
-                            }
-                            initTransaction(p, item, amount, shop);
-                        },
-                        player -> shop.openShop(p),
-                        plugin.configM.getLangYml().CONFIRM_GUI_SELL_NAME,
-                        plugin.configM.getLangYml().CONFIRM_GUI_YES,
-                        plugin.configM.getLangYml().CONFIRM_GUI_NO);
+                sellConfirmMenu.builder()
+                        .withShop(shop)
+                        .withPlayer(p)
+                        .withItem(item)
+                        .withOnCompleteAction(quantity -> initTransaction(p, item, quantity, shop))
+                        .withFallback(() -> shop.openShop(p))
+                        .build();
 
             } else {
 
@@ -91,7 +86,7 @@ public class sellTransaction {
             }
         }
 
-        int removed = ItemUtils.count(p.getInventory(), item.getRawItem(), confirmGuiSell.getComparison(item.getItem()));
+        int removed = ItemUtils.count(p.getInventory(), item.getRawItem(), CompareItemUtils::compareItems);
 
         if (removed < amount) {
             Msg.sendMsg(p, plugin.configM.getLangYml().MSG_NOT_ITEMS);
@@ -100,7 +95,7 @@ public class sellTransaction {
 
         else {
 
-            ItemUtils.remove(p.getInventory(), item.getRawItem(), amount, confirmGuiSell.getComparison(item.getItem()));
+            ItemUtils.remove(p.getInventory(), item.getRawItem(), amount, CompareItemUtils::compareItems);
             p.updateInventory();
 
             item.getEconomy().depositMoney(p, item.getSellPrice().get().getPrice() *
