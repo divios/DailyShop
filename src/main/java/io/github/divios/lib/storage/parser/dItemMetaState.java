@@ -33,7 +33,7 @@ public class dItemMetaState {
         sellPerms = item.getPermsSell().orElse(null);
         commands = item.getCommands().orElse(null);
         bundle = item.getBundle().orElse(null);
-        confirm_gui = item.getConfirm_gui();
+        confirm_gui = item.isConfirmGuiEnabled();
         rarity = item.getRarity().getKey();
         econ = item.getEconomy().getKey() + ":" + item.getEconomy().getCurrency();
 

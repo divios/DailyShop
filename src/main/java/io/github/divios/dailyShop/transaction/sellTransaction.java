@@ -13,128 +13,225 @@ import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.dLib.log.dLog;
 import io.github.divios.lib.dLib.log.options.dLogEntry;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+@SuppressWarnings({"ConstantConditions"})
 public class sellTransaction {
 
     private static final DailyShop plugin = DailyShop.getInstance();
 
-    public static void init(Player p, dItem item, dShop shop) {
+    private final Player p;
+    private final dItem item;
+    private final dShop shop;
 
-        if (p.hasPermission("dailyrandomshop." + shop.getName() + ".negate.sell") && !p.isOp()) {
-            Msg.sendMsg(p, plugin.configM.getLangYml().MSG_INVALIDATE_SELL);
-            return;
-        }
-
-        if (!item.getSellPrice().isPresent() || item.getSellPrice().get().getPrice() == -1) {
-            Msg.sendMsg(p, plugin.configM.getLangYml().MSG_INVALID_SELL);
-            shop.openShop(p);
-            return;
-        }
-
-        if (item.getConfirm_gui()) {
-
-            if (!item.getSetItems().isPresent()) {
-
-                sellConfirmMenu.builder()
-                        .withShop(shop)
-                        .withPlayer(p)
-                        .withItem(item)
-                        .withOnCompleteAction(quantity -> initTransaction(p, item, quantity, shop))
-                        .withFallback(() -> shop.openShop(p))
-                        .build();
-
-            } else {
-
-                confirmIH.builder()
-                        .withPlayer(p)
-                        .withItem(
-                                ItemBuilder.of(item.getItem().clone())
-                                        .addLore(
-                                                Msg.msgList(plugin.configM.getLangYml().CONFIRM_GUI_SELL_ITEM)
-                                                        .add("\\{price}",
-                                                        String.valueOf(item.getSellPrice().get().getPrice())).build()))
-                        .withAction(aBoolean -> {
-                            if (aBoolean) {
-                                if (!shop.getItem(item.getUid()).isPresent()) {     // Last check
-                                    Msg.sendMsg(p, plugin.configM.getLangYml().MSG_INVALID_OPERATION);
-                                    return;
-                                }
-                                initTransaction(p, item, item.getQuantity(), shop);
-                            }
-                            else
-                                shop.openShop(p);
-                        })
-                        .withTitle(plugin.configM.getLangYml().CONFIRM_GUI_SELL_NAME)
-                        .withConfirmLore(plugin.configM.getLangYml().CONFIRM_GUI_YES, plugin.configM.getLangYml().CONFIRM_GUI_YES_LORE)
-                        .withCancelLore(plugin.configM.getLangYml().CONFIRM_GUI_NO, plugin.configM.getLangYml().CONFIRM_GUI_NO_LORE)
-                        .prompt();
-            }
-        } else initTransaction(p, item, item.getQuantity(), shop);
+    public static sellTransaction create(Player p, dItem item, dShop shop) {
+        return new sellTransaction(p, item, shop);
     }
 
-    private static void initTransaction(Player p, dItem item, int amount, dShop shop) {
+    private sellTransaction(Player p, dItem item, dShop shop) {
+        this.p = p;
+        this.item = item;
+        this.shop = shop;
 
-        for (String perm : item.getPermsSell().orElse(Collections.emptyList())) {
-            if (!p.hasPermission(perm)) {
-                Msg.sendMsg(p, plugin.configM.getLangYml().MSG_NOT_PERMS_ITEM);
+        initTransaction();
+    }
+
+    private void initTransaction() {
+        if (checkPriceAndPermsConditions()) return;
+
+        if (item.isConfirmGuiEnabled()) {
+            if (!item.getSetItems().isPresent())
+                openConfirmMenu();
+            else
+                openSingleConfirmMenu();
+
+        } else runTransaction();
+    }
+
+    private void runTransaction() {
+        if (!checkItemsPermsAndAmountConditions()) return;
+        removeItemsFromPlayer();
+        depositMoney();
+        logTransaction();
+        sendMessage();
+        shop.openShop(p);
+    }
+
+
+    private boolean checkPriceAndPermsConditions() {
+        boolean result = true;
+        if (hasNegatePermission() && !p.isOp()) {
+            Msg.sendMsg(p, plugin.configM.getLangYml().MSG_INVALIDATE_SELL);
+            result = false;
+        }
+
+        if (invalidSellPrice()) {
+            Msg.sendMsg(p, plugin.configM.getLangYml().MSG_INVALID_SELL);
+            shop.openShop(p);
+            result = false;
+        }
+        return result;
+    }
+
+    private void openConfirmMenu() {
+        sellConfirmMenu.builder()
+                .withShop(shop)
+                .withPlayer(p)
+                .withItem(item)
+                .withOnCompleteAction(quantity -> initTransaction())
+                .withFallback(() -> shop.openShop(p))
+                .build();
+    }
+
+    private void openSingleConfirmMenu() {
+        confirmIH.builder()
+                .withPlayer(p)
+                .withItem(getItem())
+                .withAction(this::runSingleConfirmMenuAction)
+                .withTitle(plugin.configM.getLangYml().CONFIRM_GUI_SELL_NAME)
+                .withConfirmLore(plugin.configM.getLangYml().CONFIRM_GUI_YES, plugin.configM.getLangYml().CONFIRM_GUI_YES_LORE)
+                .withCancelLore(plugin.configM.getLangYml().CONFIRM_GUI_NO, plugin.configM.getLangYml().CONFIRM_GUI_NO_LORE)
+                .prompt();
+    }
+
+    private void runSingleConfirmMenuAction(boolean playerChoice) {
+        if (playerChoice) {
+            if (!itemExistOnShop()) {
+                Msg.sendMsg(p, plugin.configM.getLangYml().MSG_INVALID_OPERATION);
                 return;
             }
+            initTransaction();
+        } else
+            shop.openShop(p);
+    }
+
+    private boolean checkItemsPermsAndAmountConditions() {
+        try {
+            hasNecessaryPermissions();
+            hasEnoughItems();
+        } catch (Exception conditionErrorMsg) {
+            Msg.sendMsg(p, conditionErrorMsg.getMessage());
+            return false;
         }
+        return true;
+    }
 
-        int removed = ItemUtils.count(p.getInventory(), item.getRawItem(), CompareItemUtils::compareItems);
+    private void removeItemsFromPlayer() {
+        ItemUtils.remove(p.getInventory(), item.getRawItem(), item.getQuantity(), CompareItemUtils::compareItems);
+    }
 
-        if (removed < amount) {
-            Msg.sendMsg(p, plugin.configM.getLangYml().MSG_NOT_ITEMS);
+    private void depositMoney() {
+        item.getEconomy().depositMoney(p, getItemPrice());
+    }
+
+    private void logTransaction() {
+        dLog.log(
+                dLogEntry.builder()
+                        .withPlayer(p)
+                        .withShopID(shop.getName())
+                        .withItemUUID(item.getUid())
+                        .withRawItem(item.getRawItem())
+                        .withQuantity(item.getQuantity())
+                        .withType(dShop.dShopT.sell)
+                        .withPrice(getItemPrice())
+                        .build()
+        );
+    }
+
+    private void sendMessage() {
+        List<String> msg = createMsg();
+
+        if (msg.size() == 1) {      // if {item} is included
+            Msg.sendMsg(p, msg.get(0));
+        } else {
+            if (!itemWithCustomName())
+                sendNormalMessage(msg);
+            else
+                sendTranslatedMaterialMessage(msg);
         }
+    }
 
+    private ItemStack getItem() {
+        return ItemBuilder.of(item.getItem().clone()).
+                addLore(getItemLore());
+    }
 
-        else {
+    private boolean hasNegatePermission() {
+        return p.hasPermission("dailyrandomshop." + shop.getName() + ".negate.sell");
+    }
 
-            ItemUtils.remove(p.getInventory(), item.getRawItem(), amount, CompareItemUtils::compareItems);
-            p.updateInventory();
+    private boolean invalidSellPrice() {
+        return !item.getSellPrice().isPresent() || item.getSellPrice().get().getPrice() == -1;
+    }
 
-            item.getEconomy().depositMoney(p, item.getSellPrice().get().getPrice() *
-                    (item.getSetItems().isPresent() ? 1 : amount));
+    private boolean itemExistOnShop() {
+        return shop.getItem(item.getUid()).isPresent();
+    }
 
-            List<String> msg = Arrays.asList(Msg.singletonMsg(plugin.configM.getLangYml().MSG_BUY_ITEM)
-                    .add("\\{action}", plugin.configM.getLangYml().MSG_SELL_ACTION)
-                    .add("\\{amount}", "" + amount)
-                    .add("\\{price}", "" + PriceWrapper.format(item.getSellPrice().get().getPrice() * amount))
-                    .add("\\{currency}", item.getEconomy().getName()).build().split("\\{item}"));
+    private String getItemPriceFormatted() {
+        return PriceWrapper.format(getItemPrice());
+    }
 
-            dLog.log(
-                    dLogEntry.builder()
-                            .withPlayer(p)
-                            .withShopID(shop.getName())
-                            .withItemUUID(item.getUid())
-                            .withRawItem(item.getRawItem())
-                            .withQuantity(amount)
-                            .withType(dShop.dShopT.sell)
-                            .withPrice(item.getSellPrice().get().getPrice() * amount)
-                            .build()
-            );
+    private double getItemPrice() {
+        return item.getSellPrice().orElse(null).getPrice() * (item.getSetItems().isPresent() ? 1 : item.getQuantity());
+    }
 
-            if (msg.size() == 1) {
-                Msg.sendMsg(p, msg.get(0));
-            } else {
-
-                if (!item.getItem().getItemMeta().getDisplayName().isEmpty())
-                    Msg.sendMsg(p, msg.get(0) + item.getDisplayName() + "&7" + msg.get(1));
-                else
-                    DailyShop.getInstance().getLocaleManager().sendMessage(p,
-                            FormatUtils.color(DailyShop.getInstance().configM.getSettingsYml().PREFIX +
-                                    msg.get(0) + "<item>" + "&7" + msg.get(1)), item.getItem().getType(), (short) 0, null);
-            }
-                shop.openShop(p);
-
-
+    private void hasNecessaryPermissions() throws Exception {
+        for (String perm : item.getPermsSell().orElse(Collections.emptyList())) {
+            if (!p.hasPermission(perm))
+                throw new Exception(plugin.configM.getLangYml().MSG_NOT_PERMS_ITEM);
         }
+    }
 
+    private void hasEnoughItems() throws Exception {
+        int maxItemsToRemove = ItemUtils.count(p.getInventory(), item.getRawItem(), CompareItemUtils::compareItems);
+        if (maxItemsToRemove < item.getQuantity())
+            throw new Exception(plugin.configM.getLangYml().MSG_NOT_ITEMS);
+    }
+
+    private List<String> getItemLore() {
+        return Msg.msgList(plugin.configM.getLangYml().CONFIRM_GUI_SELL_ITEM)
+                .add("\\{price}", getItemPriceFormatted())
+                .build();
+    }
+
+    @NotNull
+    private List<String> createMsg() {
+        return Arrays.asList(Msg.singletonMsg(plugin.configM.getLangYml().MSG_BUY_ITEM)
+                .add("\\{action}", plugin.configM.getLangYml().MSG_SELL_ACTION)
+                .add("\\{amount}", "" + item.getQuantity())
+                .add("\\{price}", getItemPriceFormatted())
+                .add("\\{currency}", item.getEconomy().getName())
+                .build().split("\\{item}"));
+    }
+
+    private boolean itemWithCustomName() {
+        return item.getItem().getItemMeta().getDisplayName().isEmpty();
+    }
+
+
+    private void sendNormalMessage(List<String> msg) {
+        Msg.sendMsg(p, msg.get(0) + item.getDisplayName() + "&7" + msg.get(1));
+    }
+
+    private void sendTranslatedMaterialMessage(List<String> msg) {
+         sendTranslatedMaterialMessageToPlayer(getFormattedMessageForMaterialTranslation(msg), item.getItem().getType());
+    }
+
+    private void sendTranslatedMaterialMessageToPlayer(String formattedMsg, Material material) {
+        DailyShop.getInstance().getLocaleManager().sendMessage(p, formattedMsg, material, (short) 0, null);
+    }
+
+    private String getFormattedMessageForMaterialTranslation(List<String> msg) {
+        return FormatUtils.color(DailyShop.getInstance().configM.getSettingsYml().PREFIX +
+                msg.get(0) + "<item>" + "&7" + msg.get(1));
     }
 
 }

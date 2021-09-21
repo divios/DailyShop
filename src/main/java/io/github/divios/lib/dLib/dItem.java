@@ -139,7 +139,7 @@ public class dItem implements Serializable, Cloneable {
         transfer.setRarity(getRarity());
         transfer.setPermsBuy(getPermsBuy().get());
         transfer.setPermsSell(getPermsSell().get());
-        transfer.setConfirm_gui(getConfirm_gui());
+        transfer.setConfirm_gui(isConfirmGuiEnabled());
 
         return transfer.getItem();
     }
@@ -598,7 +598,7 @@ public class dItem implements Serializable, Cloneable {
      *
      * @return true if enabled; false is disabled
      */
-    public boolean getConfirm_gui() {
+    public boolean isConfirmGuiEnabled() {
         return item.getBoolean("rds_confirm_gui");
     }
 
@@ -615,7 +615,7 @@ public class dItem implements Serializable, Cloneable {
      * Toggles the value of Confirm_GUI
      */
     public void toggleConfirm_gui() {
-        setConfirm_gui(!getConfirm_gui());
+        setConfirm_gui(!isConfirmGuiEnabled());
     }
 
     /**
