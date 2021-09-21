@@ -53,7 +53,7 @@ public class transaction {
             return;
         }
 
-        if (item.getConfirm_gui()) {
+        if (item.isConfirmGuiEnabled()) {
 
             if (!item.getSetItems().isPresent()) {
 

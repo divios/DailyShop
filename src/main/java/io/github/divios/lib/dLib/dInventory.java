@@ -321,7 +321,7 @@ public class dInventory {
                                 if (e.isLeftClick())
                                     transaction.init((Player) e.getWhoClicked(), buttons.get(e.getSlot()), shop);
                                 else
-                                    sellTransaction.init((Player) e.getWhoClicked(), buttons.get(e.getSlot()), shop);
+                                    sellTransaction.create((Player) e.getWhoClicked(), buttons.get(e.getSlot()), shop);
 
                             } else {
                                 dItem item = buttons.get(e.getSlot());
