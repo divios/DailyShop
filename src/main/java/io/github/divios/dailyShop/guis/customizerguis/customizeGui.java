@@ -54,7 +54,7 @@ public class customizeGui implements Listener, InventoryHolder {
         this.p = p;
         this.shop = shop;
         this._gui = inv.skeleton();
-        this.inv = inv.clone().getInventory();
+        this.inv = inv.copy().getInventory();
 
         Task.syncDelayed(plugin, () ->
                 Bukkit.getPluginManager().registerEvents(this, plugin), 1L);
@@ -195,19 +195,19 @@ public class customizeGui implements Listener, InventoryHolder {
             else if (e.getSlot() == 19) {           //change Name
                 refreshFlag = true;
                 ChatPrompt.prompt(plugin, p , (s) -> {
-                    _gui.setTitle(FormatUtils.color(s));
+                    _gui.setInventoryTitle(FormatUtils.color(s));
                     Task.syncDelayed(plugin, this::refresh);
                 }, cause -> Task.syncDelayed(plugin, this::refresh),
                         "&5&lInput New Title", "");
             }
 
             else if (e.getSlot() == 23) {           //quitar row
-                if (_gui.removeRow())
+                if (_gui.removeInventoryRow())
                     refresh();
             }
 
             else if (e.getSlot() == 25) {           //ampliar row
-                if (_gui.addRow())
+                if (_gui.addInventoryRow())
                     refresh();
             }
         }

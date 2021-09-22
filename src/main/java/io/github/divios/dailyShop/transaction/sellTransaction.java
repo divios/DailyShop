@@ -5,6 +5,7 @@ import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.core_lib.misc.Msg;
 import io.github.divios.core_lib.misc.confirmIH;
+import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.utils.CompareItemUtils;
 import io.github.divios.dailyShop.utils.PriceWrapper;
@@ -30,6 +31,7 @@ public class sellTransaction {
     private final Player player;
     private final dItem item;
     private final dShop shop;
+    private int quantity;
 
     public static sellTransaction create(Player p, dItem item, dShop shop) {
         return new sellTransaction(p, item, shop);
@@ -58,10 +60,11 @@ public class sellTransaction {
             else
                 openSingleConfirmMenu();
 
-        } else runTransaction();
+        } else runTransaction(item.getQuantity());
     }
 
-    private void runTransaction() {
+    private void runTransaction(int quantity) {
+        this.quantity = quantity;
         try {
             checkItemsPermsAndAmountConditions();
         } catch (Exception errorMsg) {
@@ -91,7 +94,7 @@ public class sellTransaction {
                 .withShop(shop)
                 .withPlayer(player)
                 .withItem(item)
-                .withOnCompleteAction(quantity -> initTransaction())
+                .withOnCompleteAction(this::runTransaction)
                 .withFallback(() -> shop.openShop(player))
                 .build();
     }
@@ -113,7 +116,7 @@ public class sellTransaction {
                 Msg.sendMsg(player, plugin.configM.getLangYml().MSG_INVALID_OPERATION);
                 return;
             }
-            initTransaction();
+            runTransaction(quantity);
         } else
             shop.openShop(player);
     }
@@ -124,7 +127,7 @@ public class sellTransaction {
     }
 
     private void removeItemsFromPlayer() {
-        ItemUtils.remove(player.getInventory(), item.getRawItem(), item.getQuantity(), CompareItemUtils::compareItems);
+        ItemUtils.remove(player.getInventory(), item.getRawItem(), quantity, CompareItemUtils::compareItems);
     }
 
     private void depositMoney() {
@@ -170,7 +173,7 @@ public class sellTransaction {
     }
 
     private double getItemPrice() {
-        return item.getSellPrice().orElse(null).getPrice() * (item.getSetItems().isPresent() ? 1 : item.getQuantity());
+        return item.getSellPrice().orElse(null).getPrice() * (item.getSetItems().isPresent() ? 1 : quantity);
     }
 
     private void hasNecessaryPermissions() throws Exception {
@@ -182,7 +185,7 @@ public class sellTransaction {
 
     private void hasEnoughItems() throws Exception {
         int maxItemsToRemove = ItemUtils.count(player.getInventory(), item.getRawItem(), CompareItemUtils::compareItems);
-        if (maxItemsToRemove < item.getQuantity())
+        if (maxItemsToRemove < quantity)
             throw new Exception(plugin.configM.getLangYml().MSG_NOT_ITEMS);
     }
 
@@ -193,7 +196,7 @@ public class sellTransaction {
                 .withShopID(shop.getName())
                 .withItemUUID(item.getUid())
                 .withRawItem(item.getRawItem())
-                .withQuantity(item.getQuantity())
+                .withQuantity(quantity)
                 .withType(dShop.dShopT.sell)
                 .withPrice(getItemPrice())
                 .build();
@@ -203,7 +206,7 @@ public class sellTransaction {
     private List<String> createMsg() {
         return Arrays.asList(Msg.singletonMsg(plugin.configM.getLangYml().MSG_BUY_ITEM)
                 .add("\\{action}", plugin.configM.getLangYml().MSG_SELL_ACTION)
-                .add("\\{amount}", "" + item.getQuantity())
+                .add("\\{amount}", "" + quantity)
                 .add("\\{price}", getItemPriceFormatted())
                 .add("\\{currency}", item.getEconomy().getName())
                 .build().split("\\{item}"));

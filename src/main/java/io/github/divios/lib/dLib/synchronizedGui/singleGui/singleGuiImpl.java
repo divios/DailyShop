@@ -1,7 +1,6 @@
 package io.github.divios.lib.dLib.synchronizedGui.singleGui;
 
 import io.github.divios.core_lib.Events;
-import io.github.divios.core_lib.event.SingleSubscription;
 import io.github.divios.core_lib.event.Subscription;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
@@ -47,14 +46,14 @@ public class singleGuiImpl implements singleGui {
         this.p = p;
         this.shop = shop;
         this.base = base;
-        this.own = base.clone();
+        this.own = base.copy();
 
         if (p != null) {
             if (utils.isOperative("PlaceholderAPI")) {
                 updatePool.subscribe(this);
                 updateTask();
             }
-            this.own.open(p);
+            this.own.openInventory(p);
         } else ready();
     }
 
@@ -84,13 +83,13 @@ public class singleGuiImpl implements singleGui {
     public synchronized void updateTask() {
 
         loreStrategy strategy = new shopItemsLore();
-        IntStream.range(0, own.getSize())
+        IntStream.range(0, own.getInventorySize())
                 .filter(value -> !ItemUtils.isEmpty(own.getInventory().getItem(value)))
                 .forEach(value -> {
 
                     try {
                         Inventory inv = own.getInventory();
-                        ItemStack oldItem = base.getOpenSlots().contains(value) ?
+                        ItemStack oldItem = base.getDailyItemsSlots().contains(value) ?
                                 strategy.applyLore(base.getButtons().get(value).getItem().clone(), p)
                                 : base.getInventory().getItem(value);
                         ItemBuilder newItem = ItemBuilder.of(oldItem.clone()).setLore(Collections.emptyList());

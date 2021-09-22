@@ -17,6 +17,7 @@ import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -26,7 +27,7 @@ public abstract class abstractConfirmMenu {
     protected static final DailyShop plugin = DailyShop.getInstance();
 
     protected static final String MARK_KEY = "rds_temp_item";
-    protected static final int MAX_INVENTORY_ITEMS = 9 * 6 * 4;
+    protected static final int MAX_INVENTORY_ITEMS = 9 * 4 * 64;
 
     protected final dShop shop;
     protected final Player player;
@@ -95,6 +96,7 @@ public abstract class abstractConfirmMenu {
         createConfirmButton();
         createFallbackButton();
         createSetMaxButton();
+        createItemDisplayButton();
         createStatsButton();
     }
 
@@ -162,6 +164,13 @@ public abstract class abstractConfirmMenu {
                 }), 40);
     }
 
+    private void createItemDisplayButton() {
+        menu.addButton(ItemButton.create(
+                item.getRawItem()
+                , e -> {
+                }), 22);
+    }
+
     private void createStatsButton() {
         menu.addButton(ItemButton.create(ItemBuilder.of(XMaterial.PAPER)
                         .setName(plugin.configM.getLangYml().CONFIRM_GUI_STATS_NAME)
@@ -193,8 +202,8 @@ public abstract class abstractConfirmMenu {
 
     protected abstract String getConfirmName();
 
-    private String getConfirmLore() {
-        return setItemPricePlaceholder(plugin.configM.getLangYml().CONFIRM_GUI_BUY_NAME);
+    private List<String> getConfirmLore() {
+        return setItemPricePlaceholder(plugin.configM.getLangYml().CONFIRM_GUI_SELL_ITEM);
     }
 
     protected abstract String getBackName();
@@ -221,9 +230,10 @@ public abstract class abstractConfirmMenu {
         }
     }
 
-    private String setItemPricePlaceholder(String str) {
-        return Msg.singletonMsg(str)
-                .add("\\{price}", getFormattedPrice(getItemPrice()))
+    private List<String> setItemPricePlaceholder(List<String> str) {
+        return Msg.msgList(str)
+                .add("\\{price}", getFormattedPrice(getItemPrice() * nAddedItems))
+                .add("\\{quantity}", String.valueOf(nAddedItems))
                 .build();
     }
 
