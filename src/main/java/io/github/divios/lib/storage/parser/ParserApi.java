@@ -1,8 +1,6 @@
 package io.github.divios.lib.storage.parser;
 
-import com.google.common.reflect.TypeToken;
 import com.google.gson.*;
-import com.google.gson.internal.LinkedTreeMap;
 import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.utils.FileUtils;
@@ -10,11 +8,9 @@ import io.github.divios.lib.dLib.dInventory;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.managers.shopsManager;
-import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.*;
-import java.lang.reflect.Type;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
@@ -102,10 +98,10 @@ public class ParserApi {
             this.id = id;
             dInventory defaultInv = shop.getGuis().getDefault();
             this.shop = new dShopState(
-                    defaultInv.getTitle(),
-                    defaultInv.getSize(),
+                    defaultInv.getInventoryTitle(),
+                    defaultInv.getInventorySize(),
                     defaultInv.getButtons().values().stream()
-                            .filter(dItem -> !defaultInv.getOpenSlots().contains(dItem.getSlot()))      // Filter only buttons, not daily items
+                            .filter(dItem -> !defaultInv.getDailyItemsSlots().contains(dItem.getSlot()))      // Filter only buttons, not daily items
                             .collect(Collectors.toList())
             );
             this.items = items;
