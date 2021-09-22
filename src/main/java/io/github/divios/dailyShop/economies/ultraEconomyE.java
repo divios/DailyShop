@@ -22,14 +22,6 @@ public class ultraEconomyE extends economy{
     }
 
     @Override
-    public boolean hasMoney(Player p, Double price) {
-        Account account = api.getAccounts().stream()
-                .filter(account1 -> account1.getUuid().equals(p.getUniqueId()))
-                .findFirst().orElse(null);
-        return account != null && account.getBalance(currency).getOnHand() >= price;
-    }
-
-    @Override
     public void witchDrawMoney(Player p, Double price) {
         Account account = api.getAccounts().stream()
                 .filter(account1 -> account1.getUuid().equals(p.getUniqueId()))
@@ -51,6 +43,6 @@ public class ultraEconomyE extends economy{
     public double getBalance(Player p) {
         return api.getAccounts().stream()
                 .filter(account1 -> account1.getUuid().equals(p.getUniqueId()))
-                .findFirst().get().getBalance(currency).getOnHand();
+                .findFirst().orElse(null).getBalance(currency).getOnHand();
     }
 }

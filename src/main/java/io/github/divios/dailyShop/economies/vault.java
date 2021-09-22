@@ -22,10 +22,6 @@ public class vault extends economy {
 
     }
 
-    public boolean hasMoney(Player p, Double price) {
-        return vault.has(p, price);
-    }
-
     public void witchDrawMoney(Player p, Double price) {
         vault.withdrawPlayer(p, price);
     }

@@ -10,12 +10,13 @@ public enum econTypes {
     tokenManager(s -> new tokenManagerE()),
     MPoints(MPointsE::new),
     playerPoints(playerPointsE::new),
-    ultraEconomy(ultraEconomyE::new);
-
+    ultraEconomy(ultraEconomyE::new),
+    item(itemEconomy::new),
+    exp(expEconomy::new);
 
     private final Function<String, economy> function;
 
-    econTypes (Function<String, economy> function) {
+    econTypes(Function<String, economy> function) {
         this.function = function;
     }
 

@@ -20,10 +20,6 @@ public class gemEcon extends economy {
         gemApi.getClass().getName();
     }
 
-    public boolean hasMoney(Player p, Double price) {
-        return gemApi.getBalance(p.getUniqueId(), _currency) >= price;
-    }
-
     public void witchDrawMoney(Player p, Double price) {
         gemApi.withdraw(p.getUniqueId(), price, _currency);
     }
