@@ -1,7 +1,6 @@
 package io.github.divios.dailyShop.lorestategy;
 
 import io.github.divios.core_lib.itemutils.ItemBuilder;
-import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.Msg;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.lib.dLib.dItem;
@@ -11,56 +10,80 @@ import org.bukkit.inventory.ItemStack;
 
 public class shopItemsManagerLore implements loreStrategy {
 
-    private final dShop.dShopT type;
+
     private static final DailyShop plugin = DailyShop.getInstance();
+
+    private final dShop.dShopT type;
 
     public shopItemsManagerLore(dShop.dShopT type) {
         this.type = type;
     }
 
-    @Override
-    public void setLore(ItemStack item) {
-        ItemUtils.translateAllItemData(applyLore(item), item);
-    }
-
     public ItemStack applyLore(ItemStack item, Object... data) {
+        item = applyPricesLore(item);
+        if (itemHasStockEnabled(item))
+            item = applyStockLore(item);
+        item = applyCurrencyNameLore(item);
+        item = applyRarityLore(item);
+        item = applyClicksInfoLore(item);
+        return item;
+    }
 
-        dItem ditem = dItem.of(item);
-        ItemBuilder aux = ItemBuilder.of(item)
+    private ItemStack applyPricesLore(ItemStack item) {
+        return ItemBuilder.of(item)
                 .addLore("")
-                .addLore(Msg.singletonMsg(plugin.configM.getLangYml().DAILY_ITEMS_BUY_PRICE)
-                        .add("\\{buyPrice}", "" +
-                                ditem.getBuyPrice().orElse(new dPrice(-1)).getVisualPrice()).build())
-
-                .addLore(Msg.singletonMsg(plugin.configM.getLangYml().DAILY_ITEMS_SELL_PRICE)
-                        .add("\\{sellPrice}", "" +
-                                ditem.getSellPrice().orElse(new dPrice(-1)).getVisualPrice()).build())
-
+                .addLore(getBuyPriceFormatted(item))
+                .addLore(getSellPriceFormatted(item))
                 .addLore("");
-
-        if (ditem.hasStock()) {
-            aux = aux.addLore(plugin.configM.getLangYml().DAILY_ITEMS_STOCK + ditem.getStock().getDefault() + " (" + ditem.getStock().getName() + ")");
-        }
-
-        aux = aux.addLore(Msg.singletonMsg(plugin.configM.getLangYml().DAILY_ITEMS_CURRENCY)
-                .add("\\{currency}", "" + ditem.getEconomy().getName()).build());
-
-        if (DailyShop.getInstance().getConfig().getBoolean("enable-rarity", true))
-            aux = aux.addLore(Msg.singletonMsg(plugin.configM.getLangYml().DAILY_ITEMS_RARITY)
-                    .add("\\{rarity}", ditem.getRarity().toString()).build());
-
-        aux = aux.addLore("").addLore(plugin.configM.getLangYml().DAILY_ITEMS_MANAGER_LORE);
-
-        return aux;
     }
 
-    @Override
-    public void removeLore(ItemStack item) {
-
+    private boolean itemHasStockEnabled(ItemStack item) {
+        return dItem.of(item).hasStock();
     }
 
-    @Override
-    public void update(ItemStack item) {
-
+    private ItemStack applyStockLore(ItemStack item) {
+        return ItemBuilder.of(item).
+                addLore(plugin.configM.getLangYml().DAILY_ITEMS_STOCK +
+                        dItem.of(item).getStock().getDefault() + " (" + dItem.of(item).getStock().getName() + ")");
     }
+
+    private ItemStack applyCurrencyNameLore(ItemStack item) {
+        return ItemBuilder.of(item)
+                .addLore(Msg.singletonMsg(plugin.configM.getLangYml().DAILY_ITEMS_CURRENCY)
+                .add("\\{currency}", "" + dItem.of(item).getEconomy().getName()).build());
+    }
+
+    private ItemStack applyRarityLore(ItemStack item) {
+        return ItemBuilder.of(item)
+                .addLore(Msg.singletonMsg(plugin.configM.getLangYml().DAILY_ITEMS_RARITY)
+                .add("\\{rarity}", dItem.of(item).getRarity().toString()).build());
+    }
+
+    private ItemStack applyClicksInfoLore(ItemStack item) {
+        return ItemBuilder.of(item)
+                .addLore("")
+                .addLore(plugin.configM.getLangYml().DAILY_ITEMS_MANAGER_LORE);
+    }
+
+    private String getBuyPriceFormatted(ItemStack item) {
+        return Msg.singletonMsg(plugin.configM.getLangYml().DAILY_ITEMS_BUY_PRICE)
+                .add("\\{buyPrice}", getBuyVisualPrice(item))
+                .build();
+    }
+
+    private String getSellPriceFormatted(ItemStack item) {
+        return Msg.singletonMsg(plugin.configM.getLangYml().DAILY_ITEMS_SELL_PRICE)
+                .add("\\{sellPrice}", getSellVisualPrice(item))
+                .build();
+    }
+
+    private String getBuyVisualPrice(ItemStack item) {
+        return dItem.of(item).getBuyPrice().orElse(new dPrice(-1)).getVisualPrice();
+    }
+
+    private String getSellVisualPrice(ItemStack item) {
+        return dItem.of(item).getSellPrice().orElse(new dPrice(-1)).getVisualPrice();
+    }
+
+
 }

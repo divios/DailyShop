@@ -84,7 +84,7 @@ public class ParserApi {
             if (shopItem == null) continue;
             result &= dItem.getRawItem().isSimilar(shopItem.getRawItem());
         }
-        Log.info("The result of the comparison is: " + result);
+        //Log.info("The result of the comparison is: " + result);
 
         shop.setItems(newItems);                    // Set all the items
         shop.getGuis().reStock();                   // Restock shop
