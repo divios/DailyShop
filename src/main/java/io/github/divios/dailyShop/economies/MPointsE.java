@@ -18,11 +18,6 @@ public class MPointsE extends economy {
     }
 
     @Override
-    public boolean hasMoney(Player p, Double price) {
-        return api.getbalance(super.currency, p.getUniqueId()).doubleValue() >= price ;
-    }
-
-    @Override
     public void witchDrawMoney(Player p, Double price) {
         api.changebalance(super.currency, p.getUniqueId(), p.getName(), BigDecimal.valueOf(price), false);
     }

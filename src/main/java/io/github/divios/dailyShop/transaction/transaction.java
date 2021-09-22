@@ -80,7 +80,9 @@ public class transaction {
                                 ItemBuilder.of(item.getItem().clone()).addLore(
                                         Msg.msgList(plugin.configM.getLangYml().CONFIRM_GUI_SELL_ITEM)
                                                 .add("\\{price}",
-                                                        String.valueOf(item.getSellPrice().get().getPrice())).build()
+                                                        String.valueOf(item.getBuyPrice().get().getPrice()))
+                                                .add("\\{quantity}", String.valueOf(item.getQuantity()))
+                                                .build()
                                 ))
                         .withTitle(plugin.configM.getLangYml().CONFIRM_GUI_BUY_NAME)
                         .withConfirmLore(plugin.configM.getLangYml().CONFIRM_GUI_YES, plugin.configM.getLangYml().CONFIRM_GUI_YES_LORE)

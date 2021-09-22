@@ -19,11 +19,6 @@ public class playerPointsE extends economy {
     }
 
     @Override
-    public boolean hasMoney(Player p, Double price) {
-        return api.look(p.getUniqueId()) >= (int) Math.round(price);
-    }
-
-    @Override
     public void witchDrawMoney(Player p, Double price) {
         api.takeAsync(p.getUniqueId(), (int) Math.round(price));
     }
