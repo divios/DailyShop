@@ -27,7 +27,7 @@ public class sellTransaction {
 
     private static final DailyShop plugin = DailyShop.getInstance();
 
-    private final Player p;
+    private final Player player;
     private final dItem item;
     private final dShop shop;
 
@@ -36,7 +36,7 @@ public class sellTransaction {
     }
 
     private sellTransaction(Player p, dItem item, dShop shop) {
-        this.p = p;
+        this.player = p;
         this.item = item;
         this.shop = shop;
 
@@ -45,10 +45,10 @@ public class sellTransaction {
 
     private void initTransaction() {
         try {
-           checkPriceAndPermsConditions())
+           checkPriceAndPermsConditions();
         } catch (Exception errorMsg) {
-           Msg.sendMsg(p, errorMsg.getMessage());
-           shop.open(p);
+           Msg.sendMsg(player, errorMsg.getMessage());
+           shop.openShop(player);
            return;
         }
 
@@ -63,42 +63,42 @@ public class sellTransaction {
 
     private void runTransaction() {
         try {
-            checkItemsPermsAndAmountConditions());
+            checkItemsPermsAndAmountConditions();
         } catch (Exception errorMsg) {
-            Msg.sendMsg(p, errorMsg.getMessage());
+            Msg.sendMsg(player, errorMsg.getMessage());
             return;
         }
         removeItemsFromPlayer();
         depositMoney();
         logTransaction();
         sendMessage();
-        shop.openShop(p);
+        shop.openShop(player);
     }
 
 
     private void checkPriceAndPermsConditions() throws Exception {
-        if (hasNegatePermission() && !p.isOp()) {
-            throw new Exception(plugin.configM.getLangYml().MSG_INVALIDATE_SELL));
+        if (hasNegatePermission() && !player.isOp()) {
+            throw new Exception(plugin.configM.getLangYml().MSG_INVALIDATE_SELL);
         }
 
         if (invalidSellPrice()) {
-            throw new Exception(plugin.configM.getLangYml().MSG_INVALID_SELL));
+            throw new Exception(plugin.configM.getLangYml().MSG_INVALID_SELL);
         }
     }
 
     private void openConfirmMenu() {
         sellConfirmMenu.builder()
                 .withShop(shop)
-                .withPlayer(p)
+                .withPlayer(player)
                 .withItem(item)
                 .withOnCompleteAction(quantity -> initTransaction())
-                .withFallback(() -> shop.openShop(p))
+                .withFallback(() -> shop.openShop(player))
                 .build();
     }
 
     private void openSingleConfirmMenu() {
         confirmIH.builder()
-                .withPlayer(p)
+                .withPlayer(player)
                 .withItem(getItem())
                 .withAction(this::runSingleConfirmMenuAction)
                 .withTitle(plugin.configM.getLangYml().CONFIRM_GUI_SELL_NAME)
@@ -110,46 +110,36 @@ public class sellTransaction {
     private void runSingleConfirmMenuAction(boolean playerChoice) {
         if (playerChoice) {
             if (!itemExistOnShop()) {
-                Msg.sendMsg(p, plugin.configM.getLangYml().MSG_INVALID_OPERATION);
+                Msg.sendMsg(player, plugin.configM.getLangYml().MSG_INVALID_OPERATION);
                 return;
             }
             initTransaction();
         } else
-            shop.openShop(p);
+            shop.openShop(player);
     }
 
-    private boolean checkItemsPermsAndAmountConditions() throws Exception {
+    private void checkItemsPermsAndAmountConditions() throws Exception {
         hasNecessaryPermissions();
         hasEnoughItems();
     }
 
     private void removeItemsFromPlayer() {
-        ItemUtils.remove(p.getInventory(), item.getRawItem(), item.getQuantity(), CompareItemUtils::compareItems);
+        ItemUtils.remove(player.getInventory(), item.getRawItem(), item.getQuantity(), CompareItemUtils::compareItems);
     }
 
     private void depositMoney() {
-        item.getEconomy().depositMoney(p, getItemPrice());
+        item.getEconomy().depositMoney(player, getItemPrice());
     }
 
     private void logTransaction() {
-        dLog.log(
-                dLogEntry.builder()
-                        .withPlayer(p)
-                        .withShopID(shop.getName())
-                        .withItemUUID(item.getUid())
-                        .withRawItem(item.getRawItem())
-                        .withQuantity(item.getQuantity())
-                        .withType(dShop.dShopT.sell)
-                        .withPrice(getItemPrice())
-                        .build()
-        );
+        dLog.log(createLogEntry());
     }
 
     private void sendMessage() {
         List<String> msg = createMsg();
 
         if (msg.size() == 1) {      // if {item} is included
-            Msg.sendMsg(p, msg.get(0));
+            Msg.sendMsg(player, msg.get(0));
         } else {
             if (!itemWithCustomName())
                 sendNormalMessage(msg);
@@ -164,7 +154,7 @@ public class sellTransaction {
     }
 
     private boolean hasNegatePermission() {
-        return p.hasPermission("dailyrandomshop." + shop.getName() + ".negate.sell");
+        return player.hasPermission("dailyrandomshop." + shop.getName() + ".negate.sell");
     }
 
     private boolean invalidSellPrice() {
@@ -185,20 +175,27 @@ public class sellTransaction {
 
     private void hasNecessaryPermissions() throws Exception {
         for (String perm : item.getPermsSell().orElse(Collections.emptyList())) {
-            if (!p.hasPermission(perm))
+            if (!player.hasPermission(perm))
                 throw new Exception(plugin.configM.getLangYml().MSG_NOT_PERMS_ITEM);
         }
     }
 
     private void hasEnoughItems() throws Exception {
-        int maxItemsToRemove = ItemUtils.count(p.getInventory(), item.getRawItem(), CompareItemUtils::compareItems);
+        int maxItemsToRemove = ItemUtils.count(player.getInventory(), item.getRawItem(), CompareItemUtils::compareItems);
         if (maxItemsToRemove < item.getQuantity())
             throw new Exception(plugin.configM.getLangYml().MSG_NOT_ITEMS);
     }
 
-    private List<String> getItemLore() {
-        return Msg.msgList(plugin.configM.getLangYml().CONFIRM_GUI_SELL_ITEM)
-                .add("\\{price}", getItemPriceFormatted())
+    @NotNull
+    private dLogEntry createLogEntry() {
+        return dLogEntry.builder()
+                .withPlayer(player)
+                .withShopID(shop.getName())
+                .withItemUUID(item.getUid())
+                .withRawItem(item.getRawItem())
+                .withQuantity(item.getQuantity())
+                .withType(dShop.dShopT.sell)
+                .withPrice(getItemPrice())
                 .build();
     }
 
@@ -218,15 +215,21 @@ public class sellTransaction {
 
 
     private void sendNormalMessage(List<String> msg) {
-        Msg.sendMsg(p, msg.get(0) + item.getDisplayName() + "&7" + msg.get(1));
+        Msg.sendMsg(player, msg.get(0) + item.getDisplayName() + "&7" + msg.get(1));
     }
 
     private void sendTranslatedMaterialMessage(List<String> msg) {
          sendTranslatedMaterialMessageToPlayer(getFormattedMessageForMaterialTranslation(msg), item.getItem().getType());
     }
 
+    private List<String> getItemLore() {
+        return Msg.msgList(plugin.configM.getLangYml().CONFIRM_GUI_SELL_ITEM)
+                .add("\\{price}", getItemPriceFormatted())
+                .build();
+    }
+
     private void sendTranslatedMaterialMessageToPlayer(String formattedMsg, Material material) {
-        DailyShop.getInstance().getLocaleManager().sendMessage(p, formattedMsg, material, (short) 0, null);
+        DailyShop.getInstance().getLocaleManager().sendMessage(player, formattedMsg, material, (short) 0, null);
     }
 
     private String getFormattedMessageForMaterialTranslation(List<String> msg) {
