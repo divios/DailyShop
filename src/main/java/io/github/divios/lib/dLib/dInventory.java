@@ -2,7 +2,6 @@ package io.github.divios.lib.dLib;
 
 import com.google.common.collect.Sets;
 import io.github.divios.core_lib.Events;
-import io.github.divios.core_lib.event.SingleSubscription;
 import io.github.divios.core_lib.event.Subscription;
 import io.github.divios.core_lib.inventory.inventoryUtils;
 import io.github.divios.core_lib.itemutils.ItemUtils;
@@ -24,6 +23,7 @@ import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.util.io.BukkitObjectInputStream;
 import org.bukkit.util.io.BukkitObjectOutputStream;
+import org.jetbrains.annotations.NotNull;
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
 import java.io.ByteArrayInputStream;
@@ -34,6 +34,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+@SuppressWarnings({"ConstantConditions", "deprecation", "unchecked", "unused"})
 public class dInventory {
 
     protected static final DailyShop plugin = DailyShop.getInstance();
@@ -42,11 +43,27 @@ public class dInventory {
     protected Inventory inv;
     protected final dShop shop;
 
-    protected final Set<Integer> openSlots = Sets.newConcurrentHashSet();
+    protected final Set<Integer> dailyItemsSlots = Sets.newConcurrentHashSet();
     protected final Map<Integer, dItem> buttons = new ConcurrentHashMap<>();
 
-    private final Set<SingleSubscription> listeners = new HashSet<>();
+    private final Set<Subscription> listeners = new HashSet<>();
     protected final loreStrategy strategy;
+
+    public dInventory(String title, int size, dShop shop) {
+        this(title, Bukkit.createInventory(null, size, title), shop);
+    }
+
+    public dInventory(dShop shop) {
+        this(shop.getName(), 27, shop);
+    }
+
+    public dInventory(String base64, dShop shop) {
+        this.shop = shop;
+        this.strategy = new shopItemsLore();
+        _deserialize(base64);
+
+        createListeners();
+    }
 
     public dInventory(String title, Inventory inv, dShop shop) {
         this.title = title;
@@ -55,199 +72,222 @@ public class dInventory {
 
         this.strategy = new shopItemsLore();
 
-        IntStream.range(0, inv.getSize()).forEach(openSlots::add);  //initializes slots
-        ready();
+        setRangeDailySlots(0, inv.getSize());
+        createListeners();
     }
 
-    public dInventory(String title, int size, dShop shop) {
-        this(title, Bukkit.createInventory(null, size, title), shop);
-    }
-
-    public dInventory(String base64, dShop shop) {
-        this.shop = shop;
-        this.strategy = new shopItemsLore();
-        _deserialize(base64);
-
-        ready();
-    }
-
-    public dInventory(dShop shop) {
-        this(shop.getName(), 27, shop);
-    }
-
-    /**
-     * Opens the inventory for a player
-     *
-     * @param p The player to open the inventory
-     */
-    public void open(Player p) {
+    public void openInventory(Player p) {
         p.openInventory(inv);
     }
 
-    /**
-     * Returns the title of this gui
-     *
-     * @return The String representing the title
-     */
-    public String getTitle() {
+    public String getInventoryTitle() {
         return title;
     }
 
-    /**
-     * Sets the inventory title
-     *
-     * @param title
-     */
-    public void setTitle(String title) {
+    public void setInventoryTitle(String title) {
         this.title = title;
         Inventory temp = Bukkit.createInventory(null, inv.getSize(), title);
         inventoryUtils.translateContents(inv, temp);
         inv = temp;
     }
 
-    /**
-     * Returns the inventory
-     *
-     * @return The inventory this object holds
-     */
     public Inventory getInventory() {
         return inv;
     }
 
-    public int getSize() {
+    public int getInventorySize() {
         return inv.getSize();
     }
 
-    public boolean addRow() {
+    protected void createListeners() {
+        createClickInventoryListener();
+        createDragEventListener();
+    }
+
+    private void setRangeDailySlots(int start, int endExclusive) {
+        for (int i = start; i < endExclusive; i++) {
+            dailyItemsSlots.add(i);
+        }
+    }
+
+    private void createClickInventoryListener() {
+        listeners.add(
+                Events.subscribe(InventoryClickEvent.class, EventPriority.HIGHEST)
+                        .filter(e -> e.getInventory().equals(inv))
+                        .filter(e -> !ItemUtils.isEmpty(e.getCurrentItem()))
+                        .handler(e -> {
+                            e.setCancelled(true);
+                            if (!isUpperInventory(e)) return;
+
+                            if (isDailySlot(e.getSlot())) {
+                                if (e.isLeftClick()) createBuyTransaction(e);
+                                if (e.isRightClick()) createSellTransaction(e);
+                            } else
+                                runItemAction(e);
+                        })
+        );
+    }
+
+    private void createDragEventListener() {
+        listeners.add(
+                Events.subscribe(InventoryDragEvent.class)
+                        .filter(o -> o.getInventory().equals(inv))
+                        .handler(e -> e.setCancelled(true))
+        );
+    }
+
+    private boolean isUpperInventory(InventoryClickEvent e) {
+        return e.getSlot() == e.getRawSlot();
+    }
+
+    private boolean isDailySlot(int slot) {
+        return dailyItemsSlots.contains(slot);
+    }
+
+    private void createBuyTransaction(InventoryClickEvent e) {
+        transaction.init((Player) e.getWhoClicked(), buttons.get(e.getSlot()), shop);
+    }
+
+    private void createSellTransaction(InventoryClickEvent e) {
+        sellTransaction.create((Player) e.getWhoClicked(), buttons.get(e.getSlot()), shop);
+    }
+
+    private void runItemAction(InventoryClickEvent e) {
+        dItem item = buttons.get(e.getSlot());
+        if (item != null)
+        item.getAction().stream((dAction, s) -> dAction.run((Player) e.getWhoClicked(), s));
+    }
+
+    public boolean addInventoryRow() {
         if (inv.getSize() == 54) return false;
 
         Inventory aux = Bukkit.createInventory(null, inv.getSize() + 9, title);
         inventoryUtils.translateContents(inv, aux);
-
-        IntStream.range(inv.getSize(), inv.getSize() + 9).forEach(openSlots::add);
+        setRangeDailySlots(inv.getSize(), inv.getSize() + 9);
         inv = aux;
-
         return true;
     }
 
-    public boolean removeRow() {
+    public boolean removeInventoryRow() {
         if (inv.getSize() == 9) return false;
 
         Inventory aux = Bukkit.createInventory(null, inv.getSize() - 9, title);
         inventoryUtils.translateContents(inv, aux);
-
         buttons.entrySet().removeIf(entry -> entry.getKey() >= aux.getSize());
-        IntStream.range(inv.getSize() - 9, inv.getSize()).forEach(openSlots::remove);
+        IntStream.range(inv.getSize() - 9, inv.getSize()).forEach(dailyItemsSlots::remove);
         inv = aux;
 
         return true;
     }
 
-    /**
-     * Adds a button to the inventory
-     *
-     * @param item The item to add
-     * @param slot The slot where the item 'll be added
-     */
     public void addButton(dItem item, int slot) {
         dItem cloned = item.clone();
-        cloned.generateNewBuyPrice();   // Generate new prices
-        cloned.generateNewSellPrice();
+        generateItemPrices(cloned);
         cloned.setSlot(slot);
-
         buttons.put(slot, cloned);
-
-        openSlots.remove(slot);
+        dailyItemsSlots.remove(slot);
         inv.setItem(slot, cloned.getItem());
     }
 
-    /**
-     * Removes a slot from the inventory
-     *
-     * @param slot The slot which wants to be clear
-     * @return true if an item was successfully removed
-     */
+    private void generateItemPrices(dItem item) {
+        item.generateNewBuyPrice();
+        item.generateNewSellPrice();
+    }
+
+
     public dItem removeButton(int slot) {
         dItem result = buttons.remove(slot);
         if (result != null) {
-            openSlots.add(slot);
+            dailyItemsSlots.add(slot);
             inv.clear(slot);
         }
         return result;
     }
 
-    /**
-     * Gets the button in this object
-     *
-     * @return An unmodifiable view of the buttons set
-     */
     public Map<Integer, dItem> getButtons() {
         return Collections.unmodifiableMap(buttons);
     }
 
-    /**
-     * Gets the openSlots in this object
-     *
-     * @return An unmodifiable view of the open Slots
-     */
-    public Set<Integer> getOpenSlots() {
-        return Collections.unmodifiableSet(openSlots);
+    public Set<Integer> getDailyItemsSlots() {
+        return Collections.unmodifiableSet(dailyItemsSlots);
     }
 
-    /**
-     * Renovates daily items on the openSlots
-     */
     public void renovate(Player p) {
+        RemoveAirItemsOnInventory();     // Just in case
+        WeightedRandom<dItem> RRM = createWeightedRandom();
+        RemoveAllDailyItems();
+        Set<dItem> newRolledItems = rollNewDailyItems(RRM);
+        newRolledItems.forEach(dItem -> addDailyItemToInventory(p, dItem));
+    }
 
-        //shop.getItems().forEach(dItem -> Log.info(dItem.getDisplayName() + ": " + dItem.getRarity() + " - " + dItem.getRarity().getWeight()));
-        //Log.info("---------------------------------------\n");
-
+    private void RemoveAirItemsOnInventory() {
         buttons.entrySet()
                 .stream()
                 .filter(entry -> entry.getValue().isAIR())
                 .forEach(entry -> inv.clear(entry.getKey()));  // Clear AIR items
-
-        WeightedRandom<dItem> RRM = WeightedRandom.fromCollection(      // create weighted random
-                shop.getItems().stream()
-                        .filter(dItem -> dItem.getRarity().getWeight() != 0)
-                        .filter(dItem -> !(dItem.getBuyPrice().get().getPrice() < 0 &&
-                                dItem.getSellPrice().get().getPrice() < 0))
-                        .collect(Collectors.toList()),  // remove unAvailable
-                dItem::clone,
-                value -> value.getRarity().getWeight()     // Get weights depending if rarity enable
-        );
-
-        clearDailyItems();
-
-        int addedButtons = 0;
-        for (int i : openSlots.stream().sorted().collect(Collectors.toList())) {
-
-            if (i >= inv.getSize()) continue;
-            inv.clear(i);
-
-            if (addedButtons >= shop.getItems().size()) break;
-
-            dItem rolled = RRM.roll();
-            if (rolled == null) break;
-
-            rolled.generateNewBuyPrice();
-            rolled.generateNewSellPrice();
-            _renovate(p, rolled, i);
-            RRM.remove(rolled);
-            /*Log.info("---------------------------------------\n");
-            Log.info("Rolled " + rolled.getDisplayName());
-            RRM.getPercentages().forEach((dItem, aDouble) -> {
-                Log.info(dItem.getDisplayName() + " Percentage: " + aDouble);
-            }); */
-            addedButtons++;
-        }
-
     }
 
-    protected void _renovate(Player p, dItem newItem, int slot) {
-        newItem.setSlot(slot);
-        buttons.put(slot, newItem);
-        inv.setItem(slot, new shopItemsLore().applyLore(newItem.getItem().clone(), p));
+    @NotNull
+    private WeightedRandom<dItem> createWeightedRandom() {
+        return WeightedRandom.fromCollection(getValidShopItems(), dItem::clone, this::getItemRarityWeight);
+    }
+
+    private void RemoveAllDailyItems() {
+        for (Iterator<Map.Entry<Integer, dItem>> it = buttons.entrySet().iterator(); it.hasNext(); ) {
+            Map.Entry<Integer, dItem> entry = it.next();
+            if (dailyItemsSlots.contains(entry.getKey())) {
+                it.remove();
+                inv.clear(entry.getKey());
+            }
+        }
+    }
+
+    private Set<dItem> rollNewDailyItems(WeightedRandom<dItem> RRM) {
+        Set<dItem> newItems = new HashSet<>();
+        int addedButtons = 0;
+        for (int i : getDailySlotsSorted()) {
+            if (addedButtons >= shop.getItems().size()) break;
+            if (i >= inv.getSize()) continue;
+
+            inv.clear(i);
+            dItem rolled = RRM.roll();
+            if (rolled == null) break;
+            generateItemPrices(rolled);
+            rolled.setSlot(i);
+            newItems.add(rolled);
+            RRM.remove(rolled);
+            addedButtons++;
+        }
+        return newItems;
+    }
+
+    protected void addDailyItemToInventory(Player p, dItem newItem) {
+        buttons.put(newItem.getSlot(), newItem);
+        inv.setItem(newItem.getSlot(), new shopItemsLore().applyLore(newItem.getItem().clone(), p));
+    }
+
+    private List<dItem> getValidShopItems() {
+        return shop.getItems().stream()
+                .filter(this::hasAvailableRarity)
+                .filter(this::hasValidPrice)
+                .collect(Collectors.toList());
+    }
+
+    private int getItemRarityWeight(dItem item) {
+        return item.getRarity().getWeight();
+    }
+    @NotNull
+    private List<Integer> getDailySlotsSorted() {
+        return dailyItemsSlots.stream().sorted().collect(Collectors.toList());
+    }
+
+    private boolean hasAvailableRarity(dItem item) {
+        return item.getRarity().getWeight() != 0;
+    }
+
+    private boolean hasValidPrice(dItem item) {
+        return !(item.getBuyPrice().orElse(null).getPrice() < 0 &&
+                item.getSellPrice().orElse(null).getPrice() < 0);
     }
 
     public void updateItem(Player own, updateItemEvent o) {
@@ -258,94 +298,49 @@ public class dInventory {
                 .filter(dItem -> dItem.getUid().equals(o.getItem().getUid()))
                 .findFirst()
                 .ifPresent(dItem -> {
-
                     int slot = dItem.getSlot();
-                    if (o.getType().equals(updateItemEvent.updatetype.UPDATE_ITEM)) {
-
-                        o.getItem().setSlot(slot);
-                        buttons.put(slot, o.getItem().clone());
-                        inv.setItem(slot, strategy.applyLore(o.getItem().getItem().clone(), own));
-
-                    } else if (o.getType().equals(updateItemEvent.updatetype.NEXT_AMOUNT)) {
-
-                        dStock stock = dItem.getStock();
-                        stock.decrement(o.getPlayer(), o.getAmount());
-
-                        if (stock.get(o.getPlayer()) <= 0) {
-                            stock.set(o.getPlayer(), -1);
-                        }
-
-                        Bukkit.getPluginManager().callEvent(new updateItemEvent(dItem, o.getAmount(), updateItemEvent.updatetype.UPDATE_ITEM, o.getShop()));
-
-
-                    } else if (o.getType().equals(updateItemEvent.updatetype.DELETE_ITEM)) {
-
-                        dItem removed = removeButton(slot);
-                        if (removed != null) inv.setItem(slot, utils.getRedPane());
+                    if (isUpdateItem(o)) {
+                        updateItem(own, o, slot);
+                    } else if (isNextAmount(o)) {
+                        processNextAmount(o, dItem);
+                    } else if (isDeleteItem(o)) {
+                        deleteItem(slot);
                     }
                 });
     }
 
-    /**
-     * Clears all the slots corresponding to daily Items
-     */
+    private boolean isUpdateItem(updateItemEvent o) {
+        return o.getType().equals(updateItemEvent.updatetype.UPDATE_ITEM);
+    }
 
-    private void clearDailyItems() {
+    private boolean isNextAmount(updateItemEvent o) {
+        return o.getType().equals(updateItemEvent.updatetype.NEXT_AMOUNT);
+    }
 
-        for (Iterator<Map.Entry<Integer, dItem>> it = buttons.entrySet().iterator(); it.hasNext(); ) {
-            Map.Entry<Integer, dItem> entry = it.next();
+    private boolean isDeleteItem(updateItemEvent o) {
+        return o.getType().equals(updateItemEvent.updatetype.DELETE_ITEM);
+    }
 
-            if (openSlots.contains(entry.getKey())) {
-                it.remove();
-                inv.clear(entry.getKey());
-            }
+    private void updateItem(Player own, updateItemEvent o, int slot) {
+        o.getItem().setSlot(slot);
+        buttons.put(slot, o.getItem().clone());
+        inv.setItem(slot, strategy.applyLore(o.getItem().getItem().clone(), own));
+    }
 
+    private void processNextAmount(updateItemEvent o, dItem dItem) {
+        dStock stock = dItem.getStock();
+        stock.decrement(o.getPlayer(), o.getAmount());
+        if (stock.get(o.getPlayer()) <= 0) {
+            stock.set(o.getPlayer(), -1);
         }
+        Bukkit.getPluginManager().callEvent(new updateItemEvent(dItem, o.getAmount(), updateItemEvent.updatetype.UPDATE_ITEM, o.getShop()));
     }
 
-
-    protected void ready() {
-
-        listeners.add(
-                Events.subscribe(InventoryClickEvent.class, EventPriority.HIGHEST)
-                        .filter(e -> e.getInventory().equals(inv))
-                        .filter(e -> !ItemUtils.isEmpty(e.getCurrentItem()))
-                        .handler(e -> {
-
-                            e.setCancelled(true);
-
-                            if (e.getSlot() != e.getRawSlot()) return;
-
-                            if (openSlots.contains(e.getSlot())) {
-
-                                if (e.isLeftClick())
-                                    transaction.init((Player) e.getWhoClicked(), buttons.get(e.getSlot()), shop);
-                                else
-                                    sellTransaction.create((Player) e.getWhoClicked(), buttons.get(e.getSlot()), shop);
-
-                            } else {
-                                dItem item = buttons.get(e.getSlot());
-                                if (item != null)
-                                    item.getAction().stream((dAction, s) -> dAction.run((Player) e.getWhoClicked(), s));
-
-                            }
-
-                        })
-        );
-
-        listeners.add(
-                Events.subscribe(InventoryDragEvent.class)
-                        .filter(o -> o.getInventory().equals(inv))
-                        .handler(e -> e.setCancelled(true))
-        );
-
-        if (!utils.isOperative("PlaceholderAPI")) return;       // If placeholderApi is not available, break
-
+    private void deleteItem(int slot) {
+        dItem removed = removeButton(slot);
+        if (removed != null) inv.setItem(slot, utils.getRedPane());
     }
 
-    /**
-     * Destroys the inventory. In summary, unregisters all the listeners
-     */
     public void destroy() {
         listeners.forEach(Subscription::unregister);
         listeners.clear();
@@ -357,7 +352,7 @@ public class dInventory {
                 // Serialize inventory
                 dataOutput.writeObject(inventoryUtils.serialize(inv, title));
                 // Serialize openSlots
-                dataOutput.writeObject(openSlots);
+                dataOutput.writeObject(dailyItemsSlots);
                 // Serialize buttons
                 dataOutput.writeObject(buttons);
                 return Base64Coder.encodeLines(outputStream.toByteArray());
@@ -375,7 +370,7 @@ public class dInventory {
                 title = s.get1();
                 inv = s.get2();
 
-                openSlots.addAll((Set<Integer>) dataInput.readObject());
+                dailyItemsSlots.addAll((Set<Integer>) dataInput.readObject());
 
                 Object o = dataInput.readObject();
                 if (o instanceof Set) ((Set<dItem>) o).forEach(dItem -> buttons.put(dItem.getSlot(), dItem));
@@ -388,10 +383,10 @@ public class dInventory {
 
             e.printStackTrace();
             buttons.clear();
-            openSlots.clear();
+            dailyItemsSlots.clear();
             this.title = shop.getName();
             this.inv = Bukkit.createInventory(null, 27, title);
-            IntStream.range(0, inv.getSize()).forEach(openSlots::add);
+            IntStream.range(0, inv.getSize()).forEach(dailyItemsSlots::add);
 
 
         }
@@ -404,7 +399,7 @@ public class dInventory {
     // Returns a clone of this gui without the daily items
     public dInventory skeleton() {
         dInventory cloned = fromBase64(this.toBase64(), shop);
-        cloned.clearDailyItems();
+        cloned.RemoveAllDailyItems();
 
         cloned.getButtons().entrySet().stream()   // gets the AIR buttons back
                 .filter(entry -> entry.getValue().isAIR())
@@ -414,7 +409,7 @@ public class dInventory {
         return cloned;
     }
 
-    public dInventory clone() {
+    public dInventory copy() {
         return fromBase64(toBase64(), shop);
     }
 
