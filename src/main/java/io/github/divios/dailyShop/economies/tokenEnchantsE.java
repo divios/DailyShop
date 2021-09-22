@@ -18,11 +18,6 @@ public class tokenEnchantsE extends economy {
     }
 
     @Override
-    public boolean hasMoney(Player p, Double price) {
-        return api.getTokens(p) >= price ;
-    }
-
-    @Override
     public void witchDrawMoney(Player p, Double price) {
         api.removeTokens(p, price);
     }

@@ -3,6 +3,8 @@ package io.github.divios.lib.dLib.confirmMenu;
 import io.github.divios.core_lib.Events;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
+import io.github.divios.core_lib.utils.Log;
+import io.github.divios.dailyShop.utils.CompareItemUtils;
 import io.github.divios.dailyShop.utils.FutureUtils;
 import io.github.divios.dailyShop.utils.utils;
 import io.github.divios.lib.dLib.dItem;
@@ -60,7 +62,6 @@ public class buyConfirmMenu extends abstractConfirmMenu {
         drops.add(ItemBuilder.of(entry.getItem()).setCount(quantity));
     }
 
-
     public static buyConfirmMenuBuilder builder() {
         return new buyConfirmMenuBuilder();
     }
@@ -91,7 +92,7 @@ public class buyConfirmMenu extends abstractConfirmMenu {
 
     @Override
     protected boolean addConditions(int quantity) {
-        return nAddedItems <= getMinLimit() - quantity;
+        return quantity <= getMinLimit();
     }
 
     @Override
@@ -106,7 +107,13 @@ public class buyConfirmMenu extends abstractConfirmMenu {
 
     @Override
     protected void removeItems(int quantity) {
-        ItemUtils.remove(player.getInventory(), getMarkedItem(), quantity);
+        ItemUtils.remove(player.getInventory(), getMarkedItem(), quantity, this::getRemoveComparison);
+    }
+
+    private boolean getRemoveComparison(ItemStack item1, ItemStack item2) {
+        if (ItemUtils.isEmpty(item1) || ItemUtils.isEmpty(item2)) return false;
+        if (!isMarkedItem(item2)) return false;
+        return CompareItemUtils.compareItems(item1, item2);
     }
 
     @Override
@@ -122,10 +129,12 @@ public class buyConfirmMenu extends abstractConfirmMenu {
     @Override
     protected void setMaxItems() {
         int limit = getMinLimit();
+        int nAddedItemsThisItit = 0;
         ItemStack markedItem = getMarkedItem();
         while (player.getInventory().addItem(markedItem).isEmpty()) {
-            nAddedItems += 1;
-            if (nAddedItems >= limit) break;
+            nAddedItems ++;
+            nAddedItemsThisItit ++;
+            if (nAddedItemsThisItit>= limit) break;
         }
     }
 
@@ -135,7 +144,10 @@ public class buyConfirmMenu extends abstractConfirmMenu {
     }
 
     private int getMinLimit() {
-        return getMinimumValue(getStockLimit(), getBalanceLimit(), getPlayerInventoryLimit());
+        int stockLimit = getStockLimit();
+        int balanceLimit = getBalanceLimit();
+        int inventoryLimit = getPlayerInventoryLimit();
+        return getMinimumValue(stockLimit, balanceLimit, inventoryLimit);
     }
 
     private int getMinimumValue(int... values) {
@@ -169,7 +181,6 @@ public class buyConfirmMenu extends abstractConfirmMenu {
     private int getItemStock() {
         return FutureUtils.waitFor(dStock.searchStock(player, shop, item.getUid()));
     }
-
 
     public static final class buyConfirmMenuBuilder {
         protected dShop shop;

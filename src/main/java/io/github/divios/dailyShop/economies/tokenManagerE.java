@@ -19,11 +19,6 @@ public class tokenManagerE extends economy {
     }
 
     @Override
-    public boolean hasMoney(Player p, Double price) {
-        return api.getTokens(p).getAsLong() >= price ;
-    }
-
-    @Override
     public void witchDrawMoney(Player p, Double price) {
         DailyShop.getInstance().getLogger().info("" + price.longValue());
         api.removeTokens(p, price.longValue());

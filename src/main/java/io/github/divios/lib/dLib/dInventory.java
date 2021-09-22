@@ -118,6 +118,7 @@ public class dInventory {
                         .handler(e -> {
                             e.setCancelled(true);
                             if (!isUpperInventory(e)) return;
+                            if (!buttons.containsKey(e.getSlot())) return;
 
                             if (isDailySlot(e.getSlot())) {
                                 if (e.isLeftClick()) createBuyTransaction(e);
