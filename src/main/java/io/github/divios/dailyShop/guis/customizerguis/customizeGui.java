@@ -2,6 +2,7 @@ package io.github.divios.dailyShop.guis.customizerguis;
 
 import com.cryptomorin.xseries.XMaterial;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
+import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.ChatPrompt;
 import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.core_lib.misc.Task;
@@ -17,6 +18,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
@@ -52,7 +54,7 @@ public class customizeGui implements Listener, InventoryHolder {
         this.p = p;
         this.shop = shop;
         this._gui = inv.skeleton();
-        this.inv = inv.clone().getInventory();
+        this.inv = inv.copy().getInventory();
 
         Task.syncDelayed(plugin, () ->
                 Bukkit.getPluginManager().registerEvents(this, plugin), 1L);
@@ -71,7 +73,7 @@ public class customizeGui implements Listener, InventoryHolder {
     public void addCustomizeItems() {
 
 
-        IntStream.range(0, 36).forEach(i ->
+        IntStream.range(0, 36).forEach(i->
                 p.getInventory().setItem(i,
                         ItemBuilder.of(XMaterial.GRAY_STAINED_GLASS_PANE).setName("&c")));
 
@@ -188,16 +190,20 @@ public class customizeGui implements Listener, InventoryHolder {
                 p.closeInventory();
             } else if (e.getSlot() == 19) {           //change Name
                 refreshFlag = true;
-                ChatPrompt.prompt(plugin, p, (s) -> {
-                            _gui.setTitle(FormatUtils.color(s));
-                            Task.syncDelayed(plugin, this::refresh);
-                        }, cause -> Task.syncDelayed(plugin, this::refresh),
+                ChatPrompt.prompt(plugin, p , (s) -> {
+                    _gui.setInventoryTitle(FormatUtils.color(s));
+                    Task.syncDelayed(plugin, this::refresh);
+                }, cause -> Task.syncDelayed(plugin, this::refresh),
                         "&5&lInput New Title", "");
-            } else if (e.getSlot() == 23) {           //quitar row
-                if (_gui.removeRow())
+            }
+
+            else if (e.getSlot() == 23) {           //quitar row
+                if (_gui.removeInventoryRow())
                     refresh();
-            } else if (e.getSlot() == 25) {           //ampliar row
-                if (_gui.addRow())
+            }
+
+            else if (e.getSlot() == 25) {           //ampliar row
+                if (_gui.addInventoryRow())
                     refresh();
             }
         } else {          //si le da arriba

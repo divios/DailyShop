@@ -4,7 +4,8 @@ import java.util.function.Function;
 
 public enum econTypes {
 
-    vault(s -> new vault());
+    vault(s -> new vault()),
+    exp(s -> new expEconomy());
 
     private final Function<String, economy> function;
 
