@@ -316,7 +316,7 @@ public class CustomizerMenu {
                         ItemBuilder.of(XMaterial.LEVER)
                                 .setName(plugin.configM.getLangYml().CUSTOMIZE_CONFIRM_GUI_NAME)
                                 .setLore(Msg.msgList(plugin.configM.getLangYml().CUSTOMIZE_CONFIRM_GUI_LORE)
-                                        .add("\\{status}", "" + item.getConfirm_gui()).build())
+                                        .add("\\{status}", "" + item.isConfirmGuiEnabled()).build())
 
                         , e -> {
                             item.toggleConfirm_gui();

@@ -31,7 +31,9 @@ public abstract class economy implements Serializable {
 
     public abstract void test();
 
-    public abstract boolean hasMoney(Player p, Double price);
+    public boolean hasMoney(Player p, Double price) {
+        return getBalance(p) >= price;
+    }
 
     public abstract void witchDrawMoney(Player p, Double price);
 
@@ -52,32 +54,24 @@ public abstract class economy implements Serializable {
     }
 
     public String serialize() {
-
         try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
             try (BukkitObjectOutputStream dataOutput = new BukkitObjectOutputStream(outputStream)) {
-
                 dataOutput.writeObject(getKey());
                 dataOutput.writeObject(this.currency);
-
-                dataOutput.close();
                 return Base64Coder.encodeLines(outputStream.toByteArray());
             }
-
         } catch (IOException e) {
             throw new IllegalStateException("Unable to serialize economy.", e);
         }
     }
 
     public static economy deserialize(String base64) {
-
         try (ByteArrayInputStream InputStream = new ByteArrayInputStream(Base64Coder.decodeLines(base64))) {
             try (BukkitObjectInputStream dataInput = new BukkitObjectInputStream(InputStream)) {
                 String key = (String) dataInput.readObject();
                 String currency = (String) dataInput.readObject();
-
                 return getFromKey(key, currency);
             }
-
         } catch (Exception e) {
             return new vault();
         }
