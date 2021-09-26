@@ -9,13 +9,26 @@ import io.github.divios.dailyShop.hooks.hooksManager;
 import io.github.divios.lib.managers.shopsManager;
 import io.github.divios.lib.storage.dataManager;
 import me.pikamug.localelib.LocaleManager;
+import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.plugin.java.JavaPluginLoader;
+
+import java.io.File;
 
 public class DailyShop extends JavaPlugin {
 
     private static DailyShop INSTANCE;
     private LocaleManager localeManager;
     public configManager configM;
+
+    public DailyShop() {
+        super();
+    }
+
+    protected DailyShop(JavaPluginLoader loader, PluginDescriptionFile description, File dataFolder, File file)
+    {
+        super(loader, description, dataFolder, file);
+    }
 
     @Override
     public void onEnable() {
