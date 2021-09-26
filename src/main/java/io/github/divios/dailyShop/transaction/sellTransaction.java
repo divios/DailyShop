@@ -47,11 +47,11 @@ public class sellTransaction {
 
     private void initTransaction() {
         try {
-           checkPriceAndPermsConditions();
+            checkPriceAndPermsConditions();
         } catch (Exception errorMsg) {
-           Msg.sendMsg(player, errorMsg.getMessage());
-           shop.openShop(player);
-           return;
+            Msg.sendMsg(player, errorMsg.getMessage());
+            shop.openShop(player);
+            return;
         }
 
         if (item.isConfirmGuiEnabled()) {
@@ -116,7 +116,7 @@ public class sellTransaction {
                 Msg.sendMsg(player, plugin.configM.getLangYml().MSG_INVALID_OPERATION);
                 return;
             }
-            runTransaction(quantity);
+            runTransaction(item.getQuantity());
         } else
             shop.openShop(player);
     }
@@ -222,7 +222,7 @@ public class sellTransaction {
     }
 
     private void sendTranslatedMaterialMessage(List<String> msg) {
-         sendTranslatedMaterialMessageToPlayer(getFormattedMessageForMaterialTranslation(msg), item.getItem().getType());
+        sendTranslatedMaterialMessageToPlayer(getFormattedMessageForMaterialTranslation(msg), item.getItem().getType());
     }
 
     private List<String> getItemLore() {
