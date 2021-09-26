@@ -1,29 +1,23 @@
 package io.github.divios.lib.dLib.confirmMenu;
 
 import io.github.divios.core_lib.Events;
-import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
-import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.utils.CompareItemUtils;
 import io.github.divios.dailyShop.utils.FutureUtils;
 import io.github.divios.dailyShop.utils.utils;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.dLib.stock.dStock;
-import net.Indyuce.mmoitems.api.event.ItemDropEvent;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
 @SuppressWarnings({"ConstantConditions"})
@@ -48,8 +42,11 @@ public class buyConfirmMenu extends abstractConfirmMenu {
     }
 
     private static void createDropItemListener() {
-        Events.subscribe(ItemDropEvent.class)
-                .handler(event -> removeMarkedItems(event.getDrops()));
+        Events.subscribe(PlayerDropItemEvent.class)
+                .handler(event -> {
+                    if (isMarkedItem(event.getItemDrop().getItemStack()))
+                        event.getItemDrop().remove();
+                });
     }
 
     private static void removeMarkedItems(List<ItemStack> items) {
