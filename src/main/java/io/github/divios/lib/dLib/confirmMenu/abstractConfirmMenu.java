@@ -247,7 +247,7 @@ public abstract class abstractConfirmMenu {
 
     protected abstract double getItemPrice();
 
-    protected boolean isMarkedItem(ItemStack item) {
+    protected static boolean isMarkedItem(ItemStack item) {
         return new NBTItem(item).hasKey(MARK_KEY);
     }
 
@@ -257,7 +257,7 @@ public abstract class abstractConfirmMenu {
         return markedItem.getItem();
     }
 
-    protected void deleteItem(ItemStack item) {
+    protected static void deleteItem(ItemStack item) {
         item.setAmount(0);
     }
 

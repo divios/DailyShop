@@ -21,14 +21,17 @@ public class sellConfirmMenu extends abstractConfirmMenu {
     private static final Map<UUID, List<ItemStack>> retrievedItemsCache = new ConcurrentHashMap<>();
 
     static {
-        createPlayerDeathListener();
-        createPlayerJoinListener();
+        //createPlayerDeathListener();
+        //createPlayerJoinListener();
     }
 
     private static void createPlayerDeathListener() {
         Events.subscribe(PlayerDeathEvent.class)
                 .filter(event -> retrievedItemsCache.containsKey(event.getEntity().getUniqueId()))
-                .handler(event -> retrieveCachedItems(event.getEntity()));
+                .handler(event -> {
+                    List<ItemStack> entry = retrievedItemsCache.get(event.getEntity().getUniqueId());
+                    event.getDrops().addAll(entry);
+                });
     }
 
     private static void createPlayerJoinListener() {

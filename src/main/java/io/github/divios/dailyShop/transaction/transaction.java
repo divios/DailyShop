@@ -89,7 +89,7 @@ public class transaction {
                         .withCancelLore(plugin.configM.getLangYml().CONFIRM_GUI_NO, plugin.configM.getLangYml().CONFIRM_GUI_NO_LORE)
                         .prompt();
             }
-        } else initTransaction(p, item, 1, shop);
+        } else initTransaction(p, item, item.getQuantity(), shop);
 
     }
 

@@ -10,13 +10,16 @@ import io.github.divios.dailyShop.utils.utils;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.dLib.stock.dStock;
+import net.Indyuce.mmoitems.api.event.ItemDropEvent;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -26,40 +29,34 @@ import java.util.function.Consumer;
 @SuppressWarnings({"ConstantConditions"})
 public class buyConfirmMenu extends abstractConfirmMenu {
 
-    private static final Map<UUID, cacheEntry> buyItemsCache = new ConcurrentHashMap<>();
-
     static {
         createPlayerDeathListener();
         createPlayerJoinListener();
+        createDropItemListener();
     }
 
     private static void createPlayerDeathListener() {
         Events.subscribe(PlayerDeathEvent.class)
-                .filter(event -> buyItemsCache.containsKey(event.getEntity().getUniqueId()))
-                .handler(event -> {
-                    cacheEntry entry = buyItemsCache.remove(event.getEntity().getUniqueId());
-                    if (entry.getQuantity() > 0)
-                        addDropsFromCache(event.getDrops(), entry);
-                });
+                .handler(event -> removeMarkedItems(event.getDrops()));
     }
 
     private static void createPlayerJoinListener() {
         Events.subscribe(PlayerJoinEvent.class)
-                .filter(event -> buyItemsCache.containsKey(event.getPlayer().getUniqueId()))
-                .handler(event -> {
-                    cacheEntry entry = buyItemsCache.remove(event.getPlayer().getUniqueId());
-                    if (entry.getQuantity() > 0)
-                        entry.restore(event.getPlayer());
-                });
+                .handler(event ->
+                        removeMarkedItems(Arrays.asList(event.getPlayer().getInventory().getContents()))
+                );
     }
 
-    private static void addDropsFromCache(List<ItemStack> drops, cacheEntry entry) {
-        int quantity = entry.getQuantity();
-        while (quantity > 64) {
-            drops.add(ItemBuilder.of(entry.getItem()).setCount(64));
-            quantity -= 64;
+    private static void createDropItemListener() {
+        Events.subscribe(ItemDropEvent.class)
+                .handler(event -> removeMarkedItems(event.getDrops()));
+    }
+
+    private static void removeMarkedItems(List<ItemStack> items) {
+        for (ItemStack item : items) {
+            if (ItemUtils.isEmpty(item)) continue;
+            if (isMarkedItem(item)) deleteItem(item);
         }
-        drops.add(ItemBuilder.of(entry.getItem()).setCount(quantity));
     }
 
     public static buyConfirmMenuBuilder builder() {
@@ -129,12 +126,13 @@ public class buyConfirmMenu extends abstractConfirmMenu {
     @Override
     protected void setMaxItems() {
         int limit = getMinLimit();
+        if (nAddedItems >= limit) return;
         int nAddedItemsThisItit = 0;
         ItemStack markedItem = getMarkedItem();
         while (player.getInventory().addItem(markedItem).isEmpty()) {
-            nAddedItems ++;
-            nAddedItemsThisItit ++;
-            if (nAddedItemsThisItit>= limit) break;
+            nAddedItems++;
+            nAddedItemsThisItit++;
+            if (nAddedItemsThisItit >= limit) break;
         }
     }
 
@@ -147,6 +145,7 @@ public class buyConfirmMenu extends abstractConfirmMenu {
         int stockLimit = getStockLimit();
         int balanceLimit = getBalanceLimit();
         int inventoryLimit = getPlayerInventoryLimit();
+
         return getMinimumValue(stockLimit, balanceLimit, inventoryLimit);
     }
 
@@ -173,7 +172,7 @@ public class buyConfirmMenu extends abstractConfirmMenu {
         for (int i = 0; i < 36; i++)
             playerMockInventory.setItem(i, player.getInventory().getItem(i));
 
-        while (playerMockInventory.addItem(item.getRawItem()).isEmpty()) limit++;
+        while (playerMockInventory.addItem(getMarkedItem()).isEmpty()) limit++;
 
         return limit;
     }
