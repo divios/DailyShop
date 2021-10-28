@@ -146,7 +146,7 @@ public class singleGuiImpl implements singleGui {
 
     @Override
     public synchronized singleGui clone() {
-        return singleGui.fromJson(toJson(), getShop());
+        return new singleGuiImpl(p, shop, base);
     }
 
 }

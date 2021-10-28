@@ -5,6 +5,7 @@ import io.github.divios.core_lib.Events;
 import io.github.divios.core_lib.event.Subscription;
 import io.github.divios.core_lib.inventory.inventoryUtils;
 import io.github.divios.core_lib.itemutils.ItemUtils;
+import io.github.divios.core_lib.misc.Msg;
 import io.github.divios.core_lib.misc.Pair;
 import io.github.divios.core_lib.misc.WeightedRandom;
 import io.github.divios.dailyShop.DailyShop;
@@ -156,7 +157,7 @@ public class dInventory {
     private void runItemAction(InventoryClickEvent e) {
         dItem item = buttons.get(e.getSlot());
         if (item != null)
-        item.getAction().stream((dAction, s) -> dAction.run((Player) e.getWhoClicked(), s));
+            item.getAction().stream((dAction, s) -> dAction.run((Player) e.getWhoClicked(), s));
     }
 
     public boolean addInventoryRow() {
@@ -277,6 +278,7 @@ public class dInventory {
     private int getItemRarityWeight(dItem item) {
         return item.getRarity().getWeight();
     }
+
     @NotNull
     private List<Integer> getDailySlotsSorted() {
         return dailyItemsSlots.stream().sorted().collect(Collectors.toList());
@@ -411,7 +413,14 @@ public class dInventory {
     }
 
     public dInventory copy() {
-        return fromBase64(toBase64(), shop);
+        //return fromBase64(toBase64(), shop);
+        dInventory newInv = new dInventory(this.title, this.inv.getSize(), this.shop);
+        newInv.inv.setContents(this.inv.getContents());
+        newInv.buttons.putAll(this.buttons);
+        newInv.dailyItemsSlots.clear();
+        newInv.dailyItemsSlots.addAll(dailyItemsSlots);
+
+        return newInv;
     }
 
 }

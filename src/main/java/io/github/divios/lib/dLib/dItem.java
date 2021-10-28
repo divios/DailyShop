@@ -12,6 +12,7 @@ import io.github.divios.core_lib.misc.Pair;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.economies.economy;
 import io.github.divios.dailyShop.economies.vault;
+import io.github.divios.dailyShop.utils.MMOUtils;
 import io.github.divios.dailyShop.utils.utils;
 import io.github.divios.lib.dLib.stock.dStock;
 import io.github.divios.lib.dLib.stock.factory.dStockFactory;
@@ -68,22 +69,20 @@ public class dItem implements Serializable, Cloneable {
         this.rawItem = Lazy.suppliedBy(() -> ItemUtils.deserialize(item.getString("rds_rawItem")));
     }
 
+    public ItemStack getRawItem() {
+        return getRawItem(false);
+    }
+
     /**
      * Gets the raw item, this is, the item's held
      * by this instance without all the daily metadata
      * @return
      */
-    public ItemStack getRawItem() {
+    public ItemStack getRawItem(boolean getAsNewItem) {
 
-        if (utils.isOperative("MMOItems") && io.lumine.mythic.lib.api.item.NBTItem.get(rawItem.get()).hasType()) {
+        if (getAsNewItem && MMOUtils.isMMOItemsOn() && MMOUtils.isMMOItem(rawItem.get().clone())) {
             try {
-
-                io.lumine.mythic.lib.api.item.NBTItem mmoitem = io.lumine.mythic.lib.api.item.NBTItem.get(rawItem.get().clone());
-                String type = mmoitem.getType();
-                String id = mmoitem.getString("MMOITEMS_ITEM_ID");
-
-                return MMOItems.plugin.getItem(net.Indyuce.mmoitems.api.Type.get(type), id);
-
+                return MMOUtils.createNewMMOItem(rawItem.get().clone());
             } catch (Exception e) {
                 return rawItem.get();
             }
