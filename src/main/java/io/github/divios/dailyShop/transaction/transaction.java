@@ -2,12 +2,14 @@ package io.github.divios.dailyShop.transaction;
 
 import io.github.divios.core_lib.Schedulers;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
+import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.core_lib.misc.Msg;
 import io.github.divios.core_lib.misc.confirmIH;
 import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.events.updateItemEvent;
+import io.github.divios.dailyShop.utils.MMOUtils;
 import io.github.divios.dailyShop.utils.PriceWrapper;
 import io.github.divios.dailyShop.utils.utils;
 import io.github.divios.lib.dLib.confirmMenu.buyConfirmMenu;
@@ -17,6 +19,7 @@ import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.dLib.stock.dStock;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.Arrays;
 import java.util.List;
@@ -51,6 +54,12 @@ public class transaction {
             return;
         }
 
+        if (!item.getEconomy().hasMoney(p, item.getBuyPrice().get().getPrice())) {
+            Msg.sendMsg(p, plugin.configM.getLangYml().MSG_NOT_MONEY);
+            shop.openShop(p);
+            return;
+        }
+
         if (item.isConfirmGuiEnabled()) {
 
             if (!item.getSetItems().isPresent()) {
@@ -70,8 +79,7 @@ public class transaction {
                         .withAction(aBoolean -> {
                             if (aBoolean) {
                                 transaction.initTransaction(p, item, item.getQuantity(), shop);
-                            }
-                            else
+                            } else
                                 shop.openShop(p);
                         })
                         .withItem(
@@ -224,7 +232,7 @@ public class transaction {
 
         if (!item.getCommands().isPresent() &&
                 !item.getBundle().isPresent())
-            s.addRunnable(() -> IntStream.range(0, amount).forEach(i -> p.getInventory().addItem(ItemBuilder.of(item.getRawItem()).setCount(1))));
+            s.addRunnable(() -> giveOptimizedItem(p, item, amount));
 
         return s;
     }
@@ -233,7 +241,7 @@ public class transaction {
 
         boolean result = true;
 
-        if (item.hasStock())  {
+        if (item.hasStock()) {
             CompletableFuture<Integer> callback = dStock.searchStock(p, shop, item.getUid());
             try {
                 int c = callback.get(2, TimeUnit.SECONDS);
@@ -245,6 +253,19 @@ public class transaction {
             }
         }
         return shop.getItem(item.getUid()).isPresent() && result;
+
+    }
+
+    private static void giveOptimizedItem(Player player, dItem itemToGive, int amount) {
+
+        if (MMOUtils.isMMOItem(itemToGive.getRawItem())) {
+            if (itemToGive.getRawItem(true).equals(itemToGive.getRawItem(true))) {
+                ItemUtils.give(player, itemToGive.getRawItem(), amount);
+            }
+            else IntStream.range(0, amount).forEach(value -> player.getInventory().addItem(ItemBuilder.of(itemToGive.getRawItem(true)).setCount(1)));
+        }
+
+        else ItemUtils.give(player, itemToGive.getRawItem(), amount);
 
     }
 

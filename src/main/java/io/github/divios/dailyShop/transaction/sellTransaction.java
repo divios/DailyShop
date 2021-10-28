@@ -28,7 +28,7 @@ public class sellTransaction {
     private final Player player;
     private final dItem item;
     private final dShop shop;
-    private int quantity;
+    private int quantity = 1;
 
     public static sellTransaction create(Player p, dItem item, dShop shop) {
         return new sellTransaction(p, item, shop);
@@ -45,6 +45,7 @@ public class sellTransaction {
     private void initTransaction() {
         try {
             checkPriceAndPermsConditions();
+            hasEnoughItems();
         } catch (Exception errorMsg) {
             Msg.sendMsg(player, errorMsg.getMessage());
             shop.openShop(player);
