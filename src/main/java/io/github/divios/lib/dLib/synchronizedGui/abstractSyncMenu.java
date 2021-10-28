@@ -38,7 +38,7 @@ public abstract class abstractSyncMenu implements syncMenu {
     protected singleGui base;
 
     private final Set<SingleSubscription> listeners = new HashSet<>();
-    private final Map<UUID, Promise<Void>> DelayedGuisPromises = new HashMap<>();
+    private final Map<UUID, Promise<Void>> delayedGuisPromises = new HashMap<>();
 
     protected abstractSyncMenu(dShop shop) {
         this(shop, singleGui.create(shop));
@@ -87,7 +87,7 @@ public abstract class abstractSyncMenu implements syncMenu {
         singleGui gui = guis.get(o.getPlayer().getUniqueId());
 
         if (gui != null && gui.getInventory().getInventory().equals(o.getInventory()))
-            DelayedGuisPromises.put(o.getPlayer().getUniqueId(), Schedulers.sync().runLater(() -> invalidate(o.getPlayer().getUniqueId()), 2400L));
+            delayedGuisPromises.put(o.getPlayer().getUniqueId(), Schedulers.sync().runLater(() -> invalidate(o.getPlayer().getUniqueId()), 2400L));
 
     }
 
@@ -113,8 +113,7 @@ public abstract class abstractSyncMenu implements syncMenu {
     public synchronized void generate(Player p) {
 
         if (contains(p)) {
-            Promise<Void> promise = DelayedGuisPromises.remove(p.getUniqueId());
-            if (promise != null) promise.cancel();
+            removeAndCancelPromise(p.getUniqueId());
             getGui(p).getInventory().openInventory(p);
         }
 
@@ -141,27 +140,31 @@ public abstract class abstractSyncMenu implements syncMenu {
     @Override
     public synchronized void invalidate(UUID key) {
         singleGui removed = guis.remove(key);
-        if (removed == null) return;
-        removed.destroy();
+        if (removed != null) removed.destroy();
+        removeAndCancelPromise(key);
     }
 
     @Override
     public synchronized void invalidateAll() {
         guis.values().forEach(singleGui::destroy);
         guis.clear();
+        delayedGuisPromises.values().forEach(Promise::cancel);
+        delayedGuisPromises.clear();
     }
 
     @Override
     public synchronized void destroy() {
         guis.keySet().forEach(uuid -> Bukkit.getPlayer(uuid).closeInventory());     // Triggers invalidate
-        listeners.forEach(Subscription::unregister);
-        listeners.clear();
+        invalidateAll();
+
         base.destroy();
     }
 
     @Override
     public synchronized void reStock(boolean silent) {
         Set<UUID> players = new HashSet<>(guis.keySet());
+        players.removeAll(delayedGuisPromises.keySet());
+
         invalidateAll();                                            // close all inventories
         base.renovate();                                            // Renovates base
         players.forEach(uuid -> Optional.ofNullable(Bukkit.getPlayer(uuid)).ifPresent(this::generate));
@@ -206,6 +209,11 @@ public abstract class abstractSyncMenu implements syncMenu {
 
         return shop.equals(gui.getShop())
                 && guis.hashCode() == gui.getMenus().hashCode();
+    }
+
+    private void removeAndCancelPromise(UUID key) {
+        Promise<Void> promise = delayedGuisPromises.remove(key);
+        if (promise != null) promise.cancel();
     }
 
 }
