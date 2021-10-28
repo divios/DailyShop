@@ -1,5 +1,6 @@
 package io.github.divios.dailyShop.utils;
 
+import net.Indyuce.mmoitems.MMOItems;
 import org.bukkit.inventory.ItemStack;
 
 public class MMOUtils {
@@ -20,6 +21,17 @@ public class MMOUtils {
             return false;
 
         return mmoitem.getType().equals(mmoitem2.getType()) && mmoitem.getId().equals(mmoitem2.getId());
+    }
+
+    public static ItemStack createNewMMOItem(ItemStack item) {
+        if (!isMMOItem(item)) return item;
+
+        io.lumine.mythic.lib.api.item.NBTItem mmoitem = io.lumine.mythic.lib.api.item.NBTItem.get(item);
+        String type = mmoitem.getType();
+        String id = mmoitem.getString("MMOITEMS_ITEM_ID");
+
+        return MMOItems.plugin.getItem(net.Indyuce.mmoitems.api.Type.get(type), id);
+
     }
 
     private static class MMOItemData {
