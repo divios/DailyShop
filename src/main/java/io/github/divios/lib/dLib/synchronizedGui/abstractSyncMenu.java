@@ -1,13 +1,13 @@
 package io.github.divios.lib.dLib.synchronizedGui;
 
 import com.google.common.base.Objects;
-import com.google.common.collect.BiMap;
 import io.github.divios.core_lib.Events;
+import io.github.divios.core_lib.Schedulers;
 import io.github.divios.core_lib.event.SingleSubscription;
 import io.github.divios.core_lib.event.Subscription;
 import io.github.divios.core_lib.misc.Msg;
+import io.github.divios.core_lib.promise.Promise;
 import io.github.divios.dailyShop.DailyShop;
-import io.github.divios.dailyShop.events.reStockShopEvent;
 import io.github.divios.dailyShop.events.updateItemEvent;
 import io.github.divios.dailyShop.events.updateShopEvent;
 import io.github.divios.dailyShop.guis.customizerguis.customizeGui;
@@ -34,10 +34,11 @@ import java.util.*;
 public abstract class abstractSyncMenu implements syncMenu {
 
     protected final dShop shop;
-    protected final BiMap<UUID, singleGui> guis;
+    protected final Map<UUID, singleGui> guis;
     protected singleGui base;
 
     private final Set<SingleSubscription> listeners = new HashSet<>();
+    private final Map<UUID, Promise<Void>> DelayedGuisPromises = new HashMap<>();
 
     protected abstractSyncMenu(dShop shop) {
         this(shop, singleGui.create(shop));
@@ -82,9 +83,12 @@ public abstract class abstractSyncMenu implements syncMenu {
      * @param o The InventoryCloseEvent triggered
      */
     private synchronized void checkClosedInv(InventoryCloseEvent o) {
+
         singleGui gui = guis.get(o.getPlayer().getUniqueId());
 
-        if (gui != null) invalidate(o.getPlayer().getUniqueId());
+        if (gui != null && gui.getInventory().getInventory().equals(o.getInventory()))
+            DelayedGuisPromises.put(o.getPlayer().getUniqueId(), Schedulers.sync().runLater(() -> invalidate(o.getPlayer().getUniqueId()), 2400L));
+
     }
 
     /**
@@ -103,17 +107,30 @@ public abstract class abstractSyncMenu implements syncMenu {
         guis.forEach((uuid, singleGui) -> singleGui.updateItem(o));
     }
 
-    protected abstract BiMap<UUID, singleGui> createMap();
+    protected abstract Map<UUID, singleGui> createMap();
 
     @Override
     public synchronized void generate(Player p) {
-        guis.put(p.getUniqueId(), singleGui.create(p, base, shop));
+
+        if (contains(p)) {
+            Promise<Void> promise = DelayedGuisPromises.remove(p.getUniqueId());
+            if (promise != null) promise.cancel();
+            getGui(p).getInventory().openInventory(p);
+        }
+
+        else guis.put(p.getUniqueId(), singleGui.create(p, base, shop));
         //Log.warn(String.valueOf(size()));
     }
 
     @Override
-    public synchronized @Nullable singleGui get(UUID key) {
+    public synchronized @Nullable
+    singleGui getGui(UUID key) {
         return guis.get(key);
+    }
+
+    @Override
+    public boolean contains(UUID key) {
+        return guis.containsKey(key);
     }
 
     @Override
@@ -150,10 +167,10 @@ public abstract class abstractSyncMenu implements syncMenu {
         players.forEach(uuid -> Optional.ofNullable(Bukkit.getPlayer(uuid)).ifPresent(this::generate));
         if (!silent)
             Msg.broadcast(
-                Msg.singletonMsg(DailyShop.getInstance().configM.getLangYml().MSG_RESTOCK)
-                        .add("\\{shop}", shop.getName())
-                        .build()
-        );
+                    Msg.singletonMsg(DailyShop.getInstance().configM.getLangYml().MSG_RESTOCK)
+                            .add("\\{shop}", shop.getName())
+                            .build()
+            );
     }
 
     @Override
@@ -162,7 +179,9 @@ public abstract class abstractSyncMenu implements syncMenu {
     }
 
     @Override
-    public dInventory getDefault() {  return base.getBase(); }
+    public dInventory getDefault() {
+        return base.getBase();
+    }
 
     @Override
     public dShop getShop() {
