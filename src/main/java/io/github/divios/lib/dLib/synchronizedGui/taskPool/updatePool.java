@@ -19,7 +19,7 @@ public class updatePool {
         bucket.add(gui);
     }
 
-    public static void cancel(singleGui gui) {
+    public static void unsubscribe(singleGui gui) {
         bucket.remove(gui);
     }
 
