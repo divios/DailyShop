@@ -12,7 +12,7 @@ plugins {
 apply plugin: 'maven-publish'
 
 group = 'io.github.divios'
-def pluginVersion = "3.5.3"
+def pluginVersion = "3.5.4"
 version = pluginVersion
 
 sourceCompatibility = '1.8'
@@ -75,13 +75,6 @@ repositories {
         }
     }
 
-    maven {
-        url repsyUrldShopParser
-        credentials {
-            username repsyUsername
-            password repsyPassword
-        }
-    }
 }
 
 dependencies {
@@ -129,7 +122,13 @@ java {
 
 task updateJars {
     doLast {
-        copy {
+
+        exec {
+            commandLine 'sh', './copy.sh'
+        }
+
+        //windows
+        /*copy {
             from 'build/libs/DailyShop-' + pluginVersion + "-all.jar"
             into 'C:/Users/serbe/Desktop/server_pruebas/1.17/plugins'
             rename ("DailyShop-" + pluginVersion + "-all.jar"
@@ -152,7 +151,7 @@ task updateJars {
             into 'C:/Users/serbe/Desktop/server_pruebas/1.8/plugins'
             rename ("DailyShop-" + pluginVersion + "-all.jar"
                     , "DailyShop-" + pluginVersion + ".jar")
-        }
+        }*/
     }
 }
 
