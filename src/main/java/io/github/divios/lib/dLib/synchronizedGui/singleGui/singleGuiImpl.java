@@ -134,7 +134,7 @@ public class singleGuiImpl implements singleGui {
     public synchronized void destroy() {
         events.forEach(Subscription::unregister);
         own.destroy();
-        updatePool.cancel(this);
+        updatePool.unsubscribe(this);
     }
 
     @Override
