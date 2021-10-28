@@ -20,7 +20,15 @@ public interface syncMenu {
 
     void reStock(boolean silent);
 
-    singleGui get(UUID key);
+    default singleGui getGui(Player p) { return getGui(p.getUniqueId()); }
+
+    singleGui getGui(UUID key);
+
+    default boolean contains(Player p) {
+        return contains(p.getUniqueId());
+    }
+
+    boolean contains(UUID p);
 
     default int size() { return getMenus().size(); }
 
