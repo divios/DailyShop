@@ -1,9 +1,12 @@
 package io.github.divios.lib.dLib.synchronizedGui.singleGui;
 
 import io.github.divios.core_lib.Events;
+import io.github.divios.core_lib.Schedulers;
 import io.github.divios.core_lib.event.Subscription;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
+import io.github.divios.core_lib.promise.Promise;
+import io.github.divios.core_lib.terminable.Terminable;
 import io.github.divios.dailyShop.events.searchStockEvent;
 import io.github.divios.dailyShop.events.updateItemEvent;
 import io.github.divios.dailyShop.lorestategy.loreStrategy;
@@ -17,10 +20,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.IntStream;
 
 /**
@@ -51,7 +51,7 @@ public class singleGuiImpl implements singleGui {
         if (p != null) {
             if (utils.isOperative("PlaceholderAPI")) {
                 updatePool.subscribe(this);
-                updateTask();
+                Schedulers.async().run(this::updateTask);
             }
             this.own.openInventory(p);
         } else ready();
