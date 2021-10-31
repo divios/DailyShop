@@ -1,5 +1,6 @@
 package io.github.divios.dailyShop.economies;
 
+import io.github.divios.dailyShop.DailyShop;
 import org.bukkit.entity.Player;
 import org.bukkit.util.io.BukkitObjectInputStream;
 import org.bukkit.util.io.BukkitObjectOutputStream;
@@ -12,6 +13,8 @@ import java.io.Serializable;
 import java.util.function.Supplier;
 
 public abstract class economy implements Serializable {
+
+    protected static final DailyShop plugin = DailyShop.getInstance();
 
     protected final String currency;
     private final Supplier<String> name;
@@ -42,7 +45,8 @@ public abstract class economy implements Serializable {
     public abstract double getBalance(Player p);
 
     public String getName() {
-        return name.get();
+        return plugin.configM.getSettingsYml().ECONNAMES.containsKey(name.get()) ?
+                plugin.configM.getSettingsYml().ECONNAMES.get(name.get()) : name.get();
     }
 
     public String getCurrency() {
