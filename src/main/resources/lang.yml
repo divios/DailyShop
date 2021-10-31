@@ -16,7 +16,7 @@ lang:
     set_pane: "&eMAX"
     return_name: "&8> &cReturn"
     return_pane_lore: "&7Click to go back"
-    sell_item: "&8- &7Total money: &3{price}|&8- &7Quantity: &3{quantity}"
+    sell_item: "&8- &7Total: &3{price}|&8- &7Quantity: &3{quantity}"
     yes_name: "&aYES"
     yes_lore: "&8- &7Click here to confirm|&7this action"
     no_name: "&cNO"
