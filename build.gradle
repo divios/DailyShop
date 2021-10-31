@@ -78,10 +78,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'junit:junit:4.13.1'
-    testImplementation 'com.github.seeseemelk:MockBukkit-v1.16:1.0.0'
     implementation 'org.jetbrains:annotations:20.1.0'
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.7.0'
     compileOnly "org.spigotmc:spigot:1.17-R0.1-SNAPSHOT"
     compileOnly group: "org.spigotmc", name: "spigot-api", version: "1.17-R0.1-SNAPSHOT"
     compileOnly group: "net.Indyuce", name: "MMOItems", version: "6.6.1"
