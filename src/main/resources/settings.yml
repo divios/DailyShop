@@ -23,7 +23,10 @@
 #   <integer-bal>
 #        - If false, round prices like 20.0 would be displayed as 20, if true: 20.0
 # ============================
-# You must restart for changes to take affect when editing this file!
+#   <econ-names>
+#        - Option to override the displayed economy names
+# ============================
+# You must restart for changes to take effect when editing this file!
 # =========================================================
 settings:
   prefix: "&e&lDailyShop &7> "
@@ -33,4 +36,6 @@ settings:
   default_timer: 86400
   vault_name: "&7Vault"
   integer-bal: true
+  econ-names:
+    economy_name_to_change: "Custom economy name"
 

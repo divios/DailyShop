@@ -232,7 +232,7 @@ public abstract class abstractConfirmMenu {
 
     private List<String> setItemPricePlaceholder(List<String> str) {
         return Msg.msgList(str)
-                .add("\\{price}", getFormattedPrice(getItemPrice() * nAddedItems))
+                .add("\\{price}", getFormattedPrice(getItemPrice() * nAddedItems) + " " + item.getEconomy().getName())
                 .add("\\{quantity}", String.valueOf(nAddedItems))
                 .build();
     }

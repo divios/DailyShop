@@ -12,7 +12,7 @@ plugins {
 apply plugin: 'maven-publish'
 
 group = 'io.github.divios'
-def pluginVersion = "3.5.4"
+def pluginVersion = "3.5.5"
 version = pluginVersion
 
 sourceCompatibility = '1.8'
@@ -180,9 +180,20 @@ processResources {
 
 }
 
+clean.doLast {
+    file("${rootDir}/bin").deleteDir()
+}
+
+
 task deploy(dependsOn: ["build", "updateJars"]) {
     updateJars.mustRunAfter jar
 }
 
+tasks.withType(JavaCompile) {
+    options.deprecation = true
+    options.encoding = 'UTF-8'
+}
+
+compileJava.options.encoding = 'UTF-8'
 compileJava.dependsOn clean
 build.dependsOn shadowJar

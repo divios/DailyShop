@@ -18,16 +18,16 @@ public class expEconomy extends economy {
 
     @Override
     public void witchDrawMoney(Player p, Double price) {
-        p.setExp((float) (p.getExp() - price));
+        p.setLevel((int) (p.getLevel() - price));
     }
 
     @Override
     public void depositMoney(Player p, Double price) {
-        p.giveExp(price.intValue());
+        p.setLevel((int) (p.getLevel() + price));
     }
 
     @Override
     public double getBalance(Player p) {
-        return p.getExp();
+        return p.getLevel();
     }
 }

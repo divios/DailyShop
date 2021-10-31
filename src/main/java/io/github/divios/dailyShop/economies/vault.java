@@ -14,7 +14,7 @@ public class vault extends economy {
     }
 
     public vault(String currency) {
-        super(currency, () -> DailyShop.getInstance().configM.getSettingsYml().VAULT_NAME, econTypes.vault);
+        super(currency, () -> "Vault", econTypes.vault);
     }
 
     @Override

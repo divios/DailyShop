@@ -16,7 +16,6 @@ import io.github.divios.dailyShop.utils.MMOUtils;
 import io.github.divios.dailyShop.utils.utils;
 import io.github.divios.lib.dLib.stock.dStock;
 import io.github.divios.lib.dLib.stock.factory.dStockFactory;
-import net.Indyuce.mmoitems.MMOItems;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
