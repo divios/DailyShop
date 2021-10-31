@@ -65,7 +65,7 @@ public class changeEcon {
         createLightBluePanes(menu);
         createReturnButton(menu);
         createVaultButton(menu);
-        //createExpButton(menu);
+        createExpButton(menu);
         //createItemButton(menu);
         if (gemsApi != null) createGemsApiButton(menu);
         if (tokenEnchantsApi != null) createTokenEnchantsButton(menu);
