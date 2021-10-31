@@ -12,7 +12,6 @@ import io.github.divios.core_lib.misc.Pair;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.economies.economy;
 import io.github.divios.dailyShop.economies.vault;
-import io.github.divios.dailyShop.utils.MMOUtils;
 import io.github.divios.dailyShop.utils.utils;
 import io.github.divios.lib.dLib.stock.dStock;
 import io.github.divios.lib.dLib.stock.factory.dStockFactory;
@@ -78,15 +77,6 @@ public class dItem implements Serializable, Cloneable {
      * @return
      */
     public ItemStack getRawItem(boolean getAsNewItem) {
-
-        if (getAsNewItem && MMOUtils.isMMOItemsOn() && MMOUtils.isMMOItem(rawItem.get().clone())) {
-            try {
-                return MMOUtils.createNewMMOItem(rawItem.get().clone());
-            } catch (Exception e) {
-                return rawItem.get();
-            }
-        }
-
         return rawItem.get();
     }
 

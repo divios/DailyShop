@@ -9,7 +9,6 @@ import io.github.divios.core_lib.misc.confirmIH;
 import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.events.updateItemEvent;
-import io.github.divios.dailyShop.utils.MMOUtils;
 import io.github.divios.dailyShop.utils.PriceWrapper;
 import io.github.divios.dailyShop.utils.utils;
 import io.github.divios.lib.dLib.confirmMenu.buyConfirmMenu;
@@ -19,7 +18,6 @@ import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.dLib.stock.dStock;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.Arrays;
 import java.util.List;
@@ -257,16 +255,7 @@ public class transaction {
     }
 
     private static void giveOptimizedItem(Player player, dItem itemToGive, int amount) {
-
-        if (MMOUtils.isMMOItem(itemToGive.getRawItem())) {
-            if (itemToGive.getRawItem(true).equals(itemToGive.getRawItem(true))) {
-                ItemUtils.give(player, itemToGive.getRawItem(), amount);
-            }
-            else IntStream.range(0, amount).forEach(value -> player.getInventory().addItem(ItemBuilder.of(itemToGive.getRawItem(true)).setCount(1)));
-        }
-
-        else ItemUtils.give(player, itemToGive.getRawItem(), amount);
-
+        ItemUtils.give(player, itemToGive.getRawItem(), amount);
     }
 
 }
