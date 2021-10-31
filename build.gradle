@@ -180,9 +180,20 @@ processResources {
 
 }
 
+clean.doLast {
+    file("${rootDir}/bin").deleteDir()
+}
+
+
 task deploy(dependsOn: ["build", "updateJars"]) {
     updateJars.mustRunAfter jar
 }
 
+tasks.withType(JavaCompile) {
+    options.deprecation = true
+    options.encoding = 'UTF-8'
+}
+
+compileJava.options.encoding = 'UTF-8'
 compileJava.dependsOn clean
 build.dependsOn shadowJar
