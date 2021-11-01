@@ -12,7 +12,8 @@ public enum econTypes {
     playerPoints(playerPointsE::new),
     ultraEconomy(ultraEconomyE::new),
     item(itemEconomy::new),
-    exp(expEconomy::new);
+    exp(expEconomy::new),
+    elementalGems(ElementalGemsEcon::new);
 
     private final Function<String, economy> function;
 
