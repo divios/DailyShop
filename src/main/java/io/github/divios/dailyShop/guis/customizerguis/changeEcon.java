@@ -10,6 +10,7 @@ import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.economies.*;
+import io.github.divios.dailyShop.hooks.elementalGemsHook;
 import io.github.divios.dailyShop.hooks.hooksManager;
 import io.github.divios.lib.dLib.dItem;
 import me.TechsCode.UltraEconomy.UltraEconomyAPI;
@@ -73,6 +74,7 @@ public class changeEcon {
         if (mPointsAPI != null) createMPointsButton(menu);
         if (pPointsApi != null) createPlayerPointsButton(menu);
         if (uEconApi != null) createUltraEconomyButtons(menu);
+        if (elementalGemsHook.isHooked()) createElementalGemsButton(menu);
         return menu;
     }
 
@@ -142,6 +144,10 @@ public class changeEcon {
                                 consumer.accept(item);
                             }));
         }
+    }
+
+    private void createElementalGemsButton(InventoryGUI menu) {
+        addButton(menu, createEconomyButton(XMaterial.EMERALD, "&d&lElementalGems", new ElementalGemsEcon()));
     }
 
     private void createVaultButton(InventoryGUI menu) {

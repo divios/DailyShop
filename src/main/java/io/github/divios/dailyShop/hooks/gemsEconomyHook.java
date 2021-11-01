@@ -10,7 +10,7 @@ class gemsEconomyHook {
 
     private gemsEconomyHook() {};
 
-    public static void getInstance() {
+    public static void tryToHook() {
             if(main.getServer().getPluginManager().getPlugin("GemsEconomy") != null) {
                 main.getLogger().info("Hooked to GemsEconomy");
                 gemsEcon = new GemsEconomyAPI();

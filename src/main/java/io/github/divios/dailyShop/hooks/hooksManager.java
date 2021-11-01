@@ -56,7 +56,8 @@ public class hooksManager {
         if (utils.isOperative("UltraEconomy"))
             UltraEconomyHook.hook();
 
-        gemsEconomyHook.getInstance();
+        elementalGemsHook.tryToHook();
+        gemsEconomyHook.tryToHook();
         bstatsHook.init();
     }
 
@@ -77,4 +78,5 @@ public class hooksManager {
     public UltraEconomyAPI getUltraEconomyApi() { return UltraEconomyHook.getApi(); }
 
     public Object getShopGuiPlusApi() { return shopGuiPlusHook.getApi(); }
+
 }
