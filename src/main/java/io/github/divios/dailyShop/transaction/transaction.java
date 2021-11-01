@@ -272,7 +272,7 @@ public class transaction {
 
     private static void giveOptimizedItem(Player player, dItem itemToGive, int amount) {
 
-        if (MMOUtils.isMMOItem(itemToGive.getRawItem())) {
+        if (MMOUtils.isMMOItemsOn() && MMOUtils.isMMOItem(itemToGive.getRawItem())) {
             if (itemToGive.getRawItem(true).equals(itemToGive.getRawItem(true))) {
                 ItemUtils.give(player, itemToGive.getRawItem(), amount);
             }
