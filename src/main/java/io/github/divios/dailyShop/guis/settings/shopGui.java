@@ -3,14 +3,13 @@ package io.github.divios.dailyShop.guis.settings;
 import com.cryptomorin.xseries.XMaterial;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import io.github.divios.core_lib.Events;
-import io.github.divios.core_lib.Schedulers;
+import io.github.divios.core_lib.events.Events;
+import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.core_lib.inventory.InventoryGUI;
 import io.github.divios.core_lib.inventory.ItemButton;
 import io.github.divios.core_lib.inventory.builder.inventoryPopulator;
 import io.github.divios.core_lib.inventory.builder.paginatedGui;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
-import io.github.divios.core_lib.misc.Task;
 import io.github.divios.core_lib.misc.confirmIH;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.guis.customizerguis.CustomizerMenu;
@@ -180,7 +179,7 @@ public class shopGui {
                     .withAction(aBoolean -> {
                         if (aBoolean)
                             shop.removeItem(uid);
-                        Task.syncDelayed(plugin, () -> inv.destroy(), 3L);
+                        Schedulers.sync().runLater(() -> inv.destroy(), 3L);
                         open(p, shop);
                     })
                     .withTitle(plugin.configM.getLangYml().CONFIRM_GUI_ACTION_NAME)
@@ -192,7 +191,7 @@ public class shopGui {
     }
 
     private void refresh() {
-        Task.syncDelayed(plugin, () -> inv.destroy(), 3L);
+        Schedulers.sync().runLater(() -> inv.destroy(), 3L);
         open(p, shop);
     }
 

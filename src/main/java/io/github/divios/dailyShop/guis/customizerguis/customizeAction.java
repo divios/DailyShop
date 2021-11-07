@@ -8,7 +8,7 @@ import io.github.divios.core_lib.inventory.inventoryUtils;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.misc.ChatPrompt;
 import io.github.divios.core_lib.misc.EventListener;
-import io.github.divios.core_lib.misc.Task;
+import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.utils.utils;
 import io.github.divios.lib.dLib.dAction;
@@ -54,7 +54,7 @@ public class customizeAction {
 
                     if (flagPass) return;
 
-                    Task.syncDelayed(plugin, () -> inv.open(p), 1L);
+                    Schedulers.sync().runLater(() -> inv.open(p), 1L);
                 });
     }
 
@@ -96,16 +96,16 @@ public class customizeAction {
                     ChatPrompt.prompt(plugin, p, (s) -> {
                         if (!shopsManager.getInstance().getShop(s).isPresent()) {
                             utils.sendMsg(p, "&7That shop doesnt exist");
-                            Task.syncDelayed(plugin, () -> inv.open(p));
+                            Schedulers.sync().run(() -> inv.open(p));
                             flagPass = true;
                             return;
                         }
                         preventClose.unregister();
                         inv.destroy();
-                        Task.syncDelayed(plugin, () ->
+                        Schedulers.sync().runLater(() ->
                                 onComplete.accept(dAction.OPEN_SHOP, s), 1L);
                     }, (cause) -> {
-                        Task.syncDelayed(plugin, () -> inv.open(p));
+                        Schedulers.sync().run(() -> inv.open(p));
                         flagPass = true;
                     }, "&a&lInput shop name", "");
                 }), inventoryUtils.getFirstEmpty(inv.getInventory()));
@@ -117,9 +117,9 @@ public class customizeAction {
                     ChatPrompt.prompt(plugin, p , (s) -> {
                         preventClose.unregister();
                         inv.destroy();
-                        Task.syncDelayed(plugin, () -> onComplete.accept(dAction.RUN_CMD, s));
+                        Schedulers.sync().run(() -> onComplete.accept(dAction.RUN_CMD, s));
                     }, (player -> {
-                        Task.syncDelayed(plugin, () -> inv.open(p));
+                        Schedulers.sync().run(() -> inv.open(p));
                         flagPass = true;
                     }), "", "");
                 }), inventoryUtils.getFirstEmpty(inv.getInventory()));

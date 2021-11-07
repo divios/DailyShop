@@ -1,12 +1,11 @@
 package io.github.divios.lib.dLib.synchronizedGui;
 
 import com.google.common.base.Objects;
-import io.github.divios.core_lib.Events;
-import io.github.divios.core_lib.Schedulers;
-import io.github.divios.core_lib.event.SingleSubscription;
-import io.github.divios.core_lib.event.Subscription;
+import io.github.divios.core_lib.events.Events;
+import io.github.divios.core_lib.events.Subscription;
 import io.github.divios.core_lib.misc.Msg;
-import io.github.divios.core_lib.promise.Promise;
+import io.github.divios.core_lib.scheduler.Schedulers;
+import io.github.divios.core_lib.scheduler.Task;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.events.updateItemEvent;
 import io.github.divios.dailyShop.events.updateShopEvent;
@@ -20,6 +19,7 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Abstract class that represents the basic operations of a syncMenu.
@@ -37,8 +37,8 @@ public abstract class abstractSyncMenu implements syncMenu {
     protected final Map<UUID, singleGui> guis;
     protected singleGui base;
 
-    private final Set<SingleSubscription> listeners = new HashSet<>();
-    private final Map<UUID, Promise<Void>> delayedGuisPromises = new HashMap<>();
+    private final Set<Subscription> listeners = new HashSet<>();
+    private final Map<UUID, Task> delayedGuisPromises = new HashMap<>();
 
     protected abstractSyncMenu(dShop shop) {
         this(shop, singleGui.create(shop));
@@ -57,24 +57,20 @@ public abstract class abstractSyncMenu implements syncMenu {
      */
 
     private void ready() {
-
         listeners.add(
                 Events.subscribe(updateItemEvent.class)
                         .filter(o -> o.getShop().equals(shop))
                         .handler(this::updateItems)
         );
-
         listeners.add(
                 Events.subscribe(updateShopEvent.class)
                         .filter(o -> o.getShop().equals(shop))
                         .handler(this::updateBase)
         );
-
         listeners.add(
                 Events.subscribe(InventoryCloseEvent.class)
                         .handler(this::checkClosedInv)
         );
-
     }
 
     /**
@@ -83,12 +79,9 @@ public abstract class abstractSyncMenu implements syncMenu {
      * @param o The InventoryCloseEvent triggered
      */
     private synchronized void checkClosedInv(InventoryCloseEvent o) {
-
         singleGui gui = guis.get(o.getPlayer().getUniqueId());
-
         if (gui != null && gui.getInventory().getInventory().equals(o.getInventory()))
-            delayedGuisPromises.put(o.getPlayer().getUniqueId(), Schedulers.sync().runLater(() -> invalidate(o.getPlayer().getUniqueId()), 2400L));
-
+            delayedGuisPromises.put(o.getPlayer().getUniqueId(), Schedulers.sync().runLater(() -> invalidate(o.getPlayer().getUniqueId()), 2, TimeUnit.MINUTES));
     }
 
     /**
@@ -148,7 +141,7 @@ public abstract class abstractSyncMenu implements syncMenu {
     public synchronized void invalidateAll() {
         guis.values().forEach(singleGui::destroy);
         guis.clear();
-        delayedGuisPromises.values().forEach(Promise::cancel);
+        delayedGuisPromises.values().forEach(Task::stop);
         delayedGuisPromises.clear();
     }
 
@@ -212,8 +205,8 @@ public abstract class abstractSyncMenu implements syncMenu {
     }
 
     private void removeAndCancelPromise(UUID key) {
-        Promise<Void> promise = delayedGuisPromises.remove(key);
-        if (promise != null) promise.cancel();
+        Task promise = delayedGuisPromises.remove(key);
+        if (promise != null) promise.stop();
     }
 
 }

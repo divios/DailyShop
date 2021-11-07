@@ -2,7 +2,7 @@ package io.github.divios.dailyShop.guis.customizerguis;
 
 import com.cryptomorin.xseries.XMaterial;
 import com.google.common.base.Preconditions;
-import io.github.divios.core_lib.Schedulers;
+import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.core_lib.inventory.InventoryGUI;
 import io.github.divios.core_lib.inventory.ItemButton;
 import io.github.divios.core_lib.inventory.builder.inventoryPopulator;
@@ -12,7 +12,6 @@ import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.ChatPrompt;
 import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.core_lib.misc.Msg;
-import io.github.divios.core_lib.misc.Task;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.guis.settings.shopGui;
 import io.github.divios.dailyShop.utils.utils;
@@ -464,7 +463,7 @@ public class CustomizerMenu {
                                                 item.setStock(dStockFactory.INDIVIDUAL(Integer.parseInt(s)));
                                             else utils.sendMsg(p, plugin.configM.getLangYml().MSG_NOT_INTEGER);
 
-                                            Task.syncDelayed(plugin, this::refresh);
+                                            Schedulers.sync().run(this::refresh);
                                         })
                                         .withCancel(cancelReason -> Schedulers.sync().run(this::refresh))
                                         .withTitle("&c&lInput Stock number")
@@ -510,7 +509,7 @@ public class CustomizerMenu {
                                                 item.setCommands(cmds);
                                                 refresh();
                                             })
-                                            .withCancel(cancelReason -> Task.syncDelayed(plugin, this::refresh))
+                                            .withCancel(cancelReason -> Schedulers.sync().run(this::refresh))
                                             .withTitle("&7&lInput new command")
                                             .prompt();
 

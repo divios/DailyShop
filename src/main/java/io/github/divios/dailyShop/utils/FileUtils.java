@@ -3,7 +3,7 @@ package io.github.divios.dailyShop.utils;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.*;
 import com.google.gson.internal.LinkedTreeMap;
-import io.github.divios.core_lib.Schedulers;
+import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.lib.managers.shopsManager;
