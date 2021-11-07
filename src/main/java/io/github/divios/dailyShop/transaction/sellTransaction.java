@@ -48,7 +48,7 @@ public class sellTransaction {
             hasEnoughItems();
         } catch (Exception errorMsg) {
             Msg.sendMsg(player, errorMsg.getMessage());
-            shop.openShop(player);
+            //shop.openShop(player);
             return;
         }
 

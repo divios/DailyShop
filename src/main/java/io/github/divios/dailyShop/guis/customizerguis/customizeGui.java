@@ -5,8 +5,8 @@ import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.ChatPrompt;
 import io.github.divios.core_lib.misc.FormatUtils;
-import io.github.divios.core_lib.misc.Task;
 import io.github.divios.core_lib.misc.confirmIH;
+import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.events.updateShopEvent;
 import io.github.divios.dailyShop.guis.settings.shopsManagerGui;
@@ -56,9 +56,7 @@ public class customizeGui implements Listener, InventoryHolder {
         this._gui = inv.skeleton();
         this.inv = inv.copy().getInventory();
 
-        Task.syncDelayed(plugin, () ->
-                Bukkit.getPluginManager().registerEvents(this, plugin), 1L);
-
+        Schedulers.sync().runLater(() -> Bukkit.getPluginManager().registerEvents(this, plugin), 1L);
         withdrawPlayerItems();
 
         addCustomizeItems();
@@ -152,7 +150,7 @@ public class customizeGui implements Listener, InventoryHolder {
      */
     public void refresh() {
         inv = _gui.getInventory();
-        Task.syncDelayed(plugin, () -> {
+        Schedulers.sync().runLater(() -> {
             refreshFlag = true;
             addCustomizeItems();
             p.openInventory(inv);
@@ -192,8 +190,8 @@ public class customizeGui implements Listener, InventoryHolder {
                 refreshFlag = true;
                 ChatPrompt.prompt(plugin, p , (s) -> {
                     _gui.setInventoryTitle(FormatUtils.color(s));
-                    Task.syncDelayed(plugin, this::refresh);
-                }, cause -> Task.syncDelayed(plugin, this::refresh),
+                    Schedulers.sync().run(this::refresh);
+                }, cause -> Schedulers.sync().run(this::refresh),
                         "&5&lInput New Title", "");
             }
 
@@ -262,7 +260,7 @@ public class customizeGui implements Listener, InventoryHolder {
         depositPlayerItems();
 
         unregisterAll();
-        Task.syncDelayed(plugin, () -> shopsManagerGui.open(p), 1L);
+        Schedulers.sync().runLater(() -> shopsManagerGui.open(p), 1L);
 
     }
 

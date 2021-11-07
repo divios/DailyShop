@@ -1,7 +1,7 @@
 package io.github.divios.dailyShop.guis.settings;
 
 import com.cryptomorin.xseries.XMaterial;
-import io.github.divios.core_lib.Schedulers;
+import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.core_lib.inventory.ItemButton;
 import io.github.divios.core_lib.inventory.builder.inventoryPopulator;
 import io.github.divios.core_lib.inventory.builder.paginatedGui;
@@ -9,7 +9,6 @@ import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.ChatPrompt;
 import io.github.divios.core_lib.misc.Msg;
-import io.github.divios.core_lib.misc.Task;
 import io.github.divios.core_lib.misc.confirmIH;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.lorestategy.loreStrategy;
@@ -121,7 +120,7 @@ public class shopsManagerGui {
                                         .setLore(plugin.configM.getLangYml().SHOPS_MANAGER_RETURN_LORE)
                                         .applyTexture("19bf3292e126a105b54eba713aa1b152d541a1d8938829c56364d178ed22bf")
                                 , e -> {
-                                    Task.syncDelayed(plugin, () -> inv.destroy(), 3L);
+                                    Schedulers.sync().runLater(() -> inv.destroy(), 3L);
                                     p.closeInventory();
                                 })
                         , 8
@@ -164,13 +163,13 @@ public class shopsManagerGui {
 
                         if (s.isEmpty()) {
                             utils.sendMsg(p, "&7Can't be empty");
-                            Task.syncDelayed(plugin, () -> refresh(p));
+                            Schedulers.sync().run(() -> refresh(p));
                             return;
                         }
 
                         if (s.split("\\s+").length > 1) {
                             utils.sendMsg(p, "&7Name cannot have white spaces");
-                            Task.syncDelayed(plugin, () -> refresh(p));
+                            Schedulers.sync().run(() -> refresh(p));
                             return;
                         }
 
@@ -178,21 +177,21 @@ public class shopsManagerGui {
                         Matcher m = pattern.matcher(s);
                         if (m.find()) {
                             utils.sendMsg(p, "&7Name cannot contain special characters");
-                            Task.syncDelayed(plugin, () -> refresh(p));
+                            Schedulers.sync().run(() -> refresh(p));
                             return;
                         }
 
                         if (sManager.getShop(s).isPresent()) {
                             utils.sendMsg(p, "&7Already Exist");
-                            Task.syncDelayed(plugin, () -> refresh(p));
+                            Schedulers.sync().run(() -> refresh(p));
                             return;
                         }
 
                         dManager.renameShop(shop.getName(), s.toLowerCase());
                         shop.rename(s.toLowerCase());
-                        Task.syncDelayed(plugin, () -> refresh(p));
+                        Schedulers.sync().run(() -> refresh(p));
                     })
-                    .withCancel(cancelReason -> Task.syncDelayed(plugin, () -> refresh(p)))
+                    .withCancel(cancelReason -> Schedulers.sync().run(() -> refresh(p)))
                     .withTitle("&b&lInput new Shop name")
                     .prompt();
 
@@ -204,20 +203,20 @@ public class shopsManagerGui {
 
                         if (!utils.isInteger(s)) {
                             utils.sendMsg(p, plugin.configM.getLangYml().MSG_NOT_INTEGER);
-                            Task.syncDelayed(plugin, () -> refresh(p));
+                            Schedulers.sync().run(() -> refresh(p));
                             return;
                         }
 
                         if (Integer.parseInt(s) < 50 && Integer.parseInt(s) != -1) {
                             utils.sendMsg(p, "&7Time cannot be less than 50");
-                            Task.syncDelayed(plugin, () -> refresh(p));
+                            Schedulers.sync().run(() -> refresh(p));
                             return;
                         }
                         shop.setTimer(Integer.parseInt(s));
-                        Task.syncDelayed(plugin, () -> refresh(p));
+                        Schedulers.sync().run(() -> refresh(p));
 
                     })
-                    .withCancel(cancelReason -> Task.syncDelayed(plugin, () -> refresh(p)))
+                    .withCancel(cancelReason -> Schedulers.sync().run(() -> refresh(p)))
                     .withTitle("&e&lInput new Timer")
                     .prompt();
 
@@ -247,19 +246,19 @@ public class shopsManagerGui {
 
                     if (s.isEmpty()) {
                         utils.sendMsg(p, "&7Cant be empty");
-                        Task.syncDelayed(plugin, () -> refresh(p));
+                        Schedulers.sync().run(() -> refresh(p));
                         return;
                     }
 
                     if (s.split("\\s+").length > 1) {
                         utils.sendMsg(p, "&7Name cannot have white spaces");
-                        Task.syncDelayed(plugin, () -> refresh(p));
+                        Schedulers.sync().run(() -> refresh(p));
                         return;
                     }
 
                     if (sManager.getShop(s).isPresent()) {
                         utils.sendMsg(p, "&7Already Exist");
-                        Task.syncDelayed(plugin, () -> refresh(p));
+                        Schedulers.sync().run(() -> refresh(p));
                         return;
                     }
 
@@ -267,21 +266,20 @@ public class shopsManagerGui {
                     Matcher m = pattern.matcher(s);
                     if (m.find()) {
                         utils.sendMsg(p, "&7Name cannot contain special characters");
-                        Task.syncDelayed(plugin, () -> refresh(p));
+                        Schedulers.sync().run(() -> refresh(p));
                         return;
                     }
 
                     shopsManager.getInstance().createShop(s, dShop.dShopT.buy);
-                    Task.syncDelayed(plugin, () -> refresh(p));
+                    Schedulers.sync().run(() -> refresh(p));
                 })
-                .withCancel(cancelReason -> Task.syncDelayed(plugin, () -> refresh(p)))
+                .withCancel(cancelReason -> Schedulers.sync().run(() -> refresh(p)))
                 .withTitle("&a&lInput New Shop Name")
                 .prompt();
 
     }
 
     static List<Integer> itemSlots = null;
-
     private void updateTask() {
 
         Schedulers.builder()

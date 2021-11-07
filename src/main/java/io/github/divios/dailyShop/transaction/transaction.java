@@ -1,6 +1,6 @@
 package io.github.divios.dailyShop.transaction;
 
-import io.github.divios.core_lib.Schedulers;
+import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.FormatUtils;
@@ -36,25 +36,25 @@ public class transaction {
 
         if (p.hasPermission("dailyrandomshop." + shop.getName() + ".negate.buy") && !p.isOp()) {
             Msg.sendMsg(p, plugin.configM.getLangYml().MSG_INVALIDATE_BUY);
-            shop.openShop(p);
+            //shop.openShop(p);
             return;
         }
 
         if (item.hasStock() && item.getStock().get(p) == -1) {
             Msg.sendMsg(p, plugin.configM.getLangYml().MSG_OUT_STOCK);
-            shop.openShop(p);
+            //shop.openShop(p);
             return;
         }
 
         if (!item.getBuyPrice().isPresent() || item.getBuyPrice().get().getPrice() == -1) {
             Msg.sendMsg(p, plugin.configM.getLangYml().MSG_INVALID_BUY);
-            shop.openShop(p);
+            //shop.openShop(p);
             return;
         }
 
         if (!item.getEconomy().hasMoney(p, item.getBuyPrice().get().getPrice())) {
             Msg.sendMsg(p, plugin.configM.getLangYml().MSG_NOT_MONEY);
-            shop.openShop(p);
+            //shop.openShop(p);
             return;
         }
 

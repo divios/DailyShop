@@ -2,7 +2,7 @@ package io.github.divios.dailyShop.guis.customizerguis;
 
 import com.cryptomorin.xseries.XMaterial;
 import com.google.common.base.Preconditions;
-import io.github.divios.core_lib.Schedulers;
+import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.core_lib.inventory.dynamicGui;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.misc.ChatPrompt;

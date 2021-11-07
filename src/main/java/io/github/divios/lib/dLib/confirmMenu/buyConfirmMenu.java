@@ -1,6 +1,6 @@
 package io.github.divios.lib.dLib.confirmMenu;
 
-import io.github.divios.core_lib.Events;
+import io.github.divios.core_lib.events.Events;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.dailyShop.utils.CompareItemUtils;
 import io.github.divios.dailyShop.utils.FutureUtils;

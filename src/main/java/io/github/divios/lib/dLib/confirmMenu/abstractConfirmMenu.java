@@ -2,7 +2,7 @@ package io.github.divios.lib.dLib.confirmMenu;
 
 import com.cryptomorin.xseries.XMaterial;
 import de.tr7zw.nbtapi.NBTItem;
-import io.github.divios.core_lib.Schedulers;
+import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.core_lib.inventory.InventoryGUI;
 import io.github.divios.core_lib.inventory.ItemButton;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
