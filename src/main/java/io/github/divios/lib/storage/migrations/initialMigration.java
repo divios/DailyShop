@@ -1,14 +1,8 @@
 package io.github.divios.lib.storage.migrations;
 
-import io.github.divios.core_lib.Schedulers;
-import io.github.divios.core_lib.time.Time;
-import io.github.divios.lib.dLib.dShop;
-import io.github.divios.lib.managers.shopsManager;
-
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.Timestamp;
 
 public class initialMigration {
 

@@ -1,13 +1,12 @@
 package io.github.divios.dailyShop.guis.customizerguis;
 
 import com.cryptomorin.xseries.XMaterial;
-import io.github.divios.core_lib.Schedulers;
+import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.core_lib.inventory.InventoryGUI;
 import io.github.divios.core_lib.inventory.ItemButton;
 import io.github.divios.core_lib.inventory.builder.inventoryPopulator;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.misc.ChatPrompt;
-import io.github.divios.core_lib.misc.Task;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.utils.utils;
 import io.github.divios.lib.dLib.dItem;
@@ -72,7 +71,7 @@ public class changePrice {
 
                                     if (!utils.isDouble(s)) {
                                         utils.sendMsg(p, "&7Not double");
-                                        Task.syncDelayed(plugin, back, 0L);
+                                        Schedulers.sync().run(back);
                                         return;
                                     }
                                     double price = Double.parseDouble(s);
@@ -103,7 +102,7 @@ public class changePrice {
 
                                 if (pricesS.length != 2) {
                                     utils.sendMsg(p, "&7Wrong format -> minPrice:maxPrice (Ex 30:50)");
-                                    Task.syncDelayed(plugin, back, 0L);
+                                    Schedulers.sync().run(back);
                                     return;
                                 }
 
@@ -114,13 +113,13 @@ public class changePrice {
                                             Double.parseDouble(pricesS[1])};
                                 } catch (Exception err) {
                                     utils.sendMsg(p, "&7Not double");
-                                    Task.syncDelayed(plugin, back, 0L);
+                                    Schedulers.sync().run(back);
                                     return;
                                 }
 
                                 if (prices[0] >= prices[1]) {
                                     utils.sendMsg(p, "&7Max price can't be lower than min price");
-                                    Task.syncDelayed(plugin, back, 0L);
+                                    Schedulers.sync().run(back);
                                     return;
                                 }
 

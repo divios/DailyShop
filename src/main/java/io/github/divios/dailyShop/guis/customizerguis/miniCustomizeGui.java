@@ -2,7 +2,7 @@ package io.github.divios.dailyShop.guis.customizerguis;
 
 import com.cryptomorin.xseries.XMaterial;
 import com.google.common.base.Preconditions;
-import io.github.divios.core_lib.Schedulers;
+import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.core_lib.inventory.InventoryGUI;
 import io.github.divios.core_lib.inventory.ItemButton;
 import io.github.divios.core_lib.inventory.materialsPrompt;
@@ -109,8 +109,8 @@ public class miniCustomizeGui {
                     ChatPrompt.prompt(plugin, p, (s) -> {
                         item = ItemUtils.setName(item, s);
                         refreshItem();
-                        Task.syncDelayed(plugin, this::refresh);
-                    }, cause ->Task.syncDelayed(plugin, this::refresh), "&6&lInput Item Name", "");
+                        Schedulers.sync().run(this::refresh);
+                    }, cause ->Schedulers.sync().run(this::refresh), "&6&lInput Item Name", "");
                 }
         ), 11);
 
@@ -180,9 +180,9 @@ public class miniCustomizeGui {
                 ChatPrompt.prompt(plugin, p, (s) -> {
                     item.setType(XMaterial.PLAYER_HEAD.parseMaterial());
                     item = ItemUtils.applyTexture(item, s);
-                    Task.syncDelayed(plugin, this::refresh);
+                    Schedulers.sync().run(this::refresh);
 
-                }, cause -> Task.syncDelayed(plugin, this::refresh),
+                }, cause -> Schedulers.sync().run(this::refresh),
                         FormatUtils.color("&7Input base64 texture"),"");
         }), 23);
 
@@ -223,7 +223,7 @@ public class miniCustomizeGui {
         if (!preventCloseB) return;
 
         preventPicks.unregister();
-        Task.syncDelayed(plugin, () -> inv.open(p), 1L);
+        Schedulers.sync().runLater(() -> inv.open(p), 1L);
     }
 
     public static miniCustomizeGuiBuilder builder() {

@@ -1,7 +1,7 @@
 package io.github.divios.lib.dLib.synchronizedGui.taskPool;
 
 import com.google.common.collect.Sets;
-import io.github.divios.core_lib.Schedulers;
+import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.lib.dLib.synchronizedGui.singleGui.singleGui;
 
 import java.util.Set;

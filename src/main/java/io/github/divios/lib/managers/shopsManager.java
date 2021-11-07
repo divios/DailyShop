@@ -1,14 +1,16 @@
 package io.github.divios.lib.managers;
 
-import io.github.divios.core_lib.misc.Task;
-import io.github.divios.dailyShop.DailyShop;
+import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.dailyShop.events.createdShopEvent;
 import io.github.divios.dailyShop.events.deletedShopEvent;
 import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.storage.dataManager;
 import org.bukkit.Bukkit;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 public class shopsManager {
@@ -56,13 +58,13 @@ public class shopsManager {
     public synchronized CompletableFuture<Void> createShop(String name, dShop.dShopT type) {
         dShop newShop = new dShop(name, type);
         shops.add(newShop);
-        Task.syncDelayed(DailyShop.getInstance(), () -> Bukkit.getPluginManager().callEvent(new createdShopEvent(newShop)));
+        Schedulers.sync().run(() -> Bukkit.getPluginManager().callEvent(new createdShopEvent(newShop)));
         return dataManager.getInstance().createShop(newShop);
     }
 
     public synchronized CompletableFuture<Void> createShop(dShop newShop) {
         shops.add(newShop);
-        Task.syncDelayed(DailyShop.getInstance(), () -> Bukkit.getPluginManager().callEvent(new createdShopEvent(newShop)));
+        Schedulers.sync().run(() -> Bukkit.getPluginManager().callEvent(new createdShopEvent(newShop)));
         return dataManager.getInstance().createShop(newShop);
     }
 
