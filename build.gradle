@@ -12,7 +12,7 @@ plugins {
 apply plugin: 'maven-publish'
 
 group = 'io.github.divios'
-def pluginVersion = "3.5.5"
+def pluginVersion = "3.5.6"
 version = pluginVersion
 
 sourceCompatibility = '1.8'
@@ -31,6 +31,13 @@ repositories {
     maven {url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/'}
     maven {url = 'https://mvn.lumine.io/repository/maven-public/'}
     maven {url = 'https://libraries.minecraft.net'}
+    maven {
+        url repsyUrl
+        credentials {
+            username repsyUsername
+            password repsyPassword
+        }
+    }
 }
 
 dependencies {
@@ -49,6 +56,7 @@ dependencies {
     implementation "de.tr7zw:item-nbt-api-plugin:2.8.0"
     implementation "com.github.cryptomorin:XSeries:8.1.0"
     implementation 'org.bstats:bstats-bukkit:2.2.1'
+    //implementation 'io.github.divios:core_lib:3.0'
 
     compileOnly fileTree(dir: 'libs', include: ['*.jar'])
     implementation fileTree(dir: 'libsI', include: ['*.jar'])
