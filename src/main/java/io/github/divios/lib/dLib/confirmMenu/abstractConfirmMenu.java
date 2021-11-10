@@ -46,6 +46,7 @@ public abstract class abstractConfirmMenu {
         this.fallback = fallback;
 
         createMenu();
+        addItems(1);
         openMenu();
     }
 
