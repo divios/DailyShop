@@ -56,7 +56,7 @@ dependencies {
     implementation 'org.jetbrains:annotations:22.0.0'
     implementation 'com.github.PikaMug:LocaleLib:2.2'
     implementation 'org.bstats:bstats-bukkit:2.2.1'
-    implementation 'io.github.divios:core_lib_api:4.0'
+    implementation 'io.github.divios:core_lib_api:5.0'
 
     compileOnly fileTree(dir: 'libs', include: ['*.jar'])
     implementation fileTree(dir: 'libsI', include: ['*.jar'])
@@ -86,11 +86,7 @@ task cloneDependencies {
 
 task updateJars {
     doLast {
-        exec {
-            commandLine 'sh', './copy.sh'
-        }
-        //windows
-        /*copy {
+        copy {
             from 'build/libs/DailyShop-' + pluginVersion + "-all.jar"
             into 'C:/Users/serbe/Desktop/server_pruebas/1.17/plugins'
             rename ("DailyShop-" + pluginVersion + "-all.jar"
@@ -113,7 +109,7 @@ task updateJars {
             into 'C:/Users/serbe/Desktop/server_pruebas/1.8/plugins'
             rename ("DailyShop-" + pluginVersion + "-all.jar"
                     , "DailyShop-" + pluginVersion + ".jar")
-        }*/
+        }
     }
 }
 
@@ -129,3 +125,25 @@ task deploy(dependsOn: ["build", "updateJars"]) {
 
 compileJava.dependsOn clean, cloneDependencies
 build.dependsOn shadowJar
+
+publishing {
+    publications {
+        gpr(MavenPublication) {
+            groupId = group
+            artifactId = "DailyShop"
+            version = version
+
+            from components.java
+        }
+    }
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = "https://maven.pkg.github.com/divios/DailyShop"
+            credentials {
+                username "divios"
+                password gitToken
+            }
+        }
+    }
+}
