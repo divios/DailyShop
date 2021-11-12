@@ -3,6 +3,7 @@ package io.github.divios.dailyShop.hooks;
 import io.github.divios.core_lib.hooks.vaultHook;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.utils.utils;
+import me.TechsCode.UltraEconomy.UltraEconomyAPI;
 import net.milkbowl.vault.economy.Economy;
 
 public class hooksManager {

@@ -9,6 +9,7 @@ import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.utils.FutureUtils;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
+import io.github.divios.lib.dLib.log.options.dLogEntry;
 import io.github.divios.lib.dLib.synchronizedGui.syncMenu;
 import io.github.divios.lib.storage.migrations.initialMigration;
 
@@ -79,7 +80,6 @@ public class dataManager extends DataManagerAbstract {
 
                     while (result.next()) {
                         dItem newItem = dItem.fromBase64(result.getString("itemSerial"));
-                        if (newItem == null) continue;
                         items.add(newItem);
                     }
                 }
@@ -243,5 +243,68 @@ public class dataManager extends DataManagerAbstract {
             }
         }));
     }
+
+    public CompletableFuture<Void> addLogEntry(dLogEntry entry) {
+        return CompletableFuture.runAsync(() -> this.databaseConnector.connect(connection -> {
+
+            String createShop = "INSERT INTO " + this.getTablePrefix() +
+                    "log" + " (player, shopID, itemUUID, rawItem, type, price, quantity, timestamp) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+            try (PreparedStatement statement = connection.prepareStatement(createShop)) {
+
+                statement.setString(1, entry.getPlayer());
+                statement.setString(2, entry.getShopID());
+                statement.setString(3, entry.getItemUUID().toString());
+                statement.setString(4, ItemUtils.serialize(entry.getRawItem()));
+                statement.setString(5, entry.getType().name());
+                statement.setDouble(6, entry.getPrice());
+                statement.setInt(7, entry.getQuantity());
+                statement.setString(8, new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(entry.getTimestamp()));
+                statement.executeUpdate();
+            }
+
+        }));
+    }
+
+    public CompletableFuture<Collection<dLogEntry>> getEntries() {
+
+        Deque<dLogEntry> entries = new ArrayDeque<>();
+        return CompletableFuture.supplyAsync(() -> {
+            this.databaseConnector.connect(connection -> {
+
+                try (Statement statement = connection.createStatement()) {
+                    String getLogs = "SELECT * FROM " + this.getTablePrefix() + "log";
+                    ResultSet result = statement.executeQuery(getLogs);
+
+                    while (result.next()) {
+
+                        Date timestamp = null;
+
+                        try {
+                            timestamp = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").parse(result.getString("timestamp"));
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+
+                        dLogEntry entry = dLogEntry.builder()
+                                .withPlayer(result.getString("player"))
+                                .withShopID(result.getString("shopID"))
+                                .withItemUUID(result.getString("itemUUID"))
+                                .withRawItem(ItemUtils.deserialize(result.getString("rawItem")))
+                                .withType(dShop.dShopT.valueOf(result.getString("type")))
+                                .withPrice(result.getDouble("price"))
+                                .withQuantity(result.getInt("quantity"))
+                                .withTimestamp(timestamp)
+                                .build();
+
+                        entries.push(entry);
+                    }
+                }
+            });
+
+            return entries;
+        });
+
+    }
+
 
 }
