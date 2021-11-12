@@ -36,4 +36,4 @@ dependencies {
 Replace `Tag` with a valid DailyShop version. Example `6.0.1`.
 
 # Notes:
-Although the plugin is open source, it uses a private lib repository internally, so you won't be able to compile the plugin yourself. The purpose of this open source is to collaborate or verify and learn from the code, which is something that has served me more than once and has allowed me to develop better programming skills. Making this repository public is an act of gratitude to that cause.
+Although the plugin is open source, it uses a private lib repository internally, so you won't be able to compile the plugin by normal means. The purpose of this open source is to collaborate or verify and learn from the code, which is something that has served me more than once and has allowed me to develop better programming skills. Making this repository public is an act of gratitude to that cause.
