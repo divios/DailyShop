@@ -12,7 +12,7 @@ This is not the only feature, the plugin is built with a in-game gui to customiz
 Every shop has an internal (customizable) timer. When it reachs 0, the shop cleans up the current items and replace them with random new items. Collected items can have weight, which means that some items are more likely to appear than others.
 
 # Wiki
-You can check all the features of the plugin on the dedicate [wiki](https://diviosx.gitbook.io/daily-random-shop/)
+The plugin has a lot of features that are not listed here and make it unique. You can check all the features of the plugin on the dedicate [wiki](https://diviosx.gitbook.io/daily-random-shop/).
 
 # API
 To access the API you can either get it from [github](https://github.com/divios/DailyShop#with-github-packages), or on [spigot](https://www.spigotmc.org/resources/daily-shop-free-random-items-shop-customizable-items-timer-nbt-support-and-more.86907/) throught the free version.
@@ -33,7 +33,7 @@ dependencies {
 }
 ```
 
-Replace `Tag` with a valid DailyShop version. Example `6.0.1  
+Replace `Tag` with a valid DailyShop version. Example `6.0.1`.
 
 # Notes:
 Although the plugin is open source, it uses a private lib repository internally, so you won't be able to compile the plugin yourself. The purpose of this open source is to collaborate or verify and learn from the code, which is something that has served me more than once and has allowed me to develop better programming skills. Making this repository public is an act of gratitude to that cause.
