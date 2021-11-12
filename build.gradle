@@ -130,7 +130,7 @@ publishing {
     publications {
         gpr(MavenPublication) {
             groupId = group
-            artifactId = "DailyShop"
+            artifactId = "dailyshop"
             version = version
 
             from components.java
