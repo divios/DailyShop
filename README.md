@@ -15,7 +15,7 @@ Every shop has an internal (customizable) timer. When it reachs 0, the shop clea
 The plugin has a lot of features that are not listed here and make it unique. You can check all the features of the plugin on the dedicate [wiki](https://diviosx.gitbook.io/daily-random-shop/).
 
 # API
-To access the API you can either get it from [github](https://github.com/divios/DailyShop#with-github-packages), or on [spigot](https://www.spigotmc.org/resources/daily-shop-free-random-items-shop-customizable-items-timer-nbt-support-and-more.86907/) throught the free version.
+To access the API you can either get it from [github](https://github.com/divios/DailyShop/actions), or on [spigot](https://www.spigotmc.org/resources/daily-shop-free-random-items-shop-customizable-items-timer-nbt-support-and-more.86907/) throught the free version.
 
 ## With Github Packages
 
