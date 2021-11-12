@@ -59,7 +59,7 @@ dependencies {
     implementation 'io.github.divios:core_lib_api:5.0'
 
     compileOnly fileTree(dir: 'libs', include: ['*.jar'])
-    implementation fileTree(dir: 'libsI', include: ['*.jar'])
+    compileOnly fileTree(dir: 'libsI', include: ['*.jar'])
 }
 
 shadowJar {
