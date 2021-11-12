@@ -123,3 +123,4 @@ run/
 /build/resources/main/settings.yml
 /build/tmp/compileJava/source-classes-mapping.txt
 "gradle.properties" 
+/build/resources/main/dailyshop.db
