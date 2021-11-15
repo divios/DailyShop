@@ -1,5 +1,6 @@
 package io.github.divios.lib.managers;
 
+import io.github.divios.core_lib.events.Events;
 import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.dailyShop.events.createdShopEvent;
 import io.github.divios.dailyShop.events.deletedShopEvent;
@@ -58,13 +59,13 @@ public class shopsManager {
     public synchronized CompletableFuture<Void> createShop(String name, dShop.dShopT type) {
         dShop newShop = new dShop(name, type);
         shops.add(newShop);
-        Schedulers.sync().run(() -> Bukkit.getPluginManager().callEvent(new createdShopEvent(newShop)));
+        Schedulers.sync().run(() -> Events.callEvent(new createdShopEvent(newShop)));
         return dataManager.getInstance().createShop(newShop);
     }
 
     public synchronized CompletableFuture<Void> createShop(dShop newShop) {
         shops.add(newShop);
-        Schedulers.sync().run(() -> Bukkit.getPluginManager().callEvent(new createdShopEvent(newShop)));
+        Schedulers.sync().run(() -> Events.callEvent(new createdShopEvent(newShop)));
         return dataManager.getInstance().createShop(newShop);
     }
 
@@ -92,7 +93,7 @@ public class shopsManager {
         if (!result.isPresent()) return CompletableFuture.completedFuture(null);
 
         deletedShopEvent event = new deletedShopEvent(result.get());
-        Bukkit.getPluginManager().callEvent(event);     // throw new event
+        Events.callEvent(event);     // throw new event
 
         // auto-destroy is handled via event on dShop
         shops.removeIf(shop -> shop.getName().equals(name));

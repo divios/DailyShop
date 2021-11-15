@@ -2,6 +2,8 @@ package io.github.divios.dailyShop.guis.customizerguis;
 
 import com.cryptomorin.xseries.XMaterial;
 import com.google.common.base.Preconditions;
+import io.github.divios.core_lib.events.Events;
+import io.github.divios.core_lib.events.Subscription;
 import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.core_lib.inventory.InventoryGUI;
 import io.github.divios.core_lib.inventory.ItemButton;
@@ -9,6 +11,7 @@ import io.github.divios.core_lib.inventory.materialsPrompt;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.*;
+import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.lib.dLib.dAction;
 import io.github.divios.lib.dLib.dItem;
@@ -20,6 +23,7 @@ import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
 import java.util.stream.IntStream;
@@ -36,8 +40,8 @@ public class miniCustomizeGui {
 
     private boolean preventCloseB = false;      // preventClose glitch
 
-    private final EventListener<PlayerPickupItemEvent> preventPicks;
-    private final EventListener<InventoryCloseEvent> preventClose;
+    private final Subscription preventPicks;
+    private final Subscription preventClose;
 
     @Deprecated
     public miniCustomizeGui(Player p,
@@ -49,26 +53,24 @@ public class miniCustomizeGui {
         this.shop = shop;
         this.consumer = consumer;
         this.inv = getGui();
-        this.preventPicks = new EventListener<>(
-                PlayerPickupItemEvent.class, EventPriority.HIGHEST, e -> {
-            if (e.getPlayer().getUniqueId().equals(p.getUniqueId()))
-                e.setCancelled(true);
-        });
+        this.preventPicks = createItemPickUpEvent(p);
+        this.preventClose = createPreventCloseEvent();
 
-        this.preventClose = new EventListener<>(InventoryCloseEvent.class,
-                EventPriority.HIGHEST, this::preventClose);
+        createPlayerKickEvent();
+        createPlayerQuickEvent();
 
-        new EventListener<>(PlayerKickEvent.class,
-                (own, e) -> {
-                    if (!e.getPlayer().getUniqueId().equals(p.getUniqueId()))
-                        return;
+        inv.open(p);
+        preventCloseB = true;           // prevent close glitch
 
-                    preventClose.unregister();
-                    preventPicks.unregister();
-                    inv.destroy();
-                    own.unregister();
-                });
+    }
 
+    @NotNull
+    private Subscription createPreventCloseEvent() {
+        return Events.subscribe(InventoryCloseEvent.class, EventPriority.HIGHEST)
+                        .handler(this::preventClose);
+    }
+
+    private void createPlayerQuickEvent() {
         new EventListener<>(PlayerQuitEvent.class,
                 (own, e) -> {
                     if (!e.getPlayer().getUniqueId().equals(p.getUniqueId()))
@@ -79,9 +81,28 @@ public class miniCustomizeGui {
                     inv.destroy();
                     own.unregister();
                 });
+    }
 
-        inv.open(p);
-        preventCloseB = true;           // prevent close glitch
+    private void createPlayerKickEvent() {
+        new EventListener<>(PlayerKickEvent.class,
+                (own, e) -> {
+                    if (!e.getPlayer().getUniqueId().equals(p.getUniqueId()))
+                        return;
+
+                    preventClose.unregister();
+                    preventPicks.unregister();
+                    inv.destroy();
+                    own.unregister();
+                });
+    }
+
+    @NotNull
+    private Subscription createItemPickUpEvent(Player p) {
+        return Events.subscribe(PlayerPickupItemEvent.class, EventPriority.HIGHEST)
+                .handler(e -> {
+                    if (e.getPlayer().getUniqueId().equals(p.getUniqueId()))
+                        e.setCancelled(true);
+                });
     }
 
 

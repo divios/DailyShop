@@ -1,12 +1,14 @@
 package io.github.divios.dailyShop.guis.customizerguis;
 
 import com.cryptomorin.xseries.XMaterial;
+import io.github.divios.core_lib.events.Events;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.ChatPrompt;
 import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.core_lib.misc.confirmIH;
 import io.github.divios.core_lib.scheduler.Schedulers;
+import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.events.updateShopEvent;
 import io.github.divios.dailyShop.guis.settings.shopsManagerGui;
@@ -71,7 +73,7 @@ public class customizeGui implements Listener, InventoryHolder {
     public void addCustomizeItems() {
 
 
-        IntStream.range(0, 36).forEach(i->
+        IntStream.range(0, 36).forEach(i ->
                 p.getInventory().setItem(i,
                         ItemBuilder.of(XMaterial.GRAY_STAINED_GLASS_PANE).setName("&c")));
 
@@ -101,7 +103,7 @@ public class customizeGui implements Listener, InventoryHolder {
                         "",
                         "&8- &6Left click empty slot", "   &7Adds a new item",
                         "&8- &6Shift Click empty slot", "   &7Sets slot as AIR,", "   &7where no daily items",
-                            "   &7'll appear and is displayed", "   &7as an empty slot",
+                        "   &7'll appear and is displayed", "   &7as an empty slot",
                         "&8- &6Middle click item", "   &7Copies the item to the clipboard,",
                         "   &7middle click again on", "   &7empty slot to paste");
 
@@ -120,9 +122,7 @@ public class customizeGui implements Listener, InventoryHolder {
      * @return the map with the items and it's position
      */
     private void withdrawPlayerItems() {
-
         Inventory pInv = p.getInventory();
-
         IntStream.range(0, 36).forEach(i -> {
             if (utils.isEmpty(pInv.getItem(i)))
                 return;
@@ -130,7 +130,6 @@ public class customizeGui implements Listener, InventoryHolder {
             pItems.put(i, pInv.getItem(i));
             pInv.clear(i);
         });
-
     }
 
     /**
@@ -139,7 +138,6 @@ public class customizeGui implements Listener, InventoryHolder {
      */
     private void depositPlayerItems() {
         IntStream.range(0, 36).forEach(i -> p.getInventory().clear(i));
-
         pItems.forEach((i, item) ->
                 p.getInventory().setItem(i, item));
         pItems.clear();
@@ -158,119 +156,29 @@ public class customizeGui implements Listener, InventoryHolder {
         }, 1L);
     }
 
-
     @Override
-    public @NotNull Inventory getInventory() {
+    public @NotNull
+    Inventory getInventory() {
         return inv;
     }
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent e) {
-
         if (!e.getInventory().equals(inv)) return;
-
         e.setCancelled(true);
 
         if (e.getSlot() == -999) return;            //avoid errors
 
-        if (e.getRawSlot() > (inv.getSize() - 1)) {        // En el player inventory
-
-            if (utils.isEmpty(e.getCurrentItem()))
-                return;
-
-            if (e.getSlot() == 3) {  //back
-                preventClose = false;
-                p.closeInventory();
-            }
-
-            else if (e.getSlot() == 5) {   //apply changes
-
-                Bukkit.getPluginManager().callEvent(new updateShopEvent(shop, _gui));
-                preventClose = false;
-                p.closeInventory();
-            }
-
-            else if (e.getSlot() == 19) {           //change Name
-                refreshFlag = true;
-                ChatPrompt.prompt(plugin, p , (s) -> {
-                    _gui.setInventoryTitle(FormatUtils.color(s));
-                    Schedulers.sync().run(this::refresh);
-                }, cause -> Schedulers.sync().run(this::refresh),
-                        "&5&lInput New Title", "");
-            }
-
-            else if (e.getSlot() == 23) {           //quitar row
-                if (_gui.removeInventoryRow())
-                    refresh();
-            }
-
-            else if (e.getSlot() == 25) {           //ampliar row
-                if (_gui.addInventoryRow())
-                    refresh();
-            }
-        }
-
-        else {          //si le da arriba
-
-            if (toClone != null && utils.isEmpty(e.getCurrentItem())
-                && e.getClick().equals(ClickType.MIDDLE)) {     // paste clipboard
-                _gui.addButton(toClone.copy(), e.getSlot());
-                refresh();
-                return;
-            }
-
-            if (!utils.isEmpty(e.getCurrentItem()) &&
-                    e.getClick().equals(ClickType.MIDDLE)) {        // copy to clipboard
-                toClone = dItem.of(e.getCurrentItem());
-                return;
-            }
-
-            if (utils.isEmpty(e.getCurrentItem())
-                    && e.isShiftClick()) {  //add empty slot
-                _gui.addButton(dItem.AIR(), e.getSlot());
-                refresh();
-                return;
-            }
-
-            if (e.isRightClick() && !utils.isEmpty(e.getCurrentItem())) {  // delete item
-                refreshFlag = true;
-
-                confirmIH.builder()
-                        .withPlayer(p)
-                        .withAction(aBoolean -> {
-                            if (aBoolean) _gui.removeButton(e.getSlot());
-                            refresh();
-                        })
-                        .withItem(e.getCurrentItem())
-                        .withTitle("&a&lConfirm Action")
-                        .withConfirmLore(plugin.configM.getLangYml().CONFIRM_GUI_YES, plugin.configM.getLangYml().CONFIRM_GUI_YES_LORE)
-                        .withCancelLore(plugin.configM.getLangYml().CONFIRM_GUI_NO, plugin.configM.getLangYml().CONFIRM_GUI_NO_LORE)
-                        .prompt();
-
-                refreshFlag = false;
-                return;
-            }
-
-            if (!ItemUtils.isEmpty(e.getCurrentItem()) && dItem.of(e.getCurrentItem()).isAIR()) return;
-
-            refreshFlag = true;
-            depositPlayerItems();
-            new miniCustomizeGui(p, shop,        // customize item
-                    utils.isEmpty(e.getCurrentItem()) ?
-                         XMaterial.GRASS_BLOCK.parseItem() : e.getCurrentItem().clone(),
-                    item -> {
-                        _gui.addButton(new dItem(item), e.getSlot());
-                        withdrawPlayerItems();
-                        refresh();
-            });
-        }
+        if (playerClickedBottomInventory(e))
+            bottomInventoryAction(e);
+        else
+            upperInventoryAction(e);
     }
 
     @EventHandler
     public void onInventoryDrag(InventoryDragEvent e) {
         if (!e.getInventory().equals(inv))
             return;
-
         e.setCancelled(true);
     }
 
@@ -281,18 +189,14 @@ public class customizeGui implements Listener, InventoryHolder {
 
         if (refreshFlag)
             return;
-
         if (preventClose) {
             refresh();
             return;
         }
 
-
         depositPlayerItems();
-
         unregisterAll();
         Schedulers.sync().runLater(() -> shopsManagerGui.open(p), 1L);
-
     }
 
     @EventHandler
@@ -306,7 +210,6 @@ public class customizeGui implements Listener, InventoryHolder {
         if (e.getPlayer().getUniqueId().equals(p.getUniqueId())) {
 
         }
-
     }
 
     @EventHandler
@@ -314,7 +217,6 @@ public class customizeGui implements Listener, InventoryHolder {
         if (e.getPlayer().getUniqueId().equals(p.getUniqueId())) {
 
         }
-
     }
 
     /**
@@ -327,6 +229,138 @@ public class customizeGui implements Listener, InventoryHolder {
         PlayerPickupItemEvent.getHandlerList().unregister(this);
         PlayerQuitEvent.getHandlerList().unregister(this);
         PlayerKickEvent.getHandlerList().unregister(this);
+    }
+
+    private boolean playerClickedBottomInventory(InventoryClickEvent e) {
+        return e.getRawSlot() > (inv.getSize() - 1);
+    }
+
+    private void bottomInventoryAction(InventoryClickEvent e) {
+
+        if (utils.isEmpty(e.getCurrentItem()))
+            return;
+
+        if (isBackButton(e)) {  //back
+            backButtonAction();
+        } else if (isApplyButton(e)) {   //apply changes
+            applyChangesAction();
+        } else if (e.getSlot() == 19) {           //change Name
+            changeNameAction();
+        } else if (isRemoveRowButton(e)) {           //quitar row
+            removeButtonAction();
+        } else if (isAddRowButton(e)) {           //ampliar row
+            addButtonAction();
+        }
+    }
+
+    private boolean isBackButton(InventoryClickEvent e) {
+        return e.getSlot() == 3;
+    }
+
+    private void backButtonAction() {
+        preventClose = false;
+        p.closeInventory();
+    }
+
+    private boolean isApplyButton(InventoryClickEvent e) {
+        return e.getSlot() == 5;
+    }
+
+    private void applyChangesAction() {
+        Events.callEvent(new updateShopEvent(shop, _gui));
+        preventClose = false;
+        p.closeInventory();
+    }
+
+    private void changeNameAction() {
+        refreshFlag = true;
+        ChatPrompt.builder()
+                .withPlayer(p)
+                .withTitle("&5&lInput New Title")
+                .withResponse(s -> {
+                    _gui.setInventoryTitle(FormatUtils.color(s));
+                    Schedulers.sync().run(this::refresh);
+                })
+                .withCancel(cancel -> Schedulers.sync().run(this::refresh))
+                .prompt();
+    }
+
+    private void removeButtonAction() {
+        if (_gui.removeInventoryRow())
+            refresh();
+    }
+
+    private void addButtonAction() {
+        if (_gui.addInventoryRow())
+            refresh();
+    }
+
+    private boolean isRemoveRowButton(InventoryClickEvent e) {
+        return e.getSlot() == 23;
+    }
+
+    private boolean isAddRowButton(InventoryClickEvent e) {
+        return e.getSlot() == 25;
+    }
+
+    private void upperInventoryAction(InventoryClickEvent e) {
+        if (toClone != null && utils.isEmpty(e.getCurrentItem())
+                && e.getClick().equals(ClickType.MIDDLE)) {     // paste clipboard
+            _gui.addButton(toClone.copy(), e.getSlot());
+            refresh();
+            return;
+        }
+
+        if (!utils.isEmpty(e.getCurrentItem()) &&
+                e.getClick().equals(ClickType.MIDDLE)) {        // copy to clipboard
+            toClone = dItem.of(e.getCurrentItem());
+            return;
+        }
+
+        if (utils.isEmpty(e.getCurrentItem())
+                && e.isShiftClick()) {  //add empty slot
+            _gui.addButton(dItem.AIR(), e.getSlot());
+            refresh();
+            return;
+        }
+
+        if (e.isRightClick() && !utils.isEmpty(e.getCurrentItem())) {  // delete item
+            refreshFlag = true;
+
+            confirmIH.builder()
+                    .withPlayer(p)
+                    .withAction(aBoolean -> {
+                        if (aBoolean) _gui.removeButton(e.getSlot());
+                        refresh();
+                    })
+                    .withItem(e.getCurrentItem())
+                    .withTitle("&a&lConfirm Action")
+                    .withConfirmLore(plugin.configM.getLangYml().CONFIRM_GUI_YES, plugin.configM.getLangYml().CONFIRM_GUI_YES_LORE)
+                    .withCancelLore(plugin.configM.getLangYml().CONFIRM_GUI_NO, plugin.configM.getLangYml().CONFIRM_GUI_NO_LORE)
+                    .prompt();
+
+            refreshFlag = false;
+            return;
+        }
+
+        if (!ItemUtils.isEmpty(e.getCurrentItem()) && dItem.of(e.getCurrentItem()).isAIR()) return;
+
+        refreshFlag = true;
+        depositPlayerItems();
+
+        miniCustomizeGui.builder()
+                .withPlayer(p)
+                .withShop(shop)
+                .withItem(utils.isEmpty(e.getCurrentItem()) ?
+                        XMaterial.GRASS_BLOCK.parseItem() : e.getCurrentItem().clone())
+                .withConsumer(itemS -> {
+                    _gui.addButton(new dItem(itemS), e.getSlot());
+                    withdrawPlayerItems();
+                    refresh();
+                })
+                .build();
+
+        refreshFlag = false;
     }
 
 }

@@ -1,5 +1,6 @@
 package io.github.divios.lib.storage.parser;
 
+import io.github.divios.core_lib.events.Events;
 import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.dailyShop.events.updateShopEvent;
 import io.github.divios.lib.dLib.dInventory;
@@ -44,7 +45,7 @@ public class dShopState {
                 .map(entry -> entry.getValue().parseItem(entry.getKey()))
                 .forEach(entry -> newInv.addButton(entry, entry.getSlot()));
 
-        Bukkit.getPluginManager().callEvent(new updateShopEvent(shop, newInv, true));
+        Events.callEvent(new updateShopEvent(shop, newInv, true));
 
     }
 
