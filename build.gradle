@@ -56,7 +56,7 @@ dependencies {
     implementation 'org.jetbrains:annotations:22.0.0'
     implementation 'com.github.PikaMug:LocaleLib:2.2'
     implementation 'org.bstats:bstats-bukkit:2.2.1'
-    implementation 'io.github.divios:core_lib_api:5.0'
+    implementation 'io.github.divios:core_lib_api:6.1.2'
 
     compileOnly fileTree(dir: 'libs', include: ['*.jar'])
     compileOnly fileTree(dir: 'libsI', include: ['*.jar'])
@@ -88,25 +88,7 @@ task updateJars {
     doLast {
         copy {
             from 'build/libs/DailyShop-' + pluginVersion + "-all.jar"
-            into 'C:/Users/serbe/Desktop/server_pruebas/1.17/plugins'
-            rename ("DailyShop-" + pluginVersion + "-all.jar"
-                    , "DailyShop-" + pluginVersion + ".jar")
-        }
-        copy {
-            from 'build/libs/DailyShop-' + pluginVersion + "-all.jar"
-            into 'C:/Users/serbe/Desktop/server_pruebas/1.16/plugins'
-            rename ("DailyShop-" + pluginVersion + "-all.jar"
-                    , "DailyShop-" + pluginVersion + ".jar")
-        }
-        copy {
-            from 'build/libs/DailyShop-' + pluginVersion + "-all.jar"
-            into 'C:/Users/serbe/Desktop/server_pruebas/1.12/plugins'
-            rename ("DailyShop-" + pluginVersion + "-all.jar"
-                    , "DailyShop-" + pluginVersion + ".jar")
-        }
-        copy {
-            from 'build/libs/DailyShop-' + pluginVersion + "-all.jar"
-            into 'C:/Users/serbe/Desktop/server_pruebas/1.8/plugins'
+            into '/Users/sergiobernalparrondo/Desktop/server/plugins'
             rename ("DailyShop-" + pluginVersion + "-all.jar"
                     , "DailyShop-" + pluginVersion + ".jar")
         }
