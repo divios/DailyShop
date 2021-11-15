@@ -201,7 +201,7 @@ public class dShop {
             return; // Throw error
 
         items.put(uid, newItem);
-        Bukkit.getPluginManager().callEvent(new updateItemEvent(newItem, updateItemEvent.updatetype.UPDATE_ITEM, this));    // Event to update item
+        Events.callEvent(new updateItemEvent(newItem, updateItemEvent.updatetype.UPDATE_ITEM, this));    // Event to update item
         dManager.updateItem(getName(), newItem);
 
 
@@ -220,7 +220,7 @@ public class dShop {
             Map.Entry<UUID, dItem> entry = it.next();
             if (newItems.containsKey(entry.getKey())) continue;
 
-            Bukkit.getPluginManager().callEvent(new updateItemEvent(entry.getValue(), updateItemEvent.updatetype.DELETE_ITEM, this));
+            Events.callEvent(new updateItemEvent(entry.getValue(), updateItemEvent.updatetype.DELETE_ITEM, this));
             dManager.deleteItem(name, entry.getKey());
             it.remove();
         }
@@ -250,7 +250,7 @@ public class dShop {
 
         if (removed == null) return false;
         dManager.deleteItem(this.name, uid);
-        Bukkit.getPluginManager().callEvent(new updateItemEvent(removed, updateItemEvent.updatetype.DELETE_ITEM, this));
+        Events.callEvent(new updateItemEvent(removed, updateItemEvent.updatetype.DELETE_ITEM, this));
         return true;
     }
 

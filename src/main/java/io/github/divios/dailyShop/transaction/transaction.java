@@ -1,5 +1,7 @@
 package io.github.divios.dailyShop.transaction;
 
+import io.github.divios.core_lib.events.Events;
+import io.github.divios.core_lib.inventory.inventoryUtils;
 import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
@@ -49,6 +51,11 @@ public class transaction {
         if (!item.getBuyPrice().isPresent() || item.getBuyPrice().get().getPrice() == -1) {
             Msg.sendMsg(p, plugin.configM.getLangYml().MSG_INVALID_BUY);
             //shop.openShop(p);
+            return;
+        }
+
+        if (inventoryUtils.playerEmptySlots(p) <= 0) {
+            Msg.sendMsg(p, plugin.configM.getLangYml().MSG_INV_FULL);
             return;
         }
 
@@ -186,7 +193,7 @@ public class transaction {
                 throw new transactionExc(transactionExc.err.noStock);
             }
 
-            s.addRunnable(() -> Bukkit.getPluginManager().callEvent(
+            s.addRunnable(() -> Events.callEvent(
                     new updateItemEvent(p, item, amount, updateItemEvent.updatetype.NEXT_AMOUNT, shop)));
 
         }

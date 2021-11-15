@@ -1,6 +1,7 @@
 package io.github.divios.lib.dLib.stock;
 
 import com.google.gson.GsonBuilder;
+import io.github.divios.core_lib.events.Events;
 import io.github.divios.dailyShop.events.searchStockEvent;
 import io.github.divios.dailyShop.utils.InterfaceAdapter;
 import io.github.divios.lib.dLib.dShop;
@@ -70,7 +71,7 @@ public interface dStock {
     static CompletableFuture<Integer> searchStock(Player p, dShop shop, UUID id) {
         CompletableFuture<Integer> result = new CompletableFuture<>();
 
-        Bukkit.getPluginManager().callEvent(new searchStockEvent(p, shop, id, result));
+        Events.callEvent(new searchStockEvent(p, shop, id, result));
         return result;
     }
 

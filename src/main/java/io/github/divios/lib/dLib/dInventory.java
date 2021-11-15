@@ -335,7 +335,7 @@ public class dInventory {
         if (stock.get(o.getPlayer()) <= 0) {
             stock.set(o.getPlayer(), -1);
         }
-        Bukkit.getPluginManager().callEvent(new updateItemEvent(dItem, o.getAmount(), updateItemEvent.updatetype.UPDATE_ITEM, o.getShop()));
+        Events.callEvent(new updateItemEvent(dItem, o.getAmount(), updateItemEvent.updatetype.UPDATE_ITEM, o.getShop()));
     }
 
     private void deleteItem(int slot) {
@@ -402,6 +402,7 @@ public class dInventory {
     public dInventory skeleton() {
         dInventory cloned = fromBase64(this.toBase64(), shop);
         cloned.RemoveAllDailyItems();
+        cloned.destroy();
 
         cloned.getButtons().entrySet().stream()   // gets the AIR buttons back
                 .filter(entry -> entry.getValue().isAIR())
