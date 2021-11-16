@@ -1,4 +1,4 @@
-# DailyShop
+# DailyShop [![Test Build](https://github.com/divios/DailyShop/actions/workflows/gradle-build.yml/badge.svg)](https://github.com/divios/DailyShop/actions/workflows/gradle-build.yml)
 DailyShop is an advanced shop plugin that aims to transform the economy of every server.
 
 There are currently two forms of Minecraft economies that exists on modern servers. The first is vanilla which does not use plugins to assist in functionality within the economy. The second is a server-shop, vanilla blend, this method uses player-to-player trades and a server-wide shop that includes set prices for items to be bought and sold. The second method is often preferred on SMP/vanilla as it provides higher liquidity and engagement in the market than vanilla. However, on anarchy/semi-anarchy servers the vanilla-economy is provided as vanilla mechanics are often preferred.
