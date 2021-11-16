@@ -41,14 +41,3 @@ jobs:
         with:
           name: DailyShop-Free
           path: build/libs/DailyShop-**-all.jar
-          
-      - name: publish package
-        run: ./gradlew publish
-      - uses: actions/checkout@master
-      
-      - name: Create a Release
-        uses: elgohr/Github-Release-Action@master
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITTOKEN }}
-        with:
-          args: New Release
