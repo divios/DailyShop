@@ -91,7 +91,7 @@ public class buyConfirmMenu extends abstractConfirmMenu {
 
     @Override
     protected boolean removeConditions(int quantity) {
-        return nAddedItems >= quantity;
+        return nAddedItems - 1 >= quantity;
     }
 
     @Override
@@ -123,13 +123,13 @@ public class buyConfirmMenu extends abstractConfirmMenu {
     @Override
     protected void setMaxItems() {
         int limit = getMinLimit();
-        if (nAddedItems >= limit) return;
-        int nAddedItemsThisItit = 0;
+        //if (nAddedItems >= limit) return;
+        int nAddedItemsThisInit = 0;
         ItemStack markedItem = getMarkedItem();
         while (player.getInventory().addItem(markedItem).isEmpty()) {
             nAddedItems++;
-            nAddedItemsThisItit++;
-            if (nAddedItemsThisItit >= limit) break;
+            nAddedItemsThisInit++;
+            if (nAddedItemsThisInit >= limit) break;
         }
     }
 
@@ -160,7 +160,7 @@ public class buyConfirmMenu extends abstractConfirmMenu {
     }
 
     private int getBalanceLimit() {
-        return (int) Math.floor(item.getEconomy().getBalance(player) / item.getBuyPrice().orElse(null).getPrice());
+        return (int) Math.floor(item.getEconomy().getBalance(player) / item.getBuyPrice().orElse(null).getPrice()) - nAddedItems;
     }
 
     private int getPlayerInventoryLimit() {
