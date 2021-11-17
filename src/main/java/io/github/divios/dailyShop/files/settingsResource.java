@@ -33,7 +33,7 @@ public class settingsResource extends resource{
 
         ECONNAMES = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
         yaml.getConfigurationSection("settings.econ-names").getValues(false).forEach((s, o) -> {
-            ECONNAMES.put(s, String.valueOf(o));
+            ECONNAMES.put(s.toLowerCase(), String.valueOf(o));
         });
 
 
