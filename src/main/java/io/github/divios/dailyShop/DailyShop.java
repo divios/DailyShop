@@ -73,6 +73,7 @@ public class DailyShop extends JavaPlugin {
 
     public void reloadPlugin() {
         configM.reload();
+        Msg.setPREFIX(configM.getSettingsYml().PREFIX);
         //shopsManager.getInstance().reload();
     }
 
