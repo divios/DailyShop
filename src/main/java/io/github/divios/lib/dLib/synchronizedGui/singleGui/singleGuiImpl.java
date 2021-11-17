@@ -9,6 +9,7 @@ import io.github.divios.dailyShop.events.searchStockEvent;
 import io.github.divios.dailyShop.events.updateItemEvent;
 import io.github.divios.dailyShop.lorestategy.loreStrategy;
 import io.github.divios.dailyShop.lorestategy.shopItemsLore;
+import io.github.divios.dailyShop.utils.PlaceholderAPIWrapper;
 import io.github.divios.dailyShop.utils.utils;
 import io.github.divios.lib.dLib.dInventory;
 import io.github.divios.lib.dLib.dShop;
@@ -47,10 +48,8 @@ public class singleGuiImpl implements singleGui {
         this.own = base.copy();
 
         if (p != null) {
-            if (utils.isOperative("PlaceholderAPI")) {
-                updatePool.subscribe(this);
-                Schedulers.async().run(this::updateTask);
-            }
+            updateTask();
+            updatePool.subscribe(this);
             this.own.openInventory(p);
         } else ready();
     }
@@ -92,13 +91,14 @@ public class singleGuiImpl implements singleGui {
                                 : base.getInventory().getItem(value);
                         ItemBuilder newItem = ItemBuilder.of(oldItem.clone()).setLore(Collections.emptyList());
 
-                        newItem = newItem.setName(PlaceholderAPI.setPlaceholders(p, ItemUtils.getName(oldItem)));
+                        newItem = newItem.setName(PlaceholderAPIWrapper.setPlaceholders(p, ItemUtils.getName(oldItem)));
 
                         for (String s : ItemUtils.getLore(oldItem))
-                            newItem = newItem.addLore(PlaceholderAPI.setPlaceholders(p, s));
+                            newItem = newItem.addLore(PlaceholderAPIWrapper.setPlaceholders(p, s));
 
                         inv.setItem(value, newItem);
-                    } catch (Exception ignored) {}
+                    } catch (Exception ignored) {
+                    }
 
                 });
     }
