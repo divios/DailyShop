@@ -45,8 +45,8 @@ public abstract class economy implements Serializable {
     public abstract double getBalance(Player p);
 
     public String getName() {
-        return plugin.configM.getSettingsYml().ECONNAMES.containsKey(name.get()) ?
-                plugin.configM.getSettingsYml().ECONNAMES.get(name.get()) : name.get();
+        return plugin.configM.getSettingsYml().ECONNAMES.containsKey(name.get().toLowerCase()) ?
+                plugin.configM.getSettingsYml().ECONNAMES.get(name.get().toLowerCase()) : name.get();
     }
 
     public String getCurrency() {

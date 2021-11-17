@@ -5,6 +5,7 @@ import io.github.divios.core_lib.events.Subscription;
 import io.github.divios.core_lib.misc.timeStampUtils;
 import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.core_lib.scheduler.Task;
+import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.events.deletedShopEvent;
 import io.github.divios.dailyShop.events.reStockShopEvent;
@@ -20,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.sql.Timestamp;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 public class dShop {
 
@@ -74,18 +76,16 @@ public class dShop {
                 Schedulers.async().runRepeating(() -> {
 
                     if (timer == -1) return;
-                    if (timeStampUtils.diff(timestamp, new Timestamp(System.currentTimeMillis())) > timer)
+                    if (timeStampUtils.diff(timestamp, new Timestamp(System.currentTimeMillis())) >= timer)
                         reStock();
 
-                }, 20, 20)
+                }, 1, TimeUnit.SECONDS, 1, TimeUnit.SECONDS)
         );
-
-        // get hash based on content an not reference
 
         tasks.add(
                 Schedulers.async().runRepeating(() -> {      // auto-update gui if any changes where made
                     dManager.asyncUpdateGui(this.name, guis);
-                }, 18000L, 18000L)
+                }, 15, TimeUnit.MINUTES, 15, TimeUnit.MINUTES)
         );
 
         Events.subscribe(deletedShopEvent.class, EventPriority.LOW)     // auto-destroy listener
@@ -104,15 +104,16 @@ public class dShop {
 
     }
 
-    private void reStock() {
+    private synchronized void reStock() {
         timestamp = new Timestamp(System.currentTimeMillis());
         dManager.updateTimeStamp(this.name, this.timestamp);
-        Schedulers.sync().runLater(guis::reStock, 1L);
+        Schedulers.sync().run(guis::reStock);
         dManager.asyncUpdateGui(this.name, this.guis);
     }
 
     /**
      * Opens the actual shop for the player
+     *
      * @param p
      */
     public void openShop(Player p) {
@@ -121,6 +122,7 @@ public class dShop {
 
     /**
      * Opens the gui to manage the items of this shop
+     *
      * @param p
      */
     public void manageItems(Player p) {
@@ -129,9 +131,12 @@ public class dShop {
 
     /**
      * Opens the gui to customize the display of this shop
+     *
      * @param p
      */
-    public void openCustomizeGui(Player p) { guis.customizeGui(p); }
+    public void openCustomizeGui(Player p) {
+        guis.customizeGui(p);
+    }
 
     /**
      * Gets the name of the shop
@@ -166,7 +171,8 @@ public class dShop {
      * @return returns a List of dItems. Note that this list is a copy of the original,
      * any change made to it won't affect the original one
      */
-    public synchronized @NotNull Set<dItem> getItems() {
+    public synchronized @NotNull
+    Set<dItem> getItems() {
         return Collections.unmodifiableSet(new LinkedHashSet<>(items.values()));
     }
 
@@ -262,6 +268,10 @@ public class dShop {
      */
     public synchronized syncMenu getGuis() {
         return guis;
+    }
+
+    protected synchronized void setTimestamp(Timestamp timestamp) {
+        this.timestamp = timestamp;
     }
 
     public synchronized Timestamp getTimestamp() {

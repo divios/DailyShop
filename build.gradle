@@ -14,7 +14,7 @@ plugins {
 apply plugin: 'maven-publish'
 
 group = 'io.github.divios'
-def pluginVersion = "3.5.7"
+def pluginVersion = "3.5.8"
 version = pluginVersion
 
 sourceCompatibility = '1.8'

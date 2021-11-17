@@ -18,3 +18,10 @@
     - Added new gui, changeEconomy
     - Added new metadata, economy
     - Made Hashmaps thread safely
+
+3.5.8
+    - Fixed display artifact on time_placeholders when the timer reached 0
+    - Fixed buyConfirmGui
+    - Fixed prefix not changing on reload
+    - Now econ-names on settings.yml is case-insensitive
+    - Always updating guis even when placeholderApi is not present

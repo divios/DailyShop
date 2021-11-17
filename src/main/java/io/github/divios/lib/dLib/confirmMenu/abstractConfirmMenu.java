@@ -9,6 +9,7 @@ import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.Msg;
 import io.github.divios.dailyShop.DailyShop;
+import io.github.divios.dailyShop.utils.PlaceholderAPIWrapper;
 import io.github.divios.dailyShop.utils.PriceWrapper;
 import io.github.divios.dailyShop.utils.utils;
 import io.github.divios.lib.dLib.dItem;
@@ -45,8 +46,8 @@ public abstract class abstractConfirmMenu {
         this.onCompleteAction = onCompleteAction;
         this.fallback = fallback;
 
+        addItemsAndIncrement(1);
         createMenu();
-        addItems(1);
         openMenu();
     }
 
@@ -225,7 +226,7 @@ public abstract class abstractConfirmMenu {
 
     private String replacePapiPlaceholders(String str) {
         try {
-            return PlaceholderAPI.setPlaceholders(player, str);
+            return PlaceholderAPIWrapper.setPlaceholders(player, str);
         } catch (Exception e) {
             return str;
         }
