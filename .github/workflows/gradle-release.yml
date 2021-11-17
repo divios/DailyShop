@@ -34,9 +34,10 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      - name: Create a Release
-        uses: elgohr/Github-Release-Action@master
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITTOKEN }}
+      - uses: "marvinpinto/action-automatic-releases@latest"
         with:
-          args: New Release
+          repo_token: "${{ secrets.GITTOKEN }}"
+          prerelease: false
+          automatic_release_tag: "latest"
+          files: |
+            *.jar
