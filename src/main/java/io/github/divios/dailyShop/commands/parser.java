@@ -77,7 +77,7 @@ public class parser extends abstractCommand {
                 sender.sendMessage("That shop doesn't exist");
                 return;
             }
-            ParserApi.serialize(shop);
+            ParserApi.saveShopToFile(shop);
             if (sender instanceof Player) Msg.sendMsg((Player) sender, "Converted all items correctly");
         }
 

@@ -2,12 +2,16 @@ package io.github.divios.lib.dLib;
 
 
 import com.cryptomorin.xseries.XMaterial;
+import com.google.gson.JsonElement;
 import de.tr7zw.nbtapi.NBTCompound;
 import de.tr7zw.nbtapi.NBTContainer;
 import de.tr7zw.nbtapi.NBTItem;
 import io.github.divios.core_lib.cache.Lazy;
+import io.github.divios.core_lib.gson.GsonSerializable;
+import io.github.divios.core_lib.gson.JsonBuilder;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
+import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.core_lib.misc.Pair;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.economies.economy;
@@ -36,6 +40,7 @@ public class dItem implements Serializable, Cloneable {
     private static final long serialVersionUID = 6529685098267757690L;  // Avoid problems with serialization
     private static final DailyShop plugin = DailyShop.getInstance();
 
+    private String id;
     private NBTItem item;
     private dStock stock = null;
     private Lazy<ItemStack> rawItem;
@@ -785,5 +790,4 @@ public class dItem implements Serializable, Cloneable {
             throws ObjectStreamException {
 
     }
-
 }

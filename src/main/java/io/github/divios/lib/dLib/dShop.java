@@ -39,6 +39,7 @@ public class dShop {
     private final Set<Task> tasks = new HashSet<>();
     private final Set<Subscription> listeners = new HashSet<>();
 
+    @Deprecated
     public dShop(String name, dShopT type) {
         this.name = name;
         this.type = type;
@@ -49,6 +50,7 @@ public class dShop {
         ready();
     }
 
+    @Deprecated
     public dShop(String name, dShopT type, String base64, Timestamp timestamp, int timer) {
         this.name = name;
         this.type = type;
@@ -59,6 +61,7 @@ public class dShop {
         ready();
     }
 
+    @Deprecated
     public dShop(String name, dShopT type, String base64, Timestamp timestamp, int timer, Set<dItem> items) {
         this.name = name;
         this.type = type;
@@ -69,6 +72,8 @@ public class dShop {
         guis = syncHashMenu.fromJson(base64, this);
         ready();
     }
+
+
 
     private void ready() {
 

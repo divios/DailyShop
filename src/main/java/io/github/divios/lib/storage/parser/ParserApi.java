@@ -1,34 +1,24 @@
 package io.github.divios.lib.storage.parser;
 
-import com.google.gson.*;
 import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.utils.FileUtils;
-import io.github.divios.lib.dLib.dInventory;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
-import io.github.divios.lib.managers.shopsManager;
-import org.yaml.snakeyaml.Yaml;
 
 import java.io.*;
 import java.util.*;
-import java.util.concurrent.ExecutionException;
-import java.util.stream.Collectors;
 
 public class ParserApi {
 
-
-    public static void serialize(dShop shop) {
-
-        Map<UUID, dItemState> itemsCollect = new LinkedHashMap<>();
-
-        shop.getItems().forEach(dItem -> itemsCollect.put(dItem.getUid(), dItemState.of(dItem.getItem())));
-
-        File data = new File(DailyShop.getInstance().getDataFolder() + File.separator + "parser", shop.getName() + ".yml");
-        FileUtils.toYaml(new jsonEntry(shop.getName(), itemsCollect, shop), data);
-
-        Log.info("Converted all items correctly of shop " + shop.getName() + " into the file " + data.getPath());
-
+    public static void saveShopToFile(dShop shop) {
+        try {
+            File data = new File(DailyShop.getInstance().getDataFolder() + File.separator + "parser", shop.getName() + ".yml");
+            FileUtils.toYaml(Serializer.serializeShop(shop), data);
+        } catch (Exception e) {
+            Log.info("There was a problem saving the shop " + shop.getName());
+        }
+        Log.info("Converted all items correctly of shop " + shop.getName());
     }
 
     public static void deserialize(String fileName) {
@@ -42,6 +32,9 @@ public class ParserApi {
             return;
         }
 
+        Deserializer.deserializeShop(data);
+
+        /*
         jsonEntry wrapper = null;
         Object o = null;
 
@@ -118,7 +111,7 @@ public class ParserApi {
         public Map<UUID, dItemState> getItems() {
             return items;
         }
-
+        */
     }
 
 }

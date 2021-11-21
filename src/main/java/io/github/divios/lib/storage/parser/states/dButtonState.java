@@ -1,4 +1,4 @@
-package io.github.divios.lib.storage.parser;
+package io.github.divios.lib.storage.parser.states;
 
 import com.cryptomorin.xseries.XMaterial;
 import com.google.gson.Gson;
@@ -27,6 +27,7 @@ public class dButtonState {
     private Boolean air;
     private JsonObject nbt;
 
+    public static dButtonStateBuilder builder() { return new dButtonStateBuilder(); }
 
     public static dButtonState of(dItem item) {
         return new dButtonState(item);
@@ -144,5 +145,81 @@ public class dButtonState {
     }
 
 
+    public static final class dButtonStateBuilder {
+        private String name;
+        private List<String> lore = new ArrayList<>();
+        private Material material;
+        private Integer quantity;
+        private Map<String, Integer> enchantments = new HashMap<>();
+        private String action;
+        private int slot;
+        private Boolean air;
+        private JsonObject nbt;
 
+        private dButtonStateBuilder() {
+        }
+
+        public static dButtonStateBuilder adButtonState() {
+            return new dButtonStateBuilder();
+        }
+
+        public dButtonStateBuilder withName(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public dButtonStateBuilder withLore(List<String> lore) {
+            this.lore = lore;
+            return this;
+        }
+
+        public dButtonStateBuilder withMaterial(Material material) {
+            this.material = material;
+            return this;
+        }
+
+        public dButtonStateBuilder withQuantity(Integer quantity) {
+            this.quantity = quantity;
+            return this;
+        }
+
+        public dButtonStateBuilder withEnchantments(Map<String, Integer> enchantments) {
+            this.enchantments = enchantments;
+            return this;
+        }
+
+        public dButtonStateBuilder withAction(String action) {
+            this.action = action;
+            return this;
+        }
+
+        public dButtonStateBuilder withSlot(int slot) {
+            this.slot = slot;
+            return this;
+        }
+
+        public dButtonStateBuilder withAir(Boolean air) {
+            this.air = air;
+            return this;
+        }
+
+        public dButtonStateBuilder withNbt(JsonObject nbt) {
+            this.nbt = nbt;
+            return this;
+        }
+
+        public dButtonState build() {
+            dButtonState dButtonState = new dButtonState(null);
+            dButtonState.enchantments = this.enchantments;
+            dButtonState.slot = this.slot;
+            dButtonState.air = this.air;
+            dButtonState.action = this.action;
+            dButtonState.name = this.name;
+            dButtonState.lore = this.lore;
+            dButtonState.nbt = this.nbt;
+            dButtonState.material = this.material;
+            dButtonState.quantity = this.quantity;
+            return dButtonState;
+        }
+    }
 }

@@ -1,4 +1,4 @@
-package io.github.divios.lib.storage.parser;
+package io.github.divios.lib.storage.parser.states;
 
 import com.cryptomorin.xseries.XMaterial;
 import com.google.gson.Gson;
@@ -26,6 +26,10 @@ public class dItemState {
     private dItemMetaState dailyShop_meta;
     private JsonObject nbt;
 
+    public static dItemStateBuilder builder() { return new dItemStateBuilder(); }
+
+    public static dItemState of(dItem item) { return of(item.getRawItem()); }
+
     public static dItemState of(ItemStack item) {
         return new dItemState(item);
     }
@@ -39,9 +43,7 @@ public class dItemState {
         quantity = item.getAmount();
         dailyShop_meta = dItemMetaState.of(item);
 
-        item.getEnchantments().forEach((enchantment, integer) ->
-                enchantments.put(enchantment.getName(), integer));
-
+        item.getEnchantments().forEach((enchantment, integer) -> enchantments.put(enchantment.getName(), integer));
 
         NBTItem nbtItem = new NBTItem(item);
         nbt = new Gson().fromJson(nbtItem.toString(), JsonObject.class);
@@ -165,5 +167,65 @@ public class dItemState {
         }
         return newItem;
     }
-    
+
+
+    public static final class dItemStateBuilder {
+        private String name;
+        private List<String> lore = new ArrayList<>();
+        private Material material;
+        private Integer quantity;
+        private Map<String, Integer> enchantments = new HashMap<>();
+        private dItemMetaState dailyShop_meta;
+        private JsonObject nbt;
+
+        private dItemStateBuilder() {
+        }
+
+        public dItemStateBuilder withName(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public dItemStateBuilder withLore(List<String> lore) {
+            this.lore = lore;
+            return this;
+        }
+
+        public dItemStateBuilder withMaterial(Material material) {
+            this.material = material;
+            return this;
+        }
+
+        public dItemStateBuilder withQuantity(Integer quantity) {
+            this.quantity = quantity;
+            return this;
+        }
+
+        public dItemStateBuilder withEnchantments(Map<String, Integer> enchantments) {
+            this.enchantments = enchantments;
+            return this;
+        }
+
+        public dItemStateBuilder withDailyShop_meta(dItemMetaState dailyShop_meta) {
+            this.dailyShop_meta = dailyShop_meta;
+            return this;
+        }
+
+        public dItemStateBuilder withNbt(JsonObject nbt) {
+            this.nbt = nbt;
+            return this;
+        }
+
+        public dItemState build() {
+            dItemState dItemState = new dItemState(null);
+            dItemState.setName(name);
+            dItemState.setLore(lore);
+            dItemState.setMaterial(material);
+            dItemState.setQuantity(quantity);
+            dItemState.setEnchantments(enchantments);
+            dItemState.setDailyShop_meta(dailyShop_meta);
+            dItemState.setNbt(nbt);
+            return dItemState;
+        }
+    }
 }

@@ -64,7 +64,8 @@ public class FileUtils {
             FileUtils.createFile(data);
         }
 
-        String json = new Gson().toJson(o);
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        String json = gson.toJson(o);
         //Log.warn(json);
         Map map = new GsonBuilder().registerTypeAdapter(new TypeToken<Map <String, Object>>(){}.getType(),  new MapDeserializerDoubleAsIntFix())
                 .create().fromJson(json, new TypeToken<Map<String, Object>>(){}.getType());
