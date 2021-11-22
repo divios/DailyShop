@@ -150,7 +150,7 @@ public class dItemState {
         this.dailyShop_meta = dailyShop_meta;
     }
 
-    public dItem parseItem(UUID uuid) {
+    public dItem parseItem() {
 
         // Preconditions
         if (name == null) name = "";
@@ -166,7 +166,7 @@ public class dItemState {
 
         dItem newItem = dItem.of(item.getItem().clone());
         newItem.setQuantity(quantity);
-        newItem.setUid(uuid);
+        newItem.setID(id);
 
         if (enchantments != null)
             enchantments.forEach((s, integer) -> newItem.addEnchantments(Enchantment.getByName(s), integer));

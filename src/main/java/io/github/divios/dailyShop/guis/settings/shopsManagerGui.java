@@ -16,7 +16,7 @@ import io.github.divios.dailyShop.lorestategy.shopsManagerLore;
 import io.github.divios.dailyShop.utils.utils;
 import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.managers.shopsManager;
-import io.github.divios.lib.storage.dataManager;
+import io.github.divios.lib.storage.databaseManager;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -32,7 +32,7 @@ public class shopsManagerGui {
 
     private static final DailyShop plugin = DailyShop.getInstance();
     private static final shopsManager sManager = shopsManager.getInstance();
-    private static final dataManager dManager = dataManager.getInstance();
+    private static final databaseManager dManager = databaseManager.getInstance();
 
     private static final String SHOP_META = "dShopID";
 

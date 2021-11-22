@@ -4,9 +4,9 @@ import io.github.divios.core_lib.events.Events;
 import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.dailyShop.events.createdShopEvent;
 import io.github.divios.dailyShop.events.deletedShopEvent;
+import io.github.divios.dailyShop.utils.FutureUtils;
 import io.github.divios.lib.dLib.dShop;
-import io.github.divios.lib.storage.dataManager;
-import org.bukkit.Bukkit;
+import io.github.divios.lib.storage.databaseManager;
 
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -21,10 +21,10 @@ public class shopsManager {
 
     private shopsManager() {}
 
-    public static shopsManager getInstance() {
+    public synchronized static shopsManager getInstance() {
         if (instance == null) {
             instance = new shopsManager();
-            dataManager.getInstance().getShops().thenAccept(instance::setShops);
+            FutureUtils.waitFor(databaseManager.getInstance().getShops().thenAccept(instance::setShops));
         }
         return instance;
     }
@@ -51,7 +51,6 @@ public class shopsManager {
      * Creates a new shop
      *
      * @param name the name of the shop
-     * @param type the type of the shop
      * @return CompletableFuture that ends when the shop is added to the database
      *
      */
@@ -64,13 +63,13 @@ public class shopsManager {
         dShop newShop = new dShop(name, type);
         shops.add(newShop);
         Schedulers.sync().run(() -> Events.callEvent(new createdShopEvent(newShop)));
-        return dataManager.getInstance().createShop(newShop);
+        return databaseManager.getInstance().createShop(newShop);
     }
 
     public synchronized CompletableFuture<Void> createShop(dShop newShop) {
         shops.add(newShop);
         Schedulers.sync().run(() -> Events.callEvent(new createdShopEvent(newShop)));
-        return dataManager.getInstance().createShop(newShop);
+        return databaseManager.getInstance().createShop(newShop);
     }
 
     /**
@@ -83,6 +82,11 @@ public class shopsManager {
         return shops.stream()
                 .filter(shop -> shop.getName().equalsIgnoreCase(name))
                 .findFirst();
+    }
+
+
+    public synchronized CompletableFuture<Void> deleteShop(dShop shop) {
+        return deleteShop(shop.getName());
     }
 
     /**
@@ -100,8 +104,10 @@ public class shopsManager {
         Events.callEvent(event);     // throw new event
 
         // auto-destroy is handled via event on dShop
-        shops.removeIf(shop -> shop.getName().equals(name));
-        return dataManager.getInstance().deleteShop(name);
+        shops.remove(result.get());
+        return databaseManager.getInstance().deleteShop(name);
     }
+
+
 
 }

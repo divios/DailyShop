@@ -22,19 +22,19 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
-public class dataManager extends DataManagerAbstract {
+public class databaseManager extends DataManagerAbstract {
 
     private static final DailyShop plugin = DailyShop.getInstance();
 
-    private static dataManager instance = null;
+    private static databaseManager instance = null;
 
-    private dataManager(DatabaseConnector connection) {
+    private databaseManager(DatabaseConnector connection) {
         super(connection);
     }
 
-    public static dataManager getInstance() {
+    public static databaseManager getInstance() {
         if (instance == null) {
-            instance = new dataManager(new SQLiteConnector(plugin));
+            instance = new databaseManager(new SQLiteConnector(plugin));
             instance.databaseConnector.connect(connection -> initialMigration.migrate(connection, instance.getTablePrefix()));
         }
         return instance;

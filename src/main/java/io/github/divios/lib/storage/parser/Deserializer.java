@@ -15,11 +15,11 @@ public class Deserializer {
 
     private static final String shopPath = "shop.";
 
-    public static dShopState deserializeShop(File file) {
+    protected static dShopState deserializeShop(File file) {
         return deserializeShop(YamlConfiguration.loadConfiguration(file));
     }
 
-    public static dShopState deserializeShop(YamlConfiguration yaml) {
+    protected static dShopState deserializeShop(YamlConfiguration yaml) {
 
         String shopID = yaml.getString("id");
 
@@ -73,16 +73,17 @@ public class Deserializer {
                 items.put(UUID.fromString(id), buttonState);
             } catch (Exception e) {
                 Log.info("There was a problem parsing the item with id: " + id);
-                Log.info(e.getMessage());
+                //Log.info(e.getMessage());
+                e.printStackTrace();
             }
         });
         return items;
     }
 
     private static List<dItemState> getShopItems(YamlConfiguration yaml) {
-        String innerPath = shopPath + "items.";
         List<dItemState> items = new ArrayList<>();
-        yaml.getConfigurationSection(innerPath).getKeys(false).forEach(id ->  {
+        yaml.getConfigurationSection("items").getKeys(false).forEach(id ->  {
+            String innerPath = "items.";
             try {
                 dItemState item = dItemState.builder()
                         .withID(id)

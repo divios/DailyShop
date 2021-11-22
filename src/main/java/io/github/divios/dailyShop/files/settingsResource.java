@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
-public class settingsResource extends resource{
+public class settingsResource extends resource {
 
     public String PREFIX;
     public boolean DEBUG;

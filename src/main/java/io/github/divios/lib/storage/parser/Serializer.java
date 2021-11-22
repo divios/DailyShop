@@ -21,7 +21,7 @@ public class Serializer {
         return gson.toJsonTree(o);
     }
 
-    public static JsonObject serializeShop(dShop shop) {
+    protected static JsonObject serializeShop(dShop shop) {
         return JsonBuilder.object()
                 .add("id", shop.getName())
                 .add("shop", serializeShopInventory(shop))
@@ -29,11 +29,11 @@ public class Serializer {
                 .build();
     }
 
-    public static JsonElement serializeShopInventory(dShop shop) {
+    private static JsonElement serializeShopInventory(dShop shop) {
         return toJson(dShopInvState.toState(shop));
     }
 
-    public static JsonElement serializeShopItems(dShop shop) {
+    private static JsonElement serializeShopItems(dShop shop) {
         Map<UUID, dItemState> itemsCollect = new LinkedHashMap<>();
         shop.getItems().forEach(dItem -> itemsCollect.put(dItem.getUid(), dItemState.of(dItem.getItem())));
         return toJson(itemsCollect);

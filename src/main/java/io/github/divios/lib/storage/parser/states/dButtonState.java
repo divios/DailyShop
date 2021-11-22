@@ -125,8 +125,7 @@ public class dButtonState {
 
         item.mergeCompound(new NBTContainer(nbt.toString()));
 
-        dItem newItem = dItem.of(item.getItem().clone());
-        newItem.setUid(id);
+        dItem newItem = dItem.of(item.getItem().clone(), id);
         newItem.setQuantity(quantity);
         if (air != null && air) newItem.setAIR();
         newItem.setSlot(slot);

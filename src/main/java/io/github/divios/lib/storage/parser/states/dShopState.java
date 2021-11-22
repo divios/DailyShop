@@ -1,9 +1,15 @@
 package io.github.divios.lib.storage.parser.states;
 
+import io.github.divios.core_lib.events.Events;
+import io.github.divios.dailyShop.events.updateShopEvent;
+import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class dShopState {
 
@@ -35,6 +41,20 @@ public class dShopState {
 
     public List<dItemState> getItemsCollect() {
         return itemsCollect;
+    }
+
+    public dShop createShop() {
+        dShop newShop = new dShop(id);
+        Events.callEvent(new updateShopEvent(newShop, invState.build(), true));
+        newShop.setItems(buildItems(itemsCollect));
+
+        return newShop;
+    }
+
+    private Set<dItem> buildItems(Collection<dItemState> itemsToBuild) {
+        return itemsToBuild.stream()
+                .map(dItemState::parseItem)
+                .collect(Collectors.toSet());
     }
 
     public static final class dShopStateBuilder {

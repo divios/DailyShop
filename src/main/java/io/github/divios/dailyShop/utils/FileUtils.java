@@ -40,8 +40,8 @@ public class FileUtils {
 
     }
 
-    public static void createParserFolder() {
-        File parser = new File(plugin.getDataFolder(), "parser");
+    public static void createShopsFolder() {
+        File parser = new File(plugin.getDataFolder(), "shops");
         parser.mkdir();
     }
 

@@ -48,18 +48,34 @@ public class dItem implements Serializable, Cloneable {
         return new dItem(item);
     }
 
+    public static dItem of(ItemStack item, String id) {
+        return new dItem(item, id);
+    }
+
+    public static dItem of(ItemStack item, String id, int slot) {
+        return new dItem(item, id, slot);
+    }
+
     public dItem(@NotNull ItemStack item) {
         this(item, -1);
     }
 
     public dItem(@NotNull ItemStack item, int slot) {
-        setItem(item, slot);
+        this(item, UUID.randomUUID().toString(), slot);
     }
 
-    private dItem() {}
+    public dItem(ItemStack item, String id) {
+        this(item, id, -1);
+    }
+
+    public dItem(ItemStack item, String id, int slot) {
+        setItem(item, id, slot);
+    }
+
+    private dItem() {
+    }
 
     /**
-     *
      * @return the ItemStack that this instance holds
      */
     public ItemStack getItem() {
@@ -79,6 +95,7 @@ public class dItem implements Serializable, Cloneable {
     /**
      * Gets the raw item, this is, the item's held
      * by this instance without all the daily metadata
+     *
      * @return
      */
     public ItemStack getRawItem(boolean getAsNewItem) {
@@ -95,14 +112,13 @@ public class dItem implements Serializable, Cloneable {
     }
 
     /**
-     *
      * @param item the new item to be held by this instance
      */
-    public void setItem(@NotNull ItemStack item, int slot) {
+    public void setItem(@NotNull ItemStack item, String id, int slot) {
         this.item = new NBTItem(item);
-        if (getUid() == null) {
+        if (getID() == null || getID().isEmpty()) {
             setRawItem(item);
-            setUid();
+            setID(id);
             setSlot(slot);
             setRarity(new dRarity());       //Defaults to Common
             setConfirm_gui(true);           // Defaults true
@@ -117,16 +133,17 @@ public class dItem implements Serializable, Cloneable {
     }
 
     public void setItem(@NotNull ItemStack item) {
-        setItem(item, -1);
+        setItem(item, null, -1);
     }
 
     /**
      * Private method to transfer all daily item meta
+     *
      * @param item
      */
     private ItemStack copyAllMetadata(@NotNull ItemStack item) {
         dItem transfer = dItem.of(item);
-        transfer.setUid(getUid());
+        transfer.setID(getID());
         transfer.setDisplayName(getDisplayName());
         transfer.setLore(getLore());
         getAction().stream(transfer::setAction);
@@ -148,18 +165,25 @@ public class dItem implements Serializable, Cloneable {
 
     /**
      * Sets the slot of this item
+     *
      * @param slot
      */
-    public void setSlot(int slot) { item.setInteger("dailySlots", slot); }
+    public void setSlot(int slot) {
+        item.setInteger("dailySlots", slot);
+    }
 
     /**
      * Gets the slot of this item
+     *
      * @return
      */
-    public int getSlot() { return item.getInteger("dailySlots"); }
+    public int getSlot() {
+        return item.getInteger("dailySlots");
+    }
 
     /**
      * Sets the meta of the item
+     *
      * @param meta
      */
     public void setMeta(ItemMeta meta) {
@@ -170,6 +194,7 @@ public class dItem implements Serializable, Cloneable {
 
     /**
      * Sets the display name of the item
+     *
      * @param name
      */
     public void setDisplayName(@NotNull String name) {
@@ -179,16 +204,18 @@ public class dItem implements Serializable, Cloneable {
 
     /**
      * Gets the displayName of the item
+     *
      * @return
      */
     public String getDisplayName() {
         return utils.isEmpty(ItemUtils.getName(getItem())) ?
-                getItem().getType().name():
+                getItem().getType().name() :
                 ItemUtils.getName(getItem());
     }
 
     /**
      * Sets the lore of the item. Supports Color Codes
+     *
      * @param lore
      */
     public void setLore(@NotNull List<String> lore) {
@@ -198,14 +225,17 @@ public class dItem implements Serializable, Cloneable {
 
     /**
      * Gets the lore of the item
+     *
      * @return
      */
-    public @NotNull List<String> getLore() {
+    public @NotNull
+    List<String> getLore() {
         return ItemUtils.getLore(getItem());
     }
 
     /**
      * Sets the material of the item
+     *
      * @param m
      */
     public void setMaterial(@NotNull XMaterial m) {
@@ -218,14 +248,17 @@ public class dItem implements Serializable, Cloneable {
 
     /**
      * Gets the material of the item
+     *
      * @return
      */
-    public @NotNull Material getMaterial() {
+    public @NotNull
+    Material getMaterial() {
         return getItem().getType();
     }
 
     /**
      * Sets the durability of the item
+     *
      * @param durability
      */
     public void setDurability(short durability, boolean glass) {
@@ -240,6 +273,7 @@ public class dItem implements Serializable, Cloneable {
 
     /**
      * Gets the durability of the item
+     *
      * @return
      */
     public short getDurability() {
@@ -248,6 +282,7 @@ public class dItem implements Serializable, Cloneable {
 
     /**
      * Adds enchantment to item
+     *
      * @param ench
      */
     public void addEnchantments(@NotNull Enchantment ench, int lvl) {
@@ -257,6 +292,7 @@ public class dItem implements Serializable, Cloneable {
 
     /**
      * Removes enchantment from item
+     *
      * @param ench
      */
     public void removeEnchantments(@NotNull Enchantment ench) {
@@ -267,14 +303,17 @@ public class dItem implements Serializable, Cloneable {
 
     /**
      * gets a map containing all the enchants of this item
+     *
      * @return
      */
-    public @NotNull Map<Enchantment, Integer> getEnchantments() {
+    public @NotNull
+    Map<Enchantment, Integer> getEnchantments() {
         return getItem().getEnchantments();
     }
 
     /**
      * Sets the amount of the item
+     *
      * @param amount
      */
     public void setQuantity(int amount) {
@@ -288,6 +327,7 @@ public class dItem implements Serializable, Cloneable {
 
     /**
      * Gets the amount of the item
+     *
      * @return
      */
     public int getQuantity() {
@@ -296,12 +336,16 @@ public class dItem implements Serializable, Cloneable {
 
     /**
      * Returns the max stack size of this item
+     *
      * @return
      */
-    public int getMaxStackSize() { return item.getItem().getMaxStackSize(); }
+    public int getMaxStackSize() {
+        return item.getItem().getMaxStackSize();
+    }
 
     /**
      * Return if the item has a flag
+     *
      * @param flag
      * @return
      */
@@ -311,6 +355,7 @@ public class dItem implements Serializable, Cloneable {
 
     /**
      * Toggles a flag from the item
+     *
      * @param flag
      */
     public void toggleFlag(ItemFlag flag) {
@@ -325,7 +370,6 @@ public class dItem implements Serializable, Cloneable {
     }
 
     /**
-     *
      * @return the price of the item. Can be random price between the values asigned
      */
     public Optional<dPrice> getBuyPrice() {
@@ -333,7 +377,7 @@ public class dItem implements Serializable, Cloneable {
     }
 
     /**
-     *  Set the price of the item as a fixed value
+     * Set the price of the item as a fixed value
      *
      * @param price Fixed price for the item
      */
@@ -353,6 +397,7 @@ public class dItem implements Serializable, Cloneable {
 
     /**
      * Sets the buy price with a dPrice object
+     *
      * @param price
      */
     public void setBuyPrice(dPrice price) {
@@ -370,7 +415,6 @@ public class dItem implements Serializable, Cloneable {
     }
 
     /**
-     *
      * @return the price of the item. Can be random price between the values asigned
      */
     public Optional<dPrice> getSellPrice() {
@@ -378,7 +422,7 @@ public class dItem implements Serializable, Cloneable {
     }
 
     /**
-     *  Set the price of the item as a fixed value
+     * Set the price of the item as a fixed value
      *
      * @param price Fixed price for the item
      */
@@ -425,7 +469,8 @@ public class dItem implements Serializable, Cloneable {
     }
 
 
-    public static @Nullable UUID getUid(ItemStack item) {
+    public static @Nullable
+    UUID getUid(ItemStack item) {
         return dItem.of(item).getUid();
     }
 
@@ -479,7 +524,7 @@ public class dItem implements Serializable, Cloneable {
      * Saves the stock as base64
      */
     private void saveStock() {
-        item.setString("rds_stock", stock == null ? null: stock.toBase64());    // Check null to reset Stock
+        item.setString("rds_stock", stock == null ? null : stock.toBase64());    // Check null to reset Stock
     }
 
     /**
@@ -496,7 +541,8 @@ public class dItem implements Serializable, Cloneable {
      *
      * @return an integer symbolizing a rarity. Use utils to format to itemStack or String
      */
-    public @NotNull dRarity getRarity() {
+    public @NotNull
+    dRarity getRarity() {
         if (!item.hasKey("rds_rarity")) return new dRarity();
         return item.getObject("rds_rarity", dRarity.class);
     }
@@ -513,12 +559,16 @@ public class dItem implements Serializable, Cloneable {
      *
      * @return
      */
-    public @NotNull economy getEconomy() {
+    public @NotNull
+    economy getEconomy() {
         economy econ = new vault();
         if (item.hasKey("rds_econ")) {
             econ = economy.deserialize(item.getString("rds_econ"));
-            try { econ.test(); }
-            catch (NoClassDefFoundError e) { econ = new vault(); }
+            try {
+                econ.test();
+            } catch (NoClassDefFoundError e) {
+                econ = new vault();
+            }
         }
 
         return econ;
@@ -553,7 +603,7 @@ public class dItem implements Serializable, Cloneable {
 
 
     private void migratePerms() {
-        if (item.hasKey("rds_perms"))  {
+        if (item.hasKey("rds_perms")) {
             setPermsBuy(item.getObject("rds_perms", List.class));
             item.removeKey("rds_perms");
         }
@@ -633,6 +683,7 @@ public class dItem implements Serializable, Cloneable {
 
     /**
      * Set amount for the set of items
+     *
      * @param setItems
      */
     public void setSetItems(@Nullable Integer setItems) {
@@ -665,11 +716,12 @@ public class dItem implements Serializable, Cloneable {
 
     /**
      * Returns the action of the dItem
+     *
      * @return Optional.ofNullable(dAction)
      */
     public Pair<dAction, String> getAction() {
         return item.hasKey("rds_action") ?
-                Pair.deserialize(item.getString("rds_action"), dAction.class, String.class):
+                Pair.deserialize(item.getString("rds_action"), dAction.class, String.class) :
                 Pair.of(dAction.EMPTY, "");
 
     }
@@ -684,21 +736,30 @@ public class dItem implements Serializable, Cloneable {
     /**
      * Private method to set Item as AIR
      */
-    public void setAIR() { item.setBoolean("rds_AIR", true); }
+    public void setAIR() {
+        item.setBoolean("rds_AIR", true);
+    }
 
     /**
      * private method to set Item as SIGN for dGui sell purposes
      */
-    private void setSIGN() {item.setBoolean("rds_SIGN", true);}
+    private void setSIGN() {
+        item.setBoolean("rds_SIGN", true);
+    }
 
 
     /**
      * Check if an dItem is masked as AIR
+     *
      * @return
      */
-    public boolean isAIR() { return item.hasKey("rds_AIR"); }
+    public boolean isAIR() {
+        return item.hasKey("rds_AIR");
+    }
 
-    public boolean isSIGN() { return item.hasKey("rds_SIGN"); }
+    public boolean isSIGN() {
+        return item.hasKey("rds_SIGN");
+    }
 
     public String toJson() {
         saveStock();            // Save stock before serializing the hold item
@@ -707,6 +768,7 @@ public class dItem implements Serializable, Cloneable {
 
     /**
      * Gets item serializable as base64
+     *
      * @return
      */
     public String toBase64() {
@@ -715,6 +777,7 @@ public class dItem implements Serializable, Cloneable {
 
     /**
      * Constructs dItem from base 64
+     *
      * @param base64
      * @return dItem constructed
      */
@@ -731,17 +794,19 @@ public class dItem implements Serializable, Cloneable {
 
     /**
      * Returns a copy of this dItem but different UUID (generated randomly)
+     *
      * @return
      */
     public dItem copy() {
         dItem cloned = new dItem(getItem());
-        cloned.setUid(UUID.randomUUID());
+        cloned.setID(UUID.randomUUID().toString());
         cloned.setStock(getStock());
         return cloned;
     }
 
     /**
      * Returns a deep copy of the object, same UUID
+     *
      * @return
      */
     @Override

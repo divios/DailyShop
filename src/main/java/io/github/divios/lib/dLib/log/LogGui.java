@@ -7,7 +7,6 @@ import io.github.divios.core_lib.inventory.builder.inventoryPopulator;
 import io.github.divios.core_lib.inventory.builder.paginatedGui;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.misc.Msg;
-import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.utils.FutureUtils;
 import io.github.divios.dailyShop.utils.PriceWrapper;
@@ -15,14 +14,11 @@ import io.github.divios.lib.dLib.log.options.LogOptions;
 import io.github.divios.lib.dLib.log.options.LogOptionsGui;
 import io.github.divios.lib.dLib.log.options.dLogEntry;
 import io.github.divios.lib.dLib.log.options.dLogUtils;
-import io.github.divios.lib.storage.dataManager;
+import io.github.divios.lib.storage.databaseManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
@@ -48,7 +44,7 @@ public class LogGui {
         CompletableFuture<paginatedGui> gui = paginatedGui.Builder()
                 .withTitle("&8Log")
                 .withItems(() ->
-                        FutureUtils.waitFor(dataManager.getInstance().getEntries()).stream()
+                        FutureUtils.waitFor(databaseManager.getInstance().getEntries()).stream()
                                 .filter(dLogEntry -> {
                                     boolean result = true;
                                     if (options.getfPlayer() != null)
@@ -122,7 +118,7 @@ public class LogGui {
                                             , e ->
                                                     dLogUtils.importToYaml(
                                                             FutureUtils.waitFor(
-                                                                    dataManager.getInstance().getEntries()).stream()
+                                                                    databaseManager.getInstance().getEntries()).stream()
                                                                     .filter(dLogEntry -> {
                                                                         boolean result = true;
                                                                         if (options.getfPlayer() != null)

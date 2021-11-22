@@ -29,12 +29,18 @@ public class dShopInvState {
     }
 
     public dShopInvState(String name, Integer size, Collection<dItem> items) {
-        this.title = FormatUtils.unColor(name);
+        this.title = FormatUtils.color(name);
         this.size = size;
 
         items.stream()
                 .sorted(Comparator.comparingInt(dItem::getSlot))
                 .forEach(dItem -> this.display_items.put(dItem.getUid(), dButtonState.of(dItem)));
+    }
+
+    protected dShopInvState(String title, Integer size, Map<UUID, dButtonState> display_items) {
+        this.title = title;
+        this.size = size;
+        this.display_items.putAll(display_items);
     }
 
     public String getTitle() {
@@ -92,8 +98,14 @@ public class dShopInvState {
         }
 
         public dShopInvState build() {
-            dShopInvState dShopInvState = new dShopInvState(null, size, null);
-            return dShopInvState;
+            runPreconditions();
+            return new dShopInvState(title, size, display_items);
+        }
+
+        private void runPreconditions() {
+            if (title == null) title = "";
+            if (size == null) size = 27;
+            if (display_items == null) display_items = Collections.EMPTY_MAP;
         }
     }
 }
