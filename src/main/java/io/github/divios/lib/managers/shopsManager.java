@@ -56,6 +56,10 @@ public class shopsManager {
      *
      */
 
+    public synchronized CompletableFuture<Void> createShop(String name) {
+        return createShop(name, dShop.dShopT.buy);
+    }
+
     public synchronized CompletableFuture<Void> createShop(String name, dShop.dShopT type) {
         dShop newShop = new dShop(name, type);
         shops.add(newShop);

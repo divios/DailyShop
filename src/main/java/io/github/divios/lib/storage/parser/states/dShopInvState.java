@@ -54,14 +54,14 @@ public class dShopInvState {
         dInventory newInv = new dInventory(FormatUtils.color(title), size, shop);
         display_items.entrySet().stream()
                 .filter(entry -> entry.getValue().getSlot() < size)
-                .map(entry -> entry.getValue().parseItem(entry.getKey()))
+                .map(entry -> entry.getValue().parseItem())
                 .forEach(entry -> newInv.addButton(entry, entry.getSlot()));
 
         Events.callEvent(new updateShopEvent(shop, newInv, true));
     }
 
     public dInventory build() {
-        return new dInventory()
+        return null;
     }
 
     public static final class dShopInvStateBuilder {

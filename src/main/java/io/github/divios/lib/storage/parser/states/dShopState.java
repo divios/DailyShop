@@ -1,16 +1,15 @@
 package io.github.divios.lib.storage.parser.states;
 
-import io.github.divios.lib.dLib.dInventory;
-import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class dShopState {
 
     private String id;
-    private dInventory invState;
-    private Map<UUID, dItem> itemsCollect;
+    private dShopInvState invState;
+    private List<dItemState> itemsCollect;
 
     public static dShopStateBuilder builder() { return new dShopStateBuilder(); }
 
@@ -20,28 +19,28 @@ public class dShopState {
 
     public dShopState(dShop shop) {
         id = shop.getName();
-        invState = shop.getGuis().getDefault();
+        invState = dShopInvState.toState(shop);
 
-        itemsCollect = new LinkedHashMap<>();
-        shop.getItems().forEach(dItem -> itemsCollect.put(dItem.getUid(), dItem));
+        itemsCollect = new ArrayList<>();
+        shop.getItems().forEach(dItem -> itemsCollect.add(dItemState.of(dItem)));
     }
 
     public String getId() {
         return id;
     }
 
-    public dInventory getInvState() {
+    public dShopInvState getInvState() {
         return invState;
     }
 
-    public Map<UUID, dItem> getItemsCollect() {
+    public List<dItemState> getItemsCollect() {
         return itemsCollect;
     }
 
     public static final class dShopStateBuilder {
         private String id;
-        private dInventory invState;
-        private Map<UUID, dItem> itemsCollect;
+        private dShopInvState invState;
+        private List<dItemState> itemsCollect;
 
         private dShopStateBuilder() {
         }
@@ -55,12 +54,12 @@ public class dShopState {
             return this;
         }
 
-        public dShopStateBuilder withInvState(dInventory invState) {
+        public dShopStateBuilder withInvState(dShopInvState invState) {
             this.invState = invState;
             return this;
         }
 
-        public dShopStateBuilder withItemsCollect(Map<UUID, dItem> itemsCollect) {
+        public dShopStateBuilder withItemsCollect(List<dItemState> itemsCollect) {
             this.itemsCollect = itemsCollect;
             return this;
         }

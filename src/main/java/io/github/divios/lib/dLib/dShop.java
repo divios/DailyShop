@@ -73,8 +73,6 @@ public class dShop {
         ready();
     }
 
-
-
     private void ready() {
 
         tasks.add(

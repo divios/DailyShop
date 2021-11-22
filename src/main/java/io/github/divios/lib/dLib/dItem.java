@@ -40,7 +40,6 @@ public class dItem implements Serializable, Cloneable {
     private static final long serialVersionUID = 6529685098267757690L;  // Avoid problems with serialization
     private static final DailyShop plugin = DailyShop.getInstance();
 
-    private String id;
     private NBTItem item;
     private dStock stock = null;
     private Lazy<ItemStack> rawItem;
@@ -103,7 +102,7 @@ public class dItem implements Serializable, Cloneable {
         this.item = new NBTItem(item);
         if (getUid() == null) {
             setRawItem(item);
-            setUid(UUID.randomUUID());
+            setUid();
             setSlot(slot);
             setRarity(new dRarity());       //Defaults to Common
             setConfirm_gui(true);           // Defaults true
@@ -408,26 +407,26 @@ public class dItem implements Serializable, Cloneable {
         });
     }
 
+    public String getID() {
+        return item.getString("rds_UUID");
+    }
+
+    public void setID(String id) {
+        item.setString("rds_UUI", id);
+    }
+
     /**
      * Gets the uuid of the item
      *
      * @return the uuid of this item
      */
     public UUID getUid() {
-        return item.getObject("rds_UUID", UUID.class);
+        return UUID.nameUUIDFromBytes(getID().getBytes());
     }
 
 
     public static @Nullable UUID getUid(ItemStack item) {
-        return new NBTItem(item).getObject("rds_UUID", UUID.class);
-    }
-
-    /**
-     * Sets uuid
-     * @param uid
-     */
-    public void setUid(@NotNull UUID uid) {
-        item.setObject("rds_UUID", uid);
+        return dItem.of(item).getUid();
     }
 
     /**

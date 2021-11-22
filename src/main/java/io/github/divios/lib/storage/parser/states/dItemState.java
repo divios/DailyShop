@@ -1,6 +1,7 @@
 package io.github.divios.lib.storage.parser.states;
 
 import com.cryptomorin.xseries.XMaterial;
+import com.google.common.base.Preconditions;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import de.tr7zw.nbtapi.NBTContainer;
@@ -18,6 +19,7 @@ import java.util.*;
 
 public class dItemState {
 
+    private String id;
     private String name;
     private List<String> lore = new ArrayList<>();
     private Material material;
@@ -33,6 +35,8 @@ public class dItemState {
     public static dItemState of(ItemStack item) {
         return new dItemState(item);
     }
+
+    protected dItemState() {}
 
     private dItemState(ItemStack item) {
 
@@ -82,6 +86,10 @@ public class dItemState {
 
     }
 
+    public String getId() {
+        return id;
+    }
+
     public String getName() {
         return name;
     }
@@ -108,6 +116,10 @@ public class dItemState {
 
     public JsonObject getNbt() {
         return nbt;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public void setName(String name) {
@@ -170,15 +182,21 @@ public class dItemState {
 
 
     public static final class dItemStateBuilder {
+        private String id;
         private String name;
         private List<String> lore = new ArrayList<>();
-        private Material material;
+        private String material;
         private Integer quantity;
         private Map<String, Integer> enchantments = new HashMap<>();
         private dItemMetaState dailyShop_meta;
         private JsonObject nbt;
 
         private dItemStateBuilder() {
+        }
+
+        public dItemStateBuilder withID(String id) {
+            this.id = id;
+            return this;
         }
 
         public dItemStateBuilder withName(String name) {
@@ -191,7 +209,7 @@ public class dItemState {
             return this;
         }
 
-        public dItemStateBuilder withMaterial(Material material) {
+        public dItemStateBuilder withMaterial(String material) {
             this.material = material;
             return this;
         }
@@ -217,15 +235,34 @@ public class dItemState {
         }
 
         public dItemState build() {
-            dItemState dItemState = new dItemState(null);
+            checkPreConditions();
+
+            dItemState dItemState = new dItemState();
+            dItemState.setId(id);
             dItemState.setName(name);
             dItemState.setLore(lore);
-            dItemState.setMaterial(material);
+            dItemState.setMaterial(XMaterial.matchXMaterial(material).get().parseMaterial());
             dItemState.setQuantity(quantity);
             dItemState.setEnchantments(enchantments);
             dItemState.setDailyShop_meta(dailyShop_meta);
             dItemState.setNbt(nbt);
             return dItemState;
+        }
+
+        private void checkPreConditions() {
+            Preconditions.checkArgument(!id.isEmpty(), "Id cannot be empty");
+            if (lore == null) lore = Collections.emptyList();
+            Preconditions.checkArgument(XMaterial.matchXMaterial(material).isPresent(), "The item material does not exist");
+            if (quantity <= 0 || quantity > 64) quantity = 1;
+            if (enchantments == null) enchantments = Collections.EMPTY_MAP;
+            enchantments.forEach((s, integer) -> {
+                try {
+                    Enchantment.getByName(s);
+                } catch (Exception e) {
+                    throw new RuntimeException("The enchantment " + s + " does not exist");
+                }
+            });
+            if (nbt == null) nbt = new JsonObject();
         }
     }
 }

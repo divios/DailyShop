@@ -1,6 +1,7 @@
 package io.github.divios.lib.storage.parser.states;
 
 import com.cryptomorin.xseries.XMaterial;
+import com.google.common.base.Preconditions;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import de.tr7zw.nbtapi.NBTContainer;
@@ -17,6 +18,7 @@ import java.util.*;
 
 public class dButtonState {
 
+    private String id;
     private String name;
     private List<String> lore = new ArrayList<>();
     private Material material;
@@ -32,6 +34,8 @@ public class dButtonState {
     public static dButtonState of(dItem item) {
         return new dButtonState(item);
     }
+
+    protected dButtonState() {}
 
     public dButtonState(dItem item) {
 
@@ -114,15 +118,7 @@ public class dButtonState {
         return nbt;
     }
 
-    public dItem parseItem(UUID uuid) {
-
-        // Preconditions
-        if (name == null) name = "";
-        name = FormatUtils.color(name);
-        if (lore == null) lore = Collections.emptyList();
-        if (quantity == null) quantity = 1;
-        if (action == null) action = "EMPTY:";
-        if (nbt == null) nbt = new JsonObject();
+    public dItem parseItem() {
 
         NBTItem item = new NBTItem(ItemBuilder.of(XMaterial.matchXMaterial(material))
                 .setName(name).setLore(lore));
@@ -130,7 +126,7 @@ public class dButtonState {
         item.mergeCompound(new NBTContainer(nbt.toString()));
 
         dItem newItem = dItem.of(item.getItem().clone());
-        newItem.setUid(uuid);
+        newItem.setUid(id);
         newItem.setQuantity(quantity);
         if (air != null && air) newItem.setAIR();
         newItem.setSlot(slot);
@@ -146,9 +142,10 @@ public class dButtonState {
 
 
     public static final class dButtonStateBuilder {
+        private String id;
         private String name;
         private List<String> lore = new ArrayList<>();
-        private Material material;
+        private String material;
         private Integer quantity;
         private Map<String, Integer> enchantments = new HashMap<>();
         private String action;
@@ -163,6 +160,11 @@ public class dButtonState {
             return new dButtonStateBuilder();
         }
 
+        public dButtonStateBuilder withID(String id) {
+            this.id = id;
+            return this;
+        }
+
         public dButtonStateBuilder withName(String name) {
             this.name = name;
             return this;
@@ -173,7 +175,7 @@ public class dButtonState {
             return this;
         }
 
-        public dButtonStateBuilder withMaterial(Material material) {
+        public dButtonStateBuilder withMaterial(String material) {
             this.material = material;
             return this;
         }
@@ -209,17 +211,38 @@ public class dButtonState {
         }
 
         public dButtonState build() {
-            dButtonState dButtonState = new dButtonState(null);
+            checkPreConditions();
+
+            dButtonState dButtonState = new dButtonState();
+            dButtonState.id = id;
             dButtonState.enchantments = this.enchantments;
             dButtonState.slot = this.slot;
             dButtonState.air = this.air;
             dButtonState.action = this.action;
-            dButtonState.name = this.name;
+            dButtonState.name = FormatUtils.color(this.name);
             dButtonState.lore = this.lore;
             dButtonState.nbt = this.nbt;
-            dButtonState.material = this.material;
+            dButtonState.material = XMaterial.matchXMaterial(this.material).get().parseMaterial();
             dButtonState.quantity = this.quantity;
             return dButtonState;
+        }
+
+        private void checkPreConditions() {
+            Preconditions.checkArgument(!id.isEmpty(), "Id cannot be empty");
+            if (name == null) name = "";
+            if (lore == null) lore = Collections.emptyList();
+            if (action == null) action = "EMPTY:";
+            Preconditions.checkArgument(XMaterial.matchXMaterial(material).isPresent(), "The item material does not exist");
+            if (quantity == null || quantity <= 0 || quantity > 64) quantity = 1;
+            if (enchantments == null) enchantments = Collections.EMPTY_MAP;
+            enchantments.forEach((s, integer) -> {
+                try {
+                    Enchantment.getByName(s);
+                } catch (Exception e) {
+                    throw new RuntimeException("The enchantment " + s + " does not exist");
+                }
+            });
+            if (nbt == null) nbt = new JsonObject();
         }
     }
 }
