@@ -9,8 +9,10 @@ import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.utils.FutureUtils;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
+import io.github.divios.lib.dLib.dShopI;
 import io.github.divios.lib.dLib.log.options.dLogEntry;
 import io.github.divios.lib.dLib.synchronizedGui.syncMenu;
+import io.github.divios.lib.managers.dShopSync;
 import io.github.divios.lib.storage.migrations.initialMigration;
 
 import java.sql.PreparedStatement;
@@ -40,10 +42,10 @@ public class databaseManager extends DataManagerAbstract {
         return instance;
     }
 
-    public CompletableFuture<Set<dShop>> getShops() {
+    public CompletableFuture<Set<dShopI>> getShops() {
         return CompletableFuture.supplyAsync(() -> {
 
-            Set<dShop> shops = new LinkedHashSet<>();
+            Set<dShopI> shops = new LinkedHashSet<>();
 
             this.databaseConnector.connect(connection -> {
                 try (Statement statement = connection.createStatement()) {
@@ -52,7 +54,7 @@ public class databaseManager extends DataManagerAbstract {
 
                     while (result.next()) {
                         String name = result.getString("name");
-                        dShop shop = new dShop(name,
+                        dShopSync shop = new dShopSync(name,
                                 dShop.dShopT.valueOf(result.getString("type")),
                                 result.getString("gui"),
                                 timeStampUtils.deserialize(result.getString("timestamp")),

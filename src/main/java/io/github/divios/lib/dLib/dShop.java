@@ -21,21 +21,21 @@ import java.sql.Timestamp;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-public class dShop {
+public class dShop implements dShopI {
 
-    private static final DailyShop plugin = DailyShop.getInstance();
-    private static final databaseManager dManager = databaseManager.getInstance();
+    protected static final DailyShop plugin = DailyShop.getInstance();
+    protected static final databaseManager dManager = databaseManager.getInstance();
 
-    private String name;
-    private final dShopT type;
-    private final Map<UUID, dItem> items = new LinkedHashMap<>();
-    private final syncMenu guis;
+    protected String name;
+    protected final dShopT type;
+    protected final Map<UUID, dItem> items = new LinkedHashMap<>();
+    protected final syncMenu guis;
 
-    private Timestamp timestamp;
-    private int timer;
+    protected Timestamp timestamp;
+    protected int timer;
 
-    private final Set<Task> tasks = new HashSet<>();
-    private final Set<Subscription> listeners = new HashSet<>();
+    protected final Set<Task> tasks = new HashSet<>();
+    protected final Set<Subscription> listeners = new HashSet<>();
 
     public dShop(String name) {
         this(name, dShopT.buy);
@@ -75,7 +75,7 @@ public class dShop {
         ready();
     }
 
-    private void ready() {
+    protected void ready() {
 
         tasks.add(
                 Schedulers.async().runRepeating(() -> {
@@ -85,12 +85,6 @@ public class dShop {
                         reStock();
 
                 }, 1, TimeUnit.SECONDS, 1, TimeUnit.SECONDS)
-        );
-
-        tasks.add(
-                Schedulers.async().runRepeating(() -> {      // auto-update gui if any changes where made
-                    dManager.asyncUpdateGui(this.name, guis);
-                }, 15, TimeUnit.MINUTES, 15, TimeUnit.MINUTES)
         );
 
         Events.subscribe(deletedShopEvent.class, EventPriority.LOW)     // auto-destroy listener
@@ -109,11 +103,9 @@ public class dShop {
 
     }
 
-    private synchronized void reStock() {
+    protected synchronized void reStock() {
         timestamp = new Timestamp(System.currentTimeMillis());
-        dManager.updateTimeStamp(this.name, this.timestamp);
         Schedulers.sync().run(guis::reStock);
-        dManager.asyncUpdateGui(this.name, this.guis);
     }
 
     /**
@@ -213,9 +205,6 @@ public class dShop {
 
         items.put(uid, newItem);
         Events.callEvent(new updateItemEvent(newItem, updateItemEvent.updatetype.UPDATE_ITEM, this));    // Event to update item
-        dManager.updateItem(getName(), newItem);
-
-
     }
 
 
@@ -232,7 +221,6 @@ public class dShop {
             if (newItems.containsKey(entry.getKey())) continue;
 
             Events.callEvent(new updateItemEvent(entry.getValue(), updateItemEvent.updatetype.DELETE_ITEM, this));
-            dManager.deleteItem(name, entry.getKey());
             it.remove();
         }
 
@@ -246,7 +234,6 @@ public class dShop {
      */
     public synchronized void addItem(@NotNull dItem item) {
         items.put(item.getUid(), item);
-        dManager.addItem(this.name, item);
     }
 
     /**
@@ -256,11 +243,8 @@ public class dShop {
      * @return true if the item was removed. False if not
      */
     public synchronized boolean removeItem(UUID uid) {
-
         dItem removed = items.remove(uid);
-
         if (removed == null) return false;
-        dManager.deleteItem(this.name, uid);
         Events.callEvent(new updateItemEvent(removed, updateItemEvent.updatetype.DELETE_ITEM, this));
         return true;
     }
@@ -275,7 +259,7 @@ public class dShop {
         return guis;
     }
 
-    protected synchronized void setTimestamp(Timestamp timestamp) {
+    public synchronized void setTimestamp(Timestamp timestamp) {
         this.timestamp = timestamp;
     }
 
@@ -289,7 +273,6 @@ public class dShop {
 
     public synchronized void setTimer(int timer) {
         this.timer = timer;
-        dManager.updateTimer(this.name, this.timer);
     }
 
     public synchronized void destroy() {

@@ -6,6 +6,7 @@ import io.github.divios.dailyShop.events.createdShopEvent;
 import io.github.divios.dailyShop.events.deletedShopEvent;
 import io.github.divios.dailyShop.utils.FutureUtils;
 import io.github.divios.lib.dLib.dShop;
+import io.github.divios.lib.dLib.dShopI;
 import io.github.divios.lib.storage.databaseManager;
 
 import java.util.Collections;
@@ -17,7 +18,7 @@ import java.util.concurrent.CompletableFuture;
 public class shopsManager {
 
     private static shopsManager instance = null;
-    private Set<dShop> shops = new LinkedHashSet<>();
+    private Set<dShopI> shops = new LinkedHashSet<>();
 
     private shopsManager() {}
 
@@ -35,7 +36,7 @@ public class shopsManager {
      * @return a list of all the shops. Note that the returned list
      * is a copy of the original.
      */
-    public synchronized Set<dShop> getShops() {
+    public synchronized Set<dShopI> getShops() {
         return Collections.unmodifiableSet(shops);
     }
 
@@ -43,7 +44,7 @@ public class shopsManager {
      * Sets the shops. Private
      * @param shops
      */
-    private synchronized void setShops(Set<dShop> shops) {
+    private synchronized void setShops(Set<dShopI> shops) {
         this.shops = shops;
     }
 
@@ -60,16 +61,17 @@ public class shopsManager {
     }
 
     public synchronized CompletableFuture<Void> createShop(String name, dShop.dShopT type) {
-        dShop newShop = new dShop(name, type);
+        dShopSync newShop = new dShopSync(name, type);
         shops.add(newShop);
         Schedulers.sync().run(() -> Events.callEvent(new createdShopEvent(newShop)));
         return databaseManager.getInstance().createShop(newShop);
     }
 
     public synchronized CompletableFuture<Void> createShop(dShop newShop) {
-        shops.add(newShop);
-        Schedulers.sync().run(() -> Events.callEvent(new createdShopEvent(newShop)));
-        return databaseManager.getInstance().createShop(newShop);
+        dShopSync newShop_ = new dShopSync(newShop);
+        shops.add(newShop_);
+        Schedulers.sync().run(() -> Events.callEvent(new createdShopEvent(newShop_)));
+        return databaseManager.getInstance().createShop(newShop_);
     }
 
     /**
@@ -78,7 +80,7 @@ public class shopsManager {
      * @param name name of the shop
      * @return shop with the name. Null if it does not exist
      */
-    public synchronized Optional<dShop> getShop(String name) {
+    public synchronized Optional<dShopI> getShop(String name) {
         return shops.stream()
                 .filter(shop -> shop.getName().equalsIgnoreCase(name))
                 .findFirst();
@@ -97,7 +99,7 @@ public class shopsManager {
      */
     public synchronized CompletableFuture<Void> deleteShop(String name) {
 
-        Optional<dShop> result = getShop(name);
+        Optional<dShopI> result = getShop(name);
         if (!result.isPresent()) return CompletableFuture.completedFuture(null);
 
         deletedShopEvent event = new deletedShopEvent(result.get());

@@ -174,7 +174,6 @@ public class shopsManagerGui {
                             return;
                         }
 
-                        dManager.renameShop(shop.getName(), s.toLowerCase());
                         shop.rename(s.toLowerCase());
                         Schedulers.sync().run(() -> refresh(p));
                     })
