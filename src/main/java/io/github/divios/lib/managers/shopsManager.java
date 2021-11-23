@@ -24,7 +24,7 @@ public class shopsManager {
     public synchronized static shopsManager getInstance() {
         if (instance == null) {
             instance = new shopsManager();
-            FutureUtils.waitFor(databaseManager.getInstance().getShops().thenAccept(instance::setShops));
+            databaseManager.getInstance().getShops().thenAccept(instance::setShops);
         }
         return instance;
     }

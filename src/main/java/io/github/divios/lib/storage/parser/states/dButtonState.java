@@ -11,6 +11,7 @@ import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.lib.dLib.dAction;
 import io.github.divios.lib.dLib.dItem;
+import me.realized.tokenmanager.util.Log;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 
@@ -146,7 +147,7 @@ public class dButtonState {
         private List<String> lore = new ArrayList<>();
         private String material;
         private Integer quantity;
-        private Map<String, Integer> enchantments = new HashMap<>();
+        private List<String> enchantments = new ArrayList<>();
         private String action;
         private int slot;
         private Boolean air;
@@ -184,7 +185,7 @@ public class dButtonState {
             return this;
         }
 
-        public dButtonStateBuilder withEnchantments(Map<String, Integer> enchantments) {
+        public dButtonStateBuilder withEnchantments(List<String> enchantments) {
             this.enchantments = enchantments;
             return this;
         }
@@ -214,7 +215,7 @@ public class dButtonState {
 
             dButtonState dButtonState = new dButtonState();
             dButtonState.id = id;
-            dButtonState.enchantments = this.enchantments;
+            dButtonState.enchantments = getEnchantments();
             dButtonState.slot = this.slot;
             dButtonState.air = this.air;
             dButtonState.action = this.action;
@@ -233,8 +234,8 @@ public class dButtonState {
             if (action == null) action = "EMPTY:";
             Preconditions.checkArgument(XMaterial.matchXMaterial(material).isPresent(), "The item material does not exist");
             if (quantity == null || quantity <= 0 || quantity > 64) quantity = 1;
-            if (enchantments == null) enchantments = Collections.EMPTY_MAP;
-            enchantments.forEach((s, integer) -> {
+            if (enchantments == null) enchantments = Collections.emptyList();
+            getEnchantments().forEach((s, integer) -> {
                 try {
                     Enchantment.getByName(s);
                 } catch (Exception e) {
@@ -242,6 +243,19 @@ public class dButtonState {
                 }
             });
             if (nbt == null) nbt = new JsonObject();
+        }
+
+        private Map<String, Integer> getEnchantments() {
+            Map<String, Integer> enchantments = new HashMap<>();
+            this.enchantments.forEach(s -> {
+                try {
+                    enchantments.put(s.split(":")[0], Integer.parseInt(s.split(":")[1]));
+                } catch (Exception e) {
+                    Log.info("There was an syntax's error on the item of id " + id + " :" + s);
+                }
+            });
+
+            return enchantments;
         }
     }
 }

@@ -14,7 +14,7 @@ public class dShopInvState {
 
     private final String title;
     private final Integer size;
-    private final Map<UUID, dButtonState> display_items = new LinkedHashMap<>();
+    private final List<dButtonState> display_items = new ArrayList<>();
 
     public static dShopInvStateBuilder builder() { return new dShopInvStateBuilder(); }
 
@@ -34,13 +34,13 @@ public class dShopInvState {
 
         items.stream()
                 .sorted(Comparator.comparingInt(dItem::getSlot))
-                .forEach(dItem -> this.display_items.put(dItem.getUid(), dButtonState.of(dItem)));
+                .forEach(dItem -> this.display_items.add(dButtonState.of(dItem)));
     }
 
-    protected dShopInvState(String title, Integer size, Map<UUID, dButtonState> display_items) {
+    protected dShopInvState(String title, Integer size, List<dButtonState> display_items) {
         this.title = title;
         this.size = size;
-        this.display_items.putAll(display_items);
+        this.display_items.addAll(display_items);
     }
 
     public String getTitle() {
@@ -51,29 +51,25 @@ public class dShopInvState {
         return size;
     }
 
-    public Map<UUID, dButtonState> getDisplay_items() {
+    public List<dButtonState> getDisplay_items() {
         return display_items;
     }
 
     public void apply(dShop shop) {
 
         dInventory newInv = new dInventory(FormatUtils.color(title), size, shop);
-        display_items.entrySet().stream()
-                .filter(entry -> entry.getValue().getSlot() < size)
-                .map(entry -> entry.getValue().parseItem())
+        display_items.stream()
+                .filter(entry -> entry.getSlot() < size)
+                .map(dButtonState::parseItem)
                 .forEach(entry -> newInv.addButton(entry, entry.getSlot()));
 
         Events.callEvent(new updateShopEvent(shop, newInv, true));
     }
 
-    public dInventory build() {
-        return null;
-    }
-
     public static final class dShopInvStateBuilder {
         private String title;
         private Integer size;
-        private Map<UUID, dButtonState> display_items = new LinkedHashMap<>();
+        private List<dButtonState> display_items = new ArrayList<>();
 
         private dShopInvStateBuilder() {
         }
@@ -92,7 +88,7 @@ public class dShopInvState {
             return this;
         }
 
-        public dShopInvStateBuilder withDisplay_items(Map<UUID, dButtonState> display_items) {
+        public dShopInvStateBuilder withDisplay_items(List<dButtonState> display_items) {
             this.display_items = display_items;
             return this;
         }
@@ -105,7 +101,7 @@ public class dShopInvState {
         private void runPreconditions() {
             if (title == null) title = "";
             if (size == null) size = 27;
-            if (display_items == null) display_items = Collections.EMPTY_MAP;
+            if (display_items == null) display_items = Collections.emptyList();
         }
     }
 }

@@ -164,15 +164,14 @@ public class dItemState {
 
         item.mergeCompound(new NBTContainer(nbt.toString()));
 
-        dItem newItem = dItem.of(item.getItem().clone());
+        dItem newItem = dItem.of(item.getItem().clone(), id);
         newItem.setQuantity(quantity);
-        newItem.setID(id);
 
         if (enchantments != null)
             enchantments.forEach((s, integer) -> newItem.addEnchantments(Enchantment.getByName(s), integer));
 
         try {
-            dailyShop_meta.applyValues(newItem);
+            //dailyShop_meta.applyValues(newItem);
         } catch (Exception e) {
             Log.info("There was an error trying to parse the item of id " + newItem.getUid());
             e.printStackTrace();

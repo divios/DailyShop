@@ -13,6 +13,7 @@ import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.core_lib.misc.Pair;
+import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.economies.economy;
 import io.github.divios.dailyShop.economies.vault;
@@ -117,6 +118,7 @@ public class dItem implements Serializable, Cloneable {
     public void setItem(@NotNull ItemStack item, String id, int slot) {
         this.item = new NBTItem(item);
         if (getID() == null || getID().isEmpty()) {
+            Log.info("oke");
             setRawItem(item);
             setID(id);
             setSlot(slot);
@@ -456,7 +458,7 @@ public class dItem implements Serializable, Cloneable {
     }
 
     public void setID(String id) {
-        item.setString("rds_UUI", id);
+        item.setString("rds_UUID", id);
     }
 
     /**

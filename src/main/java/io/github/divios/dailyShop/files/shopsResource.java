@@ -27,12 +27,12 @@ public class shopsResource {
     private void processNewShops() {
         Log.info("Importing data from shops directory...");
         Timer timer = Timer.create();
-        Set<dShop> currentShops = sManager.getShops();
+        Set<dShop> currentShops = new HashSet<>(sManager.getShops());
         Set<dShop> newShops = getAllShopsFromFiles();
 
         deleteRemovedShops(currentShops, newShops);
         createNewlyAddedShops(currentShops, newShops);
-        updateNonRemovedShops(currentShops, newShops);
+        //updateNonRemovedShops(currentShops, newShops);
         timer.stop();
         Log.info("Data imported successfully in " + timer.getTime() + " ms");
     }
@@ -51,21 +51,25 @@ public class shopsResource {
     }
 
     private void deleteRemovedShops(Set<dShop> currentShops, Set<dShop> newShops) {
+        Log.severe("Remoded");
         currentShops.stream()
                 .filter(shop -> !newShops.contains(shop))
                 .forEach(shop -> sManager.deleteShop(shop.getName()));
     }
 
     private void createNewlyAddedShops(Set<dShop> currentShops, Set<dShop> newShops) {
+        Log.severe("created");
         newShops.stream()
                 .filter(shop -> !currentShops.contains(shop))
                 .forEach(sManager::createShop);
     }
 
     private void updateNonRemovedShops(Set<dShop> currentShops, Set<dShop> newShops) {
+        Log.severe("updated");
         currentShops.stream()
                 .filter(newShops::contains)
                 .forEach(shop -> {
+                    Log.severe(shop.getName());
                     dShop newShop = newShops.stream()
                             .filter(shop1 -> shop1.equals(shop))
                             .findFirst().get();

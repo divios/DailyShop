@@ -44,19 +44,17 @@ public class Deserializer {
                 .withTitle(yaml.getString(shopPath + "title"))
                 .withSize(yaml.getInt(shopPath + "size"));
 
-        Map<UUID, dButtonState> items = getDButtons(yaml);
-
         return dShopInvStateBuilder
-                .withDisplay_items(items)
+                .withDisplay_items(getDButtons(yaml))
                 .build();
     }
 
     @NotNull
-    private static Map<UUID, dButtonState> getDButtons(YamlConfiguration yaml) {
-        Map<UUID, dButtonState> items = new HashMap<>();
+    private static List<dButtonState> getDButtons(YamlConfiguration yaml) {
+        List<dButtonState> items = new ArrayList<>();
 
         yaml.getConfigurationSection(shopPath + "display_items").getKeys(false).forEach(id -> {
-            String innerPath = shopPath + id + ".";
+            String innerPath = shopPath + "display_items." + id + ".";
             try {
                 dButtonState buttonState = dButtonState.builder()
                         .withID(id)
@@ -66,13 +64,13 @@ public class Deserializer {
                         .withQuantity(yaml.getInt(innerPath + "quantity"))
                         .withSlot(yaml.getInt(innerPath + "slot"))
                         .withAction(yaml.getString(innerPath + "action"))
-                        .withEnchantments((Map<String, Integer>) yaml.getMapList(innerPath + "enchantments"))
-                        .withNbt((JsonObject) new JsonParser().parse(yaml.getString(innerPath + "nbt")))
+                        .withEnchantments(yaml.getStringList(innerPath + "enchantments"))
+                        //.withNbt((JsonObject) new JsonParser().parse(yaml.getString(innerPath + "nbt")))
                         .build();
 
-                items.put(UUID.fromString(id), buttonState);
+                items.add(buttonState);
             } catch (Exception e) {
-                Log.info("There was a problem parsing the item with id: " + id);
+                Log.info("There was a problem parsing the display item with id: " + id);
                 //Log.info(e.getMessage());
                 e.printStackTrace();
             }
@@ -83,7 +81,7 @@ public class Deserializer {
     private static List<dItemState> getShopItems(YamlConfiguration yaml) {
         List<dItemState> items = new ArrayList<>();
         yaml.getConfigurationSection("items").getKeys(false).forEach(id ->  {
-            String innerPath = "items.";
+            String innerPath = "items." + id + ".";
             try {
                 dItemState item = dItemState.builder()
                         .withID(id)
@@ -92,8 +90,8 @@ public class Deserializer {
                         .withMaterial(yaml.getString(innerPath + "material"))
                         .withQuantity(yaml.getInt(innerPath + "quantity"))
                         .withDailyShop_meta(getDailyItemMeta(yaml, id))
-                        .withEnchantments((Map<String, Integer>) yaml.getMapList(innerPath + "enchantments"))
-                        .withNbt((JsonObject) new JsonParser().parse(yaml.getString(innerPath + "nbt")))
+                        //.withEnchantments((Map<String, Integer>) yaml.getMapList(innerPath + "enchantments"))
+                        //.withNbt((JsonObject) new JsonParser().parse(yaml.getString(innerPath + "nbt")))
                         .build();
 
                 items.add(item);
