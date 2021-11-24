@@ -4,7 +4,6 @@ import io.github.divios.core_lib.misc.XSymbols;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.utils.utils;
 import io.github.divios.lib.dLib.dShop;
-import io.github.divios.lib.managers.dShopSync;
 import io.github.divios.lib.managers.shopsManager;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.entity.Player;
@@ -98,7 +97,7 @@ class placeholderApiHook extends PlaceholderExpansion {
     @Override
     public String onPlaceholderRequest(Player player, String identifier) {
 
-        Optional<dShopSync> shop = shopsManager.getInstance().getShop(identifier.replace("time_", ""));
+        Optional<dShop> shop = shopsManager.getInstance().getShop(identifier.replace("time_", ""));
         if (shop.isPresent() && shop.get().getTimer() == -1) return XSymbols.TIMES_3.parseSymbol();
         return shop.map(utils::getDiffActualTimer).orElse(null);
 

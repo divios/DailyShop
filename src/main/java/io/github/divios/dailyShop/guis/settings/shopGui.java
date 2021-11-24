@@ -41,7 +41,7 @@ public class shopGui {
 
         this.p = p;
         this.shop = shop;
-        this.strategy = new shopItemsManagerLore(shop.getType());
+        this.strategy = new shopItemsManagerLore();
 
         createGuis();
 

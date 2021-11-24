@@ -2,6 +2,7 @@ package io.github.divios.lib.dLib;
 
 import io.github.divios.core_lib.events.Events;
 import io.github.divios.core_lib.events.Subscription;
+import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.timeStampUtils;
 import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.core_lib.scheduler.Task;
@@ -21,7 +22,7 @@ import java.sql.Timestamp;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-public class dShop implements dShopI {
+public class dShop {
 
     protected static final DailyShop plugin = DailyShop.getInstance();
     protected static final databaseManager dManager = databaseManager.getInstance();
@@ -217,8 +218,14 @@ public class dShop implements dShopI {
         items.forEach(dItem -> newItems.put(dItem.getUid(), dItem));            // Cache values for a O(1) search
 
         for (Iterator<Map.Entry<UUID, dItem>> it = this.items.entrySet().iterator(); it.hasNext(); ) {          // Remove items that are not on the newItems list
+
             Map.Entry<UUID, dItem> entry = it.next();
-            if (newItems.containsKey(entry.getKey())) continue;
+            if (newItems.containsKey(entry.getKey())) {     // Update items if changed
+                dItem toUpdateItem = newItems.get(entry.getKey());
+                if (toUpdateItem != null && !toUpdateItem.equals(entry.getValue())) {
+                    Events.callEvent(new updateItemEvent(toUpdateItem, updateItemEvent.updatetype.UPDATE_ITEM, this));
+                }
+            }
 
             Events.callEvent(new updateItemEvent(entry.getValue(), updateItemEvent.updatetype.DELETE_ITEM, this));
             it.remove();

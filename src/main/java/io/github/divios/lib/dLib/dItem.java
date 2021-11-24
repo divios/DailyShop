@@ -118,7 +118,6 @@ public class dItem implements Serializable, Cloneable {
     public void setItem(@NotNull ItemStack item, String id, int slot) {
         this.item = new NBTItem(item);
         if (getID() == null || getID().isEmpty()) {
-            Log.info("oke");
             setRawItem(item);
             setID(id);
             setSlot(slot);

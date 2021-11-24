@@ -5,7 +5,6 @@ import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.utils.FileUtils;
 import io.github.divios.dailyShop.utils.Timer;
 import io.github.divios.lib.dLib.dShop;
-import io.github.divios.lib.dLib.dShopI;
 import io.github.divios.lib.managers.shopsManager;
 import io.github.divios.lib.storage.parser.ParserApi;
 
@@ -28,18 +27,19 @@ public class shopsResource {
     private void processNewShops() {
         Log.info("Importing data from shops directory...");
         Timer timer = Timer.create();
-        Set<dShopI> currentShops = new HashSet<>(sManager.getShops());
-        Set<dShopI> newShops = getAllShopsFromFiles();
+        Set<dShop> currentShops = new HashSet<>(sManager.getShops());
+        currentShops.forEach(shop -> Log.warn(shop.getName()));
+        Set<dShop> newShops = getAllShopsFromFiles();
 
         deleteRemovedShops(currentShops, newShops);
         createNewlyAddedShops(currentShops, newShops);
-        //updateNonRemovedShops(currentShops, newShops);
+        updateNonRemovedShops(currentShops, newShops);
         timer.stop();
         Log.info("Data imported successfully in " + timer.getTime() + " ms");
     }
 
-    private Set<dShopI> getAllShopsFromFiles() {
-        Set<dShopI> shops = new HashSet<>();
+    private Set<dShop> getAllShopsFromFiles() {
+        Set<dShop> shops = new HashSet<>();
         for (File shopFile : Objects.requireNonNull(shopsFolder.listFiles(), "The shop directory does not exits")) {
             dShop newShop = ParserApi.getShopFromFile(shopFile);
             shops.add(newShop);
@@ -51,27 +51,25 @@ public class shopsResource {
         processNewShops();
     }
 
-    private void deleteRemovedShops(Set<dShopI> currentShops, Set<dShopI> newShops) {
-        Log.severe("Remoded");
+    //////////////////////////////////////////////////////////////////////////////////////////////////
+
+    private void deleteRemovedShops(Set<dShop> currentShops, Set<dShop> newShops) {
         currentShops.stream()
                 .filter(shop -> !newShops.contains(shop))
                 .forEach(shop -> sManager.deleteShop(shop.getName()));
     }
 
-    private void createNewlyAddedShops(Set<dShopI> currentShops, Set<dShopI> newShops) {
-        Log.severe("created");
+    private void createNewlyAddedShops(Set<dShop> currentShops, Set<dShop> newShops) {
         newShops.stream()
                 .filter(shop -> !currentShops.contains(shop))
-                .forEach(sManager::createShop);
+                .forEach(dShop -> sManager.createShop(dShop));
     }
 
-    private void updateNonRemovedShops(Set<dShopI> currentShops, Set<dShopI> newShops) {
-        Log.severe("updated");
+    private void updateNonRemovedShops(Set<dShop> currentShops, Set<dShop> newShops) {
         currentShops.stream()
                 .filter(newShops::contains)
                 .forEach(shop -> {
-                    Log.severe(shop.getName());
-                    dShopI newShop = newShops.stream()
+                    dShop newShop = newShops.stream()
                             .filter(shop1 -> shop1.equals(shop))
                             .findFirst().get();
 

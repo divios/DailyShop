@@ -230,7 +230,7 @@ public class dInventory {
 
     @NotNull
     private WeightedRandom<dItem> createWeightedRandom() {
-        return WeightedRandom.fromCollection(getValidShopItems(), dItem::clone, this::getItemRarityWeight);
+        return WeightedRandom.fromCollection(getValidShoptems(), dItem::clone, this::getItemRarityWeight);
     }
 
     private void RemoveAllDailyItems() {
@@ -267,7 +267,7 @@ public class dInventory {
         inv.setItem(newItem.getSlot(), new shopItemsLore().applyLore(newItem.getItem().clone(), p));
     }
 
-    private List<dItem> getValidShopItems() {
+    private List<dItem> getValidShoptems() {
         return shop.getItems().stream()
                 .filter(this::hasAvailableRarity)
                 .filter(this::hasValidPrice)

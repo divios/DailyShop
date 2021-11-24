@@ -5,14 +5,13 @@ import io.github.divios.core_lib.database.DatabaseConnector;
 import io.github.divios.core_lib.database.SQLiteConnector;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.timeStampUtils;
+import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.utils.FutureUtils;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
-import io.github.divios.lib.dLib.dShopI;
 import io.github.divios.lib.dLib.log.options.dLogEntry;
 import io.github.divios.lib.dLib.synchronizedGui.syncMenu;
-import io.github.divios.lib.managers.dShopSync;
 import io.github.divios.lib.storage.migrations.initialMigration;
 
 import java.sql.PreparedStatement;
@@ -42,19 +41,20 @@ public class databaseManager extends DataManagerAbstract {
         return instance;
     }
 
-    public CompletableFuture<Set<dShopI>> getShops() {
+    public CompletableFuture<Set<dShop>> getShops() {
         return CompletableFuture.supplyAsync(() -> {
 
-            Set<dShopI> shops = new LinkedHashSet<>();
-
+            Set<dShop> shops = new LinkedHashSet<>();
+            Log.info("mmm1");
             this.databaseConnector.connect(connection -> {
                 try (Statement statement = connection.createStatement()) {
                     String selectFarms = "SELECT * FROM " + this.getTablePrefix() + "active_shops";
                     ResultSet result = statement.executeQuery(selectFarms);
 
+                    Log.info("mmm2");
                     while (result.next()) {
                         String name = result.getString("name");
-                        dShopSync shop = new dShopSync(name,
+                        dShop shop = new dShop(name,
                                 dShop.dShopT.valueOf(result.getString("type")),
                                 result.getString("gui"),
                                 timeStampUtils.deserialize(result.getString("timestamp")),
@@ -65,6 +65,7 @@ public class databaseManager extends DataManagerAbstract {
                     }
                 }
             });
+            Log.info("mmm3");
             return shops;
         });
     }
@@ -92,6 +93,7 @@ public class databaseManager extends DataManagerAbstract {
     }
 
     public CompletableFuture<Void> createShop(dShop shop) {
+        Log.severe("oke");
         return CompletableFuture.runAsync(() -> this.databaseConnector.connect(connection -> {
 
             String createShop = "INSERT OR REPLACE INTO " + this.getTablePrefix() +

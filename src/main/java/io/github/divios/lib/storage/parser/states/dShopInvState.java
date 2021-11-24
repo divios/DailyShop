@@ -37,7 +37,7 @@ public class dShopInvState {
                 .forEach(dItem -> this.display_items.add(dButtonState.of(dItem)));
     }
 
-    protected dShopInvState(String title, Integer size, List<dButtonState> display_items) {
+    protected dShopInvState (String title, Integer size, List<dButtonState> display_items) {
         this.title = title;
         this.size = size;
         this.display_items.addAll(display_items);

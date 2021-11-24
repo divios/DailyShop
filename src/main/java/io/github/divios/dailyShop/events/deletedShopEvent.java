@@ -1,7 +1,6 @@
 package io.github.divios.dailyShop.events;
 
 import io.github.divios.lib.dLib.dShop;
-import io.github.divios.lib.dLib.dShopI;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
@@ -17,16 +16,16 @@ public class deletedShopEvent extends Event {
     private static final HandlerList HANDLERS_LIST = new HandlerList();
     private boolean isCanceled = false;
 
-    private final dShopI deletedShop;
+    private final dShop deletedShop;
     private final Timestamp timestamp;
 
-    public deletedShopEvent(dShopI deletedShop) {
+    public deletedShopEvent(dShop deletedShop) {
         this.deletedShop = deletedShop;
         this.timestamp = new Timestamp(System.currentTimeMillis());
 
     }
 
-    public dShopI getShop() { return deletedShop; }
+    public dShop getShop() { return deletedShop; }
 
     public Timestamp getTimestamp() { return timestamp; }
 

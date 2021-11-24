@@ -2,6 +2,7 @@ package io.github.divios.lib.managers;
 
 import io.github.divios.core_lib.events.Events;
 import io.github.divios.core_lib.scheduler.Schedulers;
+import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.events.updateItemEvent;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
@@ -11,36 +12,31 @@ import java.sql.Timestamp;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-public class dShopSync extends dShop {
+public class WrappedShop extends dShop {
 
-    protected dShopSync(String name) {
+    public static dShop wrap(dShop shop) {
+        if (shop instanceof WrappedShop) return shop;
+        return new WrappedShop(shop);
+    }
+
+    protected WrappedShop(String name) {
         super(name);
     }
 
-    protected dShopSync(String name, dShopT type) {
+    protected WrappedShop(String name, dShopT type) {
         super(name, type);
     }
 
-    protected dShopSync(String name, dShopT type, String base64, Timestamp timestamp, int timer) {
+    protected WrappedShop(String name, dShopT type, String base64, Timestamp timestamp, int timer) {
         super(name, type, base64, timestamp, timer);
     }
 
-    public dShopSync(String name, dShopT type, String base64, Timestamp timestamp, int timer, Set<dItem> items) {
+    protected WrappedShop(String name, dShopT type, String base64, Timestamp timestamp, int timer, Set<dItem> items) {
         super(name, type, base64, timestamp, timer, items);
     }
 
-    protected dShopSync(dShop fromShop) {
-        this(fromShop.getName(), fromShop.getType(), fromShop.getGuis().getDefault().toBase64(), fromShop.getTimestamp(), fromShop.getTimer(), new HashSet<>(fromShop.getItems()));
-    }
-
-    @Override
-    protected void ready() {
-        super.ready();
-        tasks.add(
-                Schedulers.async().runRepeating(() -> {      // auto-update gui if any changes where made
-                    dManager.asyncUpdateGui(this.name, guis);
-                }, 15, TimeUnit.MINUTES, 15, TimeUnit.MINUTES)
-        );
+    protected WrappedShop(dShop fromShop) {
+        this(fromShop.getName(), dShopT.buy, fromShop.getGuis().getDefault().toBase64(), fromShop.getTimestamp(), fromShop.getTimer(), new HashSet<>(fromShop.getItems()));
     }
 
     @Override

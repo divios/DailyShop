@@ -34,7 +34,7 @@ public class shopsManagerGui {
     private static final shopsManager sManager = shopsManager.getInstance();
     private static final databaseManager dManager = databaseManager.getInstance();
 
-    private static final String SHOP_META = "dShopID";
+    private static final String SHOP_META = "dShopD";
 
     private static final loreStrategy strategy = new shopsManagerLore();
     private paginatedGui inv;

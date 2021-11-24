@@ -34,12 +34,12 @@ public class Deserializer {
     private static dShopState getShopState(YamlConfiguration yaml, String shopID) {
         return dShopState.builder()
                 .withId(shopID)
-                .withInvState(getDShopInv(yaml))
+                .withInvState(getdShopInv(yaml))
                 .withItemsCollect(getShopItems(yaml))
                 .build();
     }
 
-    private static dShopInvState getDShopInv(YamlConfiguration yaml) {
+    private static dShopInvState getdShopInv(YamlConfiguration yaml) {
         dShopInvState.dShopInvStateBuilder dShopInvStateBuilder = dShopInvState.builder()
                 .withTitle(yaml.getString(shopPath + "title"))
                 .withSize(yaml.getInt(shopPath + "size"));
