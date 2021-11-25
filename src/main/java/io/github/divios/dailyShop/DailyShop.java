@@ -72,7 +72,7 @@ public class DailyShop extends JavaPlugin {
     @Override
     public void onDisable() {
         shopsManager.getInstance().getShops()       // Updates all the guis before disable
-                .forEach(shop -> databaseManager.getInstance().syncUpdateGui(shop.getName(), shop.getGuis()));
+                .forEach(shop -> databaseManager.getInstance().updateGui(shop.getName(), shop.getGuis()));
     }
 
     public void reloadPlugin() {

@@ -11,7 +11,7 @@ public class dLog {
     Method to log entries into database. Is a shortcut for dataManager#addLogEntry
      */
     public static void log(dLogEntry entry) {
-        dManager.addLogEntry(entry);
+        dManager.addLogEntryAsync(entry);
     }
 
 }

@@ -1,16 +1,12 @@
 package io.github.divios.lib.managers;
 
-import io.github.divios.core_lib.events.Events;
-import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.core_lib.utils.Log;
-import io.github.divios.dailyShop.events.updateItemEvent;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.Timestamp;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 public class WrappedShop extends dShop {
 
@@ -41,33 +37,33 @@ public class WrappedShop extends dShop {
 
     @Override
     public void rename(String s) {
-        dManager.renameShop(name, s.toLowerCase());
+        dManager.renameShopAsync(name, s.toLowerCase());
         super.rename(s);
     }
 
     @Override
-    protected synchronized void reStock() {
+    public synchronized void reStock() {
         super.reStock();
-        dManager.updateTimeStamp(this.name, this.timestamp);
-        dManager.asyncUpdateGui(this.name, this.guis);
+        dManager.updateTimeStampAsync(this.name, this.timestamp);
+        dManager.updateGuiAsync(this.name, this.guis);
     }
 
     @Override
     public synchronized void addItem(dItem item) {
         super.addItem(item);
-        super.dManager.addItem(this.name, item);
+        super.dManager.addItemAsync(this.name, item);
     }
 
     @Override
     public synchronized void updateItem(UUID uid, dItem newItem) {
         super.updateItem(uid, newItem);
-        dManager.updateItem(getName(), newItem);
+        dManager.updateItemAsync(getName(), newItem);
     }
 
     @Override
     public synchronized boolean removeItem(UUID uid) {
         if (!super.removeItem(uid)) return false;
-        dManager.deleteItem(this.name, uid);
+        dManager.deleteItemAsync(this.name, uid);
         return true;
     }
 
@@ -76,17 +72,22 @@ public class WrappedShop extends dShop {
      */
     @Override
     public synchronized void setItems(@NotNull Set<dItem> items) {
-
         Map<UUID, dItem> newItems = new HashMap<>();
         items.forEach(dItem -> newItems.put(dItem.getUid(), dItem));            // Cache values for a O(1) search
 
-        for (Iterator<Map.Entry<UUID, dItem>> it = this.items.entrySet().iterator(); it.hasNext(); ) {          // Remove items that are not on the newItems list
-            Map.Entry<UUID, dItem> entry = it.next();
-            if (newItems.containsKey(entry.getKey())) continue;
+        for (Iterator<Map.Entry<UUID, dItem>> it = new HashMap<>(this.items).entrySet().iterator(); it.hasNext(); ) {          // Remove items that are not on the newItems list
 
-            Events.callEvent(new updateItemEvent(entry.getValue(), updateItemEvent.updatetype.DELETE_ITEM, this));
-            dManager.deleteItem(name, entry.getKey());
-            it.remove();
+            Map.Entry<UUID, dItem> entry = it.next();
+            if (newItems.containsKey(entry.getKey())) {     // Update items if changed
+                dItem toUpdateItem = newItems.get(entry.getKey());
+                Log.info("updating item of id: " + toUpdateItem.getID());
+                if (toUpdateItem != null && !toUpdateItem.getRawItem().isSimilar(entry.getValue().getRawItem())) {
+                    Log.info("actually updating it");
+                    updateItem(entry.getKey(), toUpdateItem);
+                }
+                continue;
+            }
+            removeItem(entry.getKey());
         }
 
         items.forEach(this::addItem);       // Replace the old values for the new ones
@@ -95,7 +96,7 @@ public class WrappedShop extends dShop {
     @Override
     public synchronized void setTimer(int timer) {
         super.setTimer(timer);
-        dManager.updateTimer(this.name, this.timer);
+        dManager.updateTimerAsync(this.name, this.timer);
     }
 
 }

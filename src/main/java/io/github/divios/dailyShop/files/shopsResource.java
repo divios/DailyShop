@@ -27,13 +27,11 @@ public class shopsResource {
     private void processNewShops() {
         Log.info("Importing data from shops directory...");
         Timer timer = Timer.create();
-        Set<dShop> currentShops = new HashSet<>(sManager.getShops());
-        currentShops.forEach(shop -> Log.warn(shop.getName()));
         Set<dShop> newShops = getAllShopsFromFiles();
 
-        deleteRemovedShops(currentShops, newShops);
-        createNewlyAddedShops(currentShops, newShops);
-        updateNonRemovedShops(currentShops, newShops);
+        deleteRemovedShops(newShops);
+        newShopsAction(newShops);
+
         timer.stop();
         Log.info("Data imported successfully in " + timer.getTime() + " ms");
     }
@@ -53,27 +51,24 @@ public class shopsResource {
 
     //////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private void deleteRemovedShops(Set<dShop> currentShops, Set<dShop> newShops) {
-        currentShops.stream()
+    private void deleteRemovedShops(Set<dShop> newShops) {
+        sManager.getShops().stream()
                 .filter(shop -> !newShops.contains(shop))
                 .forEach(shop -> sManager.deleteShop(shop.getName()));
     }
 
-    private void createNewlyAddedShops(Set<dShop> currentShops, Set<dShop> newShops) {
-        newShops.stream()
-                .filter(shop -> !currentShops.contains(shop))
-                .forEach(dShop -> sManager.createShop(dShop));
+    private void newShopsAction(Set<dShop> newShops) {
+        newShops.forEach(shop -> {
+            Log.info("Registering shop of name " + shop.getName());
+            if (!sManager.getShop(shop.getName()).isPresent()) {
+                Log.warn("created shop " + shop.getName());
+                sManager.createShop(shop);
+            } else {
+                Log.warn("updated shop of name " + shop.getName());
+                dShop currentShop = sManager.getShop(shop.getName()).get();
+                currentShop.setItems(shop.getItems());
+            }
+        });
     }
 
-    private void updateNonRemovedShops(Set<dShop> currentShops, Set<dShop> newShops) {
-        currentShops.stream()
-                .filter(newShops::contains)
-                .forEach(shop -> {
-                    dShop newShop = newShops.stream()
-                            .filter(shop1 -> shop1.equals(shop))
-                            .findFirst().get();
-
-                    shop.setItems(newShop.getItems());
-                });
-    }
 }

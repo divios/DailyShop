@@ -77,36 +77,21 @@ public class dShop {
     }
 
     protected void ready() {
-
         tasks.add(
                 Schedulers.async().runRepeating(() -> {
 
                     if (timer == -1) return;
                     if (timeStampUtils.diff(timestamp, new Timestamp(System.currentTimeMillis())) >= timer)
-                        reStock();
+                        Schedulers.sync().run(this::reStock);
 
                 }, 1, TimeUnit.SECONDS, 1, TimeUnit.SECONDS)
         );
-
-        Events.subscribe(deletedShopEvent.class, EventPriority.LOW)     // auto-destroy listener
-                .biHandler((own, e) -> {
-                    if (e.getShop().getName().equals(name)) {
-                        destroy();
-                        own.unregister();
-                    }
-                });
-
-        listeners.add(
-                Events.subscribe(reStockShopEvent.class)
-                        .filter(o -> o.getShop().equals(this))
-                        .handler(e -> reStock())
-        );
-
     }
 
-    protected synchronized void reStock() {
+    public synchronized void reStock() {
         timestamp = new Timestamp(System.currentTimeMillis());
-        Schedulers.sync().run(guis::reStock);
+        Events.callEvent(new reStockShopEvent(this));
+        guis.reStock();
     }
 
     /**
@@ -213,7 +198,6 @@ public class dShop {
      * Sets the items of this shop
      */
     public synchronized void setItems(@NotNull Set<dItem> items) {
-
         Map<UUID, dItem> newItems = new HashMap<>();
         items.forEach(dItem -> newItems.put(dItem.getUid(), dItem));            // Cache values for a O(1) search
 
@@ -224,9 +208,9 @@ public class dShop {
                 dItem toUpdateItem = newItems.get(entry.getKey());
                 if (toUpdateItem != null && !toUpdateItem.equals(entry.getValue())) {
                     Events.callEvent(new updateItemEvent(toUpdateItem, updateItemEvent.updatetype.UPDATE_ITEM, this));
+                    entry.setValue(toUpdateItem);
                 }
             }
-
             Events.callEvent(new updateItemEvent(entry.getValue(), updateItemEvent.updatetype.DELETE_ITEM, this));
             it.remove();
         }

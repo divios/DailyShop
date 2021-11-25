@@ -61,7 +61,7 @@ public class reStock extends abstractCommand {
 
         shopsManager.getInstance().getShop(args.get(0))
                 .ifPresent(shop -> {
-                            Events.callEvent(new reStockShopEvent(shop));
+                            shop.reStock();
                             if (sender instanceof Player) shop.openShop((Player) sender);
                         }
                 );

@@ -84,11 +84,7 @@ public class importShops extends abstractCommand {
 
         dShop _shop = shopsManager.getInstance().getShop(args.get(1)).orElse(null);
         if (_shop == null) {
-            try {
-                shopsManager.getInstance().createShop(args.get(1), dShop.dShopT.buy).get();
-            } catch (InterruptedException | ExecutionException e) {
-                e.printStackTrace();
-            }
+            shopsManager.getInstance().createShop(args.get(1));
         }
 
         shopsManager.getInstance().getShop(args.get(1))
