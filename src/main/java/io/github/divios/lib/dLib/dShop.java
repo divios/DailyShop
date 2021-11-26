@@ -201,18 +201,17 @@ public class dShop {
         Map<UUID, dItem> newItems = new HashMap<>();
         items.forEach(dItem -> newItems.put(dItem.getUid(), dItem));            // Cache values for a O(1) search
 
-        for (Iterator<Map.Entry<UUID, dItem>> it = this.items.entrySet().iterator(); it.hasNext(); ) {          // Remove items that are not on the newItems list
+        for (Iterator<Map.Entry<UUID, dItem>> it = new HashMap<>(this.items).entrySet().iterator(); it.hasNext(); ) {          // Remove items that are not on the newItems list
 
             Map.Entry<UUID, dItem> entry = it.next();
             if (newItems.containsKey(entry.getKey())) {     // Update items if changed
                 dItem toUpdateItem = newItems.get(entry.getKey());
-                if (toUpdateItem != null && !toUpdateItem.equals(entry.getValue())) {
-                    Events.callEvent(new updateItemEvent(toUpdateItem, updateItemEvent.updatetype.UPDATE_ITEM, this));
-                    entry.setValue(toUpdateItem);
+                if (toUpdateItem != null && !toUpdateItem.getItem().isSimilar(entry.getValue().getItem())) {
+                    updateItem(entry.getKey(), toUpdateItem);
                 }
+                continue;
             }
-            Events.callEvent(new updateItemEvent(entry.getValue(), updateItemEvent.updatetype.DELETE_ITEM, this));
-            it.remove();
+            removeItem(entry.getKey());
         }
 
         items.forEach(this::addItem);       // Replace the old values for the new ones

@@ -413,7 +413,6 @@ public class dInventory {
     }
 
     public dInventory copy() {
-        //return fromBase64(toBase64(), shop);
         dInventory newInv = new dInventory(this.title, this.inv.getSize(), this.shop);
         newInv.inv.setContents(this.inv.getContents());
         newInv.buttons.putAll(this.buttons);

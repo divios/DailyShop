@@ -45,7 +45,7 @@ public class dShopState {
 
     public dShop createShop() {
         dShop newShop = new dShop(id);
-        invState.apply(newShop);
+        //rinvState.apply(newShop);
         newShop.setItems(buildItems(itemsCollect));
 
         return newShop;

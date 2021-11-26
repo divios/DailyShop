@@ -239,4 +239,13 @@ public class utils {
         return Bukkit.getPlayer(player.getUniqueId()) != null;
     }
 
+    public static boolean testRunnable(Runnable runnable) {
+        try {
+            runnable.run();
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
+    }
+
 }

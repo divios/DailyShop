@@ -59,15 +59,13 @@ public class shopsResource {
 
     private void newShopsAction(Set<dShop> newShops) {
         newShops.forEach(shop -> {
-            Log.info("Registering shop of name " + shop.getName());
             if (!sManager.getShop(shop.getName()).isPresent()) {
-                Log.warn("created shop " + shop.getName());
                 sManager.createShop(shop);
             } else {
-                Log.warn("updated shop of name " + shop.getName());
                 dShop currentShop = sManager.getShop(shop.getName()).get();
                 currentShop.setItems(shop.getItems());
             }
+            Log.info("Registered shop of name " + shop.getName() + " with " + shop.getItems().size() + " items");
         });
     }
 

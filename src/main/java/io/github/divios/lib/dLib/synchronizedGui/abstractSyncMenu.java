@@ -6,6 +6,7 @@ import io.github.divios.core_lib.events.Subscription;
 import io.github.divios.core_lib.misc.Msg;
 import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.core_lib.scheduler.Task;
+import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.events.updateItemEvent;
 import io.github.divios.dailyShop.events.updateShopEvent;
@@ -81,7 +82,7 @@ public abstract class abstractSyncMenu implements syncMenu {
     private synchronized void checkClosedInv(InventoryCloseEvent o) {
         singleGui gui = guis.get(o.getPlayer().getUniqueId());
         if (gui != null && gui.getInventory().getInventory().equals(o.getInventory()))
-            delayedGuisPromises.put(o.getPlayer().getUniqueId(), Schedulers.sync().runLater(() -> invalidate(o.getPlayer().getUniqueId()), 2, TimeUnit.MINUTES));
+            invalidate(o.getPlayer().getUniqueId());
     }
 
     /**
@@ -104,14 +105,7 @@ public abstract class abstractSyncMenu implements syncMenu {
 
     @Override
     public synchronized void generate(Player p) {
-
-        if (contains(p)) {
-            removeAndCancelPromise(p.getUniqueId());
-            getGui(p).getInventory().openInventory(p);
-        }
-
-        else guis.put(p.getUniqueId(), singleGui.create(p, base, shop));
-        //Log.warn(String.valueOf(size()));
+        guis.put(p.getUniqueId(), singleGui.create(p, base, shop));
     }
 
     @Override

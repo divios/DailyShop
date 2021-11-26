@@ -1,8 +1,9 @@
 package io.github.divios.lib.storage.parser.states;
 
-import io.github.divios.core_lib.utils.Log;
+import io.github.divios.core_lib.utils.Primitives;
 import io.github.divios.dailyShop.economies.economy;
 import io.github.divios.dailyShop.economies.vault;
+import io.github.divios.dailyShop.utils.utils;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dRarity;
 import io.github.divios.lib.dLib.stock.factory.dStockFactory;
@@ -26,13 +27,20 @@ public class dItemMetaState {
     private String rarity;
     private String econ;
 
-    public static dItemMetaStateBuilder builder() { return new dItemMetaStateBuilder(); }
+    public static dItemMetaStateBuilder builder() {
+        return new dItemMetaStateBuilder();
+    }
 
-    public static dItemMetaState of(dItem item) { return new dItemMetaState(item); }
+    public static dItemMetaState of(dItem item) {
+        return new dItemMetaState(item);
+    }
 
-    public static dItemMetaState of(ItemStack item) { return new dItemMetaState(item); }
+    public static dItemMetaState of(ItemStack item) {
+        return new dItemMetaState(item);
+    }
 
-    protected dItemMetaState() {}
+    protected dItemMetaState() {
+    }
 
     public dItemMetaState(dItem item) {
         buyPrice = item.getBuyPrice().get().toString().isEmpty() ? null : item.getBuyPrice().get().toString();
@@ -46,10 +54,11 @@ public class dItemMetaState {
         confirm_gui = item.isConfirmGuiEnabled();
         rarity = item.getRarity().getKey();
         econ = item.getEconomy().getKey() + ":" + item.getEconomy().getCurrency();
-
     }
 
-    public dItemMetaState(ItemStack item) { this(dItem.of(item)); }
+    public dItemMetaState(ItemStack item) {
+        this(dItem.of(item));
+    }
 
     public String getBuyPrice() {
         return buyPrice;
@@ -127,11 +136,11 @@ public class dItemMetaState {
         item.setCommands(commands);
         item.setBundle(bundle);
         item.setConfirm_gui(confirm_gui);
-        item.setRarity(dRarity.fromKey(rarity));
+        if (rarity != null) item.setRarity(dRarity.fromKey(rarity));
 
         try {
             String[] keys = econ.split(":");
-            economy econ = economy.getFromKey(keys[0], keys.length == 2 ? keys[1]:"");
+            economy econ = economy.getFromKey(keys[0], keys.length == 2 ? keys[1] : "");
             econ.test();
             item.setEconomy(econ);
         } catch (Exception e) {
@@ -236,8 +245,19 @@ public class dItemMetaState {
         }
 
         private void runChecks() {
+            if (!Primitives.isDouble(buyPrice)) buyPrice = null;
+            if (!Primitives.isDouble(sellPrice)) sellPrice = null;
             if (set <= 0) set = null;
-
+            if (!utils.testRunnable(() -> dRarity.fromKey(rarity))) rarity = "Common";
+            if (!checkEconFormat()) econ = "Vault:";
         }
+
+        private boolean checkEconFormat() {
+            String[] econFormatted = econ.split(":");
+            if (econFormatted.length != 2) return false;
+            if (!utils.testRunnable(() -> economy.getFromKey(econFormatted[0], econFormatted[1]).test())) return false;
+            return true;
+        }
+
     }
 }

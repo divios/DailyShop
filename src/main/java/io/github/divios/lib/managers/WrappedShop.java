@@ -67,32 +67,6 @@ public class WrappedShop extends dShop {
         return true;
     }
 
-    /**
-     * Sets the items of this shop
-     */
-    @Override
-    public synchronized void setItems(@NotNull Set<dItem> items) {
-        Map<UUID, dItem> newItems = new HashMap<>();
-        items.forEach(dItem -> newItems.put(dItem.getUid(), dItem));            // Cache values for a O(1) search
-
-        for (Iterator<Map.Entry<UUID, dItem>> it = new HashMap<>(this.items).entrySet().iterator(); it.hasNext(); ) {          // Remove items that are not on the newItems list
-
-            Map.Entry<UUID, dItem> entry = it.next();
-            if (newItems.containsKey(entry.getKey())) {     // Update items if changed
-                dItem toUpdateItem = newItems.get(entry.getKey());
-                Log.info("updating item of id: " + toUpdateItem.getID());
-                if (toUpdateItem != null && !toUpdateItem.getRawItem().isSimilar(entry.getValue().getRawItem())) {
-                    Log.info("actually updating it");
-                    updateItem(entry.getKey(), toUpdateItem);
-                }
-                continue;
-            }
-            removeItem(entry.getKey());
-        }
-
-        items.forEach(this::addItem);       // Replace the old values for the new ones
-    }
-
     @Override
     public synchronized void setTimer(int timer) {
         super.setTimer(timer);

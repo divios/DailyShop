@@ -90,7 +90,6 @@ public class databaseManager extends DataManagerAbstract {
     }
 
     public void createShop(dShop shop) {
-        Log.severe("Called to database crateShop method");
         this.databaseConnector.connect(connection -> {
 
             String createShop = "INSERT OR REPLACE INTO " + this.getTablePrefix() +
