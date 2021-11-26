@@ -105,7 +105,7 @@ public class Deserializer {
     }
 
     private static dItemMetaState getDailyItemMeta(YamlConfiguration yaml, String id) {
-        String innerPath = shopPath + "items" + id + ".dailyShop_meta.";
+        String innerPath = "items." + id + ".dailyShop_meta.";
         return dItemMetaState.builder()
                 .withBuyPrice(yaml.getString(innerPath + "buyPrice"))
                 .withSellPrice(yaml.getString(innerPath + "sellPrice"))

@@ -169,9 +169,8 @@ public class dItemState {
 
         if (enchantments != null)
             enchantments.forEach((s, integer) -> newItem.addEnchantments(Enchantment.getByName(s), integer));
-
         try {
-            //dailyShop_meta.applyValues(newItem);
+            dailyShop_meta.applyValues(newItem);
         } catch (Exception e) {
             Log.info("There was an error trying to parse the item of id " + newItem.getUid());
             e.printStackTrace();

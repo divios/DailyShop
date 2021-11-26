@@ -1,5 +1,6 @@
 package io.github.divios.lib.storage.parser.states;
 
+import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.economies.economy;
 import io.github.divios.dailyShop.economies.vault;
 import io.github.divios.lib.dLib.dItem;
@@ -218,6 +219,7 @@ public class dItemMetaState {
         }
 
         public dItemMetaState build() {
+            runChecks();
             dItemMetaState dItemMetaState = new dItemMetaState();
             dItemMetaState.bundle = this.bundle;
             dItemMetaState.buyPrice = this.buyPrice;
@@ -231,6 +233,11 @@ public class dItemMetaState {
             dItemMetaState.sellPerms = this.sellPerms;
             dItemMetaState.confirm_gui = this.confirm_gui;
             return dItemMetaState;
+        }
+
+        private void runChecks() {
+            if (set <= 0) set = null;
+
         }
     }
 }
