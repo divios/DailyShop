@@ -1,6 +1,6 @@
 package io.github.divios.dailyShop.events;
 
-import io.github.divios.lib.dLib.dInventory;
+import io.github.divios.lib.dLib.synchronizedGui.singleGui.dInventory;
 import io.github.divios.lib.dLib.dShop;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;

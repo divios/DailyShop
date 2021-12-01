@@ -467,7 +467,7 @@ public class dItem implements Serializable, Cloneable {
 
     public static @Nullable
     UUID getUid(ItemStack item) {
-        return dItem.of(item).getUid();
+        return UUID.nameUUIDFromBytes(new NBTItem(item).getString("rds_UUID").getBytes());
     }
 
     /**

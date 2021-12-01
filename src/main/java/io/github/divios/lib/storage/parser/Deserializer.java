@@ -87,7 +87,7 @@ public class Deserializer {
                         .withLore(yaml.getStringList(innerPath + "lore"))
                         .withMaterial(yaml.getString(innerPath + "material"))
                         .withQuantity(yaml.getInt(innerPath + "quantity"))
-                        .withDailyShop_meta(getDailyItemMeta(yaml, id))
+                        .withDailyShop_meta(yaml.contains("dailyShop_meta") ? getDailyItemMeta(yaml, id) : null)
                         //.withEnchantments((Map<String, Integer>) yaml.getMapList(innerPath + "enchantments"))
                         //.withNbt((JsonObject) new JsonParser().parse(yaml.getString(innerPath + "nbt")))
                         .build();

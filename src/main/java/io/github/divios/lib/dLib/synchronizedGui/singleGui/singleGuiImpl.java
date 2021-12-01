@@ -10,7 +10,6 @@ import io.github.divios.dailyShop.lorestategy.loreStrategy;
 import io.github.divios.dailyShop.lorestategy.shopItemsLore;
 import io.github.divios.dailyShop.utils.PlaceholderAPIWrapper;
 import io.github.divios.dailyShop.utils.Utils;
-import io.github.divios.lib.dLib.dInventory;
 import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.dLib.synchronizedGui.taskPool.updatePool;
 import org.bukkit.entity.Player;

@@ -1,15 +1,19 @@
-package io.github.divios.lib.dLib;
+package io.github.divios.lib.dLib.synchronizedGui.singleGui;
 
 import io.github.divios.core_lib.events.Events;
 import io.github.divios.core_lib.events.Subscription;
 import io.github.divios.core_lib.inventory.inventoryUtils;
 import io.github.divios.core_lib.itemutils.ItemUtils;
+import io.github.divios.core_lib.misc.WeightedRandom;
+import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.events.updateItemEvent;
 import io.github.divios.dailyShop.lorestategy.loreStrategy;
 import io.github.divios.dailyShop.lorestategy.shopItemsLore;
 import io.github.divios.dailyShop.transaction.transaction;
 import io.github.divios.dailyShop.utils.Utils;
+import io.github.divios.lib.dLib.dItem;
+import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.dLib.stock.dStock;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -26,6 +30,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @SuppressWarnings({"ConstantConditions", "deprecation", "unchecked", "unused"})
@@ -42,6 +49,10 @@ public class dInventory {
 
     private final Set<Subscription> listeners = new HashSet<>();
     protected final loreStrategy strategy;
+
+    public static dInventory fromBase64(String base64, dShop shop) {
+        return new dInventory(base64, shop);
+    }
 
     public dInventory(String title, int size, dShop shop) {
         this(title, Bukkit.createInventory(null, size, title), shop);
@@ -122,6 +133,7 @@ public class dInventory {
         cloned.generateNewSellPrice();
         cloned.setSlot(slot);
         buttons.put(cloned.getUid(), cloned);
+        dailyItemsSlots.remove(slot);
         inv.setItem(slot, cloned.getItem());
     }
 
@@ -154,11 +166,14 @@ public class dInventory {
         removeAirItems();     // Just in case
         removeDailyItems();
         Set<dItem> newRolledItems = dRandomItemsSelector.fromItems(itemsToRoll).roll(dailyItemsSlots.size());
-        for (dItem item : newRolledItems)
-            addButton(item, dailyItemsSlots.pollFirst());
+        int index = dailyItemsSlots.first();
+        for (dItem item : newRolledItems) {
+            addButton(item, index);
+            dailyItemsSlots.add(index++);     // Restore slot
+        }
     }
 
-    public void updateItem(Player own, updateItemEvent o) {
+    protected void updateItem(Player own, updateItemEvent o) {
         dItem toUpdateItem = buttons.get(o.getItem().getUid());
         if (toUpdateItem == null) return;
 
@@ -172,11 +187,53 @@ public class dInventory {
             stock.decrement(o.getPlayer(), o.getAmount());
             if (stock.get(o.getPlayer()) <= 0) stock.set(o.getPlayer(), -1);
             Events.callEvent(new updateItemEvent(toUpdateItem, o.getAmount(), updateItemEvent.updatetype.UPDATE_ITEM, o.getShop()));
-        }
-
-        else if (type == updateItemEvent.updatetype.DELETE_ITEM) {
+        } else if (type == updateItemEvent.updatetype.DELETE_ITEM) {
             removeButton(toUpdateItem);
             inv.setItem(toUpdateItem.getSlot(), Utils.getRedPane());
+        }
+    }
+
+    // Returns a clone of this gui without the daily items
+    public dInventory skeleton() {
+        dInventory cloned = fromBase64(this.toBase64(), shop);
+        cloned.removeDailyItems();
+        cloned.destroy();
+
+        cloned.buttons.entrySet().stream()   // gets the AIR buttons back
+                .filter(entry -> entry.getValue().isAIR())
+                .forEach(entry -> cloned.inv.setItem(entry.getValue().getSlot(), entry.getValue().getItem()));
+
+        return cloned;
+    }
+
+    public dInventory copy() {
+        dInventory newInv = new dInventory(this.title, this.inv.getSize(), this.shop);
+        newInv.inv.setContents(this.inv.getContents());
+        newInv.buttons.putAll(this.buttons);
+        newInv.dailyItemsSlots.clear();
+        newInv.dailyItemsSlots.addAll(dailyItemsSlots);
+
+        return newInv;
+    }
+
+    public void destroy() {
+        listeners.forEach(Subscription::unregister);
+        listeners.clear();
+    }
+
+    public String toBase64() {
+        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+            try (BukkitObjectOutputStream dataOutput = new BukkitObjectOutputStream(outputStream)) {
+                // Serialize inventory
+                dataOutput.writeObject(inventoryUtils.serialize(inv, title));
+                // Serialize openSlots
+                dataOutput.writeObject(dailyItemsSlots);
+                // Serialize buttons
+                dataOutput.writeObject(buttons);
+                return Base64Coder.encodeLines(outputStream.toByteArray());
+            }
+        } catch (IOException e) {
+            throw new IllegalStateException("Unable to serialize inventory.", e);
         }
     }
 
@@ -198,10 +255,11 @@ public class dInventory {
 
                             dItem itemClicked = buttons.get(dItem.getUid(e.getCurrentItem()));
                             if (itemClicked == null) return;
-
                             if (dailyItemsSlots.contains(itemClicked.getSlot())) {
-                                if (e.isLeftClick()) transaction.init((Player) e.getWhoClicked(), buttons.get(itemClicked.getUid()), shop);
-                                if (e.isRightClick()) transaction.init((Player) e.getWhoClicked(), buttons.get(itemClicked.getUid()), shop);
+                                if (e.isLeftClick())
+                                    transaction.init((Player) e.getWhoClicked(), buttons.get(itemClicked.getUid()), shop);
+                                if (e.isRightClick())
+                                    transaction.init((Player) e.getWhoClicked(), buttons.get(itemClicked.getUid()), shop);
                             } else
                                 itemClicked.getAction().stream((dAction, s) -> dAction.run((Player) e.getWhoClicked(), s));
                         })
@@ -230,27 +288,6 @@ public class dInventory {
                 it.remove();
                 inv.clear(entry.getValue().getSlot());
             }
-        }
-    }
-
-    public void destroy() {
-        listeners.forEach(Subscription::unregister);
-        listeners.clear();
-    }
-
-    public String toBase64() {
-        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
-            try (BukkitObjectOutputStream dataOutput = new BukkitObjectOutputStream(outputStream)) {
-                // Serialize inventory
-                dataOutput.writeObject(inventoryUtils.serialize(inv, title));
-                // Serialize openSlots
-                dataOutput.writeObject(dailyItemsSlots);
-                // Serialize buttons
-                dataOutput.writeObject(buttons);
-                return Base64Coder.encodeLines(outputStream.toByteArray());
-            }
-        } catch (IOException e) {
-            throw new IllegalStateException("Unable to serialize inventory.", e);
         }
     }
 
@@ -284,31 +321,78 @@ public class dInventory {
         }
     }
 
-    public static dInventory fromBase64(String base64, dShop shop) {
-        return new dInventory(base64, shop);
-    }
 
-    // Returns a clone of this gui without the daily items
-    public dInventory skeleton() {
-        dInventory cloned = fromBase64(this.toBase64(), shop);
-        cloned.removeDailyItems();
-        cloned.destroy();
+    private final static class dRandomItemsSelector {
 
-        cloned.buttons.entrySet().stream()   // gets the AIR buttons back
-                .filter(entry -> entry.getValue().isAIR())
-                .forEach(entry -> cloned.inv.setItem(entry.getValue().getSlot(), entry.getValue().getItem()));
+        private static final Predicate<dItem> filterItems = item ->
+                !(item.getBuyPrice().orElse(null).getPrice() < 0 &&
+                        item.getSellPrice().orElse(null).getPrice() < 0) || item.getRarity().getWeight() != 0;
 
-        return cloned;
-    }
+        private final Map<UUID, dItem> items;
+        private final Function<dItem, Integer> getWeights;
 
-    public dInventory copy() {
-        dInventory newInv = new dInventory(this.title, this.inv.getSize(), this.shop);
-        newInv.inv.setContents(this.inv.getContents());
-        newInv.buttons.putAll(this.buttons);
-        newInv.dailyItemsSlots.clear();
-        newInv.dailyItemsSlots.addAll(dailyItemsSlots);
+        public static dRandomItemsSelector fromItems(Set<dItem> items) {
+            return new dRandomItemsSelector(items);
+        }
 
-        return newInv;
+        public dRandomItemsSelector(Set<dItem> items) {
+            this(items, dItem -> dItem.getRarity().getWeight());
+        }
+
+        public dRandomItemsSelector(Set<dItem> items, Function<dItem, Integer> getWeights) {
+            this(items.stream().collect(Collectors.toMap(dItem::getUid, dItem -> dItem)), getWeights);
+        }
+
+        public dRandomItemsSelector(Map<UUID, dItem> items) {
+            this(items, dItem -> dItem.getRarity().getWeight());
+        }
+
+        public dRandomItemsSelector(Map<UUID, dItem> items, Function<dItem, Integer> getWeights) {
+            this.items = items.entrySet().stream()
+                    .filter(entry -> filterItems.test(entry.getValue()))
+                    .collect(Collectors
+                            .toMap(Map.Entry::getKey, Map.Entry::getValue)
+                    );
+            this.getWeights = getWeights;
+        }
+
+        public void add(dItem item) {
+            items.put(item.getUid(), item);
+        }
+
+        public dItem remove(String id) {
+            return remove(UUID.nameUUIDFromBytes(id.getBytes()));
+        }
+
+        public dItem remove(UUID uuid) {
+            return items.remove(uuid);
+        }
+
+        public Set<dItem> getItems() {
+            return Collections.unmodifiableSet(new HashSet<>(items.values()));
+        }
+
+        public Set<dItem> roll() {
+            return roll(54);
+        }
+
+        public Set<dItem> roll(int max) {
+            Set<dItem> rolledItems = new HashSet<>();
+
+            WeightedRandom<dItem> randomSelector = WeightedRandom.fromCollection(items.values(), dItem::clone, getWeights::apply);
+
+            for (int i = 0; i < max; i++) {
+                dItem rolledItem = randomSelector.roll();
+                if (rolledItem == null) break;
+
+                rolledItem.generateNewBuyPrice();
+                rolledItem.generateNewSellPrice();
+                rolledItems.add(rolledItem);
+                randomSelector.remove(rolledItem);
+            }
+
+            return rolledItems;
+        }
     }
 
 }

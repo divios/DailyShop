@@ -29,15 +29,20 @@ public class dItemState {
     private dItemMetaState dailyShop_meta;
     private JsonObject nbt;
 
-    public static dItemStateBuilder builder() { return new dItemStateBuilder(); }
+    public static dItemStateBuilder builder() {
+        return new dItemStateBuilder();
+    }
 
-    public static dItemState of(dItem item) { return of(item.getRawItem()); }
+    public static dItemState of(dItem item) {
+        return of(item.getRawItem());
+    }
 
     public static dItemState of(ItemStack item) {
         return new dItemState(item);
     }
 
-    protected dItemState() {}
+    protected dItemState() {
+    }
 
     private dItemState(ItemStack item) {
 
@@ -171,10 +176,11 @@ public class dItemState {
         if (enchantments != null)
             enchantments.forEach((s, integer) -> newItem.addEnchantments(Enchantment.getByName(s), integer));
 
-        Utils.tryCatchAbstraction(() -> dailyShop_meta.applyValues(newItem), e -> {
-            Log.info("There was an error trying to parse the item of id " + newItem.getUid());
-            e.printStackTrace();
-        });
+        if (dailyShop_meta != null)
+            Utils.tryCatchAbstraction(() -> dailyShop_meta.applyValues(newItem), e -> {
+                Log.info("There was an error trying to parse the item of id " + newItem.getUid());
+                e.printStackTrace();
+            });
 
         return newItem;
     }

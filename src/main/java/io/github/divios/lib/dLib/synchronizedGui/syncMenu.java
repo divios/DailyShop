@@ -1,7 +1,7 @@
 package io.github.divios.lib.dLib.synchronizedGui;
 
-import io.github.divios.lib.dLib.dInventory;
 import io.github.divios.lib.dLib.dShop;
+import io.github.divios.lib.dLib.synchronizedGui.singleGui.dInventory;
 import io.github.divios.lib.dLib.synchronizedGui.singleGui.singleGui;
 import org.bukkit.entity.Player;
 
