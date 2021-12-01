@@ -10,6 +10,7 @@ import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.core_lib.utils.Log;
+import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.dItem;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -169,12 +170,12 @@ public class dItemState {
 
         if (enchantments != null)
             enchantments.forEach((s, integer) -> newItem.addEnchantments(Enchantment.getByName(s), integer));
-        try {
-            dailyShop_meta.applyValues(newItem);
-        } catch (Exception e) {
+
+        Utils.tryCatchAbstraction(() -> dailyShop_meta.applyValues(newItem), e -> {
             Log.info("There was an error trying to parse the item of id " + newItem.getUid());
             e.printStackTrace();
-        }
+        });
+
         return newItem;
     }
 

@@ -1,7 +1,6 @@
 package io.github.divios.dailyShop.guis.settings;
 
 import com.cryptomorin.xseries.XMaterial;
-import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.core_lib.inventory.ItemButton;
 import io.github.divios.core_lib.inventory.builder.inventoryPopulator;
 import io.github.divios.core_lib.inventory.builder.paginatedGui;
@@ -10,10 +9,11 @@ import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.ChatPrompt;
 import io.github.divios.core_lib.misc.Msg;
 import io.github.divios.core_lib.misc.confirmIH;
+import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.lorestategy.loreStrategy;
 import io.github.divios.dailyShop.lorestategy.shopsManagerLore;
-import io.github.divios.dailyShop.utils.utils;
+import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.managers.shopsManager;
 import io.github.divios.lib.storage.databaseManager;
@@ -149,13 +149,13 @@ public class shopsManagerGui {
                     .withResponse(s -> {
 
                         if (s.isEmpty()) {
-                            utils.sendMsg(p, "&7Can't be empty");
+                            Utils.sendMsg(p, "&7Can't be empty");
                             Schedulers.sync().run(() -> refresh(p));
                             return;
                         }
 
                         if (s.split("\\s+").length > 1) {
-                            utils.sendMsg(p, "&7Name cannot have white spaces");
+                            Utils.sendMsg(p, "&7Name cannot have white spaces");
                             Schedulers.sync().run(() -> refresh(p));
                             return;
                         }
@@ -163,13 +163,13 @@ public class shopsManagerGui {
                         Pattern pattern = Pattern.compile("[!@#$%&*()_+=|<>?{}\\[\\]~-]");
                         Matcher m = pattern.matcher(s);
                         if (m.find()) {
-                            utils.sendMsg(p, "&7Name cannot contain special characters");
+                            Utils.sendMsg(p, "&7Name cannot contain special characters");
                             Schedulers.sync().run(() -> refresh(p));
                             return;
                         }
 
                         if (sManager.getShop(s).isPresent()) {
-                            utils.sendMsg(p, "&7Already Exist");
+                            Utils.sendMsg(p, "&7Already Exist");
                             Schedulers.sync().run(() -> refresh(p));
                             return;
                         }
@@ -187,14 +187,14 @@ public class shopsManagerGui {
                     .withPlayer(p)
                     .withResponse(s -> {
 
-                        if (!utils.isInteger(s)) {
-                            utils.sendMsg(p, plugin.configM.getLangYml().MSG_NOT_INTEGER);
+                        if (!Utils.isInteger(s)) {
+                            Utils.sendMsg(p, plugin.configM.getLangYml().MSG_NOT_INTEGER);
                             Schedulers.sync().run(() -> refresh(p));
                             return;
                         }
 
                         if (Integer.parseInt(s) < 50 && Integer.parseInt(s) != -1) {
-                            utils.sendMsg(p, "&7Time cannot be less than 50");
+                            Utils.sendMsg(p, "&7Time cannot be less than 50");
                             Schedulers.sync().run(() -> refresh(p));
                             return;
                         }
@@ -231,19 +231,19 @@ public class shopsManagerGui {
                 .withResponse(s -> {
 
                     if (s.isEmpty()) {
-                        utils.sendMsg(p, "&7Cant be empty");
+                        Utils.sendMsg(p, "&7Cant be empty");
                         Schedulers.sync().run(() -> refresh(p));
                         return;
                     }
 
                     if (s.split("\\s+").length > 1) {
-                        utils.sendMsg(p, "&7Name cannot have white spaces");
+                        Utils.sendMsg(p, "&7Name cannot have white spaces");
                         Schedulers.sync().run(() -> refresh(p));
                         return;
                     }
 
                     if (sManager.getShop(s).isPresent()) {
-                        utils.sendMsg(p, "&7Already Exist");
+                        Utils.sendMsg(p, "&7Already Exist");
                         Schedulers.sync().run(() -> refresh(p));
                         return;
                     }
@@ -251,7 +251,7 @@ public class shopsManagerGui {
                     Pattern pattern = Pattern.compile("[!@#$%&*()_+=|<>?{}\\[\\]~-]");
                     Matcher m = pattern.matcher(s);
                     if (m.find()) {
-                        utils.sendMsg(p, "&7Name cannot contain special characters");
+                        Utils.sendMsg(p, "&7Name cannot contain special characters");
                         Schedulers.sync().run(() -> refresh(p));
                         return;
                     }

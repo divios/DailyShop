@@ -3,10 +3,9 @@ package io.github.divios.lib.dLib;
 import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.core_lib.misc.XSymbols;
 import io.github.divios.dailyShop.utils.PriceWrapper;
-import io.github.divios.dailyShop.utils.utils;
+import io.github.divios.dailyShop.utils.Utils;
 
 import java.io.Serializable;
-import java.text.Format;
 
 public class dPrice implements Serializable {
 
@@ -36,7 +35,7 @@ public class dPrice implements Serializable {
      * @return the price of the item
      */
     private double generateRandomPrice() {
-        return utils.round(minPrice + Math.random() *
+        return Utils.round(minPrice + Math.random() *
                 (maxPrice - minPrice), 2);
     }
 

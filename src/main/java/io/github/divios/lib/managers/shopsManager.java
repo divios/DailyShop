@@ -100,6 +100,7 @@ public class shopsManager {
         dShop newShop_ = WrappedShop.wrap(newShop);
 
         shops.add(newShop_);
+        newShop_.reStock();
         Schedulers.sync().run(() -> Events.callEvent(new createdShopEvent(newShop_)));
         dManager.createShop(newShop_);
         newShop_.getItems().forEach(dItem -> {

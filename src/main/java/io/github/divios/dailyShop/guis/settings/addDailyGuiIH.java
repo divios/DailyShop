@@ -7,7 +7,7 @@ import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.misc.ItemPrompt;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.guis.customizerguis.changeBundleItem;
-import io.github.divios.dailyShop.utils.utils;
+import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
 import org.bukkit.entity.Player;
@@ -102,7 +102,7 @@ public class addDailyGuiIH {
 
 
         IntStream.range(0, 27).forEach(value -> {
-            if (utils.isEmpty(gui.getInventory().getItem(value)))
+            if (Utils.isEmpty(gui.getInventory().getItem(value)))
                 gui.addButton(
                         ItemButton.create(
                                 ItemBuilder.of(XMaterial.GRAY_STAINED_GLASS_PANE)

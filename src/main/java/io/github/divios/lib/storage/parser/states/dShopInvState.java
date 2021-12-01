@@ -56,12 +56,11 @@ public class dShopInvState {
     }
 
     public void apply(dShop shop) {
-
         dInventory newInv = new dInventory(FormatUtils.color(title), size, shop);
         display_items.stream()
                 .filter(entry -> entry.getSlot() < size)
                 .map(dButtonState::parseItem)
-                .forEach(entry -> newInv.addButton(entry, entry.getSlot()));
+                .forEach(entry -> newInv.addButton(entry.clone(), entry.getSlot()));
 
         Events.callEvent(new updateShopEvent(shop, newInv, true));
     }
@@ -104,4 +103,5 @@ public class dShopInvState {
             if (display_items == null) display_items = Collections.emptyList();
         }
     }
+
 }

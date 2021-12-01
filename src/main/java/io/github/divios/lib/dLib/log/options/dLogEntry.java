@@ -1,7 +1,6 @@
 package io.github.divios.lib.dLib.log.options;
 
 import com.google.common.base.Preconditions;
-import de.tr7zw.nbtapi.NBTItem;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.lib.dLib.dShop;

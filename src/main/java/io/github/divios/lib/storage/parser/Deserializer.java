@@ -1,15 +1,13 @@
 package io.github.divios.lib.storage.parser;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import io.github.divios.core_lib.utils.Log;
-import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.storage.parser.states.*;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Deserializer {
 

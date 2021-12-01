@@ -2,7 +2,7 @@ package io.github.divios.dailyShop.hooks;
 
 import io.github.divios.core_lib.misc.XSymbols;
 import io.github.divios.dailyShop.DailyShop;
-import io.github.divios.dailyShop.utils.utils;
+import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.managers.shopsManager;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
@@ -99,7 +99,7 @@ class placeholderApiHook extends PlaceholderExpansion {
 
         Optional<dShop> shop = shopsManager.getInstance().getShop(identifier.replace("time_", ""));
         if (shop.isPresent() && shop.get().getTimer() == -1) return XSymbols.TIMES_3.parseSymbol();
-        return shop.map(utils::getDiffActualTimer).orElse(null);
+        return shop.map(Utils::getDiffActualTimer).orElse(null);
 
     }
 

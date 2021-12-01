@@ -10,7 +10,7 @@ import io.github.divios.core_lib.misc.ChatPrompt;
 import io.github.divios.core_lib.misc.EventListener;
 import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.dailyShop.DailyShop;
-import io.github.divios.dailyShop.utils.utils;
+import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.dAction;
 import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.managers.shopsManager;
@@ -95,7 +95,7 @@ public class customizeAction {
                     flagPass = true;
                     ChatPrompt.prompt(plugin, p, (s) -> {
                         if (!shopsManager.getInstance().getShop(s).isPresent()) {
-                            utils.sendMsg(p, "&7That shop doesnt exist");
+                            Utils.sendMsg(p, "&7That shop doesnt exist");
                             Schedulers.sync().run(() -> inv.open(p));
                             flagPass = true;
                             return;

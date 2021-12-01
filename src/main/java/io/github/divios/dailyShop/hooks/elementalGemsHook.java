@@ -1,9 +1,7 @@
 package io.github.divios.dailyShop.hooks;
 
 import io.github.divios.dailyShop.DailyShop;
-import io.github.divios.dailyShop.utils.utils;
-import me.elementalgaming.ElementalGems.GemAPI;
-import me.xanium.gemseconomy.api.GemsEconomyAPI;
+import io.github.divios.dailyShop.utils.Utils;
 
 public class elementalGemsHook {
 
@@ -13,7 +11,7 @@ public class elementalGemsHook {
     private elementalGemsHook() {}
 
     public static void tryToHook() {
-        if(utils.isOperative("ElementalGems")) {
+        if(Utils.isOperative("ElementalGems")) {
             main.getLogger().info("Hooked to ElementalGems");
             hooked = true;
         }

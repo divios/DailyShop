@@ -3,7 +3,7 @@ package io.github.divios.lib.storage.parser.states;
 import io.github.divios.core_lib.utils.Primitives;
 import io.github.divios.dailyShop.economies.economy;
 import io.github.divios.dailyShop.economies.vault;
-import io.github.divios.dailyShop.utils.utils;
+import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dRarity;
 import io.github.divios.lib.dLib.stock.factory.dStockFactory;
@@ -131,10 +131,10 @@ public class dItemMetaState {
             item.setQuantity(set);
         }
 
-        item.setPermsBuy(buyPerms);
-        item.setPermsSell(sellPerms);
-        item.setCommands(commands);
-        item.setBundle(bundle);
+        if (!buyPerms.isEmpty()) item.setPermsBuy(buyPerms);
+        if (!sellPerms.isEmpty()) item.setPermsSell(sellPerms);
+        if (!commands.isEmpty()) item.setCommands(commands);
+        if (!bundle.isEmpty()) item.setBundle(bundle);
         item.setConfirm_gui(confirm_gui);
         if (rarity != null) item.setRarity(dRarity.fromKey(rarity));
 
@@ -248,14 +248,14 @@ public class dItemMetaState {
             if (!Primitives.isDouble(buyPrice)) buyPrice = null;
             if (!Primitives.isDouble(sellPrice)) sellPrice = null;
             if (set <= 0) set = null;
-            if (!utils.testRunnable(() -> dRarity.fromKey(rarity))) rarity = "Common";
+            if (!Utils.testRunnable(() -> dRarity.fromKey(rarity))) rarity = "Common";
             if (!checkEconFormat()) econ = "Vault:";
         }
 
         private boolean checkEconFormat() {
             String[] econFormatted = econ.split(":");
             if (econFormatted.length != 2) return false;
-            if (!utils.testRunnable(() -> economy.getFromKey(econFormatted[0], econFormatted[1]).test())) return false;
+            if (!Utils.testRunnable(() -> economy.getFromKey(econFormatted[0], econFormatted[1]).test())) return false;
             return true;
         }
 

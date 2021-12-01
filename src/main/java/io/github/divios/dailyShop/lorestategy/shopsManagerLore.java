@@ -5,7 +5,7 @@ import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.core_lib.misc.Msg;
 import io.github.divios.core_lib.misc.XSymbols;
 import io.github.divios.dailyShop.DailyShop;
-import io.github.divios.dailyShop.utils.utils;
+import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.managers.shopsManager;
 import org.bukkit.inventory.ItemStack;
@@ -45,7 +45,7 @@ public class shopsManagerLore implements loreStrategy {
         if (shopTimerIsDisabled(shop))
             return getRedCross();
         else
-            return utils.getDiffActualTimer(shop);
+            return Utils.getDiffActualTimer(shop);
     }
 
     private boolean shopTimerIsDisabled(dShop shop) {

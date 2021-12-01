@@ -1,9 +1,7 @@
 package io.github.divios.dailyShop.files;
 
 import io.github.divios.core_lib.misc.FormatUtils;
-import io.github.divios.core_lib.utils.Log;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 

@@ -2,23 +2,18 @@ package io.github.divios.lib.dLib;
 
 
 import com.cryptomorin.xseries.XMaterial;
-import com.google.gson.JsonElement;
 import de.tr7zw.nbtapi.NBTCompound;
 import de.tr7zw.nbtapi.NBTContainer;
 import de.tr7zw.nbtapi.NBTItem;
 import io.github.divios.core_lib.cache.Lazy;
-import io.github.divios.core_lib.gson.GsonSerializable;
-import io.github.divios.core_lib.gson.JsonBuilder;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
-import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.core_lib.misc.Pair;
-import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.economies.economy;
 import io.github.divios.dailyShop.economies.vault;
 import io.github.divios.dailyShop.utils.MMOUtils;
-import io.github.divios.dailyShop.utils.utils;
+import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.stock.dStock;
 import io.github.divios.lib.dLib.stock.factory.dStockFactory;
 import org.bukkit.Material;
@@ -209,7 +204,7 @@ public class dItem implements Serializable, Cloneable {
      * @return
      */
     public String getDisplayName() {
-        return utils.isEmpty(ItemUtils.getName(getItem())) ?
+        return Utils.isEmpty(ItemUtils.getName(getItem())) ?
                 getItem().getType().name() :
                 ItemUtils.getName(getItem());
     }

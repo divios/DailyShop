@@ -2,7 +2,6 @@ package io.github.divios.dailyShop.guis.customizerguis;
 
 import com.cryptomorin.xseries.XMaterial;
 import com.google.common.base.Preconditions;
-import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.core_lib.inventory.InventoryGUI;
 import io.github.divios.core_lib.inventory.ItemButton;
 import io.github.divios.core_lib.inventory.builder.inventoryPopulator;
@@ -12,9 +11,10 @@ import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.ChatPrompt;
 import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.core_lib.misc.Msg;
+import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.guis.settings.shopGui;
-import io.github.divios.dailyShop.utils.utils;
+import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.dLib.stock.factory.dStockFactory;
@@ -302,7 +302,7 @@ public class CustomizerMenu {
                                 ChatPrompt.builder()
                                         .withPlayer(p)
                                         .withResponse(s -> {
-                                            if (utils.isShort(s)) item.setDurability(Short.parseShort(s), false);
+                                            if (Utils.isShort(s)) item.setDurability(Short.parseShort(s), false);
                                             else Msg.sendMsg(p, plugin.configM.getLangYml().MSG_NOT_INTEGER);
                                         })
                                         .withCancel(cancelReason -> Schedulers.sync().run(this::refresh))
@@ -341,7 +341,7 @@ public class CustomizerMenu {
 
         inv.addButton(                                                  // Hide Effects
                 ItemButton.create(
-                        utils.isPotion(item.getItem()) ?
+                        Utils.isPotion(item.getItem()) ?
                                 ItemBuilder.of(XMaterial.CAULDRON)
                                         .setName(plugin.configM.getLangYml().CUSTOMIZE_TOGGLE_EFFECTS_NAME)
                                         .setLore(Msg.msgList(plugin.configM.getLangYml().CUSTOMIZE_TOGGLE_EFFECTS_LORE)
@@ -404,7 +404,7 @@ public class CustomizerMenu {
                                     ChatPrompt.builder()
                                             .withPlayer(p)
                                             .withResponse(s -> {
-                                                if (!utils.isInteger(s))
+                                                if (!Utils.isInteger(s))
                                                     Msg.sendMsg(p, plugin.configM.getLangYml().MSG_NOT_INTEGER);
                                                 int i = Integer.parseInt(s);
                                                 if (i < 1 || i > 64) Msg.sendMsg(p, "&7Invalid amount");
@@ -459,9 +459,9 @@ public class CustomizerMenu {
                                 ChatPrompt.builder()
                                         .withPlayer(p)
                                         .withResponse(s -> {
-                                            if (utils.isInteger(s))
+                                            if (Utils.isInteger(s))
                                                 item.setStock(dStockFactory.INDIVIDUAL(Integer.parseInt(s)));
-                                            else utils.sendMsg(p, plugin.configM.getLangYml().MSG_NOT_INTEGER);
+                                            else Utils.sendMsg(p, plugin.configM.getLangYml().MSG_NOT_INTEGER);
 
                                             Schedulers.sync().run(this::refresh);
                                         })

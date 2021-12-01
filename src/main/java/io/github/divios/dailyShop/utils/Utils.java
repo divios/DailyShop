@@ -21,8 +21,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
 
-public class utils {
+public class Utils {
 
     private static final DailyShop plugin = DailyShop.getInstance();
 
@@ -133,7 +134,7 @@ public class utils {
         int freeSlots = 0;
         for (int i = 0; i < 36; i++) {
 
-            if (utils.isEmpty(inv.getItem(i))) {
+            if (Utils.isEmpty(inv.getItem(i))) {
                 freeSlots++;
             }
         }
@@ -246,6 +247,14 @@ public class utils {
             return false;
         }
         return true;
+    }
+
+    public static void tryCatchAbstraction(Runnable tryRunnable, Consumer<Exception> catchRunnable) {
+        try {
+            tryRunnable.run();
+        } catch (Exception e) {
+            catchRunnable.accept(e);
+        }
     }
 
 }

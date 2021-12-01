@@ -6,7 +6,7 @@ import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.core_lib.misc.Msg;
 import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.guis.settings.shopGui;
-import io.github.divios.dailyShop.utils.utils;
+import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.managers.shopsManager;
@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 public class importShops extends abstractCommand {
@@ -41,10 +40,10 @@ public class importShops extends abstractCommand {
         if (args.size() < 3) return false;
 
         if (args.get(0).equalsIgnoreCase("shopGui+"))
-            if (!utils.isOperative("ShopGUIPlus")) return false;
+            if (!Utils.isOperative("ShopGUIPlus")) return false;
 
         if (args.get(0).equalsIgnoreCase("BossShopPro"))
-            if (!utils.isOperative("BossShopPro")) return false;
+            if (!Utils.isOperative("BossShopPro")) return false;
 
         return (args.get(0).equalsIgnoreCase("shopGui+")
                 || args.get(0).equalsIgnoreCase("BossShop"));
@@ -70,9 +69,9 @@ public class importShops extends abstractCommand {
             return shopsManager.getInstance().getShops().stream()
                     .map(dShop::getName).collect(Collectors.toList());
         else if (args.size() == 3)
-            if (args.get(0).equalsIgnoreCase("shopGui+") && utils.isOperative("ShopGUIPlus"))
+            if (args.get(0).equalsIgnoreCase("shopGui+") && Utils.isOperative("ShopGUIPlus"))
                 return new ArrayList<>(ShopGuiPlusApi.getPlugin().getShopManager().shops.keySet());
-            else if (utils.isOperative("BossShopPro"))
+            else if (Utils.isOperative("BossShopPro"))
                 return ((BossShop) Bukkit.getPluginManager().getPlugin("BossShopPro")).getAPI()
                 .getAllShopItems().keySet().stream().map(BSShop::getShopName).collect(Collectors.toList());
 

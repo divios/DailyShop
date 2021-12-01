@@ -3,7 +3,7 @@ package io.github.divios.dailyShop.hooks;
 import com.vk2gpz.tokenenchant.api.TokenEnchantAPI;
 import io.github.divios.core_lib.hooks.vaultHook;
 import io.github.divios.dailyShop.DailyShop;
-import io.github.divios.dailyShop.utils.utils;
+import io.github.divios.dailyShop.utils.Utils;
 import me.TechsCode.UltraEconomy.UltraEconomyAPI;
 import me.realized.tokenmanager.api.TokenManager;
 import me.xanium.gemseconomy.api.GemsEconomyAPI;
@@ -34,26 +34,26 @@ public class hooksManager {
             main.getPluginLoader().disablePlugin(main);
         }
 
-        if (utils.isOperative("PlaceholderAPI"))
+        if (Utils.isOperative("PlaceholderAPI"))
             placeholderApiHook.getInstance();
-        if (utils.isOperative("TokenEnchant")) {
+        if (Utils.isOperative("TokenEnchant")) {
             tokenEnchantsHook.hook();
         }
-        if (utils.isOperative("TokenManager")) {
+        if (Utils.isOperative("TokenManager")) {
             tokenManagerHook.hook();
         }
 
-        if (utils.isOperative("MPoints")) {
+        if (Utils.isOperative("MPoints")) {
             MPointsHook.hook();
         }
 
-        if (utils.isOperative("PlayerPoints"))
+        if (Utils.isOperative("PlayerPoints"))
             playerPointsHook.hook();
 
-        if (utils.isOperative("ShopGUIPlus"))
+        if (Utils.isOperative("ShopGUIPlus"))
             shopGuiPlusHook.hook();
 
-        if (utils.isOperative("UltraEconomy"))
+        if (Utils.isOperative("UltraEconomy"))
             UltraEconomyHook.hook();
 
         elementalGemsHook.tryToHook();

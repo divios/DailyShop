@@ -4,13 +4,11 @@ import com.google.common.base.Preconditions;
 import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.utils.FileUtils;
-import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
-import io.github.divios.lib.managers.shopsManager;
 import io.github.divios.lib.storage.parser.states.dShopState;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.util.Objects;
 
 public class ParserApi {
 

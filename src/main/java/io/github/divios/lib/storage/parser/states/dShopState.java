@@ -1,7 +1,5 @@
 package io.github.divios.lib.storage.parser.states;
 
-import io.github.divios.core_lib.events.Events;
-import io.github.divios.dailyShop.events.updateShopEvent;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
 
@@ -45,7 +43,7 @@ public class dShopState {
 
     public dShop createShop() {
         dShop newShop = new dShop(id);
-        //rinvState.apply(newShop);
+        invState.apply(newShop);
         newShop.setItems(buildItems(itemsCollect));
 
         return newShop;

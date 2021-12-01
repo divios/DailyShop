@@ -5,7 +5,6 @@ import io.github.divios.core_lib.database.DatabaseConnector;
 import io.github.divios.core_lib.database.SQLiteConnector;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.timeStampUtils;
-import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
@@ -14,11 +13,13 @@ import io.github.divios.lib.dLib.synchronizedGui.syncMenu;
 import io.github.divios.lib.managers.WrappedShop;
 import io.github.divios.lib.storage.migrations.initialMigration;
 
-import java.sql.*;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.Date;
 import java.util.concurrent.CompletableFuture;
 
 public class databaseManager extends DataManagerAbstract {

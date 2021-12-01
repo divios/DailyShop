@@ -1,6 +1,5 @@
 package io.github.divios.dailyShop.economies;
 
-import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.hooks.hooksManager;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.entity.Player;

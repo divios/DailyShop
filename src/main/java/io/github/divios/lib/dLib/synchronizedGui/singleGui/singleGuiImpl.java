@@ -1,26 +1,26 @@
 package io.github.divios.lib.dLib.synchronizedGui.singleGui;
 
 import io.github.divios.core_lib.events.Events;
-import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.core_lib.events.Subscription;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
-import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.events.searchStockEvent;
 import io.github.divios.dailyShop.events.updateItemEvent;
 import io.github.divios.dailyShop.lorestategy.loreStrategy;
 import io.github.divios.dailyShop.lorestategy.shopItemsLore;
 import io.github.divios.dailyShop.utils.PlaceholderAPIWrapper;
-import io.github.divios.dailyShop.utils.utils;
+import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.dInventory;
 import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.dLib.synchronizedGui.taskPool.updatePool;
-import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.stream.IntStream;
 
 /**
@@ -106,7 +106,7 @@ public class singleGuiImpl implements singleGui {
 
     @Override
     public synchronized void renovate() {
-        own.renovate(p);
+        own.restock(p);
     }
 
     @Override
@@ -139,7 +139,7 @@ public class singleGuiImpl implements singleGui {
     @Override
     public synchronized int hash() {
         return Arrays.stream(own.getInventory().getContents())
-                .mapToInt(value -> utils.isEmpty(value) ? 0 : value.hashCode())
+                .mapToInt(value -> Utils.isEmpty(value) ? 0 : value.hashCode())
                 .sum();
     }
 
