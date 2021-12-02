@@ -209,7 +209,7 @@ public class transaction {
             }
 
             s.addRunnable(() -> Events.callEvent(
-                    new updateItemEvent(p, item, amount, updateItemEvent.updatetype.NEXT_AMOUNT, shop)));
+                    new updateItemEvent(p, item.getUid(), amount, updateItemEvent.type.NEXT_AMOUNT, shop)));
 
         }
 

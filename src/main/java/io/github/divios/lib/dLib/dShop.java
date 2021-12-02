@@ -187,7 +187,7 @@ public class dShop {
             return; // Throw error
 
         items.put(uid, newItem);
-        Events.callEvent(new updateItemEvent(newItem, updateItemEvent.updatetype.UPDATE_ITEM, this));    // Event to update item
+        Events.callEvent(new updateItemEvent(newItem.getUid(), updateItemEvent.type.UPDATE_ITEM, this));    // Event to update item
     }
 
 
@@ -232,7 +232,7 @@ public class dShop {
     public synchronized boolean removeItem(UUID uid) {
         dItem removed = items.remove(uid);
         if (removed == null) return false;
-        Events.callEvent(new updateItemEvent(removed, updateItemEvent.updatetype.DELETE_ITEM, this));
+        Events.callEvent(new updateItemEvent(removed.getUid(), updateItemEvent.type.DELETE_ITEM, this));
         return true;
     }
 

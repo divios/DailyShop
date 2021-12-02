@@ -5,7 +5,6 @@ import io.github.divios.core_lib.events.Subscription;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.WeightedRandom;
-import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.events.searchStockEvent;
 import io.github.divios.dailyShop.events.updateItemEvent;
@@ -22,7 +21,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -81,8 +79,8 @@ public class singleGuiImpl implements singleGui {
 
     @Override
     public synchronized void updateItem(updateItemEvent o) {
-        dItem toUpdateItem = o.getItem();
-        updateItemEvent.updatetype type = o.getType();
+        dItem toUpdateItem = shop.getItem(o.getUuid()).get().clone();
+        updateItemEvent.type type = o.getType();
 
         switch (type) {
             case UPDATE_ITEM:
@@ -238,7 +236,6 @@ public class singleGuiImpl implements singleGui {
             for (int i = 0; i < max; i++) {
                 dItem rolledItem = randomSelector.roll();
                 if (rolledItem == null) break;
-                Log.warn(rolledItem.getDisplayName());
 
                 rolledItem.generateNewBuyPrice();
                 rolledItem.generateNewSellPrice();

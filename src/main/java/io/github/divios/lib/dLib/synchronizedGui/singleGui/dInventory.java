@@ -4,20 +4,18 @@ import io.github.divios.core_lib.events.Events;
 import io.github.divios.core_lib.events.Subscription;
 import io.github.divios.core_lib.inventory.inventoryUtils;
 import io.github.divios.core_lib.itemutils.ItemUtils;
-import io.github.divios.core_lib.misc.WeightedRandom;
-import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
-import io.github.divios.dailyShop.events.updateItemEvent;
 import io.github.divios.dailyShop.lorestategy.loreStrategy;
 import io.github.divios.dailyShop.lorestategy.shopItemsLore;
 import io.github.divios.dailyShop.transaction.transaction;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
-import io.github.divios.lib.dLib.stock.dStock;
+import net.minecraft.world.IInventory;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.craftbukkit.v1_17_R1.inventory.CraftInventory;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventPriority;
@@ -38,16 +36,12 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @SuppressWarnings({"ConstantConditions", "deprecation", "unchecked", "unused"})
 public class dInventory {
 
     protected static final DailyShop plugin = DailyShop.getInstance();
-    private static final loreStrategy loreStrategy = new shopItemsLore();
 
     protected String title;       // for some reason is throwing noSuchMethod
     protected Inventory inv;
@@ -115,7 +109,7 @@ public class dInventory {
      * @return The inventory in question
      */
     public Inventory getInventory() {
-        return unModifiableInv.of(inv);
+        return inventoryUtils.cloneInventory(inv, title);
     }
 
     /**
@@ -269,9 +263,9 @@ public class dInventory {
      * @return The inventory in question.
      */
     public dInventory skeleton() {
-        dInventory cloned = fromBase64(this.toBase64(), shop);
+        dInventory cloned = this.copy();
         cloned.removeDailyItems();
-        cloned.destroy();
+        cloned.listeners.forEach(Subscription::unregister);
 
         cloned.buttons.entrySet().stream()   // gets the AIR buttons back
                 .filter(entry -> entry.getValue().isAIR())
@@ -409,7 +403,7 @@ public class dInventory {
         return newInv[0];
     }
 
-    private static final class unModifiableInv implements Inventory {
+    private static final class unModifiableInv extends CraftInventory {
 
         private final Inventory innerInv;
 
@@ -418,6 +412,7 @@ public class dInventory {
         }
 
         private unModifiableInv(Inventory innerInv) {
+            super((IInventory) innerInv);
             this.innerInv = innerInv;
         }
 
@@ -509,14 +504,14 @@ public class dInventory {
 
         @NotNull
         @Override
-        public HashMap<Integer, ? extends ItemStack> all(@NotNull Material material) throws IllegalArgumentException {
-            return (HashMap<Integer, ? extends ItemStack>) innerInv.all(material).clone();
+        public HashMap<Integer, ItemStack> all(@NotNull Material material) throws IllegalArgumentException {
+            return (HashMap<Integer, ItemStack>) innerInv.all(material).clone();
         }
 
         @NotNull
         @Override
-        public HashMap<Integer, ? extends ItemStack> all(@Nullable ItemStack itemStack) {
-            return (HashMap<Integer, ? extends ItemStack>) innerInv.all(itemStack).clone();
+        public HashMap<Integer, ItemStack> all(@Nullable ItemStack itemStack) {
+            return (HashMap<Integer, ItemStack>) innerInv.all(itemStack).clone();
         }
 
         @Override
@@ -562,19 +557,19 @@ public class dInventory {
         @NotNull
         @Override
         public List<HumanEntity> getViewers() {
-            return null;
+            return innerInv.getViewers();
         }
 
         @NotNull
         @Override
         public InventoryType getType() {
-            return null;
+            return innerInv.getType();
         }
 
         @Nullable
         @Override
         public InventoryHolder getHolder() {
-            return null;
+            return innerInv.getHolder();
         }
 
         @NotNull
@@ -592,7 +587,7 @@ public class dInventory {
         @Nullable
         @Override
         public Location getLocation() {
-            return null;
+            return innerInv.getLocation();
         }
 
         @Override

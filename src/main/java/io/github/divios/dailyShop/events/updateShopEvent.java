@@ -1,7 +1,7 @@
 package io.github.divios.dailyShop.events;
 
-import io.github.divios.lib.dLib.synchronizedGui.singleGui.dInventory;
 import io.github.divios.lib.dLib.dShop;
+import io.github.divios.lib.dLib.synchronizedGui.singleGui.dInventory;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;

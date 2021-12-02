@@ -1,52 +1,40 @@
 package io.github.divios.dailyShop.events;
 
-import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.Timestamp;
+import java.util.UUID;
 
 public class updateItemEvent extends Event {
+
     private static final HandlerList HANDLERS_LIST = new HandlerList();
 
-    private final dItem item;
+    private final UUID uuid;
     private final int amount;
     private final Player p;
-    private updatetype type;
+    private final updateItemEvent.type type;
     private final dShop shop;
     private final Timestamp timestamp;
 
-    public updateItemEvent(ItemStack item, updatetype type, dShop shop) {
-        this(null, new dItem(item), 1, type, shop);
+    public updateItemEvent(UUID uuid, updateItemEvent.type type, dShop shop) {
+        this(null, uuid, 1, type, shop);
     }
 
-    public updateItemEvent(dItem item, updatetype type, dShop shop) {
-        this(null, item, 1, type, shop);
+    public updateItemEvent(Player p, UUID uuid, updateItemEvent.type type, dShop shop) {
+        this(p, uuid, 1, type, shop);
     }
 
-    public updateItemEvent(Player p, ItemStack item, updatetype type, dShop shop) {
-        this(p, new dItem(item), 1, type, shop);
+    public updateItemEvent(UUID uuid, int amount, updateItemEvent.type type, dShop shop) {
+        this(null, uuid, amount, type, shop);
     }
 
-    public updateItemEvent(ItemStack item, int amount, updatetype type, dShop shop) {
-        this(null, new dItem(item), amount, type, shop);
-    }
-
-    public updateItemEvent(dItem item, int amount, updatetype type, dShop shop) {
-        this(null, item, amount, type, shop);
-    }
-
-    public updateItemEvent(Player p, ItemStack item, int amount, updatetype type, dShop shop) {
-        this(p, new dItem(item), amount, type, shop);
-    }
-
-    public updateItemEvent(Player p, dItem item, int amount, updatetype type, dShop shop) {
+    public updateItemEvent(Player p, UUID uuid, int amount, updateItemEvent.type type, dShop shop) {
         this.p = p;
-        this.item = item.clone();
+        this.uuid = uuid;
         this.amount = amount;
         this.type = type;
         this.shop = shop;
@@ -57,23 +45,21 @@ public class updateItemEvent extends Event {
         return p;
     }
 
-    public dItem getItem() { return this.item; }
+    public UUID getUuid() {
+        return uuid;
+    }
 
     public int getAmount() {
         return amount;
     }
 
-    public updatetype getType() {
+    public updateItemEvent.type getType() {
         return type;
     }
 
     public dShop getShop() { return this.shop; }
 
     public Timestamp getTimestamp() { return this.timestamp; }
-
-    public void setType(updatetype type) {
-        this.type = type;
-    }
 
     @NotNull
     @Override
@@ -86,7 +72,7 @@ public class updateItemEvent extends Event {
     }
 
 
-    public enum updatetype {
+    public enum type {
         UPDATE_ITEM,
         NEXT_AMOUNT,
         DELETE_ITEM

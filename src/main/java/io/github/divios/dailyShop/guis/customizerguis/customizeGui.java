@@ -12,9 +12,9 @@ import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.events.updateShopEvent;
 import io.github.divios.dailyShop.guis.settings.shopsManagerGui;
 import io.github.divios.dailyShop.utils.Utils;
-import io.github.divios.lib.dLib.synchronizedGui.singleGui.dInventory;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
+import io.github.divios.lib.dLib.synchronizedGui.singleGui.dInventory;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -70,7 +70,6 @@ public class customizeGui implements Listener, InventoryHolder {
     }
 
     public void addCustomizeItems() {
-
 
         IntStream.range(0, 36).forEach(i ->
                 p.getInventory().setItem(i,
