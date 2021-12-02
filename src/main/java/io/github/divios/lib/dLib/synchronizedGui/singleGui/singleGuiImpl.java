@@ -4,22 +4,27 @@ import io.github.divios.core_lib.events.Events;
 import io.github.divios.core_lib.events.Subscription;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
+import io.github.divios.core_lib.misc.WeightedRandom;
+import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.events.searchStockEvent;
 import io.github.divios.dailyShop.events.updateItemEvent;
 import io.github.divios.dailyShop.lorestategy.loreStrategy;
 import io.github.divios.dailyShop.lorestategy.shopItemsLore;
 import io.github.divios.dailyShop.utils.PlaceholderAPIWrapper;
 import io.github.divios.dailyShop.utils.Utils;
+import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
+import io.github.divios.lib.dLib.stock.dStock;
 import io.github.divios.lib.dLib.synchronizedGui.taskPool.updatePool;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 /**
@@ -31,7 +36,10 @@ import java.util.stream.IntStream;
 
 public class singleGuiImpl implements singleGui {
 
-    private final Player p;
+    protected static final DailyShop plugin = DailyShop.getInstance();
+    private static final loreStrategy loreStrategy = new shopItemsLore();
+
+    protected final Player p;
     private final dShop shop;
     private final dInventory base;
     private final dInventory own;
@@ -51,11 +59,11 @@ public class singleGuiImpl implements singleGui {
             updateTask();
             updatePool.subscribe(this);
             this.own.openInventory(p);
-        } else ready();
+        } else
+            ready();
     }
 
     private void ready() {
-
         events.add(
                 Events.subscribe(searchStockEvent.class)                // Respond to search events
                         .filter(o -> o.getShop().equals(shop))
@@ -68,17 +76,33 @@ public class singleGuiImpl implements singleGui {
                                             else o.respond(dItem.getStock().get(o.getPlayer()));
                                         }))
         );
-
     }
 
     @Override
     public synchronized void updateItem(updateItemEvent o) {
-        own.updateItem(p, o);
+        dItem toUpdateItem = o.getItem();
+        updateItemEvent.updatetype type = o.getType();
+
+        switch (type) {
+            case UPDATE_ITEM:
+                own.updateItem(toUpdateItem.applyLore(loreStrategy, p), false);
+                break;
+            case NEXT_AMOUNT:
+                dStock stock = toUpdateItem.getStock();
+                stock.decrement(o.getPlayer(), o.getAmount());
+                if (stock.get(o.getPlayer()) <= 0) stock.set(o.getPlayer(), -1);
+                own.updateItem(toUpdateItem, false);
+                break;
+            case DELETE_ITEM:
+                own.updateItem(toUpdateItem, true);
+                break;
+            default:
+                throw new UnsupportedOperationException("Invalid updateItemEvent type");
+        }
     }
 
     @Override
     public synchronized void updateTask() {
-
         loreStrategy strategy = new shopItemsLore();
         IntStream.range(0, own.getInventorySize())
                 .filter(value -> !ItemUtils.isEmpty(own.getInventory().getItem(value)))
@@ -99,13 +123,13 @@ public class singleGuiImpl implements singleGui {
                         inv.setItem(value, newItem);
                     } catch (Exception ignored) {
                     }
-
                 });
     }
+    
 
     @Override
-    public synchronized void renovate() {
-        own.restock(p);
+    public synchronized void restock() {
+        own.restock(dRandomItemsSelector.of(shop.getItems(), dItem -> dItem.applyLore(loreStrategy, p)).roll());
     }
 
     @Override
@@ -146,5 +170,102 @@ public class singleGuiImpl implements singleGui {
     public synchronized singleGui clone() {
         return new singleGuiImpl(p, shop, base);
     }
+
+
+    /**
+     * Inner utility class to generate the daily Items
+     */
+    private final static class dRandomItemsSelector {
+
+        private static final Predicate<dItem> filterItems = item ->
+                !(item.getBuyPrice().orElse(null).getPrice() < 0 &&
+                        item.getSellPrice().orElse(null).getPrice() < 0) || item.getRarity().getWeight() != 0;
+
+        private final Map<UUID, dItem> items;
+        private final Function<dItem, Integer> getWeights;
+        private final Consumer<dItem> action;
+
+        public static dRandomItemsSelector fromItems(Set<dItem> items) {
+            return new dRandomItemsSelector(items);
+        }
+
+        public static dRandomItemsSelector of(Set<dItem> items, Consumer<dItem> action) {
+            return new dRandomItemsSelector(items, action);
+        }
+
+        private dRandomItemsSelector(Set<dItem> items) {
+            this(items, dItem -> {});
+        }
+
+        private dRandomItemsSelector(Set<dItem> items, Consumer<dItem> action) {
+            this(items, dItem -> dItem.getRarity().getWeight(), action);
+        }
+
+        private dRandomItemsSelector(Set<dItem> items, Function<dItem, Integer> getWeights) {
+            this(items, getWeights, dItem -> {});
+        }
+
+        private dRandomItemsSelector(Set<dItem> items, Function<dItem, Integer> getWeights, Consumer<dItem> action) {
+            this(items.stream().collect(Collectors.toMap(dItem::getUid, dItem -> dItem)), getWeights, action);
+        }
+
+        private dRandomItemsSelector(Map<UUID, dItem> items) {
+            this(items, dItem -> dItem.getRarity().getWeight());
+        }
+
+        private dRandomItemsSelector(Map<UUID, dItem> items, Function<dItem, Integer> getWeights) {
+            this(items, getWeights, dItem -> {});
+        }
+
+        private dRandomItemsSelector(Map<UUID, dItem> items, Function<dItem, Integer> getWeights, Consumer<dItem> action) {
+            this.items = items.entrySet().stream()
+                    .filter(entry -> filterItems.test(entry.getValue()))
+                    .collect(Collectors
+                            .toMap(Map.Entry::getKey, Map.Entry::getValue)
+                    );
+            this.getWeights = getWeights;
+            this.action = action;
+        }
+
+        public void add(dItem item) {
+            items.put(item.getUid(), item);
+        }
+
+        public dItem remove(String id) {
+            return remove(UUID.nameUUIDFromBytes(id.getBytes()));
+        }
+
+        public dItem remove(UUID uuid) {
+            return items.remove(uuid);
+        }
+
+        public Set<dItem> getItems() {
+            return Collections.unmodifiableSet(new HashSet<>(items.values()));
+        }
+
+        public Set<dItem> roll() {
+            return roll(54);
+        }
+
+        public Set<dItem> roll(int max) {
+            Set<dItem> rolledItems = new HashSet<>();
+
+            WeightedRandom<dItem> randomSelector = WeightedRandom.fromCollection(items.values(), dItem::clone, getWeights::apply);
+
+            for (int i = 0; i < max; i++) {
+                dItem rolledItem = randomSelector.roll();
+                if (rolledItem == null) break;
+
+                rolledItem.generateNewBuyPrice();
+                rolledItem.generateNewSellPrice();
+                action.accept(rolledItem);
+                rolledItems.add(rolledItem);
+                randomSelector.remove(rolledItem);
+            }
+
+            return rolledItems;
+        }
+    }
+
 
 }

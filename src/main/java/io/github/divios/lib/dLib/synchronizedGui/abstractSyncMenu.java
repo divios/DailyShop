@@ -150,7 +150,7 @@ public abstract class abstractSyncMenu implements syncMenu {
         players.removeAll(delayedGuisPromises.keySet());
 
         invalidateAll();                                            // close all inventories
-        base.renovate();                                            // Renovates base
+        base.restock();                                            // Renovates base
         players.forEach(uuid -> Optional.ofNullable(Bukkit.getPlayer(uuid)).ifPresent(this::generate));
         if (!silent)
             Msg.broadcast(

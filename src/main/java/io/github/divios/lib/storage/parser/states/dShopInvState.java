@@ -3,6 +3,8 @@ package io.github.divios.lib.storage.parser.states;
 import io.github.divios.core_lib.events.Events;
 import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.dailyShop.events.updateShopEvent;
+import io.github.divios.dailyShop.lorestategy.loreStrategy;
+import io.github.divios.dailyShop.lorestategy.shopItemsLore;
 import io.github.divios.lib.dLib.synchronizedGui.singleGui.dInventory;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;

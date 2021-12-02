@@ -26,7 +26,7 @@ public interface singleGui {
 
     void updateTask();
 
-    void renovate();
+    void restock();
 
     Player getPlayer();
 

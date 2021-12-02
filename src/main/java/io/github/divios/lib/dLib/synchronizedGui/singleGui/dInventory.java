@@ -16,13 +16,21 @@ import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.dLib.stock.dStock;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.io.BukkitObjectInputStream;
 import org.bukkit.util.io.BukkitObjectOutputStream;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
 import java.io.ByteArrayInputStream;
@@ -39,6 +47,7 @@ import java.util.stream.IntStream;
 public class dInventory {
 
     protected static final DailyShop plugin = DailyShop.getInstance();
+    private static final loreStrategy loreStrategy = new shopItemsLore();
 
     protected String title;       // for some reason is throwing noSuchMethod
     protected Inventory inv;
@@ -48,10 +57,9 @@ public class dInventory {
     protected final ConcurrentHashMap<UUID, dItem> buttons = new ConcurrentHashMap<>();
 
     private final Set<Subscription> listeners = new HashSet<>();
-    protected final loreStrategy strategy;
 
     public static dInventory fromBase64(String base64, dShop shop) {
-        return new dInventory(base64, shop);
+        return deserialize(base64, shop);
     }
 
     public dInventory(String title, int size, dShop shop) {
@@ -62,33 +70,38 @@ public class dInventory {
         this(shop.getName(), 27, shop);
     }
 
-    public dInventory(String base64, dShop shop) {
-        this.shop = shop;
-        this.strategy = new shopItemsLore();
-        _deserialize(base64);
-
-        createListeners();
-    }
-
-    public dInventory(String title, Inventory inv, dShop shop) {
+    protected dInventory(String title, Inventory inv, dShop shop) {
         this.title = title;
         this.inv = inv;
         this.shop = shop;
-
-        this.strategy = new shopItemsLore();
 
         IntStream.range(0, inv.getSize()).forEach(dailyItemsSlots::add);
         createListeners();
     }
 
+    /**
+     * Opens the inventory for a player
+     *
+     * @param p The player to open the inventory to.
+     */
     public void openInventory(Player p) {
         p.openInventory(inv);
     }
 
+    /**
+     * Gets the title of this inventory
+     *
+     * @return String representing the title of this inventory
+     */
     public String getInventoryTitle() {
         return title;
     }
 
+    /**
+     * Sets the title for this inventory
+     *
+     * @param title String representing the new title of the inventory.
+     */
     public void setInventoryTitle(String title) {
         this.title = title;
         Inventory temp = Bukkit.createInventory(null, inv.getSize(), title);
@@ -96,14 +109,31 @@ public class dInventory {
         inv = temp;
     }
 
+    /**
+     * Get the inventory that holds this object
+     *
+     * @return The inventory in question
+     */
     public Inventory getInventory() {
-        return inv;
+        return unModifiableInv.of(inv);
     }
 
+    /**
+     * Gets this inventory size
+     *
+     * @return Int representing the inventory size
+     */
     public int getInventorySize() {
         return inv.getSize();
     }
 
+    /**
+     * Adds a new row to the inventory, in other words, increases the size
+     * of the inventory by 9.
+     *
+     * @return Returns a boolean representing if the inventory
+     * has been altered due to this function.
+     */
     public boolean addInventoryRow() {
         if (inv.getSize() == 54) return false;
 
@@ -115,6 +145,13 @@ public class dInventory {
         return true;
     }
 
+    /**
+     * Removes a row of the inventory, in other words, decreases the inventory
+     * size by 9
+     *
+     * @return Returns a boolean representing if the inventory
+     * has been altered due to this function.
+     */
     public boolean removeInventoryRow() {
         if (inv.getSize() == 9) return false;
 
@@ -127,6 +164,24 @@ public class dInventory {
         return true;
     }
 
+    /**
+     * Adds an item to the inventory. When this item is clicked, the action
+     * attacked to it will be executed
+     *
+     * @param item ItemStack to be added
+     * @param slot Integer representing the position of the new item on the inventory.
+     */
+    public void addButton(ItemStack item, int slot) {
+        addButton(dItem.of(item), slot);
+    }
+
+    /**
+     * Adds an item to the inventory. When this item is clicked, the action
+     * attacked to it will be executed
+     *
+     * @param item ItemStack to be added
+     * @param slot Integer representing the position of the new item on the inventory.
+     */
     public void addButton(dItem item, int slot) {
         dItem cloned = item.clone();
         cloned.generateNewBuyPrice();
@@ -137,10 +192,12 @@ public class dInventory {
         inv.setItem(slot, cloned.getItem());
     }
 
-    public dItem removeButton(dItem item) {
-        return removeButton(item.getUid());
-    }
-
+    /**
+     * Removes a button from the inventory by its UUID
+     *
+     * @param uuid The UUID of the item to be removed.
+     * @return The item that was removed if any.
+     */
     public dItem removeButton(UUID uuid) {
         dItem removedItem = buttons.remove(uuid);
         if (removedItem != null) {
@@ -150,50 +207,67 @@ public class dInventory {
         return removedItem;
     }
 
+    /**
+     * Gets an unmodifiable view of the buttons of the inventory.
+     *
+     * @return A map representing the buttons of this inventory.
+     */
     public Map<UUID, dItem> getButtons() {
         return Collections.unmodifiableMap(buttons);
     }
 
+    /**
+     * Gets the slots where the daily random items can appear.
+     *
+     * @return An unmodifiable set of the slots.
+     */
     public Set<Integer> getDailyItemsSlots() {
         return Collections.unmodifiableSet(dailyItemsSlots);
     }
 
-    public void restock(Player p) {
-        restock(p, shop.getItems());
-    }
-
-    public void restock(Player p, Set<dItem> itemsToRoll) {
+    /**
+     * Triggers the generation of new random items based on the
+     * items passed as parameter.
+     *
+     * @param itemsToRoll A collection of items that will be chosen as daily items.
+     */
+    protected void restock(Set<dItem> itemsToRoll) {
         removeAirItems();     // Just in case
         removeDailyItems();
-        Set<dItem> newRolledItems = dRandomItemsSelector.fromItems(itemsToRoll).roll(dailyItemsSlots.size());
         int index = dailyItemsSlots.first();
-        for (dItem item : newRolledItems) {
-            addButton(item, index);
+        for (dItem item : itemsToRoll) {
+            addButton(item, dailyItemsSlots.ceiling(index));
             dailyItemsSlots.add(index++);     // Restore slot
         }
     }
 
-    protected void updateItem(Player own, updateItemEvent o) {
-        dItem toUpdateItem = buttons.get(o.getItem().getUid());
+    /**
+     * Updates a dailyItem of the inventory.
+     * This function should only be called from protected sources.
+     *
+     * @param item   The item to update
+     * @param delete If the item should be deleted or updated
+     */
+    protected void updateItem(dItem item, boolean delete) {
+        dItem toUpdateItem = buttons.get(item.getUid());
         if (toUpdateItem == null) return;
 
-        updateItemEvent.updatetype type = o.getType();
-
-        if (type == updateItemEvent.updatetype.UPDATE_ITEM)
-            addButton(o.getItem(), toUpdateItem.getSlot());
-
-        else if (type == updateItemEvent.updatetype.NEXT_AMOUNT) {
-            dStock stock = toUpdateItem.getStock();
-            stock.decrement(o.getPlayer(), o.getAmount());
-            if (stock.get(o.getPlayer()) <= 0) stock.set(o.getPlayer(), -1);
-            Events.callEvent(new updateItemEvent(toUpdateItem, o.getAmount(), updateItemEvent.updatetype.UPDATE_ITEM, o.getShop()));
-        } else if (type == updateItemEvent.updatetype.DELETE_ITEM) {
-            removeButton(toUpdateItem);
-            inv.setItem(toUpdateItem.getSlot(), Utils.getRedPane());
+        int slot = toUpdateItem.getSlot();
+        if (delete) {
+            removeButton(item.getUid());
+            inv.setItem(slot, Utils.getRedPane());
+        } else {
+            addButton(item, slot);
+            dailyItemsSlots.add(slot);
         }
     }
 
-    // Returns a clone of this gui without the daily items
+    /**
+     * Returns a copy of this inventory without the daily Items,
+     * only the buttons added manually.
+     *
+     * @return The inventory in question.
+     */
     public dInventory skeleton() {
         dInventory cloned = fromBase64(this.toBase64(), shop);
         cloned.removeDailyItems();
@@ -206,6 +280,11 @@ public class dInventory {
         return cloned;
     }
 
+    /**
+     * Returns a full copy of this inventory
+     *
+     * @return The copy of this inventory.
+     */
     public dInventory copy() {
         dInventory newInv = new dInventory(this.title, this.inv.getSize(), this.shop);
         newInv.inv.setContents(this.inv.getContents());
@@ -216,11 +295,24 @@ public class dInventory {
         return newInv;
     }
 
+    /**
+     * Destroys this inventory, in other words, unregisters all the listeners
+     * and leaves all the variables for the garbage collector
+     */
     public void destroy() {
         listeners.forEach(Subscription::unregister);
         listeners.clear();
+        buttons.clear();
+        dailyItemsSlots.clear();
+        title = null;
+        inv = null;
     }
 
+    /**
+     * Serializes this inventory into base64.
+     *
+     * @return The String representing this inventory as base64.
+     */
     public String toBase64() {
         try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
             try (BukkitObjectOutputStream dataOutput = new BukkitObjectOutputStream(outputStream)) {
@@ -291,107 +383,217 @@ public class dInventory {
         }
     }
 
-    private void _deserialize(String base64) {
+    private static dInventory deserialize(String base64, dShop shop) {
+        dInventory newInv[] = {null};
         try (ByteArrayInputStream InputStream = new ByteArrayInputStream(Base64Coder.decodeLines(base64))) {
             try (BukkitObjectInputStream dataInput = new BukkitObjectInputStream(InputStream)) {
 
-                inventoryUtils.deserialize((String) dataInput.readObject()).stream((s1, itemStacks) -> {
-                    title = s1;
-                    inv = itemStacks;
+                inventoryUtils.deserialize((String) dataInput.readObject()).stream((s1, inv) -> {
+                    newInv[0] = new dInventory(s1, inv, shop);
                 });
 
-                dailyItemsSlots.addAll((Set<Integer>) dataInput.readObject());
+                newInv[0].dailyItemsSlots.retainAll((Set<Integer>) dataInput.readObject());
 
                 Object o = dataInput.readObject();
-                if (o instanceof Set) ((Set<dItem>) o).forEach(dItem -> buttons.put(dItem.getUid(), dItem));
-                else buttons.putAll((Map<? extends UUID, ? extends dItem>) o);
+                if (o instanceof Set)
+                    ((Set<dItem>) o).forEach(dItem -> newInv[0].buttons.put(dItem.getUid(), dItem));
+                else
+                    newInv[0].buttons.putAll((Map<? extends UUID, ? extends dItem>) o);
             }
 
         } catch (Exception e) {
             plugin.getLogger().severe("Unable to deserialize gui of shop "
                     + shop.getName() + ", setting it to default");
-
             e.printStackTrace();
-            buttons.clear();
-            dailyItemsSlots.clear();
-            this.title = shop.getName();
-            this.inv = Bukkit.createInventory(null, 27, title);
-            IntStream.range(0, inv.getSize()).forEach(dailyItemsSlots::add);
-
+            return new dInventory(shop);
         }
+        return newInv[0];
     }
 
+    private static final class unModifiableInv implements Inventory {
 
-    private final static class dRandomItemsSelector {
+        private final Inventory innerInv;
 
-        private static final Predicate<dItem> filterItems = item ->
-                !(item.getBuyPrice().orElse(null).getPrice() < 0 &&
-                        item.getSellPrice().orElse(null).getPrice() < 0) || item.getRarity().getWeight() != 0;
-
-        private final Map<UUID, dItem> items;
-        private final Function<dItem, Integer> getWeights;
-
-        public static dRandomItemsSelector fromItems(Set<dItem> items) {
-            return new dRandomItemsSelector(items);
+        public static Inventory of(Inventory inv) {
+            return new unModifiableInv(inv);
         }
 
-        public dRandomItemsSelector(Set<dItem> items) {
-            this(items, dItem -> dItem.getRarity().getWeight());
+        private unModifiableInv(Inventory innerInv) {
+            this.innerInv = innerInv;
         }
 
-        public dRandomItemsSelector(Set<dItem> items, Function<dItem, Integer> getWeights) {
-            this(items.stream().collect(Collectors.toMap(dItem::getUid, dItem -> dItem)), getWeights);
+        @Override
+        public int getSize() {
+            return innerInv.getSize();
         }
 
-        public dRandomItemsSelector(Map<UUID, dItem> items) {
-            this(items, dItem -> dItem.getRarity().getWeight());
+        @Override
+        public int getMaxStackSize() {
+            return innerInv.getMaxStackSize();
         }
 
-        public dRandomItemsSelector(Map<UUID, dItem> items, Function<dItem, Integer> getWeights) {
-            this.items = items.entrySet().stream()
-                    .filter(entry -> filterItems.test(entry.getValue()))
-                    .collect(Collectors
-                            .toMap(Map.Entry::getKey, Map.Entry::getValue)
-                    );
-            this.getWeights = getWeights;
+        @Override
+        public void setMaxStackSize(int i) {
+            throw new UnsupportedOperationException();
         }
 
-        public void add(dItem item) {
-            items.put(item.getUid(), item);
+        @Nullable
+        @Override
+        public ItemStack getItem(int i) {
+            ItemStack item;
+            return (item = innerInv.getItem(i)) == null ? null : item.clone();
         }
 
-        public dItem remove(String id) {
-            return remove(UUID.nameUUIDFromBytes(id.getBytes()));
+        @Override
+        public void setItem(int i, @Nullable ItemStack itemStack) {
+            throw new UnsupportedOperationException();
         }
 
-        public dItem remove(UUID uuid) {
-            return items.remove(uuid);
+        @NotNull
+        @Override
+        public HashMap<Integer, ItemStack> addItem(@NotNull ItemStack... itemStacks) throws IllegalArgumentException {
+            throw new UnsupportedOperationException();
         }
 
-        public Set<dItem> getItems() {
-            return Collections.unmodifiableSet(new HashSet<>(items.values()));
+        @NotNull
+        @Override
+        public HashMap<Integer, ItemStack> removeItem(@NotNull ItemStack... itemStacks) throws IllegalArgumentException {
+            throw new UnsupportedOperationException();
         }
 
-        public Set<dItem> roll() {
-            return roll(54);
+        @NotNull
+        @Override
+        public ItemStack[] getContents() {
+            return innerInv.getContents().clone();
         }
 
-        public Set<dItem> roll(int max) {
-            Set<dItem> rolledItems = new HashSet<>();
+        @Override
+        public void setContents(@NotNull ItemStack[] itemStacks) throws IllegalArgumentException {
+            throw new UnsupportedOperationException();
+        }
 
-            WeightedRandom<dItem> randomSelector = WeightedRandom.fromCollection(items.values(), dItem::clone, getWeights::apply);
+        @NotNull
+        @Override
+        public ItemStack[] getStorageContents() {
+            return innerInv.getStorageContents().clone();
+        }
 
-            for (int i = 0; i < max; i++) {
-                dItem rolledItem = randomSelector.roll();
-                if (rolledItem == null) break;
+        @Override
+        public void setStorageContents(@NotNull ItemStack[] itemStacks) throws IllegalArgumentException {
+            throw new UnsupportedOperationException();
+        }
 
-                rolledItem.generateNewBuyPrice();
-                rolledItem.generateNewSellPrice();
-                rolledItems.add(rolledItem);
-                randomSelector.remove(rolledItem);
-            }
+        @Override
+        public boolean contains(@NotNull Material material) throws IllegalArgumentException {
+            return innerInv.contains(material);
+        }
 
-            return rolledItems;
+        @Override
+        public boolean contains(@Nullable ItemStack itemStack) {
+            return innerInv.contains(itemStack);
+        }
+
+        @Override
+        public boolean contains(@NotNull Material material, int i) throws IllegalArgumentException {
+            return innerInv.contains(material, i);
+        }
+
+        @Override
+        public boolean contains(@Nullable ItemStack itemStack, int i) {
+            return innerInv.contains(itemStack, i);
+        }
+
+        @Override
+        public boolean containsAtLeast(@Nullable ItemStack itemStack, int i) {
+            return innerInv.containsAtLeast(itemStack, i);
+        }
+
+        @NotNull
+        @Override
+        public HashMap<Integer, ? extends ItemStack> all(@NotNull Material material) throws IllegalArgumentException {
+            return (HashMap<Integer, ? extends ItemStack>) innerInv.all(material).clone();
+        }
+
+        @NotNull
+        @Override
+        public HashMap<Integer, ? extends ItemStack> all(@Nullable ItemStack itemStack) {
+            return (HashMap<Integer, ? extends ItemStack>) innerInv.all(itemStack).clone();
+        }
+
+        @Override
+        public int first(@NotNull Material material) throws IllegalArgumentException {
+            return innerInv.first(material);
+        }
+
+        @Override
+        public int first(@NotNull ItemStack itemStack) {
+            return innerInv.first(itemStack);
+        }
+
+        @Override
+        public int firstEmpty() {
+            return innerInv.firstEmpty();
+        }
+
+        @Override
+        public boolean isEmpty() {
+            return innerInv.isEmpty();
+        }
+
+        @Override
+        public void remove(@NotNull Material material) throws IllegalArgumentException {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void remove(@NotNull ItemStack itemStack) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void clear(int i) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void clear() {
+            throw new UnsupportedOperationException();
+        }
+
+        @NotNull
+        @Override
+        public List<HumanEntity> getViewers() {
+            return null;
+        }
+
+        @NotNull
+        @Override
+        public InventoryType getType() {
+            return null;
+        }
+
+        @Nullable
+        @Override
+        public InventoryHolder getHolder() {
+            return null;
+        }
+
+        @NotNull
+        @Override
+        public ListIterator<ItemStack> iterator() {
+            return null;
+        }
+
+        @NotNull
+        @Override
+        public ListIterator<ItemStack> iterator(int i) {
+            return null;
+        }
+
+        @Nullable
+        @Override
+        public Location getLocation() {
+            return null;
         }
     }
 

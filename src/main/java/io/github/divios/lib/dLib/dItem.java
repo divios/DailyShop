@@ -12,6 +12,7 @@ import io.github.divios.core_lib.misc.Pair;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.economies.economy;
 import io.github.divios.dailyShop.economies.vault;
+import io.github.divios.dailyShop.lorestategy.loreStrategy;
 import io.github.divios.dailyShop.utils.MMOUtils;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.stock.dStock;
@@ -163,9 +164,11 @@ public class dItem implements Serializable, Cloneable {
      * Sets the slot of this item
      *
      * @param slot
+     * @return
      */
-    public void setSlot(int slot) {
+    public dItem setSlot(int slot) {
         item.setInteger("dailySlots", slot);
+        return this;
     }
 
     /**
@@ -181,21 +184,25 @@ public class dItem implements Serializable, Cloneable {
      * Sets the meta of the item
      *
      * @param meta
+     * @return
      */
-    public void setMeta(ItemMeta meta) {
+    public dItem setMeta(ItemMeta meta) {
         ItemStack itemA = getItem();
         itemA.setItemMeta(meta);
         setItem(itemA);
+        return this;
     }
 
     /**
      * Sets the display name of the item
      *
      * @param name
+     * @return
      */
-    public void setDisplayName(@NotNull String name) {
+    public dItem setDisplayName(@NotNull String name) {
         setItem(ItemUtils.setName(getItem(), name));
         setRawItem(ItemUtils.setName(getRawItem(), name));
+        return this;
     }
 
     /**
@@ -213,10 +220,18 @@ public class dItem implements Serializable, Cloneable {
      * Sets the lore of the item. Supports Color Codes
      *
      * @param lore
+     * @return
      */
-    public void setLore(@NotNull List<String> lore) {
+    public dItem setLore(@NotNull List<String> lore) {
         setItem(ItemUtils.setLore(getItem(), lore));
         setRawItem(ItemUtils.setLore(getRawItem(), lore));
+        return this;
+    }
+
+    public dItem applyLore(loreStrategy strategy, Object ...data) {
+        setItem(strategy.applyLore(item.getItem(), data));
+        setRawItem(strategy.applyLore(getRawItem(), data));
+        return this;
     }
 
     /**
@@ -233,12 +248,14 @@ public class dItem implements Serializable, Cloneable {
      * Sets the material of the item
      *
      * @param m
+     * @return
      */
-    public void setMaterial(@NotNull XMaterial m) {
+    public dItem setMaterial(@NotNull XMaterial m) {
         setItem(ItemUtils.setMaterial(getItem(), m));
         setRawItem(ItemUtils.setMaterial(getRawItem(), m));
         if (m.name().contains("GLASS"))
             setDurability(m.parseItem().getDurability(), true);
+        return this;
 
     }
 
@@ -256,8 +273,9 @@ public class dItem implements Serializable, Cloneable {
      * Sets the durability of the item
      *
      * @param durability
+     * @return
      */
-    public void setDurability(short durability, boolean glass) {
+    public dItem setDurability(short durability, boolean glass) {
         if (!glass) {
             setItem(ItemUtils.setDurability(getItem(), (short) (getItem().getType().getMaxDurability() - durability)));
             setRawItem(ItemUtils.setDurability(getRawItem(), (short) (getRawItem().getType().getMaxDurability() - durability)));
@@ -265,6 +283,7 @@ public class dItem implements Serializable, Cloneable {
             setItem(ItemUtils.setDurability(getItem(), durability));
             setRawItem(ItemUtils.setDurability(getRawItem(), durability));
         }
+        return this;
     }
 
     /**
@@ -280,20 +299,24 @@ public class dItem implements Serializable, Cloneable {
      * Adds enchantment to item
      *
      * @param ench
+     * @return
      */
-    public void addEnchantments(@NotNull Enchantment ench, int lvl) {
+    public dItem addEnchantments(@NotNull Enchantment ench, int lvl) {
         setItem(ItemUtils.addEnchant(getItem(), ench, lvl));
         setRawItem(ItemUtils.addEnchant(getRawItem(), ench, lvl));
+        return this;
     }
 
     /**
      * Removes enchantment from item
      *
      * @param ench
+     * @return
      */
-    public void removeEnchantments(@NotNull Enchantment ench) {
+    public dItem removeEnchantments(@NotNull Enchantment ench) {
         setItem(ItemUtils.removeEnchant(getItem(), ench));
         setRawItem(ItemUtils.removeEnchant(getRawItem(), ench));
+        return this;
 
     }
 
@@ -311,14 +334,16 @@ public class dItem implements Serializable, Cloneable {
      * Sets the amount of the item
      *
      * @param amount
+     * @return
      */
-    public void setQuantity(int amount) {
+    public dItem setQuantity(int amount) {
         ItemStack auxI = getItem();
         auxI.setAmount(amount);
         ItemStack auxE = getRawItem();
         auxE.setAmount(amount);
         setItem(auxI);
         setRawItem(auxE);
+        return this;
     }
 
     /**
@@ -353,8 +378,9 @@ public class dItem implements Serializable, Cloneable {
      * Toggles a flag from the item
      *
      * @param flag
+     * @return
      */
-    public void toggleFlag(ItemFlag flag) {
+    public dItem toggleFlag(ItemFlag flag) {
 
         if (ItemUtils.hasItemFlags(getItem(), flag)) {
             setItem(ItemUtils.removeItemFlags(getItem(), flag));
@@ -363,6 +389,7 @@ public class dItem implements Serializable, Cloneable {
             setItem(ItemUtils.addItemFlags(getItem(), flag));
             setRawItem(ItemUtils.addItemFlags(getRawItem(), flag));
         }
+        return this;
     }
 
     /**
@@ -376,9 +403,11 @@ public class dItem implements Serializable, Cloneable {
      * Set the price of the item as a fixed value
      *
      * @param price Fixed price for the item
+     * @return
      */
-    public void setBuyPrice(double price) {
+    public dItem setBuyPrice(double price) {
         item.setObject("rds_buyPrice", new dPrice(price));
+        return this;
     }
 
     /**
@@ -395,19 +424,23 @@ public class dItem implements Serializable, Cloneable {
      * Sets the buy price with a dPrice object
      *
      * @param price
+     * @return
      */
-    public void setBuyPrice(dPrice price) {
+    public dItem setBuyPrice(dPrice price) {
         item.setObject("rds_buyPrice", price);
+        return this;
     }
 
     /**
      * Generates a new price
+     * @return
      */
-    public void generateNewBuyPrice() {
+    public dItem generateNewBuyPrice() {
         getBuyPrice().ifPresent(dPrice -> {
             dPrice.generateNewPrice();
             setBuyPrice(dPrice);
         });
+        return this;
     }
 
     /**
@@ -421,9 +454,11 @@ public class dItem implements Serializable, Cloneable {
      * Set the price of the item as a fixed value
      *
      * @param price Fixed price for the item
+     * @return
      */
-    public void setSellPrice(double price) {
+    public dItem setSellPrice(double price) {
         item.setObject("rds_sellPrice", new dPrice(price));
+        return this;
     }
 
     /**
@@ -440,19 +475,21 @@ public class dItem implements Serializable, Cloneable {
         item.setObject("rds_sellPrice", price);
     }
 
-    public void generateNewSellPrice() {
+    public dItem generateNewSellPrice() {
         getSellPrice().ifPresent(dPrice -> {
             dPrice.generateNewPrice();
             setSellPrice(dPrice);
         });
+        return this;
     }
 
     public String getID() {
         return item.getString("rds_UUID");
     }
 
-    public void setID(String id) {
+    public dItem setID(String id) {
         item.setString("rds_UUID", id);
+        return this;
     }
 
     /**
@@ -474,9 +511,11 @@ public class dItem implements Serializable, Cloneable {
      * Set the stock of the item
      *
      * @param stock the stock to set
+     * @return
      */
-    public void setStock(@Nullable dStock stock) {
+    public dItem setStock(@Nullable dStock stock) {
         this.stock = stock;
+        return this;
     }
 
 
@@ -527,9 +566,11 @@ public class dItem implements Serializable, Cloneable {
      * Sets the rarity of the item
      *
      * @param rarity rarity to set, can be null
+     * @return
      */
-    public void setRarity(@NotNull dRarity rarity) {
+    public dItem setRarity(@NotNull dRarity rarity) {
         item.setObject("rds_rarity", rarity);
+        return this;
     }
 
     /**
@@ -545,9 +586,11 @@ public class dItem implements Serializable, Cloneable {
 
     /**
      * Set the next Rarity
+     * @return
      */
-    public void nextRarity() {
+    public dItem nextRarity() {
         setRarity(getRarity().next());
+        return this;
     }
 
     /**
@@ -574,9 +617,11 @@ public class dItem implements Serializable, Cloneable {
      * Set an economy for this item
      *
      * @param econ
+     * @return
      */
-    public void setEconomy(@NotNull economy econ) {
+    public dItem setEconomy(@NotNull economy econ) {
         item.setString("rds_econ", econ.serialize());
+        return this;
     }
 
     /**
@@ -592,9 +637,11 @@ public class dItem implements Serializable, Cloneable {
      * Sets the commands to run when this item is bought
      *
      * @param commands a list of Strings representing commands
+     * @return
      */
-    public void setCommands(@Nullable List<String> commands) {
+    public dItem setCommands(@Nullable List<String> commands) {
         item.setObject("rds_cmds", commands);
+        return this;
     }
 
 
