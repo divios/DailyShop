@@ -289,8 +289,7 @@ public class dInventory {
         dInventory newInv = new dInventory(this.title, this.inv.getSize(), this.shop);
         newInv.inv.setContents(this.inv.getContents());
         newInv.buttons.putAll(this.buttons);
-        newInv.dailyItemsSlots.clear();
-        newInv.dailyItemsSlots.addAll(dailyItemsSlots);
+        newInv.dailyItemsSlots.retainAll(dailyItemsSlots);
 
         return newInv;
     }
@@ -594,6 +593,19 @@ public class dInventory {
         @Override
         public Location getLocation() {
             return null;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || innerInv.getClass() != o.getClass()) return false;
+            Inventory that = (Inventory) o;
+            return Objects.equals(innerInv, o);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(innerInv);
         }
     }
 

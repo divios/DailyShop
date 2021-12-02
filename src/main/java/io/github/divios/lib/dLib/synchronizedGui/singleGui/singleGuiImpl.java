@@ -5,6 +5,7 @@ import io.github.divios.core_lib.events.Subscription;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.WeightedRandom;
+import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.events.searchStockEvent;
 import io.github.divios.dailyShop.events.updateItemEvent;
@@ -125,11 +126,13 @@ public class singleGuiImpl implements singleGui {
                     }
                 });
     }
-    
 
     @Override
     public synchronized void restock() {
-        own.restock(dRandomItemsSelector.of(shop.getItems(), dItem -> dItem.applyLore(loreStrategy, p)).roll());
+        Set<dItem> newItems = dRandomItemsSelector.of(
+                        shop.getItems(), dItem -> dItem.applyLore(loreStrategy, p))
+                .roll(own.dailyItemsSlots.size());
+        own.restock(newItems);
     }
 
     @Override
@@ -181,49 +184,29 @@ public class singleGuiImpl implements singleGui {
                 !(item.getBuyPrice().orElse(null).getPrice() < 0 &&
                         item.getSellPrice().orElse(null).getPrice() < 0) || item.getRarity().getWeight() != 0;
 
+        private static final Function<dItem, Integer> getWeights = dItem -> dItem.getRarity().getWeight();
+
         private final Map<UUID, dItem> items;
-        private final Function<dItem, Integer> getWeights;
-        private final Consumer<dItem> action;
+        private final Function<dItem, dItem> action;
 
         public static dRandomItemsSelector fromItems(Set<dItem> items) {
-            return new dRandomItemsSelector(items);
+            return new dRandomItemsSelector(items, Function.identity());
         }
 
-        public static dRandomItemsSelector of(Set<dItem> items, Consumer<dItem> action) {
+        public static dRandomItemsSelector of(Set<dItem> items, Function<dItem, dItem> action) {
             return new dRandomItemsSelector(items, action);
         }
 
-        private dRandomItemsSelector(Set<dItem> items) {
-            this(items, dItem -> {});
+        private dRandomItemsSelector(Set<dItem> items, Function<dItem, dItem> action) {
+            this(items.stream().collect(Collectors.toMap(dItem::getUid, dItem -> dItem)), action);
         }
 
-        private dRandomItemsSelector(Set<dItem> items, Consumer<dItem> action) {
-            this(items, dItem -> dItem.getRarity().getWeight(), action);
-        }
-
-        private dRandomItemsSelector(Set<dItem> items, Function<dItem, Integer> getWeights) {
-            this(items, getWeights, dItem -> {});
-        }
-
-        private dRandomItemsSelector(Set<dItem> items, Function<dItem, Integer> getWeights, Consumer<dItem> action) {
-            this(items.stream().collect(Collectors.toMap(dItem::getUid, dItem -> dItem)), getWeights, action);
-        }
-
-        private dRandomItemsSelector(Map<UUID, dItem> items) {
-            this(items, dItem -> dItem.getRarity().getWeight());
-        }
-
-        private dRandomItemsSelector(Map<UUID, dItem> items, Function<dItem, Integer> getWeights) {
-            this(items, getWeights, dItem -> {});
-        }
-
-        private dRandomItemsSelector(Map<UUID, dItem> items, Function<dItem, Integer> getWeights, Consumer<dItem> action) {
+        private dRandomItemsSelector(Map<UUID, dItem> items, Function<dItem, dItem> action) {
             this.items = items.entrySet().stream()
                     .filter(entry -> filterItems.test(entry.getValue()))
                     .collect(Collectors
                             .toMap(Map.Entry::getKey, Map.Entry::getValue)
                     );
-            this.getWeights = getWeights;
             this.action = action;
         }
 
@@ -248,19 +231,19 @@ public class singleGuiImpl implements singleGui {
         }
 
         public Set<dItem> roll(int max) {
-            Set<dItem> rolledItems = new HashSet<>();
+            Set<dItem> rolledItems = new LinkedHashSet<>();
 
             WeightedRandom<dItem> randomSelector = WeightedRandom.fromCollection(items.values(), dItem::clone, getWeights::apply);
 
             for (int i = 0; i < max; i++) {
                 dItem rolledItem = randomSelector.roll();
                 if (rolledItem == null) break;
+                Log.warn(rolledItem.getDisplayName());
 
                 rolledItem.generateNewBuyPrice();
                 rolledItem.generateNewSellPrice();
-                action.accept(rolledItem);
-                rolledItems.add(rolledItem);
                 randomSelector.remove(rolledItem);
+                rolledItems.add(action.apply(rolledItem));
             }
 
             return rolledItems;

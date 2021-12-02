@@ -228,9 +228,9 @@ public class dItem implements Serializable, Cloneable {
         return this;
     }
 
-    public dItem applyLore(loreStrategy strategy, Object ...data) {
+    public dItem applyLore(loreStrategy strategy, Object... data) {
         setItem(strategy.applyLore(item.getItem(), data));
-        setRawItem(strategy.applyLore(getRawItem(), data));
+        //setRawItem(strategy.applyLore(getRawItem(), data));
         return this;
     }
 
@@ -433,6 +433,7 @@ public class dItem implements Serializable, Cloneable {
 
     /**
      * Generates a new price
+     *
      * @return
      */
     public dItem generateNewBuyPrice() {
@@ -586,6 +587,7 @@ public class dItem implements Serializable, Cloneable {
 
     /**
      * Set the next Rarity
+     *
      * @return
      */
     public dItem nextRarity() {
