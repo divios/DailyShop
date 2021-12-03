@@ -14,13 +14,13 @@ public interface singleGui {
         return new singleGuiImpl(null, shop, dInventory.fromBase64(json, shop));
     }
 
-    static singleGui create(dShop shop) { return new singleGuiImpl(null, shop, new dInventory(shop.getName(), 27, shop)); }
+    static singleGui create(dShop shop) {
+        return new singleGuiImpl(null, shop, new dInventory(shop.getName(), 27, shop));
+    }
 
     static singleGui create(Player p, singleGui base, dShop shop) {
         return new singleGuiImpl(p, shop, base);
     }
-
-    static singleGui create(Player p, dInventory inv, dShop shop) { return new singleGuiImpl(p, shop, inv); }
 
     void updateItem(updateItemEvent o);
 

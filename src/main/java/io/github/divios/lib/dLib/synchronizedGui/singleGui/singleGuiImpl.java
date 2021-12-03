@@ -66,15 +66,14 @@ public class singleGuiImpl implements singleGui {
         events.add(
                 Events.subscribe(searchStockEvent.class)                // Respond to search events
                         .filter(o -> o.getShop().equals(shop))
-                        .handler(o ->
-                                own.getButtons().values().stream()
-                                        .filter(dItem -> dItem.getUid().equals(o.getUuid()))
-                                        .findFirst()
-                                        .ifPresent(dItem -> {
-                                            if (!dItem.hasStock()) o.respond(-1);
-                                            else o.respond(dItem.getStock().get(o.getPlayer()));
-                                        }))
-        );
+                        .handler(o -> {
+                                    dItem itemToSearch;
+                                    if ((itemToSearch = own.getButtons().get(o.getUuid())) != null) {
+                                        if (!itemToSearch.hasStock()) o.respond(-1);
+                                        else o.respond(itemToSearch.getStock().get(o.getPlayer()));
+                                    }
+                                }
+                        ));
     }
 
     @Override

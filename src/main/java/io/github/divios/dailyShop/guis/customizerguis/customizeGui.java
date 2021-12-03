@@ -55,7 +55,6 @@ public class customizeGui implements Listener, InventoryHolder {
         this.p = p;
         this.shop = shop;
         this._gui = inv.skeleton();
-        this.inv = inv.copy().getInventory();
 
         Schedulers.sync().runLater(() -> Bukkit.getPluginManager().registerEvents(this, plugin), 1L);
         withdrawPlayerItems();
@@ -302,6 +301,7 @@ public class customizeGui implements Listener, InventoryHolder {
     }
 
     private void upperInventoryAction(InventoryClickEvent e) {
+
         if (toClone != null && Utils.isEmpty(e.getCurrentItem())
                 && e.getClick().equals(ClickType.MIDDLE)) {     // paste clipboard
             _gui.addButton(toClone.copy(), e.getSlot());

@@ -89,7 +89,7 @@ public abstract class abstractSyncMenu implements syncMenu {
      */
     private synchronized void updateBase(updateShopEvent o) {
         base.destroy();
-        base = singleGui.create(null, o.getNewInv(), shop);
+        base = singleGui.fromJson(o.getNewInv().toBase64(), shop);
         reStock(o.isSilent());
     }
 

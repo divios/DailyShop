@@ -4,6 +4,7 @@ import io.github.divios.core_lib.events.Events;
 import io.github.divios.core_lib.events.Subscription;
 import io.github.divios.core_lib.inventory.inventoryUtils;
 import io.github.divios.core_lib.itemutils.ItemUtils;
+import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.lorestategy.loreStrategy;
 import io.github.divios.dailyShop.lorestategy.shopItemsLore;
@@ -284,6 +285,8 @@ public class dInventory {
         newInv.inv.setContents(this.inv.getContents());
         newInv.buttons.putAll(this.buttons);
         newInv.dailyItemsSlots.retainAll(dailyItemsSlots);
+        dailyItemsSlots.forEach(integer -> Log.warn(String.valueOf(integer)));
+        newInv.dailyItemsSlots.forEach(integer -> Log.warn(String.valueOf(integer)));
 
         return newInv;
     }
