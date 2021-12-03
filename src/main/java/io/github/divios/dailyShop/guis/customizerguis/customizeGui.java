@@ -8,6 +8,7 @@ import io.github.divios.core_lib.misc.ChatPrompt;
 import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.core_lib.misc.confirmIH;
 import io.github.divios.core_lib.scheduler.Schedulers;
+import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.events.updateShopEvent;
 import io.github.divios.dailyShop.guis.settings.shopsManagerGui;
@@ -191,6 +192,7 @@ public class customizeGui implements Listener, InventoryHolder {
             return;
         }
 
+        Log.info("oke");
         depositPlayerItems();
         unregisterAll();
         Schedulers.sync().runLater(() -> shopsManagerGui.open(p), 1L);
@@ -255,8 +257,8 @@ public class customizeGui implements Listener, InventoryHolder {
     }
 
     private void backButtonAction() {
-        preventClose = false;
-        p.closeInventory();
+        unregisterAll();
+        shopsManagerGui.open(p);
     }
 
     private boolean isApplyButton(InventoryClickEvent e) {
@@ -265,8 +267,8 @@ public class customizeGui implements Listener, InventoryHolder {
 
     private void applyChangesAction() {
         Events.callEvent(new updateShopEvent(shop, _gui));
-        preventClose = false;
-        p.closeInventory();
+        unregisterAll();
+        shopsManagerGui.open(p);
     }
 
     private void changeNameAction() {

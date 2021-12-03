@@ -1,14 +1,20 @@
 package io.github.divios.lib.dLib.synchronizedGui.singleGui;
 
+import com.google.common.reflect.TypeToken;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import io.github.divios.core_lib.events.Events;
 import io.github.divios.core_lib.events.Subscription;
+import io.github.divios.core_lib.gson.JsonBuilder;
 import io.github.divios.core_lib.inventory.inventoryUtils;
 import io.github.divios.core_lib.itemutils.ItemUtils;
+import io.github.divios.core_lib.misc.Pair;
 import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.lorestategy.loreStrategy;
 import io.github.divios.dailyShop.lorestategy.shopItemsLore;
 import io.github.divios.dailyShop.transaction.transaction;
+import io.github.divios.dailyShop.utils.Timer;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
@@ -281,14 +287,7 @@ public class dInventory {
      * @return The copy of this inventory.
      */
     public dInventory copy() {
-        dInventory newInv = new dInventory(this.title, this.inv.getSize(), this.shop);
-        newInv.inv.setContents(this.inv.getContents());
-        newInv.buttons.putAll(this.buttons);
-        newInv.dailyItemsSlots.retainAll(dailyItemsSlots);
-        dailyItemsSlots.forEach(integer -> Log.warn(String.valueOf(integer)));
-        newInv.dailyItemsSlots.forEach(integer -> Log.warn(String.valueOf(integer)));
-
-        return newInv;
+        return fromBase64(toBase64(), shop);
     }
 
     /**
@@ -298,10 +297,6 @@ public class dInventory {
     public void destroy() {
         listeners.forEach(Subscription::unregister);
         listeners.clear();
-        buttons.clear();
-        dailyItemsSlots.clear();
-        title = null;
-        inv = null;
     }
 
     /**
