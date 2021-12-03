@@ -19,20 +19,16 @@ public class WrappedShop extends dShop {
         super(name);
     }
 
-    protected WrappedShop(String name, dShopT type) {
-        super(name, type);
+    protected WrappedShop(String name, String base64, Timestamp timestamp, int timer) {
+        super(name, base64, timestamp, timer);
     }
 
-    protected WrappedShop(String name, dShopT type, String base64, Timestamp timestamp, int timer) {
-        super(name, type, base64, timestamp, timer);
-    }
-
-    protected WrappedShop(String name, dShopT type, String base64, Timestamp timestamp, int timer, Set<dItem> items) {
-        super(name, type, base64, timestamp, timer, items);
+    protected WrappedShop(String name, String base64, Timestamp timestamp, int timer, Set<dItem> items) {
+        super(name, base64, timestamp, timer, items);
     }
 
     protected WrappedShop(dShop fromShop) {
-        this(fromShop.getName(), dShopT.buy, fromShop.getGuis().getDefault().toBase64(), fromShop.getTimestamp(), fromShop.getTimer(), new HashSet<>(fromShop.getItems()));
+        this(fromShop.getName(), fromShop.getGuis().getDefault().toBase64(), fromShop.getTimestamp(), fromShop.getTimer(), new HashSet<>(fromShop.getItems()));
     }
 
     @Override

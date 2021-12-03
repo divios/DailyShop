@@ -9,7 +9,7 @@ public class LogOptions {
     private String fPlayer = null;
     private String fShopId = null;
     private UUID fItemUUID = null;
-    private dShop.dShopT fType = null;
+    private dLogEntry.Type fType = null;
     private quantityFilter fQuantity = null;
     private boolean display = true;
 
@@ -17,7 +17,7 @@ public class LogOptions {
 
     LogOptions() {}
 
-    LogOptions(String fPlayer, String fShopId, UUID fItemUUID, dShop.dShopT fType, quantityFilter fQuantity, boolean display) {
+    LogOptions(String fPlayer, String fShopId, UUID fItemUUID, dLogEntry.Type fType, quantityFilter fQuantity, boolean display) {
         this.fPlayer = fPlayer;
         this.fShopId = fShopId;
         this.fItemUUID = fItemUUID;
@@ -41,7 +41,7 @@ public class LogOptions {
         return this;
     }
 
-    public LogOptions setfType(dShop.dShopT fType) {
+    public LogOptions setfType(dLogEntry.Type fType) {
         this.fType = fType;
         return this;
     }
@@ -73,7 +73,7 @@ public class LogOptions {
         return fItemUUID;
     }
 
-    public dShop.dShopT getfType() {
+    public dLogEntry.Type getfType() {
         return fType;
     }
 

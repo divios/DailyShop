@@ -148,7 +148,7 @@ public class transaction {
                         .withItemUUID(item.getUid())
                         .withRawItem(item.getRawItem())
                         .withQuantity(amount)
-                        .withType(dShop.dShopT.buy)
+                        .withType(dLogEntry.Type.BUY)
                         .withPrice(s.getPrice())
                         .build()
         );

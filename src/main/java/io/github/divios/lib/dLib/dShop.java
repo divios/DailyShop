@@ -1,7 +1,13 @@
 package io.github.divios.lib.dLib;
 
+import com.google.common.base.Preconditions;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import io.github.divios.core_lib.events.Events;
 import io.github.divios.core_lib.events.Subscription;
+import io.github.divios.core_lib.gson.JsonBuilder;
 import io.github.divios.core_lib.misc.timeStampUtils;
 import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.core_lib.scheduler.Task;
@@ -11,11 +17,16 @@ import io.github.divios.dailyShop.events.updateItemEvent;
 import io.github.divios.dailyShop.guis.settings.shopGui;
 import io.github.divios.lib.dLib.synchronizedGui.syncHashMenu;
 import io.github.divios.lib.dLib.synchronizedGui.syncMenu;
+import io.github.divios.lib.serialize.adapters.dItemAdapter;
 import io.github.divios.lib.storage.databaseManager;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.sql.Time;
 import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatterBuilder;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -24,8 +35,9 @@ public class dShop {
     protected static final DailyShop plugin = DailyShop.getInstance();
     protected static final databaseManager dManager = databaseManager.getInstance();
 
+    private static final serializeOptions serializer = new serializeOptions();
+
     protected String name;
-    protected final dShopT type;
     protected final Map<UUID, dItem> items = new LinkedHashMap<>();
     protected final syncMenu guis;
 
@@ -35,45 +47,50 @@ public class dShop {
     protected final Set<Task> tasks = new HashSet<>();
     protected final Set<Subscription> listeners = new HashSet<>();
 
-    public dShop(String name) {
-        this(name, dShopT.buy);
+    public static serializeOptions serializeOptions() {
+        return serializer;
     }
 
-    @Deprecated
-    public dShop(String name, dShopT type) {
+    public dShop(String name) {
+        this(name, plugin.configM.getSettingsYml().DEFAULT_TIMER);
+    }
+
+    public dShop(String name, int timer) {
+        this(name, timer, new Timestamp(System.currentTimeMillis()));
+    }
+
+    public dShop(String name, int timer, Timestamp timestamp) {
         this.name = name;
-        this.type = type;
-        this.timestamp = new Timestamp(System.currentTimeMillis());
-        this.timer = plugin.configM.getSettingsYml().DEFAULT_TIMER;  // seconds representing time to pass until reset
+        this.timer = timer;
+        this.timestamp = timestamp;
         this.guis = syncHashMenu.create(this);
 
-        ready();
+        startTimerTask();
     }
 
+    
     @Deprecated
-    public dShop(String name, dShopT type, String base64, Timestamp timestamp, int timer) {
+    public dShop(String name, String base64, Timestamp timestamp, int timer) {
         this.name = name;
-        this.type = type;
         this.timestamp = timestamp;
         this.timer = timer;
 
         guis = syncHashMenu.fromJson(base64, this);
-        ready();
+        startTimerTask();
     }
 
     @Deprecated
-    public dShop(String name, dShopT type, String base64, Timestamp timestamp, int timer, Set<dItem> items) {
+    public dShop(String name, String base64, Timestamp timestamp, int timer, Set<dItem> items) {
         this.name = name;
-        this.type = type;
         this.timestamp = timestamp;
         this.timer = timer;
         items.forEach(dItem -> this.items.put(dItem.getUid(), dItem));
 
         guis = syncHashMenu.fromJson(base64, this);
-        ready();
+        startTimerTask();
     }
 
-    protected void ready() {
+    protected void startTimerTask() {
         tasks.add(
                 Schedulers.async().runRepeating(() -> {
 
@@ -83,12 +100,6 @@ public class dShop {
 
                 }, 1, TimeUnit.SECONDS, 1, TimeUnit.SECONDS)
         );
-    }
-
-    public synchronized void reStock() {
-        timestamp = new Timestamp(System.currentTimeMillis());
-        Events.callEvent(new reStockShopEvent(this));
-        guis.reStock();
     }
 
     /**
@@ -137,15 +148,6 @@ public class dShop {
     }
 
     /**
-     * Gets the type of the shop
-     *
-     * @return type of the shop (buy,sell)
-     */
-    public synchronized dShopT getType() {
-        return type;
-    }
-
-    /**
      * Gets a copy the items in the shop
      *
      * @return returns a List of dItems. Note that this list is a copy of the original,
@@ -174,6 +176,15 @@ public class dShop {
      */
     public synchronized boolean hasItem(UUID uid) {
         return getItem(uid).isPresent();
+    }
+
+    /**
+     * Restocks the items of this shop.
+     */
+    public synchronized void reStock() {
+        timestamp = new Timestamp(System.currentTimeMillis());
+        Events.callEvent(new reStockShopEvent(this));
+        guis.reStock();
     }
 
     /**
@@ -271,6 +282,19 @@ public class dShop {
     }
 
     @Override
+    public String toString() {
+        return "dShop{" +
+                "name='" + name + '\'' +
+                ", items=" + items +
+                ", guis=" + guis +
+                ", timestamp=" + timestamp +
+                ", timer=" + timer +
+                ", tasks=" + tasks +
+                ", listeners=" + listeners +
+                '}';
+    }
+
+    @Override
     public boolean equals(Object o) {
         return o instanceof dShop &&
                 this.getName().equals(((dShop) o).getName());
@@ -282,9 +306,80 @@ public class dShop {
     }
 
 
-    public enum dShopT {
-        buy,
-        sell
+    /**
+     * Serializers
+     **/
+
+    public static class serializeOptions {
+
+        private final jsonSerializer JSON = new jsonSerializer();
+
+        private serializeOptions() {
+        }
+
+        public jsonSerializer json() {
+            return JSON;
+        }
+    }
+
+    public static final class jsonSerializer {
+
+        private static final SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss");
+        private static final Gson gson = new GsonBuilder()
+                .registerTypeAdapter(dItem.class, new dItemAdapter())
+                .create();
+
+        private jsonSerializer() {
+        }
+
+        public JsonObject toJson(dShop shop) {
+
+            return JsonBuilder.object()
+                    .add("id", shop.name)
+                    .add("timer", shop.timer)
+                    .add("timeStamp", dateFormat.format(shop.timestamp))
+                    .add("shop", "null")
+                    .add("items", gson.toJsonTree(parseUUIDs(shop.items)))
+                    .build();
+        }
+
+        public dShop fromJson(JsonElement element) {
+
+            JsonObject object = element.getAsJsonObject();
+
+            Preconditions.checkArgument(object.has("id"), "A shop needs an ID");
+            Preconditions.checkArgument(object.has("items"), "A shop needs items");
+
+            String id = object.get("id").getAsString();
+            int timer = object.has("timer") ? object.get("timer").getAsInt() : plugin.configM.getSettingsYml().DEFAULT_TIMER;
+            Timestamp timestamp = object.has("timestamp") ? new Timestamp(wrappedParse(object.get("timestamp").getAsString()).getTime()) : new Timestamp(System.currentTimeMillis());
+
+            dShop deserializedShop = new dShop(id, timer, timestamp);
+
+            Map<UUID, dItem> items = null; //object.get("items").getAsJsonObject();
+            deserializedShop.items.putAll(items);
+
+            if (object.has("items"))
+                object.get("items");  // new updateShopEvent(deserializeShop, ...);
+
+            return deserializedShop;
+        }
+
+        private Map<String, dItem> parseUUIDs(Map<UUID, dItem> items) {
+            Map<String, dItem> newMap = new HashMap<>();
+            items.values().forEach(dItem -> newMap.put(dItem.getID(), dItem));
+
+            return newMap;
+        }
+
+        private Date wrappedParse(String s) {
+            try {
+                return dateFormat.parse(s);
+            } catch (ParseException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
     }
 
 }

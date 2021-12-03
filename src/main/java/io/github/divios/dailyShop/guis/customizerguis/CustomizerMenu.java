@@ -17,6 +17,7 @@ import io.github.divios.dailyShop.guis.settings.shopGui;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
+import io.github.divios.lib.dLib.log.options.dLogEntry;
 import io.github.divios.lib.dLib.stock.factory.dStockFactory;
 import io.github.divios.lib.managers.shopsManager;
 import org.bukkit.entity.Player;
@@ -268,7 +269,7 @@ public class CustomizerMenu {
                         , e ->
                                 changePrice.builder()
                                         .withPlayer(p)
-                                        .withType(e.isLeftClick() ? dShop.dShopT.buy : dShop.dShopT.sell)
+                                        .withType(e.isLeftClick() ? changePrice.Type.BUY : changePrice.Type.SELL)
                                         .withItem(item)
                                         .withAccept(dItem -> new CustomizerMenu(p, dItem, shop))
                                         .withBack(this::refresh)

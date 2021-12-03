@@ -72,4 +72,9 @@ public abstract class dStockAbstract implements dStock{
 
     protected abstract UUID getKey(UUID uuid);
 
+    @Override
+    public String toString() {
+        return getName() + ":" + defaultStock;
+    }
+
 }

@@ -116,12 +116,12 @@ public class LogOptionsGui {
         inv.open(p);
     }
 
-    private dShop.dShopT nextType() {
-        if (options.getfType() == dShop.dShopT.buy)
-            return dShop.dShopT.sell;
-        else if (options.getfType() == dShop.dShopT.sell)
+    private dLogEntry.Type nextType() {
+        if (options.getfType() == dLogEntry.Type.BUY)
+            return dLogEntry.Type.SELL;
+        else if (options.getfType() == dLogEntry.Type.SELL)
             return null;
-        else return dShop.dShopT.buy;
+        else return dLogEntry.Type.BUY;
     }
 
     public static LogOptionsGuiBuilder builder() {

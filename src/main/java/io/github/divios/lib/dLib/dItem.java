@@ -2,6 +2,9 @@ package io.github.divios.lib.dLib;
 
 
 import com.cryptomorin.xseries.XMaterial;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import de.tr7zw.nbtapi.NBTCompound;
 import de.tr7zw.nbtapi.NBTContainer;
 import de.tr7zw.nbtapi.NBTItem;
@@ -790,6 +793,10 @@ public class dItem implements Serializable, Cloneable {
      */
     private void setSIGN() {
         item.setBoolean("rds_SIGN", true);
+    }
+
+    public JsonObject getNBT() {
+        return new Gson().fromJson(item.toString(), JsonObject.class);
     }
 
 

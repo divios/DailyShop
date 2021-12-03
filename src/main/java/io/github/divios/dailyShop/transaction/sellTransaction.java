@@ -197,7 +197,7 @@ public class sellTransaction {
                 .withItemUUID(item.getUid())
                 .withRawItem(item.getRawItem())
                 .withQuantity(quantity)
-                .withType(dShop.dShopT.sell)
+                .withType(dLogEntry.Type.SELL)
                 .withPrice(getItemPrice())
                 .build();
     }

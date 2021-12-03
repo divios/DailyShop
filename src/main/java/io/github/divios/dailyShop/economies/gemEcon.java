@@ -5,7 +5,7 @@ import me.xanium.gemseconomy.api.GemsEconomyAPI;
 import me.xanium.gemseconomy.currency.Currency;
 import org.bukkit.entity.Player;
 
-public class gemEcon extends economy {
+public class gemEcon extends abstractEconomy {
 
     private final Currency _currency;
     private transient final static GemsEconomyAPI gemApi = hooksManager.getInstance().getGemsEcon();

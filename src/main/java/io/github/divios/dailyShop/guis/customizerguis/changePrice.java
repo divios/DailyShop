@@ -11,6 +11,7 @@ import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
+import io.github.divios.lib.dLib.log.options.dLogEntry;
 import org.bukkit.entity.Player;
 
 import java.util.function.Consumer;
@@ -22,8 +23,8 @@ public class changePrice {
 
     private final Player p;
     private final dItem item;
+    private final Type type;
     private final dShop shop;
-    private final dShop.dShopT type;
     private final Consumer<dItem> accept;
     private final Runnable back;
 
@@ -32,7 +33,7 @@ public class changePrice {
             Player p,
             dItem item,
             dShop shop,
-            dShop.dShopT type,
+            Type type,
             Consumer<dItem> accept,
             Runnable back
     ) {
@@ -77,7 +78,7 @@ public class changePrice {
                                     double price = Double.parseDouble(s);
                                     if (price < 0) price = -1;
 
-                                    if (type == dShop.dShopT.buy)
+                                    if (type == Type.BUY)
                                         item.setBuyPrice(price);
                                     else item.setSellPrice(price);
 
@@ -123,7 +124,7 @@ public class changePrice {
                                     return;
                                 }
 
-                                if (type == dShop.dShopT.buy)
+                                if (type == Type.BUY)
                                     item.setBuyPrice(prices[0], prices[1]);
                                 else item.setSellPrice(prices[0], prices[1]);
 
@@ -164,7 +165,7 @@ public class changePrice {
     public static final class changePriceBuilder {
         private Player p;
         private dItem item;
-        private dShop.dShopT type;
+        private Type type;
         private Consumer<dItem> accept;
         private Runnable back;
 
@@ -180,7 +181,7 @@ public class changePrice {
             return this;
         }
 
-        public changePriceBuilder withType(dShop.dShopT type) {
+        public changePriceBuilder withType(Type type) {
             this.type = type;
             return this;
         }
@@ -200,4 +201,10 @@ public class changePrice {
             return new changePrice(p, item, null, type, accept, back);
         }
     }
+
+    public enum Type {
+        BUY,
+        SELL
+    }
+
 }

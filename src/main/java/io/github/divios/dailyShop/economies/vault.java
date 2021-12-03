@@ -4,7 +4,7 @@ import io.github.divios.dailyShop.hooks.hooksManager;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.entity.Player;
 
-public class vault extends economy {
+public class vault extends abstractEconomy {
 
     private transient static final Economy vault = hooksManager.getInstance().getVault();
 

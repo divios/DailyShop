@@ -49,4 +49,10 @@ public enum dAction {
         action.accept(p, s);
     }
 
+    @Override
+    public String toString() {
+        return "dAction{" +
+                "action=" + action +
+                '}';
+    }
 }

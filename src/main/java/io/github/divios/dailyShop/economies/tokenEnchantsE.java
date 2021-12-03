@@ -4,7 +4,7 @@ import com.vk2gpz.tokenenchant.api.TokenEnchantAPI;
 import io.github.divios.dailyShop.hooks.hooksManager;
 import org.bukkit.entity.Player;
 
-public class tokenEnchantsE extends economy {
+public class tokenEnchantsE extends abstractEconomy {
 
     public tokenEnchantsE() { this(""); }
 

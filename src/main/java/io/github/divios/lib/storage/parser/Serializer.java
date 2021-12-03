@@ -21,11 +21,7 @@ public class Serializer {
     }
 
     protected static JsonObject serializeShop(dShop shop) {
-        return JsonBuilder.object()
-                .add("id", shop.getName())
-                .add("shop", serializeShopInventory(shop))
-                .add("items", serializeShopItems(shop))
-                .build();
+        return dShop.serializeOptions().json().toJson(shop);
     }
 
     private static JsonElement serializeShopInventory(dShop shop) {

@@ -5,6 +5,8 @@ import io.github.divios.core_lib.commands.abstractCommand;
 import io.github.divios.core_lib.commands.cmdTypes;
 import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.dailyShop.DailyShop;
+import io.github.divios.lib.managers.shopsManager;
+import io.github.divios.lib.storage.parser.ParserApi;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -45,9 +47,10 @@ public class reload extends abstractCommand {
 
     @Override
     public void run(CommandSender sender, List<String> args) {
-        DailyShop.getInstance().reloadPlugin();
+        /*DailyShop.getInstance().reloadPlugin();
         if (sender instanceof Player) Titles.sendTitle((Player) sender, 25, 40, 25,
                 FormatUtils.color("&a&lPlugin Reloaded"), "");
-        else sender.sendMessage("Plugin Reloaded");
+        else sender.sendMessage("Plugin Reloaded"); */
+        ParserApi.saveShopToFile(shopsManager.getInstance().getShop("ore").get());
     }
 }

@@ -50,7 +50,6 @@ public class databaseManager extends DataManagerAbstract {
                 while (result.next()) {
                     String name = result.getString("name");
                     dShop shop = new dShop(name,
-                            dShop.dShopT.valueOf(result.getString("type")),
                             result.getString("gui"),
                             timeStampUtils.deserialize(result.getString("timestamp")),
                             result.getInt("timer"),
@@ -97,7 +96,6 @@ public class databaseManager extends DataManagerAbstract {
                     "active_shops (name, type, gui, timestamp, timer) VALUES (?, ?, ?, ?, ?)";
             try (PreparedStatement statement = connection.prepareStatement(createShop)) {
                 statement.setString(1, shop.getName());
-                statement.setString(2, shop.getType().name());
                 statement.setString(3, shop.getGuis().toJson());
                 statement.setString(4, timeStampUtils.serialize(shop.getTimestamp()));
                 statement.setInt(5, shop.getTimer());
@@ -324,7 +322,7 @@ public class databaseManager extends DataManagerAbstract {
                             .withShopID(result.getString("shopID"))
                             .withItemUUID(result.getString("itemUUID"))
                             .withRawItem(ItemUtils.deserialize(result.getString("rawItem")))
-                            .withType(dShop.dShopT.valueOf(result.getString("type")))
+                            .withType(dLogEntry.Type.valueOf(result.getString("type")))
                             .withPrice(result.getDouble("price"))
                             .withQuantity(result.getInt("quantity"))
                             .withTimestamp(timestamp)

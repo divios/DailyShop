@@ -256,7 +256,7 @@ public class shopsManagerGui {
                         return;
                     }
 
-                    shopsManager.getInstance().createShop(s, dShop.dShopT.buy);
+                    shopsManager.getInstance().createShop(s);
                     Schedulers.sync().run(() -> refresh(p));
                 })
                 .withCancel(cancelReason -> Schedulers.sync().run(() -> refresh(p)))

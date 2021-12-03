@@ -89,11 +89,7 @@ public class shopsManager {
      */
 
     public synchronized void createShop(String name) {
-        createShop(name, dShop.dShopT.buy);
-    }
-
-    public synchronized void createShop(String name, dShop.dShopT type) {
-        createShop(new WrappedShop(name, type));
+        createShop(new WrappedShop(name));
     }
 
     public synchronized void createShop(dShop newShop) {
@@ -109,11 +105,7 @@ public class shopsManager {
     }
 
     public synchronized void createShopAsync(String name) {
-        createShopAsync(name, dShop.dShopT.buy);
-    }
-
-    public synchronized void createShopAsync(String name, dShop.dShopT type) {
-        createShopAsync(new WrappedShop(name, type));
+        createShopAsync(new WrappedShop(name));
     }
 
     public synchronized void createShopAsync(dShop newShop) {

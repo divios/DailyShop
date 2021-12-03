@@ -21,12 +21,12 @@ public class dLogEntry {
     private final String shopID;
     private final UUID itemUUID;
     private final ItemStack rawItem;
-    private final dShop.dShopT type;
+    private final Type type;
     private final double price;
     private final int quantity;
     private final Timestamp timestamp;
 
-    private dLogEntry(String p, String shopID, UUID itemUUID, ItemStack rawItem, dShop.dShopT type, double price, int quantity, Timestamp timestamp) {
+    private dLogEntry(String p, String shopID, UUID itemUUID, ItemStack rawItem, Type type, double price, int quantity, Timestamp timestamp) {
         this.p = p;
         this.shopID = shopID;
         this.itemUUID = itemUUID;
@@ -53,7 +53,7 @@ public class dLogEntry {
         return rawItem;
     }
 
-    public dShop.dShopT getType() {
+    public Type getType() {
         return type;
     }
 
@@ -81,7 +81,7 @@ public class dLogEntry {
         private String shopID;
         private UUID itemUUID;
         private ItemStack rawItem;
-        private dShop.dShopT type;
+        private Type type;
         private Double price;
         private Integer quantity;
         private Timestamp timestamp;
@@ -117,7 +117,7 @@ public class dLogEntry {
             return this;
         }
 
-        public dLogEntryBuilder withType(dShop.dShopT type) {
+        public dLogEntryBuilder withType(Type type) {
             this.type = type;
             return this;
         }
@@ -221,9 +221,14 @@ public class dLogEntry {
                 e.printStackTrace();
             }
 
-            return new dLogEntry(p, shopID, UUID.fromString(itemUUID), ItemUtils.deserialize(item), dShop.dShopT.valueOf(type), price, quantity, new Timestamp(date.getTime()));
+            return new dLogEntry(p, shopID, UUID.fromString(itemUUID), ItemUtils.deserialize(item), Type.valueOf(type), price, quantity, new Timestamp(date.getTime()));
         }
 
+    }
+
+    public enum Type {
+        BUY,
+        SELL
     }
 
 }
