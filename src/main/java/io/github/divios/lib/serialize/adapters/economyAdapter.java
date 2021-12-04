@@ -1,5 +1,6 @@
 package io.github.divios.lib.serialize.adapters;
 
+import com.google.common.base.Preconditions;
 import com.google.gson.*;
 import io.github.divios.dailyShop.economies.economy;
 
@@ -9,7 +10,11 @@ public class economyAdapter implements JsonSerializer<economy>, JsonDeserializer
 
     @Override
     public economy deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
-        return null;
+        JsonObject object = jsonElement.getAsJsonObject();
+
+        Preconditions.checkArgument(object.has("name"), "econ needs a name");
+
+        return economy.getFromKey(object.get("name").getAsString(), object.has("currency") ? object.get("currency").getAsString() : "");
     }
 
     @Override

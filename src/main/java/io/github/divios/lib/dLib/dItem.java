@@ -799,6 +799,10 @@ public class dItem implements Serializable, Cloneable {
         return new Gson().fromJson(item.toString(), JsonObject.class);
     }
 
+    public dItem setNBT(JsonObject nbt) {
+        item.mergeCompound(new NBTContainer(nbt.toString()));
+        return this;
+    }
 
     /**
      * Check if an dItem is masked as AIR

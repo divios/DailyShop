@@ -1,11 +1,15 @@
 package io.github.divios.dailyShop.utils;
 
 import com.cryptomorin.xseries.XMaterial;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.misc.Msg;
 import io.github.divios.core_lib.misc.timeStampUtils;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.lib.dLib.dShop;
+import me.xanium.gemseconomy.file.F;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -15,9 +19,14 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.yaml.snakeyaml.Yaml;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
@@ -255,6 +264,19 @@ public class Utils {
         } catch (Exception e) {
             catchRunnable.accept(e);
         }
+    }
+
+    private static Gson gson = new Gson();
+    private static Yaml yaml = new Yaml();
+    public static JsonElement getJsonFromFile(File file) {
+
+        Object loadedYaml = null;
+        try {
+            loadedYaml = yaml.load(new FileReader(file));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return gson.toJsonTree(loadedYaml, LinkedHashMap.class);
     }
 
 }

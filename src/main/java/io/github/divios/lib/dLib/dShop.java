@@ -1,6 +1,7 @@
 package io.github.divios.lib.dLib;
 
 import com.google.common.base.Preconditions;
+import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
@@ -22,11 +23,9 @@ import io.github.divios.lib.storage.databaseManager;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.sql.Time;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.format.DateTimeFormatterBuilder;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -328,6 +327,7 @@ public class dShop {
         private static final Gson gson = new GsonBuilder()
                 .registerTypeAdapter(dItem.class, new dItemAdapter())
                 .create();
+        private static final TypeToken<LinkedHashMap<String, dItem>> diItemsToken = new TypeToken<LinkedHashMap<String, dItem>>(){};
 
         private jsonSerializer() {
         }
@@ -344,26 +344,26 @@ public class dShop {
         }
 
         public dShop fromJson(JsonElement element) {
-
             JsonObject object = element.getAsJsonObject();
 
             Preconditions.checkArgument(object.has("id"), "A shop needs an ID");
             Preconditions.checkArgument(object.has("items"), "A shop needs items");
 
+            dShop deserializedShop;
+
             String id = object.get("id").getAsString();
             int timer = object.has("timer") ? object.get("timer").getAsInt() : plugin.configM.getSettingsYml().DEFAULT_TIMER;
             Timestamp timestamp = object.has("timestamp") ? new Timestamp(wrappedParse(object.get("timestamp").getAsString()).getTime()) : new Timestamp(System.currentTimeMillis());
 
-            dShop deserializedShop = new dShop(id, timer, timestamp);
+            deserializedShop = new dShop(id, timer, timestamp);
 
-            Map<UUID, dItem> items = null; //object.get("items").getAsJsonObject();
-            deserializedShop.items.putAll(items);
-
-            if (object.has("items"))
-                object.get("items");  // new updateShopEvent(deserializeShop, ...);
+            //Deserialize shop display
+            Map<String, dItem> items = gson.fromJson(object.get("items").getAsJsonObject(), diItemsToken.getType());
+            items.forEach((s, dItem) -> deserializedShop.addItem(dItem.setID(s)));
 
             return deserializedShop;
         }
+
 
         private Map<String, dItem> parseUUIDs(Map<UUID, dItem> items) {
             Map<String, dItem> newMap = new HashMap<>();
