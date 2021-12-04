@@ -2,6 +2,7 @@ package io.github.divios.dailyShop.commands;
 
 import io.github.divios.core_lib.commands.abstractCommand;
 import io.github.divios.core_lib.commands.cmdTypes;
+import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.lib.dLib.log.LogGui;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -27,7 +28,8 @@ public class logCmd extends abstractCommand {
 
     @Override
     public String getHelp() {
-        return "null";
+        return FormatUtils.color("&8- &6/rdshop log &8 " +
+                    "- &7Shows the log menu");
     }
 
     @Override
