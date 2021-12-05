@@ -19,10 +19,13 @@ import io.github.divios.dailyShop.guis.settings.shopGui;
 import io.github.divios.lib.dLib.synchronizedGui.syncHashMenu;
 import io.github.divios.lib.dLib.synchronizedGui.syncMenu;
 import io.github.divios.lib.serialize.adapters.dItemAdapter;
+import io.github.divios.lib.serialize.adapters.dShopAdapter;
+import io.github.divios.lib.serialize.adapters.dStockAdapter;
 import io.github.divios.lib.storage.databaseManager;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.beans.Transient;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -34,7 +37,7 @@ public class dShop {
     protected static final DailyShop plugin = DailyShop.getInstance();
     protected static final databaseManager dManager = databaseManager.getInstance();
 
-    private static final serializeOptions serializer = new serializeOptions();
+    private transient static final serializeOptions serializer = new serializeOptions();
 
     protected String name;
     protected final Map<UUID, dItem> items = new LinkedHashMap<>();
@@ -311,7 +314,7 @@ public class dShop {
 
     public static class serializeOptions {
 
-        private final jsonSerializer JSON = new jsonSerializer();
+        private transient final jsonSerializer JSON = new jsonSerializer();
 
         private serializeOptions() {
         }
@@ -323,61 +326,19 @@ public class dShop {
 
     public static final class jsonSerializer {
 
-        private static final SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss");
-        private static final Gson gson = new GsonBuilder()
-                .registerTypeAdapter(dItem.class, new dItemAdapter())
+        private transient static final Gson gson = new GsonBuilder()
+                .registerTypeHierarchyAdapter(dShop.class, new dShopAdapter())
                 .create();
-        private static final TypeToken<LinkedHashMap<String, dItem>> diItemsToken = new TypeToken<LinkedHashMap<String, dItem>>(){};
 
         private jsonSerializer() {
         }
 
         public JsonObject toJson(dShop shop) {
-
-            return JsonBuilder.object()
-                    .add("id", shop.name)
-                    .add("timer", shop.timer)
-                    .add("timeStamp", dateFormat.format(shop.timestamp))
-                    .add("shop", "null")
-                    .add("items", gson.toJsonTree(parseUUIDs(shop.items)))
-                    .build();
+            return gson.toJsonTree(shop).getAsJsonObject();
         }
 
         public dShop fromJson(JsonElement element) {
-            JsonObject object = element.getAsJsonObject();
-
-            Preconditions.checkArgument(object.has("id"), "A shop needs an ID");
-            Preconditions.checkArgument(object.has("items"), "A shop needs items");
-
-            dShop deserializedShop;
-
-            String id = object.get("id").getAsString();
-            int timer = object.has("timer") ? object.get("timer").getAsInt() : plugin.configM.getSettingsYml().DEFAULT_TIMER;
-            Timestamp timestamp = object.has("timestamp") ? new Timestamp(wrappedParse(object.get("timestamp").getAsString()).getTime()) : new Timestamp(System.currentTimeMillis());
-
-            deserializedShop = new dShop(id, timer, timestamp);
-
-            //Deserialize shop display
-            Map<String, dItem> items = gson.fromJson(object.get("items").getAsJsonObject(), diItemsToken.getType());
-            items.forEach((s, dItem) -> deserializedShop.addItem(dItem.setID(s)));
-
-            return deserializedShop;
-        }
-
-
-        private Map<String, dItem> parseUUIDs(Map<UUID, dItem> items) {
-            Map<String, dItem> newMap = new HashMap<>();
-            items.values().forEach(dItem -> newMap.put(dItem.getID(), dItem));
-
-            return newMap;
-        }
-
-        private Date wrappedParse(String s) {
-            try {
-                return dateFormat.parse(s);
-            } catch (ParseException e) {
-                throw new RuntimeException(e);
-            }
+            return gson.fromJson(element, dShop.class);
         }
 
     }

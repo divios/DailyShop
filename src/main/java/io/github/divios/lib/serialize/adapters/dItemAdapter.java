@@ -83,12 +83,14 @@ public class dItemAdapter implements JsonSerializer<dItem>, JsonDeserializer<dIt
             enchants.forEach(enchant -> ditem.addEnchantments(enchant.getEnchant(), enchant.getLevel()));
         }
         if (object.has("set")) ditem.setSetItems(object.get("set").getAsInt());
-        if (object.has("stock")) ditem.setStock(gson.fromJson("stock", dStock.class));
+        if (object.has("stock")) ditem.setStock(gson.fromJson(object.get("stock"), dStock.class));
         if (object.has("confirm_gui")) ditem.setConfirm_gui(object.get("confirm_gui").getAsBoolean());
         if (object.has("nbt")) ditem.setNBT(object.get("nbt").getAsJsonObject());
 
         return ditem;
     }
+
+    /** Utils **/
 
     private List<WrappedEnchantment> wrapEnchants(Map<Enchantment, Integer> enchants) {
         return enchants.entrySet().stream()

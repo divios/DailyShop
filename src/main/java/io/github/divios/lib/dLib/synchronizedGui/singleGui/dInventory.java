@@ -233,6 +233,7 @@ public class dInventory {
      * @param itemsToRoll A collection of items that will be chosen as daily items.
      */
     protected void restock(Set<dItem> itemsToRoll) {
+        if (dailyItemsSlots.isEmpty()) return;
         removeAirItems();     // Just in case
         removeDailyItems();
         int index = dailyItemsSlots.first();
@@ -383,7 +384,8 @@ public class dInventory {
                     newInv[0] = new dInventory(s1, inv, shop);
                 });
 
-                newInv[0].dailyItemsSlots.retainAll((Set<Integer>) dataInput.readObject());
+                newInv[0].dailyItemsSlots.clear();
+                newInv[0].dailyItemsSlots.addAll((Set<Integer>) dataInput.readObject());
 
                 Object o = dataInput.readObject();
                 if (o instanceof Set)

@@ -60,7 +60,7 @@ public class shopsResource {
     private void newShopsAction(Set<dShop> newShops) {
         newShops.forEach(shop -> {
             if (!sManager.getShop(shop.getName()).isPresent()) {
-                sManager.createShop(shop);
+                sManager.createShopAsync(shop);
             } else {
                 dShop currentShop = sManager.getShop(shop.getName()).get();
                 currentShop.setItems(shop.getItems());

@@ -9,6 +9,7 @@ import io.github.divios.dailyShop.events.deletedShopEvent;
 import io.github.divios.dailyShop.utils.Timer;
 import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.storage.databaseManager;
+import io.github.divios.lib.storage.parser.ParserApi;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -113,9 +114,10 @@ public class shopsManager {
 
         shops.add(newShop_);
         Schedulers.sync().run(() -> Events.callEvent(new createdShopEvent(newShop_)));
-        dManager.createShopAsync(newShop_);
-        newShop_.getItems().forEach(dItem -> {
-            dManager.addItemAsync(newShop.getName(), dItem);
+        dManager.createShopAsync(newShop_).thenAccept(unused -> {
+            newShop_.getItems().forEach(dItem -> {
+                dManager.addItemAsync(newShop.getName(), dItem);
+            });
         });
     }
 
@@ -183,5 +185,8 @@ public class shopsManager {
         new HashSet<>(shops).forEach(this::deleteShopAsync);
     }
 
+    public synchronized void saveAllShops() {
+        shops.forEach(ParserApi::saveShopToFile);
+    }
 
 }

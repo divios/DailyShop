@@ -8,6 +8,7 @@ import io.github.divios.dailyShop.files.configManager;
 import io.github.divios.dailyShop.hooks.hooksManager;
 import io.github.divios.lib.managers.shopsManager;
 import io.github.divios.lib.storage.databaseManager;
+import io.github.divios.lib.storage.parser.ParserApi;
 import me.pikamug.localelib.LocaleManager;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -72,13 +73,15 @@ public class DailyShop extends JavaPlugin {
     @Override
     public void onDisable() {
         shopsManager.getInstance().getShops()       // Updates all the guis before disable
-                .forEach(shop -> databaseManager.getInstance().updateGui(shop.getName(), shop.getGuis()));
+                .forEach(shop -> {
+                    databaseManager.getInstance().updateGui(shop.getName(), shop.getGuis());
+                    ParserApi.saveShopToFile(shop);
+                });
     }
 
     public void reloadPlugin() {
         configM.reload();
         Msg.setPREFIX(configM.getSettingsYml().PREFIX);
-        //shopsManager.getInstance().reload();
     }
 
     public static shopsManager getShopsManager() {

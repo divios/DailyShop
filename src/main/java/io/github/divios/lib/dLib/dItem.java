@@ -2,9 +2,7 @@ package io.github.divios.lib.dLib;
 
 
 import com.cryptomorin.xseries.XMaterial;
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+import com.google.gson.*;
 import de.tr7zw.nbtapi.NBTCompound;
 import de.tr7zw.nbtapi.NBTContainer;
 import de.tr7zw.nbtapi.NBTItem;
@@ -12,6 +10,7 @@ import io.github.divios.core_lib.cache.Lazy;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.Pair;
+import io.github.divios.core_lib.serialize.Base64Utils;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.economies.economy;
 import io.github.divios.dailyShop.economies.vault;
@@ -20,18 +19,21 @@ import io.github.divios.dailyShop.utils.MMOUtils;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.stock.dStock;
 import io.github.divios.lib.dLib.stock.factory.dStockFactory;
+import io.github.divios.lib.serialize.adapters.dItemAdapter;
+import io.github.divios.lib.serialize.jsonSerializer;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.util.io.BukkitObjectInputStream;
+import org.bukkit.util.io.BukkitObjectOutputStream;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
-import java.io.IOException;
-import java.io.ObjectStreamException;
-import java.io.Serializable;
+import java.io.*;
+import java.lang.reflect.Type;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -40,9 +42,13 @@ public class dItem implements Serializable, Cloneable {
     private static final long serialVersionUID = 6529685098267757690L;  // Avoid problems with serialization
     private static final DailyShop plugin = DailyShop.getInstance();
 
+    private transient static final serializeOptions serOptions = new serializeOptions();
+
     private NBTItem item;
     private dStock stock = null;
     private Lazy<ItemStack> rawItem;
+
+    public static serializeOptions serializeOptions() { return serOptions; }
 
     public static dItem of(ItemStack item) {
         return new dItem(item);
@@ -910,4 +916,66 @@ public class dItem implements Serializable, Cloneable {
             throws ObjectStreamException {
 
     }
+
+    public static final class serializeOptions {
+
+        private transient static final jsonSerialization JSON = new jsonSerialization();
+        private transient static final bukkitSerialization BUKKIT = new bukkitSerialization();
+
+        private serializeOptions() {
+        }
+
+        public jsonSerializer<dItem> json() { return JSON; }
+        public bukkitSerialization bukkit() { return BUKKIT; }
+
+    }
+
+    public static final class jsonSerialization implements jsonSerializer<dItem> {
+
+        private transient static final Gson gson = new GsonBuilder()
+                .registerTypeAdapter(dItem.class, new dItemAdapter())
+                .create();
+
+        private jsonSerialization() {}
+
+        @Override
+        public JsonElement toJson(dItem item) {
+            return gson.toJsonTree(item);
+        }
+
+        @Override
+        public dItem fromJson(JsonElement element) {
+            return gson.fromJson(element, dItem.class);
+        }
+
+    }
+
+    public static final class bukkitSerialization {
+
+        private bukkitSerialization() {}
+
+        public String serialize(dItem item) {
+            try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+                try (BukkitObjectOutputStream dataOutput = new BukkitObjectOutputStream(outputStream)) {
+                    dataOutput.writeObject(item.getItem());
+                    return Base64Utils.toBase64(outputStream.toByteArray());
+                }
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        public dItem deserialize(String s) {
+            try (ByteArrayInputStream inputStream = new ByteArrayInputStream(Base64Utils.fromBase64(s).getBytes())) {
+                try (BukkitObjectInputStream dataInput = new BukkitObjectInputStream(inputStream)) {
+                    return (dItem) dataInput.readObject();
+                }
+            } catch (IOException | ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+    }
+
+
 }
