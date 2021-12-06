@@ -38,7 +38,7 @@ public class shopsResource {
 
     private Set<dShop> getAllShopsFromFiles() {
         Set<dShop> shops = new HashSet<>();
-        for (File shopFile : Objects.requireNonNull(shopsFolder.listFiles(), "The shop directory does not exits")) {
+        for (File shopFile : Objects.requireNonNull(getYamlFiles(), "The shop directory does not exits")) {
             try {
                 dShop newShop = serializerApi.getShopFromFile(shopFile);
                 shops.add(newShop);
@@ -56,6 +56,10 @@ public class shopsResource {
 
     //////////////////////////////////////////////////////////////////////////////////////////////////
 
+    private File[] getYamlFiles() {
+        return shopsFolder.listFiles((dir, name) -> name.endsWith(".yml"));
+    }
+
     private void deleteRemovedShops(Set<dShop> newShops) {
         new HashSet<>(sManager.getShops()).stream()
                 .filter(shop -> !newShops.contains(shop))
@@ -67,11 +71,9 @@ public class shopsResource {
             if (!sManager.getShop(shop.getName()).isPresent()) {
                 sManager.createShopAsync(shop);
                 shop.destroy();
-                Log.info("oke2");
             } else {
                 dShop currentShop = sManager.getShop(shop.getName()).get();
                 currentShop.setItems(shop.getItems());
-                Log.warn("oke");
             }
             Log.info("Registered shop of name " + shop.getName() + " with " + shop.getItems().size() + " items");
         });

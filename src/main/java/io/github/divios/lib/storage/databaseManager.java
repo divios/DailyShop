@@ -76,7 +76,7 @@ public class databaseManager extends DataManagerAbstract {
                 ResultSet result = statement.executeQuery(selectFarms);
 
                 while (result.next()) {
-                    dItem newItem = dItem.fromBase64(result.getString("itemSerial"));
+                    dItem newItem = dItem.encodeOptions.REFLECTION.deserialize(result.getString("itemSerial"));
                     items.add(newItem);
                 }
             }
@@ -164,7 +164,7 @@ public class databaseManager extends DataManagerAbstract {
                     "shop_" + name + " (itemSerial, uuid) VALUES (?, ?)";
             try (PreparedStatement statement = connection.prepareStatement(createShop)) {
 
-                statement.setString(1, item.toBase64());
+                statement.setString(1, dItem.encodeOptions.REFLECTION.serialize(item));
                 statement.setString(2, item.getUid().toString());
                 statement.executeUpdate();
             }
@@ -215,7 +215,7 @@ public class databaseManager extends DataManagerAbstract {
             String updateItem = "UPDATE " + this.getTablePrefix() + "shop_" + name +
                     " SET itemSerial = ? WHERE uuid = ?";
             try (PreparedStatement statement = connection.prepareStatement(updateItem)) {
-                statement.setString(1, item.toBase64());
+                statement.setString(1, dItem.encodeOptions.REFLECTION.serialize(item));
                 statement.setString(2, item.getUid().toString());
                 statement.executeUpdate();
             }

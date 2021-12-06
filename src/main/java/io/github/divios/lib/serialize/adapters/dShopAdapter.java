@@ -3,10 +3,8 @@ package io.github.divios.lib.serialize.adapters;
 import com.google.common.base.Preconditions;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.*;
-import io.github.divios.core_lib.events.Events;
 import io.github.divios.core_lib.gson.JsonBuilder;
 import io.github.divios.dailyShop.DailyShop;
-import io.github.divios.dailyShop.events.updateShopEvent;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.dLib.synchronizedGui.singleGui.dInventory;
@@ -53,7 +51,7 @@ public class dShopAdapter implements JsonSerializer<dShop>, JsonDeserializer<dSh
         Map<String, JsonElement> items = gson.fromJson(object.get("items").getAsJsonObject(), diItemsToken.getType());
         for (Map.Entry<String, JsonElement> itemEntry : items.entrySet()) {
             try {
-                dItem ditem = dItem.serializeOptions().json().fromJson(itemEntry.getValue());
+                dItem ditem = dItem.encodeOptions.JSON.fromJson(itemEntry.getValue());
                 deserializedShop.addItem(ditem.setID(itemEntry.getKey()));
             } catch (Exception e) {
                 Log.warn("There was a problem parsing the item with id " + itemEntry.getKey());

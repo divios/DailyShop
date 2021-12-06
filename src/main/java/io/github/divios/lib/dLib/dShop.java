@@ -30,7 +30,7 @@ public class dShop {
     protected static final DailyShop plugin = DailyShop.getInstance();
     protected static final databaseManager dManager = databaseManager.getInstance();
 
-    private transient static final serializeOptions serializer = new serializeOptions();
+    private transient static final encodeOptions serializer = new encodeOptions();
 
     protected String name;
     protected final Map<UUID, dItem> items = new LinkedHashMap<>();
@@ -41,10 +41,6 @@ public class dShop {
 
     protected final Set<Task> tasks = new HashSet<>();
     protected final Set<Subscription> listeners = new HashSet<>();
-
-    public static serializeOptions serializeOptions() {
-        return serializer;
-    }
 
     public dShop(String name) {
         this(name, plugin.configM.getSettingsYml().DEFAULT_TIMER);
@@ -310,16 +306,13 @@ public class dShop {
      * Serializers
      **/
 
-    public static class serializeOptions {
+    public static class encodeOptions {
 
-        private transient final jsonSerializer JSON = new jsonSerializer();
+        public static transient final jsonSerializer JSON = new jsonSerializer();
 
-        private serializeOptions() {
+        private encodeOptions() {
         }
 
-        public jsonSerializer json() {
-            return JSON;
-        }
     }
 
     public static final class jsonSerializer {

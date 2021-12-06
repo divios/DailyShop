@@ -56,7 +56,7 @@ dependencies {
     implementation 'org.jetbrains:annotations:22.0.0'
     implementation 'com.github.PikaMug:LocaleLib:2.2'
     implementation 'org.bstats:bstats-bukkit:2.2.1'
-    implementation 'io.github.divios:core_lib_api:6.2.0'
+    implementation 'io.github.divios:core_lib_api:6.1.8'
 
     compileOnly fileTree(dir: 'libs', include: ['*.jar'])
     compileOnly fileTree(dir: 'libsI', include: ['*.jar'])

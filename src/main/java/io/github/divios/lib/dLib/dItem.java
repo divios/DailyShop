@@ -13,7 +13,6 @@ import io.github.divios.core_lib.cache.Lazy;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.Pair;
-import io.github.divios.core_lib.serialize.Base64Utils;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.economies.economy;
 import io.github.divios.dailyShop.economies.vault;
@@ -44,13 +43,9 @@ public class dItem implements Serializable, Cloneable {
     private static final long serialVersionUID = 6529685098267757690L;  // Avoid problems with serialization
     private static final DailyShop plugin = DailyShop.getInstance();
 
-    private transient static final serializeOptions serOptions = new serializeOptions();
-
     private NBTItem item;
     private dStock stock = null;
     private Lazy<ItemStack> rawItem;
-
-    public static serializeOptions serializeOptions() { return serOptions; }
 
     public static dItem of(ItemStack item) {
         return new dItem(item);
@@ -825,37 +820,6 @@ public class dItem implements Serializable, Cloneable {
         return item.hasKey("rds_SIGN");
     }
 
-    public String toJson() {
-        saveStock();            // Save stock before serializing the hold item
-        return NBTItem.convertItemtoNBT(item.getItem()).toString();
-    }
-
-    /**
-     * Gets item serializable as base64
-     *
-     * @return
-     */
-    public String toBase64() {
-        return Base64Coder.encodeString(toJson());
-    }
-
-    /**
-     * Constructs dItem from base 64
-     *
-     * @param base64
-     * @return dItem constructed
-     */
-    public static dItem fromBase64(String base64) {
-        return fromJson(Base64Coder.decodeString(base64));
-    }
-
-    public static dItem fromJson(String json) {
-        NBTCompound itemData = new NBTContainer(json);
-        ItemStack item = NBTItem.convertNBTtoItem(itemData);
-
-        return new dItem(item);
-    }
-
     /**
      * Returns a copy of this dItem but different UUID (generated randomly)
      *
@@ -903,7 +867,7 @@ public class dItem implements Serializable, Cloneable {
     //>>>>>> Serialize stuff <<<<<<//
     private void writeObject(java.io.ObjectOutputStream out)
             throws IOException {
-        out.writeObject(this.toBase64());
+        out.writeObject(encodeOptions.REFLECTION.serialize(this));
     }
 
     private void readObject(java.io.ObjectInputStream in)
@@ -919,16 +883,14 @@ public class dItem implements Serializable, Cloneable {
 
     }
 
-    public static final class serializeOptions {
+    public static final class encodeOptions {
 
-        private transient static final jsonSerialization JSON = new jsonSerialization();
-        private transient static final bukkitSerialization BUKKIT = new bukkitSerialization();
+        public transient static final jsonSerialization JSON = new jsonSerialization();
+        public transient static final bukkitSerialization BUKKIT = new bukkitSerialization();
+        public transient static final reflectionSerialization REFLECTION = new reflectionSerialization();
 
-        private serializeOptions() {
+        private encodeOptions() {
         }
-
-        public jsonSerializer<dItem> json() { return JSON; }
-        public bukkitSerialization bukkit() { return BUKKIT; }
 
     }
 
@@ -937,8 +899,6 @@ public class dItem implements Serializable, Cloneable {
         private transient static final Gson gson = new GsonBuilder()
                 .registerTypeAdapter(dItem.class, new dItemAdapter())
                 .create();
-
-        private jsonSerialization() {}
 
         @Override
         public JsonElement toJson(dItem item) {
@@ -950,11 +910,11 @@ public class dItem implements Serializable, Cloneable {
             return gson.fromJson(element, dItem.class);
         }
 
+        private jsonSerialization() {}
+
     }
 
     public static final class bukkitSerialization {
-
-        private bukkitSerialization() {}
 
         public String serialize(dItem item) {
             try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
@@ -975,6 +935,24 @@ public class dItem implements Serializable, Cloneable {
             } catch (IOException | ClassNotFoundException e) {
                 throw new RuntimeException(e);
             }
+        }
+
+        private bukkitSerialization() {}
+
+    }
+
+    public static final class reflectionSerialization {
+
+        public String serialize(dItem item) {
+            item.saveStock();
+            return Base64Coder.encodeString(NBTItem.convertItemtoNBT(item.getItem()).toString());
+        }
+
+        public dItem deserialize(String s) {
+            NBTCompound itemData = new NBTContainer(Base64Coder.decodeString(s));
+            ItemStack item = NBTItem.convertNBTtoItem(itemData);
+
+            return new dItem(item);
         }
 
     }

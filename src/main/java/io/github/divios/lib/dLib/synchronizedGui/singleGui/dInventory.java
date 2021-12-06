@@ -292,6 +292,18 @@ public class dInventory {
         listeners.clear();
     }
 
+    @Override
+    public String toString() {
+        return "dInventory{" +
+                "title='" + title + '\'' +
+                ", inv=" + inv +
+                ", shop=" + shop +
+                ", dailyItemsSlots=" + dailyItemsSlots +
+                ", buttons=" + buttons +
+                ", listeners=" + listeners +
+                '}';
+    }
+
     /**
      * Serializes this inventory into base64.
      *
@@ -333,13 +345,13 @@ public class dInventory {
                             if (itemClicked == null) return;
 
                             if (dailyItemsSlots.contains(itemClicked.getSlot())) {
-                                Log.info("oke");
                                 if (e.isLeftClick())
                                     transaction.init((Player) e.getWhoClicked(), buttons.get(itemClicked.getUid()), shop);
                                 if (e.isRightClick())
                                     transaction.init((Player) e.getWhoClicked(), buttons.get(itemClicked.getUid()), shop);
-                            } else
+                            } else {
                                 itemClicked.getAction().stream((dAction, s) -> dAction.run((Player) e.getWhoClicked(), s));
+                            }
                         })
         );
     }
@@ -379,7 +391,7 @@ public class dInventory {
                 });
 
                 newInv[0].dailyItemsSlots.clear();
-                newInv[0].dailyItemsSlots.addAll((TreeSet<Integer>) dataInput.readObject());
+                newInv[0].dailyItemsSlots.addAll((Set<Integer>) dataInput.readObject());
 
                 Object o = dataInput.readObject();
                 if (o instanceof Set)

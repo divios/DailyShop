@@ -18,7 +18,7 @@ public class serializerApi {
     public static void saveShopToFile(dShop shop) {
         try {
             File data = new File(shopsFolder, shop.getName() + ".yml");
-            FileUtils.toYaml(dShop.serializeOptions().json().toJson(shop), data);
+            FileUtils.toYaml(dShop.encodeOptions.JSON.toJson(shop), data);
         } catch (Exception e) {
             Log.info("There was a problem saving the shop " + shop.getName());
             e.printStackTrace();
@@ -29,7 +29,7 @@ public class serializerApi {
     public static dShop getShopFromFile(File data) {
         Objects.requireNonNull(data, "data cannot be null");
         Preconditions.checkArgument(data.exists(), "The file does not exist");
-        return dShop.serializeOptions().json().fromJson(Utils.getJsonFromFile(data));
+        return dShop.encodeOptions.JSON.fromJson(Utils.getJsonFromFile(data));
     }
 
 }

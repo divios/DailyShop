@@ -192,7 +192,6 @@ public class customizeGui implements Listener, InventoryHolder {
             return;
         }
 
-        Log.info("oke");
         depositPlayerItems();
         unregisterAll();
         Schedulers.sync().runLater(() -> shopsManagerGui.open(p), 1L);
@@ -207,14 +206,14 @@ public class customizeGui implements Listener, InventoryHolder {
     @EventHandler
     public void onPlayerLeave(PlayerQuitEvent e) {
         if (e.getPlayer().getUniqueId().equals(p.getUniqueId())) {
-
+            depositPlayerItems();
         }
     }
 
     @EventHandler
     public void onPlayerKick(PlayerKickEvent e) {
         if (e.getPlayer().getUniqueId().equals(p.getUniqueId())) {
-
+            depositPlayerItems();
         }
     }
 
@@ -258,6 +257,7 @@ public class customizeGui implements Listener, InventoryHolder {
 
     private void backButtonAction() {
         unregisterAll();
+        depositPlayerItems();
         shopsManagerGui.open(p);
     }
 
@@ -268,6 +268,7 @@ public class customizeGui implements Listener, InventoryHolder {
     private void applyChangesAction() {
         shop.updateShopGui(_gui);
         unregisterAll();
+        depositPlayerItems();
         shopsManagerGui.open(p);
     }
 
