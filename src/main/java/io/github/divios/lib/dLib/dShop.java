@@ -13,6 +13,7 @@ import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.events.reStockShopEvent;
 import io.github.divios.dailyShop.events.updateItemEvent;
 import io.github.divios.dailyShop.guis.settings.shopGui;
+import io.github.divios.lib.dLib.synchronizedGui.singleGui.dInventory;
 import io.github.divios.lib.dLib.synchronizedGui.syncHashMenu;
 import io.github.divios.lib.dLib.synchronizedGui.syncMenu;
 import io.github.divios.lib.serialize.adapters.dShopAdapter;
@@ -240,6 +241,13 @@ public class dShop {
         return true;
     }
 
+    public void updateShopGui(dInventory inv) {
+        guis.updateBase(inv);
+    }
+
+    public void updateShopGui(dInventory inv, boolean isSilent) {
+        guis.updateBase(inv, isSilent);
+    }
 
     /**
      * Return the dGui of this shop
@@ -289,8 +297,7 @@ public class dShop {
 
     @Override
     public boolean equals(Object o) {
-        return o instanceof dShop &&
-                this.getName().equals(((dShop) o).getName());
+        return o instanceof dShop && this.getName().equals(((dShop) o).getName());
     }
 
     @Override

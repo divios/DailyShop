@@ -34,6 +34,12 @@ public interface syncMenu {
 
     Collection<singleGui> getMenus();
 
+    default void updateBase(dInventory inv) {
+        updateBase(inv, false);
+    }
+
+    void updateBase(dInventory inv, boolean silent);
+
     void invalidate(UUID key);
 
     void invalidateAll();

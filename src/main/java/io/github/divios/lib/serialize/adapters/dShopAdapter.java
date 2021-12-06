@@ -10,6 +10,7 @@ import io.github.divios.dailyShop.events.updateShopEvent;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.dLib.synchronizedGui.singleGui.dInventory;
+import io.lumine.mythic.utils.logging.Log;
 
 import java.lang.reflect.Type;
 import java.sql.Timestamp;
@@ -25,7 +26,7 @@ public class dShopAdapter implements JsonSerializer<dShop>, JsonDeserializer<dSh
             .registerTypeAdapter(dInventory.class, new dInventoryAdapter())
             .create();
 
-    private static final TypeToken<LinkedHashMap<String, dItem>> diItemsToken = new TypeToken<LinkedHashMap<String, dItem>>(){};
+    private static final TypeToken<LinkedHashMap<String, JsonElement>> diItemsToken = new TypeToken<LinkedHashMap<String, JsonElement>>(){};
 
     @Override
     public dShop deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
@@ -42,13 +43,23 @@ public class dShopAdapter implements JsonSerializer<dShop>, JsonDeserializer<dSh
 
         deserializedShop = new dShop(id, timer, timestamp);
 
+        // Deserialize shop display
         if (object.has("shop")) {
             dInventory inv = gson.fromJson(object.get("shop"), dInventory.class);
-            Events.callEvent(new updateShopEvent(deserializedShop, inv, true));
+            deserializedShop.updateShopGui(inv, true);
         }
 
-        Map<String, dItem> items = gson.fromJson(object.get("items").getAsJsonObject(), diItemsToken.getType());
-        items.forEach((s, dItem) -> deserializedShop.addItem(dItem.setID(s)));
+        // Deserialize Items
+        Map<String, JsonElement> items = gson.fromJson(object.get("items").getAsJsonObject(), diItemsToken.getType());
+        for (Map.Entry<String, JsonElement> itemEntry : items.entrySet()) {
+            try {
+                dItem ditem = dItem.serializeOptions().json().fromJson(itemEntry.getValue());
+                deserializedShop.addItem(ditem.setID(itemEntry.getKey()));
+            } catch (Exception e) {
+                Log.warn("There was a problem parsing the item with id " + itemEntry.getKey());
+                Log.warn(e.getMessage());
+            }
+        }
 
         return deserializedShop;
     }

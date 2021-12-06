@@ -1,4 +1,4 @@
-package io.github.divios.lib.storage.parser;
+package io.github.divios.lib.serialize;
 
 import com.google.common.base.Preconditions;
 import io.github.divios.core_lib.utils.Log;
@@ -10,7 +10,7 @@ import io.github.divios.lib.dLib.dShop;
 import java.io.File;
 import java.util.Objects;
 
-public class ParserApi {
+public class serializerApi {
 
     private static final DailyShop plugin = DailyShop.getInstance();
     private static final File shopsFolder = new File(plugin.getDataFolder(), "shops");

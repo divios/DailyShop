@@ -960,7 +960,7 @@ public class dItem implements Serializable, Cloneable {
             try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
                 try (BukkitObjectOutputStream dataOutput = new BukkitObjectOutputStream(outputStream)) {
                     dataOutput.writeObject(item.getItem());
-                    return Base64Utils.toBase64(outputStream.toByteArray());
+                    return Base64.getEncoder().encodeToString(outputStream.toByteArray());
                 }
             } catch (Exception e) {
                 throw new RuntimeException(e);
@@ -968,9 +968,9 @@ public class dItem implements Serializable, Cloneable {
         }
 
         public dItem deserialize(String s) {
-            try (ByteArrayInputStream inputStream = new ByteArrayInputStream(Base64Utils.fromBase64(s).getBytes())) {
+            try (ByteArrayInputStream inputStream = new ByteArrayInputStream(Base64.getDecoder().decode(s))) {
                 try (BukkitObjectInputStream dataInput = new BukkitObjectInputStream(inputStream)) {
-                    return (dItem) dataInput.readObject();
+                    return dItem.of((ItemStack) dataInput.readObject());
                 }
             } catch (IOException | ClassNotFoundException e) {
                 throw new RuntimeException(e);

@@ -266,7 +266,7 @@ public class customizeGui implements Listener, InventoryHolder {
     }
 
     private void applyChangesAction() {
-        Events.callEvent(new updateShopEvent(shop, _gui));
+        shop.updateShopGui(_gui);
         unregisterAll();
         shopsManagerGui.open(p);
     }

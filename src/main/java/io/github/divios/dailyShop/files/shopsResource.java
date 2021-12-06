@@ -6,7 +6,7 @@ import io.github.divios.dailyShop.utils.FileUtils;
 import io.github.divios.dailyShop.utils.Timer;
 import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.managers.shopsManager;
-import io.github.divios.lib.storage.parser.ParserApi;
+import io.github.divios.lib.serialize.serializerApi;
 
 import java.io.File;
 import java.util.HashSet;
@@ -39,8 +39,13 @@ public class shopsResource {
     private Set<dShop> getAllShopsFromFiles() {
         Set<dShop> shops = new HashSet<>();
         for (File shopFile : Objects.requireNonNull(shopsFolder.listFiles(), "The shop directory does not exits")) {
-            dShop newShop = ParserApi.getShopFromFile(shopFile);
-            shops.add(newShop);
+            try {
+                dShop newShop = serializerApi.getShopFromFile(shopFile);
+                shops.add(newShop);
+            } catch (Exception e) {
+                Log.warn("There was a problem with the shop " + shopFile.getName());
+                Log.warn(e.getMessage());
+            }
         }
         return shops;
     }
@@ -60,13 +65,13 @@ public class shopsResource {
     private void newShopsAction(Set<dShop> newShops) {
         newShops.forEach(shop -> {
             if (!sManager.getShop(shop.getName()).isPresent()) {
-                shop.reStock();
                 sManager.createShopAsync(shop);
                 shop.destroy();
-
+                Log.info("oke2");
             } else {
                 dShop currentShop = sManager.getShop(shop.getName()).get();
                 currentShop.setItems(shop.getItems());
+                Log.warn("oke");
             }
             Log.info("Registered shop of name " + shop.getName() + " with " + shop.getItems().size() + " items");
         });

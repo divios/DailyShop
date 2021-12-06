@@ -108,7 +108,7 @@ public class dInventory {
      * @return The inventory in question
      */
     public Inventory getInventory() {
-        return inventoryUtils.cloneInventory(inv, title);
+        return inv;
     }
 
     /**

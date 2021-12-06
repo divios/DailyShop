@@ -5,6 +5,7 @@ import io.github.divios.core_lib.events.Events;
 import io.github.divios.core_lib.events.Subscription;
 import io.github.divios.core_lib.misc.Msg;
 import io.github.divios.core_lib.scheduler.Task;
+import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.events.updateItemEvent;
 import io.github.divios.dailyShop.events.updateShopEvent;
@@ -60,11 +61,7 @@ public abstract class abstractSyncMenu implements syncMenu {
                         .filter(o -> o.getShop().equals(shop))
                         .handler(this::updateItems)
         );
-        listeners.add(
-                Events.subscribe(updateShopEvent.class)
-                        .filter(o -> o.getShop().equals(shop))
-                        .handler(this::updateBase)
-        );
+
         listeners.add(
                 Events.subscribe(InventoryCloseEvent.class)
                         .handler(this::checkClosedInv)
@@ -78,19 +75,19 @@ public abstract class abstractSyncMenu implements syncMenu {
      */
     private synchronized void checkClosedInv(InventoryCloseEvent o) {
         singleGui gui = guis.get(o.getPlayer().getUniqueId());
-        if (gui != null && gui.getInventory().getInventory().equals(o.getInventory()))
+        if (gui != null && gui.getInventory().getInventory().equals(o.getInventory())) {
             invalidate(o.getPlayer().getUniqueId());
+        }
     }
 
     /**
      * Synchronized method to update the base when the listener is triggered
      *
-     * @param o
      */
-    private synchronized void updateBase(updateShopEvent o) {
+    public synchronized void updateBase(dInventory inv, boolean silent) {
         base.destroy();
-        base = singleGui.fromJson(o.getNewInv().toBase64(), shop);
-        reStock(o.isSilent());
+        base = singleGui.fromJson(inv.toBase64(), shop);
+        reStock(silent);
     }
 
     private synchronized void updateItems(updateItemEvent o) {
