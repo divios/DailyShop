@@ -36,12 +36,15 @@ import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
 import java.io.*;
 import java.util.*;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class dItem implements Serializable, Cloneable {
 
     private static final long serialVersionUID = 6529685098267757690L;  // Avoid problems with serialization
     private static final DailyShop plugin = DailyShop.getInstance();
+
+    private HashMap<String, LazyWrapper> cache = new HashMap<>();
 
     private NBTItem item;
     private dStock stock = null;
@@ -73,9 +76,19 @@ public class dItem implements Serializable, Cloneable {
 
     public dItem(ItemStack item, String id, int slot) {
         setItem(item, id, slot);
+        initializeCache();
     }
 
     private dItem() {
+    }
+
+    private void initializeCache() {
+        if (cache == null) cache = new HashMap<>();    //   ReadObject java bullshit
+        cache.put("slot", LazyWrapper.suppliedBy(() -> item.getInteger("dailySlots")));
+        cache.put("lore", LazyWrapper.suppliedBy(() -> ItemUtils.getLore(getItem())));
+        cache.put("material", LazyWrapper.suppliedBy(() -> getItem().getType()));
+        cache.put("durability", LazyWrapper.suppliedBy(() -> getItem().getDurability()));
+        cache.put("enchantments", LazyWrapper.suppliedBy(() -> getItem().getEnchantments()));
     }
 
     /**
@@ -119,6 +132,7 @@ public class dItem implements Serializable, Cloneable {
      */
     public void setItem(@NotNull ItemStack item, String id, int slot) {
         this.item = new NBTItem(item);
+        initializeCache();
         if (getID() == null || getID().isEmpty()) {
             setRawItem(item);
             setID(id);
@@ -174,6 +188,7 @@ public class dItem implements Serializable, Cloneable {
      */
     public dItem setSlot(int slot) {
         item.setInteger("dailySlots", slot);
+        cache.get("slot").reset();
         return this;
     }
 
@@ -183,7 +198,7 @@ public class dItem implements Serializable, Cloneable {
      * @return
      */
     public int getSlot() {
-        return item.getInteger("dailySlots");
+        return (int) cache.get("slot").get();
     }
 
     /**
@@ -231,12 +246,14 @@ public class dItem implements Serializable, Cloneable {
     public dItem setLore(@NotNull List<String> lore) {
         setItem(ItemUtils.setLore(getItem(), lore));
         setRawItem(ItemUtils.setLore(getRawItem(), lore));
+        cache.get("lore").reset();
         return this;
     }
 
     public dItem applyLore(loreStrategy strategy, Object... data) {
         setItem(strategy.applyLore(item.getItem(), data));
         //setRawItem(strategy.applyLore(getRawItem(), data));
+        cache.get("lore").reset();
         return this;
     }
 
@@ -247,7 +264,7 @@ public class dItem implements Serializable, Cloneable {
      */
     public @NotNull
     List<String> getLore() {
-        return ItemUtils.getLore(getItem());
+        return (List<String>) cache.get("lore").get();
     }
 
     /**
@@ -261,6 +278,7 @@ public class dItem implements Serializable, Cloneable {
         setRawItem(ItemUtils.setMaterial(getRawItem(), m));
         if (m.name().contains("GLASS"))
             setDurability(m.parseItem().getDurability(), true);
+        cache.get("material").reset();
         return this;
 
     }
@@ -272,7 +290,7 @@ public class dItem implements Serializable, Cloneable {
      */
     public @NotNull
     Material getMaterial() {
-        return getItem().getType();
+        return (Material) cache.get("material").get();
     }
 
     /**
@@ -289,6 +307,7 @@ public class dItem implements Serializable, Cloneable {
             setItem(ItemUtils.setDurability(getItem(), durability));
             setRawItem(ItemUtils.setDurability(getRawItem(), durability));
         }
+        cache.get("durability").reset();
         return this;
     }
 
@@ -298,7 +317,7 @@ public class dItem implements Serializable, Cloneable {
      * @return
      */
     public short getDurability() {
-        return getItem().getDurability();
+        return (short) cache.get("durability").get();
     }
 
     /**
@@ -310,6 +329,7 @@ public class dItem implements Serializable, Cloneable {
     public dItem addEnchantments(@NotNull Enchantment ench, int lvl) {
         setItem(ItemUtils.addEnchant(getItem(), ench, lvl));
         setRawItem(ItemUtils.addEnchant(getRawItem(), ench, lvl));
+        cache.get("enchantments").reset();
         return this;
     }
 
@@ -322,6 +342,7 @@ public class dItem implements Serializable, Cloneable {
     public dItem removeEnchantments(@NotNull Enchantment ench) {
         setItem(ItemUtils.removeEnchant(getItem(), ench));
         setRawItem(ItemUtils.removeEnchant(getRawItem(), ench));
+        cache.get("enchantments").reset();
         return this;
 
     }
@@ -333,7 +354,7 @@ public class dItem implements Serializable, Cloneable {
      */
     public @NotNull
     Map<Enchantment, Integer> getEnchantments() {
-        return getItem().getEnchantments();
+        return (Map<Enchantment, Integer>) cache.get("enchantments").get();
     }
 
     /**
@@ -910,7 +931,8 @@ public class dItem implements Serializable, Cloneable {
             return gson.fromJson(element, dItem.class);
         }
 
-        private jsonSerialization() {}
+        private jsonSerialization() {
+        }
 
     }
 
@@ -937,7 +959,8 @@ public class dItem implements Serializable, Cloneable {
             }
         }
 
-        private bukkitSerialization() {}
+        private bukkitSerialization() {
+        }
 
     }
 
@@ -953,6 +976,28 @@ public class dItem implements Serializable, Cloneable {
             ItemStack item = NBTItem.convertNBTtoItem(itemData);
 
             return new dItem(item);
+        }
+
+    }
+
+    public static class LazyWrapper<T> {
+
+        private final Supplier<T> supplier;
+        private Lazy<T> lazy;
+
+        public static <T> LazyWrapper<T> suppliedBy(Supplier<T> supplier) {
+            return new LazyWrapper<>(supplier);
+        }
+
+        private LazyWrapper(Supplier<T> supplier) {
+            this.supplier = supplier;
+            lazy = Lazy.suppliedBy(supplier);
+        }
+
+        public T get() { return lazy.get(); }
+
+        public void reset() {
+            lazy = Lazy.suppliedBy(supplier);
         }
 
     }
