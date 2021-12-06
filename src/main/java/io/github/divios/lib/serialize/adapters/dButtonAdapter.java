@@ -65,12 +65,13 @@ public class dButtonAdapter implements JsonSerializer<dItem>, JsonDeserializer<d
 
         Preconditions.checkArgument(object.has("material"), "An item needs a material");
         Preconditions.checkArgument(Utils.testRunnable(() -> XMaterial.valueOf(object.get("material").getAsString())), "Invalid material");
-        Preconditions.checkArgument(object.has("slot"), "An item needs a slot");
-        Preconditions.checkArgument(Utils.testRunnable(() -> object.get("slot").getAsInt()), "Slot field needs to be an integer");
 
         if (object.get("material").getAsString().equals("AIR")) {
             return dItem.AIR();
         }
+
+        Preconditions.checkArgument(object.has("slot"), "An item needs a slot");
+        Preconditions.checkArgument(Utils.testRunnable(() -> object.get("slot").getAsInt()), "Slot field needs to be an integer");
 
         ditem.setMaterial(XMaterial.valueOf(object.get("material").getAsString()));
         if (object.has("name")) ditem.setDisplayName(object.get("name").getAsString());
