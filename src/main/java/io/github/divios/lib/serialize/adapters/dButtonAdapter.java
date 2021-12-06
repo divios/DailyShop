@@ -28,6 +28,12 @@ public class dButtonAdapter implements JsonSerializer<dItem>, JsonDeserializer<d
     public JsonElement serialize(dItem dItem, Type type, JsonSerializationContext jsonSerializationContext) {
         JsonObject merchant = new JsonObject();
 
+        if (dItem.isAIR()) {
+            return JsonBuilder.object()
+                    .add("material", "AIR")
+                    .build();
+        }
+
         String name = ItemUtils.getName(dItem.getItem());
         if (!name.isEmpty()) merchant.addProperty("name", FormatUtils.unColor(name));
 
@@ -61,6 +67,10 @@ public class dButtonAdapter implements JsonSerializer<dItem>, JsonDeserializer<d
         Preconditions.checkArgument(Utils.testRunnable(() -> XMaterial.valueOf(object.get("material").getAsString())), "Invalid material");
         Preconditions.checkArgument(object.has("slot"), "An item needs a slot");
         Preconditions.checkArgument(Utils.testRunnable(() -> object.get("slot").getAsInt()), "Slot field needs to be an integer");
+
+        if (object.get("material").getAsString().equals("AIR")) {
+            return dItem.AIR();
+        }
 
         ditem.setMaterial(XMaterial.valueOf(object.get("material").getAsString()));
         if (object.has("name")) ditem.setDisplayName(object.get("name").getAsString());
