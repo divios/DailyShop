@@ -89,6 +89,36 @@ public class dItem implements Serializable, Cloneable {
         cache.put("material", LazyWrapper.suppliedBy(() -> getItem().getType()));
         cache.put("durability", LazyWrapper.suppliedBy(() -> getItem().getDurability()));
         cache.put("enchantments", LazyWrapper.suppliedBy(() -> getItem().getEnchantments()));
+        cache.put("sellPrice", LazyWrapper.suppliedBy(() -> item.getObject("rds_sellPrice", dPrice.class)));
+        cache.put("buyPrice", LazyWrapper.suppliedBy(() -> item.getObject("rds_buyPrice", dPrice.class)));
+        cache.put("id", LazyWrapper.suppliedBy(() -> item.getString("rds_UUID")));
+        cache.put("rarity", LazyWrapper.suppliedBy(() -> item.getObject("rds_rarity", dRarity.class)));
+        cache.put("economy", LazyWrapper.suppliedBy(() -> {
+            economy econ[] = {new vault()};
+            if (item.hasKey("rds_econ")) {
+                econ[0] = economy.deserialize(item.getString("rds_econ"));
+                Utils.tryCatchAbstraction(() -> econ[0].test(), e -> econ[0] = new vault());
+                try {
+                    econ[0].test();
+                } catch (NoClassDefFoundError e) {
+                    econ[0] = new vault();
+                }
+            }
+            return econ[0];
+        }));
+        cache.put("commands", LazyWrapper.suppliedBy(() -> item.getObject("rds_cmds", List.class)));
+        cache.put("buyPerms", LazyWrapper.suppliedBy(() -> item.getObject("rds_perms_buy", List.class)));
+        cache.put("sellPerms", LazyWrapper.suppliedBy(() -> item.getObject("rds_perms_sell", List.class)));
+        cache.put("action", LazyWrapper.suppliedBy(() -> item.hasKey("rds_action") ?
+                Pair.deserialize(item.getString("rds_action"), dAction.class, String.class) :
+                Pair.of(dAction.EMPTY, "")));
+        cache.put("set", LazyWrapper.suppliedBy(() -> item.getInteger("rds_setItems")));
+        cache.put("confirmGui", LazyWrapper.suppliedBy(() -> item.getBoolean("rds_confirm_gui")));
+        cache.put("bundle", LazyWrapper.suppliedBy(() -> {
+            final List<String> aux;
+            return (aux = item.getObject("rds_bundle", List.class)) == null ? null :
+                    aux.stream().map(UUID::fromString).collect(Collectors.toList());
+        }));
     }
 
     /**
@@ -423,7 +453,8 @@ public class dItem implements Serializable, Cloneable {
      * @return the price of the item. Can be random price between the values asigned
      */
     public Optional<dPrice> getBuyPrice() {
-        return Optional.ofNullable(item.getObject("rds_buyPrice", dPrice.class));
+        Object o;
+        return Optional.ofNullable((o = cache.get("buyPrice").get()) == null ? null : (dPrice) o);
     }
 
     /**
@@ -434,6 +465,7 @@ public class dItem implements Serializable, Cloneable {
      */
     public dItem setBuyPrice(double price) {
         item.setObject("rds_buyPrice", new dPrice(price));
+        cache.get("buyPrice").reset();
         return this;
     }
 
@@ -442,9 +474,12 @@ public class dItem implements Serializable, Cloneable {
      *
      * @param minPrice lower limit price
      * @param maxPrice upper limit price
+     * @return
      */
-    public void setBuyPrice(double minPrice, double maxPrice) {
+    public dItem setBuyPrice(double minPrice, double maxPrice) {
         item.setObject("rds_buyPrice", new dPrice(minPrice, maxPrice));
+        cache.get("buyPrice").reset();
+        return this;
     }
 
     /**
@@ -455,6 +490,7 @@ public class dItem implements Serializable, Cloneable {
      */
     public dItem setBuyPrice(dPrice price) {
         item.setObject("rds_buyPrice", price);
+        cache.get("buyPrice").reset();
         return this;
     }
 
@@ -468,6 +504,7 @@ public class dItem implements Serializable, Cloneable {
             dPrice.generateNewPrice();
             setBuyPrice(dPrice);
         });
+        cache.get("buyPrice").reset();
         return this;
     }
 
@@ -475,7 +512,8 @@ public class dItem implements Serializable, Cloneable {
      * @return the price of the item. Can be random price between the values asigned
      */
     public Optional<dPrice> getSellPrice() {
-        return Optional.ofNullable(item.getObject("rds_sellPrice", dPrice.class));
+        Object o;
+        return Optional.ofNullable((o = cache.get("sellPrice").get()) == null ? null : (dPrice) o);
     }
 
     /**
@@ -486,6 +524,7 @@ public class dItem implements Serializable, Cloneable {
      */
     public dItem setSellPrice(double price) {
         item.setObject("rds_sellPrice", new dPrice(price));
+        cache.get("sellPrice").reset();
         return this;
     }
 
@@ -494,9 +533,12 @@ public class dItem implements Serializable, Cloneable {
      *
      * @param minPrice lower limit price
      * @param maxPrice upper limit price
+     * @return
      */
-    public void setSellPrice(double minPrice, double maxPrice) {
+    public dItem setSellPrice(double minPrice, double maxPrice) {
+        cache.get("sellPrice").reset();
         item.setObject("rds_sellPrice", new dPrice(minPrice, maxPrice));
+        return this;
     }
 
     public void setSellPrice(dPrice price) {
@@ -508,15 +550,17 @@ public class dItem implements Serializable, Cloneable {
             dPrice.generateNewPrice();
             setSellPrice(dPrice);
         });
+        cache.get("sellPrice").reset();
         return this;
     }
 
     public String getID() {
-        return item.getString("rds_UUID");
+        return (String) cache.get("id").get();
     }
 
     public dItem setID(String id) {
         item.setString("rds_UUID", id);
+        cache.get("id").reset();
         return this;
     }
 
@@ -598,6 +642,7 @@ public class dItem implements Serializable, Cloneable {
      */
     public dItem setRarity(@NotNull dRarity rarity) {
         item.setObject("rds_rarity", rarity);
+        cache.get("rarity").reset();
         return this;
     }
 
@@ -608,8 +653,7 @@ public class dItem implements Serializable, Cloneable {
      */
     public @NotNull
     dRarity getRarity() {
-        if (!item.hasKey("rds_rarity")) return new dRarity();
-        return item.getObject("rds_rarity", dRarity.class);
+        return (dRarity) cache.get("rarity").get();
     }
 
     /**
@@ -619,6 +663,7 @@ public class dItem implements Serializable, Cloneable {
      */
     public dItem nextRarity() {
         setRarity(getRarity().next());
+        cache.get("rarity").reset();
         return this;
     }
 
@@ -629,17 +674,7 @@ public class dItem implements Serializable, Cloneable {
      */
     public @NotNull
     economy getEconomy() {
-        economy econ = new vault();
-        if (item.hasKey("rds_econ")) {
-            econ = economy.deserialize(item.getString("rds_econ"));
-            try {
-                econ.test();
-            } catch (NoClassDefFoundError e) {
-                econ = new vault();
-            }
-        }
-
-        return econ;
+        return (economy) cache.get("economy").get();
     }
 
     /**
@@ -650,6 +685,7 @@ public class dItem implements Serializable, Cloneable {
      */
     public dItem setEconomy(@NotNull economy econ) {
         item.setString("rds_econ", econ.serialize());
+        cache.get("economy").reset();
         return this;
     }
 
@@ -659,7 +695,8 @@ public class dItem implements Serializable, Cloneable {
      * @return list of Strings representing commands
      */
     public Optional<List<String>> getCommands() {
-        return Optional.ofNullable(item.getObject("rds_cmds", List.class));
+        Object o;
+        return Optional.ofNullable( (o = cache.get("commands").get()) == null ? null : (List<String>) o );
     }
 
     /**
@@ -670,6 +707,7 @@ public class dItem implements Serializable, Cloneable {
      */
     public dItem setCommands(@Nullable List<String> commands) {
         item.setObject("rds_cmds", commands);
+        cache.get("commands").reset();
         return this;
     }
 
@@ -687,16 +725,20 @@ public class dItem implements Serializable, Cloneable {
      * @return list of Strings representing permissions
      */
     public Optional<List<String>> getPermsBuy() {
-        return Optional.ofNullable(item.getObject("rds_perms_buy", List.class));
+        Object o;
+        return Optional.ofNullable( (o = cache.get("buyPerms").get()) == null ? null : (List<String>) o );
     }
 
     /**
      * Sets the permission that a player needs to buy this item
      *
      * @param perms a list of Strings representing permissions
+     * @return
      */
-    public void setPermsBuy(@Nullable List<String> perms) {
+    public dItem setPermsBuy(@Nullable List<String> perms) {
         item.setObject("rds_perms_buy", perms);
+        cache.get("buyPerms").reset();
+        return this;
     }
 
     /**
@@ -705,16 +747,20 @@ public class dItem implements Serializable, Cloneable {
      * @return list of Strings representing permissions
      */
     public Optional<List<String>> getPermsSell() {
-        return Optional.ofNullable(item.getObject("rds_perms_sell", List.class));
+        Object o;
+        return Optional.ofNullable( (o = cache.get("sellPerms").get()) == null ? null : (List<String>) o );
     }
 
     /**
      * Sets the permission that a player needs to buy this item
      *
      * @param perms a list of Strings representing permissions
+     * @return
      */
-    public void setPermsSell(@Nullable List<String> perms) {
+    public dItem setPermsSell(@Nullable List<String> perms) {
         item.setObject("rds_perms_sell", perms);
+        cache.get("sellPerms").reset();
+        return this;
     }
 
     /**
@@ -723,23 +769,28 @@ public class dItem implements Serializable, Cloneable {
      * @return true if enabled; false is disabled
      */
     public boolean isConfirmGuiEnabled() {
-        return item.getBoolean("rds_confirm_gui");
+        return (boolean) cache.get("confirmGui").get();
     }
 
     /**
      * Enable/disable confirm_Gui for this item
      *
      * @param b true to enable; false to disable
+     * @return
      */
-    public void setConfirm_gui(boolean b) {
+    public dItem setConfirm_gui(boolean b) {
         item.setBoolean("rds_confirm_gui", b);
+        cache.get("confirmGui").reset();
+        return this;
     }
 
     /**
      * Toggles the value of Confirm_GUI
+     * @return
      */
-    public void toggleConfirm_gui() {
+    public dItem toggleConfirm_gui() {
         setConfirm_gui(!isConfirmGuiEnabled());
+        return this;
     }
 
     /**
@@ -748,18 +799,20 @@ public class dItem implements Serializable, Cloneable {
      * @return
      */
     public Optional<Integer> getSetItems() {
-        if (!item.hasKey("rds_setItems"))
-            return Optional.empty();
-        return Optional.ofNullable(item.getInteger("rds_setItems"));
+        Object o;
+        return Optional.ofNullable( (o = cache.get("set")) == null ? null : (int) o );
     }
 
     /**
      * Set amount for the set of items
      *
      * @param setItems
+     * @return
      */
-    public void setSetItems(@Nullable Integer setItems) {
+    public dItem setSetItems(@Nullable Integer setItems) {
         item.setInteger("rds_setItems", setItems);
+        cache.get("set").reset();
+        return this;
     }
 
     /**
@@ -768,22 +821,21 @@ public class dItem implements Serializable, Cloneable {
      * @return null if disabled.
      */
     public Optional<List<UUID>> getBundle() {
-        List<String> aux = item.getObject("rds_bundle", List.class);
-        if (aux != null)
-            return Optional.ofNullable(aux.stream().map(UUID::fromString).collect(Collectors.toList()));
-        else
-            return Optional.empty();
+        return Optional.ofNullable((List<UUID>) cache.get("bundle").get());
     }
 
     /**
      * Sets uuid of the items that this bundle has
      *
      * @param bundle null if want to disabled it
+     * @return
      */
-    public void setBundle(@Nullable List<UUID> bundle) {
+    public dItem setBundle(@Nullable List<UUID> bundle) {
         if (bundle == null) item.removeKey("rds_bundle");
         else item.setObject("rds_bundle", bundle.stream()        // Cast to string due to bug
                 .map(UUID::toString).collect(Collectors.toList()));
+        cache.get("bundle").reset();
+        return this;
     }
 
     /**
@@ -792,31 +844,27 @@ public class dItem implements Serializable, Cloneable {
      * @return Optional.ofNullable(dAction)
      */
     public Pair<dAction, String> getAction() {
-        return item.hasKey("rds_action") ?
-                Pair.deserialize(item.getString("rds_action"), dAction.class, String.class) :
-                Pair.of(dAction.EMPTY, "");
+        return (Pair<dAction, String>) cache.get("action").get();
 
     }
 
     /**
      * Sets the action of this item
+     * @return
      */
-    public void setAction(@Nullable dAction action, String s) {
+    public dItem setAction(@Nullable dAction action, String s) {
         item.setString("rds_action", Pair.of(action, s).serialize());
+        cache.get("action").reset();
+        return this;
     }
 
     /**
      * Private method to set Item as AIR
+     * @return
      */
-    public void setAIR() {
+    public dItem setAIR() {
         item.setBoolean("rds_AIR", true);
-    }
-
-    /**
-     * private method to set Item as SIGN for dGui sell purposes
-     */
-    private void setSIGN() {
-        item.setBoolean("rds_SIGN", true);
+        return this;
     }
 
     public JsonObject getNBT() {
@@ -994,7 +1042,9 @@ public class dItem implements Serializable, Cloneable {
             lazy = Lazy.suppliedBy(supplier);
         }
 
-        public T get() { return lazy.get(); }
+        public T get() {
+            return lazy.get();
+        }
 
         public void reset() {
             lazy = Lazy.suppliedBy(supplier);
