@@ -112,7 +112,7 @@ public class dItem implements Serializable, Cloneable {
         cache.put("action", LazyWrapper.suppliedBy(() -> item.hasKey("rds_action") ?
                 Pair.deserialize(item.getString("rds_action"), dAction.class, String.class) :
                 Pair.of(dAction.EMPTY, "")));
-        cache.put("set", LazyWrapper.suppliedBy(() -> item.getInteger("rds_setItems")));
+        cache.put("set", LazyWrapper.suppliedBy(() -> item.hasKey("rds_setItems") ? item.getInteger("rds_setItems") : null));
         cache.put("confirmGui", LazyWrapper.suppliedBy(() -> item.getBoolean("rds_confirm_gui")));
         cache.put("bundle", LazyWrapper.suppliedBy(() -> {
             final List<String> aux;
@@ -800,7 +800,7 @@ public class dItem implements Serializable, Cloneable {
      */
     public Optional<Integer> getSetItems() {
         Object o;
-        return Optional.ofNullable( (o = cache.get("set")) == null ? null : (int) o );
+        return Optional.ofNullable( (o = cache.get("set").get()) == null ? null : (int) o );
     }
 
     /**
