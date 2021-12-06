@@ -3,7 +3,6 @@ package io.github.divios.lib.dLib.log.options;
 import com.google.common.base.Preconditions;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.FormatUtils;
-import io.github.divios.lib.dLib.dShop;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 

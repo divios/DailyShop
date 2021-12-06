@@ -5,7 +5,6 @@ import com.google.common.base.Preconditions;
 import com.google.gson.*;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.serialize.wrappers.WrappedEnchantment;
-import org.bukkit.enchantments.Enchantment;
 
 import java.lang.reflect.Type;
 

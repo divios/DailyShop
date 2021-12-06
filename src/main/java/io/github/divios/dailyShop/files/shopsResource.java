@@ -52,7 +52,7 @@ public class shopsResource {
     //////////////////////////////////////////////////////////////////////////////////////////////////
 
     private void deleteRemovedShops(Set<dShop> newShops) {
-        sManager.getShops().stream()
+        new HashSet<>(sManager.getShops()).stream()
                 .filter(shop -> !newShops.contains(shop))
                 .forEach(shop -> sManager.deleteShop(shop.getName()));
     }
@@ -60,7 +60,10 @@ public class shopsResource {
     private void newShopsAction(Set<dShop> newShops) {
         newShops.forEach(shop -> {
             if (!sManager.getShop(shop.getName()).isPresent()) {
+                shop.reStock();
                 sManager.createShopAsync(shop);
+                shop.destroy();
+
             } else {
                 dShop currentShop = sManager.getShop(shop.getName()).get();
                 currentShop.setItems(shop.getItems());

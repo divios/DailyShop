@@ -1,20 +1,12 @@
 package io.github.divios.lib.dLib.synchronizedGui.singleGui;
 
-import com.google.common.reflect.TypeToken;
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import io.github.divios.core_lib.events.Events;
 import io.github.divios.core_lib.events.Subscription;
-import io.github.divios.core_lib.gson.JsonBuilder;
 import io.github.divios.core_lib.inventory.inventoryUtils;
 import io.github.divios.core_lib.itemutils.ItemUtils;
-import io.github.divios.core_lib.misc.Pair;
 import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
-import io.github.divios.dailyShop.lorestategy.loreStrategy;
-import io.github.divios.dailyShop.lorestategy.shopItemsLore;
 import io.github.divios.dailyShop.transaction.transaction;
-import io.github.divios.dailyShop.utils.Timer;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
@@ -238,7 +230,7 @@ public class dInventory {
         removeDailyItems();
         int index = dailyItemsSlots.first();
         for (dItem item : itemsToRoll) {
-            addButton(item, dailyItemsSlots.ceiling(index));
+            addButton(item, (index = dailyItemsSlots.ceiling(index)));
             dailyItemsSlots.add(index++);     // Restore slot
         }
     }
@@ -339,7 +331,9 @@ public class dInventory {
 
                             dItem itemClicked = buttons.get(dItem.getUid(e.getCurrentItem()));
                             if (itemClicked == null) return;
+
                             if (dailyItemsSlots.contains(itemClicked.getSlot())) {
+                                Log.info("oke");
                                 if (e.isLeftClick())
                                     transaction.init((Player) e.getWhoClicked(), buttons.get(itemClicked.getUid()), shop);
                                 if (e.isRightClick())
@@ -385,22 +379,24 @@ public class dInventory {
                 });
 
                 newInv[0].dailyItemsSlots.clear();
-                newInv[0].dailyItemsSlots.addAll((Set<Integer>) dataInput.readObject());
+                newInv[0].dailyItemsSlots.addAll((TreeSet<Integer>) dataInput.readObject());
 
                 Object o = dataInput.readObject();
                 if (o instanceof Set)
                     ((Set<dItem>) o).forEach(dItem -> newInv[0].buttons.put(dItem.getUid(), dItem));
                 else
                     newInv[0].buttons.putAll((Map<? extends UUID, ? extends dItem>) o);
+
+                return newInv[0];
             }
 
         } catch (Exception e) {
-            plugin.getLogger().severe("Unable to deserialize gui of shop "
+            Log.severe("Unable to deserialize gui of shop "
                     + shop.getName() + ", setting it to default");
             e.printStackTrace();
             return new dInventory(shop);
         }
-        return newInv[0];
+
     }
 
     private static final class unModifiableInv extends CraftInventory {

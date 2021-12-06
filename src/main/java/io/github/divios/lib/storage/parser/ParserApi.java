@@ -6,7 +6,6 @@ import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.utils.FileUtils;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.dShop;
-import io.github.divios.lib.storage.parser.states.dShopState;
 
 import java.io.File;
 import java.util.Objects;

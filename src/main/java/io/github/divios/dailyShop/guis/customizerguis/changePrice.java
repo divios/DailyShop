@@ -11,7 +11,6 @@ import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
-import io.github.divios.lib.dLib.log.options.dLogEntry;
 import org.bukkit.entity.Player;
 
 import java.util.function.Consumer;

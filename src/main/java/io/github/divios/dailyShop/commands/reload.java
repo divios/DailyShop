@@ -1,17 +1,13 @@
 package io.github.divios.dailyShop.commands;
 
-import com.cryptomorin.xseries.messages.Titles;
 import io.github.divios.core_lib.commands.abstractCommand;
 import io.github.divios.core_lib.commands.cmdTypes;
 import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.core_lib.utils.Log;
-import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.utils.Timer;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.managers.shopsManager;
-import io.github.divios.lib.storage.parser.ParserApi;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 import java.util.Collections;
 import java.util.List;
@@ -53,7 +49,7 @@ public class reload extends abstractCommand {
         /*DailyShop.getInstance().reloadPlugin();
         if (sender instanceof Player) Titles.sendTitle((Player) sender, 25, 40, 25,
                 FormatUtils.color("&a&lPlugin Reloaded"), "");
-        else sender.sendMessage("Plugin Reloaded"); */
+        else sender.sendMessage("Plugin Reloaded");
 
         long[] totalJsonTime = {0};
         long[] totalBukkitTime = {0};
@@ -76,6 +72,11 @@ public class reload extends abstractCommand {
         Log.info("Total json timer " + (double) totalJsonTime[0] / total[0] + " ms");
         Log.info("Total bukkit timer " + (double) totalBukkitTime[0] / total[0] + " ms");
 
-        shopsManager.getInstance().saveAllShops();
+        shopsManager.getInstance().saveAllShops(); */
+
+        shopsManager.getInstance().getShops().forEach(shop -> {
+            Log.info(shop.getName());
+            shop.getGuis().getDefault().getDailyItemsSlots().forEach(integer -> Log.info(String.valueOf(integer)));
+        });
     }
 }

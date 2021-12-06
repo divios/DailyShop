@@ -1,6 +1,5 @@
 package io.github.divios.lib.serialize.wrappers;
 
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 public class WrappedNBT {

@@ -183,7 +183,7 @@ public class miniCustomizeGui {
 
         gui.addButton(24, ItemButton.create(ItemBuilder.of(XMaterial.STICKY_PISTON)
             .setName("&c&lAdd actions").setLore("&7Action to perform when this", "&7item is clicked",
-                        "", "&6Current action: &7" + action.get1() + ":" + action.get2()),
+                        "", "&6Current action: &7" + action.get1().name() + ":" + action.get2()),
                 e-> {
                     preventCloseB = false;
                     customizeAction.open(p, shop, (dAction, s) -> {

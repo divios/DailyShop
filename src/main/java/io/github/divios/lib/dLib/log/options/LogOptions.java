@@ -1,7 +1,5 @@
 package io.github.divios.lib.dLib.log.options;
 
-import io.github.divios.lib.dLib.dShop;
-
 import java.util.UUID;
 
 public class LogOptions {

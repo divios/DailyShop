@@ -1,14 +1,11 @@
 package io.github.divios.lib.dLib;
 
-import com.google.common.base.Preconditions;
-import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import io.github.divios.core_lib.events.Events;
 import io.github.divios.core_lib.events.Subscription;
-import io.github.divios.core_lib.gson.JsonBuilder;
 import io.github.divios.core_lib.misc.timeStampUtils;
 import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.core_lib.scheduler.Task;
@@ -18,17 +15,12 @@ import io.github.divios.dailyShop.events.updateItemEvent;
 import io.github.divios.dailyShop.guis.settings.shopGui;
 import io.github.divios.lib.dLib.synchronizedGui.syncHashMenu;
 import io.github.divios.lib.dLib.synchronizedGui.syncMenu;
-import io.github.divios.lib.serialize.adapters.dItemAdapter;
 import io.github.divios.lib.serialize.adapters.dShopAdapter;
-import io.github.divios.lib.serialize.adapters.dStockAdapter;
 import io.github.divios.lib.storage.databaseManager;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.beans.Transient;
 import java.sql.Timestamp;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -70,7 +62,6 @@ public class dShop {
         startTimerTask();
     }
 
-    
     @Deprecated
     public dShop(String name, String base64, Timestamp timestamp, int timer) {
         this.name = name;

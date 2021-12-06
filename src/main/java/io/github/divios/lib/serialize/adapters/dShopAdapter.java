@@ -5,7 +5,6 @@ import com.google.common.reflect.TypeToken;
 import com.google.gson.*;
 import io.github.divios.core_lib.events.Events;
 import io.github.divios.core_lib.gson.JsonBuilder;
-import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.events.updateShopEvent;
 import io.github.divios.lib.dLib.dItem;

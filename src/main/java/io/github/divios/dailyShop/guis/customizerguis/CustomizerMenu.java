@@ -17,7 +17,6 @@ import io.github.divios.dailyShop.guis.settings.shopGui;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
-import io.github.divios.lib.dLib.log.options.dLogEntry;
 import io.github.divios.lib.dLib.stock.factory.dStockFactory;
 import io.github.divios.lib.managers.shopsManager;
 import org.bukkit.entity.Player;
