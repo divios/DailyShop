@@ -397,7 +397,7 @@ public class dInventory {
                 if (o instanceof Set)
                     ((Set<dItem>) o).forEach(dItem -> newInv[0].buttons.put(dItem.getUid(), dItem));
                 else
-                    newInv[0].buttons.putAll((Map<? extends UUID, ? extends dItem>) o);
+                    newInv[0].buttons.putAll((Map<UUID, dItem>) o);
 
                 return newInv[0];
             }
