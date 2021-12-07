@@ -5,6 +5,7 @@ import com.google.common.reflect.TypeToken;
 import com.google.gson.*;
 import io.github.divios.core_lib.gson.JsonBuilder;
 import io.github.divios.dailyShop.DailyShop;
+import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.dLib.synchronizedGui.singleGui.dInventory;
@@ -32,6 +33,7 @@ public class dShopAdapter implements JsonSerializer<dShop>, JsonDeserializer<dSh
 
         Preconditions.checkArgument(object.has("id"), "A shop needs an ID");
         Preconditions.checkArgument(object.has("items"), "A shop needs items");
+        if (object.has("timer")) Preconditions.checkArgument(Utils.testRunnable(() -> object.get("timer").getAsInt()), "Timer needs to be an integer");
 
         dShop deserializedShop;
 
