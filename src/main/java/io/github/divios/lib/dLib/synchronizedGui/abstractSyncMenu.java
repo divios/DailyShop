@@ -3,19 +3,21 @@ package io.github.divios.lib.dLib.synchronizedGui;
 import com.google.common.base.Objects;
 import io.github.divios.core_lib.events.Events;
 import io.github.divios.core_lib.events.Subscription;
+import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.Msg;
 import io.github.divios.core_lib.scheduler.Task;
 import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.events.updateItemEvent;
-import io.github.divios.dailyShop.events.updateShopEvent;
 import io.github.divios.dailyShop.guis.customizerguis.customizeGui;
+import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.dLib.synchronizedGui.singleGui.dInventory;
 import io.github.divios.lib.dLib.synchronizedGui.singleGui.singleGui;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -81,14 +83,43 @@ public abstract class abstractSyncMenu implements syncMenu {
     }
 
     /**
-     * Synchronized method to update the base when the listener is triggered
-     *
+     * Synchronized method to update the shop inventory. It will only update if
+     * the inventory passed has any change compared to the actual inventory.
+     * If they are not equal, then, if the new inventory has a different size, the hole
+     * inventory is updated and new items are generated, if not, only the items that have changed will
+     * be updated without restocking the shop.
      */
     public synchronized void updateBase(dInventory inv, boolean silent) {
         if (inv.equals(base.getBase().skeleton())) return;     // Do not update if the invs are the same
-        base.destroy();
-        base = singleGui.fromJson(inv.toBase64(), shop);
-        reStock(silent);
+
+        if (inv.getInventorySize() != base.getInventory().getInventorySize()) {  // If the inv has changed size update all
+            base.destroy();
+            base = singleGui.fromJson(inv.toBase64(), shop);
+            reStock(silent);
+
+        } else {        // If the inv has same size, update only buttons with the above logic
+            ItemStack[] actualContest = base.getInventory().skeleton().getInventory().getContents();
+            ItemStack[] newContents = inv.getInventory().getContents();
+
+            Log.warn("oke");
+            for (int i = 0; i < actualContest.length; i++) {
+                if (ItemUtils.isEmpty(actualContest[i]) && ItemUtils.isEmpty(newContents[i])) continue;
+
+                if (ItemUtils.isEmpty(actualContest[i]) && !ItemUtils.isEmpty(newContents[i]))
+                    base.getInventory().addButton(newContents[i], i);
+
+                else if (!ItemUtils.isEmpty(actualContest[i]) && ItemUtils.isEmpty(newContents[i]))
+                    base.getInventory().removeButton(dItem.getUid(actualContest[i]));
+
+                else if (!actualContest[i].isSimilar(newContents[i]))
+                    base.getInventory().addButton(newContents[i], i);
+            }
+
+            Set<UUID> players = new HashSet<>(guis.keySet());       // Re-open to all players to update gui changes
+            invalidateAll();
+            players.forEach(uuid -> Optional.ofNullable(Bukkit.getPlayer(uuid)).ifPresent(this::generate));
+
+        }
     }
 
     private synchronized void updateItems(updateItemEvent o) {
