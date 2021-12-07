@@ -71,39 +71,14 @@ public class transaction {
 
         if (item.isConfirmGuiEnabled()) {
 
-            if (!item.getSetItems().isPresent()) {
+            buyConfirmMenu.builder()
+                    .withShop(shop)
+                    .withPlayer(p)
+                    .withItem(item)
+                    .withOnCompleteAction(integer -> initTransaction(p, item, integer, shop))
+                    .withFallback(() -> shop.openShop(p))
+                    .prompt();
 
-                buyConfirmMenu.builder()
-                        .withShop(shop)
-                        .withPlayer(p)
-                        .withItem(item)
-                        .withOnCompleteAction(integer -> initTransaction(p, item, integer, shop))
-                        .withFallback(() -> shop.openShop(p))
-                        .prompt();
-
-            } else {
-
-                confirmIH.builder()
-                        .withPlayer(p)
-                        .withAction(aBoolean -> {
-                            if (aBoolean) {
-                                transaction.initTransaction(p, item, item.getQuantity(), shop);
-                            } else
-                                shop.openShop(p);
-                        })
-                        .withItem(
-                                ItemBuilder.of(item.getItem().clone()).addLore(
-                                        Msg.msgList(plugin.configM.getLangYml().CONFIRM_GUI_SELL_ITEM)
-                                                .add("\\{price}",
-                                                        String.valueOf(item.getBuyPrice().get().getPrice()))
-                                                .add("\\{quantity}", String.valueOf(item.getQuantity()))
-                                                .build()
-                                ))
-                        .withTitle(plugin.configM.getLangYml().CONFIRM_GUI_BUY_NAME)
-                        .withConfirmLore(plugin.configM.getLangYml().CONFIRM_GUI_YES, plugin.configM.getLangYml().CONFIRM_GUI_YES_LORE)
-                        .withCancelLore(plugin.configM.getLangYml().CONFIRM_GUI_NO, plugin.configM.getLangYml().CONFIRM_GUI_NO_LORE)
-                        .prompt();
-            }
         } else initTransaction(p, item, item.getQuantity(), shop);
 
     }
@@ -282,11 +257,9 @@ public class transaction {
         if (MMOUtils.isMMOItemsOn() && MMOUtils.isMMOItem(itemToGive.getRawItem())) {
             if (itemToGive.getRawItem(true).equals(itemToGive.getRawItem(true))) {
                 ItemUtils.give(player, itemToGive.getRawItem(), amount);
-            }
-            else IntStream.range(0, amount).forEach(value -> player.getInventory().addItem(ItemBuilder.of(itemToGive.getRawItem(true)).setCount(1)));
-        }
-
-        else ItemUtils.give(player, itemToGive.getRawItem(), amount);
+            } else
+                IntStream.range(0, amount).forEach(value -> player.getInventory().addItem(ItemBuilder.of(itemToGive.getRawItem(true)).setCount(1)));
+        } else ItemUtils.give(player, itemToGive.getRawItem(), amount);
 
     }
 

@@ -46,7 +46,7 @@ public abstract class abstractConfirmMenu {
         this.onCompleteAction = onCompleteAction;
         this.fallback = fallback;
 
-        addItemsAndIncrement(1);
+        addItemsAndIncrement(item.getSetItems().isPresent() ? item.getSetItems().get() : 1);
         createMenu();
         openMenu();
     }
