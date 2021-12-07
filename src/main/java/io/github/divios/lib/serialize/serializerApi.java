@@ -1,6 +1,7 @@
 package io.github.divios.lib.serialize;
 
 import com.google.common.base.Preconditions;
+import io.github.divios.core_lib.cache.Lazy;
 import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.utils.FileUtils;
@@ -13,11 +14,11 @@ import java.util.Objects;
 public class serializerApi {
 
     private static final DailyShop plugin = DailyShop.getInstance();
-    private static final File shopsFolder = new File(plugin.getDataFolder(), "shops");
+    private static final Lazy<File> shopsFolder = Lazy.suppliedBy(() -> new File(plugin.getDataFolder(), "shops"));
 
     public static void saveShopToFile(dShop shop) {
         try {
-            File data = new File(shopsFolder, shop.getName() + ".yml");
+            File data = new File(shopsFolder.get(), shop.getName() + ".yml");
             FileUtils.toYaml(dShop.encodeOptions.JSON.toJson(shop), data);
         } catch (Exception e) {
             Log.info("There was a problem saving the shop " + shop.getName());
