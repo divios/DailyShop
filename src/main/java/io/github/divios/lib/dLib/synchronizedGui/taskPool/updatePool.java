@@ -5,14 +5,14 @@ import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.lib.dLib.synchronizedGui.singleGui.singleGui;
 
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 public class updatePool {
 
     private static final Set<singleGui> bucket = Sets.newConcurrentHashSet();
 
     static {
-        Schedulers.async().runRepeating(() -> bucket.forEach(singleGui::updateTask),
-                10L, 10L);
+        Schedulers.async().runRepeating(() -> bucket.forEach(singleGui::updateTask), 500, TimeUnit.MILLISECONDS, 500, TimeUnit.MILLISECONDS);
     }
 
     public static void subscribe(singleGui gui) {
