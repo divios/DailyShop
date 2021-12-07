@@ -41,11 +41,11 @@ public abstract class abstractConfirmMenu {
     public abstractConfirmMenu(dShop shop, Player player, dItem item, Consumer<Integer> onCompleteAction, Runnable fallback) {
         this.shop = shop;
         this.player = player;
-        this.item = item;
+        this.item = item.clone();
         this.onCompleteAction = onCompleteAction;
         this.fallback = fallback;
 
-        addItemsAndIncrement(1);
+        addItemsAndIncrement(item.getSetItems().isPresent() ? this.item.setQuantity(1).getSetItems().get() : 1);
         createMenu();
         openMenu();
     }
