@@ -39,17 +39,6 @@ public class FileUtils {
 
     }
 
-    public static void createShopsFolder() {
-        File shopFolder = new File(plugin.getDataFolder(), "shops");
-        if (!shopFolder.exists()) {
-            shopFolder.mkdir();
-            Stream.of("blocks", "drops", "equipment", "farm", "menu", "ore", "potion", "wood")
-                    .forEach(s -> {
-                        plugin.saveResource("shops/" + s + ".yml", false);
-                    });
-        }
-    }
-
     public static void createDatabaseFile() {
         File db = new File(plugin.getDataFolder(), "dailyshop.db");
         if (!db.exists())
