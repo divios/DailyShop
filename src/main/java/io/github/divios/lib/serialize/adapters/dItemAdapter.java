@@ -42,9 +42,10 @@ public class dItemAdapter implements JsonSerializer<dItem>, JsonDeserializer<dIt
         if (!lore.isEmpty()) merchant.add("lore", gson.toJsonTree(ItemUtils.getLore(dItem.getRawItem())));
 
         merchant.addProperty("material", ItemUtils.getMaterial(dItem.getRawItem()).name());
+        dItem.getSetItems().ifPresent(integer -> merchant.addProperty("quantity", integer));
+
         merchant.addProperty("buyPrice", dItem.getBuyPrice().get().toString());
         merchant.addProperty("sellPrice", dItem.getSellPrice().get().toString());
-        dItem.getSetItems().ifPresent(integer -> merchant.addProperty("set", integer));
         if (dItem.hasStock()) merchant.add("stock", gson.toJsonTree(dItem.getStock()));
         if (!dItem.getEnchantments().isEmpty()) merchant.add("enchantments", gson.toJsonTree(wrapEnchants(dItem.getEnchantments())));
         dItem.getCommands().ifPresent(strings -> merchant.add("commands", gson.toJsonTree(strings)));
@@ -82,7 +83,7 @@ public class dItemAdapter implements JsonSerializer<dItem>, JsonDeserializer<dIt
             List <WrappedEnchantment> enchants = gson.fromJson(object.get("enchantments"), enchantsListToken.getType());
             enchants.forEach(enchant -> ditem.addEnchantments(enchant.getEnchant(), enchant.getLevel()));
         }
-        if (object.has("set")) ditem.setSetItems(object.get("set").getAsInt());
+        if (object.has("quantity")) ditem.setSetItems(object.get("quantity").getAsInt());
         if (object.has("stock")) ditem.setStock(gson.fromJson(object.get("stock"), dStock.class));
         if (object.has("confirm_gui")) ditem.setConfirm_gui(object.get("confirm_gui").getAsBoolean());
         if (object.has("nbt")) ditem.setNBT(object.get("nbt").getAsJsonObject());
