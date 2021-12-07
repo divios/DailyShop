@@ -73,6 +73,8 @@ public class shopsResource {
                 shop.destroy();
             } else {
                 dShop currentShop = sManager.getShop(shop.getName()).get();
+
+                currentShop.updateShopGui(shop.getGuis().getDefault().skeleton());
                 currentShop.setItems(shop.getItems());
             }
             Log.info("Registered shop of name " + shop.getName() + " with " + shop.getItems().size() + " items");

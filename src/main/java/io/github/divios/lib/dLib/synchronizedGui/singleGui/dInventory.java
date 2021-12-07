@@ -1,5 +1,6 @@
 package io.github.divios.lib.dLib.synchronizedGui.singleGui;
 
+import de.tr7zw.nbtapi.NBTItem;
 import io.github.divios.core_lib.events.Events;
 import io.github.divios.core_lib.events.Subscription;
 import io.github.divios.core_lib.inventory.inventoryUtils;
@@ -325,6 +326,28 @@ public class dInventory {
         }
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        dInventory that = (dInventory) o;
+        /*Log.info("Titles: " + Objects.equals(title, that.title));
+        Log.info("Invs: " + compareInvs(that.inv, inv));
+        Log.info("Shop: " + Objects.equals(shop, that.shop));
+        Log.info("DailySlots: " + Objects.equals(dailyItemsSlots, that.dailyItemsSlots));*/
+        return Objects.equals(title, that.title) && compareInvs(that.inv, inv) && Objects.equals(shop, that.shop) && Objects.equals(dailyItemsSlots, that.dailyItemsSlots);
+    }
+
+    @Override
+    public int hashCode() {
+        int invHash = Arrays.stream(inv.getContents())
+                .map(itemStack -> new NBTItem(itemStack).toString())
+                .mapToInt(String::hashCode)
+                .sum();
+
+        return Objects.hash(title, invHash, shop, dailyItemsSlots);
+    }
+
     /**********  Utils  **********/
 
     protected void createListeners() {
@@ -409,6 +432,28 @@ public class dInventory {
             return new dInventory(shop);
         }
 
+    }
+
+    private boolean compareInvs(Inventory inv1, Inventory inv2) {
+        ItemStack contents1[] = inv1.getContents();
+        ItemStack contents2[] = inv2.getContents();
+
+        if (contents1.length != contents2.length) return false;
+
+        for (int i = 0; i < contents1.length; i++) {
+
+            //Log.info((ItemUtils.isEmpty(contents1[i]) ? "" : contents1[i].getType().name()) + " -----> " + (ItemUtils.isEmpty(contents2[i]) ? "" : contents2[i].getType().name()));
+
+            if (contents1[i] != null && contents2[i] == null
+            || contents1[i] == null && contents2[i] != null) return false;
+
+            if (contents1[i] == null && contents2[i] == null) continue;
+
+            if (!contents1[i].isSimilar(contents2[i]))
+                return false;
+
+        }
+        return true;
     }
 
     private static final class unModifiableInv extends CraftInventory {
