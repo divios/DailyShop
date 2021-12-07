@@ -811,6 +811,7 @@ public class dItem implements Serializable, Cloneable {
      */
     public dItem setSetItems(@Nullable Integer setItems) {
         item.setInteger("rds_setItems", setItems);
+        setQuantity(setItems);
         cache.get("set").reset();
         return this;
     }
