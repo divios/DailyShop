@@ -28,7 +28,7 @@ public class reStock extends abstractCommand {
         if (args.size() <= 0)
             return false;
 
-        else return shopsManager.getInstance().getShop(args.get(0)).isPresent();
+        else return args.get(0).equals("--all") || shopsManager.getInstance().getShop(args.get(0)).isPresent();
 
     }
 
@@ -56,6 +56,11 @@ public class reStock extends abstractCommand {
 
     @Override
     public void run(CommandSender sender, List<String> args) {
+
+        if (args.get(0).equals("--all")) {
+            shopsManager.getInstance().getShops().forEach(dShop::reStock);
+            return;
+        }
 
         shopsManager.getInstance().getShop(args.get(0))
                 .ifPresent(shop -> {
