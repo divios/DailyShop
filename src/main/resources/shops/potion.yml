@@ -1,0 +1,627 @@
+id: potion
+timer: 86400
+timeStamp: lun, 6 dic 2021 15:37:00
+shop:
+  title: potion
+  size: 45
+  items:
+    '"f65d7c0e-4da5-4292-88bf-12990e9fe586"':
+      name: '&c'
+      material: BLACK_STAINED_GLASS_PANE
+      slot: 0
+      nbt:
+        Damage: 0
+    '"fc4cab3b-4568-4b42-8af2-cb0c1a82e512"':
+      name: '&c'
+      material: BLACK_STAINED_GLASS_PANE
+      slot: 1
+      nbt:
+        Damage: 0
+    '"63100aa0-cea2-4297-8339-018e8f26a2a9"':
+      name: '&c'
+      material: BLACK_STAINED_GLASS_PANE
+      slot: 2
+      nbt:
+        Damage: 0
+    '"4651cbd6-e63e-412f-98b1-a009c5a2f773"':
+      name: '&c'
+      material: BLACK_STAINED_GLASS_PANE
+      slot: 3
+      nbt:
+        Damage: 0
+    '"46b76f41-46bf-4afa-920a-94293c9cdc2c"':
+      name: '&c'
+      material: BLACK_STAINED_GLASS_PANE
+      slot: 4
+      nbt:
+        Damage: 0
+    '"393b7e18-52e1-4d4d-bf1e-111cf860af20"':
+      name: '&c'
+      material: BLACK_STAINED_GLASS_PANE
+      slot: 5
+      nbt:
+        Damage: 0
+    '"e7d3aafe-030c-47b0-bdd6-5aad9dbac005"':
+      name: '&c'
+      material: BLACK_STAINED_GLASS_PANE
+      slot: 6
+      nbt:
+        Damage: 0
+    '"e6089f60-c213-407e-b229-69899f5ca94f"':
+      name: '&c'
+      material: MAGENTA_STAINED_GLASS_PANE
+      slot: 7
+    '"5b6c1974-3403-4742-890b-f94794d30988"':
+      name: '&7Time Left: &d%dailyshop_time_potion%'
+      material: COMPASS
+      slot: 8
+    '"4d26d93a-0ce6-4320-a2e6-61f8dbe8e450"':
+      name: '&c'
+      material: BLACK_STAINED_GLASS_PANE
+      slot: 9
+      nbt:
+        Damage: 0
+    '"5f3c3fb4-5847-4e92-bbab-a3861f676fc8"':
+      name: '&c'
+      material: BLACK_STAINED_GLASS_PANE
+      slot: 10
+      nbt:
+        Damage: 0
+    '"1ef561de-f7f1-4b49-b2bf-a5e15d804462"':
+      name: '&c'
+      material: BLACK_STAINED_GLASS_PANE
+      slot: 11
+      nbt:
+        Damage: 0
+    '"614897e4-a32d-4c61-bcd0-f0a9b89ffbe3"':
+      name: '&c'
+      material: BLACK_STAINED_GLASS_PANE
+      slot: 12
+      nbt:
+        Damage: 0
+    '"52498331-ed49-484d-9295-45e172060610"':
+      name: '&c'
+      material: BLACK_STAINED_GLASS_PANE
+      slot: 13
+      nbt:
+        Damage: 0
+    '"791bd53d-b394-4e71-9a23-8c549dc8dc5e"':
+      name: '&c'
+      material: BLACK_STAINED_GLASS_PANE
+      slot: 14
+      nbt:
+        Damage: 0
+    '"07eb0f76-2fc3-4801-a7f4-2d206eecf0cb"':
+      name: '&c'
+      material: BLACK_STAINED_GLASS_PANE
+      slot: 15
+      nbt:
+        Damage: 0
+    '"66d0fa05-567c-4309-826a-11c4a9d002ca"':
+      name: '&c'
+      material: MAGENTA_STAINED_GLASS_PANE
+      slot: 16
+    '"639f8767-6f0a-4e47-9b14-a17f11191df6"':
+      name: '&c'
+      material: BLACK_STAINED_GLASS_PANE
+      slot: 17
+      nbt:
+        Damage: 0
+    '"db9c38ca-7795-4e48-8ffa-cb393fc4e615"':
+      name: '&c'
+      material: BLACK_STAINED_GLASS_PANE
+      slot: 18
+      nbt:
+        Damage: 0
+    '"f1c41117-e02b-4d61-8601-5b3333fe0f03"':
+      name: '&c'
+      material: BLACK_STAINED_GLASS_PANE
+      slot: 24
+      nbt:
+        Damage: 0
+    '"ffa06aaf-688a-423a-b8c6-9ecf26694c31"':
+      name: '&c'
+      material: MAGENTA_STAINED_GLASS_PANE
+      slot: 25
+    '"f88ab0f2-de66-4305-a570-48e0e4f462a3"':
+      name: '&c'
+      material: BLACK_STAINED_GLASS_PANE
+      slot: 26
+      nbt:
+        Damage: 0
+    '"909fd810-6896-4ca6-9397-784313ada21d"':
+      name: '&c'
+      material: BLACK_STAINED_GLASS_PANE
+      slot: 27
+      nbt:
+        Damage: 0
+    '"6e8598e9-099b-42ac-9518-ae17f43ea02e"':
+      name: '&c'
+      material: BLACK_STAINED_GLASS_PANE
+      slot: 33
+      nbt:
+        Damage: 0
+    '"7abadc58-6e26-43c0-8254-6352f4a98e07"':
+      name: '&c'
+      material: MAGENTA_STAINED_GLASS_PANE
+      slot: 34
+    '"b5f7bcc9-2dac-44e5-923a-68951dd38b6e"':
+      name: '&c'
+      material: BLACK_STAINED_GLASS_PANE
+      slot: 35
+      nbt:
+        Damage: 0
+    '"7cf9afd9-a181-44e6-84ff-11f04a55a234"':
+      name: '&c'
+      material: BLACK_STAINED_GLASS_PANE
+      slot: 36
+      nbt:
+        Damage: 0
+    '"be5c6d9f-2233-45a8-b69d-54a6d660df96"':
+      name: '&c'
+      material: BLACK_STAINED_GLASS_PANE
+      slot: 37
+      nbt:
+        Damage: 0
+    '"6915c41d-e811-4f11-9d17-af35f7d38aac"':
+      name: '&c'
+      material: BLACK_STAINED_GLASS_PANE
+      slot: 38
+      nbt:
+        Damage: 0
+    '"8756e8e9-6ac4-4d30-8303-f9a889c55ded"':
+      name: '&c'
+      material: BLACK_STAINED_GLASS_PANE
+      slot: 39
+      nbt:
+        Damage: 0
+    '"f52293c8-79a8-4b9f-9469-f1688c686345"':
+      name: '&c'
+      material: BLACK_STAINED_GLASS_PANE
+      slot: 40
+      nbt:
+        Damage: 0
+    '"84ee022e-1960-45ce-8b57-205b7056dd6d"':
+      name: '&c'
+      material: BLACK_STAINED_GLASS_PANE
+      slot: 41
+      nbt:
+        Damage: 0
+    '"0f25f927-6bb7-4f97-bf2b-5886b955c67b"':
+      name: '&c'
+      material: BLACK_STAINED_GLASS_PANE
+      slot: 42
+      nbt:
+        Damage: 0
+    '"900b4f24-0998-47c0-9641-f27076ceaba1"':
+      name: '&c'
+      material: MAGENTA_STAINED_GLASS_PANE
+      slot: 43
+    '"74763423-7421-49ea-a84a-7a05a3e9a6cc"':
+      name: '&cGo back to Menu'
+      material: BARRIER
+      action:
+        type: OPEN_SHOP
+        data: menu
+      slot: 44
+items:
+  '"6f872f50-15b5-4d27-9120-3f85b011610a"':
+    material: POTION
+    buyPrice: '1075.0'
+    sellPrice: '-1.0'
+    rarity: Common
+    econ:
+      name: vault
+    confirm_gui: true
+    nbt:
+      Potion: minecraft:fire_resistance
+  '"e93b18a1-ab86-4a88-9fe9-bc82a330c50c"':
+    material: POTION
+    buyPrice: '265.4'
+    sellPrice: '-1.0'
+    rarity: Common
+    econ:
+      name: vault
+    confirm_gui: true
+    nbt:
+      Potion: minecraft:leaping
+  '"d12a78a9-cae3-417d-8b9d-27e64aa7d7fc"':
+    material: SPLASH_POTION
+    buyPrice: '575.0'
+    sellPrice: '-1.0'
+    rarity: Common
+    econ:
+      name: vault
+    confirm_gui: true
+    nbt:
+      Potion: minecraft:strong_regeneration
+  '"46390c72-66cf-4c9a-aa50-7098d53ed36b"':
+    material: SPLASH_POTION
+    buyPrice: '575.0'
+    sellPrice: '-1.0'
+    rarity: Common
+    econ:
+      name: vault
+    confirm_gui: true
+    nbt:
+      Potion: minecraft:long_water_breathing
+  '"8a1c9ca6-6026-4e74-a052-340c1559801f"':
+    material: POTION
+    buyPrice: '1975.65'
+    sellPrice: '-1.0'
+    rarity: Common
+    econ:
+      name: vault
+    confirm_gui: true
+    nbt:
+      Potion: minecraft:long_strength
+  '"0d3e2b5d-f226-4ba4-80b4-3a69f20f363d"':
+    material: POTION
+    buyPrice: '875.8'
+    sellPrice: '-1.0'
+    rarity: Common
+    econ:
+      name: vault
+    confirm_gui: true
+    nbt:
+      Potion: minecraft:long_swiftness
+  '"8c7e4be0-77b5-4cb3-8d5e-14df71ba03ac"':
+    material: SPLASH_POTION
+    buyPrice: '350.0'
+    sellPrice: '-1.0'
+    rarity: Common
+    econ:
+      name: vault
+    confirm_gui: true
+    nbt:
+      Potion: minecraft:long_regeneration
+  '"17f7182f-c5c6-43bf-9195-69e0e6c0d7c3"':
+    material: POTION
+    buyPrice: '720.45'
+    sellPrice: '-1.0'
+    rarity: Common
+    econ:
+      name: vault
+    confirm_gui: true
+    nbt:
+      Potion: minecraft:water_breathing
+  '"9b067b89-bb4f-4fc3-9a7b-0b63dc0e6f69"':
+    material: POTION
+    buyPrice: '1575.0'
+    sellPrice: '-1.0'
+    rarity: Common
+    econ:
+      name: vault
+    confirm_gui: true
+    nbt:
+      Potion: minecraft:long_fire_resistance
+  '"37a782a5-f865-4972-885f-9f99703ba8f8"':
+    material: POTION
+    buyPrice: '865.2'
+    sellPrice: '-1.0'
+    rarity: Common
+    econ:
+      name: vault
+    confirm_gui: true
+    nbt:
+      Potion: minecraft:long_regeneration
+  '"ea3f7006-575c-429a-bfc6-265447b6e4cc"':
+    material: POTION
+    buyPrice: '1000.0'
+    sellPrice: '-1.0'
+    rarity: Common
+    econ:
+      name: vault
+    confirm_gui: true
+    nbt:
+      Potion: minecraft:strong_swiftness
+  '"77a25557-b50f-4659-bf34-bbc3dd0502d9"':
+    material: POTION
+    buyPrice: '475.5'
+    sellPrice: '-1.0'
+    rarity: Common
+    econ:
+      name: vault
+    confirm_gui: true
+    nbt:
+      Potion: minecraft:long_leaping
+  '"b797dd17-d6ce-4434-ab17-4db2aa65a3c7"':
+    material: POTION
+    buyPrice: '875.9'
+    sellPrice: '-1.0'
+    rarity: Common
+    econ:
+      name: vault
+    confirm_gui: true
+    nbt:
+      Potion: minecraft:strength
+  '"37ea594b-2252-485e-b05c-046c9c6304e7"':
+    material: POTION
+    buyPrice: '850.95'
+    sellPrice: '-1.0'
+    rarity: Common
+    econ:
+      name: vault
+    confirm_gui: true
+    nbt:
+      Potion: minecraft:long_water_breathing
+  '"912ae9f8-3ca7-4edc-b578-984ca7f6dfae"':
+    material: SPLASH_POTION
+    buyPrice: '575.0'
+    sellPrice: '-1.0'
+    rarity: Common
+    econ:
+      name: vault
+    confirm_gui: true
+    nbt:
+      Potion: minecraft:long_invisibility
+  '"1a51c7c7-7c6c-401f-a917-73d13c312caf"':
+    material: SPLASH_POTION
+    buyPrice: '350.0'
+    sellPrice: '-1.0'
+    rarity: Common
+    econ:
+      name: vault
+    confirm_gui: true
+    nbt:
+      Potion: minecraft:long_leaping
+  '"6af70718-d606-4392-9a80-d71a4ef4a3de"':
+    material: POTION
+    buyPrice: '750.75'
+    sellPrice: '-1.0'
+    rarity: Common
+    econ:
+      name: vault
+    confirm_gui: true
+    nbt:
+      Potion: minecraft:long_invisibility
+  '"ece9b0a9-c400-4134-8ebf-bb95f1af15f9"':
+    material: SPLASH_POTION
+    buyPrice: '350.0'
+    sellPrice: '-1.0'
+    rarity: Common
+    econ:
+      name: vault
+    confirm_gui: true
+    nbt:
+      Potion: minecraft:long_strength
+  '"2a2b3ae1-ee1e-416e-953e-0a530104bdb6"':
+    material: SPLASH_POTION
+    buyPrice: '350.0'
+    sellPrice: '-1.0'
+    rarity: Common
+    econ:
+      name: vault
+    confirm_gui: true
+    nbt:
+      Potion: minecraft:invisibility
+  '"dd0e1632-5ca0-447e-98ac-9fd89a42d26f"':
+    material: POTION
+    buyPrice: '650.8'
+    sellPrice: '-1.0'
+    rarity: Common
+    econ:
+      name: vault
+    confirm_gui: true
+    nbt:
+      Potion: minecraft:strong_leaping
+  '"07be6eb7-bd27-407a-9387-3ef3e8175b74"':
+    material: SPLASH_POTION
+    buyPrice: '350.0'
+    sellPrice: '-1.0'
+    rarity: Common
+    econ:
+      name: vault
+    confirm_gui: true
+    nbt:
+      Potion: minecraft:healing
+  '"0d16a4f3-fade-4426-8ae9-1a2dd778d073"':
+    material: POTION
+    buyPrice: '650.95'
+    sellPrice: '-1.0'
+    rarity: Common
+    econ:
+      name: vault
+    confirm_gui: true
+    nbt:
+      Potion: minecraft:swiftness
+  '"45d0e2ca-f82f-48db-b898-86b473d50e50"':
+    material: POTION
+    buyPrice: '675.8'
+    sellPrice: '-1.0'
+    rarity: Common
+    econ:
+      name: vault
+    confirm_gui: true
+    nbt:
+      Potion: minecraft:healing
+  '"bd05be40-d41e-4187-acb4-ed3ce2c000ae"':
+    material: SPLASH_POTION
+    buyPrice: '350.0'
+    sellPrice: '-1.0'
+    rarity: Common
+    econ:
+      name: vault
+    confirm_gui: true
+    nbt:
+      Potion: minecraft:long_swiftness
+  '"b4db6f7b-f0c7-4dd3-abf9-5c720748fa61"':
+    material: SPLASH_POTION
+    buyPrice: '350.0'
+    sellPrice: '-1.0'
+    rarity: Common
+    econ:
+      name: vault
+    confirm_gui: true
+    nbt:
+      Potion: minecraft:fire_resistance
+  '"e4db3614-c996-4c1f-a961-5aaab6aca318"':
+    material: POTION
+    buyPrice: '2500.0'
+    sellPrice: '-1.0'
+    rarity: Common
+    econ:
+      name: vault
+    confirm_gui: true
+    nbt:
+      Potion: minecraft:luck
+  '"1d090dd9-27a8-4094-9ce7-f40f089cd714"':
+    material: SPLASH_POTION
+    buyPrice: '275.0'
+    sellPrice: '-1.0'
+    rarity: Common
+    econ:
+      name: vault
+    confirm_gui: true
+    nbt:
+      Potion: minecraft:leaping
+  '"2856ea0e-42cd-40cd-8ac2-34bbae6a13e9"':
+    material: SPLASH_POTION
+    buyPrice: '350.0'
+    sellPrice: '-1.0'
+    rarity: Common
+    econ:
+      name: vault
+    confirm_gui: true
+    nbt:
+      Potion: minecraft:water_breathing
+  '"a1b2719f-7d74-4b22-a8d0-8643e095803e"':
+    material: SPLASH_POTION
+    buyPrice: '575.0'
+    sellPrice: '-1.0'
+    rarity: Common
+    econ:
+      name: vault
+    confirm_gui: true
+    nbt:
+      Potion: minecraft:strong_healing
+  '"15ec99b5-948e-4c0c-ba4c-33f7fcaf1bb2"':
+    material: SPLASH_POTION
+    buyPrice: '275.0'
+    sellPrice: '-1.0'
+    rarity: Common
+    econ:
+      name: vault
+    confirm_gui: true
+    nbt:
+      Potion: minecraft:regeneration
+  '"a1c84c6d-01c7-4f84-9fd7-dd00c06d64fd"':
+    material: POTION
+    buyPrice: '915.0'
+    sellPrice: '-1.0'
+    rarity: Common
+    econ:
+      name: vault
+    confirm_gui: true
+    nbt:
+      Potion: minecraft:strong_regeneration
+  '"ad9126d9-fb91-4845-a762-4481ff0d58b5"':
+    material: SPLASH_POTION
+    buyPrice: '275.0'
+    sellPrice: '-1.0'
+    rarity: Common
+    econ:
+      name: vault
+    confirm_gui: true
+    nbt:
+      Potion: minecraft:strength
+  '"b6c67747-8f19-4ec7-83da-a7d4afc8ea8e"':
+    material: SPLASH_POTION
+    buyPrice: '275.0'
+    sellPrice: '-1.0'
+    rarity: Common
+    econ:
+      name: vault
+    confirm_gui: true
+    nbt:
+      Potion: minecraft:swiftness
+  '"f8f2b5ee-2d7f-42ed-8f7c-de6c31ac5714"':
+    material: POTION
+    buyPrice: '550.25'
+    sellPrice: '-1.0'
+    rarity: Common
+    econ:
+      name: vault
+    confirm_gui: true
+    nbt:
+      Potion: minecraft:invisibility
+  '"a27079a4-b80e-4cad-b34c-a0ded0f254d0"':
+    material: POTION
+    buyPrice: '1250.9'
+    sellPrice: '-1.0'
+    rarity: Common
+    econ:
+      name: vault
+    confirm_gui: true
+    nbt:
+      Potion: minecraft:strong_strength
+  '"e16fbbd8-f816-491d-bcbb-b9e2c7794f94"':
+    material: SPLASH_POTION
+    buyPrice: '575.0'
+    sellPrice: '-1.0'
+    rarity: Common
+    econ:
+      name: vault
+    confirm_gui: true
+    nbt:
+      Potion: minecraft:strong_strength
+  '"330a5c1b-f7cb-4bd3-983a-719c489a0f83"':
+    material: SPLASH_POTION
+    buyPrice: '550.0'
+    sellPrice: '-1.0'
+    rarity: Common
+    econ:
+      name: vault
+    confirm_gui: true
+    nbt:
+      Potion: minecraft:luck
+  '"8795baa9-206a-4335-90ad-e9b7dcb0816e"':
+    material: POTION
+    buyPrice: '875.5'
+    sellPrice: '-1.0'
+    rarity: Common
+    econ:
+      name: vault
+    confirm_gui: true
+    nbt:
+      Potion: minecraft:strong_healing
+  '"3e0a4f2c-de0c-41d8-84dc-bbfa18a6ff0d"':
+    material: SPLASH_POTION
+    buyPrice: '575.0'
+    sellPrice: '-1.0'
+    rarity: Common
+    econ:
+      name: vault
+    confirm_gui: true
+    nbt:
+      Potion: minecraft:strong_leaping
+  '"92b5e381-0829-41cd-aab9-a4eb69b6b21b"':
+    material: POTION
+    buyPrice: '775.5'
+    sellPrice: '-1.0'
+    rarity: Common
+    econ:
+      name: vault
+    confirm_gui: true
+    nbt:
+      Potion: minecraft:regeneration
+  '"f1f80d4b-9e24-4fc4-b45e-5bc0f5d94e4e"':
+    material: SPLASH_POTION
+    buyPrice: '575.0'
+    sellPrice: '-1.0'
+    rarity: Common
+    econ:
+      name: vault
+    confirm_gui: true
+    nbt:
+      Potion: minecraft:long_fire_resistance
+  '"ced3fc69-72a6-4411-86ec-979804cb19a0"':
+    material: SPLASH_POTION
+    buyPrice: '575.0'
+    sellPrice: '-1.0'
+    rarity: Common
+    econ:
+      name: vault
+    confirm_gui: true
+    nbt:
+      Potion: minecraft:strong_swiftness

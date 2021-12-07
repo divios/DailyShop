@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Stream;
 
 public class FileUtils {
 
@@ -39,21 +40,20 @@ public class FileUtils {
     }
 
     public static void createShopsFolder() {
-        File parser = new File(plugin.getDataFolder(), "shops");
-        parser.mkdir();
+        File shopFolder = new File(plugin.getDataFolder(), "shops");
+        if (!shopFolder.exists()) {
+            shopFolder.mkdir();
+            Stream.of("blocks", "drops", "equipment", "farm", "menu", "ore", "potion", "wood")
+                    .forEach(s -> {
+                        plugin.saveResource("shops/" + s + ".yml", false);
+                    });
+        }
     }
 
     public static void createDatabaseFile() {
         File db = new File(plugin.getDataFolder(), "dailyshop.db");
-        if (!db.exists()) {
-            plugin.saveResource("dailyshop.db", false);
-            Schedulers.sync().runLater(() -> {
-                shopsManager.getInstance().getShops().forEach(shop -> {
-                    shop.getGuis().reStock(true);
-                });
-            }, 60);
-        }
-
+        if (!db.exists())
+            FileUtils.createFile(db);
     }
 
     public static void toYaml(Object o, File data) {
@@ -65,8 +65,10 @@ public class FileUtils {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         String json = gson.toJson(o);
         //Log.warn(json);
-        Map map = new GsonBuilder().registerTypeAdapter(new TypeToken<Map <String, Object>>(){}.getType(),  new MapDeserializerDoubleAsIntFix())
-                .create().fromJson(json, new TypeToken<Map<String, Object>>(){}.getType());
+        Map map = new GsonBuilder().registerTypeAdapter(new TypeToken<Map<String, Object>>() {
+                }.getType(), new MapDeserializerDoubleAsIntFix())
+                .create().fromJson(json, new TypeToken<Map<String, Object>>() {
+                }.getType());
 
         DumperOptions options = new DumperOptions();
         options.setIndent(2);
@@ -83,43 +85,44 @@ public class FileUtils {
 
     public static class MapDeserializerDoubleAsIntFix implements JsonDeserializer<Map<String, Object>> {
 
-        @Override  @SuppressWarnings("unchecked")
+        @Override
+        @SuppressWarnings("unchecked")
         public Map<String, Object> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
             return (Map<String, Object>) read(json);
         }
 
         public Object read(JsonElement in) {
 
-            if(in.isJsonArray()){
+            if (in.isJsonArray()) {
                 List<Object> list = new ArrayList<Object>();
                 JsonArray arr = in.getAsJsonArray();
                 for (JsonElement anArr : arr) {
                     list.add(read(anArr));
                 }
                 return list;
-            }else if(in.isJsonObject()){
+            } else if (in.isJsonObject()) {
                 Map<String, Object> map = new LinkedTreeMap<>();
                 JsonObject obj = in.getAsJsonObject();
                 Set<Map.Entry<String, JsonElement>> entitySet = obj.entrySet();
-                for(Map.Entry<String, JsonElement> entry: entitySet){
+                for (Map.Entry<String, JsonElement> entry : entitySet) {
                     map.put(entry.getKey(), read(entry.getValue()));
                 }
                 return map;
-            }else if( in.isJsonPrimitive()){
+            } else if (in.isJsonPrimitive()) {
                 JsonPrimitive prim = in.getAsJsonPrimitive();
-                if(prim.isBoolean()){
+                if (prim.isBoolean()) {
                     return prim.getAsBoolean();
-                }else if(prim.isString()){
+                } else if (prim.isString()) {
                     return prim.getAsString();
-                }else if(prim.isNumber()){
+                } else if (prim.isNumber()) {
 
                     Number num = prim.getAsNumber();
                     // here you can handle double int/long values
                     // and return any type you want
                     // this solution will transform 3.0 float to long values
-                    if(Math.ceil(num.doubleValue())  == num.longValue())
+                    if (Math.ceil(num.doubleValue()) == num.longValue())
                         return num.longValue();
-                    else{
+                    else {
                         return num.doubleValue();
                     }
                 }
