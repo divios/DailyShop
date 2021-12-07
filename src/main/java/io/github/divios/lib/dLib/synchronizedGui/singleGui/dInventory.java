@@ -396,8 +396,8 @@ public class dInventory {
                 Object o = dataInput.readObject();
                 if (o instanceof Set)
                     ((Set<dItem>) o).forEach(dItem -> newInv[0].buttons.put(dItem.getUid(), dItem));
-                else
-                    newInv[0].buttons.putAll((Map<UUID, dItem>) o);
+                else            // Remember that for some reason java cannot serialize/deserialize UUIDs
+                    ((Map<UUID, dItem>) o).values().forEach(dItem -> newInv[0].buttons.put(dItem.getUid(), dItem));
 
                 return newInv[0];
             }
