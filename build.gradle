@@ -33,6 +33,7 @@ repositories {
     maven { url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/' }
     maven { url = 'https://mvn.lumine.io/repository/maven-public/' }
     maven { url = 'https://libraries.minecraft.net' }
+    maven { url 'https://hub.spigotmc.org/nexus/content/repositories/public/' }
     maven {
         url "https://maven.pkg.github.com/divios/core_lib"
         credentials {
@@ -60,6 +61,17 @@ dependencies {
 
     compileOnly fileTree(dir: 'libs', include: ['*.jar'])
     compileOnly fileTree(dir: 'libsI', include: ['*.jar'])
+
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+    testImplementation "org.mockito:mockito-core:4.1.0"
+    testImplementation 'org.powermock:powermock-module-junit4:2.0.9'
+    testImplementation 'org.powermock:powermock-api-mockito2:2.0.9'
+    testImplementation 'com.github.seeseemelk:MockBukkit-v1.16:1.0.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+}
+
+test {
+    useJUnitPlatform()
 }
 
 shadowJar {
