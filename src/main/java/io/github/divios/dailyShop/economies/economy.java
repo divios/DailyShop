@@ -41,11 +41,11 @@ public interface economy {
     }
 
     static economy getFromKey(String key, String currency) {
-        try {
-            return econTypes.valueOf(key).getEconomy(currency);
-        } catch (Exception e) {
-            return new vault();
+        for (econTypes value : econTypes.values()) {
+            if (value.name().equalsIgnoreCase(key))
+                return value.getEconomy(currency);
         }
+        return new vault();
     }
 
 }
