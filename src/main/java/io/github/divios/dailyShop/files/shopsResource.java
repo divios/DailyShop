@@ -2,7 +2,6 @@ package io.github.divios.dailyShop.files;
 
 import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
-import io.github.divios.dailyShop.utils.FileUtils;
 import io.github.divios.dailyShop.utils.Timer;
 import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.managers.shopsManager;
@@ -12,6 +11,7 @@ import java.io.File;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Stream;
 
 public class shopsResource {
 
@@ -20,7 +20,13 @@ public class shopsResource {
     private static final shopsManager sManager = shopsManager.getInstance();
 
     public shopsResource() {
-        FileUtils.createShopsFolder();
+        if (!shopsFolder.exists()) {
+            if (sManager.getShops().isEmpty())
+                createShopsFolderWithDefaultShops();
+            else
+                sManager.saveAllShops();        // Migration before 3.6.0
+        }
+
         processNewShops();
     }
 
@@ -55,6 +61,16 @@ public class shopsResource {
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////
+
+    private void createShopsFolderWithDefaultShops() {
+        if (!shopsFolder.exists()) {
+            shopsFolder.mkdir();
+            Stream.of("blocks", "drops", "equipment", "farm", "menu", "ore", "potion", "wood")
+                    .forEach(s -> {
+                        plugin.saveResource("shops/" + s + ".yml", false);
+                    });
+        }
+    }
 
     private File[] getYamlFiles() {
         return shopsFolder.listFiles((dir, name) -> name.endsWith(".yml"));
