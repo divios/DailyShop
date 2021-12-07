@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.powermock.reflect.Whitebox;
 
 import java.io.File;
 
@@ -32,6 +33,8 @@ public class test {
     {
         server = MockBukkit.mock();
         plugin = MockBukkit.load(DailyShop.class);
+
+        Whitebox.setInternalState(DailyShop.class, "INSTANCE", plugin);
 
         when(DailyShop.getInstance()).thenReturn(plugin);
         when(plugin.getDataFolder()).thenReturn(new File(""));
