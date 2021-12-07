@@ -31,7 +31,11 @@ public class dRarity {
 
     public static dRarity fromKey(String key) {
         dRarity dRarity = new dRarity();
-        dRarity.rarity = rarityT.valueOf(key);
+        for (rarityT value : rarityT.values()) {
+            if (value.name().equalsIgnoreCase(key)) {
+                dRarity.rarity = value;
+            }
+        }
         return dRarity;
     }
 
