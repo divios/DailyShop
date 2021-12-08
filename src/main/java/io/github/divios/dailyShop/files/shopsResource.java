@@ -112,12 +112,7 @@ public class shopsResource {
     }
 
     private String getIdFromFile(File file) {
-        YamlConfiguration yaml = new YamlConfiguration();
-        try {
-            yaml.load(file);
-        } catch (IOException | InvalidConfigurationException e) {
-            e.printStackTrace();
-        }
+        YamlConfiguration yaml = YamlConfiguration.loadConfiguration(file);
         return yaml.getString("id");
     }
 
