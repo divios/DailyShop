@@ -9,6 +9,7 @@ import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.dailyShop.economies.economy;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.dItem;
+import io.github.divios.lib.dLib.dPrice;
 import io.github.divios.lib.dLib.dRarity;
 import io.github.divios.lib.dLib.stock.dStock;
 import io.github.divios.lib.serialize.wrappers.WrappedEnchantment;
@@ -29,6 +30,7 @@ public class dItemAdapter implements JsonSerializer<dItem>, JsonDeserializer<dIt
             .registerTypeAdapter(WrappedEnchantment.class, new enchantmentAdapter())
             .registerTypeHierarchyAdapter(dStock.class, new dStockAdapter())
             .registerTypeHierarchyAdapter(economy.class, new economyAdapter())
+            .registerTypeAdapter(dPrice.class, new dPriceAdapter())
             .create();
 
     @Override
@@ -44,8 +46,8 @@ public class dItemAdapter implements JsonSerializer<dItem>, JsonDeserializer<dIt
         merchant.addProperty("material", ItemUtils.getMaterial(dItem.getRawItem()).name());
         dItem.getSetItems().ifPresent(integer -> merchant.addProperty("quantity", integer));
 
-        merchant.addProperty("buyPrice", dItem.getBuyPrice().get().toString());
-        merchant.addProperty("sellPrice", dItem.getSellPrice().get().toString());
+        merchant.add("buyPrice", gson.toJsonTree(dItem.getBuyPrice().get()));
+        merchant.add("sellPrice", gson.toJsonTree(dItem.getSellPrice().get()));
         if (dItem.hasStock()) merchant.add("stock", gson.toJsonTree(dItem.getStock()));
         if (!dItem.getEnchantments().isEmpty()) merchant.add("enchantments", gson.toJsonTree(wrapEnchants(dItem.getEnchantments())));
         dItem.getCommands().ifPresent(strings -> merchant.add("commands", gson.toJsonTree(strings)));
@@ -75,8 +77,8 @@ public class dItemAdapter implements JsonSerializer<dItem>, JsonDeserializer<dIt
         if (object.has("lore")) ditem.setLore(gson.fromJson(object.get("lore"), stringListToken.getType()));
         if (object.has("rarity")) ditem.setRarity(dRarity.fromKey(object.get("rarity").getAsString()));
         if (object.has("econ")) ditem.setEconomy(gson.fromJson(object.get("econ").getAsJsonObject(), economy.class));
-        if (object.has("buyPrice")) ditem.setBuyPrice(object.get("buyPrice").getAsDouble());
-        if (object.has("sellPrice")) ditem.setSellPrice(object.get("sellPrice").getAsDouble());
+        if (object.has("buyPrice")) ditem.setBuyPrice(gson.fromJson(object.get("buyPrice"), dPrice.class));
+        if (object.has("sellPrice")) ditem.setSellPrice(gson.fromJson(object.get("sellPrice"), dPrice.class));
         if (object.has("buyPerms")) ditem.setPermsBuy(gson.fromJson(object.get("buyPerms"), stringListToken.getType()));
         if (object.has("sellPerms")) ditem.setPermsSell(gson.fromJson(object.get("sellPerms"), stringListToken.getType()));
         if (object.has("enchantments")) {

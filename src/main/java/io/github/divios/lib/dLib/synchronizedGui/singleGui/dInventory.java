@@ -177,6 +177,8 @@ public class dInventory {
      * @param slot Integer representing the position of the new item on the inventory.
      */
     public void addButton(dItem item, int slot) {
+        if (slot >= inv.getSize()) return;
+
         dItem cloned = item.clone();
         cloned.generateNewBuyPrice();
         cloned.generateNewSellPrice();
@@ -444,8 +446,8 @@ public class dInventory {
 
             //Log.info((ItemUtils.isEmpty(contents1[i]) ? "" : contents1[i].getType().name()) + " -----> " + (ItemUtils.isEmpty(contents2[i]) ? "" : contents2[i].getType().name()));
 
-            if (contents1[i] != null && contents2[i] == null
-            || contents1[i] == null && contents2[i] != null) return false;
+            if ((contents1[i] != null && contents2[i] == null)
+            || (contents1[i] == null && contents2[i] != null)) return false;
 
             if (contents1[i] == null && contents2[i] == null) continue;
 

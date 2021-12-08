@@ -7,11 +7,12 @@ import io.github.divios.dailyShop.utils.Timer;
 import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.managers.shopsManager;
 import io.github.divios.lib.serialize.serializerApi;
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.io.IOException;
+import java.util.*;
 import java.util.stream.Stream;
 
 public class shopsResource {
@@ -20,11 +21,20 @@ public class shopsResource {
     private static final File shopsFolder = new File(plugin.getDataFolder(), "shops");
     private static final shopsManager sManager = shopsManager.getInstance();
 
+    private static final Map<String, Long> cacheCheckSums = new HashMap<>();
+    private static final Set<dShop> flaggedShops = new HashSet<>();
+
     public shopsResource() {
+
         if (!shopsFolder.exists()) {
-            if (sManager.getShops().isEmpty())
-                createShopsFolderWithDefaultShops();
-            else {
+
+            if (sManager.getShops().isEmpty()) {
+                shopsFolder.mkdir();
+                Stream.of("blocks", "drops", "equipment", "farm", "menu", "ore", "potion", "wood")
+                        .forEach(s -> {
+                            plugin.saveResource("shops/" + s + ".yml", false);
+                        });
+            } else {
                 Log.warn("Initialization migration to yaml...");
                 shopsFolder.mkdir();
                 sManager.saveAllShops();        // Migration before 3.6.0
@@ -32,27 +42,67 @@ public class shopsResource {
             }
         }
 
-        processNewShops();
+        importYamlShops();
     }
 
-    private void processNewShops() {
+    private void importYamlShops() {
         Log.info("Importing data from shops directory...");
         Timer timer = Timer.create();
-        Set<dShop> newShops = getAllShopsFromFiles();
+        Set<dShop> newShops = readYamlShops();
 
-        deleteRemovedShops(newShops);
-        newShopsAction(newShops);
+        new HashSet<>(sManager.getShops()).stream()         // Delete removed shops
+                .filter(shop -> !newShops.contains(shop))
+                .forEach(shop -> sManager.deleteShop(shop.getName()));
+
+        newShops.forEach(shop -> {                          // Process read Shops
+            if (flaggedShops.contains(shop)) {              // If flagged, skip since no changes were made
+                Log.info("No changes in shop " + shop.getName() + ", skipping...");
+                return;
+            }
+
+            if (!sManager.getShop(shop.getName()).isPresent()) {        // Create new shops
+                sManager.createShopAsync(shop);
+                shop.destroy();
+            } else {                                                    // Update shops if exist
+                dShop currentShop = sManager.getShop(shop.getName()).get();
+
+                currentShop.updateShopGui(shop.getGuis().getDefault().skeleton());
+                currentShop.setItems(shop.getItems());
+            }
+            Log.info("Registered shop of name " + shop.getName() + " with " + shop.getItems().size() + " items");
+        });
 
         timer.stop();
         Log.info("Data imported successfully in " + timer.getTime() + " ms");
+
+        flaggedShops.clear();
+
     }
 
-    private Set<dShop> getAllShopsFromFiles() {
+    protected void reload() {
+        importYamlShops();
+    }
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////
+
+    private Set<dShop> readYamlShops() {
         Set<dShop> shops = new HashSet<>();
-        for (File shopFile : Objects.requireNonNull(getYamlFiles(), "The shop directory does not exits")) {
+        for (File shopFile : Objects.requireNonNull(shopsFolder.listFiles((dir, name) -> name.endsWith(".yml")), "The shop directory does not exits")) {
+
+            Long checkSum;      // Check if same checkSum
+            if ((checkSum = cacheCheckSums.get(shopFile.getName())) != null)
+                if (checkSum == FileUtils.getFileCheckSum(shopFile)) {
+                    dShop sameShop = sManager.getShop(getIdFromFile(shopFile)).get();  // get only the id of the shop
+                    shops.add(sameShop);
+                    flaggedShops.add(sameShop);
+                    continue;
+                }
+
             try {
                 dShop newShop = serializerApi.getShopFromFile(shopFile);
                 shops.add(newShop);
+                cacheCheckSums.put(shopFile.getName(), FileUtils.getFileCheckSum(shopFile));
+
             } catch (Exception e) {
                 Log.warn("There was a problem with the shop " + shopFile.getName());
                 Log.warn(e.getMessage());
@@ -61,45 +111,9 @@ public class shopsResource {
         return shops;
     }
 
-    protected void reload() {
-        processNewShops();
-    }
-
-    //////////////////////////////////////////////////////////////////////////////////////////////////
-
-    private void createShopsFolderWithDefaultShops() {
-        if (!shopsFolder.exists()) {
-            shopsFolder.mkdir();
-            Stream.of("blocks", "drops", "equipment", "farm", "menu", "ore", "potion", "wood")
-                    .forEach(s -> {
-                        plugin.saveResource("shops/" + s + ".yml", false);
-                    });
-        }
-    }
-
-    private File[] getYamlFiles() {
-        return shopsFolder.listFiles((dir, name) -> name.endsWith(".yml"));
-    }
-
-    private void deleteRemovedShops(Set<dShop> newShops) {
-        new HashSet<>(sManager.getShops()).stream()
-                .filter(shop -> !newShops.contains(shop))
-                .forEach(shop -> sManager.deleteShop(shop.getName()));
-    }
-
-    private void newShopsAction(Set<dShop> newShops) {
-        newShops.forEach(shop -> {
-            if (!sManager.getShop(shop.getName()).isPresent()) {
-                sManager.createShopAsync(shop);
-                shop.destroy();
-            } else {
-                dShop currentShop = sManager.getShop(shop.getName()).get();
-
-                currentShop.updateShopGui(shop.getGuis().getDefault().skeleton());
-                currentShop.setItems(shop.getItems());
-            }
-            Log.info("Registered shop of name " + shop.getName() + " with " + shop.getItems().size() + " items");
-        });
+    private String getIdFromFile(File file) {
+        YamlConfiguration yaml = YamlConfiguration.loadConfiguration(file);
+        return yaml.getString("id");
     }
 
 }

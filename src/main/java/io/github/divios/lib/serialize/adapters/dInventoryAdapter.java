@@ -31,6 +31,8 @@ public class dInventoryAdapter implements JsonSerializer<dInventory>, JsonDeseri
         if (object.has("size"))
             Preconditions.checkArgument(Utils.testRunnable(() -> size[0] = object.get("size").getAsInt()), "Size field needs to be an integer");
 
+        Preconditions.checkArgument(size[0] % 9 == 0, "Inventory size must be a multiple of 9");
+
         if (object.has("items"))
             buttons.putAll(gson.fromJson(object.get("items").getAsJsonObject(), itemsToken.getType()));
 

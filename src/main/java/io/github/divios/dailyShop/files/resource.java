@@ -2,6 +2,7 @@ package io.github.divios.dailyShop.files;
 
 import com.google.common.collect.Lists;
 import io.github.divios.dailyShop.DailyShop;
+import io.github.divios.dailyShop.utils.FileUtils;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.*;
@@ -15,6 +16,7 @@ public abstract class resource {
 
     private File file;
     protected YamlConfiguration yaml;
+    private Long checkSum;
 
     protected resource(String name) {
         this.name = name;
@@ -30,8 +32,14 @@ public abstract class resource {
             plugin.saveResource(name, false);
         }
 
+        Long checkSumAux;
+        if ( (checkSumAux = FileUtils.getFileCheckSum(file)) == checkSum )  // If same checkSum -> no changes
+            return;
+        checkSum = checkSumAux;
+
         yaml = YamlConfiguration.loadConfiguration(file);
         copyDefaults();
+
 
         init();
     }
