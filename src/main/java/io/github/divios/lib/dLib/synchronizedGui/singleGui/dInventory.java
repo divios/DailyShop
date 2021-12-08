@@ -177,6 +177,8 @@ public class dInventory {
      * @param slot Integer representing the position of the new item on the inventory.
      */
     public void addButton(dItem item, int slot) {
+        if (slot >= inv.getSize()) return;
+
         dItem cloned = item.clone();
         cloned.generateNewBuyPrice();
         cloned.generateNewSellPrice();
