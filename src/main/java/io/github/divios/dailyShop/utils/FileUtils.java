@@ -1,11 +1,12 @@
 package io.github.divios.dailyShop.utils;
 
+import com.google.common.hash.HashCode;
+import com.google.common.hash.Hashing;
+import com.google.common.io.Files;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.*;
 import com.google.gson.internal.LinkedTreeMap;
-import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.dailyShop.DailyShop;
-import io.github.divios.lib.managers.shopsManager;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
@@ -17,7 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Stream;
 
 public class FileUtils {
 
@@ -70,6 +70,16 @@ public class FileUtils {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static long getFileCheckSum(File file) {
+        HashCode crc32 = null;
+        try {
+            crc32 = Files.hash(file, Hashing.crc32());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return crc32.padToLong();
     }
 
     public static class MapDeserializerDoubleAsIntFix implements JsonDeserializer<Map<String, Object>> {
