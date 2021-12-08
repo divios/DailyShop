@@ -90,7 +90,7 @@ public abstract class abstractSyncMenu implements syncMenu {
      * be updated without restocking the shop.
      */
     public synchronized void updateBase(dInventory inv, boolean silent) {
-        if (inv.equals(base.getBase().skeleton())) return;     // Do not update if the invs are the same
+        //if (inv.equals(base.getBase().skeleton())) return;     // Do not update if the invs are the same
 
         if (inv.getInventorySize() != base.getInventory().getInventorySize()) {  // If the inv has changed size update all
             base.destroy();
