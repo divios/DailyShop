@@ -2,6 +2,7 @@ package io.github.divios.dailyShop.files;
 
 import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
+import io.github.divios.dailyShop.utils.FileUtils;
 import io.github.divios.dailyShop.utils.Timer;
 import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.managers.shopsManager;
@@ -23,8 +24,12 @@ public class shopsResource {
         if (!shopsFolder.exists()) {
             if (sManager.getShops().isEmpty())
                 createShopsFolderWithDefaultShops();
-            else
+            else {
+                Log.warn("Initialization migration to yaml...");
+                shopsFolder.mkdir();
                 sManager.saveAllShops();        // Migration before 3.6.0
+                Log.warn("Migration completed!");
+            }
         }
 
         processNewShops();
