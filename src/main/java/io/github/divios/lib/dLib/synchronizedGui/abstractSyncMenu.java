@@ -101,7 +101,6 @@ public abstract class abstractSyncMenu implements syncMenu {
             ItemStack[] actualContest = base.getInventory().skeleton().getInventory().getContents();
             ItemStack[] newContents = inv.getInventory().getContents();
 
-            Log.warn("oke");
             for (int i = 0; i < actualContest.length; i++) {
                 if (ItemUtils.isEmpty(actualContest[i]) && ItemUtils.isEmpty(newContents[i])) continue;
 
