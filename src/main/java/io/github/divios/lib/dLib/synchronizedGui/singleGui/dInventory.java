@@ -49,6 +49,7 @@ public class dInventory {
 
     protected final TreeSet<Integer> dailyItemsSlots = new TreeSet<>();
     protected final ConcurrentHashMap<UUID, dItem> buttons = new ConcurrentHashMap<>();
+    protected final ConcurrentHashMap<Integer, dItem> buttonsSlot = new ConcurrentHashMap<>();
 
     private final Set<Subscription> listeners = new HashSet<>();
 
@@ -151,8 +152,10 @@ public class dInventory {
 
         Inventory aux = Bukkit.createInventory(null, inv.getSize() - 9, title);
         inventoryUtils.translateContents(inv, aux);
-        buttons.entrySet().removeIf(entry -> entry.getValue().getSlot() >= aux.getSize());
-        IntStream.range(inv.getSize() - 9, inv.getSize()).forEach(dailyItemsSlots::remove);
+        IntStream.range(inv.getSize() - 9, inv.getSize()).forEach(value -> {
+            removeButton(value);
+            dailyItemsSlots.remove(value);
+        });
         inv = aux;
 
         return true;
@@ -179,13 +182,32 @@ public class dInventory {
     public void addButton(dItem item, int slot) {
         if (slot >= inv.getSize()) return;
 
+        dItem crashItem;
+        if ((crashItem = buttonsSlot.get(slot)) != null)        // If there is a previous item with that slot, remove first
+            removeButton(crashItem.getUid());
+
         dItem cloned = item.clone();
         cloned.generateNewBuyPrice();
         cloned.generateNewSellPrice();
         cloned.setSlot(slot);
         buttons.put(cloned.getUid(), cloned);
+        buttonsSlot.put(slot, cloned);
         dailyItemsSlots.remove(slot);
-        inv.setItem(slot, cloned.getItem());
+        if (!item.isAIR())
+            inv.setItem(slot, cloned.getItem());
+        else
+            inv.clear(slot);
+    }
+
+    /**
+     * Removes a button from the inventory by its slot
+     *
+     * @param slot The Integer representing the slot to be removed.
+     * @return The item that was removed if any.
+     */
+    public dItem removeButton(int slot) {
+        dItem item;
+        return removeButton((item = buttonsSlot.get(slot)) == null ? null : item.getUid());
     }
 
     /**
@@ -197,6 +219,7 @@ public class dInventory {
     public dItem removeButton(UUID uuid) {
         dItem removedItem = buttons.remove(uuid);
         if (removedItem != null) {
+            buttonsSlot.remove(removedItem.getSlot());
             dailyItemsSlots.add(removedItem.getSlot());
             inv.clear(removedItem.getSlot());
         }
@@ -210,6 +233,15 @@ public class dInventory {
      */
     public Map<UUID, dItem> getButtons() {
         return Collections.unmodifiableMap(buttons);
+    }
+
+    /**
+     * Gets an unmodifiable view of the buttons of the inventory.
+     *
+     * @return A map representing the buttons of this inventory.
+     */
+    public Map<Integer, dItem> getButtonsSlots() {
+        return Collections.unmodifiableMap(buttonsSlot);
     }
 
     /**
@@ -303,6 +335,7 @@ public class dInventory {
                 ", shop=" + shop +
                 ", dailyItemsSlots=" + dailyItemsSlots +
                 ", buttons=" + buttons +
+                ", buttonsSlots=" + buttonsSlot +
                 ", listeners=" + listeners +
                 '}';
     }
@@ -401,6 +434,7 @@ public class dInventory {
             Map.Entry<UUID, dItem> entry = it.next();
             if (dailyItemsSlots.contains(entry.getValue().getSlot())) {
                 it.remove();
+                buttonsSlot.remove(entry.getValue().getSlot());
                 inv.clear(entry.getValue().getSlot());
             }
         }
@@ -420,9 +454,15 @@ public class dInventory {
 
                 Object o = dataInput.readObject();
                 if (o instanceof Set)
-                    ((Set<dItem>) o).forEach(dItem -> newInv[0].buttons.put(dItem.getUid(), dItem));
+                    ((Set<dItem>) o).forEach(dItem -> {
+                        newInv[0].buttons.put(dItem.getUid(), dItem);
+                        newInv[0].buttonsSlot.put(dItem.getSlot(), dItem);
+                    });
                 else            // Remember that for some reason java cannot serialize/deserialize UUIDs
-                    ((Map<UUID, dItem>) o).values().forEach(dItem -> newInv[0].buttons.put(dItem.getUid(), dItem));
+                    ((Map<UUID, dItem>) o).values().forEach(dItem -> {
+                        newInv[0].buttons.put(dItem.getUid(), dItem);
+                        newInv[0].buttonsSlot.put(dItem.getSlot(), dItem);
+                    });
 
                 return newInv[0];
             }
@@ -447,7 +487,7 @@ public class dInventory {
             //Log.info((ItemUtils.isEmpty(contents1[i]) ? "" : contents1[i].getType().name()) + " -----> " + (ItemUtils.isEmpty(contents2[i]) ? "" : contents2[i].getType().name()));
 
             if ((contents1[i] != null && contents2[i] == null)
-            || (contents1[i] == null && contents2[i] != null)) return false;
+                    || (contents1[i] == null && contents2[i] != null)) return false;
 
             if (contents1[i] == null && contents2[i] == null) continue;
 
