@@ -108,7 +108,7 @@ public class CustomizerMenu {
 
                             // Check to update or add item
                             if (shop.hasItem(item.getUid())) {
-                                shop.updateItem(item.getUid(), item);
+                                shop.updateItem(item);
                             } else {
                                 shop.addItem(item);
                             }
