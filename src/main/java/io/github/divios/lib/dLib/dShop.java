@@ -180,15 +180,19 @@ public class dShop {
     /**
      * Updates the item of the shop
      *
-     * @param uid
      * @param newItem
      */
-    public synchronized void updateItem(UUID uid, dItem newItem) {
-        if (!items.containsKey(uid))
-            return; // Throw error
+    public synchronized void updateItem(dItem newItem) {
+        UUID uid = newItem.getUid();
+        if (uid == null) return;
+
+        if (!items.containsKey(uid)) {
+            addItem(newItem);
+            return;
+        }
 
         items.put(uid, newItem);
-        Events.callEvent(new updateItemEvent(newItem.getUid(), updateItemEvent.type.UPDATE_ITEM, this));    // Event to update item
+        Events.callEvent(new updateItemEvent(uid, updateItemEvent.type.UPDATE_ITEM, this));    // Event to update item
     }
 
 
@@ -205,7 +209,7 @@ public class dShop {
             if (newItems.containsKey(entry.getKey())) {     // Update items if changed
                 dItem toUpdateItem = newItems.get(entry.getKey());
                 if (toUpdateItem != null && !toUpdateItem.getItem().isSimilar(entry.getValue().getItem())) {
-                    updateItem(entry.getKey(), toUpdateItem);
+                    updateItem(toUpdateItem);
                 }
                 continue;
             }
