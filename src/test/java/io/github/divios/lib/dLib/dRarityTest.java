@@ -30,9 +30,9 @@ import static org.mockito.Mockito.*;
 public class dRarityTest {
 
     @Mock
-    private static DailyShop plugin;
+    private DailyShop plugin;
     @Mock
-    private static Inventory inv;
+    private Inventory inv;
 
     /**
      * @throws java.lang.Exception
