@@ -9,6 +9,7 @@ import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.synchronizedGui.singleGui.dInventory;
 
 import java.lang.reflect.Type;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -56,9 +57,10 @@ public class dInventoryAdapter implements JsonSerializer<dInventory>, JsonDeseri
     private Map<String, dItem> getButtons(dInventory inv) {
         Map<String, dItem> buttons = new LinkedHashMap<>();
 
-        inv.getButtons().values().forEach(dItem -> {
-            buttons.put(dItem.getID(), dItem);
-        });
+        inv.getButtonsSlots().entrySet().stream()       // Get buttons sorted by slots
+                .sorted(Comparator.comparingInt(Map.Entry::getKey))
+                .map(Map.Entry::getValue)
+                .forEach(dItem -> buttons.put(dItem.getID(), dItem));
 
         return buttons;
     }
