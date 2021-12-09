@@ -163,7 +163,7 @@ public class dInventory {
 
     /**
      * Adds an item to the inventory. When this item is clicked, the action
-     * attacked to it will be executed
+     * attached to it will be executed
      *
      * @param item ItemStack to be added
      * @param slot Integer representing the position of the new item on the inventory.
