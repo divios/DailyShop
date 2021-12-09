@@ -98,20 +98,34 @@ public abstract class abstractSyncMenu implements syncMenu {
             reStock(silent);
 
         } else {        // If the inv has same size, update only buttons with the above logic
-            ItemStack[] actualContest = base.getInventory().skeleton().getInventory().getContents();
-            ItemStack[] newContents = inv.getInventory().getContents();
 
-            for (int i = 0; i < actualContest.length; i++) {
-                if (ItemUtils.isEmpty(actualContest[i]) && ItemUtils.isEmpty(newContents[i])) continue;
+            Map<Integer, dItem> actualContent = new HashMap<>(base.getInventory().getButtonsSlots());
+            Map<Integer, dItem> newContent = inv.getButtonsSlots();
 
-                if (ItemUtils.isEmpty(actualContest[i]) && !ItemUtils.isEmpty(newContents[i]))
-                    base.getInventory().addButton(newContents[i], i);
+            Set<Integer> dailySlots = base.getInventory().getDailyItemsSlots();
 
-                else if (!ItemUtils.isEmpty(actualContest[i]) && ItemUtils.isEmpty(newContents[i]))
-                    base.getInventory().removeButton(dItem.getUid(actualContest[i]));
+            for (int i = 0; i < base.getInventory().getInventorySize(); i++) {
+                dItem aux1;
+                dItem aux2;
 
-                else if (!actualContest[i].isSimilar(newContents[i]))
-                    base.getInventory().addButton(newContents[i], i);
+                ItemStack actualItem = (aux1 = actualContent.get(i)) == null ? null : aux1.getItem();
+                ItemStack newItem = (aux2 = newContent.get(i)) == null ? null : aux2.getItem();
+
+                if (dailySlots.contains(i)) actualItem = null;      // If is a dailyItem, set as if nothing was there
+
+                if (ItemUtils.isEmpty(actualItem) && ItemUtils.isEmpty(newItem)) continue;
+
+                if (ItemUtils.isEmpty(actualItem) && !ItemUtils.isEmpty(newItem))
+                    base.getInventory().addButton(newItem, i);
+
+                else if (!ItemUtils.isEmpty(actualItem) && ItemUtils.isEmpty(newItem))
+                    base.getInventory().removeButton(i);
+
+                else if (!actualItem.isSimilar(newItem)) {
+                    Log.warn("oke");
+                    base.getInventory().addButton(newItem, i);
+                }
+
             }
 
             Set<UUID> players = new HashSet<>(guis.keySet());       // Re-open to all players to update gui changes
@@ -195,7 +209,7 @@ public abstract class abstractSyncMenu implements syncMenu {
 
     @Override
     public dInventory getDefault() {
-        return base.getBase();
+        return base.getInventory();
     }
 
     @Override
