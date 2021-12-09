@@ -21,6 +21,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.stream.IntStream;
 
 /**
  * Abstract class that represents the basic operations of a syncMenu.
@@ -92,6 +93,16 @@ public abstract class abstractSyncMenu implements syncMenu {
     public synchronized void updateBase(dInventory inv, boolean silent) {
         //if (inv.equals(base.getBase().skeleton())) return;     // Do not update if the invs are the same
 
+        /*int comparator;
+        if ((comparator = Integer.compare(base.getInventory().getInventorySize(), inv.getInventorySize())) != 0) {
+            if (comparator < 0)
+                IntStream.range(0, (inv.getInventorySize() - base.getInventory().getInventorySize()) / 9)
+                        .forEach(value -> base.getInventory().removeInventoryRow());
+            else
+                IntStream.range(0, (base.getInventory().getInventorySize() - inv.getInventorySize()) / 9)
+                        .forEach(value -> base.getInventory().addInventoryRow());
+        } */
+
         if (inv.getInventorySize() != base.getInventory().getInventorySize()) {  // If the inv has changed size update all
             base.destroy();
             base = singleGui.fromJson(inv.toBase64(), shop);
@@ -133,6 +144,7 @@ public abstract class abstractSyncMenu implements syncMenu {
             players.forEach(uuid -> Optional.ofNullable(Bukkit.getPlayer(uuid)).ifPresent(this::generate));
 
         }
+
     }
 
     private synchronized void updateItems(updateItemEvent o) {
