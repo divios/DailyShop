@@ -101,23 +101,19 @@ public class singleGuiImpl implements singleGui {
     @Override
     public synchronized void updateTask() {
         loreStrategy strategy = new shopItemsLore();
-        IntStream.range(0, own.getInventorySize())
-                .filter(value -> !ItemUtils.isEmpty(own.getInventory().getItem(value)))
-                .forEach(value -> {
-
+        own.getButtonsSlots().keySet().stream()
+                .filter(own.dailyItemsSlots::contains)
+                .forEach(integer -> {
                     try {
-                        Inventory inv = own.getInventory();
-                        ItemStack oldItem = own.getDailyItemsSlots().contains(value) ?
-                                strategy.applyLore(own.getButtons().get(value).getItem().clone(), p)
-                                : own.getInventory().getItem(value);
-                        ItemBuilder newItem = ItemBuilder.of(oldItem.clone()).setLore(Collections.emptyList());
+                        ItemStack oldItem = shop.getItem(own.getButtonsSlots().get(integer).getUid()).get().getItem().clone();
 
-                        newItem = newItem.setName(PlaceholderAPIWrapper.setPlaceholders(p, ItemUtils.getName(oldItem)));
+                        ItemBuilder newItem = ItemBuilder.of(oldItem.clone()).setLore(Collections.emptyList());
+                        newItem = newItem.setName(PlaceholderAPIWrapper.setPlaceholders(p, ItemUtils.getName(newItem)));
 
                         for (String s : ItemUtils.getLore(oldItem))
                             newItem = newItem.addLore(PlaceholderAPIWrapper.setPlaceholders(p, s));
 
-                        inv.setItem(value, newItem);
+                        own.getInventory().setItem(integer, strategy.applyLore(newItem, p));
                     } catch (Exception ignored) {
                     }
                 });
