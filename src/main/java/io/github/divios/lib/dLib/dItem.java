@@ -1016,7 +1016,6 @@ public class dItem implements Serializable, Cloneable {
     public static final class reflectionSerialization {
 
         public String serialize(dItem item) {
-            item.saveStock();
             return Base64Coder.encodeString(NBTItem.convertItemtoNBT(item.getItem()).toString());
         }
 
