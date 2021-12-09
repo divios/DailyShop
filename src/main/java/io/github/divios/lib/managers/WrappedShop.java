@@ -51,8 +51,8 @@ public class WrappedShop extends dShop {
     }
 
     @Override
-    public synchronized void updateItem(UUID uid, dItem newItem) {
-        super.updateItem(uid, newItem);
+    public synchronized void updateItem(dItem newItem) {
+        super.updateItem(newItem);
         dManager.updateItemAsync(getName(), newItem);
     }
 
