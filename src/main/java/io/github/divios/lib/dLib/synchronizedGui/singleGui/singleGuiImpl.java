@@ -41,7 +41,6 @@ public class singleGuiImpl implements singleGui {
 
     protected final Player p;
     private final dShop shop;
-    private final dInventory base;
     private final dInventory own;
     private final Set<Subscription> events = new HashSet<>();
 
@@ -52,7 +51,6 @@ public class singleGuiImpl implements singleGui {
     protected singleGuiImpl(Player p, dShop shop, dInventory base) {
         this.p = p;
         this.shop = shop;
-        this.base = base;
         this.own = base.copy();
 
         if (p != null) {
@@ -109,9 +107,9 @@ public class singleGuiImpl implements singleGui {
 
                     try {
                         Inventory inv = own.getInventory();
-                        ItemStack oldItem = base.getDailyItemsSlots().contains(value) ?
-                                strategy.applyLore(base.getButtons().get(value).getItem().clone(), p)
-                                : base.getInventory().getItem(value);
+                        ItemStack oldItem = own.getDailyItemsSlots().contains(value) ?
+                                strategy.applyLore(own.getButtons().get(value).getItem().clone(), p)
+                                : own.getInventory().getItem(value);
                         ItemBuilder newItem = ItemBuilder.of(oldItem.clone()).setLore(Collections.emptyList());
 
                         newItem = newItem.setName(PlaceholderAPIWrapper.setPlaceholders(p, ItemUtils.getName(oldItem)));
@@ -136,11 +134,6 @@ public class singleGuiImpl implements singleGui {
     @Override
     public Player getPlayer() {
         return p;
-    }
-
-    @Override
-    public dInventory getBase() {
-        return base;
     }
 
     @Override
@@ -169,7 +162,7 @@ public class singleGuiImpl implements singleGui {
 
     @Override
     public synchronized singleGui clone() {
-        return new singleGuiImpl(p, shop, base);
+        return new singleGuiImpl(p, shop, own);
     }
 
 

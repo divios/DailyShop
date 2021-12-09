@@ -30,8 +30,6 @@ public interface singleGui {
 
     Player getPlayer();
 
-    dInventory getBase();
-
     dInventory getInventory();
 
     dShop getShop();
