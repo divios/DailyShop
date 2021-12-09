@@ -20,6 +20,21 @@ public class settingsResource extends resource {
     }
 
     @Override
+    protected String getStartMessage() {
+        return "Reading settings.yml... ";
+    }
+
+    @Override
+    protected String getCanceledMessage() {
+        return "No changes were made in settings.yml, skipping...";
+    }
+
+    @Override
+    protected String getFinishedMessage(long time) {
+        return "Imported settings.yml in " + time + " ms";
+    }
+
+    @Override
     protected void init() {
 
         PREFIX = FormatUtils.color(yaml.getString("settings.prefix"));

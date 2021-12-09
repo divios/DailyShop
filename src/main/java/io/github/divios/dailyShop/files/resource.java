@@ -1,8 +1,10 @@
 package io.github.divios.dailyShop.files;
 
 import com.google.common.collect.Lists;
+import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.utils.FileUtils;
+import io.github.divios.dailyShop.utils.Timer;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.*;
@@ -32,27 +34,35 @@ public abstract class resource {
             plugin.saveResource(name, false);
         }
 
+        Timer timer = Timer.create();
+        Log.info(getStartMessage());
         Long checkSumAux;
-        if ( (checkSumAux = FileUtils.getFileCheckSum(file)) == checkSum )  // If same checkSum -> no changes
+        if ( (checkSumAux = FileUtils.getFileCheckSum(file)) == checkSum ) { // If same checkSum -> no changes
+            Log.info(getCanceledMessage());
             return;
+        }
         checkSum = checkSumAux;
 
         yaml = YamlConfiguration.loadConfiguration(file);
         copyDefaults();
 
-
         init();
-    }
 
-    protected abstract void init();
-
-    protected List<String> getSetLines() {
-        return Lists.newArrayList(yaml.getKeys(true));
+        timer.stop();
+        Log.info(getFinishedMessage(timer.getTime()));
     }
 
     public void reload() {
         create();
     }
+
+    protected abstract String getStartMessage();
+
+    protected abstract String getCanceledMessage();
+
+    protected abstract String getFinishedMessage(long time);
+
+    protected abstract void init();
 
     private void copyDefaults() {
         Reader defConfigStream = null;
