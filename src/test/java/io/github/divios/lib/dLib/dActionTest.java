@@ -1,8 +1,8 @@
 package io.github.divios.lib.dLib;
 
-import be.seeseemelk.mockbukkit.MockBukkit;
-import be.seeseemelk.mockbukkit.ServerMock;
 import io.github.divios.dailyShop.DailyShop;
+import io.github.divios.lib.managers.shopsManager;
+import io.github.divios.lib.storage.databaseManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
@@ -19,6 +19,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -28,8 +29,15 @@ import static org.mockito.Mockito.*;
 @PrepareForTest({DailyShop.class, Bukkit.class})
 public class dActionTest {
 
-    private ServerMock server;
+    @Mock
     private DailyShop plugin;
+
+    private databaseManager dManager;
+
+    private shopsManager sManager;
+
+    private dShop shop;
+
     @Mock
     private Inventory inv;
     @Mock
@@ -40,8 +48,6 @@ public class dActionTest {
     @Before
     public void setUp() throws Exception {
 
-        plugin = MockBukkit.load(DailyShop.class);
-
         Whitebox.setInternalState(DailyShop.class, "INSTANCE", plugin);
 
         PowerMockito.mockStatic(Bukkit.class);
@@ -51,6 +57,15 @@ public class dActionTest {
         when(Bukkit.getServer()).thenReturn(server);
         when(Bukkit.getVersion()).thenReturn("git-Paper-386 (MC: 1.17.1)");
 
+        dManager = mock(databaseManager.class);
+        Whitebox.setInternalState(databaseManager.class, "instance", dManager);
+
+        sManager = mock(shopsManager.class);
+        Whitebox.setInternalState(shopsManager.class, "instance", sManager);
+
+        shop = mock(dShop.class);
+        when(sManager.getShop("asdf")).thenReturn(Optional.of(shop));
+
         ItemFactory itemFac = mock(ItemFactory.class);
         when(Bukkit.getItemFactory()).thenReturn(itemFac);
         // Panel inventory
@@ -59,6 +74,8 @@ public class dActionTest {
         player = mock(Player.class);
         UUID uuid = UUID.randomUUID();
         when(player.getUniqueId()).thenReturn(uuid);
+        when(player.getDisplayName()).thenReturn("Divios");
+        when(player.getName()).thenReturn("Divios");
 
     }
 
@@ -78,7 +95,20 @@ public class dActionTest {
 
     @Test
     public void testOpenShop() {
-
+        dAction action = dAction.OPEN_SHOP;
+        action.run(player, "asdf");
+        verify(shop).openShop(any());
     }
+
+    @Test
+    public void testRunCmd() {
+        dAction action = dAction.RUN_CMD;
+        action.run(player, "broadcast hello");
+
+        PowerMockito.verifyStatic(Bukkit.class);
+        Bukkit.dispatchCommand(null, "broadcast hello");
+    }
+
+    /*TODO SHOW ALL ITEMS */
 
 }

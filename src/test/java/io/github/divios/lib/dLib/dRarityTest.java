@@ -1,8 +1,6 @@
 package io.github.divios.lib.dLib;
 
 import io.github.divios.dailyShop.DailyShop;
-import io.github.divios.dailyShop.files.configManager;
-import io.github.divios.dailyShop.files.langResource;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.inventory.Inventory;
@@ -23,7 +21,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({DailyShop.class, Bukkit.class})
