@@ -62,7 +62,6 @@ public class shopsResource {
 
             if (!sManager.getShop(shop.getName()).isPresent()) {        // Create new shops
                 sManager.createShopAsync(shop);
-                shop.destroy();
             } else {                                                    // Update shops if exist
                 dShop currentShop = sManager.getShop(shop.getName()).get();
 
@@ -100,6 +99,7 @@ public class shopsResource {
 
             try {
                 dShop newShop = serializerApi.getShopFromFile(shopFile);
+                newShop.destroy();
                 shops.add(newShop);
                 cacheCheckSums.put(shopFile.getName(), FileUtils.getFileCheckSum(shopFile));
 
