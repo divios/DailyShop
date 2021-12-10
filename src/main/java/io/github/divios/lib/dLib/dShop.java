@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import de.tr7zw.nbtapi.NBTItem;
 import io.github.divios.core_lib.events.Events;
 import io.github.divios.core_lib.events.Subscription;
 import io.github.divios.core_lib.misc.timeStampUtils;
@@ -14,10 +15,12 @@ import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.events.reStockShopEvent;
 import io.github.divios.dailyShop.events.updateItemEvent;
 import io.github.divios.dailyShop.guis.settings.shopGui;
+import io.github.divios.lib.dLib.stock.dStock;
 import io.github.divios.lib.dLib.synchronizedGui.singleGui.dInventory;
 import io.github.divios.lib.dLib.synchronizedGui.syncHashMenu;
 import io.github.divios.lib.dLib.synchronizedGui.syncMenu;
 import io.github.divios.lib.serialize.adapters.dShopAdapter;
+import io.github.divios.lib.serialize.adapters.dStockAdapter;
 import io.github.divios.lib.storage.databaseManager;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -198,7 +201,7 @@ public class dShop {
         }
 
         items.put(uid, newItem);
-        Events.callEvent(new updateItemEvent(uid, updateItemEvent.type.UPDATE_ITEM, this));    // Event to update item
+        guis.updateItem(new updateItemEvent(uid, updateItemEvent.type.UPDATE_ITEM, this));    // Event to update item
     }
 
 
@@ -209,20 +212,20 @@ public class dShop {
         Map<UUID, dItem> newItems = new HashMap<>();
         items.forEach(dItem -> newItems.put(dItem.getUid(), dItem));            // Cache values for a O(1) search
 
-        for (Iterator<Map.Entry<UUID, dItem>> it = new HashMap<>(this.items).entrySet().iterator(); it.hasNext(); ) {          // Remove items that are not on the newItems list
-
+        for (Iterator<Map.Entry<UUID, dItem>> it = new HashMap<>(this.items).entrySet().iterator(); it.hasNext(); ) {          // Remove or update
             Map.Entry<UUID, dItem> entry = it.next();
+
             if (newItems.containsKey(entry.getKey())) {     // Update items if changed
-                dItem toUpdateItem = newItems.get(entry.getKey());
-                if (toUpdateItem != null && !toUpdateItem.getItem().isSimilar(entry.getValue().getItem())) {
+                dItem toUpdateItem = newItems.remove(entry.getKey());
+                if (toUpdateItem != null && !toUpdateItem.isSimilar(entry.getValue())) {
                     updateItem(toUpdateItem);
                 }
-                continue;
-            }
-            removeItem(entry.getKey());
+            } else
+                removeItem(entry.getKey());
+
         }
 
-        items.forEach(this::addItem);       // Replace the old values for the new ones
+        newItems.values().forEach(this::addItem);       // Replace the old values for the new ones
     }
 
     /**
