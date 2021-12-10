@@ -1,6 +1,7 @@
 package io.github.divios.dailyShop.files;
 
 import com.google.common.collect.Lists;
+import io.github.divios.core_lib.cache.Lazy;
 import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.utils.FileUtils;
@@ -18,16 +19,15 @@ public abstract class resource {
 
     private File file;
     protected YamlConfiguration yaml;
-    private Long checkSum;
+    private long checkSum;
 
     protected resource(String name) {
         this.name = name;
+        file = new File(plugin.getDataFolder(), name);
         create();
     }
 
     public void create() {
-
-        file = new File(plugin.getDataFolder(), name);
 
         if (!file.exists()) {
             file.getParentFile().mkdirs();
@@ -36,8 +36,9 @@ public abstract class resource {
 
         Timer timer = Timer.create();
         Log.info(getStartMessage());
-        Long checkSumAux;
-        if ( (checkSumAux = FileUtils.getFileCheckSum(file)) == checkSum ) { // If same checkSum -> no changes
+        long checkSumAux;
+        if ((checkSumAux = FileUtils.getFileCheckSum(file)) == (checkSum)) { // If same checkSum -> no changes
+            timer = null;
             Log.info(getCanceledMessage());
             return;
         }
