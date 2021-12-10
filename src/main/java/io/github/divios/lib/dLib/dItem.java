@@ -587,6 +587,7 @@ public class dItem implements Serializable, Cloneable {
      */
     public dItem setStock(@Nullable dStock stock) {
         this.stock = stock;
+        saveStock();
         return this;
     }
 
@@ -696,7 +697,7 @@ public class dItem implements Serializable, Cloneable {
      */
     public Optional<List<String>> getCommands() {
         Object o;
-        return Optional.ofNullable( (o = cache.get("commands").get()) == null ? null : (List<String>) o );
+        return Optional.ofNullable((o = cache.get("commands").get()) == null ? null : (List<String>) o);
     }
 
     /**
@@ -726,7 +727,7 @@ public class dItem implements Serializable, Cloneable {
      */
     public Optional<List<String>> getPermsBuy() {
         Object o;
-        return Optional.ofNullable( (o = cache.get("buyPerms").get()) == null ? null : (List<String>) o );
+        return Optional.ofNullable((o = cache.get("buyPerms").get()) == null ? null : (List<String>) o);
     }
 
     /**
@@ -748,7 +749,7 @@ public class dItem implements Serializable, Cloneable {
      */
     public Optional<List<String>> getPermsSell() {
         Object o;
-        return Optional.ofNullable( (o = cache.get("sellPerms").get()) == null ? null : (List<String>) o );
+        return Optional.ofNullable((o = cache.get("sellPerms").get()) == null ? null : (List<String>) o);
     }
 
     /**
@@ -786,6 +787,7 @@ public class dItem implements Serializable, Cloneable {
 
     /**
      * Toggles the value of Confirm_GUI
+     *
      * @return
      */
     public dItem toggleConfirm_gui() {
@@ -800,7 +802,7 @@ public class dItem implements Serializable, Cloneable {
      */
     public Optional<Integer> getSetItems() {
         Object o;
-        return Optional.ofNullable( (o = cache.get("set").get()) == null ? null : (int) o );
+        return Optional.ofNullable((o = cache.get("set").get()) == null ? null : (int) o);
     }
 
     /**
@@ -851,6 +853,7 @@ public class dItem implements Serializable, Cloneable {
 
     /**
      * Sets the action of this item
+     *
      * @return
      */
     public dItem setAction(@Nullable dAction action, String s) {
@@ -861,6 +864,7 @@ public class dItem implements Serializable, Cloneable {
 
     /**
      * Private method to set Item as AIR
+     *
      * @return
      */
     public dItem setAIR() {
@@ -951,6 +955,25 @@ public class dItem implements Serializable, Cloneable {
     private void readObjectNoData()
             throws ObjectStreamException {
 
+    }
+
+    public boolean isSimilar(@NotNull dItem o) {
+        dItem firstItem = this.clone().setStock(null);
+        dItem secondItem = o.clone().setStock(null);
+
+        boolean similarStock;
+
+        if (o.getStock() == null && this.getStock() == null)
+            similarStock = true;
+
+        else if ((o.getStock() == null && this.getStock() != null) ||
+                o.getStock() != null && this.getStock() == null)
+            similarStock = false;
+
+        else
+            similarStock = this.getStock().toString().equals(o.getStock().toString());
+
+        return firstItem.getItem().isSimilar(secondItem.getItem()) && similarStock;
     }
 
     public static final class encodeOptions {
