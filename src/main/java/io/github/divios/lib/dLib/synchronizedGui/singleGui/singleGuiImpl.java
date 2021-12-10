@@ -18,14 +18,12 @@ import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.dLib.stock.dStock;
 import io.github.divios.lib.dLib.synchronizedGui.taskPool.updatePool;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 /**
  * Class that holds a {@link dInventory} for a unique player and
@@ -85,10 +83,11 @@ public class singleGuiImpl implements singleGui {
                 own.updateItem(toUpdateItem.applyLore(loreStrategy, p), false);
                 break;
             case NEXT_AMOUNT:
-                dStock stock = toUpdateItem.getStock();
+                dStock stock = own.getButtons().get(toUpdateItem.getUid()).getStock();
                 stock.decrement(o.getPlayer(), o.getAmount());
                 if (stock.get(o.getPlayer()) <= 0) stock.set(o.getPlayer(), -1);
-                own.updateItem(toUpdateItem, false);
+                toUpdateItem.setStock(stock);
+                own.updateItem(toUpdateItem.applyLore(loreStrategy, p), false);
                 break;
             case DELETE_ITEM:
                 own.updateItem(toUpdateItem, true);
@@ -101,16 +100,21 @@ public class singleGuiImpl implements singleGui {
     @Override
     public synchronized void updateTask() {
         loreStrategy strategy = new shopItemsLore();
-        own.getButtonsSlots().keySet().stream()
-                .filter(own.dailyItemsSlots::contains)
+        Map<Integer, dItem> buttons = own.getButtonsSlots();
+
+        own.getDailyItemsSlots()
                 .forEach(integer -> {
                     try {
-                        ItemStack oldItem = shop.getItem(own.getButtonsSlots().get(integer).getUid()).get().getItem().clone();
+                        dItem oldItem = shop.getItem(buttons.get(integer).getUid()).orElse(null);
+                        if (oldItem == null || buttons.get(integer) == null) return;  // Avoid spam if somehow any error arise
+                        oldItem = oldItem.clone();
 
-                        ItemBuilder newItem = ItemBuilder.of(oldItem.clone()).setLore(Collections.emptyList());
+                        oldItem.setStock(buttons.get(integer).getStock());   // Set the stock of the actual item
+
+                        ItemBuilder newItem = ItemBuilder.of(oldItem.getItem().clone()).setLore(Collections.emptyList());
                         newItem = newItem.setName(PlaceholderAPIWrapper.setPlaceholders(p, ItemUtils.getName(newItem)));
 
-                        for (String s : ItemUtils.getLore(oldItem))
+                        for (String s : oldItem.getLore())
                             newItem = newItem.addLore(PlaceholderAPIWrapper.setPlaceholders(p, s));
 
                         own.getInventory().setItem(integer, strategy.applyLore(newItem, p));
@@ -121,8 +125,7 @@ public class singleGuiImpl implements singleGui {
 
     @Override
     public synchronized void restock() {
-        Set<dItem> newItems = dRandomItemsSelector.of(
-                        shop.getItems(), dItem -> dItem.applyLore(loreStrategy, p))
+        Set<dItem> newItems = dRandomItemsSelector.of(shop.getItems(), dItem -> dItem.applyLore(loreStrategy, p))
                 .roll(own.dailyItemsSlots.size());
         own.restock(newItems);
     }
