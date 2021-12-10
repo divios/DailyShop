@@ -9,6 +9,7 @@ import io.github.divios.core_lib.events.Subscription;
 import io.github.divios.core_lib.misc.timeStampUtils;
 import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.core_lib.scheduler.Task;
+import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.events.reStockShopEvent;
 import io.github.divios.dailyShop.events.updateItemEvent;
@@ -57,16 +58,12 @@ public class dShop {
         this.guis = syncHashMenu.create(this);
 
         startTimerTask();
+        startListeners();
     }
 
     @Deprecated
     public dShop(String name, String base64, Timestamp timestamp, int timer) {
-        this.name = name;
-        this.timestamp = timestamp;
-        this.timer = timer;
-
-        guis = syncHashMenu.fromJson(base64, this);
-        startTimerTask();
+        this(name, base64, timestamp, timer, Collections.EMPTY_SET);
     }
 
     @Deprecated
@@ -78,6 +75,7 @@ public class dShop {
 
         guis = syncHashMenu.fromJson(base64, this);
         startTimerTask();
+        startListeners();
     }
 
     protected void startTimerTask() {
@@ -89,6 +87,14 @@ public class dShop {
                         Schedulers.sync().run(this::reStock);
 
                 }, 1, TimeUnit.SECONDS, 1, TimeUnit.SECONDS)
+        );
+    }
+
+    protected void startListeners() {
+        listeners.add(
+                Events.subscribe(updateItemEvent.class)
+                        .filter(o -> o.getShop().equals(this))
+                        .handler(guis::updateItem)
         );
     }
 

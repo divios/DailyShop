@@ -60,12 +60,6 @@ public abstract class abstractSyncMenu implements syncMenu {
 
     private void ready() {
         listeners.add(
-                Events.subscribe(updateItemEvent.class)
-                        .filter(o -> o.getShop().equals(shop))
-                        .handler(this::updateItems)
-        );
-
-        listeners.add(
                 Events.subscribe(InventoryCloseEvent.class)
                         .handler(this::checkClosedInv)
         );
@@ -133,7 +127,6 @@ public abstract class abstractSyncMenu implements syncMenu {
                     base.getInventory().removeButton(i);
 
                 else if (!actualItem.isSimilar(newItem)) {
-                    Log.warn("oke");
                     base.getInventory().addButton(newItem, i);
                 }
 
@@ -147,9 +140,11 @@ public abstract class abstractSyncMenu implements syncMenu {
 
     }
 
-    private synchronized void updateItems(updateItemEvent o) {
+    public synchronized void updateItem(updateItemEvent o) {
         base.updateItem(o);
-        guis.forEach((uuid, singleGui) -> singleGui.updateItem(o));
+        guis.forEach((uuid, singleGui) -> {
+            singleGui.updateItem(o);
+        });
     }
 
     protected abstract Map<UUID, singleGui> createMap();
@@ -194,6 +189,9 @@ public abstract class abstractSyncMenu implements syncMenu {
     public synchronized void destroy() {
         guis.keySet().forEach(uuid -> Bukkit.getPlayer(uuid).closeInventory());     // Triggers invalidate
         invalidateAll();
+
+        listeners.forEach(Subscription::unregister);
+        listeners.clear();
 
         base.destroy();
     }
