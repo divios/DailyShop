@@ -45,13 +45,13 @@ public abstract class dStockAbstract implements dStock{
 
     @Override
     public void increment(UUID p, int amount) {
-        if (!exists(p)) stocks.put(p, defaultStock + 1);
+        if (!exists(p)) stocks.put(p, defaultStock + amount);
         else stocks.compute(getKey(p), (uuid, integer) -> integer + amount);
     }
 
     @Override
     public void decrement(UUID p, int amount) {
-        if (!exists(p)) stocks.put(p, defaultStock - 1);
+        if (!exists(p)) stocks.put(p, defaultStock - amount);
         else stocks.compute(getKey(p), (uuid, integer) -> integer - amount);
     }
 
