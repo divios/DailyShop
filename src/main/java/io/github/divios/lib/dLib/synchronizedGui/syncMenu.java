@@ -1,5 +1,6 @@
 package io.github.divios.lib.dLib.synchronizedGui;
 
+import io.github.divios.dailyShop.events.updateItemEvent;
 import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.dLib.synchronizedGui.singleGui.dInventory;
 import io.github.divios.lib.dLib.synchronizedGui.singleGui.singleGui;
@@ -37,6 +38,8 @@ public interface syncMenu {
     default void updateBase(dInventory inv) {
         updateBase(inv, false);
     }
+
+    void updateItem(updateItemEvent o);
 
     void updateBase(dInventory inv, boolean silent);
 
