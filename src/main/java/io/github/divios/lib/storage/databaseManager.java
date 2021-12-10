@@ -55,6 +55,7 @@ public class databaseManager extends DataManagerAbstract {
                             result.getInt("timer"),
                             getShopItems(name));
 
+                    shop.destroy();
                     shops.add(WrappedShop.wrap(shop));
                 }
             }
