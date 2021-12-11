@@ -1,36 +1,13 @@
 package io.github.divios.lib.dLib.stock;
 
-import io.github.divios.dailyShop.DailyShop;
-import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.dLib.stock.factory.dStockFactory;
-import io.github.divios.lib.managers.shopsManager;
-import io.github.divios.lib.storage.databaseManager;
-import org.bukkit.Bukkit;
-import org.bukkit.Server;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemFactory;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 
-import java.util.Optional;
 import java.util.UUID;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({DailyShop.class, Bukkit.class})
 public class stockTest {
 
     /**
@@ -46,7 +23,6 @@ public class stockTest {
      */
     @After
     public void tearDown() {
-        Mockito.framework().clearInlineMocks();
     }
 
     @Test
