@@ -246,7 +246,7 @@ public class dShop {
     public synchronized boolean removeItem(UUID uid) {
         dItem removed = items.remove(uid);
         if (removed == null) return false;
-        Events.callEvent(new updateItemEvent(removed.getUid(), updateItemEvent.type.DELETE_ITEM, this));
+        Events.callEvent(new updateItemEvent(uid, updateItemEvent.type.DELETE_ITEM, this));
         return true;
     }
 
