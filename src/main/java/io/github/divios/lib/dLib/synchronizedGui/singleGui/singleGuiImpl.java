@@ -5,6 +5,7 @@ import io.github.divios.core_lib.events.Subscription;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.WeightedRandom;
+import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.events.searchStockEvent;
 import io.github.divios.dailyShop.events.updateItemEvent;
@@ -99,7 +100,6 @@ public class singleGuiImpl implements singleGui {
 
     @Override
     public void updateTask() {
-        loreStrategy strategy = new shopItemsLore();
         Set<Integer> dailySlots = own.getDailyItemsSlots();
         if (dailySlots.isEmpty()) return;
         Map<Integer, dItem> buttons = own.getButtonsSlots();
@@ -112,7 +112,7 @@ public class singleGuiImpl implements singleGui {
                 if (dailySlots.contains(integer)) {
                     oldItem = shop.getItem(dItem.getUid()).orElse(null);
                     if (oldItem == null || buttons.get(integer) == null) return;
-                    oldItem = oldItem.clone();
+                    oldItem = oldItem.clone().applyLore(loreStrategy);
                     oldItem.setStock(buttons.get(integer).getStock());   // Set the stock of the actual item
 
                 } else
