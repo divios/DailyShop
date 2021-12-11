@@ -2,31 +2,52 @@ package io.github.divios.lib.managers;
 
 import io.github.divios.core_lib.events.Events;
 import io.github.divios.core_lib.scheduler.Schedulers;
+import io.github.divios.core_lib.scheduler.Task;
+import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.events.createdShopEvent;
 import io.github.divios.dailyShop.events.deletedShopEvent;
+import io.github.divios.dailyShop.utils.Timer;
 import io.github.divios.lib.dLib.dShop;
-import io.github.divios.lib.storage.dataManager;
-import org.bukkit.Bukkit;
+import io.github.divios.lib.storage.databaseManager;
+import io.github.divios.lib.serialize.serializerApi;
 
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 public class shopsManager {
 
     private static shopsManager instance = null;
-    private Set<dShop> shops = new LinkedHashSet<>();
+    private final Set<dShop> shops = new LinkedHashSet<>();
+    private static final databaseManager dManager = databaseManager.getInstance();
+    private final Set<Task> task = new HashSet<>();
 
-    private shopsManager() {}
+    private shopsManager() {
+        Schedulers.sync().runRepeating(this::updateShopsAsync, 15, TimeUnit.MINUTES, 15, TimeUnit.MINUTES);
+    }
 
-    public static shopsManager getInstance() {
+    public synchronized static shopsManager getInstance() {
         if (instance == null) {
             instance = new shopsManager();
-            dataManager.getInstance().getShops().thenAccept(instance::setShops);
+            Log.info("Importing database data...");
+            Timer timer = Timer.create();
+            instance.shops.addAll(databaseManager.getInstance().getShops());
+            timer.stop();
+            Log.info("Imported database data in " + timer.getTime() + " ms");
         }
         return instance;
+    }
+
+    private synchronized void updateShops() {
+        shops.forEach(shop -> {
+            dManager.updateGui(shop.getName(), shop.getGuis());
+        });
+    }
+
+    private synchronized void updateShopsAsync() {
+        shops.forEach(shop -> {
+            dManager.updateGuiAsync(shop.getName(), shop.getGuis());
+        });
     }
 
     /**
@@ -41,32 +62,64 @@ public class shopsManager {
 
     /**
      * Sets the shops. Private
+     *
      * @param shops
      */
     private synchronized void setShops(Set<dShop> shops) {
-        this.shops = shops;
+        deleteAllShops();
+        shops.forEach(this::createShop);
+    }
+
+    /**
+     * Sets the shops. Private
+     *
+     * @param shops
+     */
+    private synchronized CompletableFuture<Void> setShopsAsync(Set<dShop> shops) {
+        return CompletableFuture.runAsync(() -> {
+            deleteAllShops();
+            shops.forEach(this::createShop);
+        });
     }
 
     /**
      * Creates a new shop
      *
      * @param name the name of the shop
-     * @param type the type of the shop
      * @return CompletableFuture that ends when the shop is added to the database
-     *
      */
 
-    public synchronized CompletableFuture<Void> createShop(String name, dShop.dShopT type) {
-        dShop newShop = new dShop(name, type);
-        shops.add(newShop);
-        Schedulers.sync().run(() -> Events.callEvent(new createdShopEvent(newShop)));
-        return dataManager.getInstance().createShop(newShop);
+    public synchronized void createShop(String name) {
+        createShop(new WrappedShop(name));
     }
 
-    public synchronized CompletableFuture<Void> createShop(dShop newShop) {
-        shops.add(newShop);
-        Schedulers.sync().run(() -> Events.callEvent(new createdShopEvent(newShop)));
-        return dataManager.getInstance().createShop(newShop);
+    public synchronized void createShop(dShop newShop) {
+        dShop newShop_ = WrappedShop.wrap(newShop);
+
+        shops.add(newShop_);
+        newShop_.reStock();
+        Schedulers.sync().run(() -> Events.callEvent(new createdShopEvent(newShop_)));
+        dManager.createShop(newShop_);
+        newShop_.getItems().forEach(dItem -> {
+            dManager.addItem(newShop.getName(), dItem);
+        });
+    }
+
+    public synchronized void createShopAsync(String name) {
+        createShopAsync(new WrappedShop(name));
+    }
+
+    public synchronized void createShopAsync(dShop newShop) {
+        dShop newShop_ = WrappedShop.wrap(newShop);
+
+        shops.add(newShop_);
+        newShop_.reStock();
+        Schedulers.sync().run(() -> Events.callEvent(new createdShopEvent(newShop_)));
+        dManager.createShopAsync(newShop_).thenAccept(unused -> {
+            newShop_.getItems().forEach(dItem -> {
+                dManager.addItemAsync(newShop.getName(), dItem);
+            });
+        });
     }
 
     /**
@@ -81,23 +134,60 @@ public class shopsManager {
                 .findFirst();
     }
 
+
+    public synchronized void deleteShop(dShop shop) {
+        deleteShop(shop.getName());
+    }
+
+    public synchronized void deleteShopAsync(dShop shop) {
+        deleteShopAsync(shop.getName());
+    }
+
     /**
      * Deletes a shop by name
+     *
      * @param name name of the shop to be deleted
      * @return returns a completableFuture that ends when the shop is deleted
      * from the database
      */
-    public synchronized CompletableFuture<Void> deleteShop(String name) {
+    public synchronized void deleteShop(String name) {
 
         Optional<dShop> result = getShop(name);
-        if (!result.isPresent()) return CompletableFuture.completedFuture(null);
+        if (!result.isPresent()) return;
 
         deletedShopEvent event = new deletedShopEvent(result.get());
         Events.callEvent(event);     // throw new event
 
         // auto-destroy is handled via event on dShop
-        shops.removeIf(shop -> shop.getName().equals(name));
-        return dataManager.getInstance().deleteShop(name);
+        shops.remove(result.get());
+        result.get().destroy();
+        dManager.deleteShop(name);
+    }
+
+    public synchronized void deleteShopAsync(String name) {
+
+        Optional<dShop> result = getShop(name);
+        if (!result.isPresent()) return;
+
+        deletedShopEvent event = new deletedShopEvent(result.get());
+        Events.callEvent(event);     // throw new event
+
+        // auto-destroy is handled via event on dShop
+        shops.remove(result.get());
+        result.get().destroy();
+        dManager.deleteShopAsync(name);
+    }
+
+    public synchronized void deleteAllShops() {
+            new HashSet<>(shops).forEach(this::deleteShop);
+    }
+
+    public synchronized void deleteAllShopsAsync() {
+        new HashSet<>(shops).forEach(this::deleteShopAsync);
+    }
+
+    public synchronized void saveAllShops() {
+        shops.forEach(serializerApi::saveShopToFile);
     }
 
 }

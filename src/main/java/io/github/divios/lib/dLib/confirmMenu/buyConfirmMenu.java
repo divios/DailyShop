@@ -4,7 +4,7 @@ import io.github.divios.core_lib.events.Events;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.dailyShop.utils.CompareItemUtils;
 import io.github.divios.dailyShop.utils.FutureUtils;
-import io.github.divios.dailyShop.utils.utils;
+import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.dLib.stock.dStock;
@@ -75,7 +75,7 @@ public class buyConfirmMenu extends abstractConfirmMenu {
 
     @Override
     protected void removeAddedItems() {
-        if (!utils.playerIsOnline(player)) return;
+        if (!Utils.playerIsOnline(player)) return;
 
         ItemStack[] playerItems = player.getInventory().getContents();
         for (ItemStack item : playerItems) {

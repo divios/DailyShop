@@ -6,7 +6,7 @@ import org.bukkit.inventory.ItemStack;
 public class MMOUtils {
 
     public static boolean isMMOItemsOn() {
-        return utils.isOperative("MMOItems");
+        return Utils.isOperative("MMOItems");
     }
 
     public static boolean isMMOItem(ItemStack item) {

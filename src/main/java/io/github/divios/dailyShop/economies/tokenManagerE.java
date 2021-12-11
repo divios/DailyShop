@@ -5,7 +5,7 @@ import io.github.divios.dailyShop.hooks.hooksManager;
 import me.realized.tokenmanager.api.TokenManager;
 import org.bukkit.entity.Player;
 
-public class tokenManagerE extends economy {
+public class tokenManagerE extends abstractEconomy {
 
     public tokenManagerE() { this(""); }
 

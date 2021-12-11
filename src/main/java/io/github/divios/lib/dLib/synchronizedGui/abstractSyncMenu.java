@@ -3,23 +3,25 @@ package io.github.divios.lib.dLib.synchronizedGui;
 import com.google.common.base.Objects;
 import io.github.divios.core_lib.events.Events;
 import io.github.divios.core_lib.events.Subscription;
+import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.Msg;
-import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.core_lib.scheduler.Task;
+import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.events.updateItemEvent;
-import io.github.divios.dailyShop.events.updateShopEvent;
 import io.github.divios.dailyShop.guis.customizerguis.customizeGui;
-import io.github.divios.lib.dLib.dInventory;
+import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
+import io.github.divios.lib.dLib.synchronizedGui.singleGui.dInventory;
 import io.github.divios.lib.dLib.synchronizedGui.singleGui.singleGui;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-import java.util.concurrent.TimeUnit;
+import java.util.stream.IntStream;
 
 /**
  * Abstract class that represents the basic operations of a syncMenu.
@@ -58,16 +60,6 @@ public abstract class abstractSyncMenu implements syncMenu {
 
     private void ready() {
         listeners.add(
-                Events.subscribe(updateItemEvent.class)
-                        .filter(o -> o.getShop().equals(shop))
-                        .handler(this::updateItems)
-        );
-        listeners.add(
-                Events.subscribe(updateShopEvent.class)
-                        .filter(o -> o.getShop().equals(shop))
-                        .handler(this::updateBase)
-        );
-        listeners.add(
                 Events.subscribe(InventoryCloseEvent.class)
                         .handler(this::checkClosedInv)
         );
@@ -80,38 +72,86 @@ public abstract class abstractSyncMenu implements syncMenu {
      */
     private synchronized void checkClosedInv(InventoryCloseEvent o) {
         singleGui gui = guis.get(o.getPlayer().getUniqueId());
-        if (gui != null && gui.getInventory().getInventory().equals(o.getInventory()))
-            delayedGuisPromises.put(o.getPlayer().getUniqueId(), Schedulers.sync().runLater(() -> invalidate(o.getPlayer().getUniqueId()), 2, TimeUnit.MINUTES));
+        if (gui != null && gui.getInventory().getInventory().equals(o.getInventory())) {
+            invalidate(o.getPlayer().getUniqueId());
+        }
     }
 
     /**
-     * Synchronized method to update the base when the listener is triggered
-     *
-     * @param o
+     * Synchronized method to update the shop inventory. It will only update if
+     * the inventory passed has any change compared to the actual inventory.
+     * If they are not equal, then, if the new inventory has a different size, the hole
+     * inventory is updated and new items are generated, if not, only the items that have changed will
+     * be updated without restocking the shop.
      */
-    private synchronized void updateBase(updateShopEvent o) {
-        base.destroy();
-        base = singleGui.create(null, o.getNewInv(), shop);
-        reStock(o.isSilent());
+    public synchronized void updateBase(dInventory inv, boolean silent) {
+        //if (inv.equals(base.getBase().skeleton())) return;     // Do not update if the invs are the same
+
+        /*int comparator;
+        if ((comparator = Integer.compare(base.getInventory().getInventorySize(), inv.getInventorySize())) != 0) {
+            if (comparator < 0)
+                IntStream.range(0, (inv.getInventorySize() - base.getInventory().getInventorySize()) / 9)
+                        .forEach(value -> base.getInventory().removeInventoryRow());
+            else
+                IntStream.range(0, (base.getInventory().getInventorySize() - inv.getInventorySize()) / 9)
+                        .forEach(value -> base.getInventory().addInventoryRow());
+        } */
+
+        if (inv.getInventorySize() != base.getInventory().getInventorySize()) {  // If the inv has changed size update all
+            base.destroy();
+            base = singleGui.fromJson(inv.toBase64(), shop);
+            reStock(silent);
+
+        } else {        // If the inv has same size, update only buttons with the above logic
+
+            Map<Integer, dItem> actualContent = new HashMap<>(base.getInventory().getButtonsSlots());
+            Map<Integer, dItem> newContent = inv.getButtonsSlots();
+
+            Set<Integer> dailySlots = base.getInventory().getDailyItemsSlots();
+
+            for (int i = 0; i < base.getInventory().getInventorySize(); i++) {
+                dItem aux1;
+                dItem aux2;
+
+                ItemStack actualItem = (aux1 = actualContent.get(i)) == null ? null : aux1.getItem();
+                ItemStack newItem = (aux2 = newContent.get(i)) == null ? null : aux2.getItem();
+
+                if (dailySlots.contains(i)) actualItem = null;      // If is a dailyItem, set as if nothing was there
+
+                if (ItemUtils.isEmpty(actualItem) && ItemUtils.isEmpty(newItem)) continue;
+
+                if (ItemUtils.isEmpty(actualItem) && !ItemUtils.isEmpty(newItem))
+                    base.getInventory().addButton(newItem, i);
+
+                else if (!ItemUtils.isEmpty(actualItem) && ItemUtils.isEmpty(newItem))
+                    base.getInventory().removeButton(i);
+
+                else if (!actualItem.isSimilar(newItem)) {
+                    base.getInventory().addButton(newItem, i);
+                }
+
+            }
+
+            Set<UUID> players = new HashSet<>(guis.keySet());       // Re-open to all players to update gui changes
+            invalidateAll();
+            players.forEach(uuid -> Optional.ofNullable(Bukkit.getPlayer(uuid)).ifPresent(this::generate));
+
+        }
+
     }
 
-    private synchronized void updateItems(updateItemEvent o) {
+    public synchronized void updateItem(updateItemEvent o) {
         base.updateItem(o);
-        guis.forEach((uuid, singleGui) -> singleGui.updateItem(o));
+        guis.forEach((uuid, singleGui) -> {
+            singleGui.updateItem(o);
+        });
     }
 
     protected abstract Map<UUID, singleGui> createMap();
 
     @Override
     public synchronized void generate(Player p) {
-
-        if (contains(p)) {
-            removeAndCancelPromise(p.getUniqueId());
-            getGui(p).getInventory().openInventory(p);
-        }
-
-        else guis.put(p.getUniqueId(), singleGui.create(p, base, shop));
-        //Log.warn(String.valueOf(size()));
+        guis.put(p.getUniqueId(), singleGui.create(p, base, shop));
     }
 
     @Override
@@ -150,6 +190,9 @@ public abstract class abstractSyncMenu implements syncMenu {
         guis.keySet().forEach(uuid -> Bukkit.getPlayer(uuid).closeInventory());     // Triggers invalidate
         invalidateAll();
 
+        listeners.forEach(Subscription::unregister);
+        listeners.clear();
+
         base.destroy();
     }
 
@@ -159,7 +202,7 @@ public abstract class abstractSyncMenu implements syncMenu {
         players.removeAll(delayedGuisPromises.keySet());
 
         invalidateAll();                                            // close all inventories
-        base.renovate();                                            // Renovates base
+        base.restock();                                            // Renovates base
         players.forEach(uuid -> Optional.ofNullable(Bukkit.getPlayer(uuid)).ifPresent(this::generate));
         if (!silent)
             Msg.broadcast(
@@ -176,7 +219,7 @@ public abstract class abstractSyncMenu implements syncMenu {
 
     @Override
     public dInventory getDefault() {
-        return base.getBase();
+        return base.getInventory();
     }
 
     @Override

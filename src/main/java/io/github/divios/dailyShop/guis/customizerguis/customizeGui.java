@@ -12,10 +12,11 @@ import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.events.updateShopEvent;
 import io.github.divios.dailyShop.guis.settings.shopsManagerGui;
-import io.github.divios.dailyShop.utils.utils;
-import io.github.divios.lib.dLib.dInventory;
+import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
+import io.github.divios.lib.dLib.synchronizedGui.singleGui.dInventory;
+import io.github.divios.lib.serialize.serializerApi;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -56,7 +57,6 @@ public class customizeGui implements Listener, InventoryHolder {
         this.p = p;
         this.shop = shop;
         this._gui = inv.skeleton();
-        this.inv = inv.copy().getInventory();
 
         Schedulers.sync().runLater(() -> Bukkit.getPluginManager().registerEvents(this, plugin), 1L);
         withdrawPlayerItems();
@@ -71,7 +71,6 @@ public class customizeGui implements Listener, InventoryHolder {
     }
 
     public void addCustomizeItems() {
-
 
         IntStream.range(0, 36).forEach(i ->
                 p.getInventory().setItem(i,
@@ -124,7 +123,7 @@ public class customizeGui implements Listener, InventoryHolder {
     private void withdrawPlayerItems() {
         Inventory pInv = p.getInventory();
         IntStream.range(0, 36).forEach(i -> {
-            if (utils.isEmpty(pInv.getItem(i)))
+            if (Utils.isEmpty(pInv.getItem(i)))
                 return;
 
             pItems.put(i, pInv.getItem(i));
@@ -208,14 +207,14 @@ public class customizeGui implements Listener, InventoryHolder {
     @EventHandler
     public void onPlayerLeave(PlayerQuitEvent e) {
         if (e.getPlayer().getUniqueId().equals(p.getUniqueId())) {
-
+            depositPlayerItems();
         }
     }
 
     @EventHandler
     public void onPlayerKick(PlayerKickEvent e) {
         if (e.getPlayer().getUniqueId().equals(p.getUniqueId())) {
-
+            depositPlayerItems();
         }
     }
 
@@ -237,7 +236,7 @@ public class customizeGui implements Listener, InventoryHolder {
 
     private void bottomInventoryAction(InventoryClickEvent e) {
 
-        if (utils.isEmpty(e.getCurrentItem()))
+        if (Utils.isEmpty(e.getCurrentItem()))
             return;
 
         if (isBackButton(e)) {  //back
@@ -258,8 +257,9 @@ public class customizeGui implements Listener, InventoryHolder {
     }
 
     private void backButtonAction() {
-        preventClose = false;
-        p.closeInventory();
+        unregisterAll();
+        depositPlayerItems();
+        shopsManagerGui.open(p);
     }
 
     private boolean isApplyButton(InventoryClickEvent e) {
@@ -267,9 +267,11 @@ public class customizeGui implements Listener, InventoryHolder {
     }
 
     private void applyChangesAction() {
-        Events.callEvent(new updateShopEvent(shop, _gui));
-        preventClose = false;
-        p.closeInventory();
+        shop.updateShopGui(_gui);
+        unregisterAll();
+        depositPlayerItems();
+        shopsManagerGui.open(p);
+        Schedulers.async().runLater(() -> serializerApi.saveShopToFile(shop), 1L);
     }
 
     private void changeNameAction() {
@@ -304,33 +306,34 @@ public class customizeGui implements Listener, InventoryHolder {
     }
 
     private void upperInventoryAction(InventoryClickEvent e) {
-        if (toClone != null && utils.isEmpty(e.getCurrentItem())
+
+        if (toClone != null && Utils.isEmpty(e.getCurrentItem())
                 && e.getClick().equals(ClickType.MIDDLE)) {     // paste clipboard
             _gui.addButton(toClone.copy(), e.getSlot());
             refresh();
             return;
         }
 
-        if (!utils.isEmpty(e.getCurrentItem()) &&
+        if (!Utils.isEmpty(e.getCurrentItem()) &&
                 e.getClick().equals(ClickType.MIDDLE)) {        // copy to clipboard
             toClone = dItem.of(e.getCurrentItem());
             return;
         }
 
-        if (utils.isEmpty(e.getCurrentItem())
+        if (Utils.isEmpty(e.getCurrentItem())
                 && e.isShiftClick()) {  //add empty slot
             _gui.addButton(dItem.AIR(), e.getSlot());
             refresh();
             return;
         }
 
-        if (e.isRightClick() && !utils.isEmpty(e.getCurrentItem())) {  // delete item
+        if (e.isRightClick() && !Utils.isEmpty(e.getCurrentItem())) {  // delete item
             refreshFlag = true;
 
             confirmIH.builder()
                     .withPlayer(p)
                     .withAction(aBoolean -> {
-                        if (aBoolean) _gui.removeButton(e.getSlot());
+                        if (aBoolean) _gui.removeButton(dItem.getUid(e.getCurrentItem()));
                         refresh();
                     })
                     .withItem(e.getCurrentItem())
@@ -351,7 +354,7 @@ public class customizeGui implements Listener, InventoryHolder {
         miniCustomizeGui.builder()
                 .withPlayer(p)
                 .withShop(shop)
-                .withItem(utils.isEmpty(e.getCurrentItem()) ?
+                .withItem(Utils.isEmpty(e.getCurrentItem()) ?
                         XMaterial.GRASS_BLOCK.parseItem() : e.getCurrentItem().clone())
                 .withConsumer(itemS -> {
                     _gui.addButton(new dItem(itemS), e.getSlot());

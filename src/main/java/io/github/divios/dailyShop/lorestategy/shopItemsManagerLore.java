@@ -5,7 +5,6 @@ import io.github.divios.core_lib.misc.Msg;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dPrice;
-import io.github.divios.lib.dLib.dShop;
 import org.bukkit.inventory.ItemStack;
 
 public class shopItemsManagerLore implements loreStrategy {
@@ -13,10 +12,7 @@ public class shopItemsManagerLore implements loreStrategy {
 
     private static final DailyShop plugin = DailyShop.getInstance();
 
-    private final dShop.dShopT type;
-
-    public shopItemsManagerLore(dShop.dShopT type) {
-        this.type = type;
+    public shopItemsManagerLore() {
     }
 
     public ItemStack applyLore(ItemStack item, Object... data) {

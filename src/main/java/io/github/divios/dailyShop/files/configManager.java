@@ -1,5 +1,6 @@
 package io.github.divios.dailyShop.files;
 
+import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.utils.FileUtils;
 
@@ -8,6 +9,7 @@ public class configManager {
     private static final DailyShop main = DailyShop.getInstance();
     private final langResource langYml;
     private final settingsResource settingsYml;
+    private shopsResource shopsResource;
 
     public static configManager generate() {
         return new configManager();
@@ -18,7 +20,7 @@ public class configManager {
         FileUtils.createParentDirectory();
         langYml = new langResource();
         settingsYml = new settingsResource();
-        FileUtils.createParserFolder();
+        Schedulers.sync().run(() -> shopsResource = new shopsResource());
         FileUtils.createDatabaseFile();
     }
 
@@ -33,5 +35,6 @@ public class configManager {
     public synchronized void reload() {
         langYml.reload();
         settingsYml.reload();
+        shopsResource.reload();
     }
 }

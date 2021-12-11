@@ -6,7 +6,7 @@ import me.TechsCode.UltraEconomy.objects.Account;
 import me.TechsCode.UltraEconomy.objects.Currency;
 import org.bukkit.entity.Player;
 
-public class ultraEconomyE extends economy{
+public class ultraEconomyE extends abstractEconomy {
 
     private static final UltraEconomyAPI api = hooksManager.getInstance().getUltraEconomyApi();
     private final Currency currency;

@@ -6,7 +6,7 @@ import org.bukkit.entity.Player;
 public class PlaceholderAPIWrapper {
 
     public static String setPlaceholders(Player p, String s) {
-        if (p == null || !utils.isOperative("PlaceholderAPI")) {
+        if (p == null || !Utils.isOperative("PlaceholderAPI")) {
             return s;
         }
 

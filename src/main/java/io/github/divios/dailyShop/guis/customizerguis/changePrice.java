@@ -1,14 +1,14 @@
 package io.github.divios.dailyShop.guis.customizerguis;
 
 import com.cryptomorin.xseries.XMaterial;
-import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.core_lib.inventory.InventoryGUI;
 import io.github.divios.core_lib.inventory.ItemButton;
 import io.github.divios.core_lib.inventory.builder.inventoryPopulator;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.misc.ChatPrompt;
+import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.dailyShop.DailyShop;
-import io.github.divios.dailyShop.utils.utils;
+import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
 import org.bukkit.entity.Player;
@@ -22,8 +22,8 @@ public class changePrice {
 
     private final Player p;
     private final dItem item;
+    private final Type type;
     private final dShop shop;
-    private final dShop.dShopT type;
     private final Consumer<dItem> accept;
     private final Runnable back;
 
@@ -32,7 +32,7 @@ public class changePrice {
             Player p,
             dItem item,
             dShop shop,
-            dShop.dShopT type,
+            Type type,
             Consumer<dItem> accept,
             Runnable back
     ) {
@@ -69,15 +69,15 @@ public class changePrice {
                                 .withPlayer(p)
                                 .withResponse(s -> {
 
-                                    if (!utils.isDouble(s)) {
-                                        utils.sendMsg(p, "&7Not double");
+                                    if (!Utils.isDouble(s)) {
+                                        Utils.sendMsg(p, "&7Not double");
                                         Schedulers.sync().run(back);
                                         return;
                                     }
                                     double price = Double.parseDouble(s);
                                     if (price < 0) price = -1;
 
-                                    if (type == dShop.dShopT.buy)
+                                    if (type == Type.BUY)
                                         item.setBuyPrice(price);
                                     else item.setSellPrice(price);
 
@@ -101,7 +101,7 @@ public class changePrice {
                                 String[] pricesS = s.split(":");
 
                                 if (pricesS.length != 2) {
-                                    utils.sendMsg(p, "&7Wrong format -> minPrice:maxPrice (Ex 30:50)");
+                                    Utils.sendMsg(p, "&7Wrong format -> minPrice:maxPrice (Ex 30:50)");
                                     Schedulers.sync().run(back);
                                     return;
                                 }
@@ -112,18 +112,18 @@ public class changePrice {
                                     prices = new Double[]{Double.parseDouble(pricesS[0]),
                                             Double.parseDouble(pricesS[1])};
                                 } catch (Exception err) {
-                                    utils.sendMsg(p, "&7Not double");
+                                    Utils.sendMsg(p, "&7Not double");
                                     Schedulers.sync().run(back);
                                     return;
                                 }
 
                                 if (prices[0] >= prices[1]) {
-                                    utils.sendMsg(p, "&7Max price can't be lower than min price");
+                                    Utils.sendMsg(p, "&7Max price can't be lower than min price");
                                     Schedulers.sync().run(back);
                                     return;
                                 }
 
-                                if (type == dShop.dShopT.buy)
+                                if (type == Type.BUY)
                                     item.setBuyPrice(prices[0], prices[1]);
                                 else item.setSellPrice(prices[0], prices[1]);
 
@@ -164,7 +164,7 @@ public class changePrice {
     public static final class changePriceBuilder {
         private Player p;
         private dItem item;
-        private dShop.dShopT type;
+        private Type type;
         private Consumer<dItem> accept;
         private Runnable back;
 
@@ -180,7 +180,7 @@ public class changePrice {
             return this;
         }
 
-        public changePriceBuilder withType(dShop.dShopT type) {
+        public changePriceBuilder withType(Type type) {
             this.type = type;
             return this;
         }
@@ -200,4 +200,10 @@ public class changePrice {
             return new changePrice(p, item, null, type, accept, back);
         }
     }
+
+    public enum Type {
+        BUY,
+        SELL
+    }
+
 }

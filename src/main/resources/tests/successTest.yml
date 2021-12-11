@@ -1,0 +1,36 @@
+id: blocks
+timer: 86400
+timeStamp: lun, 6 dic 2021 15:37:00
+shop:
+  title: blocks
+  size: 45
+  items:
+    'test2':
+      name: '&c'
+      material: BLACK_STAINED_GLASS_PANE
+      slot: 0
+items:
+  'test':
+    name: "test"
+    lore:
+      - "test"
+      - "test"
+    material: COARSE_DIRT
+    quantity: 3
+    buyPrice: '15.6'
+    sellPrice: '1.5'
+    buyPerms:
+      - "test"
+    sellPerms:
+      - "test"
+    commands:
+      - "test"
+    rarity: Common
+    econ:
+      name: vault
+    confirm_gui: true
+  test_stock:
+    name: test
+    stock:
+      - type: INDIVIDUAL
+      - amount: 3

@@ -2,18 +2,18 @@ package io.github.divios.dailyShop.transaction;
 
 import io.github.divios.core_lib.events.Events;
 import io.github.divios.core_lib.inventory.inventoryUtils;
-import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.core_lib.misc.Msg;
 import io.github.divios.core_lib.misc.confirmIH;
+import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.events.updateItemEvent;
 import io.github.divios.dailyShop.utils.MMOUtils;
 import io.github.divios.dailyShop.utils.PriceWrapper;
-import io.github.divios.dailyShop.utils.utils;
+import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.confirmMenu.buyConfirmMenu;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dPrice;
@@ -23,7 +23,6 @@ import io.github.divios.lib.dLib.log.options.dLogEntry;
 import io.github.divios.lib.dLib.stock.dStock;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.Arrays;
 import java.util.List;
@@ -92,7 +91,7 @@ public class transaction {
             if (!s.getEcon().hasMoney(p, s.getPrice()))
                 throw new transactionExc(transactionExc.err.noMoney);
 
-            if (utils.inventoryFull(p.getInventory()) < s.getSlots())
+            if (Utils.inventoryFull(p.getInventory()) < s.getSlots())
                 throw new transactionExc(transactionExc.err.noSpace);
 
         } catch (transactionExc e) {
@@ -124,7 +123,7 @@ public class transaction {
                         .withItemUUID(item.getUid())
                         .withRawItem(item.getRawItem())
                         .withQuantity(amount)
-                        .withType(dShop.dShopT.buy)
+                        .withType(dLogEntry.Type.BUY)
                         .withPrice(s.getPrice())
                         .build()
         );
@@ -185,7 +184,7 @@ public class transaction {
             }
 
             s.addRunnable(() -> Events.callEvent(
-                    new updateItemEvent(p, item, amount, updateItemEvent.updatetype.NEXT_AMOUNT, shop)));
+                    new updateItemEvent(p, item.getUid(), amount, updateItemEvent.type.NEXT_AMOUNT, shop)));
 
         }
 

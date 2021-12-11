@@ -1,13 +1,11 @@
 package io.github.divios.dailyShop.files;
 
 import io.github.divios.core_lib.misc.FormatUtils;
-import io.github.divios.core_lib.utils.Log;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
-public class settingsResource extends resource{
+public class settingsResource extends resource {
 
     public String PREFIX;
     public boolean DEBUG;
@@ -19,6 +17,21 @@ public class settingsResource extends resource{
 
     protected settingsResource() {
         super("settings.yml");
+    }
+
+    @Override
+    protected String getStartMessage() {
+        return "Reading settings.yml... ";
+    }
+
+    @Override
+    protected String getCanceledMessage() {
+        return "No changes were made in settings.yml, skipping...";
+    }
+
+    @Override
+    protected String getFinishedMessage(long time) {
+        return "Imported settings.yml in " + time + " ms";
     }
 
     @Override

@@ -2,13 +2,13 @@ package io.github.divios.dailyShop.guis.customizerguis;
 
 import com.cryptomorin.xseries.XMaterial;
 import com.google.common.base.Preconditions;
-import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.core_lib.inventory.dynamicGui;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.misc.ChatPrompt;
 import io.github.divios.core_lib.misc.FormatUtils;
+import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.dailyShop.DailyShop;
-import io.github.divios.dailyShop.utils.utils;
+import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
 import org.bukkit.enchantments.Enchantment;
@@ -96,8 +96,8 @@ public class changeEnchantments {
 
         ChatPrompt.prompt(plugin, p, s1 -> {
 
-            if (!utils.isInteger(s1)) {
-                utils.sendMsg(p, plugin.configM.getLangYml().MSG_NOT_INTEGER);
+            if (!Utils.isInteger(s1)) {
+                Utils.sendMsg(p, plugin.configM.getLangYml().MSG_NOT_INTEGER);
                 Schedulers.sync().run(()  -> CustomizerMenu.open(p, ditem, shop));
             }
             ditem.addEnchantments(Enchantment.getByName(s), Integer.parseInt(s1));

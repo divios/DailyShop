@@ -3,7 +3,7 @@ package io.github.divios.dailyShop.economies;
 import me.elementalgaming.ElementalGems.GemAPI;
 import org.bukkit.entity.Player;
 
-public class ElementalGemsEcon extends economy {
+public class ElementalGemsEcon extends abstractEconomy {
 
     public ElementalGemsEcon() {
         this("");

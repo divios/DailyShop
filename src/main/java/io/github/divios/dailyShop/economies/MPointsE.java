@@ -6,7 +6,7 @@ import org.bukkit.entity.Player;
 
 import java.math.BigDecimal;
 
-public class MPointsE extends economy {
+public class MPointsE extends abstractEconomy {
 
     private transient static final MPointsAPI api = hooksManager.getInstance().getMPointsApi();
 

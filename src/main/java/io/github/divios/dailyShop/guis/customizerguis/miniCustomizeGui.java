@@ -4,14 +4,16 @@ import com.cryptomorin.xseries.XMaterial;
 import com.google.common.base.Preconditions;
 import io.github.divios.core_lib.events.Events;
 import io.github.divios.core_lib.events.Subscription;
-import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.core_lib.inventory.InventoryGUI;
 import io.github.divios.core_lib.inventory.ItemButton;
 import io.github.divios.core_lib.inventory.materialsPrompt;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
-import io.github.divios.core_lib.misc.*;
-import io.github.divios.core_lib.utils.Log;
+import io.github.divios.core_lib.misc.ChatPrompt;
+import io.github.divios.core_lib.misc.EventListener;
+import io.github.divios.core_lib.misc.FormatUtils;
+import io.github.divios.core_lib.misc.Pair;
+import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.lib.dLib.dAction;
 import io.github.divios.lib.dLib.dItem;
@@ -181,7 +183,7 @@ public class miniCustomizeGui {
 
         gui.addButton(24, ItemButton.create(ItemBuilder.of(XMaterial.STICKY_PISTON)
             .setName("&c&lAdd actions").setLore("&7Action to perform when this", "&7item is clicked",
-                        "", "&6Current action: &7" + action.get1() + ":" + action.get2()),
+                        "", "&6Current action: &7" + action.get1().name() + ":" + action.get2()),
                 e-> {
                     preventCloseB = false;
                     customizeAction.open(p, shop, (dAction, s) -> {

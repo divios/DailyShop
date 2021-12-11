@@ -2,12 +2,9 @@ package io.github.divios.dailyShop.commands;
 
 import io.github.divios.core_lib.commands.abstractCommand;
 import io.github.divios.core_lib.commands.cmdTypes;
-import io.github.divios.core_lib.events.Events;
 import io.github.divios.core_lib.misc.FormatUtils;
-import io.github.divios.dailyShop.events.reStockShopEvent;
 import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.managers.shopsManager;
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -31,7 +28,7 @@ public class reStock extends abstractCommand {
         if (args.size() <= 0)
             return false;
 
-        else return shopsManager.getInstance().getShop(args.get(0)).isPresent();
+        else return args.get(0).equals("--all") || shopsManager.getInstance().getShop(args.get(0)).isPresent();
 
     }
 
@@ -60,9 +57,14 @@ public class reStock extends abstractCommand {
     @Override
     public void run(CommandSender sender, List<String> args) {
 
+        if (args.get(0).equals("--all")) {
+            shopsManager.getInstance().getShops().forEach(dShop::reStock);
+            return;
+        }
+
         shopsManager.getInstance().getShop(args.get(0))
                 .ifPresent(shop -> {
-                            Events.callEvent(new reStockShopEvent(shop));
+                            shop.reStock();
                             if (sender instanceof Player) shop.openShop((Player) sender);
                         }
                 );

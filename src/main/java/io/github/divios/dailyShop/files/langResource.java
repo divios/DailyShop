@@ -167,6 +167,21 @@ public class langResource extends resource{
     }
 
     @Override
+    protected String getStartMessage() {
+        return "Reading lang.yml...";
+    }
+
+    @Override
+    protected String getCanceledMessage() {
+        return "No changes were made on lang.yml, skipping...";
+    }
+
+    @Override
+    protected String getFinishedMessage(long time) {
+        return "Imported lang.yml in " + time + " ms";
+    }
+
+    @Override
     protected void init() {
 
         CONFIRM_GUI_BUY_NAME = yaml.getString("lang.confirm_gui.buy_name");

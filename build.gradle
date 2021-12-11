@@ -14,7 +14,7 @@ plugins {
 apply plugin: 'maven-publish'
 
 group = 'io.github.divios'
-def pluginVersion = "3.5.9"
+def pluginVersion = "3.6.0"
 version = pluginVersion
 
 sourceCompatibility = '1.8'
@@ -33,6 +33,7 @@ repositories {
     maven { url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/' }
     maven { url = 'https://mvn.lumine.io/repository/maven-public/' }
     maven { url = 'https://libraries.minecraft.net' }
+    maven { url 'https://hub.spigotmc.org/nexus/content/repositories/public/' }
     maven {
         url "https://maven.pkg.github.com/divios/core_lib"
         credentials {
@@ -59,6 +60,12 @@ dependencies {
 
     compileOnly fileTree(dir: 'libs', include: ['*.jar'])
     compileOnly fileTree(dir: 'libsI', include: ['*.jar'])
+
+    testImplementation('junit:junit:4.13.2')
+    testImplementation "org.mockito:mockito-core:1.9.5"
+    testImplementation 'org.powermock:powermock-module-junit4:2.0.9'
+    testImplementation 'org.powermock:powermock-api-mockito2:2.0.9'
+    testImplementation 'com.github.seeseemelk:MockBukkit-v1.16:1.5.2'
 }
 
 shadowJar {

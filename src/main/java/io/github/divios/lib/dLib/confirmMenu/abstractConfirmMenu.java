@@ -2,19 +2,18 @@ package io.github.divios.lib.dLib.confirmMenu;
 
 import com.cryptomorin.xseries.XMaterial;
 import de.tr7zw.nbtapi.NBTItem;
-import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.core_lib.inventory.InventoryGUI;
 import io.github.divios.core_lib.inventory.ItemButton;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.Msg;
+import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.utils.PlaceholderAPIWrapper;
 import io.github.divios.dailyShop.utils.PriceWrapper;
-import io.github.divios.dailyShop.utils.utils;
+import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
-import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -42,11 +41,11 @@ public abstract class abstractConfirmMenu {
     public abstractConfirmMenu(dShop shop, Player player, dItem item, Consumer<Integer> onCompleteAction, Runnable fallback) {
         this.shop = shop;
         this.player = player;
-        this.item = item;
+        this.item = item.clone();
         this.onCompleteAction = onCompleteAction;
         this.fallback = fallback;
 
-        addItemsAndIncrement(item.getSetItems().isPresent() ? item.getSetItems().get() : 1);
+        addItemsAndIncrement(item.getSetItems().isPresent() ? this.item.setQuantity(1).getSetItems().get() : 1);
         createMenu();
         openMenu();
     }
@@ -221,7 +220,7 @@ public abstract class abstractConfirmMenu {
     }
 
     private boolean placeholderApiIsOn() {
-        return utils.isOperative("PlaceholderAPI");
+        return Utils.isOperative("PlaceholderAPI");
     }
 
     private String replacePapiPlaceholders(String str) {
