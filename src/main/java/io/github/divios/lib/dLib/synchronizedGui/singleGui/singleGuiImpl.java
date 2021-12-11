@@ -37,6 +37,8 @@ public class singleGuiImpl implements singleGui {
     protected static final DailyShop plugin = DailyShop.getInstance();
     private static final loreStrategy loreStrategy = new shopItemsLore();
 
+    protected boolean isDestroyed = false;
+
     protected final Player p;
     private final dShop shop;
     private final dInventory own;
@@ -147,6 +149,8 @@ public class singleGuiImpl implements singleGui {
 
     @Override
     public synchronized void destroy() {
+        if (isDestroyed) return;
+        isDestroyed = true;
         events.forEach(Subscription::unregister);
         own.destroy();
         updatePool.unsubscribe(this);
