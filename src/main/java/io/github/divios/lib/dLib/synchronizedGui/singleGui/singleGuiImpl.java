@@ -101,7 +101,6 @@ public class singleGuiImpl implements singleGui {
     @Override
     public void updateTask() {
         Set<Integer> dailySlots = own.getDailyItemsSlots();
-        if (dailySlots.isEmpty()) return;
         Map<Integer, dItem> buttons = own.getButtonsSlots();
 
         try {
@@ -112,7 +111,7 @@ public class singleGuiImpl implements singleGui {
                 if (dailySlots.contains(integer)) {
                     oldItem = shop.getItem(dItem.getUid()).orElse(null);
                     if (oldItem == null || buttons.get(integer) == null) return;
-                    oldItem = oldItem.clone().applyLore(loreStrategy);
+                    oldItem = oldItem.clone().applyLore(loreStrategy, p);
                     oldItem.setStock(buttons.get(integer).getStock());   // Set the stock of the actual item
 
                 } else
