@@ -5,222 +5,222 @@ shop:
   title: drops
   size: 45
   items:
-    '"6cc20e0f-2267-4a22-8324-9b63a3a74b86"':
+    'shop_timer':
       name: '&7Time Left: &a%dailyshop_time_drops%'
       material: COMPASS
       slot: 0
-    '"44614901-6b80-4ea0-9875-3e5048602fd9"':
+    'BLACK_STAINED_GLASS_PANE_1':
       name: '&c'
       material: BLACK_STAINED_GLASS_PANE
       slot: 1
       nbt:
         Damage: 0
-    '"c7b4ae78-eedd-4b3e-a666-d7935ed69449"':
+    'BLACK_STAINED_GLASS_PANE_2':
       name: '&c'
       material: BLACK_STAINED_GLASS_PANE
       slot: 2
       nbt:
         Damage: 0
-    '"e290d384-3045-4032-9831-bcd52083fd4d"':
+    'BLACK_STAINED_GLASS_PANE_3':
       name: '&c'
       material: BLACK_STAINED_GLASS_PANE
       slot: 3
       nbt:
         Damage: 0
-    '"d3e797cd-27b0-4bdc-b1bc-bbb729df3441"':
+    'BLACK_STAINED_GLASS_PANE_4':
       name: '&c'
       material: BLACK_STAINED_GLASS_PANE
       slot: 4
       nbt:
         Damage: 0
-    '"de161511-e4dd-4031-8f6d-483da2b10cc2"':
+    'BLACK_STAINED_GLASS_PANE_5':
       name: '&c'
       material: BLACK_STAINED_GLASS_PANE
       slot: 5
       nbt:
         Damage: 0
-    '"53cba51f-2166-4d7a-a1c3-aad1cbe92da3"':
+    'BLACK_STAINED_GLASS_PANE_6':
       name: '&c'
       material: BLACK_STAINED_GLASS_PANE
       slot: 6
       nbt:
         Damage: 0
-    '"a53814ba-c3bc-45e7-aadb-1d83c28fdf7b"':
+    'BLACK_STAINED_GLASS_PANE_7':
       name: '&c'
       material: BLACK_STAINED_GLASS_PANE
       slot: 7
       nbt:
         Damage: 0
-    '"90968fd4-6889-4b35-8232-7a3055feffaa"':
+    'BLACK_STAINED_GLASS_PANE_8':
       name: '&c'
       material: BLACK_STAINED_GLASS_PANE
       slot: 8
       nbt:
         Damage: 0
-    '"1610ec74-22a3-4c8b-9cde-512a16f3ef35"':
+    'BLACK_STAINED_GLASS_PANE_9':
       name: '&c'
       material: BLACK_STAINED_GLASS_PANE
       slot: 9
       nbt:
         Damage: 0
-    '"f3ead074-8254-4d4b-b88e-3cf5e4bcd024"':
+    'BLACK_STAINED_GLASS_PANE_10':
       name: '&c'
       material: BLACK_STAINED_GLASS_PANE
       slot: 10
       nbt:
         Damage: 0
-    '"c04936a0-2520-4490-b2f8-15678e9d14c7"':
+    'BLACK_STAINED_GLASS_PANE_16':
       name: '&c'
       material: BLACK_STAINED_GLASS_PANE
       slot: 16
       nbt:
         Damage: 0
-    '"0e838652-a0c4-4a2a-a9db-6abe4f30c524"':
+    'BLACK_STAINED_GLASS_PANE_17':
       name: '&c'
       material: BLACK_STAINED_GLASS_PANE
       slot: 17
       nbt:
         Damage: 0
-    '"a1e5b0f3-9356-4194-967e-ffdca8671b0a"':
+    'BLACK_STAINED_GLASS_PANE_18':
       name: '&c'
       material: BLACK_STAINED_GLASS_PANE
       slot: 18
       nbt:
         Damage: 0
-    '"c45233e2-148b-4367-808e-77f5fb037a5f"':
+    'BLACK_STAINED_GLASS_PANE_19':
       name: '&c'
       material: BLACK_STAINED_GLASS_PANE
       slot: 19
       nbt:
         Damage: 0
-    '"f8c9d1ab-3aee-41fc-8c6b-ae1fa9e1c895"':
+    'BLACK_STAINED_GLASS_PANE_20':
       name: '&c'
       material: BLACK_STAINED_GLASS_PANE
       slot: 20
       nbt:
         Damage: 0
-    '"ec3e2cc3-e14d-4649-bf2d-717ce193acea"':
+    'BLACK_STAINED_GLASS_PANE_21':
       name: '&c'
       material: BLACK_STAINED_GLASS_PANE
       slot: 21
       nbt:
         Damage: 0
-    '"434abca0-5112-465c-a0e9-cccf8437f9d7"':
+    'BLACK_STAINED_GLASS_PANE_22':
       name: '&c'
       material: BLACK_STAINED_GLASS_PANE
       slot: 22
       nbt:
         Damage: 0
-    '"6894f48f-3911-475a-be47-6e608783d7fc"':
+    'BLACK_STAINED_GLASS_PANE_23':
       name: '&c'
       material: BLACK_STAINED_GLASS_PANE
       slot: 23
       nbt:
         Damage: 0
-    '"37d542bf-a983-48f4-bd87-ba080d9f5d7b"':
+    'BLACK_STAINED_GLASS_PANE_24':
       name: '&c'
       material: BLACK_STAINED_GLASS_PANE
       slot: 24
       nbt:
         Damage: 0
-    '"7c8260a0-b6f8-440a-a6a4-7bf62aacac72"':
+    'BLACK_STAINED_GLASS_PANE_25':
       name: '&c'
       material: BLACK_STAINED_GLASS_PANE
       slot: 25
       nbt:
         Damage: 0
-    '"1373fcc8-66bf-4ed0-bb9c-f6b05ea975b0"':
+    'BLACK_STAINED_GLASS_PANE_26':
       name: '&c'
       material: BLACK_STAINED_GLASS_PANE
       slot: 26
       nbt:
         Damage: 0
-    '"b15945d4-fbc5-47f5-ab25-520c5c1f56f3"':
+    'BLACK_STAINED_GLASS_PANE_27':
       name: '&c'
       material: GREEN_STAINED_GLASS_PANE
       slot: 27
-    '"94f451ca-815f-4621-81bb-5ac4f77f039f"':
+    'BLACK_STAINED_GLASS_PANE_28':
       name: '&c'
       material: GREEN_STAINED_GLASS_PANE
       slot: 28
-    '"fe0dd5d8-68c3-4a47-80c4-1a5c49036803"':
+    'BLACK_STAINED_GLASS_PANE_29':
       name: '&c'
       material: GREEN_STAINED_GLASS_PANE
       slot: 29
-    '"8b489b7b-2bac-4e64-8de9-82a412f958db"':
+    'BLACK_STAINED_GLASS_PANE_30':
       name: '&c'
       material: GREEN_STAINED_GLASS_PANE
       slot: 30
-    '"88f25ec1-33fb-4fed-abc8-65d445c650bb"':
+    'BLACK_STAINED_GLASS_PANE_31':
       name: '&c'
       material: GREEN_STAINED_GLASS_PANE
       slot: 31
-    '"a09b5af1-03c6-459d-814b-0282d0c8912d"':
+    'BLACK_STAINED_GLASS_PANE_32':
       name: '&c'
       material: GREEN_STAINED_GLASS_PANE
       slot: 32
-    '"0c13808b-034c-446f-b314-cb1735f59f0a"':
+    'BLACK_STAINED_GLASS_PANE_33':
       name: '&c'
       material: GREEN_STAINED_GLASS_PANE
       slot: 33
-    '"ea4dcd6b-af43-41fc-8511-01a060edf567"':
+    'BLACK_STAINED_GLASS_PANE_34':
       name: '&c'
       material: GREEN_STAINED_GLASS_PANE
       slot: 34
-    '"9fd508b1-089a-45c9-99ab-4a3233ad0e7d"':
+    'BLACK_STAINED_GLASS_PANE_35':
       name: '&c'
       material: GREEN_STAINED_GLASS_PANE
       slot: 35
-    '"9fdb734c-2cbc-4374-8c92-346547ed569c"':
+    'BLACK_STAINED_GLASS_PANE_36':
       name: '&c'
       material: BLACK_STAINED_GLASS_PANE
       slot: 36
       nbt:
         Damage: 0
-    '"11df4b20-16b7-476b-a9e0-258ea31a67b1"':
+    'BLACK_STAINED_GLASS_PANE_37':
       name: '&c'
       material: BLACK_STAINED_GLASS_PANE
       slot: 37
       nbt:
         Damage: 0
-    '"68a7859e-e8b4-47e4-a45c-c47d593b1b22"':
+    'BLACK_STAINED_GLASS_PANE_38':
       name: '&c'
       material: BLACK_STAINED_GLASS_PANE
       slot: 38
       nbt:
         Damage: 0
-    '"c9f48184-b82f-4970-ae76-a37b1c23eb7a"':
+    'BLACK_STAINED_GLASS_PANE_39':
       name: '&c'
       material: BLACK_STAINED_GLASS_PANE
       slot: 39
       nbt:
         Damage: 0
-    '"e5b12e1f-f195-45fc-bc0f-af85d5101902"':
+    'back_button':
       name: '&cGo back to Menu'
       material: BARRIER
       action:
         type: OPEN_SHOP
         data: menu
       slot: 40
-    '"d9be785c-bac7-4070-a1b3-6a7db6c971f4"':
+    'BLACK_STAINED_GLASS_PANE_41':
       name: '&c'
       material: BLACK_STAINED_GLASS_PANE
       slot: 41
       nbt:
         Damage: 0
-    '"59381593-72d8-417e-9041-78086b98ae38"':
+    'BLACK_STAINED_GLASS_PANE_42':
       name: '&c'
       material: BLACK_STAINED_GLASS_PANE
       slot: 42
       nbt:
         Damage: 0
-    '"5c17299c-6344-431c-a916-1a5ddcc0c7d9"':
+    'BLACK_STAINED_GLASS_PANE_43':
       name: '&c'
       material: BLACK_STAINED_GLASS_PANE
       slot: 43
       nbt:
         Damage: 0
-    '"99290066-a7af-4285-b9f7-09368b0e0bee"':
+    'BLACK_STAINED_GLASS_PANE_44':
       name: '&c'
       material: BLACK_STAINED_GLASS_PANE
       slot: 44

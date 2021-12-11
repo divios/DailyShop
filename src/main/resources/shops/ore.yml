@@ -5,18 +5,18 @@ shop:
   title: ore
   size: 9
   items:
-    '"acb5d7d5-e5f5-4a69-a305-6c38731029be"':
+    'TIME_LEFT':
       name: '&7Time Left: &e%dailyshop_time_ore%'
       material: COMPASS
       slot: 0
-    '"0bde07fa-8519-4370-8532-47de39c12685"':
+    'BACK':
       name: '&cGo back to Menu'
       material: BARRIER
       action:
         type: OPEN_SHOP
         data: menu
       slot: 1
-    '"dec698a2-2d90-4062-a216-017d60208507"':
+    'PANE':
       name: '&c'
       material: YELLOW_STAINED_GLASS_PANE
       slot: 2

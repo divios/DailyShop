@@ -5,199 +5,199 @@ shop:
   title: potion
   size: 45
   items:
-    '"f65d7c0e-4da5-4292-88bf-12990e9fe586"':
+    'PANE_0':
       name: '&c'
       material: BLACK_STAINED_GLASS_PANE
       slot: 0
       nbt:
         Damage: 0
-    '"fc4cab3b-4568-4b42-8af2-cb0c1a82e512"':
+    'PANE_1':
       name: '&c'
       material: BLACK_STAINED_GLASS_PANE
       slot: 1
       nbt:
         Damage: 0
-    '"63100aa0-cea2-4297-8339-018e8f26a2a9"':
+    'PANE_2':
       name: '&c'
       material: BLACK_STAINED_GLASS_PANE
       slot: 2
       nbt:
         Damage: 0
-    '"4651cbd6-e63e-412f-98b1-a009c5a2f773"':
+    'PANE_3':
       name: '&c'
       material: BLACK_STAINED_GLASS_PANE
       slot: 3
       nbt:
         Damage: 0
-    '"46b76f41-46bf-4afa-920a-94293c9cdc2c"':
+    'PANE_4':
       name: '&c'
       material: BLACK_STAINED_GLASS_PANE
       slot: 4
       nbt:
         Damage: 0
-    '"393b7e18-52e1-4d4d-bf1e-111cf860af20"':
+    'PANE_5':
       name: '&c'
       material: BLACK_STAINED_GLASS_PANE
       slot: 5
       nbt:
         Damage: 0
-    '"e7d3aafe-030c-47b0-bdd6-5aad9dbac005"':
+    'PANE_6':
       name: '&c'
       material: BLACK_STAINED_GLASS_PANE
       slot: 6
       nbt:
         Damage: 0
-    '"e6089f60-c213-407e-b229-69899f5ca94f"':
+    'PANE_7':
       name: '&c'
       material: MAGENTA_STAINED_GLASS_PANE
       slot: 7
-    '"5b6c1974-3403-4742-890b-f94794d30988"':
+    'TIME_LEFT':
       name: '&7Time Left: &d%dailyshop_time_potion%'
       material: COMPASS
       slot: 8
-    '"4d26d93a-0ce6-4320-a2e6-61f8dbe8e450"':
+    'PANE_8':
       name: '&c'
       material: BLACK_STAINED_GLASS_PANE
       slot: 9
       nbt:
         Damage: 0
-    '"5f3c3fb4-5847-4e92-bbab-a3861f676fc8"':
+    'PANE_10':
       name: '&c'
       material: BLACK_STAINED_GLASS_PANE
       slot: 10
       nbt:
         Damage: 0
-    '"1ef561de-f7f1-4b49-b2bf-a5e15d804462"':
+    'PANE_11':
       name: '&c'
       material: BLACK_STAINED_GLASS_PANE
       slot: 11
       nbt:
         Damage: 0
-    '"614897e4-a32d-4c61-bcd0-f0a9b89ffbe3"':
+    'PANE_12':
       name: '&c'
       material: BLACK_STAINED_GLASS_PANE
       slot: 12
       nbt:
         Damage: 0
-    '"52498331-ed49-484d-9295-45e172060610"':
+    'PANE_13':
       name: '&c'
       material: BLACK_STAINED_GLASS_PANE
       slot: 13
       nbt:
         Damage: 0
-    '"791bd53d-b394-4e71-9a23-8c549dc8dc5e"':
+    'PANE_PANE_14':
       name: '&c'
       material: BLACK_STAINED_GLASS_PANE
       slot: 14
       nbt:
         Damage: 0
-    '"07eb0f76-2fc3-4801-a7f4-2d206eecf0cb"':
+    'PANE_15':
       name: '&c'
       material: BLACK_STAINED_GLASS_PANE
       slot: 15
       nbt:
         Damage: 0
-    '"66d0fa05-567c-4309-826a-11c4a9d002ca"':
+    'PANE_16':
       name: '&c'
       material: MAGENTA_STAINED_GLASS_PANE
       slot: 16
-    '"639f8767-6f0a-4e47-9b14-a17f11191df6"':
+    'PANE_17':
       name: '&c'
       material: BLACK_STAINED_GLASS_PANE
       slot: 17
       nbt:
         Damage: 0
-    '"db9c38ca-7795-4e48-8ffa-cb393fc4e615"':
+    'PANE_18':
       name: '&c'
       material: BLACK_STAINED_GLASS_PANE
       slot: 18
       nbt:
         Damage: 0
-    '"f1c41117-e02b-4d61-8601-5b3333fe0f03"':
+    'PANE_24':
       name: '&c'
       material: BLACK_STAINED_GLASS_PANE
       slot: 24
       nbt:
         Damage: 0
-    '"ffa06aaf-688a-423a-b8c6-9ecf26694c31"':
+    'PANE_25':
       name: '&c'
       material: MAGENTA_STAINED_GLASS_PANE
       slot: 25
-    '"f88ab0f2-de66-4305-a570-48e0e4f462a3"':
+    'PANE_26':
       name: '&c'
       material: BLACK_STAINED_GLASS_PANE
       slot: 26
       nbt:
         Damage: 0
-    '"909fd810-6896-4ca6-9397-784313ada21d"':
+    'PANE_27':
       name: '&c'
       material: BLACK_STAINED_GLASS_PANE
       slot: 27
       nbt:
         Damage: 0
-    '"6e8598e9-099b-42ac-9518-ae17f43ea02e"':
+    'PANE_33':
       name: '&c'
       material: BLACK_STAINED_GLASS_PANE
       slot: 33
       nbt:
         Damage: 0
-    '"7abadc58-6e26-43c0-8254-6352f4a98e07"':
+    'PANE_34':
       name: '&c'
       material: MAGENTA_STAINED_GLASS_PANE
       slot: 34
-    '"b5f7bcc9-2dac-44e5-923a-68951dd38b6e"':
+    'PANE_35':
       name: '&c'
       material: BLACK_STAINED_GLASS_PANE
       slot: 35
       nbt:
         Damage: 0
-    '"7cf9afd9-a181-44e6-84ff-11f04a55a234"':
+    'PANE_36':
       name: '&c'
       material: BLACK_STAINED_GLASS_PANE
       slot: 36
       nbt:
         Damage: 0
-    '"be5c6d9f-2233-45a8-b69d-54a6d660df96"':
+    'PANE_37':
       name: '&c'
       material: BLACK_STAINED_GLASS_PANE
       slot: 37
       nbt:
         Damage: 0
-    '"6915c41d-e811-4f11-9d17-af35f7d38aac"':
+    'PANE_38':
       name: '&c'
       material: BLACK_STAINED_GLASS_PANE
       slot: 38
       nbt:
         Damage: 0
-    '"8756e8e9-6ac4-4d30-8303-f9a889c55ded"':
+    'PANE_39':
       name: '&c'
       material: BLACK_STAINED_GLASS_PANE
       slot: 39
       nbt:
         Damage: 0
-    '"f52293c8-79a8-4b9f-9469-f1688c686345"':
+    'PANE_40':
       name: '&c'
       material: BLACK_STAINED_GLASS_PANE
       slot: 40
       nbt:
         Damage: 0
-    '"84ee022e-1960-45ce-8b57-205b7056dd6d"':
+    'PANE_41':
       name: '&c'
       material: BLACK_STAINED_GLASS_PANE
       slot: 41
       nbt:
         Damage: 0
-    '"0f25f927-6bb7-4f97-bf2b-5886b955c67b"':
+    'PANE_42':
       name: '&c'
       material: BLACK_STAINED_GLASS_PANE
       slot: 42
       nbt:
         Damage: 0
-    '"900b4f24-0998-47c0-9641-f27076ceaba1"':
+    'PANE_43':
       name: '&c'
       material: MAGENTA_STAINED_GLASS_PANE
       slot: 43
-    '"74763423-7421-49ea-a84a-7a05a3e9a6cc"':
+    'BACK':
       name: '&cGo back to Menu'
       material: BARRIER
       action:
