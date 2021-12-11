@@ -13,12 +13,13 @@ import io.github.divios.lib.serialize.serializerApi;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 public class shopsManager {
 
     private static shopsManager instance = null;
-    private final Set<dShop> shops = new LinkedHashSet<>();
+    private final Set<dShop> shops = ConcurrentHashMap.newKeySet();
     private static final databaseManager dManager = databaseManager.getInstance();
     private final Set<Task> task = new HashSet<>();
 
@@ -38,13 +39,13 @@ public class shopsManager {
         return instance;
     }
 
-    private synchronized void updateShops() {
+    private void updateShops() {
         shops.forEach(shop -> {
             dManager.updateGui(shop.getName(), shop.getGuis());
         });
     }
 
-    private synchronized void updateShopsAsync() {
+    private void updateShopsAsync() {
         shops.forEach(shop -> {
             dManager.updateGuiAsync(shop.getName(), shop.getGuis());
         });
@@ -56,7 +57,7 @@ public class shopsManager {
      * @return a list of all the shops. Note that the returned list
      * is a copy of the original.
      */
-    public synchronized Set<dShop> getShops() {
+    public  Set<dShop> getShops() {
         return Collections.unmodifiableSet(shops);
     }
 
@@ -65,7 +66,7 @@ public class shopsManager {
      *
      * @param shops
      */
-    private synchronized void setShops(Set<dShop> shops) {
+    private void setShops(Set<dShop> shops) {
         deleteAllShops();
         shops.forEach(this::createShop);
     }
@@ -75,7 +76,7 @@ public class shopsManager {
      *
      * @param shops
      */
-    private synchronized CompletableFuture<Void> setShopsAsync(Set<dShop> shops) {
+    private  CompletableFuture<Void> setShopsAsync(Set<dShop> shops) {
         return CompletableFuture.runAsync(() -> {
             deleteAllShops();
             shops.forEach(this::createShop);
@@ -89,11 +90,11 @@ public class shopsManager {
      * @return CompletableFuture that ends when the shop is added to the database
      */
 
-    public synchronized void createShop(String name) {
+    public void createShop(String name) {
         createShop(new WrappedShop(name));
     }
 
-    public synchronized void createShop(dShop newShop) {
+    public void createShop(dShop newShop) {
         dShop newShop_ = WrappedShop.wrap(newShop);
 
         shops.add(newShop_);
@@ -103,13 +104,14 @@ public class shopsManager {
         newShop_.getItems().forEach(dItem -> {
             dManager.addItem(newShop.getName(), dItem);
         });
+
     }
 
-    public synchronized void createShopAsync(String name) {
+    public void createShopAsync(String name) {
         createShopAsync(new WrappedShop(name));
     }
 
-    public synchronized void createShopAsync(dShop newShop) {
+    public void createShopAsync(dShop newShop) {
         dShop newShop_ = WrappedShop.wrap(newShop);
 
         shops.add(newShop_);
@@ -128,18 +130,18 @@ public class shopsManager {
      * @param name name of the shop
      * @return shop with the name. Null if it does not exist
      */
-    public synchronized Optional<dShop> getShop(String name) {
+    public  Optional<dShop> getShop(String name) {
         return shops.stream()
                 .filter(shop -> shop.getName().equalsIgnoreCase(name))
                 .findFirst();
     }
 
 
-    public synchronized void deleteShop(dShop shop) {
+    public void deleteShop(dShop shop) {
         deleteShop(shop.getName());
     }
 
-    public synchronized void deleteShopAsync(dShop shop) {
+    public void deleteShopAsync(dShop shop) {
         deleteShopAsync(shop.getName());
     }
 
@@ -150,7 +152,7 @@ public class shopsManager {
      * @return returns a completableFuture that ends when the shop is deleted
      * from the database
      */
-    public synchronized void deleteShop(String name) {
+    public void deleteShop(String name) {
 
         Optional<dShop> result = getShop(name);
         if (!result.isPresent()) return;
@@ -164,7 +166,7 @@ public class shopsManager {
         dManager.deleteShop(name);
     }
 
-    public synchronized void deleteShopAsync(String name) {
+    public void deleteShopAsync(String name) {
 
         Optional<dShop> result = getShop(name);
         if (!result.isPresent()) return;
@@ -178,15 +180,19 @@ public class shopsManager {
         dManager.deleteShopAsync(name);
     }
 
-    public synchronized void deleteAllShops() {
+    public void deleteAllShops() {
             new HashSet<>(shops).forEach(this::deleteShop);
     }
 
-    public synchronized void deleteAllShopsAsync() {
+    public void deleteAllShopsAsync() {
         new HashSet<>(shops).forEach(this::deleteShopAsync);
     }
 
-    public synchronized void saveAllShops() {
+    public void saveShop(String name) {
+        getShop(name).ifPresent(serializerApi::saveShopToFile);
+    }
+
+    public void saveAllShops() {
         shops.forEach(serializerApi::saveShopToFile);
     }
 
