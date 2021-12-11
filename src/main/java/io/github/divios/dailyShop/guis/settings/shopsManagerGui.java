@@ -16,6 +16,7 @@ import io.github.divios.dailyShop.lorestategy.shopsManagerLore;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.managers.shopsManager;
+import io.github.divios.lib.serialize.serializerApi;
 import io.github.divios.lib.storage.databaseManager;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -175,6 +176,7 @@ public class shopsManagerGui {
                         }
 
                         shop.rename(s.toLowerCase());
+                        serializerApi.saveShopToFileAsync(shop);
                         Schedulers.sync().run(() -> refresh(p));
                     })
                     .withCancel(cancelReason -> Schedulers.sync().run(() -> refresh(p)))
@@ -199,6 +201,7 @@ public class shopsManagerGui {
                             return;
                         }
                         shop.setTimer(Integer.parseInt(s));
+                        serializerApi.saveShopToFileAsync(shop);
                         Schedulers.sync().run(() -> refresh(p));
 
                     })

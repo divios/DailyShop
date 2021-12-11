@@ -113,7 +113,7 @@ public class CustomizerMenu {
                                 shop.addItem(item);
                             }
                             shopGui.open(p, shop.getName());
-                            Schedulers.async().runLater(() -> serializerApi.saveShopToFile(shop), 1L);
+                            serializerApi.saveShopToFileAsync(shop);
                         }),
                 7
         );

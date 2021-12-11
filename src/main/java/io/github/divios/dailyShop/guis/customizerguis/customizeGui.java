@@ -271,7 +271,7 @@ public class customizeGui implements Listener, InventoryHolder {
         unregisterAll();
         depositPlayerItems();
         shopsManagerGui.open(p);
-        Schedulers.async().runLater(() -> serializerApi.saveShopToFile(shop), 1L);
+        serializerApi.saveShopToFileAsync(shop);
     }
 
     private void changeNameAction() {
