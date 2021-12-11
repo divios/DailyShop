@@ -5,6 +5,7 @@ import io.github.divios.core_lib.events.Subscription;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.WeightedRandom;
+import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.events.searchStockEvent;
@@ -54,7 +55,7 @@ public class singleGuiImpl implements singleGui {
 
         if (p != null) {
             updateTask();
-            updatePool.subscribe(this);
+            Schedulers.sync().runLater(() -> updatePool.subscribe(this), 1L);
             this.own.openInventory(p);
         } else
             ready();
@@ -103,8 +104,9 @@ public class singleGuiImpl implements singleGui {
         Set<Integer> dailySlots = own.getDailyItemsSlots();
         Map<Integer, dItem> buttons = own.getButtonsSlots();
 
-        try {
-            own.getButtonsSlots().forEach((integer, dItem) -> {
+        own.getButtonsSlots().forEach((integer, dItem) -> {
+            if (dItem.isAIR()) return;
+            try {
                 dItem oldItem;
                 ItemBuilder newItem;
 
@@ -124,11 +126,10 @@ public class singleGuiImpl implements singleGui {
                     newItem = newItem.addLore(PlaceholderAPIWrapper.setPlaceholders(p, s));
 
                 own.getInventory().setItem(integer, newItem);
+            } catch (Exception ignored) {
+            }
+        });
 
-            });
-
-        } catch (Exception ignored) {
-        }
 
     }
 
