@@ -77,8 +77,8 @@ public class singleGuiImpl implements singleGui {
 
     @Override
     public synchronized void updateItem(updateItemEvent o) {
-        dItem toUpdateItem = shop.getItem(o.getUuid()).get().clone();
         updateItemEvent.type type = o.getType();
+        dItem toUpdateItem = type == updateItemEvent.type.DELETE_ITEM ? null : shop.getItem(o.getUuid()).get().clone();
 
         switch (type) {
             case UPDATE_ITEM:
@@ -92,7 +92,7 @@ public class singleGuiImpl implements singleGui {
                 own.updateItem(toUpdateItem.applyLore(loreStrategy, p), false);
                 break;
             case DELETE_ITEM:
-                own.updateItem(toUpdateItem, true);
+                own.removeButton(o.getUuid());
                 break;
             default:
                 throw new UnsupportedOperationException("Invalid updateItemEvent type");
