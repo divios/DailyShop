@@ -38,7 +38,7 @@ public class sellTransaction {
 
     private sellTransaction(Player p, dItem item, dShop shop) {
         this.player = p;
-        this.item = item;
+        this.item = item.clone();
         this.shop = shop;
 
         initTransaction();
@@ -55,10 +55,9 @@ public class sellTransaction {
         }
 
         if (item.isConfirmGuiEnabled()) {
-            if (!item.getSetItems().isPresent())
-                openConfirmMenu();
-            else
-                openSingleConfirmMenu();
+            if (item.getSetItems().isPresent())
+                item.setSetItems(1);
+            openConfirmMenu();
 
         } else runTransaction(item.getQuantity());
     }
