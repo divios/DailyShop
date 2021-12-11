@@ -1,7 +1,9 @@
 package io.github.divios.lib.managers;
 
+import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
+import io.github.divios.lib.serialize.serializerApi;
 
 import java.sql.Timestamp;
 import java.util.HashSet;
@@ -40,6 +42,7 @@ public class WrappedShop extends dShop {
     @Override
     public synchronized void reStock() {
         super.reStock();
+        serializerApi.saveShopToFileAsync(this);     // save new timestamp
         dManager.updateTimeStampAsync(this.name, this.timestamp);
         dManager.updateGuiAsync(this.name, this.guis);
     }
