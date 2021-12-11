@@ -45,7 +45,7 @@ public class FileUtils {
             FileUtils.createFile(db);
     }
 
-    public static void toYaml(Object o, File data) {
+    public static void dumpToYaml(Object o, File data) {
 
         if (!data.exists()) {
             FileUtils.createFile(data);
