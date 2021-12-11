@@ -227,7 +227,7 @@ shop:
       nbt:
         Damage: 0
 items:
-  '"23414fea-0a55-4219-bf9e-4572e2b69dd8"':
+  "PHANTOM_MEMBRANE":
     material: PHANTOM_MEMBRANE
     quantity: 4
     buyPrice:
@@ -238,7 +238,7 @@ items:
     econ:
       name: vault
     confirm_gui: true
-  '"4acabaed-b741-4c9c-a544-6479300bd757"':
+  "RABBIT_FOOT":
     material: RABBIT_FOOT
     quantity: 6
     buyPrice:
@@ -249,7 +249,7 @@ items:
     econ:
       name: vault
     confirm_gui: true
-  '"0acd6e22-2b9f-4857-b2a9-7cbe3650cec7"':
+  "PRISMARINE_SHARD":
     material: PRISMARINE_SHARD
     quantity: 4
     buyPrice:
@@ -260,7 +260,7 @@ items:
     econ:
       name: vault
     confirm_gui: true
-  '"93709571-100b-4dbf-b0da-30039aa13048"':
+  "SPIDER_EYE":
     material: SPIDER_EYE
     quantity: 8
     buyPrice:
@@ -271,7 +271,7 @@ items:
     econ:
       name: vault
     confirm_gui: true
-  '"c5dabd57-6221-47b6-b7e2-f6b9e914974f"':
+  "INK_SAC":
     material: INK_SAC
     quantity: 16
     buyPrice:
@@ -282,7 +282,7 @@ items:
     econ:
       name: vault
     confirm_gui: true
-  '"d831e4d6-79bd-45e6-a223-2e7911c66755"':
+  "PRISMARINE_CRYSTALS":
     material: PRISMARINE_CRYSTALS
     quantity: 4
     buyPrice:
@@ -293,7 +293,7 @@ items:
     econ:
       name: vault
     confirm_gui: true
-  '"5053a4ca-be3d-4dfd-9799-67ee5f8af4ab"':
+  "WHITE_WOOL":
     material: WHITE_WOOL
     quantity: 8
     buyPrice:
@@ -304,7 +304,7 @@ items:
     econ:
       name: vault
     confirm_gui: true
-  '"f68e75ba-7e5c-4cb3-9118-83ed2fec301f"':
+  "EGG":
     material: EGG
     buyPrice:
       fixed: '80.55'
@@ -314,7 +314,7 @@ items:
     econ:
       name: vault
     confirm_gui: true
-  '"2f14cbc4-78a4-4fda-bb72-4dcef004f34c"':
+  "BONE":
     material: BONE
     quantity: 4
     buyPrice:
@@ -325,7 +325,7 @@ items:
     econ:
       name: vault
     confirm_gui: true
-  '"2b494956-a033-40c8-ba74-44df4585977a"':
+  "MAGMA_CREAM":
     material: MAGMA_CREAM
     quantity: 2
     buyPrice:
@@ -336,7 +336,7 @@ items:
     econ:
       name: vault
     confirm_gui: true
-  '"7f74e471-6908-47c5-a7d3-30a77bee78ff"':
+  "ENDER_PEARL":
     material: ENDER_PEARL
     quantity: 2
     buyPrice:
@@ -347,7 +347,7 @@ items:
     econ:
       name: vault
     confirm_gui: true
-  '"28c8faa5-c6f0-45b0-a203-ffa028cc15f0"':
+  "STRING":
     material: STRING
     quantity: 16
     buyPrice:
@@ -358,7 +358,7 @@ items:
     econ:
       name: vault
     confirm_gui: true
-  '"7ab88af8-263b-4639-a204-7fdd5f00cb25"':
+  "RABBIT_HIDE":
     material: RABBIT_HIDE
     quantity: 4
     buyPrice:
@@ -369,7 +369,7 @@ items:
     econ:
       name: vault
     confirm_gui: true
-  '"1a05f61d-7273-4706-90f1-14406849cbfd"':
+  "LEATHER":
     material: LEATHER
     quantity: 4
     buyPrice:
@@ -380,7 +380,7 @@ items:
     econ:
       name: vault
     confirm_gui: true
-  '"ce9186d3-8b5c-4b69-a929-7fdfe4065836"':
+  "ROTTEN_FLESH":
     material: ROTTEN_FLESH
     quantity: 8
     buyPrice:
@@ -391,7 +391,7 @@ items:
     econ:
       name: vault
     confirm_gui: true
-  '"17b61812-fc9f-4a2d-a9db-cc84406be86c"':
+  "ARROW":
     material: ARROW
     quantity: 16
     buyPrice:
@@ -402,7 +402,7 @@ items:
     econ:
       name: vault
     confirm_gui: true
-  '"6dba06cf-46fa-4c47-b05c-6cf7dbaccdd3"':
+  "SLIME_BALL":
     material: SLIME_BALL
     quantity: 2
     buyPrice:
@@ -413,7 +413,7 @@ items:
     econ:
       name: vault
     confirm_gui: true
-  '"692e78da-ba9f-460b-a1b4-e10cbad8e9f8"':
+  "GHAST_TEAR":
     material: GHAST_TEAR
     quantity: 2
     buyPrice:
@@ -424,7 +424,7 @@ items:
     econ:
       name: vault
     confirm_gui: true
-  '"d93137c8-34e9-4372-bb1b-d5d663e542b8"':
+  "BLAZE_ROD":
     material: BLAZE_ROD
     buyPrice:
       fixed: '1000.0'
@@ -434,7 +434,7 @@ items:
     econ:
       name: vault
     confirm_gui: true
-  '"1f70c4ca-8fc8-4dce-8c00-1e5b691e6296"':
+  "FEATHER":
     material: FEATHER
     quantity: 4
     buyPrice:
@@ -445,7 +445,7 @@ items:
     econ:
       name: vault
     confirm_gui: true
-  '"5b57720b-1b63-46a4-a76e-91b249311e60"':
+  "GUNPOWDER":
     material: GUNPOWDER
     quantity: 4
     buyPrice:
@@ -456,3 +456,4 @@ items:
     econ:
       name: vault
     confirm_gui: true
+

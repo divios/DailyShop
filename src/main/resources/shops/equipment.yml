@@ -181,7 +181,7 @@ shop:
       material: BLACK_STAINED_GLASS_PANE
       slot: 53
 items:
-  '"a9db23ee-5cd5-44df-83bc-3fe3b77c4ff1"':
+  "STONE_AXE":
     material: STONE_AXE
     buyPrice:
       fixed: '780.75'
@@ -193,7 +193,7 @@ items:
     confirm_gui: true
     nbt:
       Damage: 0
-  '"e33372ec-6a58-4312-8ea1-990a9506665a"':
+  "GOLDEN_SWORD":
     material: GOLDEN_SWORD
     buyPrice:
       fixed: '850.0'
@@ -205,7 +205,7 @@ items:
     confirm_gui: true
     nbt:
       Damage: 0
-  '"efd7e65f-3e06-49cf-b20c-6b1278b65c19"':
+  "IRON_HORSE_ARMOR":
     material: IRON_HORSE_ARMOR
     buyPrice:
       fixed: '2000.0'
@@ -215,7 +215,7 @@ items:
     econ:
       name: vault
     confirm_gui: true
-  '"d056c9a2-8bca-4388-9e0f-f339718ec0ed"':
+  "GOLDEN_LEGGINGS":
     material: GOLDEN_LEGGINGS
     buyPrice:
       fixed: '1600.75'
@@ -227,7 +227,7 @@ items:
     confirm_gui: true
     nbt:
       Damage: 0
-  '"25af09d8-d763-4a6a-8346-82282b8a43f3"':
+  "IRON_HELMET":
     material: IRON_HELMET
     buyPrice:
       fixed: '1250.6'
@@ -239,7 +239,7 @@ items:
     confirm_gui: true
     nbt:
       Damage: 0
-  '"b25ef3e1-c1ea-44d9-825a-15eb8ad3d748"':
+  "DIAMOND_BOOTS":
     material: DIAMOND_BOOTS
     buyPrice:
       fixed: '12500.0'
@@ -251,7 +251,7 @@ items:
     confirm_gui: true
     nbt:
       Damage: 0
-  '"2746bf2b-4494-4feb-ac67-0c4258820194"':
+  "BUCKET":
     material: BUCKET
     quantity: 6
     buyPrice:
@@ -262,7 +262,7 @@ items:
     econ:
       name: vault
     confirm_gui: true
-  '"8b91409b-2df1-4124-9200-42e256d70c77"':
+  "WATER_BUCKET":
     material: WATER_BUCKET
     buyPrice:
       fixed: '400.5'
@@ -272,7 +272,7 @@ items:
     econ:
       name: vault
     confirm_gui: true
-  '"54bc4a0f-7c79-4bde-a0d9-0404aefe5a6e"':
+  "WOODEN_SHOVEL":
     material: WOODEN_SHOVEL
     buyPrice:
       fixed: '75.0'
@@ -284,7 +284,7 @@ items:
     confirm_gui: true
     nbt:
       Damage: 0
-  '"80cb63ef-e31e-406c-8d63-dfe2baf738fe"':
+  "GOLDEN_AXE":
     material: GOLDEN_AXE
     buyPrice:
       fixed: '1000.0'
@@ -296,7 +296,7 @@ items:
     confirm_gui: true
     nbt:
       Damage: 0
-  '"d12ccf04-5d9d-413b-8466-948ee4491734"':
+  "IRON_CHESTPLATE":
     material: IRON_CHESTPLATE
     buyPrice:
       fixed: '2500.0'
@@ -308,7 +308,7 @@ items:
     confirm_gui: true
     nbt:
       Damage: 0
-  '"31955dca-4a8b-45b1-a793-54a592257569"':
+  "GOLDEN_CHESTPLATE":
     material: GOLDEN_CHESTPLATE
     buyPrice:
       fixed: '1750.6'
@@ -320,7 +320,7 @@ items:
     confirm_gui: true
     nbt:
       Damage: 0
-  '"ca9d780e-78e9-4160-938e-43d6a8b43be0"':
+  "FISHING_ROD":
     material: FISHING_ROD
     buyPrice:
       fixed: '750.7'
@@ -332,7 +332,7 @@ items:
     confirm_gui: true
     nbt:
       Damage: 0
-  '"61220c74-fda2-4396-b244-f1efafa89dc5"':
+  "LEATHER_BOOTS":
     material: LEATHER_BOOTS
     buyPrice:
       fixed: '95.7'
@@ -344,7 +344,7 @@ items:
     confirm_gui: true
     nbt:
       Damage: 0
-  '"3d14143b-9262-48a2-a960-fca8dc5c62a2"':
+  "SADDLE":
     material: SADDLE
     buyPrice:
       fixed: '2500.0'
@@ -354,7 +354,7 @@ items:
     econ:
       name: vault
     confirm_gui: true
-  '"ac2fdd47-7f64-4d08-a822-260a05bf2672"':
+  "DIAMOND_HORSE_ARMOR":
     material: DIAMOND_HORSE_ARMOR
     buyPrice:
       fixed: '10000.0'
@@ -364,7 +364,7 @@ items:
     econ:
       name: vault
     confirm_gui: true
-  '"bfcb8f43-2a65-45e4-a276-c6391cc83b6c"':
+  "GOLDEN_PICKAXE":
     material: GOLDEN_PICKAXE
     buyPrice:
       fixed: '1000.0'
@@ -376,7 +376,7 @@ items:
     confirm_gui: true
     nbt:
       Damage: 0
-  '"5ecb6586-8dde-4de3-b9bf-27162710d7ba"':
+  "CHAINMAIL_BOOTS":
     material: CHAINMAIL_BOOTS
     buyPrice:
       fixed: '275.6'
@@ -388,7 +388,7 @@ items:
     confirm_gui: true
     nbt:
       Damage: 0
-  '"2d36526c-2421-4a20-aac9-758a553cd988"':
+  "EXPERIENCE_BOTTLE":
     material: EXPERIENCE_BOTTLE
     quantity: 16
     buyPrice:
@@ -399,7 +399,7 @@ items:
     econ:
       name: vault
     confirm_gui: true
-  '"63e909af-57eb-4c88-a128-5a737f9b76a5"':
+  "CHAINMAIL_HELMET":
     material: CHAINMAIL_HELMET
     buyPrice:
       fixed: '350.05'
@@ -411,7 +411,7 @@ items:
     confirm_gui: true
     nbt:
       Damage: 0
-  '"63ccdf5d-4c5a-4ae8-b50e-f805ac374044"':
+  "LAVA_BUCKET":
     material: LAVA_BUCKET
     buyPrice:
       fixed: '450.75'
@@ -421,7 +421,7 @@ items:
     econ:
       name: vault
     confirm_gui: true
-  '"41391a59-ce21-4584-a9fd-0d70d8c38f50"':
+  "DIAMOND_PICKAXE":
     material: DIAMOND_PICKAXE
     buyPrice:
       fixed: '15000.0'
@@ -433,7 +433,7 @@ items:
     confirm_gui: true
     nbt:
       Damage: 0
-  '"883c128b-803b-499c-9d66-9b33bd06400b"':
+  "DIAMOND_SWORD":
     material: DIAMOND_SWORD
     buyPrice:
       fixed: '7500.0'
@@ -445,7 +445,7 @@ items:
     confirm_gui: true
     nbt:
       Damage: 0
-  '"5ea02ad0-4c40-43b3-8ff5-7c75301cf840"':
+  "ELYTRA":
     material: ELYTRA
     buyPrice:
       fixed: '50000.0'
@@ -457,7 +457,7 @@ items:
     confirm_gui: true
     nbt:
       Damage: 0
-  '"b4adfc22-6f13-4b1f-9bc0-bb3e2a7ac80d"':
+  "IRON_SWORD":
     material: IRON_SWORD
     buyPrice:
       fixed: '1250.0'
@@ -469,7 +469,7 @@ items:
     confirm_gui: true
     nbt:
       Damage: 0
-  '"98903fec-0ea4-4631-85a0-8d9d5579f5d6"':
+  "DIAMOND_SHOVEL":
     material: DIAMOND_SHOVEL
     buyPrice:
       fixed: '5000.0'
@@ -481,7 +481,7 @@ items:
     confirm_gui: true
     nbt:
       Damage: 0
-  '"05817db0-b55f-47d8-848b-2983d528c12b"':
+  "LEATHER_HORSE_ARMOR":
     material: LEATHER_HORSE_ARMOR
     buyPrice:
       fixed: '1000.0'
@@ -491,7 +491,7 @@ items:
     econ:
       name: vault
     confirm_gui: true
-  '"ee899c54-cc91-4aba-8700-1735912dee5b"':
+  "STONE_SWORD":
     material: STONE_SWORD
     buyPrice:
       fixed: '500.0'
@@ -503,7 +503,7 @@ items:
     confirm_gui: true
     nbt:
       Damage: 0
-  '"3591cd8a-484a-4319-b46b-3a8bb37fc7e1"':
+  "STONE_PICKAXE":
     material: STONE_PICKAXE
     buyPrice:
       fixed: '780.75'
@@ -515,7 +515,7 @@ items:
     confirm_gui: true
     nbt:
       Damage: 0
-  '"7ff308d4-359d-441b-ae7b-6f8d7f2d97bf"':
+  "TRIDENT":
     material: TRIDENT
     buyPrice:
       fixed: '275.5'
@@ -527,7 +527,7 @@ items:
     confirm_gui: true
     nbt:
       Damage: 0
-  '"9ab6aec2-0e75-46ab-9cf4-846657609d85"':
+  "IRON_LEGGINGS":
     material: IRON_LEGGINGS
     buyPrice:
       fixed: '2250.0'
@@ -539,7 +539,7 @@ items:
     confirm_gui: true
     nbt:
       Damage: 0
-  '"e8ba87bb-8d7b-48af-bc8c-ff45c5717422"':
+  "DIAMOND_LEGGINGS":
     material: DIAMOND_LEGGINGS
     buyPrice:
       fixed: '18000.0'
@@ -551,7 +551,7 @@ items:
     confirm_gui: true
     nbt:
       Damage: 0
-  '"18950d26-f96e-470c-b87c-8c91337beaa8"':
+  "MINECART":
     material: MINECART
     buyPrice:
       fixed: '1675.5'
@@ -561,7 +561,7 @@ items:
     econ:
       name: vault
     confirm_gui: true
-  '"3bb87622-d651-48b0-9280-06533bb5ff88"':
+  "LEATHER_CHESTPLATE":
     material: LEATHER_CHESTPLATE
     buyPrice:
       fixed: '125.85'
@@ -573,7 +573,7 @@ items:
     confirm_gui: true
     nbt:
       Damage: 0
-  '"f2cb9094-e61f-48f8-969c-2e488ac6ef73"':
+  "GOLDEN_HORSE_ARMOR":
     material: GOLDEN_HORSE_ARMOR
     buyPrice:
       fixed: '3000.0'
@@ -583,7 +583,7 @@ items:
     econ:
       name: vault
     confirm_gui: true
-  '"9928c286-104e-40c9-b4e6-1a5cf206f2eb"':
+  "CHAINMAIL_LEGGINGS":
     material: CHAINMAIL_LEGGINGS
     buyPrice:
       fixed: '500.55'
@@ -595,7 +595,7 @@ items:
     confirm_gui: true
     nbt:
       Damage: 0
-  '"4388f3b2-01df-46df-bff4-dc7ad6fc286e"':
+  "IRON_SHOVEL":
     material: IRON_SHOVEL
     buyPrice:
       fixed: '1250.0'
@@ -607,7 +607,7 @@ items:
     confirm_gui: true
     nbt:
       Damage: 0
-  '"bd1c5a1b-b968-4d7a-a0d8-a83d44288403"':
+  "DIAMOND_AXE":
     material: DIAMOND_AXE
     buyPrice:
       fixed: '15000.0'
@@ -619,7 +619,7 @@ items:
     confirm_gui: true
     nbt:
       Damage: 0
-  '"5b01449d-ec14-432f-bced-3e9896d06099"':
+  "WOODEN_AXE":
     material: WOODEN_AXE
     buyPrice:
       fixed: '130.0'
@@ -631,7 +631,7 @@ items:
     confirm_gui: true
     nbt:
       Damage: 0
-  '"49b990de-e5bb-4a6e-821b-d78e3960450b"':
+  "DIAMOND_CHESTPLATE":
     material: DIAMOND_CHESTPLATE
     buyPrice:
       fixed: '20000.0'
@@ -643,7 +643,7 @@ items:
     confirm_gui: true
     nbt:
       Damage: 0
-  '"3da37171-c1aa-4427-ba7c-1be29f3e9d78"':
+  "WOODEN_SWORD":
     material: WOODEN_SWORD
     buyPrice:
       fixed: '125.0'
@@ -655,7 +655,7 @@ items:
     confirm_gui: true
     nbt:
       Damage: 0
-  '"5e7f2101-d161-4703-859e-43d3dc8b29f7"':
+  "LEAD":
     material: LEAD
     quantity: 4
     buyPrice:
@@ -666,7 +666,7 @@ items:
     econ:
       name: vault
     confirm_gui: true
-  '"a6402e9a-22aa-4956-9dd2-35dffa0c6524"':
+  "SHEARS":
     material: SHEARS
     buyPrice:
       fixed: '450.8'
@@ -678,7 +678,7 @@ items:
     confirm_gui: true
     nbt:
       Damage: 0
-  '"78adbe6d-9b70-4e66-b12a-0069f97babc2"':
+  "BOW":
     material: BOW
     buyPrice:
       fixed: '500.75'
@@ -690,7 +690,7 @@ items:
     confirm_gui: true
     nbt:
       Damage: 0
-  '"cf8bef44-acc4-40d2-be35-fa28caa27ae3"':
+  "IRON_AXE":
     material: IRON_AXE
     buyPrice:
       fixed: '1700.0'
@@ -702,7 +702,7 @@ items:
     confirm_gui: true
     nbt:
       Damage: 0
-  '"ac1e2882-3558-4ee8-961d-20c3c1232232"':
+  "LEATHER_LEGGINGS":
     material: LEATHER_LEGGINGS
     buyPrice:
       fixed: '115.85'
@@ -714,7 +714,7 @@ items:
     confirm_gui: true
     nbt:
       Damage: 0
-  '"5606652d-46ef-4193-a9e0-0f4857f66af3"':
+  "CLOCK":
     material: CLOCK
     quantity: 4
     buyPrice:
@@ -725,7 +725,7 @@ items:
     econ:
       name: vault
     confirm_gui: true
-  '"458594b9-bd62-4535-ab1a-ae2e36763a69"':
+  "NAME_TAG":
     material: NAME_TAG
     buyPrice:
       fixed: '5000.0'
@@ -735,7 +735,7 @@ items:
     econ:
       name: vault
     confirm_gui: true
-  '"f5f59ba5-e89c-4ac8-8f47-70620c438c10"':
+  "COMPASS":
     material: COMPASS
     quantity: 4
     buyPrice:
@@ -746,7 +746,7 @@ items:
     econ:
       name: vault
     confirm_gui: true
-  '"30cf251f-e3f2-401f-84aa-bcb6e3170f2a"':
+  "LEATHER_HELMET":
     material: LEATHER_HELMET
     buyPrice:
       fixed: '105.7'
@@ -758,7 +758,7 @@ items:
     confirm_gui: true
     nbt:
       Damage: 0
-  '"4306a000-5b4e-4158-a3dc-2011535274ba"':
+  "FLINT_AND_STEEL":
     material: FLINT_AND_STEEL
     buyPrice:
       fixed: '205.5'
@@ -770,7 +770,7 @@ items:
     confirm_gui: true
     nbt:
       Damage: 0
-  '"3f476c24-5d69-4f66-abf8-25fcd5343319"':
+  "IRON_PICKAXE":
     material: IRON_PICKAXE
     buyPrice:
       fixed: '1700.0'
@@ -782,7 +782,7 @@ items:
     confirm_gui: true
     nbt:
       Damage: 0
-  '"9af9d6e4-d5ac-493e-b9ce-aa75c7f014bb"':
+  "STONE_SHOVEL":
     material: STONE_SHOVEL
     buyPrice:
       fixed: '345.6'
@@ -794,7 +794,7 @@ items:
     confirm_gui: true
     nbt:
       Damage: 0
-  '"3005c373-45ab-4696-ba4a-f303cb9c12a7"':
+  "CHAINMAIL_CHESTPLATE":
     material: CHAINMAIL_CHESTPLATE
     buyPrice:
       fixed: '570.6'
@@ -806,7 +806,7 @@ items:
     confirm_gui: true
     nbt:
       Damage: 0
-  '"2276254d-4197-4f3a-90fc-580d61c53fc4"':
+  "GOLDEN_HELMET":
     material: GOLDEN_HELMET
     buyPrice:
       fixed: '1050.7'
@@ -818,7 +818,7 @@ items:
     confirm_gui: true
     nbt:
       Damage: 0
-  '"dd5d8552-5881-4e0a-8dea-a5814f21fa44"':
+  "GOLDEN_BOOTS":
     material: GOLDEN_BOOTS
     buyPrice:
       fixed: '995.7'
@@ -830,7 +830,7 @@ items:
     confirm_gui: true
     nbt:
       Damage: 0
-  '"16026000-813a-4b2c-84e0-847e5e1dd40a"':
+  "DIAMOND_HELMET":
     material: DIAMOND_HELMET
     buyPrice:
       fixed: '15000.0'
@@ -842,7 +842,7 @@ items:
     confirm_gui: true
     nbt:
       Damage: 0
-  '"1cb30af7-e34d-43b0-a271-cef8c832b1af"':
+  "IRON_BOOTS":
     material: IRON_BOOTS
     buyPrice:
       fixed: '1025.5'
@@ -854,7 +854,7 @@ items:
     confirm_gui: true
     nbt:
       Damage: 0
-  '"873003b3-efb6-452d-aa83-365002813fa3"':
+  "TURTLE_HELMET":
     material: TURTLE_HELMET
     buyPrice:
       fixed: '12500.0'
@@ -866,7 +866,7 @@ items:
     confirm_gui: true
     nbt:
       Damage: 0
-  '"5259120c-be29-425f-8136-3538e6052ff9"':
+  "ARROW":
     material: ARROW
     quantity: 16
     buyPrice:
@@ -877,7 +877,7 @@ items:
     econ:
       name: vault
     confirm_gui: true
-  '"0cb6530c-28f6-4230-895b-f940861b874c"':
+  "GOLDEN_SHOVEL":
     material: GOLDEN_SHOVEL
     buyPrice:
       fixed: '700.0'
@@ -889,7 +889,7 @@ items:
     confirm_gui: true
     nbt:
       Damage: 0
-  '"6ddda009-cabd-4e6a-986a-a35603117a40"':
+  "WOODEN_PICKAXE":
     material: WOODEN_PICKAXE
     buyPrice:
       fixed: '130.0'
