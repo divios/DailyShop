@@ -1,10 +1,14 @@
 id: ore
 timer: 86400
-timeStamp: lun, 6 dic 2021 18:58:39
+timeStamp: jue, 16 sept 2021 10:59:47
 shop:
   title: ore
   size: 9
   items:
+    '"acb5d7d5-e5f5-4a69-a305-6c38731029be"':
+      name: '&7Time Left: &e%dailyshop_time_ore%'
+      material: COMPASS
+      slot: 0
     '"0bde07fa-8519-4370-8532-47de39c12685"':
       name: '&cGo back to Menu'
       material: BARRIER
@@ -12,10 +16,6 @@ shop:
         type: OPEN_SHOP
         data: menu
       slot: 1
-    '"acb5d7d5-e5f5-4a69-a305-6c38731029be"':
-      name: '&7Time Left: &e%dailyshop_time_ore%'
-      material: COMPASS
-      slot: 0
     '"dec698a2-2d90-4062-a216-017d60208507"':
       name: '&c'
       material: YELLOW_STAINED_GLASS_PANE
@@ -23,200 +23,248 @@ shop:
 items:
   '"e60aff32-b9d2-4ed7-829a-ded710ca13e6"':
     material: IRON_ORE
-    buyPrice: '485.5'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '485.5'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"86530001-0b30-4bc9-911b-09365c8bcef6"':
     material: IRON_INGOT
-    buyPrice: '1085.75'
-    sellPrice: '-1.0'
     quantity: 4
+    buyPrice:
+      fixed: '1085.75'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"537ba32c-b83a-49d0-a30c-c031fb49c6c0"':
     material: EMERALD
-    buyPrice: '20000.0'
-    sellPrice: '1250.0'
     quantity: 2
+    buyPrice:
+      fixed: '20000.0'
+    sellPrice:
+      fixed: '1250.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"857ff219-4a83-440a-8e86-15f2fe675d44"':
     material: EMERALD_BLOCK
-    buyPrice: '25000.0'
-    sellPrice: '2500.0'
+    buyPrice:
+      fixed: '25000.0'
+    sellPrice:
+      fixed: '2500.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"c92c4ea7-7201-4395-984f-ffcda45b3842"':
     material: EMERALD_ORE
-    buyPrice: '18500.0'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '18500.0'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"d30caa59-bd20-437f-adbf-747e856ede92"':
     material: COAL
-    buyPrice: '175.5'
-    sellPrice: '-1.0'
     quantity: 16
+    buyPrice:
+      fixed: '175.5'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"94855442-226a-4a84-96c1-f3303223eaa1"':
     material: COAL_BLOCK
-    buyPrice: '7500.0'
-    sellPrice: '150.5'
+    buyPrice:
+      fixed: '7500.0'
+    sellPrice:
+      fixed: '150.5'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"55932c1c-17f1-4b9a-a057-28fc73fb5ca1"':
     material: DIAMOND
-    buyPrice: '25000.0'
-    sellPrice: '2500.0'
     quantity: 2
+    buyPrice:
+      fixed: '25000.0'
+    sellPrice:
+      fixed: '2500.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"240f2cfc-57af-458d-b8e9-5c8d50702294"':
     material: REDSTONE_ORE
-    buyPrice: '670.5'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '670.5'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"2f40ff5e-2253-4a30-b32c-f40c47c2583f"':
     material: LAPIS_LAZULI
-    buyPrice: '750.5'
-    sellPrice: '-1.0'
     quantity: 16
+    buyPrice:
+      fixed: '750.5'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"ed9d211a-8f54-48a6-86f9-0cce68294dc4"':
     material: QUARTZ_BLOCK
-    buyPrice: '650.7'
-    sellPrice: '6.5'
+    buyPrice:
+      fixed: '650.7'
+    sellPrice:
+      fixed: '6.5'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"948c7070-aca3-482c-993e-90e35b02cf5a"':
     material: GOLD_BLOCK
-    buyPrice: '17500.0'
-    sellPrice: '850.7'
+    buyPrice:
+      fixed: '17500.0'
+    sellPrice:
+      fixed: '850.7'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"c4b96a59-3595-4a0c-9dea-bcd8b0618670"':
     material: LAPIS_ORE
-    buyPrice: '670.5'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '670.5'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"ed83c7a1-9a59-42bd-b841-172a54d9e976"':
     material: COAL_ORE
-    buyPrice: '150.75'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '150.75'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"46ac67be-0404-447c-a5e1-fc49620bde8d"':
     material: QUARTZ
-    buyPrice: '406.5'
-    sellPrice: '-1.0'
     quantity: 16
+    buyPrice:
+      fixed: '406.5'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"ff6594b3-3789-4df8-82a3-39fcec45ce1b"':
     material: GOLD_ORE
-    buyPrice: '3755.8'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '3755.8'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"cf825d47-5c16-4f3b-a944-93556296b853"':
     material: DIAMOND_ORE
-    buyPrice: '20000.0'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '20000.0'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"d19845f5-363d-40c0-b390-9d9bcd77bf36"':
     material: REDSTONE
-    buyPrice: '750.5'
-    sellPrice: '-1.0'
     quantity: 16
+    buyPrice:
+      fixed: '750.5'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"33f89ae9-ae44-49ce-a84d-cce2e9bc3e41"':
     material: REDSTONE_BLOCK
-    buyPrice: '5000.0'
-    sellPrice: '250.75'
+    buyPrice:
+      fixed: '5000.0'
+    sellPrice:
+      fixed: '250.75'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"adc7b59e-7c1e-4679-8d4c-8245ad8aaf28"':
     material: GOLD_INGOT
-    buyPrice: '3075.4'
-    sellPrice: '-1.0'
     quantity: 4
+    buyPrice:
+      fixed: '3075.4'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"30978885-7cab-4c17-9dbf-3902c0f38583"':
     material: IRON_BLOCK
-    buyPrice: '10500.0'
-    sellPrice: '500.75'
+    buyPrice:
+      fixed: '10500.0'
+    sellPrice:
+      fixed: '500.75'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"c523d483-479d-4b45-8563-51e8cef22bd9"':
     material: DIAMOND_BLOCK
-    buyPrice: '50000.0'
-    sellPrice: '5000.0'
+    buyPrice:
+      fixed: '50000.0'
+    sellPrice:
+      fixed: '5000.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"5e4b3435-afb1-44f1-83b3-af531f96c326"':
     material: NETHER_QUARTZ_ORE
-    buyPrice: '350.75'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '350.75'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"734d3fac-15fe-46dd-b6a0-0fea42992786"':
     material: LAPIS_BLOCK
-    buyPrice: '5000.0'
-    sellPrice: '250.75'
+    buyPrice:
+      fixed: '5000.0'
+    sellPrice:
+      fixed: '250.75'
     rarity: Common
     econ:
       name: vault

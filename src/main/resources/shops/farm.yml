@@ -1,122 +1,68 @@
 id: farm
 timer: 86400
-timeStamp: lun, 6 dic 2021 15:37:00
+timeStamp: jue, 16 sept 2021 10:59:47
 shop:
   title: farm
   size: 45
   items:
     '"03c4912f-cb03-43f9-bf6c-2cf41380862a"':
-      name: '&c'
-      material: GRAY_STAINED_GLASS_PANE
+      material: AIR
       slot: 0
-      nbt:
-        HideFlags: 1
     '"caf568f7-07bc-4374-ad6e-2866d5b082da"':
-      name: '&c'
-      material: GRAY_STAINED_GLASS_PANE
+      material: AIR
       slot: 1
-      nbt:
-        HideFlags: 1
     '"210011a6-ecff-4ea2-999f-885b14f746d7"':
-      name: '&c'
-      material: GRAY_STAINED_GLASS_PANE
+      material: AIR
       slot: 2
-      nbt:
-        HideFlags: 1
     '"2fcb6c7a-c0b7-4d85-aa8e-0d734a106d87"':
-      name: '&c'
-      material: GRAY_STAINED_GLASS_PANE
+      material: AIR
       slot: 3
-      nbt:
-        HideFlags: 1
     '"1ac2a755-a867-44f2-9053-4cbf6ec2d226"':
       name: '&7Time Left: &8%dailyshop_time_farm%'
       material: COMPASS
       slot: 4
     '"ce9c7397-2098-463d-9198-0e2a80ea71e7"':
-      name: '&c'
-      material: GRAY_STAINED_GLASS_PANE
+      material: AIR
       slot: 5
-      nbt:
-        HideFlags: 1
     '"2a331c49-b2e1-4c84-b5f9-c0ca0e821317"':
-      name: '&c'
-      material: GRAY_STAINED_GLASS_PANE
+      material: AIR
       slot: 6
-      nbt:
-        HideFlags: 1
     '"3a0a4895-681c-4679-9088-9c3a1b8e1e3a"':
-      name: '&c'
-      material: GRAY_STAINED_GLASS_PANE
+      material: AIR
       slot: 7
-      nbt:
-        HideFlags: 1
     '"4efd902e-c629-4da5-a237-764eb5c27d1c"':
-      name: '&c'
-      material: GRAY_STAINED_GLASS_PANE
+      material: AIR
       slot: 8
-      nbt:
-        HideFlags: 1
     '"cac58458-f1ea-4184-a768-671502bb28df"':
-      name: '&c'
-      material: GRAY_STAINED_GLASS_PANE
+      material: AIR
       slot: 9
-      nbt:
-        HideFlags: 1
     '"08cd25c3-a3e8-4327-a989-234a5d0b7f9d"':
-      name: '&c'
-      material: GRAY_STAINED_GLASS_PANE
+      material: AIR
       slot: 17
-      nbt:
-        HideFlags: 1
     '"a88e6244-b0bb-4065-b3cd-ca8b7e405669"':
-      name: '&c'
-      material: GRAY_STAINED_GLASS_PANE
+      material: AIR
       slot: 18
-      nbt:
-        HideFlags: 1
     '"ca9588b8-147a-469a-a11e-5cef35fc56bf"':
-      name: '&c'
-      material: GRAY_STAINED_GLASS_PANE
+      material: AIR
       slot: 26
-      nbt:
-        HideFlags: 1
     '"3ea2eca6-dd31-4761-a773-e85d37779dbe"':
-      name: '&c'
-      material: GRAY_STAINED_GLASS_PANE
+      material: AIR
       slot: 27
-      nbt:
-        HideFlags: 1
     '"2d43b929-070f-4b3b-bd3a-df8755f79323"':
-      name: '&c'
-      material: GRAY_STAINED_GLASS_PANE
+      material: AIR
       slot: 35
-      nbt:
-        HideFlags: 1
     '"cdcaeaab-5a21-4f40-8c46-4f7e47c30e0f"':
-      name: '&c'
-      material: GRAY_STAINED_GLASS_PANE
+      material: AIR
       slot: 36
-      nbt:
-        HideFlags: 1
     '"58708322-fe00-4ad8-9291-811ffd9ec3eb"':
-      name: '&c'
-      material: GRAY_STAINED_GLASS_PANE
+      material: AIR
       slot: 37
-      nbt:
-        HideFlags: 1
     '"dbf416ac-dcc7-4fcf-a172-10e763f5f263"':
-      name: '&c'
-      material: GRAY_STAINED_GLASS_PANE
+      material: AIR
       slot: 38
-      nbt:
-        HideFlags: 1
     '"0940034e-8373-4c72-8196-910f5ce7cb1a"':
-      name: '&c'
-      material: GRAY_STAINED_GLASS_PANE
+      material: AIR
       slot: 39
-      nbt:
-        HideFlags: 1
     '"b5ad16ce-9e6b-43ea-b7be-7eb2902bb993"':
       name: '&cGo back to Menu'
       material: BARRIER
@@ -125,659 +71,789 @@ shop:
         data: menu
       slot: 40
     '"f0aa2499-8d7f-4d7c-93dd-00ceb33cb8c7"':
-      name: '&c'
-      material: GRAY_STAINED_GLASS_PANE
+      material: AIR
       slot: 41
-      nbt:
-        HideFlags: 1
     '"bd6cbf87-d003-4304-bdb8-10903dcf19d6"':
-      name: '&c'
-      material: GRAY_STAINED_GLASS_PANE
+      material: AIR
       slot: 42
-      nbt:
-        HideFlags: 1
     '"7c24d6af-2033-4df9-ac6a-66d129bb5116"':
-      name: '&c'
-      material: GRAY_STAINED_GLASS_PANE
+      material: AIR
       slot: 43
-      nbt:
-        HideFlags: 1
     '"396134c2-9766-4de1-b43b-670d3445d864"':
-      name: '&c'
-      material: GRAY_STAINED_GLASS_PANE
+      material: AIR
       slot: 44
-      nbt:
-        HideFlags: 1
 items:
   '"c525b917-e927-482c-aeef-6fdc451e2400"':
     material: ACACIA_LEAVES
-    buyPrice: '17.5'
-    sellPrice: '-1.0'
     quantity: 8
+    buyPrice:
+      fixed: '17.5'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"2dd76a79-8cc0-4414-8997-db376f9db813"':
     material: PEONY
-    buyPrice: '45.5'
-    sellPrice: '-1.0'
     quantity: 4
+    buyPrice:
+      fixed: '45.5'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"eed6e0ff-d794-431b-93aa-75470af06cd5"':
     material: JUNGLE_SAPLING
-    buyPrice: '67.5'
-    sellPrice: '-1.0'
     quantity: 8
+    buyPrice:
+      fixed: '67.5'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"43202c4b-cdd5-4d4e-9112-7d7d997f1907"':
     material: SUGAR
-    buyPrice: '25.65'
-    sellPrice: '-1.0'
     quantity: 8
+    buyPrice:
+      fixed: '25.65'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"a06d8d69-6919-4d6b-8c41-fe0d37bef4c6"':
     material: WHEAT_SEEDS
-    buyPrice: '10.5'
-    sellPrice: '-1.0'
     quantity: 16
+    buyPrice:
+      fixed: '10.5'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"f27b4d0b-bcec-4308-a496-28631c38afef"':
     material: ORANGE_TULIP
-    buyPrice: '25.5'
-    sellPrice: '-1.0'
     quantity: 8
+    buyPrice:
+      fixed: '25.5'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"40ec17ae-b33d-4e90-858d-0aad3ec2226e"':
     material: CHORUS_FRUIT
-    buyPrice: '750.85'
-    sellPrice: '-1.0'
     quantity: 12
+    buyPrice:
+      fixed: '750.85'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"f54e31d7-dbaf-4bfe-b095-328773667fb9"':
     material: BAKED_POTATO
-    buyPrice: '80.75'
-    sellPrice: '-1.0'
     quantity: 4
+    buyPrice:
+      fixed: '80.75'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"c513ce8f-303e-4d09-b6ce-5cb3762796b3"':
     material: BLUE_ORCHID
-    buyPrice: '25.5'
-    sellPrice: '-1.0'
     quantity: 8
+    buyPrice:
+      fixed: '25.5'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"d5de7aea-2c99-4699-8945-1eb680dabc6b"':
     material: AZURE_BLUET
-    buyPrice: '25.5'
-    sellPrice: '-1.0'
     quantity: 8
+    buyPrice:
+      fixed: '25.5'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"9f232156-9981-494a-85fb-50adc9eca12e"':
     material: PUMPKIN_PIE
-    buyPrice: '265.5'
-    sellPrice: '-1.0'
     quantity: 4
+    buyPrice:
+      fixed: '265.5'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"610eea40-2708-4f69-8ded-24fc25251ad2"':
     material: APPLE
-    buyPrice: '30.5'
-    sellPrice: '-1.0'
     quantity: 4
+    buyPrice:
+      fixed: '30.5'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"793c62f9-4dcb-478a-8312-83fa715db02a"':
     material: SCUTE
-    buyPrice: '7500.0'
-    sellPrice: '-1.0'
     quantity: 4
+    buyPrice:
+      fixed: '7500.0'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"b389f5a1-fa8e-4dff-bbe4-bb71e80ab0ac"':
     material: LILY_PAD
-    buyPrice: '25.65'
-    sellPrice: '3.8'
     quantity: 4
+    buyPrice:
+      fixed: '25.65'
+    sellPrice:
+      fixed: '3.8'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"b5cdb673-fccb-422a-910a-65e08cedaab5"':
     material: BROWN_MUSHROOM
-    buyPrice: '250.75'
-    sellPrice: '-1.0'
     quantity: 6
+    buyPrice:
+      fixed: '250.75'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"a339de20-d480-4179-92d5-e96c41f7a2c0"':
     material: ACACIA_SAPLING
-    buyPrice: '67.5'
-    sellPrice: '-1.0'
     quantity: 8
+    buyPrice:
+      fixed: '67.5'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"5bef08a7-758c-4ba7-aff6-007a172457c1"':
     material: BREAD
-    buyPrice: '75.6'
-    sellPrice: '-1.0'
     quantity: 8
+    buyPrice:
+      fixed: '75.6'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"0e03d7c9-e48a-466c-bd36-a820009025f3"':
     material: ROSE_BUSH
-    buyPrice: '45.5'
-    sellPrice: '-1.0'
     quantity: 4
+    buyPrice:
+      fixed: '45.5'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"070e948c-f7de-4056-9580-f63cc0f22f1d"':
     material: COOKIE
-    buyPrice: '30.75'
-    sellPrice: '-1.0'
     quantity: 16
+    buyPrice:
+      fixed: '30.75'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"d4de2608-6e27-4b6e-9958-64f2ab79e4f3"':
     material: CHORUS_FLOWER
-    buyPrice: '5000.0'
-    sellPrice: '85.5'
     quantity: 4
+    buyPrice:
+      fixed: '5000.0'
+    sellPrice:
+      fixed: '85.5'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"375d3518-ed14-47b4-8824-3dbd4c41de1f"':
     material: GLISTERING_MELON_SLICE
-    buyPrice: '850.5'
-    sellPrice: '-1.0'
     quantity: 2
+    buyPrice:
+      fixed: '850.5'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"d14c944c-5a6d-4f2d-97b4-59abfbc1c820"':
     material: HAY_BLOCK
-    buyPrice: '125.5'
-    sellPrice: '-1.0'
     quantity: 4
+    buyPrice:
+      fixed: '125.5'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"be842b2d-7bb3-41b6-af06-e8a1a3744f42"':
     material: MUSHROOM_STEW
-    buyPrice: '230.75'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '230.75'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"c782f68f-155e-4af2-881e-efa0f4eb243c"':
     material: LARGE_FERN
-    buyPrice: '45.5'
-    sellPrice: '-1.0'
     quantity: 4
+    buyPrice:
+      fixed: '45.5'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"6da16649-b26e-4027-ad78-3fc48ae6de2c"':
     material: DRIED_KELP_BLOCK
-    buyPrice: '345.5'
-    sellPrice: '-1.0'
     quantity: 4
+    buyPrice:
+      fixed: '345.5'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"2af8112b-bcce-42f5-b52b-83ae2b066762"':
     material: MELON_SLICE
-    buyPrice: '90.8'
-    sellPrice: '-1.0'
     quantity: 12
+    buyPrice:
+      fixed: '90.8'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"8e5eac80-6918-4ba0-8abe-e4784ef384ff"':
     material: PINK_TULIP
-    buyPrice: '25.5'
-    sellPrice: '-1.0'
     quantity: 8
+    buyPrice:
+      fixed: '25.5'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"8623d2ea-83e9-46aa-a4ae-7592323b06b8"':
     material: RED_TULIP
-    buyPrice: '25.5'
-    sellPrice: '-1.0'
     quantity: 8
+    buyPrice:
+      fixed: '25.5'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"c876232b-984b-42b9-a6b0-d22823d22ff8"':
     material: BEETROOT
-    buyPrice: '12.5'
-    sellPrice: '-1.0'
     quantity: 12
+    buyPrice:
+      fixed: '12.5'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"dbd82d40-8ded-4bd2-a087-6e95f9cb386e"':
     material: JUNGLE_LEAVES
-    buyPrice: '17.5'
-    sellPrice: '-1.0'
     quantity: 8
+    buyPrice:
+      fixed: '17.5'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"8b4fa2d5-0217-4a18-9484-ab5c15a1bcea"':
     material: BIRCH_SAPLING
-    buyPrice: '67.5'
-    sellPrice: '-1.0'
     quantity: 8
+    buyPrice:
+      fixed: '67.5'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"f6e209b4-ca99-4a60-905e-d1699d26a0e5"':
     material: GOLDEN_APPLE
-    buyPrice: '5000.0'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '5000.0'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"31843c9f-978a-4f02-a4c1-ee058ea599d8"':
     material: SUGAR_CANE
-    buyPrice: '75.5'
-    sellPrice: '-1.0'
     quantity: 12
+    buyPrice:
+      fixed: '75.5'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"c65b337f-0c54-44a1-aa40-e3f0cde95d12"':
     material: NETHER_WART
-    buyPrice: '505.85'
-    sellPrice: '5.8'
     quantity: 8
+    buyPrice:
+      fixed: '505.85'
+    sellPrice:
+      fixed: '5.8'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"41160066-385f-4d66-a2eb-5228104bc10b"':
     material: SUNFLOWER
-    buyPrice: '45.5'
-    sellPrice: '-1.0'
     quantity: 4
+    buyPrice:
+      fixed: '45.5'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"fae8e9bd-1646-47c7-95be-74855b092994"':
     material: CAKE
-    buyPrice: '2500.0'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '2500.0'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"68ec95c0-24c9-4c52-9198-433ffdf8ef2e"':
     material: KELP
-    buyPrice: '45.5'
-    sellPrice: '-1.0'
     quantity: 12
+    buyPrice:
+      fixed: '45.5'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"5c7c5679-3a1e-42c8-a595-3970e02e17e1"':
     material: GOLDEN_CARROT
-    buyPrice: '900.5'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '900.5'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"0335af89-264b-4e91-b538-007e170c3e5e"':
     material: MELON
-    buyPrice: '1350.85'
-    sellPrice: '20.85'
     quantity: 4
+    buyPrice:
+      fixed: '1350.85'
+    sellPrice:
+      fixed: '20.85'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"55a99b04-2c36-4a0a-b444-57339ccdc839"':
     material: OAK_SAPLING
-    buyPrice: '67.5'
-    sellPrice: '-1.0'
     quantity: 8
+    buyPrice:
+      fixed: '67.5'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"51fb1673-99f9-415c-8b21-aff4c8dd9aa7"':
     material: POTATO
-    buyPrice: '45.5'
-    sellPrice: '-1.0'
     quantity: 8
+    buyPrice:
+      fixed: '45.5'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"b4998cb1-855b-4b60-a9c5-c1894dc4f1b6"':
     material: PUMPKIN
-    buyPrice: '1025.5'
-    sellPrice: '10.75'
     quantity: 4
+    buyPrice:
+      fixed: '1025.5'
+    sellPrice:
+      fixed: '10.75'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"fac4fdf2-7a7c-4b44-b05e-80663f94b3a3"':
     material: TALL_GRASS
-    buyPrice: '45.5'
-    sellPrice: '-1.0'
     quantity: 4
+    buyPrice:
+      fixed: '45.5'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"ffe7d8e7-4c6a-4c1c-900b-24cf7e635193"':
     material: POPPY
-    buyPrice: '25.5'
-    sellPrice: '-1.0'
     quantity: 8
+    buyPrice:
+      fixed: '25.5'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"bc154438-471a-4caa-b19f-c2691a564f72"':
     material: PUMPKIN_SEEDS
-    buyPrice: '12.5'
-    sellPrice: '-1.0'
     quantity: 16
+    buyPrice:
+      fixed: '12.5'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"b9af2d8d-dd16-4b90-ad80-04430b68c1fb"':
     material: SEAGRASS
-    buyPrice: '65.7'
-    sellPrice: '-1.0'
     quantity: 12
+    buyPrice:
+      fixed: '65.7'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"de5ff99e-6678-4294-8892-c3c9d7083bfc"':
     material: DARK_OAK_LEAVES
-    buyPrice: '17.5'
-    sellPrice: '-1.0'
     quantity: 8
+    buyPrice:
+      fixed: '17.5'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"81db9213-9474-4044-b07d-54d91403043b"':
     material: CACTUS
-    buyPrice: '105.5'
-    sellPrice: '8.5'
     quantity: 4
+    buyPrice:
+      fixed: '105.5'
+    sellPrice:
+      fixed: '8.5'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"a7931eed-7360-4a9b-a8b4-de48a68ffec5"':
     material: CHORUS_PLANT
-    buyPrice: '575.5'
-    sellPrice: '-1.0'
     quantity: 8
+    buyPrice:
+      fixed: '575.5'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"a65042ec-1923-493b-a3ed-5317d5b32ac4"':
     material: ALLIUM
-    buyPrice: '25.5'
-    sellPrice: '-1.0'
     quantity: 8
+    buyPrice:
+      fixed: '25.5'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"71853cd2-997f-40bc-a591-251aaa50c5bc"':
     material: SPRUCE_LEAVES
-    buyPrice: '17.5'
-    sellPrice: '-1.0'
     quantity: 8
+    buyPrice:
+      fixed: '17.5'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"d83e29bf-5d88-45a5-aebd-e20cef08159a"':
     material: CARVED_PUMPKIN
-    buyPrice: '615.5'
-    sellPrice: '-1.0'
     quantity: 4
+    buyPrice:
+      fixed: '615.5'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"9647d427-1c8e-466b-9af8-dad7b898f1b2"':
     material: WHITE_TULIP
-    buyPrice: '25.5'
-    sellPrice: '-1.0'
     quantity: 8
+    buyPrice:
+      fixed: '25.5'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"b62f6eb7-d868-4bb8-99d2-676dca49e1ad"':
     material: COCOA_BEANS
-    buyPrice: '105.75'
-    sellPrice: '-1.0'
     quantity: 16
+    buyPrice:
+      fixed: '105.75'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"8a2287e4-7c53-45ca-a7ce-2d1e37c28210"':
     material: DARK_OAK_SAPLING
-    buyPrice: '67.5'
-    sellPrice: '-1.0'
     quantity: 8
+    buyPrice:
+      fixed: '67.5'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"06cdb750-8bc9-4938-85aa-69eacba5f30f"':
     material: RED_MUSHROOM
-    buyPrice: '300.75'
-    sellPrice: '-1.0'
     quantity: 6
+    buyPrice:
+      fixed: '300.75'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"fbac99ca-8033-4b7b-ac89-58b0c066a3f6"':
     material: OXEYE_DAISY
-    buyPrice: '25.5'
-    sellPrice: '-1.0'
     quantity: 8
+    buyPrice:
+      fixed: '25.5'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"746ab344-683b-4c3e-9b5c-cb8aae111bee"':
     material: LILAC
-    buyPrice: '45.5'
-    sellPrice: '-1.0'
     quantity: 4
+    buyPrice:
+      fixed: '45.5'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"10105ed6-1885-4d4d-b848-cdad67e3a1cc"':
     material: BIRCH_LEAVES
-    buyPrice: '17.5'
-    sellPrice: '-1.0'
     quantity: 8
+    buyPrice:
+      fixed: '17.5'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"d9ec2274-9db0-437a-94cc-ab4a7c289961"':
     material: MELON_SEEDS
-    buyPrice: '12.5'
-    sellPrice: '-1.0'
     quantity: 16
+    buyPrice:
+      fixed: '12.5'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"7502afce-c258-4850-bd2d-d840c4521476"':
     material: SPRUCE_SAPLING
-    buyPrice: '67.5'
-    sellPrice: '-1.0'
     quantity: 8
+    buyPrice:
+      fixed: '67.5'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"f68584d9-aef5-49b0-9a94-752a4a1d9076"':
     material: DANDELION
-    buyPrice: '25.5'
-    sellPrice: '-1.0'
     quantity: 8
+    buyPrice:
+      fixed: '25.5'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"516c7c23-5d02-4a84-ba44-75a8e38b0bda"':
     material: OAK_LEAVES
-    buyPrice: '17.5'
-    sellPrice: '-1.0'
     quantity: 8
+    buyPrice:
+      fixed: '17.5'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"1b6f8b0a-8360-4abd-8440-521c53d1d094"':
     material: EGG
-    buyPrice: '15.65'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '15.65'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"e70c80e7-a22c-4c7f-a5d8-4a42ee1a0de3"':
     material: WHEAT
-    buyPrice: '45.75'
-    sellPrice: '-1.0'
     quantity: 8
+    buyPrice:
+      fixed: '45.75'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"993da8cb-4d03-424f-abc2-26e9d3d4a105"':
     material: VINE
-    buyPrice: '50.75'
-    sellPrice: '5.75'
     quantity: 4
+    buyPrice:
+      fixed: '50.75'
+    sellPrice:
+      fixed: '5.75'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"31a3da9a-d905-4c47-9e95-a2775d1f2087"':
     material: DEAD_BUSH
-    buyPrice: '65.5'
-    sellPrice: '-1.0'
     quantity: 8
+    buyPrice:
+      fixed: '65.5'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"8d5f2954-2db1-405f-b57c-deafbda473eb"':
     material: SEA_PICKLE
-    buyPrice: '65.5'
-    sellPrice: '-1.0'
     quantity: 8
+    buyPrice:
+      fixed: '65.5'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"ae3c6cbb-3cb4-402a-9a72-c80ff7e0f2d7"':
     material: CARROT
-    buyPrice: '55.5'
-    sellPrice: '-1.0'
     quantity: 8
+    buyPrice:
+      fixed: '55.5'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"7384560b-0f61-4246-a068-750320224d1d"':
     material: DRIED_KELP
-    buyPrice: '105.7'
-    sellPrice: '-1.0'
     quantity: 8
+    buyPrice:
+      fixed: '105.7'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"20418d49-91c1-4ad8-b792-44d013b8d08c"':
     material: ENCHANTED_GOLDEN_APPLE
-    buyPrice: '500000.0'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '500000.0'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault

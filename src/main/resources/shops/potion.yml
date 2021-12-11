@@ -1,6 +1,6 @@
 id: potion
 timer: 86400
-timeStamp: lun, 6 dic 2021 15:37:00
+timeStamp: jue, 16 sept 2021 10:59:47
 shop:
   title: potion
   size: 45
@@ -207,8 +207,10 @@ shop:
 items:
   '"6f872f50-15b5-4d27-9120-3f85b011610a"':
     material: POTION
-    buyPrice: '1075.0'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '1075.0'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
@@ -217,8 +219,10 @@ items:
       Potion: minecraft:fire_resistance
   '"e93b18a1-ab86-4a88-9fe9-bc82a330c50c"':
     material: POTION
-    buyPrice: '265.4'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '265.4'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
@@ -227,8 +231,10 @@ items:
       Potion: minecraft:leaping
   '"d12a78a9-cae3-417d-8b9d-27e64aa7d7fc"':
     material: SPLASH_POTION
-    buyPrice: '575.0'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '575.0'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
@@ -237,8 +243,10 @@ items:
       Potion: minecraft:strong_regeneration
   '"46390c72-66cf-4c9a-aa50-7098d53ed36b"':
     material: SPLASH_POTION
-    buyPrice: '575.0'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '575.0'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
@@ -247,8 +255,10 @@ items:
       Potion: minecraft:long_water_breathing
   '"8a1c9ca6-6026-4e74-a052-340c1559801f"':
     material: POTION
-    buyPrice: '1975.65'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '1975.65'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
@@ -257,8 +267,10 @@ items:
       Potion: minecraft:long_strength
   '"0d3e2b5d-f226-4ba4-80b4-3a69f20f363d"':
     material: POTION
-    buyPrice: '875.8'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '875.8'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
@@ -267,8 +279,10 @@ items:
       Potion: minecraft:long_swiftness
   '"8c7e4be0-77b5-4cb3-8d5e-14df71ba03ac"':
     material: SPLASH_POTION
-    buyPrice: '350.0'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '350.0'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
@@ -277,8 +291,10 @@ items:
       Potion: minecraft:long_regeneration
   '"17f7182f-c5c6-43bf-9195-69e0e6c0d7c3"':
     material: POTION
-    buyPrice: '720.45'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '720.45'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
@@ -287,8 +303,10 @@ items:
       Potion: minecraft:water_breathing
   '"9b067b89-bb4f-4fc3-9a7b-0b63dc0e6f69"':
     material: POTION
-    buyPrice: '1575.0'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '1575.0'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
@@ -297,8 +315,10 @@ items:
       Potion: minecraft:long_fire_resistance
   '"37a782a5-f865-4972-885f-9f99703ba8f8"':
     material: POTION
-    buyPrice: '865.2'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '865.2'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
@@ -307,8 +327,10 @@ items:
       Potion: minecraft:long_regeneration
   '"ea3f7006-575c-429a-bfc6-265447b6e4cc"':
     material: POTION
-    buyPrice: '1000.0'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '1000.0'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
@@ -317,8 +339,10 @@ items:
       Potion: minecraft:strong_swiftness
   '"77a25557-b50f-4659-bf34-bbc3dd0502d9"':
     material: POTION
-    buyPrice: '475.5'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '475.5'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
@@ -327,8 +351,10 @@ items:
       Potion: minecraft:long_leaping
   '"b797dd17-d6ce-4434-ab17-4db2aa65a3c7"':
     material: POTION
-    buyPrice: '875.9'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '875.9'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
@@ -337,8 +363,10 @@ items:
       Potion: minecraft:strength
   '"37ea594b-2252-485e-b05c-046c9c6304e7"':
     material: POTION
-    buyPrice: '850.95'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '850.95'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
@@ -347,8 +375,10 @@ items:
       Potion: minecraft:long_water_breathing
   '"912ae9f8-3ca7-4edc-b578-984ca7f6dfae"':
     material: SPLASH_POTION
-    buyPrice: '575.0'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '575.0'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
@@ -357,8 +387,10 @@ items:
       Potion: minecraft:long_invisibility
   '"1a51c7c7-7c6c-401f-a917-73d13c312caf"':
     material: SPLASH_POTION
-    buyPrice: '350.0'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '350.0'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
@@ -367,8 +399,10 @@ items:
       Potion: minecraft:long_leaping
   '"6af70718-d606-4392-9a80-d71a4ef4a3de"':
     material: POTION
-    buyPrice: '750.75'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '750.75'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
@@ -377,8 +411,10 @@ items:
       Potion: minecraft:long_invisibility
   '"ece9b0a9-c400-4134-8ebf-bb95f1af15f9"':
     material: SPLASH_POTION
-    buyPrice: '350.0'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '350.0'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
@@ -387,8 +423,10 @@ items:
       Potion: minecraft:long_strength
   '"2a2b3ae1-ee1e-416e-953e-0a530104bdb6"':
     material: SPLASH_POTION
-    buyPrice: '350.0'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '350.0'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
@@ -397,8 +435,10 @@ items:
       Potion: minecraft:invisibility
   '"dd0e1632-5ca0-447e-98ac-9fd89a42d26f"':
     material: POTION
-    buyPrice: '650.8'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '650.8'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
@@ -407,8 +447,10 @@ items:
       Potion: minecraft:strong_leaping
   '"07be6eb7-bd27-407a-9387-3ef3e8175b74"':
     material: SPLASH_POTION
-    buyPrice: '350.0'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '350.0'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
@@ -417,8 +459,10 @@ items:
       Potion: minecraft:healing
   '"0d16a4f3-fade-4426-8ae9-1a2dd778d073"':
     material: POTION
-    buyPrice: '650.95'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '650.95'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
@@ -427,8 +471,10 @@ items:
       Potion: minecraft:swiftness
   '"45d0e2ca-f82f-48db-b898-86b473d50e50"':
     material: POTION
-    buyPrice: '675.8'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '675.8'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
@@ -437,8 +483,10 @@ items:
       Potion: minecraft:healing
   '"bd05be40-d41e-4187-acb4-ed3ce2c000ae"':
     material: SPLASH_POTION
-    buyPrice: '350.0'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '350.0'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
@@ -447,8 +495,10 @@ items:
       Potion: minecraft:long_swiftness
   '"b4db6f7b-f0c7-4dd3-abf9-5c720748fa61"':
     material: SPLASH_POTION
-    buyPrice: '350.0'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '350.0'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
@@ -457,8 +507,10 @@ items:
       Potion: minecraft:fire_resistance
   '"e4db3614-c996-4c1f-a961-5aaab6aca318"':
     material: POTION
-    buyPrice: '2500.0'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '2500.0'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
@@ -467,8 +519,10 @@ items:
       Potion: minecraft:luck
   '"1d090dd9-27a8-4094-9ce7-f40f089cd714"':
     material: SPLASH_POTION
-    buyPrice: '275.0'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '275.0'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
@@ -477,8 +531,10 @@ items:
       Potion: minecraft:leaping
   '"2856ea0e-42cd-40cd-8ac2-34bbae6a13e9"':
     material: SPLASH_POTION
-    buyPrice: '350.0'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '350.0'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
@@ -487,8 +543,10 @@ items:
       Potion: minecraft:water_breathing
   '"a1b2719f-7d74-4b22-a8d0-8643e095803e"':
     material: SPLASH_POTION
-    buyPrice: '575.0'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '575.0'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
@@ -497,8 +555,10 @@ items:
       Potion: minecraft:strong_healing
   '"15ec99b5-948e-4c0c-ba4c-33f7fcaf1bb2"':
     material: SPLASH_POTION
-    buyPrice: '275.0'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '275.0'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
@@ -507,8 +567,10 @@ items:
       Potion: minecraft:regeneration
   '"a1c84c6d-01c7-4f84-9fd7-dd00c06d64fd"':
     material: POTION
-    buyPrice: '915.0'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '915.0'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
@@ -517,8 +579,10 @@ items:
       Potion: minecraft:strong_regeneration
   '"ad9126d9-fb91-4845-a762-4481ff0d58b5"':
     material: SPLASH_POTION
-    buyPrice: '275.0'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '275.0'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
@@ -527,8 +591,10 @@ items:
       Potion: minecraft:strength
   '"b6c67747-8f19-4ec7-83da-a7d4afc8ea8e"':
     material: SPLASH_POTION
-    buyPrice: '275.0'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '275.0'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
@@ -537,8 +603,10 @@ items:
       Potion: minecraft:swiftness
   '"f8f2b5ee-2d7f-42ed-8f7c-de6c31ac5714"':
     material: POTION
-    buyPrice: '550.25'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '550.25'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
@@ -547,8 +615,10 @@ items:
       Potion: minecraft:invisibility
   '"a27079a4-b80e-4cad-b34c-a0ded0f254d0"':
     material: POTION
-    buyPrice: '1250.9'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '1250.9'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
@@ -557,8 +627,10 @@ items:
       Potion: minecraft:strong_strength
   '"e16fbbd8-f816-491d-bcbb-b9e2c7794f94"':
     material: SPLASH_POTION
-    buyPrice: '575.0'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '575.0'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
@@ -567,8 +639,10 @@ items:
       Potion: minecraft:strong_strength
   '"330a5c1b-f7cb-4bd3-983a-719c489a0f83"':
     material: SPLASH_POTION
-    buyPrice: '550.0'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '550.0'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
@@ -577,8 +651,10 @@ items:
       Potion: minecraft:luck
   '"8795baa9-206a-4335-90ad-e9b7dcb0816e"':
     material: POTION
-    buyPrice: '875.5'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '875.5'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
@@ -587,8 +663,10 @@ items:
       Potion: minecraft:strong_healing
   '"3e0a4f2c-de0c-41d8-84dc-bbfa18a6ff0d"':
     material: SPLASH_POTION
-    buyPrice: '575.0'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '575.0'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
@@ -597,8 +675,10 @@ items:
       Potion: minecraft:strong_leaping
   '"92b5e381-0829-41cd-aab9-a4eb69b6b21b"':
     material: POTION
-    buyPrice: '775.5'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '775.5'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
@@ -607,8 +687,10 @@ items:
       Potion: minecraft:regeneration
   '"f1f80d4b-9e24-4fc4-b45e-5bc0f5d94e4e"':
     material: SPLASH_POTION
-    buyPrice: '575.0'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '575.0'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
@@ -617,8 +699,10 @@ items:
       Potion: minecraft:long_fire_resistance
   '"ced3fc69-72a6-4411-86ec-979804cb19a0"':
     material: SPLASH_POTION
-    buyPrice: '575.0'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '575.0'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault

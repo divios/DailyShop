@@ -1,83 +1,14 @@
 id: equipment
 timer: 86400
-timeStamp: lun, 6 dic 2021 23:14:14
+timeStamp: jue, 16 sept 2021 10:59:48
 shop:
   title: equipment
   size: 54
   items:
-    '"526f112f-1f67-4df8-9bcd-998c78da977a"':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 51
-    '"202ce8b3-48ae-440e-9b3a-cc301dfedb33"':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 39
-    '"6cef2a97-cb71-41f5-b370-80c21022dc0a"':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 5
-    '"82ac8ba7-bd5b-49a1-84ff-0bec58aae2bc"':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 11
-    '"c13d8334-508a-4c84-aa2a-fcd3f97f0b7f"':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 40
-    '"718961f9-b577-46c8-beff-aa1d1a312050"':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 9
-    '"252c2bb0-56bf-47bd-965e-e5d2fc4aae4e"':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 35
-    '"0193c8cd-de63-426d-b359-ee2647dda976"':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 3
-    '"da011dd0-f60b-46f5-b3b6-a63a1fbd2394"':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 43
-    '"d53d5347-9366-4ee1-9602-5ac0549d6a8a"':
-      name: '&7Time Left: &b%dailyshop_time_equipment%'
-      material: COMPASS
-      slot: 27
-      nbt:
-        LodestoneTracked: 0b
-    '"b7f50b90-206e-481a-89cf-c070dda754a4"':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 42
-    '"3c47eb5c-2c38-492a-9ca4-a0b6ee05176b"':
-      name: '&cGo back to Menu'
-      material: BARRIER
-      action:
-        type: OPEN_SHOP
-        data: menu
-      slot: 18
     '"11a9c3b5-8efb-4a75-b66d-cecc18c80b21"':
       name: '&c'
       material: BLACK_STAINED_GLASS_PANE
       slot: 0
-    '"a0f9e974-6429-490b-88a0-81946c6b2b89"':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 50
-    '"ce670809-350c-4285-bb84-d15e513df1b5"':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 41
-    '"9fd32eee-f76d-4b2c-9acf-c2d7c37e5f15"':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 48
-    '"8769d29b-5250-4889-9ea8-adc95c203250"':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 29
     '"5b2c803d-378a-472c-8443-0f2a2ce5f5eb"':
       name: '&c'
       material: LIME_STAINED_GLASS_PANE
@@ -86,108 +17,176 @@ shop:
       name: '&c'
       material: BLACK_STAINED_GLASS_PANE
       slot: 2
-    '"3f346bce-ae83-41ec-84a4-57e52dbea62c"':
+    '"0193c8cd-de63-426d-b359-ee2647dda976"':
       name: '&c'
       material: BLACK_STAINED_GLASS_PANE
-      slot: 30
-    '"b020aa5e-dd8e-43ac-b7ff-89a92aeca272"':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 7
-    '"a3ea7aa2-fc2a-4430-9116-7462069c03ca"':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 20
-    '"8b3bcd61-4122-4baa-8528-fc13fa5a613c"':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 17
-    '"35d81fb9-2ba2-4279-aabe-587bbb298c42"':
-      name: '&c'
-      material: LIME_STAINED_GLASS_PANE
-      slot: 10
-    '"d2c8d10c-06e4-4cb6-8eba-61d96c3aaeb8"':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 44
-    be0fe104-16c4-4229-89bd-2701be8700b0:
-      material: AIR
-      slot: 31
+      slot: 3
     '"1a04fa21-4e9f-4cf1-a8f2-6475e04d4b46"':
       name: '&c'
       material: BLACK_STAINED_GLASS_PANE
       slot: 4
+    '"6cef2a97-cb71-41f5-b370-80c21022dc0a"':
+      name: '&c'
+      material: BLACK_STAINED_GLASS_PANE
+      slot: 5
+    '"a51879c0-ab39-4d19-85ab-a5db99cf631d"':
+      name: '&c'
+      material: BLACK_STAINED_GLASS_PANE
+      slot: 6
+    '"b020aa5e-dd8e-43ac-b7ff-89a92aeca272"':
+      name: '&c'
+      material: BLACK_STAINED_GLASS_PANE
+      slot: 7
     '"2aaae227-a5fb-4635-ad4b-0e52ca5a2b86"':
       name: '&c'
       material: BLACK_STAINED_GLASS_PANE
       slot: 8
+    '"718961f9-b577-46c8-beff-aa1d1a312050"':
+      name: '&c'
+      material: BLACK_STAINED_GLASS_PANE
+      slot: 9
+    '"35d81fb9-2ba2-4279-aabe-587bbb298c42"':
+      name: '&c'
+      material: LIME_STAINED_GLASS_PANE
+      slot: 10
+    '"82ac8ba7-bd5b-49a1-84ff-0bec58aae2bc"':
+      name: '&c'
+      material: BLACK_STAINED_GLASS_PANE
+      slot: 11
+    '"69c096b5-4d2d-419d-ab29-83f21ee2f95a"':
+      name: '&c'
+      material: BLACK_STAINED_GLASS_PANE
+      slot: 12
+    '"8b3bcd61-4122-4baa-8528-fc13fa5a613c"':
+      name: '&c'
+      material: BLACK_STAINED_GLASS_PANE
+      slot: 17
+    '"3c47eb5c-2c38-492a-9ca4-a0b6ee05176b"':
+      name: '&cGo back to Menu'
+      material: BARRIER
+      action:
+        type: OPEN_SHOP
+        data: menu
+      slot: 18
+    '"4e82b8c9-a81a-4496-be82-edc2f799ff60"':
+      name: '&c'
+      material: LIME_STAINED_GLASS_PANE
+      slot: 19
+    '"a3ea7aa2-fc2a-4430-9116-7462069c03ca"':
+      name: '&c'
+      material: BLACK_STAINED_GLASS_PANE
+      slot: 20
+    '"c4363897-5aa6-4627-820b-618d3cb7e548"':
+      name: '&c'
+      material: BLACK_STAINED_GLASS_PANE
+      slot: 21
+    '"9b00768c-228e-4f4e-8bac-07f183fcb923"':
+      name: '&c'
+      material: BLACK_STAINED_GLASS_PANE
+      slot: 26
+    '"d53d5347-9366-4ee1-9602-5ac0549d6a8a"':
+      name: '&7Time Left: &b%dailyshop_time_equipment%'
+      material: COMPASS
+      slot: 27
+      nbt:
+        LodestoneTracked: 0b
+    '"576a77ca-973d-45d2-adea-3ca3c99ee59f"':
+      name: '&c'
+      material: LIME_STAINED_GLASS_PANE
+      slot: 28
+    '"8769d29b-5250-4889-9ea8-adc95c203250"':
+      name: '&c'
+      material: BLACK_STAINED_GLASS_PANE
+      slot: 29
+    '"3f346bce-ae83-41ec-84a4-57e52dbea62c"':
+      name: '&c'
+      material: BLACK_STAINED_GLASS_PANE
+      slot: 30
+    '"252c2bb0-56bf-47bd-965e-e5d2fc4aae4e"':
+      name: '&c'
+      material: BLACK_STAINED_GLASS_PANE
+      slot: 35
+    '"e9bea967-93de-432f-ad12-f50669d4fb17"':
+      name: '&c'
+      material: BLACK_STAINED_GLASS_PANE
+      slot: 36
+    '"f6398879-1f54-40f3-aa10-ab80769dc1cf"':
+      name: '&c'
+      material: LIME_STAINED_GLASS_PANE
+      slot: 37
     '"de9e7271-44bd-45d1-967b-3c0e4da29d13"':
       name: '&c'
       material: BLACK_STAINED_GLASS_PANE
       slot: 38
+    '"202ce8b3-48ae-440e-9b3a-cc301dfedb33"':
+      name: '&c'
+      material: BLACK_STAINED_GLASS_PANE
+      slot: 39
+    '"c13d8334-508a-4c84-aa2a-fcd3f97f0b7f"':
+      name: '&c'
+      material: BLACK_STAINED_GLASS_PANE
+      slot: 40
+    '"ce670809-350c-4285-bb84-d15e513df1b5"':
+      name: '&c'
+      material: BLACK_STAINED_GLASS_PANE
+      slot: 41
+    '"b7f50b90-206e-481a-89cf-c070dda754a4"':
+      name: '&c'
+      material: BLACK_STAINED_GLASS_PANE
+      slot: 42
+    '"da011dd0-f60b-46f5-b3b6-a63a1fbd2394"':
+      name: '&c'
+      material: BLACK_STAINED_GLASS_PANE
+      slot: 43
+    '"d2c8d10c-06e4-4cb6-8eba-61d96c3aaeb8"':
+      name: '&c'
+      material: BLACK_STAINED_GLASS_PANE
+      slot: 44
+    '"24902aaa-bd08-4fd9-8e00-04e1aaf6c364"':
+      name: '&c'
+      material: BLACK_STAINED_GLASS_PANE
+      slot: 45
     '"2f4b6979-262f-481e-b52a-dc4fe31311d7"':
       name: '&c'
       material: LIME_STAINED_GLASS_PANE
       slot: 46
       nbt:
         Damage: 0
-    '"4e82b8c9-a81a-4496-be82-edc2f799ff60"':
-      name: '&c'
-      material: LIME_STAINED_GLASS_PANE
-      slot: 19
-    '"0e3f6080-f1ce-419b-8775-7a05f7df7f4f"':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 53
-    '"f6398879-1f54-40f3-aa10-ab80769dc1cf"':
-      name: '&c'
-      material: LIME_STAINED_GLASS_PANE
-      slot: 37
     '"a367364e-ba19-4026-bfbf-b962eda7ca93"':
       name: '&c'
       material: BLACK_STAINED_GLASS_PANE
       slot: 47
-    '"a51879c0-ab39-4d19-85ab-a5db99cf631d"':
+    '"9fd32eee-f76d-4b2c-9acf-c2d7c37e5f15"':
       name: '&c'
       material: BLACK_STAINED_GLASS_PANE
-      slot: 6
-    '"c7bff57b-777d-4b92-8f73-f26c013a1665"':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 52
-    '"c4363897-5aa6-4627-820b-618d3cb7e548"':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 21
-    '"69c096b5-4d2d-419d-ab29-83f21ee2f95a"':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 12
-    '"9b00768c-228e-4f4e-8bac-07f183fcb923"':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 26
-    '"576a77ca-973d-45d2-adea-3ca3c99ee59f"':
-      name: '&c'
-      material: LIME_STAINED_GLASS_PANE
-      slot: 28
-    '"e9bea967-93de-432f-ad12-f50669d4fb17"':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 36
+      slot: 48
     '"18234f74-76ae-46ce-b35c-e14332c3dd47"':
       name: '&c'
       material: BLACK_STAINED_GLASS_PANE
       slot: 49
-    '"24902aaa-bd08-4fd9-8e00-04e1aaf6c364"':
+    '"a0f9e974-6429-490b-88a0-81946c6b2b89"':
       name: '&c'
       material: BLACK_STAINED_GLASS_PANE
-      slot: 45
+      slot: 50
+    '"526f112f-1f67-4df8-9bcd-998c78da977a"':
+      name: '&c'
+      material: BLACK_STAINED_GLASS_PANE
+      slot: 51
+    '"c7bff57b-777d-4b92-8f73-f26c013a1665"':
+      name: '&c'
+      material: BLACK_STAINED_GLASS_PANE
+      slot: 52
+    '"0e3f6080-f1ce-419b-8775-7a05f7df7f4f"':
+      name: '&c'
+      material: BLACK_STAINED_GLASS_PANE
+      slot: 53
 items:
   '"a9db23ee-5cd5-44df-83bc-3fe3b77c4ff1"':
     material: STONE_AXE
-    buyPrice: '780.75'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '780.75'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
@@ -196,8 +195,10 @@ items:
       Damage: 0
   '"e33372ec-6a58-4312-8ea1-990a9506665a"':
     material: GOLDEN_SWORD
-    buyPrice: '850.0'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '850.0'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
@@ -206,16 +207,20 @@ items:
       Damage: 0
   '"efd7e65f-3e06-49cf-b20c-6b1278b65c19"':
     material: IRON_HORSE_ARMOR
-    buyPrice: '2000.0'
-    sellPrice: '200.0'
+    buyPrice:
+      fixed: '2000.0'
+    sellPrice:
+      fixed: '200.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"d056c9a2-8bca-4388-9e0f-f339718ec0ed"':
     material: GOLDEN_LEGGINGS
-    buyPrice: '1600.75'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '1600.75'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
@@ -224,8 +229,10 @@ items:
       Damage: 0
   '"25af09d8-d763-4a6a-8346-82282b8a43f3"':
     material: IRON_HELMET
-    buyPrice: '1250.6'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '1250.6'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
@@ -234,8 +241,10 @@ items:
       Damage: 0
   '"b25ef3e1-c1ea-44d9-825a-15eb8ad3d748"':
     material: DIAMOND_BOOTS
-    buyPrice: '12500.0'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '12500.0'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
@@ -244,25 +253,31 @@ items:
       Damage: 0
   '"2746bf2b-4494-4feb-ac67-0c4258820194"':
     material: BUCKET
-    buyPrice: '375.5'
-    sellPrice: '-1.0'
     quantity: 6
+    buyPrice:
+      fixed: '375.5'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"8b91409b-2df1-4124-9200-42e256d70c77"':
     material: WATER_BUCKET
-    buyPrice: '400.5'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '400.5'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"54bc4a0f-7c79-4bde-a0d9-0404aefe5a6e"':
     material: WOODEN_SHOVEL
-    buyPrice: '75.0'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '75.0'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
@@ -271,8 +286,10 @@ items:
       Damage: 0
   '"80cb63ef-e31e-406c-8d63-dfe2baf738fe"':
     material: GOLDEN_AXE
-    buyPrice: '1000.0'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '1000.0'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
@@ -281,8 +298,10 @@ items:
       Damage: 0
   '"d12ccf04-5d9d-413b-8466-948ee4491734"':
     material: IRON_CHESTPLATE
-    buyPrice: '2500.0'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '2500.0'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
@@ -291,8 +310,10 @@ items:
       Damage: 0
   '"31955dca-4a8b-45b1-a793-54a592257569"':
     material: GOLDEN_CHESTPLATE
-    buyPrice: '1750.6'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '1750.6'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
@@ -301,8 +322,10 @@ items:
       Damage: 0
   '"ca9d780e-78e9-4160-938e-43d6a8b43be0"':
     material: FISHING_ROD
-    buyPrice: '750.7'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '750.7'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
@@ -311,8 +334,10 @@ items:
       Damage: 0
   '"61220c74-fda2-4396-b244-f1efafa89dc5"':
     material: LEATHER_BOOTS
-    buyPrice: '95.7'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '95.7'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
@@ -321,24 +346,30 @@ items:
       Damage: 0
   '"3d14143b-9262-48a2-a960-fca8dc5c62a2"':
     material: SADDLE
-    buyPrice: '2500.0'
-    sellPrice: '185.5'
+    buyPrice:
+      fixed: '2500.0'
+    sellPrice:
+      fixed: '185.5'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"ac2fdd47-7f64-4d08-a822-260a05bf2672"':
     material: DIAMOND_HORSE_ARMOR
-    buyPrice: '10000.0'
-    sellPrice: '1000.0'
+    buyPrice:
+      fixed: '10000.0'
+    sellPrice:
+      fixed: '1000.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"bfcb8f43-2a65-45e4-a276-c6391cc83b6c"':
     material: GOLDEN_PICKAXE
-    buyPrice: '1000.0'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '1000.0'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
@@ -347,8 +378,10 @@ items:
       Damage: 0
   '"5ecb6586-8dde-4de3-b9bf-27162710d7ba"':
     material: CHAINMAIL_BOOTS
-    buyPrice: '275.6'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '275.6'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
@@ -357,17 +390,21 @@ items:
       Damage: 0
   '"2d36526c-2421-4a20-aac9-758a553cd988"':
     material: EXPERIENCE_BOTTLE
-    buyPrice: '500.0'
-    sellPrice: '-1.0'
     quantity: 16
+    buyPrice:
+      fixed: '500.0'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"63e909af-57eb-4c88-a128-5a737f9b76a5"':
     material: CHAINMAIL_HELMET
-    buyPrice: '350.05'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '350.05'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
@@ -376,16 +413,20 @@ items:
       Damage: 0
   '"63ccdf5d-4c5a-4ae8-b50e-f805ac374044"':
     material: LAVA_BUCKET
-    buyPrice: '450.75'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '450.75'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"41391a59-ce21-4584-a9fd-0d70d8c38f50"':
     material: DIAMOND_PICKAXE
-    buyPrice: '15000.0'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '15000.0'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
@@ -394,8 +435,10 @@ items:
       Damage: 0
   '"883c128b-803b-499c-9d66-9b33bd06400b"':
     material: DIAMOND_SWORD
-    buyPrice: '7500.0'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '7500.0'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
@@ -404,8 +447,10 @@ items:
       Damage: 0
   '"5ea02ad0-4c40-43b3-8ff5-7c75301cf840"':
     material: ELYTRA
-    buyPrice: '50000.0'
-    sellPrice: '5000.0'
+    buyPrice:
+      fixed: '50000.0'
+    sellPrice:
+      fixed: '5000.0'
     rarity: Common
     econ:
       name: vault
@@ -414,8 +459,10 @@ items:
       Damage: 0
   '"b4adfc22-6f13-4b1f-9bc0-bb3e2a7ac80d"':
     material: IRON_SWORD
-    buyPrice: '1250.0'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '1250.0'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
@@ -424,8 +471,10 @@ items:
       Damage: 0
   '"98903fec-0ea4-4631-85a0-8d9d5579f5d6"':
     material: DIAMOND_SHOVEL
-    buyPrice: '5000.0'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '5000.0'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
@@ -434,16 +483,20 @@ items:
       Damage: 0
   '"05817db0-b55f-47d8-848b-2983d528c12b"':
     material: LEATHER_HORSE_ARMOR
-    buyPrice: '1000.0'
-    sellPrice: '100.0'
+    buyPrice:
+      fixed: '1000.0'
+    sellPrice:
+      fixed: '100.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"ee899c54-cc91-4aba-8700-1735912dee5b"':
     material: STONE_SWORD
-    buyPrice: '500.0'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '500.0'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
@@ -452,8 +505,10 @@ items:
       Damage: 0
   '"3591cd8a-484a-4319-b46b-3a8bb37fc7e1"':
     material: STONE_PICKAXE
-    buyPrice: '780.75'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '780.75'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
@@ -462,8 +517,10 @@ items:
       Damage: 0
   '"7ff308d4-359d-441b-ae7b-6f8d7f2d97bf"':
     material: TRIDENT
-    buyPrice: '275.5'
-    sellPrice: '5.6'
+    buyPrice:
+      fixed: '275.5'
+    sellPrice:
+      fixed: '5.6'
     rarity: Common
     econ:
       name: vault
@@ -472,8 +529,10 @@ items:
       Damage: 0
   '"9ab6aec2-0e75-46ab-9cf4-846657609d85"':
     material: IRON_LEGGINGS
-    buyPrice: '2250.0'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '2250.0'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
@@ -482,8 +541,10 @@ items:
       Damage: 0
   '"e8ba87bb-8d7b-48af-bc8c-ff45c5717422"':
     material: DIAMOND_LEGGINGS
-    buyPrice: '18000.0'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '18000.0'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
@@ -492,16 +553,20 @@ items:
       Damage: 0
   '"18950d26-f96e-470c-b87c-8c91337beaa8"':
     material: MINECART
-    buyPrice: '1675.5'
-    sellPrice: '6.05'
+    buyPrice:
+      fixed: '1675.5'
+    sellPrice:
+      fixed: '6.05'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"3bb87622-d651-48b0-9280-06533bb5ff88"':
     material: LEATHER_CHESTPLATE
-    buyPrice: '125.85'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '125.85'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
@@ -510,16 +575,20 @@ items:
       Damage: 0
   '"f2cb9094-e61f-48f8-969c-2e488ac6ef73"':
     material: GOLDEN_HORSE_ARMOR
-    buyPrice: '3000.0'
-    sellPrice: '300.0'
+    buyPrice:
+      fixed: '3000.0'
+    sellPrice:
+      fixed: '300.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"9928c286-104e-40c9-b4e6-1a5cf206f2eb"':
     material: CHAINMAIL_LEGGINGS
-    buyPrice: '500.55'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '500.55'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
@@ -528,8 +597,10 @@ items:
       Damage: 0
   '"4388f3b2-01df-46df-bff4-dc7ad6fc286e"':
     material: IRON_SHOVEL
-    buyPrice: '1250.0'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '1250.0'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
@@ -538,8 +609,10 @@ items:
       Damage: 0
   '"bd1c5a1b-b968-4d7a-a0d8-a83d44288403"':
     material: DIAMOND_AXE
-    buyPrice: '15000.0'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '15000.0'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
@@ -548,8 +621,10 @@ items:
       Damage: 0
   '"5b01449d-ec14-432f-bced-3e9896d06099"':
     material: WOODEN_AXE
-    buyPrice: '130.0'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '130.0'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
@@ -558,8 +633,10 @@ items:
       Damage: 0
   '"49b990de-e5bb-4a6e-821b-d78e3960450b"':
     material: DIAMOND_CHESTPLATE
-    buyPrice: '20000.0'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '20000.0'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
@@ -568,8 +645,10 @@ items:
       Damage: 0
   '"3da37171-c1aa-4427-ba7c-1be29f3e9d78"':
     material: WOODEN_SWORD
-    buyPrice: '125.0'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '125.0'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
@@ -578,17 +657,21 @@ items:
       Damage: 0
   '"5e7f2101-d161-4703-859e-43d3dc8b29f7"':
     material: LEAD
-    buyPrice: '670.5'
-    sellPrice: '16.8'
     quantity: 4
+    buyPrice:
+      fixed: '670.5'
+    sellPrice:
+      fixed: '16.8'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"a6402e9a-22aa-4956-9dd2-35dffa0c6524"':
     material: SHEARS
-    buyPrice: '450.8'
-    sellPrice: '14.8'
+    buyPrice:
+      fixed: '450.8'
+    sellPrice:
+      fixed: '14.8'
     rarity: Common
     econ:
       name: vault
@@ -597,8 +680,10 @@ items:
       Damage: 0
   '"78adbe6d-9b70-4e66-b12a-0069f97babc2"':
     material: BOW
-    buyPrice: '500.75'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '500.75'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
@@ -607,8 +692,10 @@ items:
       Damage: 0
   '"cf8bef44-acc4-40d2-be35-fa28caa27ae3"':
     material: IRON_AXE
-    buyPrice: '1700.0'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '1700.0'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
@@ -617,8 +704,10 @@ items:
       Damage: 0
   '"ac1e2882-3558-4ee8-961d-20c3c1232232"':
     material: LEATHER_LEGGINGS
-    buyPrice: '115.85'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '115.85'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
@@ -627,34 +716,42 @@ items:
       Damage: 0
   '"5606652d-46ef-4193-a9e0-0f4857f66af3"':
     material: CLOCK
-    buyPrice: '175.7'
-    sellPrice: '34.8'
     quantity: 4
+    buyPrice:
+      fixed: '175.7'
+    sellPrice:
+      fixed: '34.8'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"458594b9-bd62-4535-ab1a-ae2e36763a69"':
     material: NAME_TAG
-    buyPrice: '5000.0'
-    sellPrice: '250.5'
+    buyPrice:
+      fixed: '5000.0'
+    sellPrice:
+      fixed: '250.5'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"f5f59ba5-e89c-4ac8-8f47-70620c438c10"':
     material: COMPASS
-    buyPrice: '150.6'
-    sellPrice: '25.7'
     quantity: 4
+    buyPrice:
+      fixed: '150.6'
+    sellPrice:
+      fixed: '25.7'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"30cf251f-e3f2-401f-84aa-bcb6e3170f2a"':
     material: LEATHER_HELMET
-    buyPrice: '105.7'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '105.7'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
@@ -663,8 +760,10 @@ items:
       Damage: 0
   '"4306a000-5b4e-4158-a3dc-2011535274ba"':
     material: FLINT_AND_STEEL
-    buyPrice: '205.5'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '205.5'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
@@ -673,8 +772,10 @@ items:
       Damage: 0
   '"3f476c24-5d69-4f66-abf8-25fcd5343319"':
     material: IRON_PICKAXE
-    buyPrice: '1700.0'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '1700.0'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
@@ -683,8 +784,10 @@ items:
       Damage: 0
   '"9af9d6e4-d5ac-493e-b9ce-aa75c7f014bb"':
     material: STONE_SHOVEL
-    buyPrice: '345.6'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '345.6'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
@@ -693,8 +796,10 @@ items:
       Damage: 0
   '"3005c373-45ab-4696-ba4a-f303cb9c12a7"':
     material: CHAINMAIL_CHESTPLATE
-    buyPrice: '570.6'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '570.6'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
@@ -703,8 +808,10 @@ items:
       Damage: 0
   '"2276254d-4197-4f3a-90fc-580d61c53fc4"':
     material: GOLDEN_HELMET
-    buyPrice: '1050.7'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '1050.7'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
@@ -713,8 +820,10 @@ items:
       Damage: 0
   '"dd5d8552-5881-4e0a-8dea-a5814f21fa44"':
     material: GOLDEN_BOOTS
-    buyPrice: '995.7'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '995.7'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
@@ -723,8 +832,10 @@ items:
       Damage: 0
   '"16026000-813a-4b2c-84e0-847e5e1dd40a"':
     material: DIAMOND_HELMET
-    buyPrice: '15000.0'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '15000.0'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
@@ -733,8 +844,10 @@ items:
       Damage: 0
   '"1cb30af7-e34d-43b0-a271-cef8c832b1af"':
     material: IRON_BOOTS
-    buyPrice: '1025.5'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '1025.5'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
@@ -743,8 +856,10 @@ items:
       Damage: 0
   '"873003b3-efb6-452d-aa83-365002813fa3"':
     material: TURTLE_HELMET
-    buyPrice: '12500.0'
-    sellPrice: '1000.0'
+    buyPrice:
+      fixed: '12500.0'
+    sellPrice:
+      fixed: '1000.0'
     rarity: Common
     econ:
       name: vault
@@ -753,17 +868,21 @@ items:
       Damage: 0
   '"5259120c-be29-425f-8136-3538e6052ff9"':
     material: ARROW
-    buyPrice: '50.0'
-    sellPrice: '-1.0'
     quantity: 16
+    buyPrice:
+      fixed: '50.0'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"0cb6530c-28f6-4230-895b-f940861b874c"':
     material: GOLDEN_SHOVEL
-    buyPrice: '700.0'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '700.0'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
@@ -772,8 +891,10 @@ items:
       Damage: 0
   '"6ddda009-cabd-4e6a-986a-a35603117a40"':
     material: WOODEN_PICKAXE
-    buyPrice: '130.0'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '130.0'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault

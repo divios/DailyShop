@@ -1,6 +1,6 @@
 id: drops
 timer: 86400
-timeStamp: lun, 6 dic 2021 15:37:00
+timeStamp: jue, 16 sept 2021 11:47:34
 shop:
   title: drops
   size: 45
@@ -229,187 +229,229 @@ shop:
 items:
   '"23414fea-0a55-4219-bf9e-4572e2b69dd8"':
     material: PHANTOM_MEMBRANE
-    buyPrice: '10500.5'
-    sellPrice: '1000.0'
     quantity: 4
+    buyPrice:
+      fixed: '10500.5'
+    sellPrice:
+      fixed: '1000.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"4acabaed-b741-4c9c-a544-6479300bd757"':
     material: RABBIT_FOOT
-    buyPrice: '115.5'
-    sellPrice: '-1.0'
     quantity: 6
+    buyPrice:
+      fixed: '115.5'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"0acd6e22-2b9f-4857-b2a9-7cbe3650cec7"':
     material: PRISMARINE_SHARD
-    buyPrice: '1250.75'
-    sellPrice: '80.75'
     quantity: 4
+    buyPrice:
+      fixed: '1250.75'
+    sellPrice:
+      fixed: '80.75'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"93709571-100b-4dbf-b0da-30039aa13048"':
     material: SPIDER_EYE
-    buyPrice: '125.5'
-    sellPrice: '15.5'
     quantity: 8
+    buyPrice:
+      fixed: '125.5'
+    sellPrice:
+      fixed: '15.5'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"c5dabd57-6221-47b6-b7e2-f6b9e914974f"':
     material: INK_SAC
-    buyPrice: '105.5'
-    sellPrice: '-1.0'
     quantity: 16
+    buyPrice:
+      fixed: '105.5'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"d831e4d6-79bd-45e6-a223-2e7911c66755"':
     material: PRISMARINE_CRYSTALS
-    buyPrice: '1875.5'
-    sellPrice: '120.5'
     quantity: 4
+    buyPrice:
+      fixed: '1875.5'
+    sellPrice:
+      fixed: '120.5'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"5053a4ca-be3d-4dfd-9799-67ee5f8af4ab"':
     material: WHITE_WOOL
-    buyPrice: '65.5'
-    sellPrice: '-1.0'
     quantity: 8
+    buyPrice:
+      fixed: '65.5'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"f68e75ba-7e5c-4cb3-9118-83ed2fec301f"':
     material: EGG
-    buyPrice: '80.55'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '80.55'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"2f14cbc4-78a4-4fda-bb72-4dcef004f34c"':
     material: BONE
-    buyPrice: '205.5'
-    sellPrice: '20.8'
     quantity: 4
+    buyPrice:
+      fixed: '205.5'
+    sellPrice:
+      fixed: '20.8'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"2b494956-a033-40c8-ba74-44df4585977a"':
     material: MAGMA_CREAM
-    buyPrice: '1850.5'
-    sellPrice: '250.8'
     quantity: 2
+    buyPrice:
+      fixed: '1850.5'
+    sellPrice:
+      fixed: '250.8'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"7f74e471-6908-47c5-a7d3-30a77bee78ff"':
     material: ENDER_PEARL
-    buyPrice: '1050.5'
-    sellPrice: '105.85'
     quantity: 2
+    buyPrice:
+      fixed: '1050.5'
+    sellPrice:
+      fixed: '105.85'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"28c8faa5-c6f0-45b0-a203-ffa028cc15f0"':
     material: STRING
-    buyPrice: '95.5'
-    sellPrice: '8.75'
     quantity: 16
+    buyPrice:
+      fixed: '95.5'
+    sellPrice:
+      fixed: '8.75'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"7ab88af8-263b-4639-a204-7fdd5f00cb25"':
     material: RABBIT_HIDE
-    buyPrice: '100.25'
-    sellPrice: '-1.0'
     quantity: 4
+    buyPrice:
+      fixed: '100.25'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"1a05f61d-7273-4706-90f1-14406849cbfd"':
     material: LEATHER
-    buyPrice: '125.5'
-    sellPrice: '-1.0'
     quantity: 4
+    buyPrice:
+      fixed: '125.5'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"ce9186d3-8b5c-4b69-a929-7fdfe4065836"':
     material: ROTTEN_FLESH
-    buyPrice: '75.5'
-    sellPrice: '1.25'
     quantity: 8
+    buyPrice:
+      fixed: '75.5'
+    sellPrice:
+      fixed: '1.25'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"17b61812-fc9f-4a2d-a9db-cc84406be86c"':
     material: ARROW
-    buyPrice: '50.0'
-    sellPrice: '-1.0'
     quantity: 16
+    buyPrice:
+      fixed: '50.0'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"6dba06cf-46fa-4c47-b05c-6cf7dbaccdd3"':
     material: SLIME_BALL
-    buyPrice: '100.5'
-    sellPrice: '12.75'
     quantity: 2
+    buyPrice:
+      fixed: '100.5'
+    sellPrice:
+      fixed: '12.75'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"692e78da-ba9f-460b-a1b4-e10cbad8e9f8"':
     material: GHAST_TEAR
-    buyPrice: '8500.0'
-    sellPrice: '500.85'
     quantity: 2
+    buyPrice:
+      fixed: '8500.0'
+    sellPrice:
+      fixed: '500.85'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"d93137c8-34e9-4372-bb1b-d5d663e542b8"':
     material: BLAZE_ROD
-    buyPrice: '1000.0'
-    sellPrice: '125.5'
+    buyPrice:
+      fixed: '1000.0'
+    sellPrice:
+      fixed: '125.5'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"1f70c4ca-8fc8-4dce-8c00-1e5b691e6296"':
     material: FEATHER
-    buyPrice: '102.5'
-    sellPrice: '-1.0'
     quantity: 4
+    buyPrice:
+      fixed: '102.5'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"5b57720b-1b63-46a4-a76e-91b249311e60"':
     material: GUNPOWDER
-    buyPrice: '235.5'
-    sellPrice: '10.85'
     quantity: 4
+    buyPrice:
+      fixed: '235.5'
+    sellPrice:
+      fixed: '10.85'
     rarity: Common
     econ:
       name: vault

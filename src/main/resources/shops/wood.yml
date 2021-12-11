@@ -1,6 +1,6 @@
 id: wood
 timer: 86400
-timeStamp: lun, 6 dic 2021 15:37:00
+timeStamp: jue, 16 sept 2021 10:59:48
 shop:
   title: wood
   size: 45
@@ -183,240 +183,300 @@ shop:
 items:
   '"fe9ac289-4572-4905-a3d9-b09cb9d5649e"':
     material: ACACIA_WOOD
-    buyPrice: '125.8'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '125.8'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"0ccd0295-7d87-4c8a-b6f0-dcce2b40ae8d"':
     material: STRIPPED_OAK_WOOD
-    buyPrice: '105.75'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '105.75'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"a33e9143-f3f0-403e-8a97-30609d7fff4a"':
     material: BIRCH_LOG
-    buyPrice: '87.5'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '87.5'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"0dbcec4f-4f25-4f9b-8076-c0e4a7d23556"':
     material: STRIPPED_JUNGLE_WOOD
-    buyPrice: '105.75'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '105.75'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"405d7554-9cfe-4109-bebe-5833408469a4"':
     material: BIRCH_WOOD
-    buyPrice: '125.8'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '125.8'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"1212d209-dc8d-4c24-b6f5-2354ee09379d"':
     material: ACACIA_PLANKS
-    buyPrice: '12.75'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '12.75'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"0209d984-60a5-4ba4-808f-bcdfbff7a1a9"':
     material: STRIPPED_ACACIA_LOG
-    buyPrice: '75.8'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '75.8'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"d2d3e2f7-e4e6-4aa5-90c9-45962e3fe94e"':
     material: STRIPPED_SPRUCE_LOG
-    buyPrice: '75.8'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '75.8'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"06d411fb-11ac-4f51-bbf3-961849ebf6a6"':
     material: STRIPPED_DARK_OAK_LOG
-    buyPrice: '75.8'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '75.8'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"c7a90919-fb5d-49b9-a38e-8667594636fd"':
     material: STRIPPED_BIRCH_LOG
-    buyPrice: '75.8'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '75.8'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"12578eb5-5f58-4c8c-9348-aa6ebcbcaf64"':
     material: STRIPPED_SPRUCE_WOOD
-    buyPrice: '105.75'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '105.75'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"423f0f95-fe7c-4c2e-b3aa-c9d19077da82"':
     material: DARK_OAK_PLANKS
-    buyPrice: '12.75'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '12.75'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"070ec713-4f09-4570-aa6f-e58fd37807c7"':
     material: STRIPPED_DARK_OAK_WOOD
-    buyPrice: '105.75'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '105.75'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"79b68ff9-1b91-4b26-8d81-83915476ae07"':
     material: SPRUCE_PLANKS
-    buyPrice: '12.75'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '12.75'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"5f6debfa-4f56-4ea9-a8b0-23aad2c8b6ff"':
     material: STRIPPED_JUNGLE_LOG
-    buyPrice: '75.8'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '75.8'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"a0c56093-d08c-48aa-a467-b1669e236aff"':
     material: BIRCH_PLANKS
-    buyPrice: '12.75'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '12.75'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"e9ae701b-2512-49f3-8850-cb009d405e56"':
     material: STRIPPED_BIRCH_WOOD
-    buyPrice: '105.75'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '105.75'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"11519d3a-f58d-4757-850e-facf4e025493"':
     material: DARK_OAK_WOOD
-    buyPrice: '125.8'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '125.8'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"f52c5a0b-3d74-43fd-9154-f879362277f8"':
     material: JUNGLE_WOOD
-    buyPrice: '125.8'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '125.8'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"60bb4cb5-8207-4566-ad00-19e87c1f7743"':
     material: DARK_OAK_LOG
-    buyPrice: '87.5'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '87.5'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"24b4e4b3-8da5-48f8-8a2c-bafbd85a0409"':
     material: STRIPPED_OAK_LOG
-    buyPrice: '75.8'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '75.8'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"9b2dc4c1-1755-4648-ad44-c327cbef2b97"':
     material: OAK_LOG
-    buyPrice: '87.5'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '87.5'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"aeafb82a-a8c3-455f-b45b-4c83c39c3f67"':
     material: JUNGLE_PLANKS
-    buyPrice: '12.75'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '12.75'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"5e402c25-b3d5-418b-ae5b-0de40834fd9d"':
     material: SPRUCE_LOG
-    buyPrice: '87.5'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '87.5'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"3e7771bb-689a-4f97-8148-886d2f63c7b9"':
     material: ACACIA_LOG
-    buyPrice: '87.5'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '87.5'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"57477372-610f-4270-b15a-98c2f5b2a014"':
     material: STRIPPED_ACACIA_WOOD
-    buyPrice: '105.75'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '105.75'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"ea1c2ee7-52e7-4f57-b744-e37a69c4cf3a"':
     material: SPRUCE_WOOD
-    buyPrice: '125.8'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '125.8'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"9f6b37cd-39a2-46d3-a5bf-3aee83d4fa96"':
     material: JUNGLE_LOG
-    buyPrice: '87.5'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '87.5'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"a6967858-054f-48bc-a0bb-c3383c4fc3d2"':
     material: OAK_WOOD
-    buyPrice: '125.8'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '125.8'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
   '"e8dabf32-6df3-4cc0-aa11-029103139cc2"':
     material: OAK_PLANKS
-    buyPrice: '12.75'
-    sellPrice: '-1.0'
+    buyPrice:
+      fixed: '12.75'
+    sellPrice:
+      fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
