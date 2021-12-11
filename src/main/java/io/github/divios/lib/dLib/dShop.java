@@ -27,6 +27,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.sql.Timestamp;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 public class dShop {
@@ -37,7 +38,7 @@ public class dShop {
     private transient static final encodeOptions serializer = new encodeOptions();
 
     protected String name;
-    protected final Map<UUID, dItem> items = new LinkedHashMap<>();
+    protected final Map<UUID, dItem> items = new ConcurrentHashMap<>();
     protected final syncMenu guis;
 
     protected Timestamp timestamp;
@@ -133,7 +134,7 @@ public class dShop {
      *
      * @return
      */
-    public synchronized String getName() {
+    public String getName() {
         return name;
     }
 
@@ -142,7 +143,7 @@ public class dShop {
      *
      * @param name
      */
-    public synchronized void rename(String name) {
+    public void rename(String name) {
         this.name = name;
     }
 
@@ -152,7 +153,7 @@ public class dShop {
      * @return returns a List of dItems. Note that this list is a copy of the original,
      * any change made to it won't affect the original one
      */
-    public synchronized @NotNull
+    public @NotNull
     Set<dItem> getItems() {
         return Collections.unmodifiableSet(new LinkedHashSet<>(items.values()));
     }
@@ -163,7 +164,7 @@ public class dShop {
      * @param uid the UUID to search
      * @return null if it does not exist
      */
-    public synchronized Optional<dItem> getItem(UUID uid) {
+    public Optional<dItem> getItem(UUID uid) {
         return Optional.ofNullable(items.get(uid));
     }
 
@@ -173,14 +174,14 @@ public class dShop {
      * @param uid the UUID to check
      * @return true if exits, false if not
      */
-    public synchronized boolean hasItem(UUID uid) {
+    public boolean hasItem(UUID uid) {
         return getItem(uid).isPresent();
     }
 
     /**
      * Restocks the items of this shop.
      */
-    public synchronized void reStock() {
+    public void reStock() {
         timestamp = new Timestamp(System.currentTimeMillis());
         Events.callEvent(new reStockShopEvent(this));
         guis.reStock();
@@ -191,7 +192,7 @@ public class dShop {
      *
      * @param newItem
      */
-    public synchronized void updateItem(dItem newItem) {
+    public void updateItem(dItem newItem) {
         UUID uid = newItem.getUid();
         if (uid == null) return;
 
@@ -208,7 +209,7 @@ public class dShop {
     /**
      * Sets the items of this shop
      */
-    public synchronized void setItems(@NotNull Set<dItem> items) {
+    public void setItems(@NotNull Set<dItem> items) {
         Map<UUID, dItem> newItems = new HashMap<>();
         items.forEach(dItem -> newItems.put(dItem.getUid(), dItem));            // Cache values for a O(1) search
 
@@ -233,7 +234,7 @@ public class dShop {
      *
      * @param item item to be added
      */
-    public synchronized void addItem(@NotNull dItem item) {
+    public void addItem(@NotNull dItem item) {
         items.put(item.getUid(), item);
     }
 
@@ -243,7 +244,7 @@ public class dShop {
      * @param uid UUID of the item to be removed
      * @return true if the item was removed. False if not
      */
-    public synchronized boolean removeItem(UUID uid) {
+    public boolean removeItem(UUID uid) {
         dItem removed = items.remove(uid);
         if (removed == null) return false;
         Events.callEvent(new updateItemEvent(uid, updateItemEvent.type.DELETE_ITEM, this));
@@ -263,27 +264,27 @@ public class dShop {
      *
      * @return
      */
-    public synchronized syncMenu getGuis() {
+    public syncMenu getGuis() {
         return guis;
     }
 
-    public synchronized void setTimestamp(Timestamp timestamp) {
+    public void setTimestamp(Timestamp timestamp) {
         this.timestamp = timestamp;
     }
 
-    public synchronized Timestamp getTimestamp() {
+    public Timestamp getTimestamp() {
         return this.timestamp;
     }
 
-    public synchronized int getTimer() {
+    public int getTimer() {
         return timer;
     }
 
-    public synchronized void setTimer(int timer) {
+    public void setTimer(int timer) {
         this.timer = timer;
     }
 
-    public synchronized void destroy() {
+    public void destroy() {
         guis.destroy();
         tasks.forEach(Task::stop);
         tasks.clear();

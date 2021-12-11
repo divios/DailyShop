@@ -36,6 +36,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.stream.IntStream;
 
 @SuppressWarnings({"ConstantConditions", "deprecation", "unchecked", "unused"})
@@ -47,7 +48,7 @@ public class dInventory {
     protected Inventory inv;
     protected final dShop shop;
 
-    protected final TreeSet<Integer> dailyItemsSlots = new TreeSet<>();
+    protected final ConcurrentSkipListSet<Integer> dailyItemsSlots = new ConcurrentSkipListSet<>();
     protected final ConcurrentHashMap<UUID, dItem> buttons = new ConcurrentHashMap<>();
     protected final ConcurrentHashMap<Integer, dItem> buttonsSlot = new ConcurrentHashMap<>();
 

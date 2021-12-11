@@ -5,7 +5,6 @@ import io.github.divios.core_lib.events.Subscription;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.WeightedRandom;
-import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.events.searchStockEvent;
 import io.github.divios.dailyShop.events.updateItemEvent;
@@ -18,7 +17,6 @@ import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.dLib.stock.dStock;
 import io.github.divios.lib.dLib.synchronizedGui.taskPool.updatePool;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
 import java.util.function.Function;
@@ -76,7 +74,7 @@ public class singleGuiImpl implements singleGui {
     }
 
     @Override
-    public synchronized void updateItem(updateItemEvent o) {
+    public void updateItem(updateItemEvent o) {
         updateItemEvent.type type = o.getType();
         dItem toUpdateItem = type == updateItemEvent.type.DELETE_ITEM ? null : shop.getItem(o.getUuid()).get().clone();
 
@@ -100,7 +98,7 @@ public class singleGuiImpl implements singleGui {
     }
 
     @Override
-    public synchronized void updateTask() {
+    public void updateTask() {
         loreStrategy strategy = new shopItemsLore();
         Set<Integer> dailySlots = own.getDailyItemsSlots();
         if (dailySlots.isEmpty()) return;
@@ -136,7 +134,7 @@ public class singleGuiImpl implements singleGui {
     }
 
     @Override
-    public synchronized void restock() {
+    public void restock() {
         Set<dItem> newItems = dRandomItemsSelector.of(shop.getItems(), dItem -> dItem.applyLore(loreStrategy, p))
                 .roll(own.dailyItemsSlots.size());
         own.restock(newItems);
@@ -158,7 +156,7 @@ public class singleGuiImpl implements singleGui {
     }
 
     @Override
-    public synchronized void destroy() {
+    public void destroy() {
         if (isDestroyed) return;
         isDestroyed = true;
         events.forEach(Subscription::unregister);
@@ -167,14 +165,14 @@ public class singleGuiImpl implements singleGui {
     }
 
     @Override
-    public synchronized int hash() {
+    public int hash() {
         return Arrays.stream(own.getInventory().getContents())
                 .mapToInt(value -> Utils.isEmpty(value) ? 0 : value.hashCode())
                 .sum();
     }
 
     @Override
-    public synchronized singleGui clone() {
+    public singleGui clone() {
         return new singleGuiImpl(p, shop, own);
     }
 
