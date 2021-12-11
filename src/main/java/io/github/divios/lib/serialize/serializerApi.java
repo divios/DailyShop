@@ -8,6 +8,7 @@ import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.utils.FileUtils;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.dShop;
+import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.util.Objects;
@@ -21,7 +22,7 @@ public class serializerApi {
     public static void saveShopToFile(dShop shop) {
         try {
             File data = new File(shopsFolder.get(), shop.getName() + ".yml");
-            FileUtils.toYaml(dShop.encodeOptions.JSON.toJson(shop), data);
+            FileUtils.dumpToYaml(dShop.encodeOptions.JSON.toJson(shop), data);
         } catch (Exception e) {
             Log.info("There was a problem saving the shop " + shop.getName());
             e.printStackTrace();
@@ -41,6 +42,18 @@ public class serializerApi {
 
     public static CompletableFuture<dShop> getShopFromFileAsync(File data) {
         return CompletableFuture.supplyAsync(() -> getShopFromFile(data));
+    }
+
+    public static void deleteShop(String name) {
+        File[] files = shopsFolder.get().listFiles((dir, name1) -> name1.endsWith(".yml"));
+        if (files == null) throw new RuntimeException("shops directory does not exits");
+        for (int i = 0; i < files.length; i++) {
+            YamlConfiguration yaml = YamlConfiguration.loadConfiguration(files[i]);
+            if (yaml.get("id").equals(name)) {
+                files[i].delete();
+                break;
+            }
+        }
     }
 
 }
