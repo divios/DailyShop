@@ -54,7 +54,7 @@ dependencies {
     compileOnly group: "io.lumine", name: "MythicLib", version: "1.1.3"
 
     implementation 'org.jetbrains:annotations:22.0.0'
-    implementation 'com.github.PikaMug:LocaleLib:2.2'
+    implementation 'com.github.PikaMug:LocaleLib:2.4'
     implementation 'org.bstats:bstats-bukkit:2.2.1'
     implementation 'io.github.divios:core_lib_api:6.2.2'
 
@@ -94,7 +94,7 @@ task updateJars {
     doLast {
         copy {
             from 'build/libs/DailyShop-' + pluginVersion + "-all.jar"
-            into 'C:\\Users\\serbe\\OneDrive\\Desktop\\server_pruebas\\server\\plugins'
+            into '/Users/sergiobernalparrondo/Desktop/server/plugins'
             rename ("DailyShop-" + pluginVersion + "-all.jar"
                     , "DailyShop-" + pluginVersion + ".jar")
         }
