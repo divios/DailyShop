@@ -65,6 +65,7 @@ public class shopsResource {
             } else {                                                    // Update shops if exist
                 dShop currentShop = sManager.getShop(shop.getName()).get();
 
+                currentShop.setTimer(shop.getTimer());
                 currentShop.updateShopGui(shop.getGuis().getDefault().skeleton());
                 currentShop.setItems(shop.getItems());
             }
