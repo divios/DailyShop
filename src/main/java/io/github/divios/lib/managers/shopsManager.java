@@ -164,6 +164,7 @@ public class shopsManager {
         shops.remove(result.get());
         result.get().destroy();
         dManager.deleteShop(name);
+        serializerApi.deleteShop(name);
     }
 
     public void deleteShopAsync(String name) {
