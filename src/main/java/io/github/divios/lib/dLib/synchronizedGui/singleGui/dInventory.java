@@ -7,6 +7,7 @@ import io.github.divios.core_lib.inventory.inventoryUtils;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
+import io.github.divios.dailyShop.transaction.sellTransaction;
 import io.github.divios.dailyShop.transaction.transaction;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.dItem;
@@ -406,8 +407,8 @@ public class dInventory {
                             if (dailyItemsSlots.contains(itemClicked.getSlot())) {
                                 if (e.isLeftClick())
                                     transaction.init((Player) e.getWhoClicked(), buttons.get(itemClicked.getUid()), shop);
-                                if (e.isRightClick())
-                                    transaction.init((Player) e.getWhoClicked(), buttons.get(itemClicked.getUid()), shop);
+                                else if (e.isRightClick())
+                                    sellTransaction.create((Player) e.getWhoClicked(), buttons.get(itemClicked.getUid()), shop);
                             } else {
                                 itemClicked.getAction().stream((dAction, s) -> dAction.run((Player) e.getWhoClicked(), s));
                             }
