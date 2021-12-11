@@ -102,27 +102,37 @@ public class singleGuiImpl implements singleGui {
     @Override
     public synchronized void updateTask() {
         loreStrategy strategy = new shopItemsLore();
+        Set<Integer> dailySlots = own.getDailyItemsSlots();
+        if (dailySlots.isEmpty()) return;
         Map<Integer, dItem> buttons = own.getButtonsSlots();
 
-        own.getDailyItemsSlots()
-                .forEach(integer -> {
-                    try {
-                        dItem oldItem = shop.getItem(buttons.get(integer).getUid()).orElse(null);
-                        if (oldItem == null || buttons.get(integer) == null) return;  // Avoid spam if somehow any error arise
-                        oldItem = oldItem.clone();
+        try {
+            own.getButtonsSlots().forEach((integer, dItem) -> {
+                dItem oldItem;
+                ItemBuilder newItem;
 
-                        oldItem.setStock(buttons.get(integer).getStock());   // Set the stock of the actual item
+                if (dailySlots.contains(integer)) {
+                    oldItem = shop.getItem(dItem.getUid()).orElse(null);
+                    if (oldItem == null || buttons.get(integer) == null) return;
+                    oldItem = oldItem.clone();
+                    oldItem.setStock(buttons.get(integer).getStock());   // Set the stock of the actual item
 
-                        ItemBuilder newItem = ItemBuilder.of(oldItem.getItem().clone()).setLore(Collections.emptyList());
-                        newItem = newItem.setName(PlaceholderAPIWrapper.setPlaceholders(p, ItemUtils.getName(newItem)));
+                } else
+                    oldItem = buttons.get(integer);
 
-                        for (String s : oldItem.getLore())
-                            newItem = newItem.addLore(PlaceholderAPIWrapper.setPlaceholders(p, s));
+                newItem = ItemBuilder.of(oldItem.getItem().clone()).setLore(Collections.emptyList());
+                newItem = newItem.setName(PlaceholderAPIWrapper.setPlaceholders(p, ItemUtils.getName(oldItem.getRawItem())));
 
-                        own.getInventory().setItem(integer, strategy.applyLore(newItem, p));
-                    } catch (Exception ignored) {
-                    }
-                });
+                for (String s : oldItem.getLore())
+                    newItem = newItem.addLore(PlaceholderAPIWrapper.setPlaceholders(p, s));
+
+                own.getInventory().setItem(integer, newItem);
+
+            });
+
+        } catch (Exception ignored) {
+        }
+
     }
 
     @Override
