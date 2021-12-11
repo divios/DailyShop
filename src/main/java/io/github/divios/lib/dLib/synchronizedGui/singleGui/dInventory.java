@@ -219,6 +219,7 @@ public class dInventory {
      * @return The item that was removed if any.
      */
     public dItem removeButton(UUID uuid) {
+        if (uuid == null) return null;      // ConcurrentHashMap throws error on null keys
         dItem removedItem = buttons.remove(uuid);
         if (removedItem != null) {
             buttonsSlot.remove(removedItem.getSlot());
