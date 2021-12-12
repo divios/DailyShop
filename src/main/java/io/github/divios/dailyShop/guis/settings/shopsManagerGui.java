@@ -214,8 +214,10 @@ public class shopsManagerGui {
             confirmIH.builder()
                     .withPlayer(p)
                     .withAction(aBoolean -> {
-                        if (aBoolean)
+                        if (aBoolean) {
                             shopsManager.getInstance().deleteShop(shop.getName());
+                            serializerApi.deleteShop(shop.getName());
+                        }
                         refresh(p);
                     })
                     .withItem(selected)
