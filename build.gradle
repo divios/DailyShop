@@ -43,8 +43,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly "org.spigotmc:spigot:1.17-R0.1-SNAPSHOT"
-    compileOnly group: "org.spigotmc", name: "spigot-api", version: "1.17-R0.1-SNAPSHOT"
+    compileOnly group: "org.spigotmc", name: "spigot-api", version: "1.18-R0.1-SNAPSHOT"
     compileOnly 'com.github.MilkBowl:VaultAPI:1.7'
     compileOnly 'me.clip:placeholderapi:2.10.9'
     compileOnly 'com.mojang:authlib:1.5.21'
@@ -56,7 +55,7 @@ dependencies {
     implementation 'org.jetbrains:annotations:22.0.0'
     implementation 'com.github.PikaMug:LocaleLib:2.2'
     implementation 'org.bstats:bstats-bukkit:2.2.1'
-    implementation 'io.github.divios:core_lib_api:6.1.8'
+    implementation 'io.github.divios:core_lib_api:6.2.2'
 
     compileOnly fileTree(dir: 'libs', include: ['*.jar'])
     compileOnly fileTree(dir: 'libsI', include: ['*.jar'])
