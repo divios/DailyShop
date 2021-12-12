@@ -44,6 +44,8 @@ public class dShop {
     protected Timestamp timestamp;
     protected int timer;
 
+    boolean announce_restock = true;
+
     protected final Set<Task> tasks = new HashSet<>();
     protected final Set<Subscription> listeners = new HashSet<>();
 
@@ -184,7 +186,7 @@ public class dShop {
     public void reStock() {
         timestamp = new Timestamp(System.currentTimeMillis());
         Events.callEvent(new reStockShopEvent(this));
-        guis.reStock();
+        guis.reStock(announce_restock);
     }
 
     /**
@@ -278,6 +280,14 @@ public class dShop {
 
     public int getTimer() {
         return timer;
+    }
+
+    public boolean get_announce() {
+        return announce_restock;
+    }
+
+    public void set_announce(boolean announce_restock) {
+        this.announce_restock = announce_restock;
     }
 
     public void setTimer(int timer) {

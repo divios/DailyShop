@@ -12,6 +12,7 @@ import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.dLib.synchronizedGui.singleGui.dInventory;
 
 import java.lang.reflect.Type;
+import java.sql.Time;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -31,17 +32,25 @@ public class dShopAdapter implements JsonSerializer<dShop>, JsonDeserializer<dSh
     public dShop deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
         JsonObject object = jsonElement.getAsJsonObject();
 
+        String id;
+        int[] timer = {86400};
+        Timestamp timestamp;
+        boolean announce_restock[] = {true};
+
         Preconditions.checkArgument(object.has("id"), "A shop needs an ID");
         Preconditions.checkArgument(object.has("items"), "A shop needs items");
-        if (object.has("timer")) Preconditions.checkArgument(Utils.testRunnable(() -> object.get("timer").getAsInt()), "Timer needs to be an integer");
+        if (object.has("timer")) Preconditions.checkArgument(Utils.testRunnable(() -> timer[0] = object.get("timer").getAsInt()), "Timer needs to be an integer");
+        Preconditions.checkArgument(timer[0] >= 50, "timer needs to be >= 50");
+        if (object.has("announce_restock")) Preconditions.checkArgument(Utils.testRunnable(() -> announce_restock[0] = object.get("announce_restock").getAsBoolean()));
 
         dShop deserializedShop;
 
-        String id = object.get("id").getAsString();
-        int timer = object.has("timer") ? object.get("timer").getAsInt() : DailyShop.getInstance().configM.getSettingsYml().DEFAULT_TIMER;
-        Timestamp timestamp = object.has("timestamp") ? new Timestamp(wrappedParse(object.get("timestamp").getAsString()).getTime()) : new Timestamp(System.currentTimeMillis());
+        id = object.get("id").getAsString();
+        timer[0] = object.has("timer") ? object.get("timer").getAsInt() : DailyShop.getInstance().configM.getSettingsYml().DEFAULT_TIMER;
+        timestamp = object.has("timestamp") ? new Timestamp(wrappedParse(object.get("timestamp").getAsString()).getTime()) : new Timestamp(System.currentTimeMillis());
 
-        deserializedShop = new dShop(id, timer, timestamp);
+        deserializedShop = new dShop(id, timer[0], timestamp);
+        deserializedShop.set_announce(announce_restock[0]);
 
         // Deserialize shop display
         if (object.has("shop")) {
