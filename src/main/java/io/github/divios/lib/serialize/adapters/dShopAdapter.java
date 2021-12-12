@@ -78,7 +78,8 @@ public class dShopAdapter implements JsonSerializer<dShop>, JsonDeserializer<dSh
         return JsonBuilder.object()
                 .add("id", shop.getName())
                 .add("timer", shop.getTimer())
-                .add("timeStamp", dateFormat.format(shop.getTimestamp()))
+                .add("announce_restock", shop.get_announce())
+                //.add("timeStamp", dateFormat.format(shop.getTimestamp()))
                 .add("shop", gson.toJsonTree(shop.getGuis().getDefault()))
                 .add("items", gson.toJsonTree(parseUUIDs(shop.getItems())))
                 .build();
