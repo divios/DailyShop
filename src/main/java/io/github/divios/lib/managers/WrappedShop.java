@@ -42,7 +42,7 @@ public class WrappedShop extends dShop {
     @Override
     public synchronized void reStock() {
         super.reStock();
-        serializerApi.saveShopToFileAsync(this);     // save new timestamp
+        //serializerApi.saveShopToFileAsync(this);     // save new timestamp
         dManager.updateTimeStampAsync(this.name, this.timestamp);
         dManager.updateGuiAsync(this.name, this.guis);
     }
