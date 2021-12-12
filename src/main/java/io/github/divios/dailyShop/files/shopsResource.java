@@ -66,6 +66,7 @@ public class shopsResource {
                 dShop currentShop = sManager.getShop(shop.getName()).get();
 
                 currentShop.setTimer(shop.getTimer());
+                currentShop.set_announce(shop.get_announce());
                 currentShop.updateShopGui(shop.getGuis().getDefault().skeleton());
                 currentShop.setItems(shop.getItems());
             }
