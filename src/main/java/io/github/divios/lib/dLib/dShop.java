@@ -186,7 +186,7 @@ public class dShop {
     public void reStock() {
         timestamp = new Timestamp(System.currentTimeMillis());
         Events.callEvent(new reStockShopEvent(this));
-        guis.reStock(announce_restock);
+        guis.reStock(!announce_restock);
     }
 
     /**
