@@ -29,7 +29,7 @@ lang:
     create_lore: "&7Create a new shop"
     return: "&8> &cReturn"
     return_lore: "&7Click to close the menu"
-    lore: "&7Shop basic info||&7Timer: &e{timer}|&7Current Timer: &e{c_timer}|&7Items: &e{amount}||&8- &9LEFT CLICK|  &7Manage items||&8- &9RIGHT CLICK|  &7Delete shop||&8- &9MIDDLE CLICK|  &7Change shop name||&8- &9SHIFT LEFT CLICK|  &7Customize shop||&8- &9Q + CLICK|   &7Change timer"
+    lore: "&7Shop basic info||&7Timer: &e{timer}|&7Current Timer: &e{c_timer}|&7Items: &e{amount}||&8- &9LEFT CLICK|  &7Manage items||&8- &9RIGHT CLICK|  &7Delete shop||&8- &9SHIFT LEFT CLICK|  &7Customize shop||&8- &9Q + CLICK|   &7Change timer"
   add_item_gui:
     title: "&8Create Item"
     from_zero: "&8> &cCreate item from zero"

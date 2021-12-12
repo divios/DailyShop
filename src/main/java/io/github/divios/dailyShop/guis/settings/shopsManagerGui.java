@@ -143,46 +143,6 @@ public class shopsManagerGui {
             inv.destroy();
             shop.openCustomizeGui(p);
 
-        } else if (e.getClick().equals(ClickType.MIDDLE)) {   // rename
-
-            ChatPrompt.builder()
-                    .withPlayer(p)
-                    .withResponse(s -> {
-
-                        if (s.isEmpty()) {
-                            Utils.sendMsg(p, "&7Can't be empty");
-                            Schedulers.sync().run(() -> refresh(p));
-                            return;
-                        }
-
-                        if (s.split("\\s+").length > 1) {
-                            Utils.sendMsg(p, "&7Name cannot have white spaces");
-                            Schedulers.sync().run(() -> refresh(p));
-                            return;
-                        }
-
-                        Pattern pattern = Pattern.compile("[!@#$%&*()_+=|<>?{}\\[\\]~-]");
-                        Matcher m = pattern.matcher(s);
-                        if (m.find()) {
-                            Utils.sendMsg(p, "&7Name cannot contain special characters");
-                            Schedulers.sync().run(() -> refresh(p));
-                            return;
-                        }
-
-                        if (sManager.getShop(s).isPresent()) {
-                            Utils.sendMsg(p, "&7Already Exist");
-                            Schedulers.sync().run(() -> refresh(p));
-                            return;
-                        }
-
-                        shop.rename(s.toLowerCase());
-                        serializerApi.saveShopToFileAsync(shop);
-                        Schedulers.sync().run(() -> refresh(p));
-                    })
-                    .withCancel(cancelReason -> Schedulers.sync().run(() -> refresh(p)))
-                    .withTitle("&b&lInput new Shop name")
-                    .prompt();
-
         } else if (e.getClick().equals(ClickType.DROP)) {       // change timer
 
             ChatPrompt.builder()
