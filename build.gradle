@@ -44,8 +44,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly "org.spigotmc:spigot:1.17-R0.1-SNAPSHOT"
-    compileOnly group: "org.spigotmc", name: "spigot-api", version: "1.17-R0.1-SNAPSHOT"
+    compileOnly group: "org.spigotmc", name: "spigot-api", version: "1.18-R0.1-SNAPSHOT"
     compileOnly 'com.github.MilkBowl:VaultAPI:1.7'
     compileOnly 'me.clip:placeholderapi:2.10.9'
     compileOnly 'com.mojang:authlib:1.5.21'
