@@ -40,7 +40,7 @@ public class dShopAdapter implements JsonSerializer<dShop>, JsonDeserializer<dSh
         Preconditions.checkArgument(object.has("id"), "A shop needs an ID");
         Preconditions.checkArgument(object.has("items"), "A shop needs items");
         if (object.has("timer")) Preconditions.checkArgument(Utils.testRunnable(() -> timer[0] = object.get("timer").getAsInt()), "Timer needs to be an integer");
-        Preconditions.checkArgument(timer[0] >= 50, "timer needs to be >= 50");
+        Preconditions.checkArgument((timer[0] >= 50 || timer[0] == -1), "timer needs to be >= 50");
         if (object.has("announce_restock")) Preconditions.checkArgument(Utils.testRunnable(() -> announce_restock[0] = object.get("announce_restock").getAsBoolean()));
 
         dShop deserializedShop;
