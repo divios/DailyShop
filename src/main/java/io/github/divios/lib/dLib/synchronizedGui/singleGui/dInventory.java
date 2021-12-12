@@ -5,6 +5,7 @@ import io.github.divios.core_lib.events.Events;
 import io.github.divios.core_lib.events.Subscription;
 import io.github.divios.core_lib.inventory.inventoryUtils;
 import io.github.divios.core_lib.itemutils.ItemUtils;
+import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.transaction.sellTransaction;
@@ -13,21 +14,15 @@ import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.io.BukkitObjectInputStream;
 import org.bukkit.util.io.BukkitObjectOutputStream;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.checkerframework.checker.formatter.FormatUtil;
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
 import java.io.ByteArrayInputStream;
@@ -58,7 +53,7 @@ public class dInventory {
     }
 
     public dInventory(String title, int size, dShop shop) {
-        this(title, Bukkit.createInventory(null, size, title), shop);
+        this(title, Bukkit.createInventory(null, size, FormatUtils.color(title)), shop);
     }
 
     public dInventory(dShop shop) {
@@ -99,7 +94,7 @@ public class dInventory {
      */
     public void setInventoryTitle(String title) {
         this.title = title;
-        Inventory temp = Bukkit.createInventory(null, inv.getSize(), title);
+        Inventory temp = Bukkit.createInventory(null, inv.getSize(), FormatUtils.color(title));
         inventoryUtils.translateContents(inv, temp);
         inv = temp;
     }
@@ -132,7 +127,7 @@ public class dInventory {
     public boolean addInventoryRow() {
         if (inv.getSize() == 54) return false;
 
-        Inventory aux = Bukkit.createInventory(null, inv.getSize() + 9, title);
+        Inventory aux = Bukkit.createInventory(null, inv.getSize() + 9, FormatUtils.color(title));
         inventoryUtils.translateContents(inv, aux);
         IntStream.range(inv.getSize(), inv.getSize() + 9).forEach(dailyItemsSlots::add);
         inv = aux;
@@ -150,7 +145,7 @@ public class dInventory {
     public boolean removeInventoryRow() {
         if (inv.getSize() == 9) return false;
 
-        Inventory aux = Bukkit.createInventory(null, inv.getSize() - 9, title);
+        Inventory aux = Bukkit.createInventory(null, inv.getSize() - 9, FormatUtils.color(title));
         inventoryUtils.translateContents(inv, aux);
         IntStream.range(inv.getSize() - 9, inv.getSize()).forEach(value -> {
             removeButton(value);

@@ -105,7 +105,7 @@ public abstract class abstractSyncMenu implements syncMenu {
         } else {        // If the inv has same size, update only buttons with the above logic
 
             if (!inv.getInventoryTitle().equals(base.getInventory().getInventoryTitle()))
-                base.getInventory().renameInventory(inv.getInventoryTitle());
+                base.getInventory().setInventoryTitle(inv.getInventoryTitle());
 
 
             Map<Integer, dItem> actualContent = new HashMap<>(base.getInventory().getButtonsSlots());
