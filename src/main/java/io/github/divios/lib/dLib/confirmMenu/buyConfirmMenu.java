@@ -156,7 +156,7 @@ public class buyConfirmMenu extends abstractConfirmMenu {
     }
 
     private int getStockLimit() {
-        return item.hasStock() ? getItemStock() : MAX_INVENTORY_ITEMS;
+        return (item.hasStock() ? getItemStock() : MAX_INVENTORY_ITEMS) - nAddedItems;
     }
 
     private int getBalanceLimit() {
