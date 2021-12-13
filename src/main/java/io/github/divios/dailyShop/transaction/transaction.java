@@ -84,7 +84,6 @@ public class transaction {
 
     private static void initTransaction(Player p, dItem item, int amount, dShop shop) {
 
-        Log.info(String.valueOf(amount));
         summary s = null;
         try {
             s = printSummary(p, item, amount, shop);
