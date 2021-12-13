@@ -172,7 +172,7 @@ public class sellTransaction {
     }
 
     private double getItemPrice() {
-        return item.getSellPrice().orElse(null).getPrice() * (item.getSetItems().isPresent() ? 1 : quantity);
+        return item.getSellPrice().orElse(null).getPrice() * quantity;
     }
 
     private void hasNecessaryPermissions() throws Exception {

@@ -84,6 +84,7 @@ public class transaction {
 
     private static void initTransaction(Player p, dItem item, int amount, dShop shop) {
 
+        Log.info(String.valueOf(amount));
         summary s = null;
         try {
             s = printSummary(p, item, amount, shop);
@@ -217,10 +218,7 @@ public class transaction {
 
         /// A PARTIR DE AQUI YA SOLO COMPROBAR SLOTS Y PRICE ///
 
-        s.setPrice(s.getPrice() + (item.getSetItems().isPresent() ?
-                item.getBuyPrice().orElse(dPrice.empty()).getPrice() :
-                item.getBuyPrice().orElse(dPrice.empty()).getPrice() * amount));
-
+        s.setPrice(s.getPrice() + item.getBuyPrice().orElse(dPrice.empty()).getPrice() * amount);
 
         s.setSlots(item.getMaxStackSize() == 1 ?
                 s.getSlots() + amount : s.getSlots() + 1);
