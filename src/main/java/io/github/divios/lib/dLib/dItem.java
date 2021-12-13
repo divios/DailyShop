@@ -324,6 +324,37 @@ public class dItem implements Serializable, Cloneable {
     }
 
     /**
+     * Set this item as a custom head with the given texture as base64
+     * @param s Base64 texture
+     * @return the new item with the texture applied
+     */
+
+    public dItem setCustomPlayerHead(String s) {
+        setMaterial(XMaterial.PLAYER_HEAD);
+        setItem(ItemUtils.applyTexture(getItem(), s));
+        setRawItem(ItemUtils.applyTexture(getRawItem(), s));
+        item.setString("rds_headUrl", s);
+        return this;
+    }
+
+    /**
+     * Get if the item is a player head with a custom texture applied to it.
+     * @return
+     */
+    public boolean isCustomHead() {
+        return getMaterial() == Material.PLAYER_HEAD && item.hasKey("rds_headUrl");
+    }
+
+    /**
+     * Get the custom texture of the item
+     * @return null if it is not a customHead or the url
+     */
+    public String getCustomHeadUrl() {
+        if (!isCustomHead()) return null;
+        return item.getString("rds_headUrl");
+    }
+
+    /**
      * Sets the durability of the item
      *
      * @param durability

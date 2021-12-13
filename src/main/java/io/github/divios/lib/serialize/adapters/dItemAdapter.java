@@ -23,8 +23,10 @@ import java.util.stream.Collectors;
 
 public class dItemAdapter implements JsonSerializer<dItem>, JsonDeserializer<dItem> {
 
-    private static TypeToken<List<String>> stringListToken = new TypeToken<List<String>>() {};
-    private static TypeToken<List<WrappedEnchantment>> enchantsListToken = new TypeToken<List<WrappedEnchantment>>() {};
+    private static TypeToken<List<String>> stringListToken = new TypeToken<List<String>>() {
+    };
+    private static TypeToken<List<WrappedEnchantment>> enchantsListToken = new TypeToken<List<WrappedEnchantment>>() {
+    };
 
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(WrappedEnchantment.class, new enchantmentAdapter())
@@ -43,13 +45,17 @@ public class dItemAdapter implements JsonSerializer<dItem>, JsonDeserializer<dIt
         List<String> lore = ItemUtils.getLore(dItem.getRawItem());
         if (!lore.isEmpty()) merchant.add("lore", gson.toJsonTree(ItemUtils.getLore(dItem.getRawItem())));
 
-        merchant.addProperty("material", ItemUtils.getMaterial(dItem.getRawItem()).name());
-        dItem.getSetItems().ifPresent(integer -> merchant.addProperty("quantity", integer));
+        if (!dItem.isCustomHead())
+            merchant.addProperty("material", ItemUtils.getMaterial(dItem.getRawItem()).name());
+        else
+            merchant.addProperty("material", "base64:" + dItem.getCustomHeadUrl());
 
+        dItem.getSetItems().ifPresent(integer -> merchant.addProperty("quantity", integer));
         merchant.add("buyPrice", gson.toJsonTree(dItem.getBuyPrice().get()));
         merchant.add("sellPrice", gson.toJsonTree(dItem.getSellPrice().get()));
         if (dItem.hasStock()) merchant.add("stock", gson.toJsonTree(dItem.getStock()));
-        if (!dItem.getEnchantments().isEmpty()) merchant.add("enchantments", gson.toJsonTree(wrapEnchants(dItem.getEnchantments())));
+        if (!dItem.getEnchantments().isEmpty())
+            merchant.add("enchantments", gson.toJsonTree(wrapEnchants(dItem.getEnchantments())));
         dItem.getCommands().ifPresent(strings -> merchant.add("commands", gson.toJsonTree(strings)));
         dItem.getPermsBuy().ifPresent(strings -> merchant.add("buyPerms", gson.toJsonTree(strings)));
         dItem.getPermsSell().ifPresent(strings -> merchant.add("sellPerms", gson.toJsonTree(strings)));
@@ -68,11 +74,16 @@ public class dItemAdapter implements JsonSerializer<dItem>, JsonDeserializer<dIt
         JsonObject object = jsonElement.getAsJsonObject();
 
         Preconditions.checkArgument(object.has("material"), "An item needs a material");
-        Preconditions.checkArgument(Utils.testRunnable(() -> XMaterial.valueOf(object.get("material").getAsString())), "Invalid material");
+        Preconditions.checkArgument(
+                Utils.testRunnable(() -> XMaterial.valueOf(object.get("material").getAsString()))
+                        || object.get("material").getAsString().startsWith("base64:"), "Invalid material");
 
         dItem ditem = dItem.of(XMaterial.DIRT.parseItem());
 
-        ditem.setMaterial(XMaterial.valueOf(object.get("material").getAsString()));
+        String material = object.get("material").getAsString();
+        if (material.startsWith("base64:")) ditem.setCustomPlayerHead(material.replace("base64:", ""));
+        else ditem.setMaterial(XMaterial.valueOf(material));
+
         if (object.has("name")) ditem.setDisplayName(object.get("name").getAsString());
         if (object.has("lore")) ditem.setLore(gson.fromJson(object.get("lore"), stringListToken.getType()));
         if (object.has("rarity")) ditem.setRarity(dRarity.fromKey(object.get("rarity").getAsString()));
@@ -82,9 +93,10 @@ public class dItemAdapter implements JsonSerializer<dItem>, JsonDeserializer<dIt
         if (object.has("buyPerms")) ditem.setPermsBuy(gson.fromJson(object.get("buyPerms"), stringListToken.getType()));
         if (object.has("sellPerms")) ditem.setPermsSell(gson.fromJson(object.get("sellPerms"), stringListToken.getType()));
         if (object.has("enchantments")) {
-            List <WrappedEnchantment> enchants = gson.fromJson(object.get("enchantments"), enchantsListToken.getType());
+            List<WrappedEnchantment> enchants = gson.fromJson(object.get("enchantments"), enchantsListToken.getType());
             enchants.forEach(enchant -> ditem.addEnchantments(enchant.getEnchant(), enchant.getLevel()));
         }
+        if (object.has("commands")) ditem.setCommands(gson.fromJson(object.get("commands"), stringListToken.getType()));
         if (object.has("quantity")) ditem.setSetItems(object.get("quantity").getAsInt());
         if (object.has("stock")) ditem.setStock(gson.fromJson(object.get("stock"), dStock.class));
         if (object.has("confirm_gui")) ditem.setConfirm_gui(object.get("confirm_gui").getAsBoolean());
@@ -93,7 +105,9 @@ public class dItemAdapter implements JsonSerializer<dItem>, JsonDeserializer<dIt
         return ditem;
     }
 
-    /** Utils **/
+    /**
+     * Utils
+     **/
 
     private List<WrappedEnchantment> wrapEnchants(Map<Enchantment, Integer> enchants) {
         return enchants.entrySet().stream()

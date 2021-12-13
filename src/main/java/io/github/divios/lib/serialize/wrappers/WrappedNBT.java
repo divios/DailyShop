@@ -37,6 +37,8 @@ public class WrappedNBT {
         nbt.remove("display");
         nbt.remove("lore");
         nbt.remove("Enchantments");
+        nbt.remove("rds_headUrl");
+        nbt.remove("SkullOwner");
     }
 
     public JsonObject getNbt() {

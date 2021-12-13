@@ -19,8 +19,8 @@ import java.util.List;
 
 public class dButtonAdapter implements JsonSerializer<dItem>, JsonDeserializer<dItem> {
 
-    private static TypeToken<List<String>> stringListToken = new TypeToken<List<String>>() {};
-    private static TypeToken<List<WrappedEnchantment>> enchantsListToken = new TypeToken<List<WrappedEnchantment>>() {};
+    private static final TypeToken<List<String>> stringListToken = new TypeToken<List<String>>() {};
+    private static final TypeToken<List<WrappedEnchantment>> enchantsListToken = new TypeToken<List<WrappedEnchantment>>() {};
 
     private static final Gson gson = new GsonBuilder().create();
 
@@ -41,7 +41,10 @@ public class dButtonAdapter implements JsonSerializer<dItem>, JsonDeserializer<d
         List<String> lore = ItemUtils.getLore(dItem.getItem());
         if (!lore.isEmpty()) merchant.add("lore", gson.toJsonTree(lore));
 
-        merchant.addProperty("material", XMaterial.matchXMaterial(dItem.getItem()).name());
+        if (!dItem.isCustomHead())
+            merchant.addProperty("material", ItemUtils.getMaterial(dItem.getRawItem()).name());
+        else
+            merchant.addProperty("material", "base64:" + dItem.getCustomHeadUrl());
 
         Pair<dAction, String> pair = dItem.getAction();
         if (!pair.get1().name().equals("EMPTY"))
@@ -65,7 +68,9 @@ public class dButtonAdapter implements JsonSerializer<dItem>, JsonDeserializer<d
         dItem ditem = dItem.of(XMaterial.DIRT_PATH.parseItem());
 
         Preconditions.checkArgument(object.has("material"), "An item needs a material");
-        Preconditions.checkArgument(Utils.testRunnable(() -> XMaterial.valueOf(object.get("material").getAsString())), "Invalid material");
+        Preconditions.checkArgument(
+                Utils.testRunnable(() -> XMaterial.valueOf(object.get("material").getAsString()))
+                        || object.get("material").getAsString().startsWith("base64:"), "Invalid material");
         Preconditions.checkArgument(object.has("slot"), "An item needs a slot");
         Preconditions.checkArgument(Utils.testRunnable(() -> object.get("slot").getAsInt()), "Slot field needs to be an integer");
 
@@ -73,7 +78,10 @@ public class dButtonAdapter implements JsonSerializer<dItem>, JsonDeserializer<d
             return dItem.AIR().setSlot(object.get("slot").getAsInt());
         }
 
-        ditem.setMaterial(XMaterial.valueOf(object.get("material").getAsString()));
+        String material = object.get("material").getAsString();
+        if (material.startsWith("base64:")) ditem.setCustomPlayerHead(material.replace("base64:", ""));
+        else ditem.setMaterial(XMaterial.valueOf(material));
+
         if (object.has("name")) ditem.setDisplayName(object.get("name").getAsString());
         if (object.has("lore")) ditem.setLore(gson.fromJson(object.get("lore"), stringListToken.getType()));
         if (object.has("enchantments")) {
