@@ -14,7 +14,7 @@ plugins {
 apply plugin: 'maven-publish'
 
 group = 'io.github.divios'
-def pluginVersion = "3.6.1"
+def pluginVersion = "3.6.2"
 version = pluginVersion
 
 sourceCompatibility = '1.8'
@@ -91,10 +91,18 @@ task cloneDependencies {
 
 task updateJars {
     doLast {
+        // windows
+        copy {
+            from 'build/libs/DailyShop-' + pluginVersion + "-all.jar"
+            into 'C:/Users/serbe/OneDrive/Desktop/server_pruebas/server/plugins'
+            rename("DailyShop-" + pluginVersion + "-all.jar"
+                    , "DailyShop-" + pluginVersion + ".jar")
+        }
+        // MAC
         copy {
             from 'build/libs/DailyShop-' + pluginVersion + "-all.jar"
             into '/Users/sergiobernalparrondo/Desktop/server/plugins'
-            rename ("DailyShop-" + pluginVersion + "-all.jar"
+            rename("DailyShop-" + pluginVersion + "-all.jar"
                     , "DailyShop-" + pluginVersion + ".jar")
         }
     }
