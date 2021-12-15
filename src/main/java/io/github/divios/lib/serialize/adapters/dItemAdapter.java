@@ -6,6 +6,7 @@ import com.google.common.reflect.TypeToken;
 import com.google.gson.*;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.FormatUtils;
+import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.economies.economy;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.dItem;
@@ -18,6 +19,8 @@ import io.github.divios.lib.serialize.wrappers.WrappedEnchantment;
 import io.github.divios.lib.serialize.wrappers.WrappedNBT;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
@@ -38,6 +41,7 @@ public class dItemAdapter implements JsonSerializer<dItem>, JsonDeserializer<dIt
             .registerTypeHierarchyAdapter(dStock.class, new dStockAdapter())
             .registerTypeHierarchyAdapter(economy.class, new economyAdapter())
             .registerTypeAdapter(dPrice.class, new dPriceAdapter())
+            .registerTypeHierarchyAdapter(PotionMeta.class, new potionEffectsAdapter())
             .create();
 
     @Override
@@ -66,6 +70,10 @@ public class dItemAdapter implements JsonSerializer<dItem>, JsonDeserializer<dIt
 
         if (dItem.isUnbreakble()) merchant.addProperty("unbreakable", true);
 
+        if (dItem.isPotion()) {
+            merchant.add("potion", gson.toJsonTree(ItemUtils.getPotionMeta(dItem.getItem()), PotionMeta.class));
+        }
+
         List<String> flags;
         if (!(flags = WrappedItemFlags.of(dItem).getFlags()).isEmpty())
             merchant.add("flags", gson.toJsonTree(flags, stringListToken.getType()));
@@ -88,6 +96,10 @@ public class dItemAdapter implements JsonSerializer<dItem>, JsonDeserializer<dIt
 
         dItem ditem = WrappedMaterial.of(object.get("material").getAsString()).parseItem();
 
+        if (ditem.isPotion() && object.has("potion")) {
+            ditem.setMeta(gson.fromJson(object.get("potion"), PotionMeta.class));
+        }
+
         if (object.has("name")) ditem.setDisplayName(object.get("name").getAsString());
         if (object.has("lore")) ditem.setLore(gson.fromJson(object.get("lore"), stringListToken.getType()));
         if (object.has("rarity")) ditem.setRarity(dRarity.fromKey(object.get("rarity").getAsString()));
@@ -107,7 +119,7 @@ public class dItemAdapter implements JsonSerializer<dItem>, JsonDeserializer<dIt
         if (object.has("confirm_gui")) ditem.setConfirm_gui(object.get("confirm_gui").getAsBoolean());
         if (object.has("nbt")) ditem.setNBT(object.get("nbt").getAsJsonObject());
         if (object.has("unbreakable") && object.get("unbreakable").getAsBoolean()) ditem.setUnbreakable();
-        //if (object.has("potion"))
+
         if (object.has("flags")) {
             List<String> flags = gson.fromJson(object.get("flags"), stringListToken.getType());
             flags.forEach(s -> {

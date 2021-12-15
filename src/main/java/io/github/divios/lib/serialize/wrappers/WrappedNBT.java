@@ -48,6 +48,7 @@ public class WrappedNBT {
         nbt.remove("SkullOwner");
         nbt.remove("Damage");
         nbt.remove("Potion");
+        nbt.remove("CustomPotionColor");
         itemFlags.forEach(nbt::remove);
     }
 
