@@ -2,7 +2,14 @@ package io.github.divios.lib.serialize.wrappers;
 
 import com.google.gson.JsonObject;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class WrappedNBT {
+
+    private static final List<String> itemFlags =
+            Arrays.asList("HideFlags", "HideAttributes", "HideDestroys", "HideDye", "HideEnchants",
+                    "HidePlacedOn", "HidePotionEffects", "HideUnbreakable");
 
     private final JsonObject nbt;
 
@@ -39,6 +46,9 @@ public class WrappedNBT {
         nbt.remove("Enchantments");
         nbt.remove("rds_headUrl");
         nbt.remove("SkullOwner");
+        nbt.remove("Damage");
+        nbt.remove("Potion");
+        itemFlags.forEach(nbt::remove);
     }
 
     public JsonObject getNbt() {
