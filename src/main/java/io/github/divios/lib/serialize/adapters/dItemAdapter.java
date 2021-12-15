@@ -12,10 +12,14 @@ import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dPrice;
 import io.github.divios.lib.dLib.dRarity;
 import io.github.divios.lib.dLib.stock.dStock;
+import io.github.divios.lib.serialize.wrappers.WrappedItemFlags;
 import io.github.divios.lib.serialize.wrappers.WrappedMaterial;
 import io.github.divios.lib.serialize.wrappers.WrappedEnchantment;
 import io.github.divios.lib.serialize.wrappers.WrappedNBT;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.ItemFlag;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import java.lang.reflect.Type;
 import java.util.List;
@@ -52,8 +56,7 @@ public class dItemAdapter implements JsonSerializer<dItem>, JsonDeserializer<dIt
         merchant.add("buyPrice", gson.toJsonTree(dItem.getBuyPrice().get()));
         merchant.add("sellPrice", gson.toJsonTree(dItem.getSellPrice().get()));
         if (dItem.hasStock()) merchant.add("stock", gson.toJsonTree(dItem.getStock()));
-        if (!dItem.getEnchantments().isEmpty())
-            merchant.add("enchantments", gson.toJsonTree(wrapEnchants(dItem.getEnchantments())));
+        if (!dItem.getEnchantments().isEmpty()) merchant.add("enchantments", gson.toJsonTree(wrapEnchants(dItem.getEnchantments())));
         dItem.getCommands().ifPresent(strings -> merchant.add("commands", gson.toJsonTree(strings)));
         dItem.getPermsBuy().ifPresent(strings -> merchant.add("buyPerms", gson.toJsonTree(strings)));
         dItem.getPermsSell().ifPresent(strings -> merchant.add("sellPerms", gson.toJsonTree(strings)));
@@ -61,8 +64,15 @@ public class dItemAdapter implements JsonSerializer<dItem>, JsonDeserializer<dIt
         merchant.add("econ", gson.toJsonTree(dItem.getEconomy()));
         merchant.addProperty("confirm_gui", dItem.isConfirmGuiEnabled());
 
-        WrappedNBT nbt = WrappedNBT.valueOf(dItem.getNBT());
-        if (!nbt.isEmpty()) merchant.add("nbt", nbt.getNbt());
+        if (dItem.isUnbreakble()) merchant.addProperty("unbreakable", true);
+
+        List<String> flags;
+        if (!(flags = WrappedItemFlags.of(dItem).getFlags()).isEmpty())
+            merchant.add("flags", gson.toJsonTree(flags, stringListToken.getType()));
+
+        WrappedNBT nbt;
+        if (!(nbt = WrappedNBT.valueOf(dItem.getNBT())).isEmpty())
+            merchant.add("nbt", nbt.getNbt());
 
         return merchant;
     }
@@ -96,6 +106,15 @@ public class dItemAdapter implements JsonSerializer<dItem>, JsonDeserializer<dIt
         if (object.has("stock")) ditem.setStock(gson.fromJson(object.get("stock"), dStock.class));
         if (object.has("confirm_gui")) ditem.setConfirm_gui(object.get("confirm_gui").getAsBoolean());
         if (object.has("nbt")) ditem.setNBT(object.get("nbt").getAsJsonObject());
+        if (object.has("unbreakable") && object.get("unbreakable").getAsBoolean()) ditem.setUnbreakable();
+        //if (object.has("potion"))
+        if (object.has("flags")) {
+            List<String> flags = gson.fromJson(object.get("flags"), stringListToken.getType());
+            flags.forEach(s -> {
+                Preconditions.checkArgument(Utils.testRunnable(() -> ItemFlag.valueOf(s)), "Incorrect flag " + s);
+                ditem.setFlag(ItemFlag.valueOf(s));
+            });
+        }
 
         return ditem;
     }
