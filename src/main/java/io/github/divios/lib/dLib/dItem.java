@@ -2,6 +2,7 @@ package io.github.divios.lib.dLib;
 
 
 import com.cryptomorin.xseries.XMaterial;
+import com.cryptomorin.xseries.XPotion;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
@@ -13,6 +14,7 @@ import io.github.divios.core_lib.cache.Lazy;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.Pair;
+import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.economies.economy;
 import io.github.divios.dailyShop.economies.vault;
@@ -28,6 +30,8 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.potion.Potion;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.util.io.BukkitObjectInputStream;
 import org.bukkit.util.io.BukkitObjectOutputStream;
@@ -242,6 +246,11 @@ public class dItem implements Serializable, Cloneable {
         ItemStack itemA = getItem();
         itemA.setItemMeta(meta);
         setItem(itemA);
+
+        ItemStack itemB = getRawItem();
+        itemA.setItemMeta(meta);
+        setRawItem(itemB);
+
         return this;
     }
 
@@ -520,7 +529,7 @@ public class dItem implements Serializable, Cloneable {
     }
 
     public boolean isPotion() {
-        return ItemUtils.isPotion(getItem());
+        return XPotion.canHaveEffects(getMaterial());
     }
 
     /**
