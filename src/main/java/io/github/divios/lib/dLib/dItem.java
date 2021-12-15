@@ -28,6 +28,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.potion.PotionEffect;
 import org.bukkit.util.io.BukkitObjectInputStream;
 import org.bukkit.util.io.BukkitObjectOutputStream;
 import org.jetbrains.annotations.NotNull;
@@ -405,7 +406,6 @@ public class dItem implements Serializable, Cloneable {
         setRawItem(ItemUtils.removeEnchant(getRawItem(), ench));
         cache.get("enchantments").reset();
         return this;
-
     }
 
     /**
@@ -463,6 +463,17 @@ public class dItem implements Serializable, Cloneable {
     }
 
     /**
+     * Set the flag of an item.
+     * @param flag
+     * @return
+     */
+    public dItem setFlag(ItemFlag flag) {
+        setItem(ItemUtils.addItemFlags(getItem(), flag));
+        setRawItem(ItemUtils.addItemFlags(getRawItem(), flag));
+        return this;
+    }
+
+    /**
      * Toggles a flag from the item
      *
      * @param flag
@@ -477,6 +488,69 @@ public class dItem implements Serializable, Cloneable {
             setItem(ItemUtils.addItemFlags(getItem(), flag));
             setRawItem(ItemUtils.addItemFlags(getRawItem(), flag));
         }
+        return this;
+    }
+
+    /**
+     * Gets a list of all the flags this item has.
+     * @return
+     */
+    public List<ItemFlag> getAllFlags() {
+        return Arrays.stream(ItemFlag.values())
+                .filter(this::hasFlag)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Returns true if the item is unbreakable
+     * @return
+     */
+    public boolean isUnbreakble() {
+        return getItem().getItemMeta().isUnbreakable();
+    }
+
+    /**
+     * Sets the item as unbreakable
+     * @return
+     */
+    public dItem setUnbreakable() {
+        setItem(ItemUtils.setUnbreakable(getItem()));
+        setRawItem(ItemUtils.setUnbreakable(getRawItem()));
+        return this;
+    }
+
+    public boolean isPotion() {
+        return ItemUtils.isPotion(getItem());
+    }
+
+    /**
+     * Gets if the item has the desired potionEffect
+     * @param effect the potion effect to check
+     * @return true if it has, or false if not or the item is not a potion
+     */
+    public boolean hasPotionEffect(PotionEffect effect) {
+        return ItemUtils.hasPotionEffect(getItem(), effect);
+    }
+
+    public List<PotionEffect> getAllPotionEffects() {
+        return ItemUtils.getAllPotionEffects(getItem());
+    }
+
+    public dItem addPotionEffect(PotionEffect ...effect) {
+        setItem(ItemUtils.addPotionEffects(getItem(), effect));
+        setRawItem(ItemUtils.addPotionEffects(getItem(), effect));
+        return this;
+    }
+
+    public dItem addPotionEffect(List<PotionEffect> effect) {
+        setItem(ItemUtils.addPotionEffects(getItem(), effect));
+        setRawItem(ItemUtils.addPotionEffects(getItem(), effect));
+        return this;
+    }
+
+    public dItem removePotionEffect(List<PotionEffect> effect) {
+        setItem(ItemUtils.removePotionEffects(getItem(), effect));
+        setRawItem(ItemUtils.removePotionEffects(getItem(), effect));
         return this;
     }
 
