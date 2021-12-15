@@ -16,11 +16,14 @@ import io.github.divios.dailyShop.guis.customizerguis.CustomizerMenu;
 import io.github.divios.dailyShop.lorestategy.shopItemsManagerLore;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
+import io.github.divios.lib.dLib.log.options.dLogEntry;
 import io.github.divios.lib.managers.shopsManager;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -81,6 +84,9 @@ public class shopGui {
 
     private void createGuis() {
 
+        Deque<dItem> entries = new ArrayDeque<>();
+        shop.getItems().forEach(entries::addFirst);
+
         inv = paginatedGui.Builder()
 
                 .withPopulator(
@@ -102,7 +108,7 @@ public class shopGui {
                 )
 
                 .withItems(
-                        shop.getItems().stream().parallel()
+                        entries.stream().parallel()
                                 .map(dItem ->
                                         ItemButton.create(strategy.applyLore(dItem.getItem().clone())
                                                 , this::contentAction))

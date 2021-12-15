@@ -38,7 +38,7 @@ public class dShop {
     private transient static final encodeOptions serializer = new encodeOptions();
 
     protected String name;
-    protected final Map<UUID, dItem> items = new ConcurrentHashMap<>();
+    protected final Map<UUID, dItem> items = Collections.synchronizedMap(new LinkedHashMap<>());
     protected final syncMenu guis;
 
     protected Timestamp timestamp;
