@@ -13,10 +13,7 @@ import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dPrice;
 import io.github.divios.lib.dLib.dRarity;
 import io.github.divios.lib.dLib.stock.dStock;
-import io.github.divios.lib.serialize.wrappers.WrappedItemFlags;
-import io.github.divios.lib.serialize.wrappers.WrappedMaterial;
-import io.github.divios.lib.serialize.wrappers.WrappedEnchantment;
-import io.github.divios.lib.serialize.wrappers.WrappedNBT;
+import io.github.divios.lib.serialize.wrappers.*;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -54,13 +51,17 @@ public class dItemAdapter implements JsonSerializer<dItem>, JsonDeserializer<dIt
         List<String> lore = ItemUtils.getLore(dItem.getRawItem());
         if (!lore.isEmpty()) merchant.add("lore", gson.toJsonTree(ItemUtils.getLore(dItem.getRawItem())));
 
-        merchant.addProperty("material", WrappedMaterial.getMaterial(dItem));
+        if (WrappedCustomItem.isCustomItem(dItem))
+            merchant.add("item", WrappedCustomItem.serializeCustomItem(dItem));
+        else
+            merchant.addProperty("material", WrappedMaterial.getMaterial(dItem));
 
         dItem.getSetItems().ifPresent(integer -> merchant.addProperty("quantity", integer));
         merchant.add("buyPrice", gson.toJsonTree(dItem.getBuyPrice().get()));
         merchant.add("sellPrice", gson.toJsonTree(dItem.getSellPrice().get()));
         if (dItem.hasStock()) merchant.add("stock", gson.toJsonTree(dItem.getStock()));
-        if (!dItem.getEnchantments().isEmpty()) merchant.add("enchantments", gson.toJsonTree(wrapEnchants(dItem.getEnchantments())));
+        if (!dItem.getEnchantments().isEmpty())
+            merchant.add("enchantments", gson.toJsonTree(wrapEnchants(dItem.getEnchantments())));
         dItem.getCommands().ifPresent(strings -> merchant.add("commands", gson.toJsonTree(strings)));
         dItem.getPermsBuy().ifPresent(strings -> merchant.add("buyPerms", gson.toJsonTree(strings)));
         dItem.getPermsSell().ifPresent(strings -> merchant.add("sellPerms", gson.toJsonTree(strings)));
@@ -89,12 +90,19 @@ public class dItemAdapter implements JsonSerializer<dItem>, JsonDeserializer<dIt
     public dItem deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
         JsonObject object = jsonElement.getAsJsonObject();
 
-        Preconditions.checkArgument(object.has("material"), "An item needs a material");
+        Preconditions.checkArgument(object.has("material") || object.has("item"), "An item needs a material");
         Preconditions.checkArgument(
                 Utils.testRunnable(() -> XMaterial.valueOf(object.get("material").getAsString()))
                         || object.get("material").getAsString().startsWith("base64:"), "Invalid material");
 
-        dItem ditem = WrappedMaterial.of(object.get("material").getAsString()).parseItem();
+        dItem ditem;
+
+        if (object.has("material"))    // Normal Item
+            ditem = WrappedMaterial.of(object.get("material").getAsString()).parseItem();
+        else if (object.has("item"))   // Custom item
+            ditem = WrappedCustomItem.from(object).parseItem();
+        else
+            throw new RuntimeException("Invalid configuration");
 
         if (ditem.isPotion() && object.has("potion")) {
             ditem.setMeta(gson.fromJson(object.get("potion"), PotionMeta.class));
@@ -123,8 +131,8 @@ public class dItemAdapter implements JsonSerializer<dItem>, JsonDeserializer<dIt
         if (object.has("flags")) {
             List<String> flags = gson.fromJson(object.get("flags"), stringListToken.getType());
             flags.forEach(s -> {
-                Preconditions.checkArgument(Utils.testRunnable(() -> ItemFlag.valueOf(s)), "Incorrect flag " + s);
-                ditem.setFlag(ItemFlag.valueOf(s));
+                Preconditions.checkArgument(Utils.testRunnable(() -> ItemFlag.valueOf(s.toUpperCase())), "Incorrect flag " + s);
+                ditem.setFlag(ItemFlag.valueOf(s.toUpperCase()));
             });
         }
 

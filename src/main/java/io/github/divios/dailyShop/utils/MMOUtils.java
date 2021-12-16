@@ -10,10 +10,13 @@ public class MMOUtils {
     }
 
     public static boolean isMMOItem(ItemStack item) {
+        if (!isMMOItemsOn()) return false;
         return io.lumine.mythic.lib.api.item.NBTItem.get(item).hasType();
     }
 
     public static boolean compareMMOItems(ItemStack ItemCompared, ItemStack ItemToCompare) {
+        if (!isMMOItemsOn()) return false;
+
         MMOItemData mmoitem = MMOItemData.create(ItemCompared);
         MMOItemData mmoitem2 = MMOItemData.create(ItemToCompare);
 
@@ -23,15 +26,35 @@ public class MMOUtils {
         return mmoitem.getType().equals(mmoitem2.getType()) && mmoitem.getId().equals(mmoitem2.getId());
     }
 
-    public static ItemStack createNewMMOItem(ItemStack item) {
+    public static ItemStack createNewMMOItemFromExisting(ItemStack item) {
+        if (!isMMOItemsOn()) return null;
+
         if (!isMMOItem(item)) return item;
 
         io.lumine.mythic.lib.api.item.NBTItem mmoitem = io.lumine.mythic.lib.api.item.NBTItem.get(item);
         String type = mmoitem.getType();
         String id = mmoitem.getString("MMOITEMS_ITEM_ID");
 
-        return MMOItems.plugin.getItem(net.Indyuce.mmoitems.api.Type.get(type), id);
+        return createMMOItem(type, id);
 
+    }
+
+    public static String getId(ItemStack item) {
+        if (!isMMOItemsOn()) return null;
+        if (!isMMOItem(item)) return null;
+        return MMOItemData.create(item).getId();
+    }
+
+    public static String getType(ItemStack item) {
+        if (!isMMOItemsOn()) return null;
+        if (!isMMOItem(item)) return null;
+        return MMOItemData.create(item).getType();
+    }
+
+
+    public static ItemStack createMMOItem(String type, String id) {
+        if (!isMMOItemsOn()) return null;
+        return MMOItems.plugin.getItem(net.Indyuce.mmoitems.api.Type.get(type), id);
     }
 
     private static class MMOItemData {
