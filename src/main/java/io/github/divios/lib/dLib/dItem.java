@@ -14,7 +14,6 @@ import io.github.divios.core_lib.cache.Lazy;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.Pair;
-import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.economies.economy;
 import io.github.divios.dailyShop.economies.vault;
@@ -30,8 +29,6 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.PotionMeta;
-import org.bukkit.potion.Potion;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.util.io.BukkitObjectInputStream;
 import org.bukkit.util.io.BukkitObjectOutputStream;
@@ -153,7 +150,7 @@ public class dItem implements Serializable, Cloneable {
 
         if (getAsNewItem && MMOUtils.isMMOItemsOn() && MMOUtils.isMMOItem(rawItem.get().clone())) {
             try {
-                return MMOUtils.createNewMMOItem(rawItem.get().clone());
+                return MMOUtils.createNewMMOItemFromExisting(rawItem.get().clone());
             } catch (Exception e) {
                 return rawItem.get();
             }
@@ -177,6 +174,7 @@ public class dItem implements Serializable, Cloneable {
             setEconomy(new vault());        // Default Vault
             setBuyPrice(plugin.configM.getSettingsYml().DEFAULT_BUY); // Default buy price
             setSellPrice(plugin.configM.getSettingsYml().DEFAULT_SELL); // Default sell price
+            if (getQuantity() > 1) setSetItems(getQuantity());   // Initialize quantity
         }
 
         rawItem = Lazy.suppliedBy(() -> ItemUtils.deserialize(this.item.getString("rds_rawItem")));
