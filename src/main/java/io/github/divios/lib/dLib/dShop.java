@@ -156,8 +156,8 @@ public class dShop {
      * any change made to it won't affect the original one
      */
     public @NotNull
-    Set<dItem> getItems() {
-        return Collections.unmodifiableSet(new LinkedHashSet<>(items.values()));
+    Collection<dItem> getItems() {
+        return Collections.unmodifiableCollection(items.values());
     }
 
     /**
@@ -211,7 +211,7 @@ public class dShop {
     /**
      * Sets the items of this shop
      */
-    public void setItems(@NotNull Set<dItem> items) {
+    public void setItems(@NotNull Collection<dItem> items) {
         Map<UUID, dItem> newItems = new HashMap<>();
         items.forEach(dItem -> newItems.put(dItem.getUid(), dItem));            // Cache values for a O(1) search
 

@@ -191,15 +191,15 @@ public class singleGuiImpl implements singleGui {
         private final Map<UUID, dItem> items;
         private final Function<dItem, dItem> action;
 
-        public static dRandomItemsSelector fromItems(Set<dItem> items) {
+        public static dRandomItemsSelector fromItems(Collection<dItem> items) {
             return new dRandomItemsSelector(items, Function.identity());
         }
 
-        public static dRandomItemsSelector of(Set<dItem> items, Function<dItem, dItem> action) {
+        public static dRandomItemsSelector of(Collection<dItem> items, Function<dItem, dItem> action) {
             return new dRandomItemsSelector(items, action);
         }
 
-        private dRandomItemsSelector(Set<dItem> items, Function<dItem, dItem> action) {
+        private dRandomItemsSelector(Collection<dItem> items, Function<dItem, dItem> action) {
             this(items.stream().collect(Collectors.toMap(dItem::getUid, dItem -> dItem)), action);
         }
 

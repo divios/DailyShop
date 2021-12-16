@@ -87,7 +87,7 @@ public class dShopAdapter implements JsonSerializer<dShop>, JsonDeserializer<dSh
 
     /** Utils **/
 
-    private Map<String, dItem> parseUUIDs(Set<dItem> items) {
+    private Map<String, dItem> parseUUIDs(Collection<dItem> items) {
         Map<String, dItem> newMap = new HashMap<>();
         items.forEach(dItem -> newMap.put(dItem.getID(), dItem));
 
