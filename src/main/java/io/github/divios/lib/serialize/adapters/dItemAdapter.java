@@ -15,6 +15,7 @@ import io.github.divios.lib.dLib.dRarity;
 import io.github.divios.lib.dLib.stock.dStock;
 import io.github.divios.lib.serialize.wrappers.*;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
@@ -55,6 +56,8 @@ public class dItemAdapter implements JsonSerializer<dItem>, JsonDeserializer<dIt
             merchant.add("item", WrappedCustomItem.serializeCustomItem(dItem));
         else
             merchant.addProperty("material", WrappedMaterial.getMaterial(dItem));
+
+        if (dItem.isSpawner()) merchant.addProperty("mob", dItem.getSpawnerType().name());
 
         dItem.getSetItems().ifPresent(integer -> merchant.addProperty("quantity", integer));
         merchant.add("buyPrice", gson.toJsonTree(dItem.getBuyPrice().get()));
@@ -107,6 +110,8 @@ public class dItemAdapter implements JsonSerializer<dItem>, JsonDeserializer<dIt
         if (ditem.isPotion() && object.has("potion")) {
             ditem.setMeta(gson.fromJson(object.get("potion"), PotionMeta.class));
         }
+
+        if (object.has("mob")) ditem.setSpawnerType(EntityType.valueOf(object.get("mob").getAsString()));
 
         if (object.has("name")) ditem.setDisplayName(object.get("name").getAsString());
         if (object.has("lore")) ditem.setLore(gson.fromJson(object.get("lore"), stringListToken.getType()));

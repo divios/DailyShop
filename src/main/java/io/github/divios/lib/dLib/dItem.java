@@ -11,6 +11,7 @@ import de.tr7zw.nbtapi.NBTCompound;
 import de.tr7zw.nbtapi.NBTContainer;
 import de.tr7zw.nbtapi.NBTItem;
 import io.github.divios.core_lib.cache.Lazy;
+import io.github.divios.core_lib.gson.JsonBuilder;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.Pair;
@@ -25,15 +26,19 @@ import io.github.divios.lib.dLib.stock.factory.dStockFactory;
 import io.github.divios.lib.serialize.adapters.dItemAdapter;
 import io.github.divios.lib.serialize.jsonSerializer;
 import org.bukkit.Material;
+import org.bukkit.block.CreatureSpawner;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BlockStateMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.util.io.BukkitObjectInputStream;
 import org.bukkit.util.io.BukkitObjectOutputStream;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.json.simple.JSONObject;
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
 import java.io.*;
@@ -252,6 +257,40 @@ public class dItem implements Serializable, Cloneable {
         return this;
     }
 
+    public dItem setSpawnerType(EntityType type) {
+        if (!isSpawner()) return this;
+
+        item.setString("ms_mob", type.getName());  // MineableSpawner
+
+        NBTCompound compound = item.getOrCreateCompound("SilkSpawners");  // SilkSpawner
+        compound.setString("entity", type.getName());
+
+        compound = item.getOrCreateCompound("BlockEntityTag");  // Vanilla
+        compound.setString("EntityId", type.getName());
+
+        NBTCompound subCompound = compound.getOrCreateCompound("EntityTag");
+        subCompound.setString("id", "minecraft:" + type.getName());
+
+        subCompound = compound.getOrCreateCompound("SpawnData");
+        subCompound.setString("id", "minecraft:" + type.getName());
+
+        compound.getOrCreateCompound("SpawnPotentials");
+
+        compound.setString("id", "mob_spawner");
+
+        return this;
+    }
+
+    public EntityType getSpawnerType() {
+        if (!isSpawner()) return null;
+
+        return EntityType.fromName(item.getCompound("BlockEntityTag").getString("EntityId"));
+    }
+
+    public boolean isSpawner() {
+        return getMaterial() == Material.SPAWNER;
+    }
+
     /**
      * Sets the display name of the item
      *
@@ -333,6 +372,7 @@ public class dItem implements Serializable, Cloneable {
 
     /**
      * Set this item as a custom head with the given texture as base64
+     *
      * @param s Base64 texture
      * @return the new item with the texture applied
      */
@@ -347,6 +387,7 @@ public class dItem implements Serializable, Cloneable {
 
     /**
      * Get if the item is a player head with a custom texture applied to it.
+     *
      * @return
      */
     public boolean isCustomHead() {
@@ -355,6 +396,7 @@ public class dItem implements Serializable, Cloneable {
 
     /**
      * Get the custom texture of the item
+     *
      * @return null if it is not a customHead or the url
      */
     public String getCustomHeadUrl() {
@@ -471,6 +513,7 @@ public class dItem implements Serializable, Cloneable {
 
     /**
      * Set the flag of an item.
+     *
      * @param flag
      * @return
      */
@@ -500,6 +543,7 @@ public class dItem implements Serializable, Cloneable {
 
     /**
      * Gets a list of all the flags this item has.
+     *
      * @return
      */
     public List<ItemFlag> getAllFlags() {
@@ -510,6 +554,7 @@ public class dItem implements Serializable, Cloneable {
 
     /**
      * Returns true if the item is unbreakable
+     *
      * @return
      */
     public boolean isUnbreakble() {
@@ -518,6 +563,7 @@ public class dItem implements Serializable, Cloneable {
 
     /**
      * Sets the item as unbreakable
+     *
      * @return
      */
     public dItem setUnbreakable() {
@@ -532,6 +578,7 @@ public class dItem implements Serializable, Cloneable {
 
     /**
      * Gets if the item has the desired potionEffect
+     *
      * @param effect the potion effect to check
      * @return true if it has, or false if not or the item is not a potion
      */
@@ -543,7 +590,7 @@ public class dItem implements Serializable, Cloneable {
         return ItemUtils.getAllPotionEffects(getItem());
     }
 
-    public dItem addPotionEffect(PotionEffect ...effect) {
+    public dItem addPotionEffect(PotionEffect... effect) {
         setItem(ItemUtils.addPotionEffects(getItem(), effect));
         setRawItem(ItemUtils.addPotionEffects(getItem(), effect));
         return this;

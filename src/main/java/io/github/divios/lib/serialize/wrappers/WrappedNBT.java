@@ -49,6 +49,9 @@ public class WrappedNBT {
         nbt.remove("Damage");
         nbt.remove("Potion");
         nbt.remove("CustomPotionColor");
+        //nbt.remove("BlockEntityTag");
+        //nbt.remove("ms_mob");
+        //nbt.remove("SilkSpawners");
         itemFlags.forEach(nbt::remove);
     }
 
