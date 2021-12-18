@@ -23,6 +23,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import java.lang.reflect.Type;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -54,10 +55,10 @@ public class dItemAdapter implements JsonSerializer<dItem>, JsonDeserializer<dIt
 
         if (WrappedCustomItem.isCustomItem(dItem))
             merchant.add("item", WrappedCustomItem.serializeCustomItem(dItem));
-        else
+        else {
             merchant.addProperty("material", WrappedMaterial.getMaterial(dItem));
-
-        if (dItem.isSpawner()) merchant.addProperty("mob", dItem.getSpawnerType().name());
+            if (dItem.isSpawner()) merchant.addProperty("mob", dItem.getSpawnerType().name());
+        }
 
         dItem.getSetItems().ifPresent(integer -> merchant.addProperty("quantity", integer));
         merchant.add("buyPrice", gson.toJsonTree(dItem.getBuyPrice().get()));
@@ -111,7 +112,14 @@ public class dItemAdapter implements JsonSerializer<dItem>, JsonDeserializer<dIt
             ditem.setMeta(gson.fromJson(object.get("potion"), PotionMeta.class));
         }
 
-        if (object.has("mob")) ditem.setSpawnerType(EntityType.valueOf(object.get("mob").getAsString()));
+
+        if (object.has("mob")) {
+            Preconditions.checkArgument(Arrays.asList(EntityType.values())
+                            .stream()
+                            .anyMatch(entityType -> entityType.getName().equals(object.get("mob").getAsString())),
+                    "Invalid mob type");
+            ditem.setSpawnerType(EntityType.valueOf(object.get("mob").getAsString()));
+        }
 
         if (object.has("name")) ditem.setDisplayName(object.get("name").getAsString());
         if (object.has("lore")) ditem.setLore(gson.fromJson(object.get("lore"), stringListToken.getType()));

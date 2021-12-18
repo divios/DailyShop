@@ -278,6 +278,27 @@ public class dItem implements Serializable, Cloneable {
 
         compound.setString("id", "mob_spawner");
 
+        // RawItem
+        NBTItem rawItem = new NBTItem(getRawItem());
+
+        compound = rawItem.getOrCreateCompound("SilkSpawners");  // SilkSpawner
+        compound.setString("entity", type.getName());
+
+        compound = rawItem.getOrCreateCompound("BlockEntityTag");  // Vanilla
+        compound.setString("EntityId", type.getName());
+
+        subCompound = compound.getOrCreateCompound("EntityTag");
+        subCompound.setString("id", "minecraft:" + type.getName());
+
+        subCompound = compound.getOrCreateCompound("SpawnData");
+        subCompound.setString("id", "minecraft:" + type.getName());
+
+        compound.getOrCreateCompound("SpawnPotentials");
+
+        compound.setString("id", "mob_spawner");
+
+        setRawItem(rawItem.getItem());
+
         return this;
     }
 
