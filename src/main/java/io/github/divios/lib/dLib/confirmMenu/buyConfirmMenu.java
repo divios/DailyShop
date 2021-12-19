@@ -123,7 +123,7 @@ public class buyConfirmMenu extends abstractConfirmMenu {
     @Override
     protected void setMaxItems() {
         int limit = getMinLimit();
-        //if (nAddedItems >= limit) return;
+        if (limit == 0) return;
         int nAddedItemsThisInit = 0;
         ItemStack markedItem = getMarkedItem();
         while (player.getInventory().addItem(markedItem).isEmpty()) {
