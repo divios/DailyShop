@@ -222,6 +222,7 @@ public class shopsManagerGui {
                     }
 
                     shopsManager.getInstance().createShop(s);
+                    serializerApi.saveShopToFileAsync(shopsManager.getInstance().getShop(s).get());
                     Schedulers.sync().run(() -> refresh(p));
                 })
                 .withCancel(cancelReason -> Schedulers.sync().run(() -> refresh(p)))

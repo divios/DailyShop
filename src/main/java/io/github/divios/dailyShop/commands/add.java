@@ -9,6 +9,7 @@ import io.github.divios.dailyShop.guis.settings.shopsManagerGui;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.managers.shopsManager;
+import io.github.divios.lib.serialize.serializerApi;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -66,6 +67,7 @@ public class add extends abstractCommand {
                         sManager.getShop(args.get(0))
                         .ifPresent(shop -> {
                             shop.addItem(new dItem(itemStack));
+                            serializerApi.saveShopToFileAsync(shop);
                             shopGui.open((Player) sender, shop);
                         })
                 , () -> shopsManagerGui.open((Player) sender));

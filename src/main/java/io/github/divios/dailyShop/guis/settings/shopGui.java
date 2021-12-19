@@ -18,6 +18,7 @@ import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.dLib.log.options.dLogEntry;
 import io.github.divios.lib.managers.shopsManager;
+import io.github.divios.lib.serialize.serializerApi;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
@@ -152,6 +153,7 @@ public class shopGui {
 
                                     e -> addDailyGuiIH.open(p, shop, itemStack -> {
                                         shop.addItem(new dItem(itemStack));
+                                        serializerApi.saveShopToFileAsync(shop);
                                         refresh();
                                     }, this::refresh)), 53);
 
@@ -183,8 +185,10 @@ public class shopGui {
             confirmIH.builder()
                     .withPlayer(p)
                     .withAction(aBoolean -> {
-                        if (aBoolean)
+                        if (aBoolean) {
                             shop.removeItem(uid);
+                            serializerApi.saveShopToFileAsync(shop);
+                        }
                         Schedulers.sync().runLater(() -> inv.destroy(), 3L);
                         open(p, shop);
                     })

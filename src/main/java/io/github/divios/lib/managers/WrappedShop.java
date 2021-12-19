@@ -37,7 +37,6 @@ public class WrappedShop extends dShop {
     public void rename(String s) {
         super.rename(s);
         dManager.renameShopAsync(name, s.toLowerCase());
-        serializerApi.saveShopToFile(this);
     }
 
     @Override
@@ -52,21 +51,18 @@ public class WrappedShop extends dShop {
     public synchronized void addItem(dItem item) {
         super.addItem(item);
         super.dManager.addItemAsync(this.name, item);
-        serializerApi.saveShopToFile(this);
     }
 
     @Override
     public synchronized void updateItem(dItem newItem) {
         super.updateItem(newItem);
         dManager.updateItemAsync(getName(), newItem);
-        serializerApi.saveShopToFile(this);
     }
 
     @Override
     public synchronized boolean removeItem(UUID uid) {
         if (!super.removeItem(uid)) return false;
         dManager.deleteItemAsync(this.name, uid);
-        serializerApi.saveShopToFile(this);
         return true;
     }
 
@@ -74,7 +70,6 @@ public class WrappedShop extends dShop {
     public synchronized void setTimer(int timer) {
         super.setTimer(timer);
         dManager.updateTimerAsync(this.name, this.timer);
-        serializerApi.saveShopToFile(this);
     }
 
 }
