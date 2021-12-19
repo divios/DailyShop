@@ -8,6 +8,7 @@ import io.github.divios.core_lib.gson.JsonBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.core_lib.misc.Pair;
+import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.dAction;
 import io.github.divios.lib.dLib.dItem;
@@ -29,10 +30,15 @@ public class dButtonAdapter implements JsonSerializer<dItem>, JsonDeserializer<d
         JsonObject merchant = new JsonObject();
 
         if (dItem.isAIR()) {
-            return JsonBuilder.object()
-                    .add("material", "AIR")
-                    .add("slot", dItem.getSlot())
-                    .build();
+            JsonBuilder.JsonObjectBuilder builder = JsonBuilder.object()
+                    .add("material", "AIR");
+
+            if (dItem.isMultipleSlots())
+                builder.add("slot", gson.toJsonTree(dItem.getMultipleSlots()));
+            else
+                builder.add("slot", dItem.getSlot());
+
+            return builder.build();
         }
 
         String name = ItemUtils.getName(dItem.getItem());
@@ -54,7 +60,8 @@ public class dButtonAdapter implements JsonSerializer<dItem>, JsonDeserializer<d
                     .build()
             );
 
-        merchant.addProperty("slot", dItem.getSlot());
+        if (dItem.isMultipleSlots()) merchant.add("slot", gson.toJsonTree(dItem.getMultipleSlots()));
+        else merchant.addProperty("slot", dItem.getSlot());
 
         WrappedNBT nbt = WrappedNBT.valueOf(dItem.getNBT());
         if (!nbt.isEmpty()) merchant.add("nbt", nbt.getNbt());
@@ -72,7 +79,6 @@ public class dButtonAdapter implements JsonSerializer<dItem>, JsonDeserializer<d
                 Utils.testRunnable(() -> XMaterial.valueOf(object.get("material").getAsString()))
                         || object.get("material").getAsString().startsWith("base64:"), "Invalid material");
         Preconditions.checkArgument(object.has("slot"), "An item needs a slot");
-        Preconditions.checkArgument(Utils.testRunnable(() -> object.get("slot").getAsInt()), "Slot field needs to be an integer");
 
         if (object.get("material").getAsString().equals("AIR")) {
             return dItem.AIR().setSlot(object.get("slot").getAsInt());
@@ -98,9 +104,16 @@ public class dButtonAdapter implements JsonSerializer<dItem>, JsonDeserializer<d
             ditem.setAction(typeAction[0], action.has("data") ? action.get("data").getAsString() : "");
         }
 
-        ditem.setSlot(object.get("slot").getAsInt());
+        if (object.get("slot").isJsonArray()) {     // Get the min slot if multipleSlots
+            int minSlot = 999;
+            for (JsonElement element : object.get("slot").getAsJsonArray())
+                if (element.getAsInt() < minSlot) minSlot = element.getAsInt();
+            ditem.setSlot(minSlot);
+        } else
+            ditem.setSlot(object.get("slot").getAsInt());
         if (object.has("nbt")) ditem.setNBT(object.get("nbt").getAsJsonObject());
 
         return ditem;
     }
+    
 }

@@ -11,7 +11,6 @@ import de.tr7zw.nbtapi.NBTCompound;
 import de.tr7zw.nbtapi.NBTContainer;
 import de.tr7zw.nbtapi.NBTItem;
 import io.github.divios.core_lib.cache.Lazy;
-import io.github.divios.core_lib.gson.JsonBuilder;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.Pair;
@@ -26,19 +25,16 @@ import io.github.divios.lib.dLib.stock.factory.dStockFactory;
 import io.github.divios.lib.serialize.adapters.dItemAdapter;
 import io.github.divios.lib.serialize.jsonSerializer;
 import org.bukkit.Material;
-import org.bukkit.block.CreatureSpawner;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.BlockStateMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.util.io.BukkitObjectInputStream;
 import org.bukkit.util.io.BukkitObjectOutputStream;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.json.simple.JSONObject;
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
 import java.io.*;
@@ -237,6 +233,20 @@ public class dItem implements Serializable, Cloneable {
      */
     public int getSlot() {
         return (int) cache.get("slot").get();
+    }
+
+    public dItem setMultipleSlots(List<Integer> slots) {
+        item.setObject("slots", slots);
+        return this;
+    }
+
+    public List<Integer> getMultipleSlots() {
+        if (!isMultipleSlots()) return null;
+        return item.getObject("slots", List.class);
+    }
+
+    public boolean isMultipleSlots() {
+        return item.hasKey("slots");
     }
 
     /**

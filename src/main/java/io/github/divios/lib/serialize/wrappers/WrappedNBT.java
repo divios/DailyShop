@@ -27,6 +27,7 @@ public class WrappedNBT {
         nbt.remove("rds_rarity");
         nbt.remove("rds_sellPrice");
         nbt.remove("dailySlots");
+        nbt.remove("slots");
         nbt.remove("rds_buyPrice");
         nbt.remove("rds_stock");
         nbt.remove("rds_cmds");

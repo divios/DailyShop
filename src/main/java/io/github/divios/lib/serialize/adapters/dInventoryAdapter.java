@@ -7,11 +7,11 @@ import io.github.divios.core_lib.gson.JsonBuilder;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.synchronizedGui.singleGui.dInventory;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Type;
-import java.util.Comparator;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class dInventoryAdapter implements JsonSerializer<dInventory>, JsonDeserializer<dInventory> {
 
@@ -34,11 +34,14 @@ public class dInventoryAdapter implements JsonSerializer<dInventory>, JsonDeseri
 
         Preconditions.checkArgument(size[0] % 9 == 0, "Inventory size must be a multiple of 9");
 
-        if (object.has("items"))
+        if (object.has("items")) {
             buttons.putAll(gson.fromJson(object.get("items").getAsJsonObject(), itemsToken.getType()));
+        }
 
         dInventory inv = new dInventory(title, size[0], null);
         buttons.forEach((s, dItem) -> inv.addButton(dItem.setID(s), dItem.getSlot()));
+
+        addItemsWithMultipleSlots(object, inv);
 
         return inv;
     }
@@ -56,13 +59,52 @@ public class dInventoryAdapter implements JsonSerializer<dInventory>, JsonDeseri
 
     private Map<String, dItem> getButtons(dInventory inv) {
         Map<String, dItem> buttons = new LinkedHashMap<>();
+        Set<Integer> flaggedSlots = new HashSet<>();
+        Map<String, dItem> finalButtons = new LinkedHashMap<>();
 
         inv.getButtonsSlots().entrySet().stream()       // Get buttons sorted by slots
                 .sorted(Comparator.comparingInt(Map.Entry::getKey))
-                .map(Map.Entry::getValue)
+                .map(entry -> entry.getValue().clone())
                 .forEach(dItem -> buttons.put(dItem.getID(), dItem));
 
-        return buttons;
+        buttons.values().forEach(dItem -> {
+            if (flaggedSlots.contains(dItem.getSlot())) return;
+
+            List<Integer> similarItemsSlots = buttons.values().stream()
+                    .filter(dItem1 -> dItem1.getRawItem().isSimilar(dItem.getRawItem()))
+                    .map(io.github.divios.lib.dLib.dItem::getSlot)
+                    .sorted()
+                    .collect(Collectors.toList());
+
+            if (similarItemsSlots.size() == 1)
+                finalButtons.put(dItem.getID(), dItem);
+            else {
+                dItem baseItem = inv.getButtonsSlots().get(similarItemsSlots.get(0)).clone();  // Less slot should be baseItem
+                finalButtons.put(baseItem.getID(), baseItem.setMultipleSlots(similarItemsSlots));
+                flaggedSlots.addAll(similarItemsSlots);
+            }
+        });
+
+        return finalButtons;
+    }
+
+    private static final TypeToken<LinkedHashMap<String, JsonObject>> itemsJsonToken = new TypeToken<LinkedHashMap<String, JsonObject>>() {};
+
+    private void addItemsWithMultipleSlots(JsonObject object, dInventory inv) {
+        LinkedHashMap<String, JsonObject> items = gson.fromJson(object.get("items"), itemsJsonToken.getType());
+
+        for (JsonObject item : items.values()) {
+            TreeSet<Integer> multipleSlots = new TreeSet<>();
+
+            if (!item.has("slot") || !item.get("slot").isJsonArray()) continue;
+
+            item.get("slot").getAsJsonArray().forEach(element -> multipleSlots.add(element.getAsInt()));
+
+            dItem baseItem = inv.getButtonsSlots().get(multipleSlots.pollFirst());
+            if (baseItem == null) return;
+
+            multipleSlots.forEach(integer -> inv.addButton(baseItem.copy(), integer));
+        }
     }
 
 }
