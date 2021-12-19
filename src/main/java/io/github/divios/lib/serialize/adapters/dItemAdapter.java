@@ -95,9 +95,7 @@ public class dItemAdapter implements JsonSerializer<dItem>, JsonDeserializer<dIt
         JsonObject object = jsonElement.getAsJsonObject();
 
         Preconditions.checkArgument(object.has("material") || object.has("item"), "An item needs a material");
-        Preconditions.checkArgument(
-                Utils.testRunnable(() -> XMaterial.valueOf(object.get("material").getAsString()))
-                        || object.get("material").getAsString().startsWith("base64:"), "Invalid material");
+        Preconditions.checkArgument(Utils.testRunnable(() -> XMaterial.valueOf(object.get("material").getAsString())) || object.get("material").getAsString().startsWith("base64:"), "Invalid material");
 
         dItem ditem;
 
@@ -108,16 +106,11 @@ public class dItemAdapter implements JsonSerializer<dItem>, JsonDeserializer<dIt
         else
             throw new RuntimeException("Invalid configuration");
 
-        if (ditem.isPotion() && object.has("potion")) {
+        if (ditem.isPotion() && object.has("potion"))
             ditem.setMeta(gson.fromJson(object.get("potion"), PotionMeta.class));
-        }
-
 
         if (object.has("mob")) {
-            Preconditions.checkArgument(Arrays.asList(EntityType.values())
-                            .stream()
-                            .anyMatch(entityType -> entityType.getName().equals(object.get("mob").getAsString())),
-                    "Invalid mob type");
+            Preconditions.checkArgument(Arrays.asList(EntityType.values()).stream().anyMatch(entityType -> entityType.getName().equals(object.get("mob").getAsString())), "Invalid mob type");
             ditem.setSpawnerType(EntityType.valueOf(object.get("mob").getAsString()));
         }
 
