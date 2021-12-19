@@ -9,6 +9,8 @@ import io.github.divios.lib.managers.shopsManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
@@ -16,13 +18,16 @@ public enum dAction {
 
     EMPTY((p, s) -> {
     }),
+
     OPEN_SHOP((p, s) -> {
         shopsManager.getInstance()
                 .getShop(s).ifPresent(shop1 -> shop1.openShop(p));
     }),
+
     RUN_CMD((p, s) -> {
-        Bukkit.dispatchCommand(Bukkit.getConsoleSender(),
-                Msg.singletonMsg(s).add("%player%", p.getName()).build());
+        List<String> commands = Arrays.asList(s.split(";:"));
+        commands.forEach(s1 ->
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), Msg.singletonMsg(s1).add("%player%", p.getName()).build()));
     }),
 
     SHOW_ALL_ITEMS((p, s) -> {
