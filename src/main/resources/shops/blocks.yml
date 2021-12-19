@@ -8,81 +8,35 @@ shop:
     'BLACK_STAINED_GLASS_PANE_0':
       name: '&c'
       material: BLACK_STAINED_GLASS_PANE
-      slot: 0
-    'BLACK_STAINED_GLASS_PANE_1':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 1
-    'BLACK_STAINED_GLASS_PANE_2':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 2
-    'BLACK_STAINED_GLASS_PANE_3':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 3
+      slot:
+        - 0
+        - 1
+        - 2
+        - 3
+        - 5
+        - 6
+        - 7
+        - 8
+        - 9
+        - 17
+        - 18
+        - 26
+        - 27
+        - 35
+        - 36
+        - 37
+        - 38
+        - 39
+        - 41
+        - 42
+        - 43
+        - 44
     'shop_timer':
       name: '&7Time Left: &c%dailyshop_time_blocks%'
       material: COMPASS
       slot: 4
       nbt:
         LodestoneTracked: 0b
-    'BLACK_STAINED_GLASS_PANE_5':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 5
-    'BLACK_STAINED_GLASS_PANE_6':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 6
-    'BLACK_STAINED_GLASS_PANE_7':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 7
-    'BLACK_STAINED_GLASS_PANE_8':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 8
-    'BLACK_STAINED_GLASS_PANE_9':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 9
-    'BLACK_STAINED_GLASS_PANE_17':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 17
-    'BLACK_STAINED_GLASS_PANE_18':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 18
-    'BLACK_STAINED_GLASS_PANE_26':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 26
-    'BLACK_STAINED_GLASS_PANE_27':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 27
-    'BLACK_STAINED_GLASS_PANE_35':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 35
-    'BLACK_STAINED_GLASS_PANE_36':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 36
-    'BLACK_STAINED_GLASS_PANE_37':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 37
-    'BLACK_STAINED_GLASS_PANE_38':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 38
-    'BLACK_STAINED_GLASS_PANE_39':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 39
     'back_button':
       name: '&cGo back to Menu'
       material: BARRIER
@@ -90,22 +44,6 @@ shop:
         type: OPEN_SHOP
         data: menu
       slot: 40
-    'BLACK_STAINED_GLASS_PANE_41':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 41
-    'BLACK_STAINED_GLASS_PANE_42':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 42
-    'BLACK_STAINED_GLASS_PANE_43':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 43
-    'BLACK_STAINED_GLASS_PANE_44':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 44
 items:
   "COARSE_DIRT":
     material: COARSE_DIRT

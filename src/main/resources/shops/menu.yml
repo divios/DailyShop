@@ -1,214 +1,100 @@
 id: menu
 timer: -1
-timeStamp: dom, 12 sept 2021 13:22:45
+announce_restock: true
 shop:
   title: menu
   size: 45
   items:
-    'PANE_0':
+    PANE_0:
       name: '&c'
       material: BLACK_STAINED_GLASS_PANE
-      slot: 0
-    'PANE_1':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 1
-    'PANE_2':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 2
-    'PANE_3':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 3
-    'ECO':
-      name: '&7Your Balance: &e%vault_eco_balance_formatted%'
-      material: GOLD_INGOT
-      slot: 4
-    'PANE_5':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 5
-    'PANE_6':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 6
-    'PANE_7':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 7
-    'PANE_8':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 8
-    'PANE_9':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 9
-    'PANE_10':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 10
-    'PANE_11':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 11
-    'PANE_12':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 12
-    'PANE_13':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 13
-    'PANE_14':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 14
-    'PANE_15':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 15
-    'PANE_16':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 16
-    'PANE_17':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 17
-    'PANE_18':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 18
-    'EQUIPMENT':
+      slot:
+        - 0
+        - 1
+        - 2
+        - 3
+        - 4
+        - 5
+        - 6
+        - 7
+        - 8
+        - 9
+        - 10
+        - 11
+        - 12
+        - 13
+        - 14
+        - 15
+        - 16
+        - 17
+        - 18
+        - 26
+        - 27
+        - 28
+        - 29
+        - 30
+        - 31
+        - 32
+        - 33
+        - 34
+        - 35
+        - 36
+        - 37
+        - 38
+        - 39
+        - 40
+        - 41
+        - 42
+        - 43
+        - 44
+    EQUIPMENT:
       name: '&bEquipment'
       material: LEATHER_CHESTPLATE
       action:
         type: OPEN_SHOP
         data: equipment
       slot: 19
-      nbt:
-        Damage: 0
-    'BLOCKS':
+    BLOCKS:
       name: '&cBlocks'
       material: BRICKS
       action:
         type: OPEN_SHOP
         data: blocks
       slot: 20
-    'FARM':
+    FARM:
       name: '&8Farm'
       material: IRON_HOE
       action:
         type: OPEN_SHOP
         data: farm
       slot: 21
-      nbt:
-        Damage: 0
-    'ORES':
+    ORES:
       name: '&eOres'
       material: GOLD_ORE
       action:
         type: OPEN_SHOP
         data: ore
       slot: 22
-    'WOOD':
+    WOOD:
       name: '&6Wood'
       material: ACACIA_LOG
       action:
         type: OPEN_SHOP
         data: wood
       slot: 23
-    'DROPS':
+    DROPS:
       name: '&aDrops'
       material: ARROW
       action:
         type: OPEN_SHOP
         data: drops
       slot: 24
-    'POTIONS':
+    POTIONS:
       name: '&dPotions'
       material: BREWING_STAND
       action:
         type: OPEN_SHOP
         data: potion
       slot: 25
-    'PANE_26':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 26
-    'PANE_27':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 27
-    'PANE_28':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 28
-    'PANE_29':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 29
-    'PANE_30':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 30
-    'PANE_31':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 31
-    'PANE_32':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 32
-    'PANE_33"':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 33
-    'PANE_34':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 34
-    'PANE_35':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 35
-    'PANE_36':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 36
-    'PANE_37':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 37
-    'PANE_38':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 38
-    'PANE_39':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 39
-    'PANE_40':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 40
-    'PANE_41':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 41
-    'PANE_42':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 42
-    'PANE_43':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 43
-    'PANE_44':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 44
 items: {
-  }
+}

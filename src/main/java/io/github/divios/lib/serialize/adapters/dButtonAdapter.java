@@ -81,7 +81,9 @@ public class dButtonAdapter implements JsonSerializer<dItem>, JsonDeserializer<d
         Preconditions.checkArgument(object.has("slot"), "An item needs a slot");
 
         if (object.get("material").getAsString().equals("AIR")) {
-            return dItem.AIR().setSlot(object.get("slot").getAsInt());
+            dItem air = dItem.AIR();
+            setSlots(object.get("slot"), air);
+            return air;
         }
 
         String material = object.get("material").getAsString();
@@ -104,16 +106,20 @@ public class dButtonAdapter implements JsonSerializer<dItem>, JsonDeserializer<d
             ditem.setAction(typeAction[0], action.has("data") ? action.get("data").getAsString() : "");
         }
 
-        if (object.get("slot").isJsonArray()) {     // Get the min slot if multipleSlots
-            int minSlot = 999;
-            for (JsonElement element : object.get("slot").getAsJsonArray())
-                if (element.getAsInt() < minSlot) minSlot = element.getAsInt();
-            ditem.setSlot(minSlot);
-        } else
-            ditem.setSlot(object.get("slot").getAsInt());
+        setSlots(object.get("slot"), ditem);
         if (object.has("nbt")) ditem.setNBT(object.get("nbt").getAsJsonObject());
 
         return ditem;
     }
-    
+
+    private void setSlots(JsonElement object, dItem ditem) {
+        if (object.isJsonArray()) {     // Get the min slot if multipleSlots
+            int minSlot = 999;
+            for (JsonElement element : object.getAsJsonArray())
+                if (element.getAsInt() < minSlot) minSlot = element.getAsInt();
+            ditem.setSlot(minSlot);
+        } else
+            ditem.setSlot(object.getAsInt());
+    }
+
 }

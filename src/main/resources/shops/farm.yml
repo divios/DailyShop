@@ -5,64 +5,35 @@ shop:
   title: farm
   size: 45
   items:
-    'AIR_0':
+    'AIR':
       material: AIR
-      slot: 0
-    'AIR_1':
-      material: AIR
-      slot: 1
-    'AIR_2':
-      material: AIR
-      slot: 2
-    'AIR_3':
-      material: AIR
-      slot: 3
+      slot:
+        - 0
+        - 1
+        - 2
+        - 3
+        - 5
+        - 6
+        - 7
+        - 8
+        - 9
+        - 17
+        - 18
+        - 26
+        - 27
+        - 35
+        - 36
+        - 37
+        - 38
+        - 39
+        - 41
+        - 42
+        - 43
+        - 44
     'TIME_LEFT':
       name: '&7Time Left: &8%dailyshop_time_farm%'
       material: COMPASS
       slot: 4
-    'AIR_5':
-      material: AIR
-      slot: 5
-    'AIR_6':
-      material: AIR
-      slot: 6
-    'AIR_7':
-      material: AIR
-      slot: 7
-    'AIR_8':
-      material: AIR
-      slot: 8
-    'AIR_9':
-      material: AIR
-      slot: 9
-    'AIR_17':
-      material: AIR
-      slot: 17
-    'AIR_18':
-      material: AIR
-      slot: 18
-    'AIR_26':
-      material: AIR
-      slot: 26
-    'AIR_27':
-      material: AIR
-      slot: 27
-    'AIR_35':
-      material: AIR
-      slot: 35
-    'AIR_36':
-      material: AIR
-      slot: 36
-    'AIR_37':
-      material: AIR
-      slot: 37
-    'AIR_38':
-      material: AIR
-      slot: 38
-    'AIR_39':
-      material: AIR
-      slot: 39
     'BACK':
       name: '&cGo back to Menu'
       material: BARRIER
@@ -70,18 +41,6 @@ shop:
         type: OPEN_SHOP
         data: menu
       slot: 40
-    'AIR_41':
-      material: AIR
-      slot: 41
-    'AIR_42':
-      material: AIR
-      slot: 42
-    'AIR_43':
-      material: AIR
-      slot: 43
-    'AIR_44':
-      material: AIR
-      slot: 44
 items:
   "ACACIA_LEAVES":
     material: ACACIA_LEAVES

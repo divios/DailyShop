@@ -9,192 +9,54 @@ shop:
       name: '&7Time Left: &a%dailyshop_time_drops%'
       material: COMPASS
       slot: 0
-    'BLACK_STAINED_GLASS_PANE_1':
+    'BLACK_PANE':
       name: '&c'
       material: BLACK_STAINED_GLASS_PANE
-      slot: 1
+      slot:
+        - 1
+        - 2
+        - 3
+        - 4
+        - 5
+        - 6
+        - 7
+        - 8
+        - 9
+        - 10
+        - 16
+        - 17
+        - 18
+        - 19
+        - 20
+        - 21
+        - 22
+        - 23
+        - 24
+        - 25
+        - 26
+        - 36
+        - 37
+        - 38
+        - 39
+        - 41
+        - 42
+        - 43
+        - 44
       nbt:
         Damage: 0
-    'BLACK_STAINED_GLASS_PANE_2':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 2
-      nbt:
-        Damage: 0
-    'BLACK_STAINED_GLASS_PANE_3':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 3
-      nbt:
-        Damage: 0
-    'BLACK_STAINED_GLASS_PANE_4':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 4
-      nbt:
-        Damage: 0
-    'BLACK_STAINED_GLASS_PANE_5':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 5
-      nbt:
-        Damage: 0
-    'BLACK_STAINED_GLASS_PANE_6':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 6
-      nbt:
-        Damage: 0
-    'BLACK_STAINED_GLASS_PANE_7':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 7
-      nbt:
-        Damage: 0
-    'BLACK_STAINED_GLASS_PANE_8':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 8
-      nbt:
-        Damage: 0
-    'BLACK_STAINED_GLASS_PANE_9':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 9
-      nbt:
-        Damage: 0
-    'BLACK_STAINED_GLASS_PANE_10':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 10
-      nbt:
-        Damage: 0
-    'BLACK_STAINED_GLASS_PANE_16':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 16
-      nbt:
-        Damage: 0
-    'BLACK_STAINED_GLASS_PANE_17':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 17
-      nbt:
-        Damage: 0
-    'BLACK_STAINED_GLASS_PANE_18':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 18
-      nbt:
-        Damage: 0
-    'BLACK_STAINED_GLASS_PANE_19':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 19
-      nbt:
-        Damage: 0
-    'BLACK_STAINED_GLASS_PANE_20':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 20
-      nbt:
-        Damage: 0
-    'BLACK_STAINED_GLASS_PANE_21':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 21
-      nbt:
-        Damage: 0
-    'BLACK_STAINED_GLASS_PANE_22':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 22
-      nbt:
-        Damage: 0
-    'BLACK_STAINED_GLASS_PANE_23':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 23
-      nbt:
-        Damage: 0
-    'BLACK_STAINED_GLASS_PANE_24':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 24
-      nbt:
-        Damage: 0
-    'BLACK_STAINED_GLASS_PANE_25':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 25
-      nbt:
-        Damage: 0
-    'BLACK_STAINED_GLASS_PANE_26':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 26
-      nbt:
-        Damage: 0
-    'BLACK_STAINED_GLASS_PANE_27':
-      name: '&c'
-      material: GREEN_STAINED_GLASS_PANE
-      slot: 27
-    'BLACK_STAINED_GLASS_PANE_28':
-      name: '&c'
-      material: GREEN_STAINED_GLASS_PANE
-      slot: 28
-    'BLACK_STAINED_GLASS_PANE_29':
-      name: '&c'
-      material: GREEN_STAINED_GLASS_PANE
-      slot: 29
-    'BLACK_STAINED_GLASS_PANE_30':
-      name: '&c'
-      material: GREEN_STAINED_GLASS_PANE
-      slot: 30
-    'BLACK_STAINED_GLASS_PANE_31':
-      name: '&c'
-      material: GREEN_STAINED_GLASS_PANE
-      slot: 31
-    'BLACK_STAINED_GLASS_PANE_32':
-      name: '&c'
-      material: GREEN_STAINED_GLASS_PANE
-      slot: 32
-    'BLACK_STAINED_GLASS_PANE_33':
-      name: '&c'
-      material: GREEN_STAINED_GLASS_PANE
-      slot: 33
-    'BLACK_STAINED_GLASS_PANE_34':
-      name: '&c'
-      material: GREEN_STAINED_GLASS_PANE
-      slot: 34
-    'BLACK_STAINED_GLASS_PANE_35':
-      name: '&c'
-      material: GREEN_STAINED_GLASS_PANE
-      slot: 35
-    'BLACK_STAINED_GLASS_PANE_36':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 36
-      nbt:
-        Damage: 0
-    'BLACK_STAINED_GLASS_PANE_37':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 37
-      nbt:
-        Damage: 0
-    'BLACK_STAINED_GLASS_PANE_38':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 38
-      nbt:
-        Damage: 0
-    'BLACK_STAINED_GLASS_PANE_39':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 39
-      nbt:
-        Damage: 0
+    'GREEN_PANE':
+        name: '&c'
+        material: GREEN_STAINED_GLASS_PANE
+        slot:
+          - 27
+          - 28
+          - 29
+          - 30
+          - 31
+          - 32
+          - 33
+          - 34
+          - 35
     'back_button':
       name: '&cGo back to Menu'
       material: BARRIER
@@ -202,30 +64,6 @@ shop:
         type: OPEN_SHOP
         data: menu
       slot: 40
-    'BLACK_STAINED_GLASS_PANE_41':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 41
-      nbt:
-        Damage: 0
-    'BLACK_STAINED_GLASS_PANE_42':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 42
-      nbt:
-        Damage: 0
-    'BLACK_STAINED_GLASS_PANE_43':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 43
-      nbt:
-        Damage: 0
-    'BLACK_STAINED_GLASS_PANE_44':
-      name: '&c'
-      material: BLACK_STAINED_GLASS_PANE
-      slot: 44
-      nbt:
-        Damage: 0
 items:
   "PHANTOM_MEMBRANE":
     material: PHANTOM_MEMBRANE
