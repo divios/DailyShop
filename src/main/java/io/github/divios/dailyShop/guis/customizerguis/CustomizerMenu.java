@@ -28,6 +28,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class CustomizerMenu {
@@ -542,9 +543,7 @@ public class CustomizerMenu {
                                         .setName("&f&lChange bundle items")
                                         .setLore("&6Right Click > &7To change items on the bundle")
                                         .addLore("")
-                                        .addLore(item.getBundle().orElse(Collections.emptyList()).stream()
-                                                .map(uuid -> shop.getItem(uuid).orElse(dItem.AIR()).getDisplayName())
-                                                .collect(Collectors.toList()))
+                                        .addLore(item.getBundle().orElse(Collections.emptyList()))
                                 :
                                 ItemBuilder.of(XMaterial.GRAY_STAINED_GLASS_PANE).setName("&c")
 

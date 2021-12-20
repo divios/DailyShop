@@ -23,7 +23,7 @@ public class changeBundleItem {
     private final Player p;
     private final dItem item;
     private final dShop shop;
-    private final Consumer<List<UUID>> confirm;
+    private final Consumer<List<String>> confirm;
     private final Runnable back;
 
     @Deprecated
@@ -31,7 +31,7 @@ public class changeBundleItem {
             Player p,
             dItem item,
             dShop shop,
-            Consumer<List<UUID>> confirm,
+            Consumer<List<String>> confirm,
             Runnable back
     ) {
         this.p = p;
@@ -49,17 +49,17 @@ public class changeBundleItem {
 
     private void open() {
 
-        List<UUID> added = item.getBundle().orElse(new ArrayList<>());
-        UUID ownId = item.getUid();
+        List<String> added = item.getBundle().orElse(new ArrayList<>());
+        String ownId = item.getID();
 
         new dynamicGui.Builder()
                 .contents(() -> {
                     //loreStrategy ls = new bundleSettingsLore();
                     return shop.getItems().stream()
-                            .filter(dItem -> !dItem.getUid().equals(ownId))
+                            .filter(dItem -> !dItem.getID().equals(ownId))
                             .map(dItem -> dItem.getItem().clone())  // Todo Aplicar lore strategy a los items
                             .map(_item -> {
-                                if (added.contains(dItem.getUid(_item))) {
+                                if (added.contains(dItem.getId(_item))) {
                                     _item = ItemUtils.addEnchant(_item, Enchantment.DAMAGE_ALL, 1);
                                     _item = ItemUtils.addItemFlags(_item, ItemFlag.HIDE_ENCHANTS);
                                 }
@@ -73,7 +73,7 @@ public class changeBundleItem {
 
                 .contentAction(event -> {
 
-                    UUID uid = dItem.getUid(event.getCurrentItem());
+                    String uid = dItem.getId(event.getCurrentItem());
                     if (added.contains(uid)) {
                         added.remove(uid);
                     } else {
@@ -99,7 +99,7 @@ public class changeBundleItem {
         private Player p;
         private dItem item;
         private dShop shop;
-        private Consumer<List<UUID>> confirm;
+        private Consumer<List<String>> confirm;
         private Runnable back;
 
         private changeBundleItemBuilder() {
@@ -120,7 +120,7 @@ public class changeBundleItem {
             return this;
         }
 
-        public changeBundleItemBuilder withConfirm(Consumer<List<UUID>> confirm) {
+        public changeBundleItemBuilder withConfirm(Consumer<List<String>> confirm) {
             this.confirm = confirm;
             return this;
         }

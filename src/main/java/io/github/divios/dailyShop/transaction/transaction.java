@@ -95,6 +95,7 @@ public class transaction {
 
         } catch (transactionExc e) {
             e.sendErrorMsg(p);
+            p.closeInventory();
             return;
         }
 
@@ -194,14 +195,12 @@ public class transaction {
                             .forEach(value ->
                                     {
                                         try {
-                                            s.concat(printSummary(p, uuid, shop));
+                                            s.concat(printSummary(p, UUID.nameUUIDFromBytes(uuid.getBytes()), shop));
                                         } catch (transactionExc e) {
                                             err1[0] = e;
                                         }
                                     }
                             );
-
-                    s.setPrice(s.getPrice() + item.getBuyPrice().orElse(dPrice.empty()).getPrice());
                 }));
 
         if (err1[0] != null) throw err1[0];
@@ -216,7 +215,7 @@ public class transaction {
 
         /// A PARTIR DE AQUI YA SOLO COMPROBAR SLOTS Y PRICE ///
 
-        s.setPrice(s.getPrice() + item.getBuyPrice().orElse(dPrice.empty()).getPrice() * amount);
+        s.setPrice(item.getBuyPrice().orElse(dPrice.empty()).getPrice() * amount);
 
         s.setSlots(item.getMaxStackSize() == 1 ?
                 s.getSlots() + amount : s.getSlots() + 1);

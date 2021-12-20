@@ -42,12 +42,13 @@ import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+@SuppressWarnings({"unchecked", "deprecation", "unused"})
 public class dItem implements Serializable, Cloneable {
 
     private static final long serialVersionUID = 6529685098267757690L;  // Avoid problems with serialization
     private static final DailyShop plugin = DailyShop.get();
 
-    private HashMap<String, LazyWrapper> cache = new HashMap<>();
+    private HashMap<String, LazyWrapper<?>> cache = new HashMap<>();
 
     private NBTItem item;
     private dStock stock = null;
@@ -97,7 +98,7 @@ public class dItem implements Serializable, Cloneable {
         cache.put("id", LazyWrapper.suppliedBy(() -> item.getString("rds_UUID")));
         cache.put("rarity", LazyWrapper.suppliedBy(() -> item.getObject("rds_rarity", dRarity.class)));
         cache.put("economy", LazyWrapper.suppliedBy(() -> {
-            economy econ[] = {new vault()};
+            economy[] econ = {new vault()};
             if (item.hasKey("rds_econ")) {
                 econ[0] = economy.deserialize(item.getString("rds_econ"));
                 Utils.tryCatchAbstraction(() -> econ[0].test(), e -> econ[0] = new vault());
@@ -117,11 +118,7 @@ public class dItem implements Serializable, Cloneable {
                 Pair.of(dAction.EMPTY, "")));
         cache.put("set", LazyWrapper.suppliedBy(() -> item.hasKey("rds_setItems") ? item.getInteger("rds_setItems") : null));
         cache.put("confirmGui", LazyWrapper.suppliedBy(() -> item.getBoolean("rds_confirm_gui")));
-        cache.put("bundle", LazyWrapper.suppliedBy(() -> {
-            final List<String> aux;
-            return (aux = item.getObject("rds_bundle", List.class)) == null ? null :
-                    aux.stream().map(UUID::fromString).collect(Collectors.toList());
-        }));
+        cache.put("bundle", LazyWrapper.suppliedBy(() -> item.getObject("rds_bundle", List.class)));
     }
 
     /**
@@ -145,7 +142,7 @@ public class dItem implements Serializable, Cloneable {
      * Gets the raw item, this is, the item's held
      * by this instance without all the daily metadata
      *
-     * @return
+     * @return s
      */
     public ItemStack getRawItem(boolean getAsNewItem) {
 
@@ -190,7 +187,7 @@ public class dItem implements Serializable, Cloneable {
     /**
      * Private method to transfer all daily item meta
      *
-     * @param item
+     * @param item s
      */
     private ItemStack copyAllMetadata(@NotNull ItemStack item) {
         dItem transfer = dItem.of(item);
@@ -764,9 +761,13 @@ public class dItem implements Serializable, Cloneable {
     }
 
 
-    public static @Nullable
-    UUID getUid(ItemStack item) {
-        return UUID.nameUUIDFromBytes(new NBTItem(item).getString("rds_UUID").getBytes());
+    public static String getId(ItemStack item) {
+        return new NBTItem(item).getString("rds_UUID");
+    }
+
+    @NotNull
+    public static UUID getUid(ItemStack item) {
+        return UUID.nameUUIDFromBytes(getId(item).getBytes());
     }
 
     /**
@@ -1013,8 +1014,8 @@ public class dItem implements Serializable, Cloneable {
      *
      * @return null if disabled.
      */
-    public Optional<List<UUID>> getBundle() {
-        return Optional.ofNullable((List<UUID>) cache.get("bundle").get());
+    public Optional<List<String>> getBundle() {
+        return Optional.ofNullable((List<String>) cache.get("bundle").get());
     }
 
     /**
@@ -1023,10 +1024,9 @@ public class dItem implements Serializable, Cloneable {
      * @param bundle null if want to disabled it
      * @return
      */
-    public dItem setBundle(@Nullable List<UUID> bundle) {
+    public dItem setBundle(@Nullable List<String> bundle) {
         if (bundle == null) item.removeKey("rds_bundle");
-        else item.setObject("rds_bundle", bundle.stream()        // Cast to string due to bug
-                .map(UUID::toString).collect(Collectors.toList()));
+        else item.setObject("rds_bundle", new ArrayList<>(bundle));
         cache.get("bundle").reset();
         return this;
     }

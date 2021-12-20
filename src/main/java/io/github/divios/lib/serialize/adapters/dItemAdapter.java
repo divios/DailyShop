@@ -71,6 +71,7 @@ public class dItemAdapter implements JsonSerializer<dItem>, JsonDeserializer<dIt
         merchant.addProperty("rarity", dItem.getRarity().getKey());
         merchant.add("econ", gson.toJsonTree(dItem.getEconomy()));
         merchant.addProperty("confirm_gui", dItem.isConfirmGuiEnabled());
+        dItem.getBundle().ifPresent(ids -> merchant.add("bundle", gson.toJsonTree(ids, stringListToken.getType())));
 
         if (dItem.isUnbreakble()) merchant.addProperty("unbreakable", true);
 
@@ -130,6 +131,7 @@ public class dItemAdapter implements JsonSerializer<dItem>, JsonDeserializer<dIt
         if (object.has("quantity")) ditem.setSetItems(object.get("quantity").getAsInt());
         if (object.has("stock")) ditem.setStock(gson.fromJson(object.get("stock"), dStock.class));
         if (object.has("confirm_gui")) ditem.setConfirm_gui(object.get("confirm_gui").getAsBoolean());
+        if (object.has("bundle")) ditem.setBundle(gson.fromJson(object.get("bundle"), stringListToken.getType()));
         if (object.has("nbt")) ditem.setNBT(object.get("nbt").getAsJsonObject());
         if (object.has("unbreakable") && object.get("unbreakable").getAsBoolean()) ditem.setUnbreakable();
 
