@@ -58,6 +58,8 @@ public class dButtonAdapter implements JsonSerializer<dItem>, JsonDeserializer<d
         else
             merchant.addProperty("slot", dItem.getSlot());
 
+        if (dItem.isUnbreakble()) merchant.addProperty("unbreakable", true);
+
         List<String> flags;
         if (!(flags = WrappedItemFlags.of(dItem).getFlags()).isEmpty())
             merchant.add("flags", gson.toJsonTree(flags, stringListToken.getType()));
@@ -104,6 +106,8 @@ public class dButtonAdapter implements JsonSerializer<dItem>, JsonDeserializer<d
             Pair<dAction, String> action = gson.fromJson(object.get("action"), Pair.class);
             ditem.setAction(action.get1(), action.get2());
         }
+
+        if (object.has("unbreakable") && object.get("unbreakable").getAsBoolean()) ditem.setUnbreakable();
 
         if (object.has("flags")) {
             List<String> flags = gson.fromJson(object.get("flags"), stringListToken.getType());
