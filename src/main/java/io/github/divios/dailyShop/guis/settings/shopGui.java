@@ -16,7 +16,6 @@ import io.github.divios.dailyShop.guis.customizerguis.CustomizerMenu;
 import io.github.divios.dailyShop.lorestategy.shopItemsManagerLore;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
-import io.github.divios.lib.dLib.log.options.dLogEntry;
 import io.github.divios.lib.managers.shopsManager;
 import io.github.divios.lib.serialize.serializerApi;
 import org.bukkit.entity.Player;
@@ -30,7 +29,7 @@ import java.util.UUID;
 
 public class shopGui {
 
-    private static final DailyShop plugin = DailyShop.getInstance();
+    private static final DailyShop plugin = DailyShop.get();
     private static final shopsManager sManager = shopsManager.getInstance();
 
     private static final BiMap<UUID, Integer> cache = HashBiMap.create();

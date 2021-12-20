@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 
 public class open extends abstractCommand {
 
-    private static final DailyShop plugin = DailyShop.getInstance();
+    private static final DailyShop plugin = DailyShop.get();
 
     public open() {
         super(cmdTypes.BOTH);

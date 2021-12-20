@@ -5,7 +5,7 @@ import io.github.divios.dailyShop.DailyShop;
 
 public class tokenEnchantsHook {
 
-    private static final DailyShop main = DailyShop.getInstance();
+    private static final DailyShop main = DailyShop.get();
     private static TokenEnchantAPI teAPI = null;
 
     static void hook() {

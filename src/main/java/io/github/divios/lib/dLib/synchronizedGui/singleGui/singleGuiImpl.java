@@ -6,7 +6,6 @@ import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.WeightedRandom;
 import io.github.divios.core_lib.scheduler.Schedulers;
-import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.events.searchStockEvent;
 import io.github.divios.dailyShop.events.updateItemEvent;
@@ -34,7 +33,7 @@ import java.util.stream.Collectors;
 
 public class singleGuiImpl implements singleGui {
 
-    protected static final DailyShop plugin = DailyShop.getInstance();
+    protected static final DailyShop plugin = DailyShop.get();
     private static final loreStrategy loreStrategy = new shopItemsLore();
 
     protected boolean isDestroyed = false;

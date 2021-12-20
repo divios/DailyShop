@@ -77,7 +77,7 @@ public class DailyShop extends JavaPlugin {
                 });
     }
 
-    public void reloadPlugin() {
+    public void reload() {
         configM.reload();
         Msg.setPREFIX(configM.getSettingsYml().PREFIX);
     }
@@ -86,7 +86,7 @@ public class DailyShop extends JavaPlugin {
         return shopsManager.getInstance();
     }
 
-    public static DailyShop getInstance() {
+    public static DailyShop get() {
         return INSTANCE;
     }
 

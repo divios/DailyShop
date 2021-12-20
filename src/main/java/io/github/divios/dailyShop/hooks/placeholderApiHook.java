@@ -12,7 +12,7 @@ import java.util.Optional;
 
 class placeholderApiHook extends PlaceholderExpansion {
 
-    private static final DailyShop plugin = DailyShop.getInstance();
+    private static final DailyShop plugin = DailyShop.get();
     private static placeholderApiHook instance = null;
 
     private placeholderApiHook() {

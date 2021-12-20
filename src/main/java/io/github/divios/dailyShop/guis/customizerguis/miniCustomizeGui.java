@@ -32,7 +32,7 @@ import java.util.stream.IntStream;
 
 public class miniCustomizeGui {
 
-    private static final DailyShop plugin = DailyShop.getInstance();
+    private static final DailyShop plugin = DailyShop.get();
 
     private final Player p;
     private ItemStack item;

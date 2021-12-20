@@ -39,7 +39,7 @@ public enum dAction {
                         .collect(Collectors.toList()))
                 .title(integer -> "&6&l" + shopsManager.getInstance().getShop(s).get().getName() + " items")
                 .back(player -> shopsManager.getInstance().getShop(s).get().openShop(p))
-                .plugin(DailyShop.getInstance())
+                .plugin(DailyShop.get())
                 .setSearch(false)
                 .open(p);
     });

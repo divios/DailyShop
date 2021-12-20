@@ -7,7 +7,7 @@ public class shopGuiPlusHook {
     public static Object api = null;
 
     public static void hook() {
-        DailyShop.getInstance().getLogger().info("Hooked to ShopGUIPlus");
+        DailyShop.get().getLogger().info("Hooked to ShopGUIPlus");
         api = new Object();
     }
 

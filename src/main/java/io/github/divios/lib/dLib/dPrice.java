@@ -4,6 +4,7 @@ import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.core_lib.misc.XSymbols;
 import io.github.divios.dailyShop.utils.PriceWrapper;
 import io.github.divios.dailyShop.utils.Utils;
+import org.bukkit.entity.Player;
 
 import java.io.Serializable;
 
@@ -43,6 +44,12 @@ public class dPrice implements Serializable {
         return actualPrice;
     }
 
+    public double getPriceForPlayer(Player p, type type) {
+        double price = getPrice();
+
+        return price;
+    }
+
     public void generateNewPrice() {
         if (randomFlag)
             actualPrice = generateRandomPrice();
@@ -67,6 +74,10 @@ public class dPrice implements Serializable {
         else return String.valueOf(actualPrice);
     }
 
+    public enum type {
+        BUY,
+        SELL
+    }
 
 
 }

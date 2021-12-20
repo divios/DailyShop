@@ -23,7 +23,7 @@ import java.util.stream.IntStream;
 
 public class customizeAction {
 
-    private final static DailyShop plugin = DailyShop.getInstance();
+    private final static DailyShop plugin = DailyShop.get();
 
     private final Player p;
     private final dShop shop;

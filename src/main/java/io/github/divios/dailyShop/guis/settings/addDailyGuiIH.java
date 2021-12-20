@@ -18,7 +18,7 @@ import java.util.stream.IntStream;
 
 public class addDailyGuiIH {
 
-    private static final DailyShop plugin = DailyShop.getInstance();
+    private static final DailyShop plugin = DailyShop.get();
 
     private final Player p;
     private final dShop shop;

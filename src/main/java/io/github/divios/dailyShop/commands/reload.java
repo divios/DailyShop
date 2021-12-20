@@ -1,23 +1,15 @@
 package io.github.divios.dailyShop.commands;
 
 import com.cryptomorin.xseries.messages.Titles;
-import com.google.common.util.concurrent.FutureCallback;
-import com.google.gson.JsonElement;
 import io.github.divios.core_lib.commands.abstractCommand;
 import io.github.divios.core_lib.commands.cmdTypes;
 import io.github.divios.core_lib.misc.FormatUtils;
-import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
-import io.github.divios.dailyShop.utils.Timer;
-import io.github.divios.lib.dLib.dItem;
-import io.github.divios.lib.managers.shopsManager;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.stream.IntStream;
 
 public class reload extends abstractCommand {
 
@@ -53,7 +45,7 @@ public class reload extends abstractCommand {
 
     @Override
     public void run(CommandSender sender, List<String> args) {
-        DailyShop.getInstance().reloadPlugin();
+        DailyShop.get().reload();
         if (sender instanceof Player) Titles.sendTitle((Player) sender, 25, 40, 25,
                 FormatUtils.color("&a&lPlugin Reloaded"), "");
         else sender.sendMessage("Plugin Reloaded");

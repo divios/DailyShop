@@ -6,7 +6,6 @@ import io.github.divios.core_lib.events.Subscription;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.Msg;
 import io.github.divios.core_lib.scheduler.Task;
-import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.events.updateItemEvent;
 import io.github.divios.dailyShop.guis.customizerguis.customizeGui;
@@ -21,7 +20,6 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-import java.util.stream.IntStream;
 
 /**
  * Abstract class that represents the basic operations of a syncMenu.
@@ -210,7 +208,7 @@ public abstract class abstractSyncMenu implements syncMenu {
         players.forEach(uuid -> Optional.ofNullable(Bukkit.getPlayer(uuid)).ifPresent(this::generate));
         if (!silent)
             Msg.broadcast(
-                    Msg.singletonMsg(DailyShop.getInstance().configM.getLangYml().MSG_RESTOCK)
+                    Msg.singletonMsg(DailyShop.get().configM.getLangYml().MSG_RESTOCK)
                             .add("\\{shop}", shop.getName())
                             .build()
             );

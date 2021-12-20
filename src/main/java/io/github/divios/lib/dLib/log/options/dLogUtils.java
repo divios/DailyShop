@@ -14,7 +14,7 @@ import java.util.concurrent.CompletableFuture;
 
 public class dLogUtils {
 
-    private static final DailyShop plugin = DailyShop.getInstance();
+    private static final DailyShop plugin = DailyShop.get();
 
     public static CompletableFuture<Void> importToYaml(Collection<dLogEntry.dLogEntryState> entries) {
 

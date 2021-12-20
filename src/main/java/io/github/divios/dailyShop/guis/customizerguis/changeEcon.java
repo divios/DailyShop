@@ -28,7 +28,7 @@ import java.util.stream.IntStream;
 
 public class changeEcon {
 
-    private static final DailyShop plugin = DailyShop.getInstance();
+    private static final DailyShop plugin = DailyShop.get();
 
     private static final GemsEconomyAPI gemsApi = hooksManager.getInstance().getGemsEcon();
     private static final TokenEnchantAPI tokenEnchantsApi = hooksManager.getInstance().getTokenEnchantApi();

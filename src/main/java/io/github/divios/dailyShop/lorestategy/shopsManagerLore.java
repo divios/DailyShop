@@ -30,7 +30,7 @@ public class shopsManagerLore implements loreStrategy {
 
     private List<String> getLore(dShop shop) {
         return Msg.msgList(
-                DailyShop.getInstance().configM.getLangYml().SHOPS_MANAGER_LORE)
+                DailyShop.get().configM.getLangYml().SHOPS_MANAGER_LORE)
                 .add("\\{timer}", String.valueOf(shop.getTimer()))
                 .add("\\{amount}", getShopAmountOfItems(shop))
                 .add("\\{c_timer}", getShopTimerFormatted(shop))

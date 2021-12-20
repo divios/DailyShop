@@ -12,7 +12,7 @@ import java.util.function.Supplier;
 
 public abstract class abstractEconomy implements Serializable, economy {
 
-    protected static final DailyShop plugin = DailyShop.getInstance();
+    protected static final DailyShop plugin = DailyShop.get();
 
     protected final String currency;
     private final Supplier<String> name;

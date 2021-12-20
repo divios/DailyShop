@@ -21,7 +21,7 @@ import java.util.Set;
 
 public class FileUtils {
 
-    private static final DailyShop plugin = DailyShop.getInstance();
+    private static final DailyShop plugin = DailyShop.get();
 
     public static void createFile(File file) {
         try {

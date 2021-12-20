@@ -22,7 +22,7 @@ import java.util.Map;
 
 public class changeEnchantments {
 
-    private static final DailyShop plugin = DailyShop.getInstance();
+    private static final DailyShop plugin = DailyShop.get();
 
     private static final List<ItemStack> contentsList = contents();
     private final Player p;

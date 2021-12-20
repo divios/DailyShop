@@ -6,7 +6,7 @@ import io.github.divios.dailyShop.utils.FileUtils;
 
 public class configManager {
 
-    private static final DailyShop main = DailyShop.getInstance();
+    private static final DailyShop main = DailyShop.get();
     private final langResource langYml;
     private final settingsResource settingsYml;
     private shopsResource shopsResource;

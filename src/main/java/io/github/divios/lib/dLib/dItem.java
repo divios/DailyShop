@@ -45,7 +45,7 @@ import java.util.stream.Collectors;
 public class dItem implements Serializable, Cloneable {
 
     private static final long serialVersionUID = 6529685098267757690L;  // Avoid problems with serialization
-    private static final DailyShop plugin = DailyShop.getInstance();
+    private static final DailyShop plugin = DailyShop.get();
 
     private HashMap<String, LazyWrapper> cache = new HashMap<>();
 

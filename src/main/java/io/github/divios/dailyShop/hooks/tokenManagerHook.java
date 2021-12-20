@@ -6,7 +6,7 @@ import org.bukkit.Bukkit;
 
 public class tokenManagerHook {
 
-    private static final DailyShop main = DailyShop.getInstance();
+    private static final DailyShop main = DailyShop.get();
     static TokenManager api = null;
 
     public static void hook() {

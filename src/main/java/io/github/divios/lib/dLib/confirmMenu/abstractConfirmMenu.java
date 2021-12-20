@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 
 public abstract class abstractConfirmMenu {
 
-    protected static final DailyShop plugin = DailyShop.getInstance();
+    protected static final DailyShop plugin = DailyShop.get();
 
     protected static final String MARK_KEY = "rds_temp_item";
     protected static final int MAX_INVENTORY_ITEMS = 9 * 4 * 64;

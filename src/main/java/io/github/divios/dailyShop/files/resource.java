@@ -1,7 +1,5 @@
 package io.github.divios.dailyShop.files;
 
-import com.google.common.collect.Lists;
-import io.github.divios.core_lib.cache.Lazy;
 import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.utils.FileUtils;
@@ -9,11 +7,10 @@ import io.github.divios.dailyShop.utils.Timer;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.*;
-import java.util.List;
 
 public abstract class resource {
 
-    private static final DailyShop plugin = DailyShop.getInstance();
+    private static final DailyShop plugin = DailyShop.get();
 
     private final String name;
 

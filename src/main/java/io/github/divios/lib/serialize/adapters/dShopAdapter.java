@@ -12,7 +12,6 @@ import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.dLib.synchronizedGui.singleGui.dInventory;
 
 import java.lang.reflect.Type;
-import java.sql.Time;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -46,7 +45,7 @@ public class dShopAdapter implements JsonSerializer<dShop>, JsonDeserializer<dSh
         dShop deserializedShop;
 
         id = object.get("id").getAsString();
-        timer[0] = object.has("timer") ? object.get("timer").getAsInt() : DailyShop.getInstance().configM.getSettingsYml().DEFAULT_TIMER;
+        timer[0] = object.has("timer") ? object.get("timer").getAsInt() : DailyShop.get().configM.getSettingsYml().DEFAULT_TIMER;
         timestamp = object.has("timestamp") ? new Timestamp(wrappedParse(object.get("timestamp").getAsString()).getTime()) : new Timestamp(System.currentTimeMillis());
 
         deserializedShop = new dShop(id, timer[0], timestamp);

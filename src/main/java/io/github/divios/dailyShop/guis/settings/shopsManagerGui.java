@@ -31,7 +31,7 @@ import java.util.regex.Pattern;
 
 public class shopsManagerGui {
 
-    private static final DailyShop plugin = DailyShop.getInstance();
+    private static final DailyShop plugin = DailyShop.get();
     private static final shopsManager sManager = shopsManager.getInstance();
     private static final databaseManager dManager = databaseManager.getInstance();
 

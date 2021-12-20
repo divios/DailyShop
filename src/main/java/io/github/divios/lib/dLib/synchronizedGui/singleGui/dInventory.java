@@ -22,7 +22,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.io.BukkitObjectInputStream;
 import org.bukkit.util.io.BukkitObjectOutputStream;
-import org.checkerframework.checker.formatter.FormatUtil;
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
 import java.io.ByteArrayInputStream;
@@ -36,7 +35,7 @@ import java.util.stream.IntStream;
 @SuppressWarnings({"ConstantConditions", "deprecation", "unchecked", "unused"})
 public class dInventory {
 
-    protected static final DailyShop plugin = DailyShop.getInstance();
+    protected static final DailyShop plugin = DailyShop.get();
 
     protected String title;       // for some reason is throwing noSuchMethod
     protected Inventory inv;

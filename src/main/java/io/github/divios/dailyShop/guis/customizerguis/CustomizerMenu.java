@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
 
 public class CustomizerMenu {
 
-    private final static DailyShop plugin = DailyShop.getInstance();
+    private final static DailyShop plugin = DailyShop.get();
 
     private final Player p;
     private final dItem item;

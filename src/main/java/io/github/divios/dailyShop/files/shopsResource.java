@@ -7,17 +7,15 @@ import io.github.divios.dailyShop.utils.Timer;
 import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.managers.shopsManager;
 import io.github.divios.lib.serialize.serializerApi;
-import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.*;
 import java.util.stream.Stream;
 
 public class shopsResource {
 
-    private static final DailyShop plugin = DailyShop.getInstance();
+    private static final DailyShop plugin = DailyShop.get();
     private static final File shopsFolder = new File(plugin.getDataFolder(), "shops");
     private static final shopsManager sManager = shopsManager.getInstance();
 

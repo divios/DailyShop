@@ -20,7 +20,7 @@ public class tokenManagerE extends abstractEconomy {
 
     @Override
     public void witchDrawMoney(Player p, Double price) {
-        DailyShop.getInstance().getLogger().info("" + price.longValue());
+        DailyShop.get().getLogger().info("" + price.longValue());
         api.removeTokens(p, price.longValue());
     }
 

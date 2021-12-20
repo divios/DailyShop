@@ -7,7 +7,7 @@ import org.bukkit.entity.Player;
 public class transactionExc extends Exception{
 
     private final err motive;
-    private final static DailyShop plugin = DailyShop.getInstance();
+    private final static DailyShop plugin = DailyShop.get();
 
     public transactionExc(err motive) {
         this.motive = motive;

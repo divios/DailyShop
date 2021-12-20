@@ -25,7 +25,7 @@ import java.util.List;
 @SuppressWarnings({"ConstantConditions"})
 public class sellTransaction {
 
-    private static final DailyShop plugin = DailyShop.getInstance();
+    private static final DailyShop plugin = DailyShop.get();
 
     private final Player player;
     private final dItem item;
@@ -231,11 +231,11 @@ public class sellTransaction {
     }
 
     private void sendTranslatedMaterialMessageToPlayer(String formattedMsg, Material material) {
-        DailyShop.getInstance().getLocaleManager().sendMessage(player, formattedMsg, material, (short) 0, null);
+        DailyShop.get().getLocaleManager().sendMessage(player, formattedMsg, material, (short) 0, null);
     }
 
     private String getFormattedMessageForMaterialTranslation(List<String> msg) {
-        return FormatUtils.color(DailyShop.getInstance().configM.getSettingsYml().PREFIX +
+        return FormatUtils.color(DailyShop.get().configM.getSettingsYml().PREFIX +
                 msg.get(0) + "<item>" + "&7" + msg.get(1));
     }
 

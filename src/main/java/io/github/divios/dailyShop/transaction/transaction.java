@@ -6,7 +6,6 @@ import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.core_lib.misc.Msg;
-import io.github.divios.core_lib.misc.confirmIH;
 import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
@@ -35,7 +34,7 @@ import java.util.stream.IntStream;
 
 public class transaction {
 
-    private final static DailyShop plugin = DailyShop.getInstance();
+    private final static DailyShop plugin = DailyShop.get();
 
     public static void init(Player p, dItem item, dShop shop) {
 
@@ -135,8 +134,8 @@ public class transaction {
             if (!item.getItem().getItemMeta().getDisplayName().isEmpty())
                 Msg.sendMsg(p, msg.get(0) + item.getDisplayName() + "&7" + msg.get(1));
             else
-                DailyShop.getInstance().getLocaleManager().sendMessage(p,
-                        FormatUtils.color(DailyShop.getInstance().configM.getSettingsYml().PREFIX +
+                DailyShop.get().getLocaleManager().sendMessage(p,
+                        FormatUtils.color(DailyShop.get().configM.getSettingsYml().PREFIX +
                                 msg.get(0) + "<item>" + "&7" + msg.get(1)), item.getItem().getType(), (short) 0, null);
         }
 

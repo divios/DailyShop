@@ -6,7 +6,7 @@ import org.black_ixx.playerpoints.PlayerPointsAPI;
 
 public class playerPointsHook {
 
-    private static final DailyShop plugin = DailyShop.getInstance();
+    private static final DailyShop plugin = DailyShop.get();
     private static PlayerPointsAPI api = null;
 
     public static void hook() {

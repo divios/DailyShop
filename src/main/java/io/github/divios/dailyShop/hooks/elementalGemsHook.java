@@ -5,7 +5,7 @@ import io.github.divios.dailyShop.utils.Utils;
 
 public class elementalGemsHook {
 
-    private static final DailyShop main = DailyShop.getInstance();
+    private static final DailyShop main = DailyShop.get();
     private static boolean hooked = false;
 
     private elementalGemsHook() {}

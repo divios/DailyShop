@@ -11,7 +11,7 @@ import java.util.List;
 
 public class dRarity {
 
-    private static final DailyShop plugin = DailyShop.getInstance();
+    private static final DailyShop plugin = DailyShop.get();
 
     private transient static final List<ItemStack> items = new ArrayList<ItemStack>() {{
         add(XMaterial.GRAY_DYE.parseItem());

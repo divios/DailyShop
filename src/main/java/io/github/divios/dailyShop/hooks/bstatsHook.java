@@ -5,7 +5,7 @@ import org.bstats.bukkit.Metrics;
 
 public class bstatsHook {
 
-    private static final DailyShop main = DailyShop.getInstance();
+    private static final DailyShop main = DailyShop.get();
 
     private bstatsHook() {};
 

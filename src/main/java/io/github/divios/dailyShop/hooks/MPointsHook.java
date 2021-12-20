@@ -5,7 +5,7 @@ import me.yic.mpoints.MPointsAPI;
 
 public class MPointsHook {
 
-    private static final DailyShop plugin = DailyShop.getInstance();
+    private static final DailyShop plugin = DailyShop.get();
     private static MPointsAPI api = null;
 
     public static void hook() {

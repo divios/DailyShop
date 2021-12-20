@@ -46,7 +46,7 @@ public class helpCmd extends abstractCommand {
     public void run(CommandSender sender, List<String> args) {
         sender.sendMessage("");
         sender.sendMessage(FormatUtils.color("&6&lDailyShop Help &7Version &6" +
-                DailyShop.getInstance().getDescription().getVersion()));
+                DailyShop.get().getDescription().getVersion()));
         CommandManager.getCmds().stream()
                 .filter(absC -> {
                     for (String perms : absC.getPerms())

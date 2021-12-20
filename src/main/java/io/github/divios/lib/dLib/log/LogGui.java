@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 
 public class LogGui {
 
-    private static final DailyShop plugin = DailyShop.getInstance();
+    private static final DailyShop plugin = DailyShop.get();
 
     private final Player p;
     private final Runnable fallback;

@@ -6,7 +6,7 @@ import me.TechsCode.UltraEconomy.UltraEconomyAPI;
 
 public class UltraEconomyHook {
 
-    private static final DailyShop plugin = DailyShop.getInstance();
+    private static final DailyShop plugin = DailyShop.get();
     private static UltraEconomyAPI api = null;
 
     public static void hook() {

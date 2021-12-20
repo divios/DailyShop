@@ -13,7 +13,7 @@ import org.black_ixx.playerpoints.PlayerPointsAPI;
 
 public class hooksManager {
 
-    private static final DailyShop main = DailyShop.getInstance();
+    private static final DailyShop main = DailyShop.get();
     private static hooksManager instance = null;
 
     private hooksManager() {}

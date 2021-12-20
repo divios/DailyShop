@@ -10,7 +10,7 @@ import org.bukkit.inventory.ItemStack;
 public class shopItemsManagerLore implements loreStrategy {
 
 
-    private static final DailyShop plugin = DailyShop.getInstance();
+    private static final DailyShop plugin = DailyShop.get();
 
     public shopItemsManagerLore() {
     }

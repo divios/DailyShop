@@ -90,7 +90,7 @@ public class changeBundleItem {
         }).setSearch(false)
                 .back(player -> back.run())
                 .title(_i -> "&6Set items on the bundle")
-                .plugin(DailyShop.getInstance())
+                .plugin(DailyShop.get())
                 .open(p);
 
     }

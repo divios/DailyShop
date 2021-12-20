@@ -24,7 +24,7 @@ import java.util.concurrent.CompletableFuture;
 
 public class databaseManager extends DataManagerAbstract {
 
-    private static final DailyShop plugin = DailyShop.getInstance();
+    private static final DailyShop plugin = DailyShop.get();
 
     private static databaseManager instance = null;
 

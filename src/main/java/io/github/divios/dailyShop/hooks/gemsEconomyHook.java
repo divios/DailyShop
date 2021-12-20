@@ -5,7 +5,7 @@ import me.xanium.gemseconomy.api.GemsEconomyAPI;
 
 class gemsEconomyHook {
 
-    private static final DailyShop main = DailyShop.getInstance();
+    private static final DailyShop main = DailyShop.get();
     private static GemsEconomyAPI gemsEcon = null;
 
     private gemsEconomyHook() {};

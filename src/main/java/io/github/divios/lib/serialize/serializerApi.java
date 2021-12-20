@@ -16,7 +16,7 @@ import java.util.concurrent.CompletableFuture;
 
 public class serializerApi {
 
-    private static final DailyShop plugin = DailyShop.getInstance();
+    private static final DailyShop plugin = DailyShop.get();
     private static final Lazy<File> shopsFolder = Lazy.suppliedBy(() -> new File(plugin.getDataFolder(), "shops"));
 
     public static void saveShopToFile(dShop shop) {

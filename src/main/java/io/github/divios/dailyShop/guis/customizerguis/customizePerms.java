@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 
 public class customizePerms {
 
-    private static final DailyShop plugin = DailyShop.getInstance();
+    private static final DailyShop plugin = DailyShop.get();
 
     private final Player p;
     private final dItem item;
