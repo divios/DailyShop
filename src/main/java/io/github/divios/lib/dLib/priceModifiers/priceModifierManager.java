@@ -1,7 +1,6 @@
 package io.github.divios.lib.dLib.priceModifiers;
 
 import io.github.divios.dailyShop.DailyShop;
-import io.github.divios.lib.dLib.dShop;
 import org.bukkit.entity.Player;
 
 import java.util.Collection;
@@ -9,13 +8,13 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class priceModifiers {
+public class priceModifierManager {
 
     private static final DailyShop plugin = DailyShop.get();
 
     private final Set<priceModifier> modifiers = ConcurrentHashMap.newKeySet();
 
-    public priceModifiers() {}
+    public priceModifierManager() {}
 
     public boolean hasModifiers(Player p) {
         return modifiers.stream().anyMatch(modifier -> p.hasPermission(modifier.getPermission()));
@@ -26,6 +25,7 @@ public class priceModifiers {
 
         modifierContext context = new modifierContext(p, shop, itemID, type);
         return modifiers.stream()
+                .filter(priceModifier -> p.hasPermission(priceModifier.getPermission()))
                 .filter(priceModifier -> priceModifier.appliesToContext(context))
                 .map(priceModifier::getValue)
                 .min(Double::compare)
