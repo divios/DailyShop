@@ -12,7 +12,9 @@ import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.dAction;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.serialize.wrappers.WrappedEnchantment;
+import io.github.divios.lib.serialize.wrappers.WrappedItemFlags;
 import io.github.divios.lib.serialize.wrappers.WrappedNBT;
+import org.bukkit.inventory.ItemFlag;
 
 import java.lang.reflect.Type;
 import java.util.List;
@@ -55,6 +57,10 @@ public class dButtonAdapter implements JsonSerializer<dItem>, JsonDeserializer<d
             merchant.add("slot", gson.toJsonTree(dItem.getMultipleSlots()));
         else
             merchant.addProperty("slot", dItem.getSlot());
+
+        List<String> flags;
+        if (!(flags = WrappedItemFlags.of(dItem).getFlags()).isEmpty())
+            merchant.add("flags", gson.toJsonTree(flags, stringListToken.getType()));
 
         WrappedNBT nbt = WrappedNBT.valueOf(dItem.getNBT());
         if (!nbt.isEmpty()) merchant.add("nbt", nbt.getNbt());
@@ -99,7 +105,16 @@ public class dButtonAdapter implements JsonSerializer<dItem>, JsonDeserializer<d
             ditem.setAction(action.get1(), action.get2());
         }
 
+        if (object.has("flags")) {
+            List<String> flags = gson.fromJson(object.get("flags"), stringListToken.getType());
+            flags.forEach(s -> {
+                Preconditions.checkArgument(Utils.testRunnable(() -> ItemFlag.valueOf(s.toUpperCase())), "Incorrect flag " + s);
+                ditem.setFlag(ItemFlag.valueOf(s.toUpperCase()));
+            });
+        }
+
         deserializeSlots(object.get("slot"), ditem);
+
         if (object.has("nbt")) ditem.setNBT(object.get("nbt").getAsJsonObject());
 
         return ditem;
