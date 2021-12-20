@@ -3,11 +3,10 @@ package io.github.divios.dailyShop;
 import io.github.divios.core_lib.Core_lib;
 import io.github.divios.core_lib.commands.CommandManager;
 import io.github.divios.core_lib.misc.Msg;
-import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.commands.*;
 import io.github.divios.dailyShop.files.configManager;
 import io.github.divios.dailyShop.hooks.hooksManager;
-import io.github.divios.lib.dLib.priceModifiers.priceModifiers;
+import io.github.divios.lib.dLib.priceModifiers.priceModifierManager;
 import io.github.divios.lib.managers.shopsManager;
 import io.github.divios.lib.storage.databaseManager;
 import me.pikamug.localelib.LocaleManager;
@@ -22,7 +21,7 @@ public class DailyShop extends JavaPlugin {
     private static DailyShop INSTANCE;
     private LocaleManager localeManager;
     public configManager configM;
-    private priceModifiers modifiers;
+    private priceModifierManager modifiers;
 
     public DailyShop() {
         super();
@@ -45,7 +44,7 @@ public class DailyShop extends JavaPlugin {
         hooksManager.getInstance();
 
                                 /* Init conf & msgs & modifiers*/
-        modifiers = new priceModifiers();
+        modifiers = new priceModifierManager();
         configM = configManager.generate();
 
                                 /* Initiate database + getAllItems + timer */
@@ -97,5 +96,5 @@ public class DailyShop extends JavaPlugin {
         return localeManager;
     }
 
-    public priceModifiers getPriceModifiers() { return modifiers; }
+    public priceModifierManager getPriceModifiers() { return modifiers; }
 }
