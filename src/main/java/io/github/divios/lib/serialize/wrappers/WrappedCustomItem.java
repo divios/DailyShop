@@ -32,7 +32,7 @@ public class WrappedCustomItem {
     public dItem parseItem() {
         dItem item = null;
 
-        Preconditions.checkArgument(customItemType.isCustomObject(object), "Invalid object");
+        Preconditions.checkArgument(customItemType.isCustomObject(object), "Invalid object, check the format or if the plugin is running");
 
         switch (customItemType.getObjectType(object)) {
             case MMOITEM:
@@ -91,8 +91,8 @@ public class WrappedCustomItem {
 
 
     private enum customItemType {
-        MMOITEM(object -> object.has("mmoItem"), dItem -> MMOUtils.isMMOItem(dItem.getItem())),
-        ORAXEN(object -> object.has("oraxenItem"), dItem -> OraxenUtils.isOraxenItem(dItem.getItem()));
+        MMOITEM(object -> object.has("mmoItem") && MMOUtils.isMMOItemsOn(), dItem -> MMOUtils.isMMOItem(dItem.getItem())),
+        ORAXEN(object -> object.has("oraxenItem") && OraxenUtils.isOraxenOn(), dItem -> OraxenUtils.isOraxenItem(dItem.getItem()));
 
         Predicate<JsonObject> isElementType;
         Predicate<dItem> isType;
