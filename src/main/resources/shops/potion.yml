@@ -1,11 +1,11 @@
 id: potion
 timer: 86400
-timeStamp: jue, 16 sept 2021 10:59:47
+announce_restock: true
 shop:
   title: potion
   size: 45
   items:
-    'PANE_0':
+    PANE_0:
       name: '&c'
       material: BLACK_STAINED_GLASS_PANE
       slot:
@@ -37,9 +37,7 @@ shop:
         - 40
         - 41
         - 42
-      nbt:
-        Damage: 0
-    'PANE_7':
+    PANE_7:
       name: '&c'
       material: MAGENTA_STAINED_GLASS_PANE
       slot:
@@ -48,11 +46,11 @@ shop:
         - 25
         - 34
         - 43
-    'TIME_LEFT':
+    TIME_LEFT:
       name: '&7Time Left: &d%dailyshop_time_potion%'
       material: COMPASS
       slot: 8
-    'BACK':
+    BACK:
       name: '&cGo back to Menu'
       material: BARRIER
       action:
@@ -60,415 +58,7 @@ shop:
         data: menu
       slot: 44
 items:
-  "POTION_FIRE_RESISTENCE":
-    material: POTION
-    buyPrice:
-      fixed: '1075.0'
-    sellPrice:
-      fixed: '-1.0'
-    rarity: Common
-    econ:
-      name: vault
-    confirm_gui: true
-    nbt:
-      Potion: minecraft:fire_resistance
-  "POTION_LEAPING":
-    material: POTION
-    buyPrice:
-      fixed: '265.4'
-    sellPrice:
-      fixed: '-1.0'
-    rarity: Common
-    econ:
-      name: vault
-    confirm_gui: true
-    nbt:
-      Potion: minecraft:leaping
-  "SPLASH_POTION_REGENERATION":
-    material: SPLASH_POTION
-    buyPrice:
-      fixed: '575.0'
-    sellPrice:
-      fixed: '-1.0'
-    rarity: Common
-    econ:
-      name: vault
-    confirm_gui: true
-    nbt:
-      Potion: minecraft:strong_regeneration
-  "SPLASH_POTION_BREATHING":
-    material: SPLASH_POTION
-    buyPrice:
-      fixed: '575.0'
-    sellPrice:
-      fixed: '-1.0'
-    rarity: Common
-    econ:
-      name: vault
-    confirm_gui: true
-    nbt:
-      Potion: minecraft:long_water_breathing
-  "POTION_STRENTH":
-    material: POTION
-    buyPrice:
-      fixed: '1975.65'
-    sellPrice:
-      fixed: '-1.0'
-    rarity: Common
-    econ:
-      name: vault
-    confirm_gui: true
-    nbt:
-      Potion: minecraft:long_strength
-  "POTION_SWIFTNESS":
-    material: POTION
-    buyPrice:
-      fixed: '875.8'
-    sellPrice:
-      fixed: '-1.0'
-    rarity: Common
-    econ:
-      name: vault
-    confirm_gui: true
-    nbt:
-      Potion: minecraft:long_swiftness
-  "SPLASH_POTION_REGENERATION_2":
-    material: SPLASH_POTION
-    buyPrice:
-      fixed: '350.0'
-    sellPrice:
-      fixed: '-1.0'
-    rarity: Common
-    econ:
-      name: vault
-    confirm_gui: true
-    nbt:
-      Potion: minecraft:long_regeneration
-  "POTION_BREATHING_2":
-    material: POTION
-    buyPrice:
-      fixed: '720.45'
-    sellPrice:
-      fixed: '-1.0'
-    rarity: Common
-    econ:
-      name: vault
-    confirm_gui: true
-    nbt:
-      Potion: minecraft:water_breathing
-  "POTION_FIRE_RESISTANCE":
-    material: POTION
-    buyPrice:
-      fixed: '1575.0'
-    sellPrice:
-      fixed: '-1.0'
-    rarity: Common
-    econ:
-      name: vault
-    confirm_gui: true
-    nbt:
-      Potion: minecraft:long_fire_resistance
-  "POTION_REGENERATION_3":
-    material: POTION
-    buyPrice:
-      fixed: '865.2'
-    sellPrice:
-      fixed: '-1.0'
-    rarity: Common
-    econ:
-      name: vault
-    confirm_gui: true
-    nbt:
-      Potion: minecraft:long_regeneration
-  "POTION_SWIFTNESS_2":
-    material: POTION
-    buyPrice:
-      fixed: '1000.0'
-    sellPrice:
-      fixed: '-1.0'
-    rarity: Common
-    econ:
-      name: vault
-    confirm_gui: true
-    nbt:
-      Potion: minecraft:strong_swiftness
-  "POTION_LEAPING_2":
-    material: POTION
-    buyPrice:
-      fixed: '475.5'
-    sellPrice:
-      fixed: '-1.0'
-    rarity: Common
-    econ:
-      name: vault
-    confirm_gui: true
-    nbt:
-      Potion: minecraft:long_leaping
-  "POTION_STRENGTH":
-    material: POTION
-    buyPrice:
-      fixed: '875.9'
-    sellPrice:
-      fixed: '-1.0'
-    rarity: Common
-    econ:
-      name: vault
-    confirm_gui: true
-    nbt:
-      Potion: minecraft:strength
-  "POTION_BREATHING":
-    material: POTION
-    buyPrice:
-      fixed: '850.95'
-    sellPrice:
-      fixed: '-1.0'
-    rarity: Common
-    econ:
-      name: vault
-    confirm_gui: true
-    nbt:
-      Potion: minecraft:long_water_breathing
-  "SPLASH_POTION_INVISIBLE":
-    material: SPLASH_POTION
-    buyPrice:
-      fixed: '575.0'
-    sellPrice:
-      fixed: '-1.0'
-    rarity: Common
-    econ:
-      name: vault
-    confirm_gui: true
-    nbt:
-      Potion: minecraft:long_invisibility
-  "SPLASH_POTION_LEAPING":
-    material: SPLASH_POTION
-    buyPrice:
-      fixed: '350.0'
-    sellPrice:
-      fixed: '-1.0'
-    rarity: Common
-    econ:
-      name: vault
-    confirm_gui: true
-    nbt:
-      Potion: minecraft:long_leaping
-  "POTION_INVISIBLE_2":
-    material: POTION
-    buyPrice:
-      fixed: '750.75'
-    sellPrice:
-      fixed: '-1.0'
-    rarity: Common
-    econ:
-      name: vault
-    confirm_gui: true
-    nbt:
-      Potion: minecraft:long_invisibility
-  "SPLASH_POTION_STREGTH":
-    material: SPLASH_POTION
-    buyPrice:
-      fixed: '350.0'
-    sellPrice:
-      fixed: '-1.0'
-    rarity: Common
-    econ:
-      name: vault
-    confirm_gui: true
-    nbt:
-      Potion: minecraft:long_strength
-  "SPLASH_POTION_INVISIBLE_2":
-    material: SPLASH_POTION
-    buyPrice:
-      fixed: '350.0'
-    sellPrice:
-      fixed: '-1.0'
-    rarity: Common
-    econ:
-      name: vault
-    confirm_gui: true
-    nbt:
-      Potion: minecraft:invisibility
-  "POTION_LEAPING_3":
-    material: POTION
-    buyPrice:
-      fixed: '650.8'
-    sellPrice:
-      fixed: '-1.0'
-    rarity: Common
-    econ:
-      name: vault
-    confirm_gui: true
-    nbt:
-      Potion: minecraft:strong_leaping
-  "SPLASH_POTION_HEALING":
-    material: SPLASH_POTION
-    buyPrice:
-      fixed: '350.0'
-    sellPrice:
-      fixed: '-1.0'
-    rarity: Common
-    econ:
-      name: vault
-    confirm_gui: true
-    nbt:
-      Potion: minecraft:healing
-  "POTION_SWIFTNESS_3":
-    material: POTION
-    buyPrice:
-      fixed: '650.95'
-    sellPrice:
-      fixed: '-1.0'
-    rarity: Common
-    econ:
-      name: vault
-    confirm_gui: true
-    nbt:
-      Potion: minecraft:swiftness
-  "POTION_HEALING":
-    material: POTION
-    buyPrice:
-      fixed: '675.8'
-    sellPrice:
-      fixed: '-1.0'
-    rarity: Common
-    econ:
-      name: vault
-    confirm_gui: true
-    nbt:
-      Potion: minecraft:healing
-  "SPLASH_POTION_SWIFTNESS":
-    material: SPLASH_POTION
-    buyPrice:
-      fixed: '350.0'
-    sellPrice:
-      fixed: '-1.0'
-    rarity: Common
-    econ:
-      name: vault
-    confirm_gui: true
-    nbt:
-      Potion: minecraft:long_swiftness
-  "SPLASH_POTION_RESISTANCE":
-    material: SPLASH_POTION
-    buyPrice:
-      fixed: '350.0'
-    sellPrice:
-      fixed: '-1.0'
-    rarity: Common
-    econ:
-      name: vault
-    confirm_gui: true
-    nbt:
-      Potion: minecraft:fire_resistance
-  "POTION_LUCK":
-    material: POTION
-    buyPrice:
-      fixed: '2500.0'
-    sellPrice:
-      fixed: '-1.0'
-    rarity: Common
-    econ:
-      name: vault
-    confirm_gui: true
-    nbt:
-      Potion: minecraft:luck
-  "SPLASH_POTION_LEAPING_2":
-    material: SPLASH_POTION
-    buyPrice:
-      fixed: '275.0'
-    sellPrice:
-      fixed: '-1.0'
-    rarity: Common
-    econ:
-      name: vault
-    confirm_gui: true
-    nbt:
-      Potion: minecraft:leaping
-  "SPLASH_POTION_BREATHING_2":
-    material: SPLASH_POTION
-    buyPrice:
-      fixed: '350.0'
-    sellPrice:
-      fixed: '-1.0'
-    rarity: Common
-    econ:
-      name: vault
-    confirm_gui: true
-    nbt:
-      Potion: minecraft:water_breathing
-  "SPLASH_POTION_HEALING_2":
-    material: SPLASH_POTION
-    buyPrice:
-      fixed: '575.0'
-    sellPrice:
-      fixed: '-1.0'
-    rarity: Common
-    econ:
-      name: vault
-    confirm_gui: true
-    nbt:
-      Potion: minecraft:strong_healing
-  "SPLASH_POTION_REGENERATION_3":
-    material: SPLASH_POTION
-    buyPrice:
-      fixed: '275.0'
-    sellPrice:
-      fixed: '-1.0'
-    rarity: Common
-    econ:
-      name: vault
-    confirm_gui: true
-    nbt:
-      Potion: minecraft:regeneration
-  "POTION_REGENERATION":
-    material: POTION
-    buyPrice:
-      fixed: '915.0'
-    sellPrice:
-      fixed: '-1.0'
-    rarity: Common
-    econ:
-      name: vault
-    confirm_gui: true
-    nbt:
-      Potion: minecraft:strong_regeneration
-  "SPLASH_POTION_STREGTH_2":
-    material: SPLASH_POTION
-    buyPrice:
-      fixed: '275.0'
-    sellPrice:
-      fixed: '-1.0'
-    rarity: Common
-    econ:
-      name: vault
-    confirm_gui: true
-    nbt:
-      Potion: minecraft:strength
-  "SPLASH_POTION_SWIFTNESS_2":
-    material: SPLASH_POTION
-    buyPrice:
-      fixed: '275.0'
-    sellPrice:
-      fixed: '-1.0'
-    rarity: Common
-    econ:
-      name: vault
-    confirm_gui: true
-    nbt:
-      Potion: minecraft:swiftness
-  "POTION_INVISIBLE":
-    material: POTION
-    buyPrice:
-      fixed: '550.25'
-    sellPrice:
-      fixed: '-1.0'
-    rarity: Common
-    econ:
-      name: vault
-    confirm_gui: true
-    nbt:
-      Potion: minecraft:invisibility
-  "POTION_STRENGTH_2":
+  POTION_STRENGTH_2:
     material: POTION
     buyPrice:
       fixed: '1250.9'
@@ -478,45 +68,24 @@ items:
     econ:
       name: vault
     confirm_gui: true
-    nbt:
-      Potion: minecraft:strong_strength
-  "SPLASH_POTION_STRENGTH":
-    material: SPLASH_POTION
-    buyPrice:
-      fixed: '575.0'
-    sellPrice:
-      fixed: '-1.0'
-    rarity: Common
-    econ:
-      name: vault
-    confirm_gui: true
-    nbt:
-      Potion: minecraft:strong_strength
-  "SPLASH_POTION_LUCK":
-    material: SPLASH_POTION
-    buyPrice:
-      fixed: '550.0'
-    sellPrice:
-      fixed: '-1.0'
-    rarity: Common
-    econ:
-      name: vault
-    confirm_gui: true
-    nbt:
-      Potion: minecraft:luck
-  "POTION_HEAL":
+    potion:
+      type: STRENGTH
+      level: 2
+      extended: true
+  POTION_STRENGTH:
     material: POTION
     buyPrice:
-      fixed: '875.5'
+      fixed: '875.9'
     sellPrice:
       fixed: '-1.0'
     rarity: Common
     econ:
       name: vault
     confirm_gui: true
-    nbt:
-      Potion: minecraft:strong_healing
-  "SPLASH_POTION_LEAPING_3":
+    potion:
+      type: STRENGTH
+      level: 1
+  SPLASH_POTION_STRENGTH:
     material: SPLASH_POTION
     buyPrice:
       fixed: '575.0'
@@ -526,9 +95,208 @@ items:
     econ:
       name: vault
     confirm_gui: true
-    nbt:
-      Potion: minecraft:strong_leaping
-  "POTION":
+    potion:
+      type: STRENGTH
+      level: 2
+      extended: true
+  SPLASH_POTION_SWIFTNESS_2:
+    material: SPLASH_POTION
+    buyPrice:
+      fixed: '275.0'
+    sellPrice:
+      fixed: '-1.0'
+    rarity: Common
+    econ:
+      name: vault
+    confirm_gui: true
+    potion:
+      type: SPEED
+      level: 1
+  SPLASH_POTION_SWIFTNESS:
+    material: SPLASH_POTION
+    buyPrice:
+      fixed: '350.0'
+    sellPrice:
+      fixed: '-1.0'
+    rarity: Common
+    econ:
+      name: vault
+    confirm_gui: true
+    potion:
+      type: SPEED
+      level: 1
+  SPLASH_POTION_INVISIBLE_2:
+    material: SPLASH_POTION
+    buyPrice:
+      fixed: '350.0'
+    sellPrice:
+      fixed: '-1.0'
+    rarity: Common
+    econ:
+      name: vault
+    confirm_gui: true
+    potion:
+      type: INVISIBILITY
+      level: 1
+  SPLASH_POTION_SWIFTNESS_3:
+    material: SPLASH_POTION
+    buyPrice:
+      fixed: '575.0'
+    sellPrice:
+      fixed: '-1.0'
+    rarity: Common
+    econ:
+      name: vault
+    confirm_gui: true
+    potion:
+      type: SPEED
+      level: 2
+      extended: true
+  SPLASH_POTION_FIRE_RESISTANCE:
+    material: SPLASH_POTION
+    buyPrice:
+      fixed: '575.0'
+    sellPrice:
+      fixed: '-1.0'
+    rarity: Common
+    econ:
+      name: vault
+    confirm_gui: true
+    potion:
+      type: FIRE_RESISTANCE
+      level: 1
+  POTION_LEAPING:
+    material: POTION
+    buyPrice:
+      fixed: '265.4'
+    sellPrice:
+      fixed: '-1.0'
+    rarity: Common
+    econ:
+      name: vault
+    confirm_gui: true
+    potion:
+      type: JUMP
+      level: 1
+  POTION_LUCK:
+    material: POTION
+    buyPrice:
+      fixed: '2500.0'
+    sellPrice:
+      fixed: '-1.0'
+    rarity: Common
+    econ:
+      name: vault
+    confirm_gui: true
+    potion:
+      type: LUCK
+      level: 1
+  POTION_INVISIBLE:
+    material: POTION
+    buyPrice:
+      fixed: '550.25'
+    sellPrice:
+      fixed: '-1.0'
+    rarity: Common
+    econ:
+      name: vault
+    confirm_gui: true
+    potion:
+      type: INVISIBILITY
+      level: 1
+  SPLASH_POTION_BREATHING_2:
+    material: SPLASH_POTION
+    buyPrice:
+      fixed: '350.0'
+    sellPrice:
+      fixed: '-1.0'
+    rarity: Common
+    econ:
+      name: vault
+    confirm_gui: true
+    potion:
+      type: WATER_BREATHING
+      level: 1
+  POTION_BREATHING_2:
+    material: POTION
+    buyPrice:
+      fixed: '720.45'
+    sellPrice:
+      fixed: '-1.0'
+    rarity: Common
+    econ:
+      name: vault
+    confirm_gui: true
+    potion:
+      type: WATER_BREATHING
+      level: 1
+  SPLASH_POTION_STREGTH:
+    material: SPLASH_POTION
+    buyPrice:
+      fixed: '350.0'
+    sellPrice:
+      fixed: '-1.0'
+    rarity: Common
+    econ:
+      name: vault
+    confirm_gui: true
+    potion:
+      type: STRENGTH
+      level: 1
+  POTION_SWIFTNESS_3:
+    material: POTION
+    buyPrice:
+      fixed: '650.95'
+    sellPrice:
+      fixed: '-1.0'
+    rarity: Common
+    econ:
+      name: vault
+    confirm_gui: true
+    potion:
+      type: SPEED
+      level: 1
+  POTION_SWIFTNESS_2:
+    material: POTION
+    buyPrice:
+      fixed: '1000.0'
+    sellPrice:
+      fixed: '-1.0'
+    rarity: Common
+    econ:
+      name: vault
+    confirm_gui: true
+    potion:
+      type: SPEED
+      level: 2
+      extended: true
+  SPLASH_POTION_BREATHING:
+    material: SPLASH_POTION
+    buyPrice:
+      fixed: '575.0'
+    sellPrice:
+      fixed: '-1.0'
+    rarity: Common
+    econ:
+      name: vault
+    confirm_gui: true
+    potion:
+      type: WATER_BREATHING
+      level: 1
+  POTION_INVISIBLE_2:
+    material: POTION
+    buyPrice:
+      fixed: '750.75'
+    sellPrice:
+      fixed: '-1.0'
+    rarity: Common
+    econ:
+      name: vault
+    confirm_gui: true
+    potion:
+      type: INVISIBILITY
+      level: 1
+  POTION:
     material: POTION
     buyPrice:
       fixed: '775.5'
@@ -538,9 +306,116 @@ items:
     econ:
       name: vault
     confirm_gui: true
-    nbt:
-      Potion: minecraft:regeneration
-  "SPLASH_POTION_FIRE_RESISTANCE":
+    potion:
+      type: REGEN
+      level: 1
+  POTION_BREATHING:
+    material: POTION
+    buyPrice:
+      fixed: '850.95'
+    sellPrice:
+      fixed: '-1.0'
+    rarity: Common
+    econ:
+      name: vault
+    confirm_gui: true
+    potion:
+      type: WATER_BREATHING
+      level: 1
+  POTION_REGENERATION:
+    material: POTION
+    buyPrice:
+      fixed: '915.0'
+    sellPrice:
+      fixed: '-1.0'
+    rarity: Common
+    econ:
+      name: vault
+    confirm_gui: true
+    potion:
+      type: REGEN
+      level: 2
+      extended: true
+  POTION_SWIFTNESS:
+    material: POTION
+    buyPrice:
+      fixed: '875.8'
+    sellPrice:
+      fixed: '-1.0'
+    rarity: Common
+    econ:
+      name: vault
+    confirm_gui: true
+    potion:
+      type: SPEED
+      level: 1
+  POTION_HEAL:
+    material: POTION
+    buyPrice:
+      fixed: '875.5'
+    sellPrice:
+      fixed: '-1.0'
+    rarity: Common
+    econ:
+      name: vault
+    confirm_gui: true
+    potion:
+      type: INSTANT_HEAL
+      level: 2
+      extended: true
+  SPLASH_POTION_RESISTANCE:
+    material: SPLASH_POTION
+    buyPrice:
+      fixed: '350.0'
+    sellPrice:
+      fixed: '-1.0'
+    rarity: Common
+    econ:
+      name: vault
+    confirm_gui: true
+    potion:
+      type: FIRE_RESISTANCE
+      level: 1
+  POTION_REGENERATION_3:
+    material: POTION
+    buyPrice:
+      fixed: '865.2'
+    sellPrice:
+      fixed: '-1.0'
+    rarity: Common
+    econ:
+      name: vault
+    confirm_gui: true
+    potion:
+      type: REGEN
+      level: 1
+  SPLASH_POTION_HEALING:
+    material: SPLASH_POTION
+    buyPrice:
+      fixed: '350.0'
+    sellPrice:
+      fixed: '-1.0'
+    rarity: Common
+    econ:
+      name: vault
+    confirm_gui: true
+    potion:
+      type: INSTANT_HEAL
+      level: 1
+  SPLASH_POTION_LUCK:
+    material: SPLASH_POTION
+    buyPrice:
+      fixed: '550.0'
+    sellPrice:
+      fixed: '-1.0'
+    rarity: Common
+    econ:
+      name: vault
+    confirm_gui: true
+    potion:
+      type: LUCK
+      level: 1
+  SPLASH_POTION_INVISIBLE:
     material: SPLASH_POTION
     buyPrice:
       fixed: '575.0'
@@ -550,9 +425,10 @@ items:
     econ:
       name: vault
     confirm_gui: true
-    nbt:
-      Potion: minecraft:long_fire_resistance
-  "SPLASH_POTION_SWIFTNESS_3":
+    potion:
+      type: INVISIBILITY
+      level: 1
+  SPLASH_POTION_HEALING_2:
     material: SPLASH_POTION
     buyPrice:
       fixed: '575.0'
@@ -562,5 +438,179 @@ items:
     econ:
       name: vault
     confirm_gui: true
-    nbt:
-      Potion: minecraft:strong_swiftness
+    potion:
+      type: INSTANT_HEAL
+      level: 2
+      extended: true
+  SPLASH_POTION_REGENERATION:
+    material: SPLASH_POTION
+    buyPrice:
+      fixed: '575.0'
+    sellPrice:
+      fixed: '-1.0'
+    rarity: Common
+    econ:
+      name: vault
+    confirm_gui: true
+    potion:
+      type: REGEN
+      level: 2
+      extended: true
+  POTION_HEALING:
+    material: POTION
+    buyPrice:
+      fixed: '675.8'
+    sellPrice:
+      fixed: '-1.0'
+    rarity: Common
+    econ:
+      name: vault
+    confirm_gui: true
+    potion:
+      type: INSTANT_HEAL
+      level: 1
+  POTION_STRENTH:
+    material: POTION
+    buyPrice:
+      fixed: '1975.65'
+    sellPrice:
+      fixed: '-1.0'
+    rarity: Common
+    econ:
+      name: vault
+    confirm_gui: true
+    potion:
+      type: STRENGTH
+      level: 1
+  POTION_LEAPING_3:
+    material: POTION
+    buyPrice:
+      fixed: '650.8'
+    sellPrice:
+      fixed: '-1.0'
+    rarity: Common
+    econ:
+      name: vault
+    confirm_gui: true
+    potion:
+      type: JUMP
+      level: 2
+      extended: true
+  POTION_LEAPING_2:
+    material: POTION
+    buyPrice:
+      fixed: '475.5'
+    sellPrice:
+      fixed: '-1.0'
+    rarity: Common
+    econ:
+      name: vault
+    confirm_gui: true
+    potion:
+      type: JUMP
+      level: 1
+  SPLASH_POTION_LEAPING:
+    material: SPLASH_POTION
+    buyPrice:
+      fixed: '350.0'
+    sellPrice:
+      fixed: '-1.0'
+    rarity: Common
+    econ:
+      name: vault
+    confirm_gui: true
+    potion:
+      type: JUMP
+      level: 1
+  SPLASH_POTION_LEAPING_2:
+    material: SPLASH_POTION
+    buyPrice:
+      fixed: '275.0'
+    sellPrice:
+      fixed: '-1.0'
+    rarity: Common
+    econ:
+      name: vault
+    confirm_gui: true
+    potion:
+      type: JUMP
+      level: 1
+  POTION_FIRE_RESISTANCE:
+    material: POTION
+    buyPrice:
+      fixed: '1575.0'
+    sellPrice:
+      fixed: '-1.0'
+    rarity: Common
+    econ:
+      name: vault
+    confirm_gui: true
+    potion:
+      type: FIRE_RESISTANCE
+      level: 1
+  SPLASH_POTION_LEAPING_3:
+    material: SPLASH_POTION
+    buyPrice:
+      fixed: '575.0'
+    sellPrice:
+      fixed: '-1.0'
+    rarity: Common
+    econ:
+      name: vault
+    confirm_gui: true
+    potion:
+      type: JUMP
+      level: 2
+      extended: true
+  SPLASH_POTION_STREGTH_2:
+    material: SPLASH_POTION
+    buyPrice:
+      fixed: '275.0'
+    sellPrice:
+      fixed: '-1.0'
+    rarity: Common
+    econ:
+      name: vault
+    confirm_gui: true
+    potion:
+      type: STRENGTH
+      level: 1
+  POTION_FIRE_RESISTENCE:
+    material: POTION
+    buyPrice:
+      fixed: '1075.0'
+    sellPrice:
+      fixed: '-1.0'
+    rarity: Common
+    econ:
+      name: vault
+    confirm_gui: true
+    potion:
+      type: FIRE_RESISTANCE
+      level: 1
+  SPLASH_POTION_REGENERATION_3:
+    material: SPLASH_POTION
+    buyPrice:
+      fixed: '275.0'
+    sellPrice:
+      fixed: '-1.0'
+    rarity: Common
+    econ:
+      name: vault
+    confirm_gui: true
+    potion:
+      type: REGEN
+      level: 1
+  SPLASH_POTION_REGENERATION_2:
+    material: SPLASH_POTION
+    buyPrice:
+      fixed: '350.0'
+    sellPrice:
+      fixed: '-1.0'
+    rarity: Common
+    econ:
+      name: vault
+    confirm_gui: true
+    potion:
+      type: REGEN
+      level: 1
