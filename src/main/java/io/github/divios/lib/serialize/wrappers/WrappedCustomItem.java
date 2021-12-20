@@ -91,8 +91,8 @@ public class WrappedCustomItem {
 
 
     private enum customItemType {
-        MMOITEM(object -> object.has("mmoItem") && MMOUtils.isMMOItemsOn(), dItem -> MMOUtils.isMMOItem(dItem.getItem())),
-        ORAXEN(object -> object.has("oraxenItem") && OraxenUtils.isOraxenOn(), dItem -> OraxenUtils.isOraxenItem(dItem.getItem()));
+        MMOITEM(object -> object.has("mmoItem"), dItem -> MMOUtils.isMMOItem(dItem.getItem())),
+        ORAXEN(object -> object.has("oraxenItem"), dItem -> OraxenUtils.isOraxenItem(dItem.getItem()));
 
         Predicate<JsonObject> isElementType;
         Predicate<dItem> isType;
