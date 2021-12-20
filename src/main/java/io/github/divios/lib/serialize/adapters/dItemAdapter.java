@@ -64,8 +64,7 @@ public class dItemAdapter implements JsonSerializer<dItem>, JsonDeserializer<dIt
         merchant.add("buyPrice", gson.toJsonTree(dItem.getBuyPrice().get()));
         merchant.add("sellPrice", gson.toJsonTree(dItem.getSellPrice().get()));
         if (dItem.hasStock()) merchant.add("stock", gson.toJsonTree(dItem.getStock()));
-        if (!dItem.getEnchantments().isEmpty())
-            merchant.add("enchantments", gson.toJsonTree(wrapEnchants(dItem.getEnchantments())));
+        if (!dItem.getEnchantments().isEmpty()) merchant.add("enchantments", gson.toJsonTree(wrapEnchants(dItem.getEnchantments())));
         dItem.getCommands().ifPresent(strings -> merchant.add("commands", gson.toJsonTree(strings)));
         dItem.getPermsBuy().ifPresent(strings -> merchant.add("buyPerms", gson.toJsonTree(strings)));
         dItem.getPermsSell().ifPresent(strings -> merchant.add("sellPerms", gson.toJsonTree(strings)));
@@ -110,8 +109,8 @@ public class dItemAdapter implements JsonSerializer<dItem>, JsonDeserializer<dIt
             ditem.setMeta(gson.fromJson(object.get("potion"), PotionMeta.class));
 
         if (object.has("mob")) {
-            Preconditions.checkArgument(Arrays.asList(EntityType.values()).stream().anyMatch(entityType -> entityType.getName().equals(object.get("mob").getAsString())), "Invalid mob type");
-            ditem.setSpawnerType(EntityType.valueOf(object.get("mob").getAsString()));
+            Preconditions.checkArgument(Arrays.asList(EntityType.values()).stream().anyMatch(entityType -> entityType.getName().equalsIgnoreCase(object.get("mob").getAsString())), "Invalid mob type");
+            ditem.setSpawnerType(EntityType.fromName(object.get("mob").getAsString()));
         }
 
         if (object.has("name")) ditem.setDisplayName(object.get("name").getAsString());
