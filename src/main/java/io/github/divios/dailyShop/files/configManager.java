@@ -10,6 +10,7 @@ public class configManager {
     private final langResource langYml;
     private final settingsResource settingsYml;
     private shopsResource shopsResource;
+    private final priceModifiersResource modifiersResource;
 
     public static configManager generate() {
         return new configManager();
@@ -22,6 +23,7 @@ public class configManager {
         settingsYml = new settingsResource();
         Schedulers.sync().run(() -> shopsResource = new shopsResource());
         FileUtils.createDatabaseFile();
+        modifiersResource = new priceModifiersResource();
     }
 
     public synchronized langResource getLangYml() {
@@ -36,5 +38,6 @@ public class configManager {
         langYml.reload();
         settingsYml.reload();
         shopsResource.reload();
+        modifiersResource.reload();
     }
 }

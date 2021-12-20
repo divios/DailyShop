@@ -12,7 +12,8 @@ public abstract class resource {
 
     private static final DailyShop plugin = DailyShop.get();
 
-    private final String name;
+    protected final String name;
+    protected boolean firstTime = true;
 
     private File file;
     protected YamlConfiguration yaml;
@@ -22,6 +23,7 @@ public abstract class resource {
         this.name = name;
         file = new File(plugin.getDataFolder(), name);
         create();
+        firstTime = false;
     }
 
     public void create() {

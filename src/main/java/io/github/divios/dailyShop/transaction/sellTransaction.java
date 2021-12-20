@@ -13,6 +13,7 @@ import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.dLib.log.dLog;
 import io.github.divios.lib.dLib.log.options.dLogEntry;
+import io.github.divios.lib.dLib.priceModifiers.priceModifier;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -172,7 +173,7 @@ public class sellTransaction {
     }
 
     private double getItemPrice() {
-        return item.getSellPrice().orElse(null).getPrice() * quantity;
+        return item.getSellPrice().orElse(null).getPriceForPlayer(player, shop, item.getID(), priceModifier.type.SELL) * quantity;
     }
 
     private void hasNecessaryPermissions() throws Exception {

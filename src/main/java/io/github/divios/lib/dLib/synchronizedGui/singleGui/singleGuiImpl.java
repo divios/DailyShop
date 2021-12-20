@@ -113,7 +113,7 @@ public class singleGuiImpl implements singleGui {
                     if (oldItem == null || buttons.get(integer) == null) return;
                     oldItem = oldItem.clone();
                     oldItem.setStock(buttons.get(integer).getStock());   // Set the stock of the actual item
-                    oldItem = oldItem.applyLore(loreStrategy, p);
+                    oldItem = oldItem.applyLore(loreStrategy, p, shop);
 
                 } else
                     oldItem = buttons.get(integer);

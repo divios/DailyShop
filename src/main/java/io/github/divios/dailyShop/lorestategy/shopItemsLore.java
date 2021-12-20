@@ -8,6 +8,8 @@ import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.utils.PriceWrapper;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dPrice;
+import io.github.divios.lib.dLib.dShop;
+import io.github.divios.lib.dLib.priceModifiers.priceModifier;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -18,6 +20,7 @@ public class shopItemsLore implements loreStrategy {
 
     private ItemStack itemToApplyLore;
     private Player player;
+    private dShop shop;
 
     public shopItemsLore() {}
 
@@ -25,6 +28,7 @@ public class shopItemsLore implements loreStrategy {
     public ItemStack applyLore(ItemStack item, Object... data) {
         this.itemToApplyLore = item;
         player = (Player) data[0];
+        shop = (dShop) data[1];
         return addLoreToItem();
     }
 
@@ -109,19 +113,19 @@ public class shopItemsLore implements loreStrategy {
     }
 
     private String getItemBuyPriceDoubleFormatted() {
-        return PriceWrapper.format(getItemBuyPriceDouble());
+        return PriceWrapper.format(getItemBuyPriceDouble() * dItem.of(itemToApplyLore).getSetItems().orElse(1));
     }
 
     private String getItemSellPriceDoubleFormatted() {
-        return PriceWrapper.format(getItemSellPriceDouble());
+        return PriceWrapper.format(getItemSellPriceDouble() * dItem.of(itemToApplyLore).getSetItems().orElse(1));
     }
 
     private double getItemBuyPriceDouble() {
-        return dItem.of(itemToApplyLore).getBuyPrice().orElse(new dPrice(-1)).getPrice();
+        return dItem.of(itemToApplyLore).getBuyPrice().orElse(new dPrice(-1)).getPriceForPlayer(player, shop, dItem.getId(itemToApplyLore), priceModifier.type.BUY);
     }
 
     private double getItemSellPriceDouble() {
-        return dItem.of(itemToApplyLore).getSellPrice().orElse(new dPrice(-1)).getPrice();
+        return dItem.of(itemToApplyLore).getSellPrice().orElse(new dPrice(-1)).getPriceForPlayer(player, shop, dItem.getId(itemToApplyLore), priceModifier.type.SELL);
     }
 
 

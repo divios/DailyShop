@@ -19,6 +19,7 @@ import io.github.divios.lib.dLib.dPrice;
 import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.dLib.log.dLog;
 import io.github.divios.lib.dLib.log.options.dLogEntry;
+import io.github.divios.lib.dLib.priceModifiers.priceModifier;
 import io.github.divios.lib.dLib.stock.dStock;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -61,7 +62,7 @@ public class transaction {
             return;
         }
 
-        if (!item.getEconomy().hasMoney(p, item.getBuyPrice().get().getPrice())) {
+        if (!item.getEconomy().hasMoney(p, item.getBuyPrice().get().getPriceForPlayer(p, shop, item.getID(), priceModifier.type.BUY))) {
             Msg.sendMsg(p, plugin.configM.getLangYml().MSG_NOT_MONEY);
             //shop.openShop(p);
             return;
@@ -215,7 +216,7 @@ public class transaction {
 
         /// A PARTIR DE AQUI YA SOLO COMPROBAR SLOTS Y PRICE ///
 
-        s.setPrice(item.getBuyPrice().orElse(dPrice.empty()).getPrice() * amount);
+        s.setPrice(item.getBuyPrice().orElse(dPrice.empty()).getPriceForPlayer(p, shop, item.getID(), priceModifier.type.BUY) * amount);
 
         s.setSlots(item.getMaxStackSize() == 1 ?
                 s.getSlots() + amount : s.getSlots() + 1);

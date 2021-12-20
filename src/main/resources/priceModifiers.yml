@@ -1,0 +1,43 @@
+# DailyShop Modifiers.
+# Created by Divios
+# =========================================================
+# Fields Explanation:
+#   <example1>:
+#       - The id of the modifier. It is used to determinate the permission
+#        to apply it, for example dailyrandomshop.pricemodifier.example1
+# =========================================================
+#   <scope>:
+#       - #Valid scopes: GLOBAL, SHOP, ITEM
+# =========================================================
+#   <type>:
+#       - Valid types: BOTH, BUY, SELL.
+# =========================================================
+#   <value>:
+#       - The modifier value, 1.0 = 100%, 2.0 = 200%, -0.2 = -20% etc.
+#       It works like this: actualPrice + (actualPrice * value)
+# =========================================================
+#   <shop>:
+#       - The shop name to which this modifier should apply (case insensitive)
+# =========================================================
+#   <itemID>:
+#       - The article ID to which this modifier should apply (case insensitive)
+# =========================================================
+# You must reload for changes to take effect when editing this file!
+# =========================================================
+
+modifiers:
+  example1:
+    scope: GLOBAL
+    type: BOTH
+    value: 2.0
+  example2:
+    scope: SHOP
+    type: BOTH
+    value: 1.5
+    shop: food
+  example3:
+    scope: ITEM
+    type: BUY
+    value: -0.25
+    shop: food
+    itemID: 1

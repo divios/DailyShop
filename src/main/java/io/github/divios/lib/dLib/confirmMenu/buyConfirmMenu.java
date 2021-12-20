@@ -7,6 +7,7 @@ import io.github.divios.dailyShop.utils.FutureUtils;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
+import io.github.divios.lib.dLib.priceModifiers.priceModifier;
 import io.github.divios.lib.dLib.stock.dStock;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -135,7 +136,7 @@ public class buyConfirmMenu extends abstractConfirmMenu {
 
     @Override
     protected double getItemPrice() {
-        return item.getBuyPrice().orElse(null).getPrice();
+        return item.getBuyPrice().orElse(null).getPriceForPlayer(player, shop, item.getID(), priceModifier.type.BUY);
     }
 
     private int getMinLimit() {

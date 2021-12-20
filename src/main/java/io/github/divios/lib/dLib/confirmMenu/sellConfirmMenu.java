@@ -6,6 +6,7 @@ import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.dailyShop.utils.CompareItemUtils;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
+import io.github.divios.lib.dLib.priceModifiers.priceModifier;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -112,7 +113,7 @@ public class sellConfirmMenu extends abstractConfirmMenu {
 
     @Override
     protected double getItemPrice() {
-        return item.getSellPrice().orElse(null).getPrice();
+        return item.getSellPrice().orElse(null).getPriceForPlayer(player, shop, item.getID(), priceModifier.type.SELL);
     }
 
     private int countSimilarItems() {
