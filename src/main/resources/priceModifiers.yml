@@ -34,10 +34,10 @@ modifiers:
     scope: SHOP
     type: BOTH
     value: 1.5
-    shop: food
+    shop: blocks
   example3:
     scope: ITEM
     type: BUY
     value: -0.25
-    shop: food
+    shop: drops
     itemID: 1
