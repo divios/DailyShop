@@ -27,8 +27,8 @@ public class shopItemsLore implements loreStrategy {
     @Override
     public ItemStack applyLore(ItemStack item, Object... data) {
         this.itemToApplyLore = item;
-        player = (Player) data[0];
-        shop = (dShop) data[1];
+        player = (data.length) == 1 ? (Player) data[0] : null;
+        shop = (data.length == 2) ? (dShop) data[1] : null;
         return addLoreToItem();
     }
 

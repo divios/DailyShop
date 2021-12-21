@@ -58,6 +58,8 @@ public interface priceModifier extends Comparable<priceModifier> {
         }
 
         public boolean isEquals(type other) {
+            if (other == null) return false;
+
             if (this == BOTH) return true;
             else return this.equals(other);
         }

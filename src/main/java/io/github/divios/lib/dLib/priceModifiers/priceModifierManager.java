@@ -2,6 +2,7 @@ package io.github.divios.lib.dLib.priceModifiers;
 
 import io.github.divios.dailyShop.DailyShop;
 import org.bukkit.entity.Player;
+import org.checkerframework.checker.units.qual.s;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -21,7 +22,7 @@ public class priceModifierManager {
     }
 
     public double getModifier(Player p, String shop, String itemID, priceModifier.type type) {
-        if (isEmpty()) return 0.0;
+        if (isEmpty() || p == null) return 0.0;
 
         modifierContext context = new modifierContext(p, shop, itemID, type);
         return modifiers.stream()

@@ -134,7 +134,7 @@ public class singleGuiImpl implements singleGui {
 
     @Override
     public void restock() {
-        Set<dItem> newItems = dRandomItemsSelector.of(shop.getItems(), dItem -> dItem.applyLore(loreStrategy, p))
+        Set<dItem> newItems = dRandomItemsSelector.of(shop.getItems(), dItem -> dItem.applyLore(loreStrategy, p, shop))
                 .roll(own.dailyItemsSlots.size());
         own.restock(newItems);
     }
