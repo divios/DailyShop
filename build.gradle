@@ -7,7 +7,7 @@ plugins {
     id "eclipse"
     id 'java-library'
     id "maven-publish"
-    id "com.github.johnrengelman.shadow" version "7.0.0"
+    id "com.github.johnrengelman.shadow" version "7.1.1"
     id 'org.ajoberstar.grgit' version '4.1.0' apply false
 }
 
@@ -56,6 +56,7 @@ dependencies {
     implementation 'com.github.PikaMug:LocaleLib:2.4'
     implementation 'org.bstats:bstats-bukkit:2.2.1'
     implementation 'io.github.divios:core_lib_api:6.2.5'
+    implementation "dev.jorel.CommandAPI:commandapi-shade:6.4.0"
 
     compileOnly fileTree(dir: 'libs', include: ['*.jar'])
     compileOnly fileTree(dir: 'libsI', include: ['*.jar'])
@@ -74,6 +75,7 @@ shadowJar {
     relocate('de.tr7zw', 'io.github.divios.dependencies.nbt')
     relocate('io.github.divios.core_lib', 'io.github.divios.dependencies.Core_lib')
     relocate('com.cryptomorin.xseries', 'io.github.divios.dependencies.XSeries')
+    relocate 'dev.jorel.commandapi', 'io.github.divios.dependencies.commandapi'
     minimize()
 }
 

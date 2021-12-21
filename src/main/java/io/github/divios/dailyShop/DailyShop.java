@@ -1,5 +1,7 @@
 package io.github.divios.dailyShop;
 
+import dev.jorel.commandapi.CommandAPI;
+import dev.jorel.commandapi.CommandAPIConfig;
 import io.github.divios.core_lib.Core_lib;
 import io.github.divios.core_lib.commands.CommandManager;
 import io.github.divios.core_lib.misc.Msg;
@@ -33,10 +35,16 @@ public class DailyShop extends JavaPlugin {
     }
 
     @Override
+    public void onLoad() {
+        CommandAPI.onLoad(new CommandAPIConfig().silentLogs(true));
+    }
+
+    @Override
     public void onEnable() {
 
         INSTANCE = this;
-        Core_lib.setPlugin(this);       // Set plugin for aux library
+        Core_lib.setPlugin(this);       /* Set plugin for aux libraries */
+        CommandAPI.onEnable(this);
 
         localeManager = new LocaleManager();
 
@@ -50,12 +58,10 @@ public class DailyShop extends JavaPlugin {
                                 /* Initiate database + getAllItems + timer */
         databaseManager.getInstance();
         shopsManager.getInstance();
-                                /* Register Commands */
-        CommandManager.register(INSTANCE.getCommand("DailyShop"));
-        registerAllCmds();
 
-        CommandManager.setNotPerms(configM.getSettingsYml().PREFIX + configM.getLangYml().MSG_NOT_PERMS);
-        CommandManager.setDefault(new helpCmd());
+
+
+                                /* Register prefix */
         Msg.setPREFIX(configM.getSettingsYml().PREFIX);
 
         try { Class.forName("io.github.divios.core_lib.inventory.materialsPrompt");  // loads all materials
