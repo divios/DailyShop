@@ -161,7 +161,7 @@ public class buyConfirmMenu extends abstractConfirmMenu {
     }
 
     private int getBalanceLimit() {
-        return (int) Math.floor(item.getEconomy().getBalance(player) / item.getBuyPrice().orElse(null).getPrice()) - nAddedItems;
+        return (int) Math.floor(item.getEconomy().getBalance(player) / item.getBuyPrice().orElse(null).getPriceForPlayer(player, shop, item.getID(), priceModifier.type.BUY)) - nAddedItems;
     }
 
     private int getPlayerInventoryLimit() {
