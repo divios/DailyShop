@@ -61,5 +61,7 @@ public class priceModifiersResource extends resource{
             DailyShop.get().getPriceModifiers().addAll(modifiers);
         }
 
+        Log.info("Loaded " + DailyShop.get().getPriceModifiers().size() + " modifiers");
+
     }
 }
