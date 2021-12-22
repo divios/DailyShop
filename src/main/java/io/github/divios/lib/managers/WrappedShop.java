@@ -35,6 +35,8 @@ public class WrappedShop extends dShop {
 
     protected WrappedShop(dShop fromShop) {
         this(fromShop.getName(), fromShop.getGuis().getDefault().toBase64(), fromShop.getTimestamp(), fromShop.getTimer(), new HashSet<>(fromShop.getItems()));
+        this.set_announce(fromShop.get_announce());
+        this.setDefault(fromShop.isDefault());
     }
 
     @Override
