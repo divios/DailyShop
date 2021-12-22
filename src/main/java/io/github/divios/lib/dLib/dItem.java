@@ -1107,12 +1107,11 @@ public class dItem implements Serializable, Cloneable {
     }
 
     public static dItem AIR() {
-        dItem empty = new dItem(ItemBuilder.of(XMaterial.GRAY_STAINED_GLASS_PANE)
-                .setName("&c").addItemFlags(ItemFlag.HIDE_ENCHANTS)
-                .addEnchant(Enchantment.DAMAGE_ALL, 1));
-
-        empty.setAIR();
-        return empty;
+        return new dItem(XMaterial.GRAY_STAINED_GLASS_PANE.parseItem())
+                .setDisplayName("&c")
+                .setFlag(ItemFlag.HIDE_ENCHANTS)
+                .addEnchantments(Enchantment.DAMAGE_ALL, 1)
+                .setAIR();
     }
 
     @Override
