@@ -10,6 +10,7 @@ import io.github.divios.dailyShop.utils.Timer;
 import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.storage.databaseManager;
 import io.github.divios.lib.serialize.serializerApi;
+import org.checkerframework.checker.nullness.Opt;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -51,7 +52,7 @@ public class shopsManager {
      * @return a list of all the shops. Note that the returned list
      * is a copy of the original.
      */
-    public  Set<dShop> getShops() {
+    public Set<dShop> getShops() {
         return Collections.unmodifiableSet(shops);
     }
 
@@ -70,7 +71,7 @@ public class shopsManager {
      *
      * @param shops
      */
-    private  CompletableFuture<Void> setShopsAsync(Set<dShop> shops) {
+    private CompletableFuture<Void> setShopsAsync(Set<dShop> shops) {
         return CompletableFuture.runAsync(() -> {
             deleteAllShops();
             shops.forEach(this::createShop);
@@ -124,9 +125,20 @@ public class shopsManager {
      * @param name name of the shop
      * @return shop with the name. Null if it does not exist
      */
-    public  Optional<dShop> getShop(String name) {
+    public Optional<dShop> getShop(String name) {
         return shops.stream()
                 .filter(shop -> shop.getName().equalsIgnoreCase(name))
+                .findFirst();
+    }
+
+    /**
+     * Return the default shop, if any
+     * @return Optional with the default shop
+     */
+    public Optional<dShop> getDefaultShop() {
+        Log.info("oke2");
+        return shops.stream()
+                .filter(dShop::isDefault)
                 .findFirst();
     }
 
@@ -175,7 +187,7 @@ public class shopsManager {
     }
 
     public void deleteAllShops() {
-            new HashSet<>(shops).forEach(this::deleteShop);
+        new HashSet<>(shops).forEach(this::deleteShop);
     }
 
     public void deleteAllShopsAsync() {

@@ -34,13 +34,13 @@ public class dShopAdapter implements JsonSerializer<dShop>, JsonDeserializer<dSh
         String id;
         int[] timer = {86400};
         Timestamp timestamp;
-        boolean announce_restock[] = {true};
 
         Preconditions.checkArgument(object.has("id"), "A shop needs an ID");
         Preconditions.checkArgument(object.has("items"), "A shop needs items");
         if (object.has("timer")) Preconditions.checkArgument(Utils.testRunnable(() -> timer[0] = object.get("timer").getAsInt()), "Timer needs to be an integer");
         Preconditions.checkArgument((timer[0] >= 50 || timer[0] == -1), "timer needs to be >= 50");
-        if (object.has("announce_restock")) Preconditions.checkArgument(Utils.testRunnable(() -> announce_restock[0] = object.get("announce_restock").getAsBoolean()));
+        if (object.has("announce_restock")) Preconditions.checkArgument(Utils.testRunnable(() -> object.get("announce_restock").getAsBoolean()), "announce_restock field needs to be a boolean");
+        if (object.has("default")) Preconditions.checkArgument(Utils.testRunnable(() -> object.get("default").getAsBoolean()), "default field needs to be a boolean");
 
         dShop deserializedShop;
 
@@ -49,7 +49,10 @@ public class dShopAdapter implements JsonSerializer<dShop>, JsonDeserializer<dSh
         timestamp = object.has("timestamp") ? new Timestamp(wrappedParse(object.get("timestamp").getAsString()).getTime()) : new Timestamp(System.currentTimeMillis());
 
         deserializedShop = new dShop(id, timer[0], timestamp);
-        deserializedShop.set_announce(announce_restock[0]);
+
+        // Set miscellaneous fields
+        if (object.has("announce_restock")) deserializedShop.set_announce(object.get("announce_restock").getAsBoolean());
+        if (object.has("default")) deserializedShop.setDefault(object.get("default").getAsBoolean());
 
         // Deserialize shop display
         if (object.has("shop")) {
@@ -74,14 +77,19 @@ public class dShopAdapter implements JsonSerializer<dShop>, JsonDeserializer<dSh
 
     @Override
     public JsonElement serialize(dShop shop, Type type, JsonSerializationContext jsonSerializationContext) {
-        return JsonBuilder.object()
+
+        JsonBuilder.JsonObjectBuilder builder = JsonBuilder.object()
                 .add("id", shop.getName())
-                .add("timer", shop.getTimer())
-                .add("announce_restock", shop.get_announce())
-                //.add("timeStamp", dateFormat.format(shop.getTimestamp()))
+                .add("timer", shop.getTimer());
+
+        if (!shop.get_announce()) builder.add("announce_restock", false);
+        if (!shop.isDefault()) builder.add("default", true);
+
+        return builder.add("timeStamp", (Boolean) null)  // dateFormat.format(shop.getTimestamp()
                 .add("shop", gson.toJsonTree(shop.getGuis().getDefault()))
                 .add("items", gson.toJsonTree(parseUUIDs(shop.getItems())))
                 .build();
+
     }
 
     /** Utils **/

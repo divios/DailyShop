@@ -4,6 +4,7 @@ import io.github.divios.core_lib.commands.abstractCommand;
 import io.github.divios.core_lib.commands.cmdTypes;
 import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.core_lib.misc.Msg;
+import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.managers.shopsManager;
@@ -13,6 +14,7 @@ import org.bukkit.entity.Player;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class open extends abstractCommand {
@@ -31,13 +33,14 @@ public class open extends abstractCommand {
     @Override
     public boolean validArgs(List<String> args) {
 
+        if (args.isEmpty()) return DailyShop.get().getShopsManager().getDefaultShop().isPresent();
+
         if (args.size() == 1) return DailyShop.get().getShopsManager().getShop(args.get(0)).isPresent();
 
-        else if (args.size() > 1) {
+        else {
             return DailyShop.get().getShopsManager().getShop(args.get(0)).isPresent() &&
                     Bukkit.getPlayer(args.get(1)) != null;
         }
-        return false;
     }
 
     @Override
@@ -69,6 +72,7 @@ public class open extends abstractCommand {
     @Override
     public void run(CommandSender sender, List<String> args) {
 
+        Log.info("oke");
         if (args.size() == 2) {
             if (!sender.hasPermission("DailyRandomShop.open.others")) {
                 sender.sendMessage("You dont have permission to open shops for others");
@@ -81,13 +85,16 @@ public class open extends abstractCommand {
             return;
         }
 
-        if (!sender.hasPermission("dailyrandomshop.open." + args.get(0))) {
+        Optional<dShop> shop = args.isEmpty() ?
+                DailyShop.get().getShopsManager().getDefaultShop() :
+                DailyShop.get().getShopsManager().getShop(args.get(0));
+
+        if (!sender.hasPermission("dailyrandomshop.open." + shop.get().getName())) {
             Msg.sendMsg((Player) sender, plugin.configM.getLangYml().MSG_PERMS_OPEN_SHOP);
             return;
         }
 
-        DailyShop.get().getShopsManager().getShop(args.get(0))
-                .get().openShop(args.size() == 2 ? Bukkit.getPlayer(args.get(1)): (Player) sender);
+        shop.ifPresent(shop1 -> shop1.openShop(args.size() == 2 ? Bukkit.getPlayer(args.get(1)): (Player) sender));
 
     }
 }

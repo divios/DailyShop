@@ -38,7 +38,8 @@ public class dShop {
     protected Timestamp timestamp;
     protected int timer;
 
-    boolean announce_restock = true;
+    protected boolean announce_restock = true;
+    protected boolean isDefault = false;
 
     protected final Set<Task> tasks = new HashSet<>();
     protected final Set<Subscription> listeners = new HashSet<>();
@@ -282,6 +283,14 @@ public class dShop {
 
     public void set_announce(boolean announce_restock) {
         this.announce_restock = announce_restock;
+    }
+
+    public void setDefault(boolean aDefault) {
+        isDefault = aDefault;
+    }
+
+    public boolean isDefault() {
+        return isDefault;
     }
 
     public void setTimer(int timer) {

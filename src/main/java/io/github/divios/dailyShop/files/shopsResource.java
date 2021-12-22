@@ -65,6 +65,7 @@ public class shopsResource {
 
                 currentShop.setTimer(shop.getTimer());
                 currentShop.set_announce(shop.get_announce());
+                currentShop.setDefault(shop.isDefault());
                 currentShop.updateShopGui(shop.getGuis().getDefault().skeleton());
                 currentShop.setItems(shop.getItems());
             }
