@@ -27,6 +27,7 @@ public class addDailyGuiIH {
     private final Runnable back;
 
     public static void open(Player p, dShop shop, Consumer<ItemStack> consumer, Runnable back) {
+        if (shop == null || p == null) return;
         new addDailyGuiIH(p, shop, consumer, back);
     }
 
