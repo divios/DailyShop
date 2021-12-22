@@ -72,7 +72,6 @@ public class open extends abstractCommand {
     @Override
     public void run(CommandSender sender, List<String> args) {
 
-        Log.info("oke");
         if (args.size() == 2) {
             if (!sender.hasPermission("DailyRandomShop.open.others")) {
                 sender.sendMessage("You dont have permission to open shops for others");

@@ -136,7 +136,6 @@ public class shopsManager {
      * @return Optional with the default shop
      */
     public Optional<dShop> getDefaultShop() {
-        Log.info("oke2");
         return shops.stream()
                 .filter(dShop::isDefault)
                 .findFirst();
