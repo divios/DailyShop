@@ -1,7 +1,5 @@
 package io.github.divios.dailyShop;
 
-import dev.jorel.commandapi.CommandAPI;
-import dev.jorel.commandapi.CommandAPIConfig;
 import io.github.divios.core_lib.Core_lib;
 import io.github.divios.core_lib.commands.CommandManager;
 import io.github.divios.core_lib.misc.Msg;
@@ -24,6 +22,8 @@ public class DailyShop extends JavaPlugin {
     private LocaleManager localeManager;
     public configManager configM;
     private priceModifierManager modifiers;
+    private databaseManager dManager;
+    private shopsManager sManager;
 
     public DailyShop() {
         super();
@@ -35,16 +35,10 @@ public class DailyShop extends JavaPlugin {
     }
 
     @Override
-    public void onLoad() {
-        CommandAPI.onLoad(new CommandAPIConfig().silentLogs(true));
-    }
-
-    @Override
     public void onEnable() {
 
         INSTANCE = this;
         Core_lib.setPlugin(this);       /* Set plugin for aux libraries */
-        CommandAPI.onEnable(this);
 
         localeManager = new LocaleManager();
 
@@ -56,11 +50,14 @@ public class DailyShop extends JavaPlugin {
         configM = configManager.generate();
 
                                 /* Initiate database + getAllItems + timer */
-        databaseManager.getInstance();
-        shopsManager.getInstance();
+        dManager = new databaseManager();
+        sManager = new shopsManager(dManager);
 
+        CommandManager.register(INSTANCE.getCommand("DailyShop"));
+        registerAllCmds();
 
-
+        CommandManager.setNotPerms(configM.getSettingsYml().PREFIX + configM.getLangYml().MSG_NOT_PERMS);
+        CommandManager.setDefault(new helpCmd());
                                 /* Register prefix */
         Msg.setPREFIX(configM.getSettingsYml().PREFIX);
 
@@ -79,9 +76,9 @@ public class DailyShop extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        shopsManager.getInstance().getShops()       // Updates all the guis before disable
+        sManager.getShops()       // Updates all the guis before disable
                 .forEach(shop -> {
-                    databaseManager.getInstance().updateGui(shop.getName(), shop.getGuis());
+                    dManager.updateGui(shop.getName(), shop.getGuis());
                 });
     }
 
@@ -90,9 +87,11 @@ public class DailyShop extends JavaPlugin {
         Msg.setPREFIX(configM.getSettingsYml().PREFIX);
     }
 
-    public static shopsManager getShopsManager() {
-        return shopsManager.getInstance();
+    public shopsManager getShopsManager() {
+        return sManager;
     }
+
+    public databaseManager getDatabaseManager() { return dManager; }
 
     public static DailyShop get() {
         return INSTANCE;

@@ -28,7 +28,6 @@ import java.util.concurrent.TimeUnit;
 public class dShop {
 
     protected static final DailyShop plugin = DailyShop.get();
-    protected static final databaseManager dManager = databaseManager.getInstance();
 
     private transient static final encodeOptions serializer = new encodeOptions();
 

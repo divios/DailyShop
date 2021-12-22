@@ -5,6 +5,7 @@ import io.github.divios.core_lib.commands.cmdTypes;
 import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.core_lib.misc.Msg;
 import io.github.divios.core_lib.utils.Log;
+import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.guis.settings.shopGui;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.dItem;
@@ -66,7 +67,7 @@ public class importShops extends abstractCommand {
         if (args.size() == 1)
             return Arrays.asList("shopGui+", "BossShop");
         else if (args.size() == 2)
-            return shopsManager.getInstance().getShops().stream()
+            return DailyShop.get().getShopsManager().getShops().stream()
                     .map(dShop::getName).collect(Collectors.toList());
         else if (args.size() == 3)
             if (args.get(0).equalsIgnoreCase("shopGui+") && Utils.isOperative("ShopGUIPlus"))
@@ -81,12 +82,12 @@ public class importShops extends abstractCommand {
     @Override
     public void run(CommandSender sender, List<String> args) {
 
-        dShop _shop = shopsManager.getInstance().getShop(args.get(1)).orElse(null);
+        dShop _shop = DailyShop.get().getShopsManager().getShop(args.get(1)).orElse(null);
         if (_shop == null) {
-            shopsManager.getInstance().createShop(args.get(1));
+            DailyShop.get().getShopsManager().createShop(args.get(1));
         }
 
-        shopsManager.getInstance().getShop(args.get(1))
+        DailyShop.get().getShopsManager().getShop(args.get(1))
                 .ifPresent(shop -> {
 
                     if (args.get(0).equalsIgnoreCase("shopGui+")) {

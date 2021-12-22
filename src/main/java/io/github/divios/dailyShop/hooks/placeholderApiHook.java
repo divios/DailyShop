@@ -97,7 +97,7 @@ class placeholderApiHook extends PlaceholderExpansion {
     @Override
     public String onPlaceholderRequest(Player player, String identifier) {
 
-        Optional<dShop> shop = shopsManager.getInstance().getShop(identifier.replace("time_", ""));
+        Optional<dShop> shop = DailyShop.get().getShopsManager().getShop(identifier.replace("time_", ""));
         if (shop.isPresent() && shop.get().getTimer() == -1) return XSymbols.TIMES_3.parseSymbol();
         return shop.map(Utils::getDiffActualTimer).orElse(null);
 

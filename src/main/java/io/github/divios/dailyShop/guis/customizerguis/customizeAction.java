@@ -94,7 +94,7 @@ public class customizeAction {
                 e -> {
                     flagPass = true;
                     ChatPrompt.prompt(plugin, p, (s) -> {
-                        if (!shopsManager.getInstance().getShop(s).isPresent()) {
+                        if (!DailyShop.get().getShopsManager().getShop(s).isPresent()) {
                             Utils.sendMsg(p, "&7That shop doesnt exist");
                             Schedulers.sync().run(() -> inv.open(p));
                             flagPass = true;

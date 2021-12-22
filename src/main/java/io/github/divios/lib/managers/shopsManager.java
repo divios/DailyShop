@@ -18,25 +18,19 @@ import java.util.concurrent.TimeUnit;
 
 public class shopsManager {
 
-    private static shopsManager instance = null;
     private final Set<dShop> shops = ConcurrentHashMap.newKeySet();
-    private static final databaseManager dManager = databaseManager.getInstance();
+    private final databaseManager dManager;
     private final Set<Task> task = new HashSet<>();
 
-    private shopsManager() {
-        Schedulers.sync().runRepeating(this::updateShopsAsync, 15, TimeUnit.MINUTES, 15, TimeUnit.MINUTES);
-    }
+    public shopsManager(databaseManager databaseManager) {
+        dManager = databaseManager;
+        Log.info("Importing database data...");
+        Timer timer = Timer.create();
+        shops.addAll(databaseManager.getShops());
+        timer.stop();
+        Log.info("Imported database data in " + timer.getTime() + " ms");
 
-    public synchronized static shopsManager getInstance() {
-        if (instance == null) {
-            instance = new shopsManager();
-            Log.info("Importing database data...");
-            Timer timer = Timer.create();
-            instance.shops.addAll(databaseManager.getInstance().getShops());
-            timer.stop();
-            Log.info("Imported database data in " + timer.getTime() + " ms");
-        }
-        return instance;
+        Schedulers.sync().runRepeating(this::updateShopsAsync, 15, TimeUnit.MINUTES, 15, TimeUnit.MINUTES);
     }
 
     private void updateShops() {

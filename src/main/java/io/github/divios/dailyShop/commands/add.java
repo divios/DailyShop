@@ -3,6 +3,7 @@ package io.github.divios.dailyShop.commands;
 import io.github.divios.core_lib.commands.abstractCommand;
 import io.github.divios.core_lib.commands.cmdTypes;
 import io.github.divios.core_lib.misc.FormatUtils;
+import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.guis.settings.addDailyGuiIH;
 import io.github.divios.dailyShop.guis.settings.shopGui;
 import io.github.divios.dailyShop.guis.settings.shopsManagerGui;
@@ -19,7 +20,7 @@ import java.util.stream.Collectors;
 
 public class add extends abstractCommand {
 
-    private static final shopsManager sManager = shopsManager.getInstance();
+    private static final shopsManager sManager = DailyShop.get().getShopsManager();
 
     public add() {
         super(cmdTypes.BOTH);
@@ -51,7 +52,7 @@ public class add extends abstractCommand {
     @Override
     public List<String> getTabCompletition(List<String> args) {
         if (args.size() == 1)
-            return shopsManager.getInstance().getShops()
+            return sManager.getShops()
                     .stream()
                     .map(dShop::getName)
                     .collect(Collectors.toList());

@@ -598,7 +598,7 @@ public class CustomizerMenu {
         }
 
         public newCustomizerMenuBuilder withShop(String shopS) {
-            this.shop = shopsManager.getInstance().getShop(shopS).orElse(null);
+            this.shop = DailyShop.get().getShopsManager().getShop(shopS).orElse(null);
             return this;
         }
 

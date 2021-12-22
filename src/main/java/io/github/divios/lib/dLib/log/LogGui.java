@@ -44,7 +44,7 @@ public class LogGui {
         CompletableFuture<paginatedGui> gui = paginatedGui.Builder()
                 .withTitle("&8Log")
                 .withItems(() ->
-                        databaseManager.getInstance().getLogEntries().stream()
+                        DailyShop.get().getDatabaseManager().getLogEntries().stream()
                                 .filter(dLogEntry -> {
                                     boolean result = true;
                                     if (options.getfPlayer() != null)
@@ -118,7 +118,7 @@ public class LogGui {
                                                     .setName("&e&lCreate json").setLore("&7Click to create a json file", "&7with the current filtered entries")
                                             , e ->
                                                     dLogUtils.importToYaml(
-                                                            databaseManager.getInstance().getLogEntries().stream()
+                                                            DailyShop.get().getDatabaseManager().getLogEntries().stream()
                                                                     .filter(dLogEntry -> {
                                                                         boolean result = true;
                                                                         if (options.getfPlayer() != null)

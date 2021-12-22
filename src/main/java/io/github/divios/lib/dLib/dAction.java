@@ -20,8 +20,7 @@ public enum dAction {
     }),
 
     OPEN_SHOP((p, s) -> {
-        shopsManager.getInstance()
-                .getShop(s).ifPresent(shop1 -> shop1.openShop(p));
+        DailyShop.get().getShopsManager().getShop(s).ifPresent(shop1 -> shop1.openShop(p));
     }),
 
     RUN_CMD((p, s) -> {
@@ -31,14 +30,15 @@ public enum dAction {
     }),
 
     SHOW_ALL_ITEMS((p, s) -> {
+        shopsManager manager = DailyShop.get().getShopsManager();
         loreStrategy strategy = new shopItemsLore();
         new dynamicGui.Builder()
-                .contents(() -> shopsManager.getInstance().getShop(s)
+                .contents(() -> manager.getShop(s)
                         .get().getItems().parallelStream()
                         .map(dItem -> strategy.applyLore(dItem.getItem().clone(), p))
                         .collect(Collectors.toList()))
-                .title(integer -> "&6&l" + shopsManager.getInstance().getShop(s).get().getName() + " items")
-                .back(player -> shopsManager.getInstance().getShop(s).get().openShop(p))
+                .title(integer -> "&6&l" + manager.getShop(s).get().getName() + " items")
+                .back(player -> manager.getShop(s).get().openShop(p))
                 .plugin(DailyShop.get())
                 .setSearch(false)
                 .open(p);

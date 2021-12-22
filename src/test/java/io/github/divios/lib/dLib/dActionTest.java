@@ -58,10 +58,10 @@ public class dActionTest {
         when(Bukkit.getVersion()).thenReturn("git-Paper-386 (MC: 1.17.1)");
 
         dManager = mock(databaseManager.class);
-        Whitebox.setInternalState(databaseManager.class, "instance", dManager);
+        when(DailyShop.get().getDatabaseManager()).thenReturn(dManager);
 
         sManager = mock(shopsManager.class);
-        Whitebox.setInternalState(shopsManager.class, "instance", sManager);
+        when(DailyShop.get().getShopsManager()).thenReturn(sManager);
 
         shop = mock(dShop.class);
         when(sManager.getShop("asdf")).thenReturn(Optional.of(shop));

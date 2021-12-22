@@ -3,6 +3,7 @@ package io.github.divios.dailyShop.commands;
 import io.github.divios.core_lib.commands.abstractCommand;
 import io.github.divios.core_lib.commands.cmdTypes;
 import io.github.divios.core_lib.misc.FormatUtils;
+import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.managers.shopsManager;
 import org.bukkit.command.CommandSender;
@@ -28,7 +29,7 @@ public class reStock extends abstractCommand {
         if (args.size() <= 0)
             return false;
 
-        else return args.get(0).equals("--all") || shopsManager.getInstance().getShop(args.get(0)).isPresent();
+        else return args.get(0).equals("--all") || DailyShop.get().getShopsManager().getShop(args.get(0)).isPresent();
 
     }
 
@@ -46,7 +47,7 @@ public class reStock extends abstractCommand {
     @Override
     public List<String> getTabCompletition(List<String> args) {
         if (args.size() == 1)
-            return shopsManager.getInstance().getShops()
+            return DailyShop.get().getShopsManager().getShops()
                     .stream()
                     .map(dShop::getName)
                     .collect(Collectors.toList());
@@ -58,11 +59,11 @@ public class reStock extends abstractCommand {
     public void run(CommandSender sender, List<String> args) {
 
         if (args.get(0).equals("--all")) {
-            shopsManager.getInstance().getShops().forEach(dShop::reStock);
+            DailyShop.get().getShopsManager().getShops().forEach(dShop::reStock);
             return;
         }
 
-        shopsManager.getInstance().getShop(args.get(0))
+        DailyShop.get().getShopsManager().getShop(args.get(0))
                 .ifPresent(shop -> {
                             shop.reStock();
                             if (sender instanceof Player) shop.openShop((Player) sender);

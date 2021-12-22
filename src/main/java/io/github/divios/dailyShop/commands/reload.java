@@ -56,7 +56,7 @@ public class reload extends abstractCommand {
 
         int total[] = {0};
 
-        shopsManager.getInstance().getShop("ore").get().getItems().forEach(item -> {
+        DailyShop.get().getShopsManager().getShop("ore").get().getItems().forEach(item -> {
             Timer timer = Timer.create();
             dItem.serializeOptions().json().toJson(item);
             timer.stop();
@@ -72,7 +72,7 @@ public class reload extends abstractCommand {
         Log.info("Total json timer " + (double) totalJsonTime[0] / total[0] + " ms");
         Log.info("Total bukkit timer " + (double) totalBukkitTime[0] / total[0] + " ms");
 
-        shopsManager.getInstance().saveAllShops();
+        DailyShop.get().getShopsManager().saveAllShops();
 
         long[] totalJsonTime = {0};
         long[] totalBukkitTime = {0};
@@ -83,7 +83,7 @@ public class reload extends abstractCommand {
         CompletableFuture.runAsync(() -> {
             IntStream.range(0, 50000).forEach(value -> {
                 Log.info("Concurrency: " + value);
-                shopsManager.getInstance().getShop("ore").get().getItems().forEach(item -> {
+                DailyShop.get().getShopsManager().getShop("ore").get().getItems().forEach(item -> {
                     Timer timer = Timer.create();
                     JsonElement element = dItem.serializeOptions().json().toJson(item);
                     dItem.serializeOptions().json().fromJson(element);

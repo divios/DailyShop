@@ -32,8 +32,7 @@ import java.util.regex.Pattern;
 public class shopsManagerGui {
 
     private static final DailyShop plugin = DailyShop.get();
-    private static final shopsManager sManager = shopsManager.getInstance();
-    private static final databaseManager dManager = databaseManager.getInstance();
+    private static final shopsManager sManager = DailyShop.get().getShopsManager();
 
     private static final String SHOP_META = "dShopD";
 
@@ -76,7 +75,7 @@ public class shopsManagerGui {
                 )
 
                 .withItems(
-                        shopsManager.getInstance().getShops().stream().parallel()
+                        DailyShop.get().getShopsManager().getShops().stream().parallel()
                                 .map(dShop -> ItemButton.create(
                                         strategy.applyLore(ItemBuilder.of(XMaterial.PLAYER_HEAD)
                                                 .setName("&8> &6" + dShop.getName())
@@ -175,7 +174,7 @@ public class shopsManagerGui {
                     .withPlayer(p)
                     .withAction(aBoolean -> {
                         if (aBoolean) {
-                            shopsManager.getInstance().deleteShop(shop.getName());
+                            DailyShop.get().getShopsManager().deleteShop(shop.getName());
                             serializerApi.deleteShop(shop.getName());
                         }
                         refresh(p);
@@ -221,8 +220,8 @@ public class shopsManagerGui {
                         return;
                     }
 
-                    shopsManager.getInstance().createShop(s);
-                    serializerApi.saveShopToFileAsync(shopsManager.getInstance().getShop(s).get());
+                    DailyShop.get().getShopsManager().createShop(s);
+                    serializerApi.saveShopToFileAsync(DailyShop.get().getShopsManager().getShop(s).get());
                     Schedulers.sync().run(() -> refresh(p));
                 })
                 .withCancel(cancelReason -> Schedulers.sync().run(() -> refresh(p)))

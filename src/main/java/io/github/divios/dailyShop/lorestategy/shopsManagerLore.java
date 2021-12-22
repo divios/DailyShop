@@ -19,7 +19,7 @@ public class shopsManagerLore implements loreStrategy {
     public ItemStack applyLore(ItemStack item, Object... data) {
 
         String name = FormatUtils.stripColor(item.getItemMeta().getDisplayName().substring(4));
-        dShop shop = shopsManager.getInstance().getShop(name).orElse(null);
+        dShop shop = DailyShop.get().getShopsManager().getShop(name).orElse(null);
 
         return addLore(item, shop);
     }

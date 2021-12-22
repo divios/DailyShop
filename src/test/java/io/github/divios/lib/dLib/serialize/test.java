@@ -90,7 +90,7 @@ public class test {
     @Test
     public void testSuccess() {
         File successTest = testUtils.getResource("tests/successTest.yml");
-        Assert.assertThrows(ExceptionInInitializerError.class, () -> serializerApi.getShopFromFile(successTest));
+        Assert.assertThrows(NullPointerException.class, () -> serializerApi.getShopFromFile(successTest));
     }
 
 }

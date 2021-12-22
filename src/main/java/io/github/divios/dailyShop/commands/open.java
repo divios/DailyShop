@@ -31,10 +31,10 @@ public class open extends abstractCommand {
     @Override
     public boolean validArgs(List<String> args) {
 
-        if (args.size() == 1) return shopsManager.getInstance().getShop(args.get(0)).isPresent();
+        if (args.size() == 1) return DailyShop.get().getShopsManager().getShop(args.get(0)).isPresent();
 
         else if (args.size() > 1) {
-            return shopsManager.getInstance().getShop(args.get(0)).isPresent() &&
+            return DailyShop.get().getShopsManager().getShop(args.get(0)).isPresent() &&
                     Bukkit.getPlayer(args.get(1)) != null;
         }
         return false;
@@ -54,7 +54,7 @@ public class open extends abstractCommand {
     @Override
     public List<String> getTabCompletition(List<String> args) {
         if (args.size() == 1)
-            return shopsManager.getInstance().getShops()
+            return DailyShop.get().getShopsManager().getShops()
                     .stream()
                     .map(dShop::getName)
                     .collect(Collectors.toList());
@@ -86,7 +86,7 @@ public class open extends abstractCommand {
             return;
         }
 
-        shopsManager.getInstance().getShop(args.get(0))
+        DailyShop.get().getShopsManager().getShop(args.get(0))
                 .get().openShop(args.size() == 2 ? Bukkit.getPlayer(args.get(1)): (Player) sender);
 
     }

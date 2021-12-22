@@ -26,18 +26,9 @@ public class databaseManager extends DataManagerAbstract {
 
     private static final DailyShop plugin = DailyShop.get();
 
-    private static databaseManager instance = null;
-
-    private databaseManager(DatabaseConnector connection) {
-        super(connection);
-    }
-
-    public static databaseManager getInstance() {
-        if (instance == null) {
-            instance = new databaseManager(new SQLiteConnector(plugin));
-            instance.databaseConnector.connect(connection -> initialMigration.migrate(connection, instance.getTablePrefix()));
-        }
-        return instance;
+    public databaseManager() {
+        super(new SQLiteConnector(plugin));
+        super.databaseConnector.connect(connection -> initialMigration.migrate(connection, super.getTablePrefix()));
     }
 
     public Set<dShop> getShops() {

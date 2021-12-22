@@ -1,9 +1,11 @@
 package io.github.divios.lib.managers;
 
 import io.github.divios.core_lib.scheduler.Schedulers;
+import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.serialize.serializerApi;
+import io.github.divios.lib.storage.databaseManager;
 
 import java.sql.Timestamp;
 import java.util.HashSet;
@@ -11,6 +13,8 @@ import java.util.Set;
 import java.util.UUID;
 
 public class WrappedShop extends dShop {
+
+    private static final databaseManager dManager = DailyShop.get().getDatabaseManager();
 
     public static dShop wrap(dShop shop) {
         if (shop instanceof WrappedShop) return shop;
@@ -50,7 +54,7 @@ public class WrappedShop extends dShop {
     @Override
     public synchronized void addItem(dItem item) {
         super.addItem(item);
-        super.dManager.addItemAsync(this.name, item);
+        dManager.addItemAsync(this.name, item);
     }
 
     @Override

@@ -30,7 +30,7 @@ import java.util.UUID;
 public class shopGui {
 
     private static final DailyShop plugin = DailyShop.get();
-    private static final shopsManager sManager = shopsManager.getInstance();
+    private static final shopsManager sManager = DailyShop.get().getShopsManager();
 
     private static final BiMap<UUID, Integer> cache = HashBiMap.create();
 

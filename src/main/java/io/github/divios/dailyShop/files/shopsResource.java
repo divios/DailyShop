@@ -17,7 +17,7 @@ public class shopsResource {
 
     private static final DailyShop plugin = DailyShop.get();
     private static final File shopsFolder = new File(plugin.getDataFolder(), "shops");
-    private static final shopsManager sManager = shopsManager.getInstance();
+    private static final shopsManager sManager = DailyShop.get().getShopsManager();
 
     private static final Map<String, Long> cacheCheckSums = new HashMap<>();
     private static final Set<dShop> flaggedShops = new HashSet<>();
