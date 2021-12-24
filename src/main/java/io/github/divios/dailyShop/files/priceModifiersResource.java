@@ -10,7 +10,7 @@ import java.util.Set;
 public class priceModifiersResource extends resource{
 
     protected priceModifiersResource() {
-        super("priceModifiers.yml");
+        super("priceModifiers.yml", false);
     }
 
     @Override

@@ -14,14 +14,20 @@ public abstract class resource {
 
     protected final String name;
     protected boolean firstTime = true;
+    private boolean copyDefaults = true;
 
-    private File file;
+    private final File file;
     protected YamlConfiguration yaml;
     private long checkSum;
 
     protected resource(String name) {
+        this(name, true);
+    }
+
+    protected resource(String name, boolean copyDefaults) {
         this.name = name;
-        file = new File(plugin.getDataFolder(), name);
+        this.file = new File(plugin.getDataFolder(), name);
+        this.copyDefaults = copyDefaults;
         create();
         firstTime = false;
     }
@@ -44,7 +50,7 @@ public abstract class resource {
         checkSum = checkSumAux;
 
         yaml = YamlConfiguration.loadConfiguration(file);
-        copyDefaults();
+        if (copyDefaults) copyDefaults();
 
         init();
 
