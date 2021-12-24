@@ -1,5 +1,6 @@
 package io.github.divios.dailyShop.economies;
 
+import me.realized.tokenmanager.util.Log;
 import org.bukkit.entity.Player;
 import org.bukkit.util.io.BukkitObjectInputStream;
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
@@ -35,15 +36,19 @@ public interface economy {
                 String currency = (String) dataInput.readObject();
                 return getFromKey(key, currency);
             }
-        } catch (Exception e) {
+        } catch (Error | Exception ignored) {
             return new vault();
         }
     }
 
     static economy getFromKey(String key, String currency) {
-        for (econTypes value : econTypes.values()) {
-            if (value.name().equalsIgnoreCase(key))
-                return value.getEconomy(currency);
+        try {
+            for (econTypes value : econTypes.values()) {
+                if (value.name().equalsIgnoreCase(key))
+                    return value.getEconomy(currency);
+            }
+        } catch (Error | Exception ignored) {
+            Log.info("Cannot get economy " + currency + ", check if the corresponding plugin is enabled. Setting it to vault");
         }
         return new vault();
     }
