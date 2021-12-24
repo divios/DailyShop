@@ -1,11 +1,11 @@
 package io.github.divios.dailyShop;
 
 import io.github.divios.core_lib.Core_lib;
-import io.github.divios.core_lib.commands.CommandManager;
 import io.github.divios.core_lib.misc.Msg;
-import io.github.divios.dailyShop.commands.*;
+import io.github.divios.dailyShop.commands.commandsManager;
 import io.github.divios.dailyShop.files.configManager;
 import io.github.divios.dailyShop.hooks.hooksManager;
+import io.github.divios.jcommands.JCommands;
 import io.github.divios.lib.dLib.priceModifiers.priceModifierManager;
 import io.github.divios.lib.managers.shopsManager;
 import io.github.divios.lib.storage.databaseManager;
@@ -39,6 +39,7 @@ public class DailyShop extends JavaPlugin {
 
         INSTANCE = this;
         Core_lib.setPlugin(this);       /* Set plugin for aux libraries */
+        JCommands.register(this);
 
         localeManager = new LocaleManager();
 
@@ -53,11 +54,9 @@ public class DailyShop extends JavaPlugin {
         dManager = new databaseManager();
         sManager = new shopsManager(dManager);
 
-        CommandManager.register(INSTANCE.getCommand("DailyShop"));
-        registerAllCmds();
+                                /* Load commands */
+        new commandsManager().loadCommands();
 
-        CommandManager.setNotPerms(configM.getSettingsYml().PREFIX + configM.getLangYml().MSG_NOT_PERMS);
-        CommandManager.setDefault(new helpCmd());
                                 /* Register prefix */
         Msg.setPREFIX(configM.getSettingsYml().PREFIX);
 
@@ -69,17 +68,10 @@ public class DailyShop extends JavaPlugin {
 
     }
 
-    private void registerAllCmds() {
-        CommandManager.addCommand(new add(), new helpCmd(),
-                new open(), new manager(), new reStock(), new importShops(), new reload(), new logCmd());
-    }
-
     @Override
     public void onDisable() {
         sManager.getShops()       // Updates all the guis before disable
-                .forEach(shop -> {
-                    dManager.updateGui(shop.getName(), shop.getGuis());
-                });
+                .forEach(shop -> dManager.updateGui(shop.getName(), shop.getGuis()));
     }
 
     public void reload() {

@@ -1,133 +1,124 @@
 package io.github.divios.dailyShop.commands;
 
-import io.github.divios.core_lib.commands.abstractCommand;
-import io.github.divios.core_lib.commands.cmdTypes;
 import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.core_lib.misc.Msg;
 import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.guis.settings.shopGui;
 import io.github.divios.dailyShop.utils.Utils;
+import io.github.divios.jcommands.JCommand;
+import io.github.divios.jcommands.arguments.Argument;
+import io.github.divios.jcommands.arguments.types.StringArgument;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
-import io.github.divios.lib.managers.shopsManager;
 import net.brcdev.shopgui.ShopGuiPlusApi;
 import net.brcdev.shopgui.shop.ShopManager;
 import org.black_ixx.bossshop.BossShop;
 import org.black_ixx.bossshop.core.BSShop;
 import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 import java.util.stream.Collectors;
 
-public class importShops extends abstractCommand {
+public class importShops {
 
-    public importShops() { super(cmdTypes.BOTH); }
-
-    @Override
-    public String getName() {
-        return "import";
+    public JCommand getCommand() {
+        return JCommand.create("import")
+                .assertPermission("DailyRandomShop.import")
+                .assertUsage(getUsage())
+                .withSubcommands(getShopGuiCommand(), getBossShopProCommand());
     }
 
-    @Override
-    public boolean validArgs(List<String> args) {
-
-        if (args.size() < 3) return false;
-
-        if (args.get(0).equalsIgnoreCase("shopGui+"))
-            if (!Utils.isOperative("ShopGUIPlus")) return false;
-
-        if (args.get(0).equalsIgnoreCase("BossShopPro"))
-            if (!Utils.isOperative("BossShopPro")) return false;
-
-        return (args.get(0).equalsIgnoreCase("shopGui+")
-                || args.get(0).equalsIgnoreCase("BossShop"));
-
+    private String getUsage() {
+        return FormatUtils.color("&8- &6/rdshop import [plugin] [shop] [_shop] ] &8- &7Imports the given items _shop to a shop");
     }
 
-    @Override
-    public String getHelp() {
-        return FormatUtils.color("&8- &6/rdshop import [plugin] [shop] [_shop] ] &8 " +
-                "- &7Imports the given items _shop to a shop");
-    }
+    private JCommand getShopGuiCommand() {
+        return JCommand.create("shopGuiPlus")
+                .assertUsage(getUsage())
+                .assertRequirements(commandSender -> Utils.isOperative("ShopGUIPlus"))
+                .withArguments(getShopGuiArgument(), getDailyShopsArgument())
+                .executesPlayer((player, args) -> {
+                    DailyShop.get().getShopsManager().getShop(args.get("dailyShop").getAsString())
+                            .ifPresent(shop -> {
+                                ShopGuiPlusApi.getShop(args.get("bossShop").getAsString()).getShopItems()
+                                        .forEach(shopItem -> {
 
-    @Override
-    public List<String> getPerms() {
-        return Collections.singletonList("DailyRandomShop.import");
-    }
+                                            if (shopItem.getType().equals(ShopManager.ItemType.DUMMY)) return;
 
-    @Override
-    public List<String> getTabCompletition(List<String> args) {
-        if (args.size() == 1)
-            return Arrays.asList("shopGui+", "BossShop");
-        else if (args.size() == 2)
-            return DailyShop.get().getShopsManager().getShops().stream()
-                    .map(dShop::getName).collect(Collectors.toList());
-        else if (args.size() == 3)
-            if (args.get(0).equalsIgnoreCase("shopGui+") && Utils.isOperative("ShopGUIPlus"))
-                return new ArrayList<>(ShopGuiPlusApi.getPlugin().getShopManager().shops.keySet());
-            else if (Utils.isOperative("BossShopPro"))
-                return ((BossShop) Bukkit.getPluginManager().getPlugin("BossShopPro")).getAPI()
-                .getAllShopItems().keySet().stream().map(BSShop::getShopName).collect(Collectors.toList());
+                                            dItem newItem = dItem.of(shopItem.getItem());
 
-        return Collections.emptyList();
-    }
+                                            if (newItem.getQuantity() != 1)
+                                                newItem.setSetItems(newItem.getQuantity());
 
-    @Override
-    public void run(CommandSender sender, List<String> args) {
-
-        dShop _shop = DailyShop.get().getShopsManager().getShop(args.get(1)).orElse(null);
-        if (_shop == null) {
-            DailyShop.get().getShopsManager().createShop(args.get(1));
-        }
-
-        DailyShop.get().getShopsManager().getShop(args.get(1))
-                .ifPresent(shop -> {
-
-                    if (args.get(0).equalsIgnoreCase("shopGui+")) {
-                        ShopGuiPlusApi.getShop(args.get(2)).getShopItems()
-                                .forEach(shopItem -> {
-
-                                    if (shopItem.getType().equals(ShopManager.ItemType.DUMMY)) return;
-
-                                    dItem newItem = dItem.of(shopItem.getItem());
-
-                                    if (newItem.getQuantity() != 1)
-                                        newItem.setSetItems(newItem.getQuantity());
-
-                                    newItem.setBuyPrice(shopItem.getBuyPrice());
-                                    newItem.setSellPrice(shopItem.getSellPrice());
-                                    shop.addItem(newItem);
-                                });
-                    } else
-                        ((BossShop) Bukkit.getPluginManager().getPlugin("BossShopPro")).getAPI()
-                                .getShop(args.get(2)).getItems()
-                                .forEach(bsBuy -> {
-                                    dItem newItem = dItem.of(bsBuy.getItem());
-
-                                    try {
-                                        newItem.setBuyPrice(Double.parseDouble(
-                                                String.valueOf(bsBuy.getPrice(null) == null ?
-                                                        bsBuy.getPrice(ClickType.LEFT):bsBuy.getPrice(null))
-                                        ));
-                                        newItem.setSellPrice(Double.parseDouble(
-                                                String.valueOf(bsBuy.getPrice(null) == null ?
-                                                        bsBuy.getPrice(ClickType.RIGHT):bsBuy.getPrice(null))
-                                        ));
-                                    } catch (Exception e) {
-                                        Log.info("Could not import item of name " + bsBuy.getName());
-                                        return;
-                                    }
-                                    shop.addItem(newItem);
-                                });
-                    Msg.sendMsg((Player) sender, FormatUtils.color("&7Items imported successfully"));
-                    shopGui.open((Player) sender, shop);
+                                            newItem.setBuyPrice(shopItem.getBuyPrice());
+                                            newItem.setSellPrice(shopItem.getSellPrice());
+                                            shop.addItem(newItem);
+                                        });
+                                Msg.sendMsg(player, FormatUtils.color("&7Items imported successfully"));
+                                shopGui.open(player, shop);
+                            });
                 });
     }
+
+    private Argument getShopGuiArgument() {
+        return new StringArgument("bossShop")
+                .overrideSuggestions(() -> new ArrayList<>(ShopGuiPlusApi.getPlugin().getShopManager().shops.keySet()));
+    }
+
+    final BossShop plugin = ((BossShop) Bukkit.getPluginManager().getPlugin("BossShopPro"));
+
+    private JCommand getBossShopProCommand() {
+        return JCommand.create("BossShopPro")
+                .assertUsage(getUsage())
+                .assertRequirements(commandSender -> Utils.isOperative("BossShopPro"))
+                .withArguments(getBossShopProArgument(), getDailyShopsArgument())
+                .executesPlayer((player, args) -> {
+                    DailyShop.get().getShopsManager().getShop(args.get("dailyShop").getAsString())
+                            .ifPresent(shop -> {
+                                plugin.getAPI().getShop(args.get("bossShop").getAsString())
+                                        .getItems().forEach(bsBuy -> {
+                                            dItem newItem = dItem.of(bsBuy.getItem());
+
+                                            try {
+                                                newItem.setBuyPrice(Double.parseDouble(
+                                                        String.valueOf(bsBuy.getPrice(null) == null ?
+                                                                bsBuy.getPrice(ClickType.LEFT) : bsBuy.getPrice(null))
+                                                ));
+                                                newItem.setSellPrice(Double.parseDouble(
+                                                        String.valueOf(bsBuy.getPrice(null) == null ?
+                                                                bsBuy.getPrice(ClickType.RIGHT) : bsBuy.getPrice(null))
+                                                ));
+                                            } catch (Exception e) {
+                                                Log.info("Could not import item of name " + bsBuy.getName());
+                                                return;
+                                            }
+                                            shop.addItem(newItem);
+                                        });
+                                Msg.sendMsg(player, FormatUtils.color("&7Items imported successfully"));
+                                shopGui.open(player, shop);
+                            });
+                });
+    }
+
+    private Argument getBossShopProArgument() {
+        return new StringArgument("bossShop")
+                .overrideSuggestions(() -> plugin.getClassManager().getShops().getShops().values()
+                        .stream()
+                        .map(BSShop::getShopName)
+                        .collect(Collectors.toList()));
+    }
+
+    private Argument getDailyShopsArgument() {
+        return new StringArgument("dailyShop")
+                .overrideSuggestions(() -> DailyShop.get().getShopsManager()
+                        .getShops()
+                        .stream()
+                        .map(dShop::getName)
+                        .collect(Collectors.toList())
+                )
+                .setAsImperative();
+    }
+
 }

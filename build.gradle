@@ -56,6 +56,7 @@ dependencies {
     implementation 'com.github.PikaMug:LocaleLib:2.4'
     implementation 'org.bstats:bstats-bukkit:2.2.1'
     implementation 'io.github.divios:core_lib_api:6.2.5'
+    implementation 'com.github.divios:JCommands:1.5'
 
     compileOnly fileTree(dir: 'libs', include: ['*.jar'])
     compileOnly fileTree(dir: 'libsI', include: ['*.jar'])
@@ -73,6 +74,7 @@ shadowJar {
     relocate('org.bstats', 'io.github.divios.dependencies.bstats')
     relocate('de.tr7zw', 'io.github.divios.dependencies.nbt')
     relocate('io.github.divios.core_lib', 'io.github.divios.dependencies.Core_lib')
+    relocate('io.github.divios.jcommands', 'io.github.divios.dependencies.jCommands')
     relocate('com.cryptomorin.xseries', 'io.github.divios.dependencies.XSeries')
     minimize()
 }
@@ -92,19 +94,19 @@ task cloneDependencies {
 task updateJars {
     doLast {
         // windows
-        /*copy {
+        copy {
             from 'build/libs/DailyShop-' + pluginVersion + "-all.jar"
             into 'C:/Users/serbe/OneDrive/Desktop/server_pruebas/server/plugins'
             rename("DailyShop-" + pluginVersion + "-all.jar"
                     , "DailyShop-" + pluginVersion + ".jar")
-        } */
-        // MAC
+        }
+        /* MAC
         copy {
             from 'build/libs/DailyShop-' + pluginVersion + "-all.jar"
             into '/Users/sergiobernalparrondo/Desktop/servers/server-1.17/plugins'
             rename("DailyShop-" + pluginVersion + "-all.jar"
                     , "DailyShop-" + pluginVersion + ".jar")
-        }
+        } */
     }
 }
 
