@@ -4,6 +4,7 @@ import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.core_lib.misc.Msg;
 import io.github.divios.core_lib.misc.XSymbols;
+import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.utils.PriceWrapper;
 import io.github.divios.lib.dLib.dItem;
@@ -27,8 +28,8 @@ public class shopItemsLore implements loreStrategy {
     @Override
     public ItemStack applyLore(ItemStack item, Object... data) {
         this.itemToApplyLore = item;
-        player = (data.length) == 1 ? (Player) data[0] : null;
-        shop = (data.length == 2) ? (dShop) data[1] : null;
+        player = (data.length) >= 1 ? (Player) data[0] : null;
+        shop = (data.length >= 2) ? (dShop) data[1] : null;
         return addLoreToItem();
     }
 
