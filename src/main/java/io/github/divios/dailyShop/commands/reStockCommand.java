@@ -25,7 +25,7 @@ public class reStockCommand {
                         return;
                     }
 
-                    DailyShop.get().getShopsManager().getShop(values.get(0).getAsString())
+                    DailyShop.get().getShopsManager().getShop(values.get("dailyShop").getAsString())
                             .ifPresent(shop -> {
                                 shop.reStock();
                                 if (commandSender instanceof Player) shop.openShop((Player) commandSender);
