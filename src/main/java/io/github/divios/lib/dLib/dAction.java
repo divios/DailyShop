@@ -34,7 +34,10 @@ public enum dAction {
 
     RUN_PLAYER_CMD((p, s) -> {
         for (String command : s.split(";:")) {
-            p.performCommand(Utils.JTEXT_PARSER.parse(command, p));
+            p.performCommand(Utils.JTEXT_PARSER
+                    .withTag("%", "%")
+                    .withTemplate("player", p.getName())
+                    .parse(command, p));
         }
     }),
 
