@@ -39,8 +39,7 @@ public class shopItemsLore implements loreStrategy {
     }
 
     private boolean itemHasStock() {
-        return dItem.of(itemToApplyLore).hasStock()
-                && player != null;
+        return dItem.of(itemToApplyLore).hasStock() && player != null;
     }
 
     private ItemStack applyStockLore() {
@@ -72,7 +71,8 @@ public class shopItemsLore implements loreStrategy {
     }
 
     private boolean playerHasStock() {
-        return dItem.of(itemToApplyLore).getStock().get(player) != -1;
+        dItem aux;
+        return (aux = dItem.of(itemToApplyLore)).getStock() != null && aux.getStock().get(player) != -1;
     }
 
     private String getRedCross() {
