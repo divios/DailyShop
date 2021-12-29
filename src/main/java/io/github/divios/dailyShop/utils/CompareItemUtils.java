@@ -5,7 +5,7 @@ import org.bukkit.inventory.ItemStack;
 
 public class CompareItemUtils {
 
-    public  static boolean compareItems(ItemStack itemCompared, ItemStack itemToCompare) {
+    public static boolean compareItems(ItemStack itemCompared, ItemStack itemToCompare) {
         if (ItemUtils.isEmpty(itemCompared) || ItemUtils.isEmpty(itemToCompare)) return false;
 
         if (MMOUtils.isMMOItemsOn() && MMOUtils.isMMOItem(itemCompared)) {
@@ -13,5 +13,5 @@ public class CompareItemUtils {
         }
         return itemCompared.isSimilar(itemToCompare);
     }
-    
+
 }

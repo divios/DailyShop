@@ -14,6 +14,7 @@ import io.github.divios.dailyShop.lorestategy.shopItemsLore;
 import io.github.divios.dailyShop.utils.PlaceholderAPIWrapper;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.dItem;
+import io.github.divios.lib.dLib.dPrice;
 import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.dLib.stock.dStock;
 import io.github.divios.lib.dLib.synchronizedGui.taskPool.updatePool;
@@ -113,6 +114,8 @@ public class singleGuiImpl implements singleGui {
                     if (oldItem == null || buttons.get(integer) == null) return;
                     oldItem = oldItem.clone();
                     oldItem.setStock(buttons.get(integer).getStock());   // Set the stock of the actual item
+                    oldItem.setBuyPrice(buttons.get(integer).getBuyPrice().orElse(dPrice.EMPTY()));  // Set buyPrice (randomPrice bug)
+                    oldItem.setSellPrice(buttons.get(integer).getSellPrice().orElse(dPrice.EMPTY()));  // Set sellPrice (randomPrice bug)
                     oldItem = oldItem.applyLore(loreStrategy, p, shop);
 
                 } else
@@ -182,8 +185,8 @@ public class singleGuiImpl implements singleGui {
     private final static class dRandomItemsSelector {
 
         private static final Predicate<dItem> filterItems = item ->
-                !(item.getBuyPrice().orElse(null).getPrice() < 0 &&
-                        item.getSellPrice().orElse(null).getPrice() < 0) || item.getRarity().getWeight() != 0;
+                !(item.getBuyPrice().orElse(dPrice.EMPTY()).getPrice() < 0 &&
+                        item.getSellPrice().orElse(dPrice.EMPTY()).getPrice() < 0) || item.getRarity().getWeight() != 0;
 
         private static final Function<dItem, Integer> getWeights = dItem -> dItem.getRarity().getWeight();
 

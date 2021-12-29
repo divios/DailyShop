@@ -7,7 +7,8 @@ public class bstatsHook {
 
     private static final DailyShop main = DailyShop.get();
 
-    private bstatsHook() {};
+    private bstatsHook() {
+    }
 
     public static void init() {
         int pluginId = 9721;

@@ -129,8 +129,8 @@ lang:
         name: "&f&lMake potion effects visible/invisible"
         lore: "|&8- &9LEFT CLICK|  &7Toggle status||&7Status &e{status}"
   messages:
-    buy_action: "buy"
-    sell_action: "sell"
+    buy_action: "bought"
+    sell_action: "sold"
     buy_item: "&7You {action} {amount} of {item} for {price} {currency}"
     not_enough_money: "&7Ey, You dont have enough money to buy this item!"
     inventory_full: "&7Ey, You don't have enough space in your inventory!"

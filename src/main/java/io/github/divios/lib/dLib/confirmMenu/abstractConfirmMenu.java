@@ -6,12 +6,12 @@ import io.github.divios.core_lib.inventory.InventoryGUI;
 import io.github.divios.core_lib.inventory.ItemButton;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
-import io.github.divios.core_lib.misc.Msg;
 import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.dailyShop.DailyShop;
-import io.github.divios.dailyShop.utils.PlaceholderAPIWrapper;
+import io.github.divios.dailyShop.files.Lang;
 import io.github.divios.dailyShop.utils.PriceWrapper;
 import io.github.divios.dailyShop.utils.Utils;
+import io.github.divios.jtext.wrappers.Template;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
 import org.bukkit.entity.Player;
@@ -19,7 +19,6 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 
 public abstract class abstractConfirmMenu {
@@ -45,7 +44,7 @@ public abstract class abstractConfirmMenu {
         this.onCompleteAction = onCompleteAction;
         this.fallback = fallback;
 
-        addItemsAndIncrement(item.getSetItems().isPresent() ? this.item.setQuantity(1).getSetItems().get() : 1);
+        addItemsAndIncrement(item.getSetItems().isPresent() ? this.item.setQuantity(1).getSetItems().orElse(1) : 1);
         createMenu();
         openMenu();
     }
@@ -109,7 +108,8 @@ public abstract class abstractConfirmMenu {
         menu.addButton(
                 ItemButton.create(
                         ItemBuilder.of(XMaterial.GREEN_STAINED_GLASS_PANE)
-                                .setName(plugin.configM.getLangYml().CONFIRM_GUI_ADD_PANE + " " + quantity).setCount(quantity)
+                                .setName(Lang.CONFIRM_GUI_ADD_PANE.getAsString(player) + " " + quantity)
+                                .setCount(quantity)
                         , e -> {
                             if (ItemUtils.isEmpty(e.getCurrentItem())) return;
                             addItemsAndIncrement(quantity);
@@ -121,7 +121,8 @@ public abstract class abstractConfirmMenu {
         menu.addButton(
                 ItemButton.create(
                         ItemBuilder.of(XMaterial.RED_STAINED_GLASS_PANE)
-                                .setName(plugin.configM.getLangYml().CONFIRM_GUI_REMOVE_PANE + " " + quantity).setCount(quantity)
+                                .setName(Lang.CONFIRM_GUI_REMOVE_PANE.getAsString(player) + " " + quantity)
+                                .setCount(quantity)
                         , e -> {
                             if (ItemUtils.isEmpty(e.getCurrentItem())) return;
                             removeItemsAndDecrement(quantity);
@@ -147,7 +148,7 @@ public abstract class abstractConfirmMenu {
         menu.addButton(41, ItemButton.create(
                 ItemBuilder.of(XMaterial.RED_STAINED_GLASS)
                         .setName(getBackName())
-                        .setLore(plugin.configM.getLangYml().CONFIRM_GUI_RETURN_PANE_LORE)
+                        .setLore(Lang.CONFIRM_GUI_RETURN_PANE_LORE.getAsListString(player))
                 ,
                 e -> {
                     removeAddedItems();
@@ -158,7 +159,7 @@ public abstract class abstractConfirmMenu {
     private void createSetMaxButton() {
         menu.addButton(ItemButton.create(
                 ItemBuilder.of(XMaterial.YELLOW_STAINED_GLASS)
-                        .setName(plugin.configM.getLangYml().CONFIRM_GUI_SET_PANE)
+                        .setName(Lang.CONFIRM_GUI_SET_PANE.getAsString(player))
                 , e -> {
                     setMaxItems();
                     updateButtons();
@@ -174,15 +175,13 @@ public abstract class abstractConfirmMenu {
 
     private void createStatsButton() {
         menu.addButton(ItemButton.create(ItemBuilder.of(XMaterial.PAPER)
-                        .setName(plugin.configM.getLangYml().CONFIRM_GUI_STATS_NAME)
-                        .setLore(plugin.configM.getLangYml().CONFIRM_GUI_STATS_LORE.stream()
-                                .map(this::setPricePlaceholder)
-                                .map(this::setEconomyNamePlaceholder)
-                                .map(s -> {
-                                    if (placeholderApiIsOn()) return replacePapiPlaceholders(s);
-                                    return s;
-                                })
-                                .collect(Collectors.toList()))
+                        .setName(Lang.CONFIRM_GUI_STATS_NAME.getAsString(player))
+                        .setLore(Lang.CONFIRM_GUI_STATS_LORE
+                                .getAsListString(player,
+                                        Template.of("price", getFormattedPrice(getItemPrice() * nAddedItems) + " " + item.getEconomy().getName()),
+                                        Template.of("quantity", String.valueOf(nAddedItems))
+                                )
+                        )
                 , e -> {
                 }), 45);
     }
@@ -204,46 +203,24 @@ public abstract class abstractConfirmMenu {
     protected abstract String getConfirmName();
 
     private List<String> getConfirmLore() {
-        return setItemPricePlaceholder(plugin.configM.getLangYml().CONFIRM_GUI_SELL_ITEM);
+        return setItemPricePlaceholder(Lang.CONFIRM_GUI_SELL_ITEM.getAsListString(player));
     }
 
     protected abstract String getBackName();
 
     protected abstract void setMaxItems();
 
-    private String setPricePlaceholder(String str) {
-        return str.replaceAll("\\{economy}", getFormattedPrice(getPlayerBalance()));
-    }
-
-    private String setEconomyNamePlaceholder(String str) {
-        return str.replaceAll("\\{economy_name}", item.getEconomy().getName());
-    }
-
-    private boolean placeholderApiIsOn() {
-        return Utils.isOperative("PlaceholderAPI");
-    }
-
-    private String replacePapiPlaceholders(String str) {
-        try {
-            return PlaceholderAPIWrapper.setPlaceholders(player, str);
-        } catch (Exception e) {
-            return str;
-        }
-    }
-
     private List<String> setItemPricePlaceholder(List<String> str) {
-        return Msg.msgList(str)
-                .add("\\{price}", getFormattedPrice(getItemPrice() * nAddedItems) + " " + item.getEconomy().getName())
-                .add("\\{quantity}", String.valueOf(nAddedItems))
-                .build();
+        return Utils.JTEXT_PARSER
+                .withTemplate(
+                        Template.of("price", getFormattedPrice(getItemPrice() * nAddedItems) + " " + item.getEconomy().getName()),
+                        Template.of("quantity", nAddedItems)
+                )
+                .parse(str, player);
     }
 
     private String getFormattedPrice(double value) {
         return PriceWrapper.format(value);
-    }
-
-    private double getPlayerBalance() {
-        return item.getEconomy().getBalance(player);
     }
 
     protected abstract double getItemPrice();

@@ -7,9 +7,13 @@ import org.bukkit.entity.Player;
 
 public class playerPointsE extends abstractEconomy {
 
-    public playerPointsE() {this(""); }
+    public playerPointsE() {
+        this("");
+    }
 
-    public playerPointsE(String currency) { super(currency, "PlayerPoints", econTypes.playerPoints); }
+    public playerPointsE(String currency) {
+        super(currency, "PlayerPoints", econTypes.playerPoints);
+    }
 
     private transient static final PlayerPointsAPI api = PlayerPoints.getInstance().getAPI();
 

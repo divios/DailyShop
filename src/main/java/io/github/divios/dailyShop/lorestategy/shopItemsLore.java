@@ -2,11 +2,10 @@ package io.github.divios.dailyShop.lorestategy;
 
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.misc.FormatUtils;
-import io.github.divios.core_lib.misc.Msg;
 import io.github.divios.core_lib.misc.XSymbols;
-import io.github.divios.core_lib.utils.Log;
-import io.github.divios.dailyShop.DailyShop;
+import io.github.divios.dailyShop.files.Lang;
 import io.github.divios.dailyShop.utils.PriceWrapper;
+import io.github.divios.jtext.wrappers.Template;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dPrice;
 import io.github.divios.lib.dLib.dShop;
@@ -17,13 +16,13 @@ import org.bukkit.inventory.ItemStack;
 import java.util.List;
 
 public class shopItemsLore implements loreStrategy {
-    private static final DailyShop plugin = DailyShop.get();
 
     private ItemStack itemToApplyLore;
     private Player player;
     private dShop shop;
 
-    public shopItemsLore() {}
+    public shopItemsLore() {
+    }
 
     @Override
     public ItemStack applyLore(ItemStack item, Object... data) {
@@ -41,14 +40,13 @@ public class shopItemsLore implements loreStrategy {
 
     private boolean itemHasStock() {
         return dItem.of(itemToApplyLore).hasStock()
-                && player != null
-                && !plugin.configM.getLangYml().DAILY_ITEMS_STOCK.isEmpty();
+                && player != null;
     }
 
     private ItemStack applyStockLore() {
         return ItemBuilder.of(itemToApplyLore)
                 .addLore("")
-                .addLore(plugin.configM.getLangYml().DAILY_ITEMS_STOCK + getStockForPlayer());
+                .addLore(Lang.DAILY_ITEMS_STOCK.getAsString(player) + getStockForPlayer());
     }
 
     private ItemStack applyDefaultLore() {
@@ -65,12 +63,12 @@ public class shopItemsLore implements loreStrategy {
     }
 
     private List<String> getDefaultLore() {
-        return Msg.msgList(plugin.configM.getLangYml().SHOPS_ITEMS_LORE)
-                .add("\\{buyPrice}", getItemBuyPrice())
-                .add("\\{sellPrice}", getItemSellPrice())
-                .add("\\{currency}", getItemEconomyName())
-                .add("\\{rarity}", getItemRarity())
-                .build();
+        return Lang.SHOPS_ITEMS_LORE.getAsListString(player,
+                Template.of("buyPrice", getItemBuyPrice()),
+                Template.of("sellPrice", getItemSellPrice()),
+                Template.of("currency", getItemEconomyName()),
+                Template.of("rarity", getItemRarity())
+        );
     }
 
     private boolean playerHasStock() {

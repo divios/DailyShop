@@ -4,10 +4,12 @@ import io.github.divios.core_lib.utils.Log;
 
 public class Timer {
 
-    private long start;
+    private final long start;
     private long end;
 
-    public static Timer create() { return new Timer(); }
+    public static Timer create() {
+        return new Timer();
+    }
 
     private Timer() {
         start = System.currentTimeMillis();

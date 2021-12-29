@@ -2,12 +2,12 @@ package io.github.divios.dailyShop.lorestategy;
 
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.misc.FormatUtils;
-import io.github.divios.core_lib.misc.Msg;
 import io.github.divios.core_lib.misc.XSymbols;
 import io.github.divios.dailyShop.DailyShop;
+import io.github.divios.dailyShop.files.Lang;
 import io.github.divios.dailyShop.utils.Utils;
+import io.github.divios.jtext.wrappers.Template;
 import io.github.divios.lib.dLib.dShop;
-import io.github.divios.lib.managers.shopsManager;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
@@ -29,12 +29,11 @@ public class shopsManagerLore implements loreStrategy {
     }
 
     private List<String> getLore(dShop shop) {
-        return Msg.msgList(
-                DailyShop.get().configM.getLangYml().SHOPS_MANAGER_LORE)
-                .add("\\{timer}", String.valueOf(shop.getTimer()))
-                .add("\\{amount}", getShopAmountOfItems(shop))
-                .add("\\{c_timer}", getShopTimerFormatted(shop))
-                .build();
+        return Lang.SHOPS_MANAGER_LORE.getAsListString(
+                Template.of("timer", shop.getTimer()),
+                Template.of("amount", getShopAmountOfItems(shop)),
+                Template.of("c_timer", getShopTimerFormatted(shop))
+        );
     }
 
     private String getShopAmountOfItems(dShop shop) {

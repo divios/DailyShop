@@ -24,7 +24,9 @@ public class gemEcon extends abstractEconomy {
         gemApi.withdraw(p.getUniqueId(), price, _currency);
     }
 
-    public void depositMoney(Player p, Double price) { gemApi.deposit(p.getUniqueId(), price, _currency); }
+    public void depositMoney(Player p, Double price) {
+        gemApi.deposit(p.getUniqueId(), price, _currency);
+    }
 
     @Override
     public double getBalance(Player p) {

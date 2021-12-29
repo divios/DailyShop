@@ -12,6 +12,7 @@ import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.misc.confirmIH;
 import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.dailyShop.DailyShop;
+import io.github.divios.dailyShop.files.Lang;
 import io.github.divios.dailyShop.guis.customizerguis.CustomizerMenu;
 import io.github.divios.dailyShop.lorestategy.shopItemsManagerLore;
 import io.github.divios.lib.dLib.dItem;
@@ -29,7 +30,6 @@ import java.util.UUID;
 
 public class shopGui {
 
-    private static final DailyShop plugin = DailyShop.get();
     private static final shopsManager sManager = DailyShop.get().getShopsManager();
 
     private static final BiMap<UUID, Integer> cache = HashBiMap.create();
@@ -116,14 +116,14 @@ public class shopGui {
 
                 .withNextButton(
                         ItemBuilder.of(XMaterial.PLAYER_HEAD)
-                                .setName(plugin.configM.getLangYml().DAILY_ITEMS_NEXT)
+                                .setName(Lang.DAILY_ITEMS_NEXT.getAsString(p))
                                 .applyTexture("19bf3292e126a105b54eba713aa1b152d541a1d8938829c56364d178ed22bf")
                         , 51
                 )
 
                 .withBackButton(
                         ItemBuilder.of(XMaterial.PLAYER_HEAD)
-                                .setName(plugin.configM.getLangYml().DAILY_ITEMS_PREVIOUS)
+                                .setName(Lang.DAILY_ITEMS_PREVIOUS.getAsString(p))
                                 .applyTexture("bd69e06e5dadfd84e5f3d1c21063f2553b2fa945ee1d4d7152fdc5425bc12a9")
                         , 47
                 )
@@ -131,7 +131,7 @@ public class shopGui {
                 .withExitButton(
                         ItemButton.create(
                                 ItemBuilder.of(XMaterial.PLAYER_HEAD)
-                                        .setName(plugin.configM.getLangYml().SHOPS_MANAGER_RETURN)
+                                        .setName(Lang.SHOPS_MANAGER_RETURN.getAsString(p))
                                         .setLore("&7Click to return")
                                         .applyTexture("19bf3292e126a105b54eba713aa1b152d541a1d8938829c56364d178ed22bf")
                                 , e -> {
@@ -142,21 +142,19 @@ public class shopGui {
                 )
 
                 .withButtons(
-                        (inventoryGUI, integer) -> {
+                        (inventoryGUI, integer) ->
 
-                            inventoryGUI.addButton(ItemButton.create(
-                                    ItemBuilder.of(XMaterial.PLAYER_HEAD)
-                                            .setName(plugin.configM.getLangYml().DAILY_ITEMS_ADD)
-                                            .addLore(plugin.configM.getLangYml().DAILY_ITEMS_ADD_LORE)
-                                            .applyTexture("9b425aa3d94618a87dac9c94f377af6ca4984c07579674fad917f602b7bf235"),
+                                inventoryGUI.addButton(ItemButton.create(
+                                        ItemBuilder.of(XMaterial.PLAYER_HEAD)
+                                                .setName(Lang.DAILY_ITEMS_ADD.getAsString(p))
+                                                .addLore(Lang.DAILY_ITEMS_ADD_LORE.getAsString(p))
+                                                .applyTexture("9b425aa3d94618a87dac9c94f377af6ca4984c07579674fad917f602b7bf235"),
 
-                                    e -> addDailyGuiIH.open(p, shop, itemStack -> {
-                                        shop.addItem(new dItem(itemStack));
-                                        serializerApi.saveShopToFileAsync(shop);
-                                        refresh();
-                                    }, this::refresh)), 53);
-
-                        }
+                                        e -> addDailyGuiIH.open(p, shop, itemStack -> {
+                                            shop.addItem(new dItem(itemStack));
+                                            serializerApi.saveShopToFileAsync(shop);
+                                            refresh();
+                                        }, this::refresh)), 53)
                 )
 
                 .withTitle("&8" + shop.getName())
@@ -191,9 +189,9 @@ public class shopGui {
                         Schedulers.sync().runLater(() -> inv.destroy(), 3L);
                         open(p, shop);
                     })
-                    .withTitle(plugin.configM.getLangYml().CONFIRM_GUI_ACTION_NAME)
-                    .withConfirmLore(plugin.configM.getLangYml().CONFIRM_GUI_YES, plugin.configM.getLangYml().CONFIRM_GUI_YES_LORE)
-                    .withCancelLore(plugin.configM.getLangYml().CONFIRM_GUI_NO, plugin.configM.getLangYml().CONFIRM_GUI_NO_LORE)
+                    .withTitle(Lang.CONFIRM_GUI_ACTION_NAME.getAsString(p))
+                    .withConfirmLore(Lang.CONFIRM_GUI_YES.getAsString(p), Lang.CONFIRM_GUI_YES_LORE.getAsListString(p))
+                    .withCancelLore(Lang.CONFIRM_GUI_NO.getAsString(p), Lang.CONFIRM_GUI_NO_LORE.getAsListString(p))
                     .withItem(dItem.of(e.getCurrentItem()).getRawItem())
                     .prompt();
 

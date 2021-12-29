@@ -6,8 +6,13 @@ import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.core_lib.misc.Msg;
 import io.github.divios.core_lib.misc.confirmIH;
 import io.github.divios.dailyShop.DailyShop;
+import io.github.divios.dailyShop.files.Lang;
+import io.github.divios.dailyShop.files.Messages;
+import io.github.divios.dailyShop.files.Settings;
 import io.github.divios.dailyShop.utils.CompareItemUtils;
 import io.github.divios.dailyShop.utils.PriceWrapper;
+import io.github.divios.dailyShop.utils.Utils;
+import io.github.divios.jtext.wrappers.Template;
 import io.github.divios.lib.dLib.confirmMenu.sellConfirmMenu;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
@@ -19,14 +24,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-@SuppressWarnings({"ConstantConditions"})
+@SuppressWarnings({"ConstantConditions", "unused"})
 public class sellTransaction {
-
-    private static final DailyShop plugin = DailyShop.get();
 
     private final Player player;
     private final dItem item;
@@ -50,7 +52,7 @@ public class sellTransaction {
             checkPriceAndPermsConditions();
             hasEnoughItems();
         } catch (Exception errorMsg) {
-            Msg.sendMsg(player, errorMsg.getMessage());
+            Messages.valueOf(errorMsg.getMessage()).send(player);
             //shop.openShop(player);
             return;
         }
@@ -68,7 +70,7 @@ public class sellTransaction {
         try {
             checkItemsPermsAndAmountConditions();
         } catch (Exception errorMsg) {
-            Msg.sendMsg(player, errorMsg.getMessage());
+            Messages.valueOf(errorMsg.getMessage()).send(player);
             return;
         }
         removeItemsFromPlayer();
@@ -81,11 +83,11 @@ public class sellTransaction {
 
     private void checkPriceAndPermsConditions() throws Exception {
         if (hasNegatePermission() && !player.isOp()) {
-            throw new Exception(plugin.configM.getLangYml().MSG_INVALIDATE_SELL);
+            throw new Exception("MSG_INVALIDATE_SELL");
         }
 
         if (invalidSellPrice()) {
-            throw new Exception(plugin.configM.getLangYml().MSG_INVALID_SELL);
+            throw new Exception("MSG_INVALID_SELL");
         }
     }
 
@@ -104,16 +106,16 @@ public class sellTransaction {
                 .withPlayer(player)
                 .withItem(getItem())
                 .withAction(this::runSingleConfirmMenuAction)
-                .withTitle(plugin.configM.getLangYml().CONFIRM_GUI_SELL_NAME)
-                .withConfirmLore(plugin.configM.getLangYml().CONFIRM_GUI_YES, plugin.configM.getLangYml().CONFIRM_GUI_YES_LORE)
-                .withCancelLore(plugin.configM.getLangYml().CONFIRM_GUI_NO, plugin.configM.getLangYml().CONFIRM_GUI_NO_LORE)
+                .withTitle(Lang.CONFIRM_GUI_SELL_NAME.getAsString(player))
+                .withConfirmLore(Lang.CONFIRM_GUI_YES.getAsString(player), Lang.CONFIRM_GUI_YES_LORE.getAsListString(player))
+                .withCancelLore(Lang.CONFIRM_GUI_NO.getAsString(player), Lang.CONFIRM_GUI_NO_LORE.getAsListString(player))
                 .prompt();
     }
 
     private void runSingleConfirmMenuAction(boolean playerChoice) {
         if (playerChoice) {
             if (!itemExistOnShop()) {
-                Msg.sendMsg(player, plugin.configM.getLangYml().MSG_INVALID_OPERATION);
+                Messages.MSG_INVALID_OPERATION.send(player);
                 return;
             }
             runTransaction(item.getQuantity());
@@ -139,16 +141,13 @@ public class sellTransaction {
     }
 
     private void sendMessage() {
-        List<String> msg = createMsg();
-
-        if (msg.size() == 1) {      // if {item} is included
-            Msg.sendMsg(player, msg.get(0));
-        } else {
-            if (!itemWithCustomName())
-                sendNormalMessage(msg);
-            else
-                sendTranslatedMaterialMessage(msg);
-        }
+        Messages.MSG_BUY_ITEM.send(player,
+                Template.of("action", Lang.SELL_ACTION_NAME.getAsString(player)),
+                Template.of("item", item.getDisplayName()),
+                Template.of("amount", quantity),
+                Template.of("price", getItemPriceFormatted()),
+                Template.of("currency", item.getEconomy().getName())
+        );
     }
 
     private ItemStack getItem() {
@@ -179,14 +178,14 @@ public class sellTransaction {
     private void hasNecessaryPermissions() throws Exception {
         for (String perm : item.getPermsSell().orElse(Collections.emptyList())) {
             if (!player.hasPermission(perm))
-                throw new Exception(plugin.configM.getLangYml().MSG_NOT_PERMS_ITEM);
+                throw new Exception("MSG_NOT_PERMS_ITEM");
         }
     }
 
     private void hasEnoughItems() throws Exception {
         int maxItemsToRemove = ItemUtils.count(player.getInventory(), item.getRawItem(), CompareItemUtils::compareItems);
         if (maxItemsToRemove < quantity)
-            throw new Exception(plugin.configM.getLangYml().MSG_NOT_ITEMS);
+            throw new Exception("MSG_NOT_ITEMS");
     }
 
     @NotNull
@@ -202,23 +201,13 @@ public class sellTransaction {
                 .build();
     }
 
-    @NotNull
-    private List<String> createMsg() {
-        return Arrays.asList(Msg.singletonMsg(plugin.configM.getLangYml().MSG_BUY_ITEM)
-                .add("\\{action}", plugin.configM.getLangYml().MSG_SELL_ACTION)
-                .add("\\{amount}", "" + quantity)
-                .add("\\{price}", getItemPriceFormatted())
-                .add("\\{currency}", item.getEconomy().getName())
-                .build().split("\\{item}"));
-    }
-
     private boolean itemWithCustomName() {
         return item.getItem().getItemMeta().getDisplayName().isEmpty();
     }
 
 
     private void sendNormalMessage(List<String> msg) {
-        Msg.sendMsg(player, msg.get(0) + item.getDisplayName() + "&7" + msg.get(1));
+        Utils.sendRawMsg(player, msg.get(0) + item.getDisplayName() + "&7" + msg.get(1));
     }
 
     private void sendTranslatedMaterialMessage(List<String> msg) {
@@ -226,18 +215,17 @@ public class sellTransaction {
     }
 
     private List<String> getItemLore() {
-        return Msg.msgList(plugin.configM.getLangYml().CONFIRM_GUI_SELL_ITEM)
-                .add("\\{price}", getItemPriceFormatted())
-                .build();
+        return Lang.CONFIRM_GUI_SELL_ITEM.getAsListString(player,
+                Template.of("price", getItemPriceFormatted())
+        );
     }
 
     private void sendTranslatedMaterialMessageToPlayer(String formattedMsg, Material material) {
-        DailyShop.get().getLocaleManager().sendMessage(player, formattedMsg, material, (short) 0, null);
+        //DailyShop.get().getLocaleManager().sendMessage(player, formattedMsg, material, (short) 0, null);
     }
 
     private String getFormattedMessageForMaterialTranslation(List<String> msg) {
-        return FormatUtils.color(DailyShop.get().configM.getSettingsYml().PREFIX +
-                msg.get(0) + "<item>" + "&7" + msg.get(1));
+        return Utils.JTEXT_PARSER.parse(Settings.PREFIX + msg.get(0) + "<item>" + "&7" + msg.get(1));
     }
 
 }

@@ -1,10 +1,10 @@
 package io.github.divios.dailyShop;
 
 import io.github.divios.core_lib.Core_lib;
-import io.github.divios.core_lib.misc.Msg;
 import io.github.divios.dailyShop.commands.commandsManager;
-import io.github.divios.dailyShop.files.configManager;
+import io.github.divios.dailyShop.files.resourceManager;
 import io.github.divios.dailyShop.hooks.hooksManager;
+import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.jcommands.JCommands;
 import io.github.divios.lib.dLib.priceModifiers.priceModifierManager;
 import io.github.divios.lib.managers.shopsManager;
@@ -19,8 +19,7 @@ import java.io.File;
 public class DailyShop extends JavaPlugin {
 
     private static DailyShop INSTANCE;
-    private LocaleManager localeManager;
-    public configManager configM;
+    private resourceManager resourcesManager;
     private priceModifierManager modifiers;
     private databaseManager dManager;
     private shopsManager sManager;
@@ -29,8 +28,7 @@ public class DailyShop extends JavaPlugin {
         super();
     }
 
-    protected DailyShop(JavaPluginLoader loader, PluginDescriptionFile description, File dataFolder, File file)
-    {
+    protected DailyShop(JavaPluginLoader loader, PluginDescriptionFile description, File dataFolder, File file) {
         super(loader, description, dataFolder, file);
     }
 
@@ -40,31 +38,31 @@ public class DailyShop extends JavaPlugin {
         INSTANCE = this;
         Core_lib.setPlugin(this);       /* Set plugin for aux libraries */
         JCommands.register(this);
+        Utils.JTEXT_PARSER.getTemplates();     /* Init JText
 
-        localeManager = new LocaleManager();
+        /* Init conf & msgs & modifiers*/
+        modifiers = new priceModifierManager();
+        resourcesManager = resourceManager.generate();
 
-                                /* Init hooks  */
+        /* Init hooks  */
         hooksManager.getInstance();
 
-                                /* Init conf & msgs & modifiers*/
-        modifiers = new priceModifierManager();
-        configM = configManager.generate();
-
-                                /* Initiate database + getAllItems + timer */
+        /* Initiate database + getAllItems + timer */
         dManager = new databaseManager();
         sManager = new shopsManager(dManager);
 
-                                /* Load commands */
+        /* Load commands */
         new commandsManager().loadCommands();
 
-                                /* Register prefix */
-        Msg.setPREFIX(configM.getSettingsYml().PREFIX);
+        try {
+            Class.forName("io.github.divios.core_lib.inventory.materialsPrompt");  // loads all materials
+        } catch (ClassNotFoundException ignored) {
+        }
 
-        try { Class.forName("io.github.divios.core_lib.inventory.materialsPrompt");  // loads all materials
-        } catch (ClassNotFoundException ignored) {}
-
-        try { Class.forName("io.github.divios.lib.dLib.confirmMenu.buyConfirmMenu");  // loads Events
-        } catch (ClassNotFoundException ignored) {}
+        try {
+            Class.forName("io.github.divios.lib.dLib.confirmMenu.buyConfirmMenu");  // loads Events
+        } catch (ClassNotFoundException ignored) {
+        }
 
     }
 
@@ -75,23 +73,26 @@ public class DailyShop extends JavaPlugin {
     }
 
     public void reload() {
-        configM.reload();
-        Msg.setPREFIX(configM.getSettingsYml().PREFIX);
+        resourcesManager.reload();
     }
 
     public shopsManager getShopsManager() {
         return sManager;
     }
 
-    public databaseManager getDatabaseManager() { return dManager; }
+    public databaseManager getDatabaseManager() {
+        return dManager;
+    }
 
     public static DailyShop get() {
         return INSTANCE;
     }
 
-    public LocaleManager getLocaleManager() {
-        return localeManager;
+    public resourceManager getResources() {
+        return resourcesManager;
     }
 
-    public priceModifierManager getPriceModifiers() { return modifiers; }
+    public priceModifierManager getPriceModifiers() {
+        return modifiers;
+    }
 }

@@ -8,6 +8,7 @@ import io.github.divios.core_lib.misc.ChatPrompt;
 import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.dailyShop.DailyShop;
+import io.github.divios.dailyShop.files.Messages;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
@@ -30,7 +31,7 @@ public class changeEnchantments {
     private final dShop shop;
     private Map<Enchantment, Integer> e;
 
-    private changeEnchantments (
+    private changeEnchantments(
             Player p,
             dItem ditem,
             dShop shop
@@ -47,7 +48,7 @@ public class changeEnchantments {
                 .open(p);
     }
 
-    private changeEnchantments (
+    private changeEnchantments(
             Player p,
             dItem ditem,
             dShop shop,
@@ -74,7 +75,7 @@ public class changeEnchantments {
 
     private static List<ItemStack> contents() {
         List<ItemStack> contents = new ArrayList<>();
-        for(Enchantment e : Enchantment.values()) {
+        for (Enchantment e : Enchantment.values()) {
             ItemStack item = ItemBuilder.of(XMaterial.BOOK.parseItem())
                     .setName("&f&l" + e.getName());
             contents.add(item);
@@ -96,14 +97,14 @@ public class changeEnchantments {
 
         ChatPrompt.prompt(plugin, p, s1 -> {
 
-            if (!Utils.isInteger(s1)) {
-                Utils.sendMsg(p, plugin.configM.getLangYml().MSG_NOT_INTEGER);
-                Schedulers.sync().run(()  -> CustomizerMenu.open(p, ditem, shop));
-            }
-            ditem.addEnchantments(Enchantment.getByName(s), Integer.parseInt(s1));
-                    Schedulers.sync().run(()  -> CustomizerMenu.open(p, ditem, shop));
+                    if (!Utils.isInteger(s1)) {
+                        Messages.MSG_NOT_INTEGER.send(p);
+                        Schedulers.sync().run(() -> CustomizerMenu.open(p, ditem, shop));
+                    }
+                    ditem.addEnchantments(Enchantment.getByName(s), Integer.parseInt(s1));
+                    Schedulers.sync().run(() -> CustomizerMenu.open(p, ditem, shop));
 
-        }, cause -> Schedulers.sync().run(() -> CustomizerMenu.open(p, ditem, shop)),
+                }, cause -> Schedulers.sync().run(() -> CustomizerMenu.open(p, ditem, shop)),
                 "&1&lInput Enchant lvl", "");
 
         return dynamicGui.Response.nu();
@@ -115,7 +116,7 @@ public class changeEnchantments {
 
     private List<ItemStack> contentsX() {
         List<ItemStack> contents = new ArrayList<>();
-        for(Map.Entry<Enchantment, Integer> e : e.entrySet()) {
+        for (Map.Entry<Enchantment, Integer> e : e.entrySet()) {
             ItemStack item = ItemBuilder.of(XMaterial.ENCHANTED_BOOK.parseItem())
                     .setName("&f&l" + e.getKey().getName() + ":" + e.getValue());
             contents.add(item);
@@ -132,7 +133,9 @@ public class changeEnchantments {
 
     }
 
-    public static changeEnchantmentsBuilder builder() { return new changeEnchantmentsBuilder(); }
+    public static changeEnchantmentsBuilder builder() {
+        return new changeEnchantmentsBuilder();
+    }
 
     public static final class changeEnchantmentsBuilder {
         private Player p;
@@ -140,7 +143,8 @@ public class changeEnchantments {
         private dShop shop;
         private Map<Enchantment, Integer> e;
 
-        private changeEnchantmentsBuilder() { }
+        private changeEnchantmentsBuilder() {
+        }
 
         public changeEnchantmentsBuilder withPlayer(Player p) {
             this.p = p;

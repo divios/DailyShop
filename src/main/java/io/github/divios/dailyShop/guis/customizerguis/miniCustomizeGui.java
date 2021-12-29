@@ -69,7 +69,7 @@ public class miniCustomizeGui {
     @NotNull
     private Subscription createPreventCloseEvent() {
         return Events.subscribe(InventoryCloseEvent.class, EventPriority.HIGHEST)
-                        .handler(this::preventClose);
+                .handler(this::preventClose);
     }
 
     private void createPlayerQuickEvent() {
@@ -121,24 +121,24 @@ public class miniCustomizeGui {
                         .setName("&c")));
 
         IntStream.of(10, 11, 12, 19, 20, 21, 28, 29, 30,
-                5, 6, 7, 8, 23, 24, 25, 32, 33, 34, 41, 42, 43, 45, 46, 47, 48)
+                        5, 6, 7, 8, 23, 24, 25, 32, 33, 34, 41, 42, 43, 45, 46, 47, 48)
                 .forEach(value -> gui.getInventory().setItem(value, ItemBuilder.of(XMaterial.GRAY_STAINED_GLASS_PANE)
                         .setName("&c")));
 
         gui.addButton(ItemButton.create(ItemBuilder.of(XMaterial.NAME_TAG)
-                .setName("&b&lChange name").addLore("&7Click to change the item's name")
+                        .setName("&b&lChange name").addLore("&7Click to change the item's name")
                 , e -> {
                     preventCloseB = false;
                     ChatPrompt.prompt(plugin, p, (s) -> {
                         item = ItemUtils.setName(item, s);
                         refreshItem();
                         Schedulers.sync().run(this::refresh);
-                    }, cause ->Schedulers.sync().run(this::refresh), "&6&lInput Item Name", "");
+                    }, cause -> Schedulers.sync().run(this::refresh), "&6&lInput Item Name", "");
                 }
         ), 11);
 
         gui.addButton(ItemButton.create(ItemBuilder.of(XMaterial.SLIME_BALL)
-                .setName("&b&lChange material").addLore("&7Click to change the item's material")
+                        .setName("&b&lChange material").addLore("&7Click to change the item's material")
                 , e -> {
                     preventCloseB = false;
                     materialsPrompt.open(plugin, p, (aBoolean, material) -> {
@@ -153,8 +153,8 @@ public class miniCustomizeGui {
         ), 20);
 
         gui.addButton(ItemButton.create(ItemBuilder.of(XMaterial.PAPER)
-                .setName("&b&lAdd/remove Lore").addLore("&7Left Click to add lore",
-                        "&7Right Click to remove lore"),
+                        .setName("&b&lAdd/remove Lore").addLore("&7Left Click to add lore",
+                                "&7Right Click to remove lore"),
                 e -> {
                     preventCloseB = false;
                     if (e.isLeftClick()) {
@@ -177,14 +177,14 @@ public class miniCustomizeGui {
                     }
 
 
-        }), 29);
+                }), 29);
 
         Pair<dAction, String> action = new dItem(item).getAction();
 
         gui.addButton(24, ItemButton.create(ItemBuilder.of(XMaterial.STICKY_PISTON)
-            .setName("&c&lAdd actions").setLore("&7Action to perform when this", "&7item is clicked",
-                        "", "&6Current action: &7" + action.get1().name() + ":" + action.get2()),
-                e-> {
+                        .setName("&c&lAdd actions").setLore("&7Action to perform when this", "&7item is clicked",
+                                "", "&6Current action: &7" + action.get1().name() + ":" + action.get2()),
+                e -> {
                     preventCloseB = false;
                     customizeAction.open(p, shop, (dAction, s) -> {
                         dItem aux = new dItem(item);
@@ -195,26 +195,27 @@ public class miniCustomizeGui {
                 }));
 
         gui.addButton(ItemButton.create(ItemBuilder.of(XMaterial.PLAYER_HEAD)
-            .setName("&e&lSet material as base64").setLore("&7Set this item's material",
-                        "&7from url or base64").applyTexture("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTljNzY5MDgzMTYzZTlhZWJkOGVkNWQ2NmJlYmNiOWRmMjFjYWJhZTYzYmFhYWEwZDNhYmUxNDIwYTRhYjU4ZiJ9fX0="),
+                        .setName("&e&lSet material as base64").setLore("&7Set this item's material",
+                                "&7from url or base64").applyTexture("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTljNzY5MDgzMTYzZTlhZWJkOGVkNWQ2NmJlYmNiOWRmMjFjYWJhZTYzYmFhYWEwZDNhYmUxNDIwYTRhYjU4ZiJ9fX0="),
                 e -> {
-                preventCloseB = false;
-                p.closeInventory();
-                ChatPrompt.prompt(plugin, p, (s) -> {
-                    item.setType(XMaterial.PLAYER_HEAD.parseMaterial());
-                    item = ItemUtils.applyTexture(item, s);
-                    Schedulers.sync().run(this::refresh);
+                    preventCloseB = false;
+                    p.closeInventory();
+                    ChatPrompt.prompt(plugin, p, (s) -> {
+                                item.setType(XMaterial.PLAYER_HEAD.parseMaterial());
+                                item = ItemUtils.applyTexture(item, s);
+                                Schedulers.sync().run(this::refresh);
 
-                }, cause -> Schedulers.sync().run(this::refresh),
-                        FormatUtils.color("&7Input base64 texture"),"");
-        }), 23);
+                            }, cause -> Schedulers.sync().run(this::refresh),
+                            FormatUtils.color("&7Input base64 texture"), "");
+                }), 23);
 
-        gui.addButton(ItemButton.create(item.clone(), e -> {}), 5);
+        gui.addButton(ItemButton.create(item.clone(), e -> {
+        }), 5);
 
         gui.addButton(ItemButton.create(ItemBuilder.of(XMaterial.PLAYER_HEAD)
-                .setName("&b&lGo back").addLore("&7Click to go back")
+                        .setName("&b&lGo back").addLore("&7Click to go back")
                         .applyTexture("19bf3292e126a105b54eba713aa1b152d541a1d8938829c56364d178ed22bf")
-                , e-> {
+                , e -> {
                     preventClose.unregister();
                     consumer.accept(item);
                     inv.destroy();
@@ -227,7 +228,8 @@ public class miniCustomizeGui {
     }
 
     private void refreshItem() {
-        inv.addButton(ItemButton.create(item.clone(), e -> {}), 5);
+        inv.addButton(ItemButton.create(item.clone(), e -> {
+        }), 5);
     }
 
     private void refresh() {
@@ -259,7 +261,8 @@ public class miniCustomizeGui {
         private dShop shop;
         private Consumer<ItemStack> consumer;
 
-        private miniCustomizeGuiBuilder() {}
+        private miniCustomizeGuiBuilder() {
+        }
 
         public miniCustomizeGuiBuilder withPlayer(Player p) {
             this.p = p;

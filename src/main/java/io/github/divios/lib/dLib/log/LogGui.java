@@ -8,13 +8,14 @@ import io.github.divios.core_lib.inventory.builder.paginatedGui;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.misc.Msg;
 import io.github.divios.dailyShop.DailyShop;
+import io.github.divios.dailyShop.files.Lang;
 import io.github.divios.dailyShop.utils.FutureUtils;
 import io.github.divios.dailyShop.utils.PriceWrapper;
+import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.log.options.LogOptions;
 import io.github.divios.lib.dLib.log.options.LogOptionsGui;
 import io.github.divios.lib.dLib.log.options.dLogEntry;
 import io.github.divios.lib.dLib.log.options.dLogUtils;
-import io.github.divios.lib.storage.databaseManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -23,8 +24,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 public class LogGui {
-
-    private static final DailyShop plugin = DailyShop.get();
 
     private final Player p;
     private final Runnable fallback;
@@ -35,7 +34,7 @@ public class LogGui {
         this.fallback = fallback;
         this.options = options;
 
-        Msg.sendMsg(p, "Generating report, please wait");
+        Utils.sendRawMsg(p, "Generating report, please wait");
         init();
     }
 
@@ -48,7 +47,7 @@ public class LogGui {
                                 .filter(dLogEntry -> {
                                     boolean result = true;
                                     if (options.getfPlayer() != null)
-                                        result &= dLogEntry.getPlayer().equals(options.getfPlayer());
+                                        result = dLogEntry.getPlayer().equals(options.getfPlayer());
                                     if (options.getfShopId() != null)
                                         result &= dLogEntry.getShopID().equals(options.getfShopId());
                                     if (options.getfType() != null)
@@ -75,14 +74,14 @@ public class LogGui {
                 )
                 .withNextButton(
                         ItemBuilder.of(XMaterial.PLAYER_HEAD)
-                                .setName(plugin.configM.getLangYml().DAILY_ITEMS_NEXT)
+                                .setName(Lang.DAILY_ITEMS_NEXT.getAsString(p))
                                 .applyTexture("19bf3292e126a105b54eba713aa1b152d541a1d8938829c56364d178ed22bf")
                         , 52
                 )
 
                 .withBackButton(
                         ItemBuilder.of(XMaterial.PLAYER_HEAD)
-                                .setName(plugin.configM.getLangYml().DAILY_ITEMS_PREVIOUS)
+                                .setName(Lang.DAILY_ITEMS_PREVIOUS.getAsString(p))
                                 .applyTexture("bd69e06e5dadfd84e5f3d1c21063f2553b2fa945ee1d4d7152fdc5425bc12a9")
                         , 46
                 )
@@ -122,7 +121,7 @@ public class LogGui {
                                                                     .filter(dLogEntry -> {
                                                                         boolean result = true;
                                                                         if (options.getfPlayer() != null)
-                                                                            result &= dLogEntry.getPlayer().equals(options.getfPlayer());
+                                                                            result = dLogEntry.getPlayer().equals(options.getfPlayer());
                                                                         if (options.getfShopId() != null)
                                                                             result &= dLogEntry.getShopID().equals(options.getfShopId());
                                                                         if (options.getfType() != null)
@@ -131,7 +130,7 @@ public class LogGui {
                                                                     })
                                                                     .map(dLogEntry::toState)
                                                                     .collect(Collectors.toList())
-                                                    ).thenAccept(unused -> Msg.sendMsg(p, "Entries imported successfully"))
+                                                    ).thenAccept(unused -> Utils.sendRawMsg(p, "Entries imported successfully"))
 
                                     ), 45
                             );

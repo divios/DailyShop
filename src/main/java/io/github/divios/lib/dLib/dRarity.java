@@ -3,6 +3,8 @@ package io.github.divios.lib.dLib;
 import com.cryptomorin.xseries.XMaterial;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.dailyShop.DailyShop;
+import io.github.divios.dailyShop.files.Lang;
+import io.github.divios.dailyShop.files.Settings;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -68,8 +70,8 @@ public class dRarity {
      */
     private String getRarityLore() {
         try {
-            return plugin.configM.getLangYml().CUSTOMIZE_RARITY_TYPES.get(rarity.ordinal());
-        } catch (Exception e) {
+            return Lang.CUSTOMIZE_RARITY_TYPES.getAsListString().get(rarity.ordinal());
+        } catch (Exception | Error e) {
             return rarity.name();
         }
     }

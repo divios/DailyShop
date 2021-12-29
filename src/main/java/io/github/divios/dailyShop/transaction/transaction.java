@@ -4,15 +4,14 @@ import io.github.divios.core_lib.events.Events;
 import io.github.divios.core_lib.inventory.inventoryUtils;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
-import io.github.divios.core_lib.misc.FormatUtils;
-import io.github.divios.core_lib.misc.Msg;
-import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.core_lib.utils.Log;
-import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.events.updateItemEvent;
+import io.github.divios.dailyShop.files.Lang;
+import io.github.divios.dailyShop.files.Messages;
 import io.github.divios.dailyShop.utils.MMOUtils;
 import io.github.divios.dailyShop.utils.PriceWrapper;
 import io.github.divios.dailyShop.utils.Utils;
+import io.github.divios.jtext.wrappers.Template;
 import io.github.divios.lib.dLib.confirmMenu.buyConfirmMenu;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dPrice;
@@ -24,8 +23,6 @@ import io.github.divios.lib.dLib.stock.dStock;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -35,35 +32,33 @@ import java.util.stream.IntStream;
 
 public class transaction {
 
-    private final static DailyShop plugin = DailyShop.get();
-
     public static void init(Player p, dItem item, dShop shop) {
 
         if (p.hasPermission("dailyrandomshop." + shop.getName() + ".negate.buy") && !p.isOp()) {
-            Msg.sendMsg(p, plugin.configM.getLangYml().MSG_INVALIDATE_BUY);
+            Messages.MSG_INVALIDATE_BUY.send(p);
             //shop.openShop(p);
             return;
         }
 
         if (item.hasStock() && item.getStock().get(p) == -1) {
-            Msg.sendMsg(p, plugin.configM.getLangYml().MSG_OUT_STOCK);
+            Messages.MSG_OUT_STOCK.send(p);
             //shop.openShop(p);
             return;
         }
 
         if (!item.getBuyPrice().isPresent() || item.getBuyPrice().get().getPrice() == -1) {
-            Msg.sendMsg(p, plugin.configM.getLangYml().MSG_INVALID_BUY);
+            Messages.MSG_INVALID_BUY.send(p);
             //shop.openShop(p);
             return;
         }
 
         if (inventoryUtils.playerEmptySlots(p) <= 0) {
-            Msg.sendMsg(p, plugin.configM.getLangYml().MSG_INV_FULL);
+            Messages.MSG_INV_FULL.send(p);
             return;
         }
 
         if (!item.getEconomy().hasMoney(p, item.getBuyPrice().get().getPriceForPlayer(p, shop, item.getID(), priceModifier.type.BUY))) {
-            Msg.sendMsg(p, plugin.configM.getLangYml().MSG_NOT_MONEY);
+            Messages.MSG_NOT_MONEY.send(p);
             //shop.openShop(p);
             return;
         }
@@ -84,7 +79,7 @@ public class transaction {
 
     private static void initTransaction(Player p, dItem item, int amount, dShop shop) {
 
-        summary s = null;
+        summary s;
         try {
             s = printSummary(p, item, amount, shop);
 
@@ -102,7 +97,7 @@ public class transaction {
 
         if (!lastCheck(p, shop, item, amount)
         ) {     // Last check
-            Msg.sendMsg(p, plugin.configM.getLangYml().MSG_INVALID_OPERATION);
+            Messages.MSG_INVALID_OPERATION.send(p);
             shop.openShop(p);
             return;
         }
@@ -111,11 +106,15 @@ public class transaction {
 
         s.getRunnables().forEach(Runnable::run);
 
-        List<String> msg = Arrays.asList(Msg.singletonMsg(plugin.configM.getLangYml().MSG_BUY_ITEM)
-                .add("\\{action}", plugin.configM.getLangYml().MSG_BUY_ACTION)
-                .add("\\{amount}", "" + amount)
-                .add("\\{price}", "" + PriceWrapper.format(s.getPrice()))
-                .add("\\{currency}", s.getEcon().getName()).build().split("\\{item}"));
+        shop.openShop(p);
+
+        Messages.MSG_BUY_ITEM.send(p,
+                Template.of("action", Lang.BUY_ACTION_NAME.getAsString(p)),
+                Template.of("item", item.getDisplayName()),
+                Template.of("amount", amount),
+                Template.of("price", PriceWrapper.format(s.getPrice())),
+                Template.of("currency", s.getEcon().getName())
+        );
 
         dLog.log(
                 dLogEntry.builder()
@@ -128,20 +127,6 @@ public class transaction {
                         .withPrice(s.getPrice())
                         .build()
         );
-
-        if (msg.size() == 1) {
-            Msg.sendMsg(p, msg.get(0));
-        } else {
-
-            if (!item.getItem().getItemMeta().getDisplayName().isEmpty())
-                Msg.sendMsg(p, msg.get(0) + item.getDisplayName() + "&7" + msg.get(1));
-            else
-                DailyShop.get().getLocaleManager().sendMessage(p,
-                        FormatUtils.color(DailyShop.get().configM.getSettingsYml().PREFIX +
-                                msg.get(0) + "<item>" + "&7" + msg.get(1)), item.getItem().getType(), (short) 0, null);
-        }
-
-        Schedulers.sync().run(() -> shop.openShop(p));
 
     }
 
@@ -172,13 +157,7 @@ public class transaction {
 
         if (item.hasStock()) {                          // Stock check
 
-            int stock = 0;
-            try {
-                stock = dStock.searchStock(p, shop, item.getUid()).get(4, TimeUnit.SECONDS);
-            } catch (InterruptedException | ExecutionException | TimeoutException e) {
-                Log.severe("There was a problem searching for a stock for the player " + p.getDisplayName());
-                e.printStackTrace();
-            }
+            int stock = dStock.searchStock(p, shop, item.getUid());
 
             if (stock < amount) {
                 throw new transactionExc(transactionExc.err.noStock);
@@ -191,27 +170,34 @@ public class transaction {
 
         transactionExc[] err1 = {null};
         item.getBundle().ifPresent(uuids ->         // bundle check
-                uuids.forEach(uuid -> {
-                    IntStream.range(0, amount)
-                            .forEach(value ->
-                                    {
-                                        try {
-                                            s.concat(printSummary(p, UUID.nameUUIDFromBytes(uuid.getBytes()), shop));
-                                        } catch (transactionExc e) {
-                                            err1[0] = e;
+                uuids.forEach(uuid ->
+
+                        IntStream.range(0, amount)
+                                .forEach(value ->
+                                        {
+                                            try {
+                                                s.concat(printSummary(p, UUID.nameUUIDFromBytes(uuid.getBytes()), shop));
+                                            } catch (transactionExc e) {
+                                                err1[0] = e;
+                                            }
                                         }
-                                    }
-                            );
-                }));
+                                )));
 
         if (err1[0] != null) throw err1[0];
 
         IntStream.range(0, amount).forEach(i ->
                 item.getCommands().ifPresent(strings -> strings.forEach(s1 ->
-                        s.addRunnable(() ->
-                                Bukkit.dispatchCommand(Bukkit.getConsoleSender(),
-                                        Msg.singletonMsg(s1).add("%player%", p.getName())
-                                                .build())))));
+                                s.addRunnable(() ->
+                                        Bukkit.dispatchCommand(Bukkit.getConsoleSender(),
+                                                Utils.JTEXT_PARSER
+                                                        .withTag("%", "%")
+                                                        .withTemplate("player", p.getName())
+                                                        .parse(s1)
+                                        )
+                                )
+                        )
+                )
+        );
 
 
         /// A PARTIR DE AQUI YA SOLO COMPROBAR SLOTS Y PRICE ///
@@ -233,15 +219,8 @@ public class transaction {
         boolean result = true;
 
         if (item.hasStock()) {
-            CompletableFuture<Integer> callback = dStock.searchStock(p, shop, item.getUid());
-            try {
-                int c = callback.get(2, TimeUnit.SECONDS);
-                result = c > 0 && c >= amount;
-            } catch (InterruptedException | ExecutionException e) {
-                e.printStackTrace();
-            } catch (TimeoutException e) {
-                result = false;
-            }
+            int callback = dStock.searchStock(p, shop, item.getUid());
+            result = callback > 0 && callback >= amount;
         }
         return shop.getItem(item.getUid()).isPresent() && result;
 

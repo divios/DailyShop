@@ -1,6 +1,5 @@
 package io.github.divios.dailyShop.utils;
 
-import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.th0rgal.oraxen.items.OraxenItems;
 import org.bukkit.inventory.ItemStack;
 
@@ -32,7 +31,7 @@ public class OraxenUtils {
     }
 
     public static ItemStack createItemByID(String id) {
-        if(!isOraxenOn()) return null;
+        if (!isOraxenOn()) return null;
         if (OraxenItems.exists(id)) return null;
 
         return OraxenItems.getItemById(id).build();

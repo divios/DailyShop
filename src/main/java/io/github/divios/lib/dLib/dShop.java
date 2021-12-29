@@ -12,12 +12,12 @@ import io.github.divios.core_lib.scheduler.Task;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.events.reStockShopEvent;
 import io.github.divios.dailyShop.events.updateItemEvent;
+import io.github.divios.dailyShop.files.Settings;
 import io.github.divios.dailyShop.guis.settings.shopGui;
 import io.github.divios.lib.dLib.synchronizedGui.singleGui.dInventory;
 import io.github.divios.lib.dLib.synchronizedGui.syncHashMenu;
 import io.github.divios.lib.dLib.synchronizedGui.syncMenu;
 import io.github.divios.lib.serialize.adapters.dShopAdapter;
-import io.github.divios.lib.storage.databaseManager;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -45,7 +45,7 @@ public class dShop {
     protected final Set<Subscription> listeners = new HashSet<>();
 
     public dShop(String name) {
-        this(name, plugin.configM.getSettingsYml().DEFAULT_TIMER);
+        this(name, Settings.DEFAULT_TIMER.getValue().getAsInt());
     }
 
     public dShop(String name, int timer) {
@@ -215,6 +215,7 @@ public class dShop {
 
             if (newItems.containsKey(entry.getKey())) {     // Update items if changed
                 dItem toUpdateItem = newItems.remove(entry.getKey());
+
                 if (toUpdateItem != null && !toUpdateItem.isSimilar(entry.getValue())) {
                     updateItem(toUpdateItem);
                 }

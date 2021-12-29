@@ -6,6 +6,7 @@ import com.google.gson.*;
 import io.github.divios.core_lib.gson.JsonBuilder;
 import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
+import io.github.divios.dailyShop.files.Settings;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
@@ -45,7 +46,7 @@ public class dShopAdapter implements JsonSerializer<dShop>, JsonDeserializer<dSh
         dShop deserializedShop;
 
         id = object.get("id").getAsString();
-        timer[0] = object.has("timer") ? object.get("timer").getAsInt() : DailyShop.get().configM.getSettingsYml().DEFAULT_TIMER;
+        timer[0] = object.has("timer") ? object.get("timer").getAsInt() : Settings.DEFAULT_TIMER.getValue().getAsInt();
         timestamp = object.has("timestamp") ? new Timestamp(wrappedParse(object.get("timestamp").getAsString()).getTime()) : new Timestamp(System.currentTimeMillis());
 
         deserializedShop = new dShop(id, timer[0], timestamp);

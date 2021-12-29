@@ -10,7 +10,6 @@ import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 
 public interface dStock {
 
@@ -67,11 +66,10 @@ public interface dStock {
 
     default String toBase64() { return Base64Coder.encodeString(toJson()); }
 
-    static CompletableFuture<Integer> searchStock(Player p, dShop shop, UUID id) {
-        CompletableFuture<Integer> result = new CompletableFuture<>();
-
-        Events.callEvent(new searchStockEvent(p, shop, id, result));
-        return result;
+    static int searchStock(Player p, dShop shop, UUID id) {
+        searchStockEvent event = new searchStockEvent(p, shop, id);
+        Events.callEvent(event);
+        return event.getRespond();
     }
 
 }

@@ -10,6 +10,7 @@ import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.economies.*;
+import io.github.divios.dailyShop.files.Lang;
 import io.github.divios.dailyShop.hooks.elementalGemsHook;
 import io.github.divios.dailyShop.hooks.hooksManager;
 import io.github.divios.lib.dLib.dItem;
@@ -61,7 +62,7 @@ public class changeEcon {
     }
 
     private InventoryGUI createMenu() {
-        InventoryGUI menu = new InventoryGUI(plugin, 54, plugin.configM.getLangYml().CUSTOMIZE_ECON_NAME);
+        InventoryGUI menu = new InventoryGUI(plugin, 54, Lang.CUSTOMIZE_ECON_NAME.getAsString(p));
         createBluePanels(menu);
         createLightBluePanes(menu);
         createReturnButton(menu);

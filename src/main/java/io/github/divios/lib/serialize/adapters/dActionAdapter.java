@@ -27,6 +27,7 @@ public class dActionAdapter implements JsonSerializer<Pair<dAction, String>>, Js
         if (action.has("data")) {
             switch (typeAction[0]) {
                 case RUN_CMD:
+                case RUN_PLAYER_CMD:
                     StringBuilder stringBuilder = new StringBuilder();
                     action.get("data").getAsJsonArray().forEach(element ->
                             stringBuilder.append(element.getAsString() + ";:"));
@@ -50,6 +51,7 @@ public class dActionAdapter implements JsonSerializer<Pair<dAction, String>>, Js
 
         switch (action.get1()) {
             case RUN_CMD:
+            case RUN_PLAYER_CMD:
                 object.add("data", gson.toJsonTree(action.get2().split(";:")));
                 break;
             case OPEN_SHOP:

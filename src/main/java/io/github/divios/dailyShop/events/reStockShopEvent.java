@@ -16,7 +16,7 @@ import java.sql.Timestamp;
 public class reStockShopEvent extends Event {
 
     private static final HandlerList HANDLERS_LIST = new HandlerList();
-    private boolean isCanceled = false;
+    private final boolean isCanceled = false;
 
     private final dShop reStockedShop;
     private final Timestamp timestamp;
@@ -27,9 +27,13 @@ public class reStockShopEvent extends Event {
 
     }
 
-    public dShop getShop() { return this.reStockedShop; }
+    public dShop getShop() {
+        return this.reStockedShop;
+    }
 
-    public Timestamp getTimestamp() { return this.timestamp; }
+    public Timestamp getTimestamp() {
+        return this.timestamp;
+    }
 
     @NotNull
     @Override

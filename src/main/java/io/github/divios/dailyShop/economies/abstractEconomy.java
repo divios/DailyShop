@@ -1,6 +1,7 @@
 package io.github.divios.dailyShop.economies;
 
 import io.github.divios.dailyShop.DailyShop;
+import io.github.divios.dailyShop.files.Settings;
 import org.bukkit.entity.Player;
 import org.bukkit.util.io.BukkitObjectOutputStream;
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
@@ -39,8 +40,7 @@ public abstract class abstractEconomy implements Serializable, economy {
     public abstract double getBalance(Player p);
 
     public String getName() {
-        return plugin.configM.getSettingsYml().ECONNAMES.containsKey(name.get().toLowerCase()) ?
-                plugin.configM.getSettingsYml().ECONNAMES.get(name.get().toLowerCase()) : name.get();
+        return Settings.ECON_NAMES.getEconNameOrDefault(name.get(), name.get());
     }
 
     public String getCurrency() {

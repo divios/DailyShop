@@ -16,13 +16,12 @@ public class searchStockEvent extends Event {
     private final Player p;
     private final dShop shop;
     private final UUID uuid;
-    private final CompletableFuture<Integer> callBack;
+    private int respond = -1;
 
-    public searchStockEvent(Player p, dShop shop, UUID uuid, CompletableFuture<Integer> callBack) {
+    public searchStockEvent(Player p, dShop shop, UUID uuid) {
         this.p = p;
         this.shop = shop;
         this.uuid = uuid;
-        this.callBack = callBack;
     }
 
     public Player getPlayer() {
@@ -37,7 +36,13 @@ public class searchStockEvent extends Event {
         return uuid;
     }
 
-    public void respond(int value) { callBack.complete(value); }
+    public int getRespond() {
+        return respond;
+    }
+
+    public void respond(int value) {
+        respond = value;
+    }
 
     @NotNull
     @Override

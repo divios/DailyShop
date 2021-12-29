@@ -13,6 +13,8 @@ public class MPointsHook {
         api = new MPointsAPI();
     }
 
-    public static MPointsAPI getApi() { return api; }
+    public static MPointsAPI getApi() {
+        return api;
+    }
 
 }

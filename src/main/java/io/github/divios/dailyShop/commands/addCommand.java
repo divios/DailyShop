@@ -13,6 +13,7 @@ import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.managers.shopsManager;
 import io.github.divios.lib.serialize.serializerApi;
 
+import java.util.Arrays;
 import java.util.stream.Collectors;
 
 public class addCommand {
@@ -41,6 +42,14 @@ public class addCommand {
                         .collect(Collectors.toList())
                 )
                 .setAsImperative();
+    }
+
+    private void test() {
+        JCommand.create("Custom argument")
+                .withArguments(new StringArgument("actions")
+                        .overrideSuggestions(() -> Arrays.asList("sell", "buy", "sellAll"))        // You can set your own custom autocomplete arguments
+                )
+                .register();
     }
 
 }

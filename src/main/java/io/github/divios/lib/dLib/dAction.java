@@ -1,16 +1,15 @@
 package io.github.divios.lib.dLib;
 
 import io.github.divios.core_lib.inventory.dynamicGui;
-import io.github.divios.core_lib.misc.Msg;
+import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.lorestategy.loreStrategy;
 import io.github.divios.dailyShop.lorestategy.shopItemsLore;
+import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.managers.shopsManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
@@ -24,9 +23,19 @@ public enum dAction {
     }),
 
     RUN_CMD((p, s) -> {
-        List<String> commands = Arrays.asList(s.split(";:"));
-        commands.forEach(s1 ->
-                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), Msg.singletonMsg(s1).add("%player%", p.getName()).build()));
+        for (String command : s.split(";:")) {
+            Bukkit.dispatchCommand(Bukkit.getConsoleSender(),
+                    Utils.JTEXT_PARSER
+                            .withTag("%", "%")
+                            .withTemplate("player", p.getName())
+                            .parse(command));
+        }
+    }),
+
+    RUN_PLAYER_CMD((p, s) -> {
+        for (String command : s.split(";:")) {
+            p.performCommand(Utils.JTEXT_PARSER.parse(command, p));
+        }
     }),
 
     SHOW_ALL_ITEMS((p, s) -> {
@@ -34,7 +43,8 @@ public enum dAction {
         loreStrategy strategy = new shopItemsLore();
         new dynamicGui.Builder()
                 .contents(() -> manager.getShop(s)
-                        .get().getItems().parallelStream()
+                        .get().getItems()
+                        .parallelStream()
                         .map(dItem -> strategy.applyLore(dItem.getItem().clone(), p))
                         .collect(Collectors.toList()))
                 .title(integer -> "&6&l" + manager.getShop(s).get().getName() + " items")

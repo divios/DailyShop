@@ -1,13 +1,11 @@
 package io.github.divios.dailyShop.transaction;
 
-import io.github.divios.core_lib.misc.Msg;
-import io.github.divios.dailyShop.DailyShop;
+import io.github.divios.dailyShop.files.Messages;
 import org.bukkit.entity.Player;
 
-public class transactionExc extends Exception{
+public class transactionExc extends Exception {
 
     private final err motive;
-    private final static DailyShop plugin = DailyShop.get();
 
     public transactionExc(err motive) {
         this.motive = motive;
@@ -17,16 +15,16 @@ public class transactionExc extends Exception{
     public void sendErrorMsg(Player p) {
         switch (motive) {
             case noMoney:
-                Msg.sendMsg(p, plugin.configM.getLangYml().MSG_NOT_MONEY);
+                Messages.MSG_NOT_MONEY.send(p);
                 break;
             case noPerms:
-                Msg.sendMsg(p, plugin.configM.getLangYml().MSG_NOT_PERMS_ITEM);
+                Messages.MSG_NOT_PERMS_ITEM.send(p);
                 break;
             case noSpace:
-                Msg.sendMsg(p, plugin.configM.getLangYml().MSG_INV_FULL);
+                Messages.MSG_INV_FULL.send(p);
                 break;
             case noStock:
-                Msg.sendMsg(p, plugin.configM.getLangYml().MSG_NOT_STOCK);
+                Messages.MSG_NOT_STOCK.send(p);
                 break;
         }
 

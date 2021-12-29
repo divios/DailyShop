@@ -11,6 +11,7 @@ public class itemEconomy extends abstractEconomy {
     public itemEconomy(ItemStack item) {
         this(ItemUtils.serialize(item));
     }
+
     protected itemEconomy(String currency) {
         super("item", currency, econTypes.exp);
         item = ItemUtils.deserialize(currency);

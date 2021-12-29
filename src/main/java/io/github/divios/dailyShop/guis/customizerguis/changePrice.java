@@ -8,6 +8,7 @@ import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.misc.ChatPrompt;
 import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.dailyShop.DailyShop;
+import io.github.divios.dailyShop.files.Lang;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
@@ -62,36 +63,36 @@ public class changePrice {
                 .apply(gui.getInventory());
 
         gui.addButton(ItemButton.create(ItemBuilder.of(XMaterial.SUNFLOWER)
-                        .setName("&6&lSet fixed price").addLore("&7The item 'll always have", "&7the given price"),
+                                .setName("&6&lSet fixed price").addLore("&7The item 'll always have", "&7the given price"),
 
-                e ->
-                        ChatPrompt.builder()
-                                .withPlayer(p)
-                                .withResponse(s -> {
+                        e ->
+                                ChatPrompt.builder()
+                                        .withPlayer(p)
+                                        .withResponse(s -> {
 
-                                    if (!Utils.isDouble(s)) {
-                                        Utils.sendMsg(p, "&7Not double");
-                                        Schedulers.sync().run(back);
-                                        return;
-                                    }
-                                    double price = Double.parseDouble(s);
-                                    if (price < 0) price = -1;
+                                            if (!Utils.isDouble(s)) {
+                                                Utils.sendRawMsg(p, "&7Not double");
+                                                Schedulers.sync().run(back);
+                                                return;
+                                            }
+                                            double price = Double.parseDouble(s);
+                                            if (price < 0) price = -1;
 
-                                    if (type == Type.BUY)
-                                        item.setBuyPrice(price);
-                                    else item.setSellPrice(price);
+                                            if (type == Type.BUY)
+                                                item.setBuyPrice(price);
+                                            else item.setSellPrice(price);
 
-                                    accept.accept(item);
-                                })
-                                .withCancel(cancelReason -> Schedulers.sync().run(back))
-                                .withTitle("&6&lInput new Price")
-                                .prompt()),
+                                            accept.accept(item);
+                                        })
+                                        .withCancel(cancelReason -> Schedulers.sync().run(back))
+                                        .withTitle("&6&lInput new Price")
+                                        .prompt()),
 
                 11);
 
         gui.addButton(ItemButton.create(ItemBuilder.of(XMaterial.REPEATER)
                         .setName("&c&lSet interval").addLore("&7The price of the item",
-                        "&7will take a random value between", "&7the given interval"),
+                                "&7will take a random value between", "&7the given interval"),
                 e -> {
 
                     ChatPrompt.builder()
@@ -101,7 +102,7 @@ public class changePrice {
                                 String[] pricesS = s.split(":");
 
                                 if (pricesS.length != 2) {
-                                    Utils.sendMsg(p, "&7Wrong format -> minPrice:maxPrice (Ex 30:50)");
+                                    Utils.sendRawMsg(p, "&7Wrong format -> minPrice:maxPrice (Ex 30:50)");
                                     Schedulers.sync().run(back);
                                     return;
                                 }
@@ -112,13 +113,13 @@ public class changePrice {
                                     prices = new Double[]{Double.parseDouble(pricesS[0]),
                                             Double.parseDouble(pricesS[1])};
                                 } catch (Exception err) {
-                                    Utils.sendMsg(p, "&7Not double");
+                                    Utils.sendRawMsg(p, "&7Not double");
                                     Schedulers.sync().run(back);
                                     return;
                                 }
 
                                 if (prices[0] >= prices[1]) {
-                                    Utils.sendMsg(p, "&7Max price can't be lower than min price");
+                                    Utils.sendRawMsg(p, "&7Max price can't be lower than min price");
                                     Schedulers.sync().run(back);
                                     return;
                                 }
@@ -140,17 +141,11 @@ public class changePrice {
                 }), 15);
 
         gui.addButton(ItemButton.create(new
-
                         ItemBuilder(XMaterial.PLAYER_HEAD)
-                        .
+                        .setName(Lang.CONFIRM_GUI_RETURN_NAME.getAsString(p))
+                        .setLore(Lang.CONFIRM_GUI_RETURN_PANE_LORE.getAsListString(p))
+                        .applyTexture("19bf3292e126a105b54eba713aa1b152d541a1d8938829c56364d178ed22bf")
 
-                                setName(plugin.configM.getLangYml().CONFIRM_GUI_RETURN_NAME)
-                        .
-
-                                setLore(plugin.configM.getLangYml().CONFIRM_GUI_RETURN_PANE_LORE)
-                        .
-
-                                applyTexture("19bf3292e126a105b54eba713aa1b152d541a1d8938829c56364d178ed22bf")
                 , e -> back.run()), 22);
 
         gui.destroysOnClose();
@@ -168,7 +163,8 @@ public class changePrice {
         private Consumer<dItem> accept;
         private Runnable back;
 
-        private changePriceBuilder() {}
+        private changePriceBuilder() {
+        }
 
         public changePriceBuilder withPlayer(Player p) {
             this.p = p;

@@ -3,8 +3,10 @@ package io.github.divios.lib.dLib.confirmMenu;
 import io.github.divios.core_lib.events.Events;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
+import io.github.divios.dailyShop.files.Lang;
 import io.github.divios.dailyShop.utils.CompareItemUtils;
 import io.github.divios.lib.dLib.dItem;
+import io.github.divios.lib.dLib.dPrice;
 import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.dLib.priceModifiers.priceModifier;
 import org.bukkit.entity.Player;
@@ -16,15 +18,15 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
-@SuppressWarnings({"ConstantConditions"})
+@SuppressWarnings({"ConstantConditions", "unused"})
 public class sellConfirmMenu extends abstractConfirmMenu {
 
     private static final Map<UUID, List<ItemStack>> retrievedItemsCache = new ConcurrentHashMap<>();
 
-    static {
+    /*static {
         //createPlayerDeathListener();
         //createPlayerJoinListener();
-    }
+    } */
 
     private static void createPlayerDeathListener() {
         Events.subscribe(PlayerDeathEvent.class)
@@ -62,7 +64,7 @@ public class sellConfirmMenu extends abstractConfirmMenu {
 
     @Override
     protected String getTitle() {
-        return plugin.configM.getLangYml().CONFIRM_GUI_SELL_NAME;
+        return Lang.CONFIRM_GUI_SELL_NAME.getAsString(player);
     }
 
     @Override
@@ -96,12 +98,12 @@ public class sellConfirmMenu extends abstractConfirmMenu {
 
     @Override
     protected String getConfirmName() {
-        return plugin.configM.getLangYml().CONFIRM_GUI_YES;
+        return Lang.CONFIRM_GUI_YES.getAsString(player);
     }
 
     @Override
     protected String getBackName() {
-        return plugin.configM.getLangYml().CONFIRM_GUI_NO;
+        return Lang.CONFIRM_GUI_NO.getAsString(player);
     }
 
     @Override
@@ -113,7 +115,7 @@ public class sellConfirmMenu extends abstractConfirmMenu {
 
     @Override
     protected double getItemPrice() {
-        return item.getSellPrice().orElse(null).getPriceForPlayer(player, shop, item.getID(), priceModifier.type.SELL);
+        return item.getSellPrice().orElse(dPrice.EMPTY()).getPriceForPlayer(player, shop, item.getID(), priceModifier.type.SELL);
     }
 
     private int countSimilarItems() {
@@ -172,11 +174,11 @@ public class sellConfirmMenu extends abstractConfirmMenu {
     }
 
     public static final class sellConfirmMenuBuilder {
-        protected dShop shop;
-        protected Player player;
-        protected dItem item;
-        protected Consumer<Integer> onCompleteAction;
-        protected Runnable fallback;
+        private dShop shop;
+        private Player player;
+        private dItem item;
+        private Consumer<Integer> onCompleteAction;
+        private Runnable fallback;
 
         private sellConfirmMenuBuilder() {
         }

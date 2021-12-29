@@ -25,7 +25,9 @@ public class vault extends abstractEconomy {
         vault.withdrawPlayer(p, price);
     }
 
-    public void depositMoney(Player p, Double price) { vault.depositPlayer(p, price); }
+    public void depositMoney(Player p, Double price) {
+        vault.depositPlayer(p, price);
+    }
 
     @Override
     public double getBalance(Player p) {

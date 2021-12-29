@@ -57,9 +57,13 @@ public class updateItemEvent extends Event {
         return type;
     }
 
-    public dShop getShop() { return this.shop; }
+    public dShop getShop() {
+        return this.shop;
+    }
 
-    public Timestamp getTimestamp() { return this.timestamp; }
+    public Timestamp getTimestamp() {
+        return this.timestamp;
+    }
 
     @NotNull
     @Override

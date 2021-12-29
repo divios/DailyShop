@@ -14,6 +14,8 @@ public class UltraEconomyHook {
         api = UltraEconomy.getAPI();
     }
 
-    public static UltraEconomyAPI getApi() { return api; }
+    public static UltraEconomyAPI getApi() {
+        return api;
+    }
 
 }

@@ -11,6 +11,8 @@ public class shopGuiPlusHook {
         api = new Object();
     }
 
-    public static Object getApi() { return api; }
+    public static Object getApi() {
+        return api;
+    }
 
 }

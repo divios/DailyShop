@@ -8,13 +8,17 @@ class gemsEconomyHook {
     private static final DailyShop main = DailyShop.get();
     private static GemsEconomyAPI gemsEcon = null;
 
-    private gemsEconomyHook() {};
+    private gemsEconomyHook() {
+    }
 
     public static void tryToHook() {
-            if(main.getServer().getPluginManager().getPlugin("GemsEconomy") != null) {
-                main.getLogger().info("Hooked to GemsEconomy");
-                gemsEcon = new GemsEconomyAPI();
-            }
+        if (main.getServer().getPluginManager().getPlugin("GemsEconomy") != null) {
+            main.getLogger().info("Hooked to GemsEconomy");
+            gemsEcon = new GemsEconomyAPI();
+        }
     }
-    public static GemsEconomyAPI getGemsEcon() { return gemsEcon; }
+
+    public static GemsEconomyAPI getGemsEcon() {
+        return gemsEcon;
+    }
 }

@@ -56,7 +56,7 @@ public class importShops {
                                             newItem.setSellPrice(shopItem.getSellPrice());
                                             shop.addItem(newItem);
                                         });
-                                Msg.sendMsg(player, FormatUtils.color("&7Items imported successfully"));
+                                Utils.sendRawMsg(player, "&7Items imported successfully");
                                 shopGui.open(player, shop);
                             });
                 });
@@ -96,7 +96,7 @@ public class importShops {
                                             }
                                             shop.addItem(newItem);
                                         });
-                                Msg.sendMsg(player, FormatUtils.color("&7Items imported successfully"));
+                                Utils.sendRawMsg(player, "&7Items imported successfully");
                                 shopGui.open(player, shop);
                             });
                 });

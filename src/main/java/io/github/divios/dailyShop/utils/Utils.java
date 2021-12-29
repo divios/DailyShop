@@ -7,6 +7,10 @@ import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.misc.Msg;
 import io.github.divios.core_lib.misc.timeStampUtils;
 import io.github.divios.dailyShop.DailyShop;
+import io.github.divios.dailyShop.files.Messages;
+import io.github.divios.dailyShop.files.Settings;
+import io.github.divios.jtext.JText;
+import io.github.divios.jtext.JTextBuilder;
 import io.github.divios.lib.dLib.dShop;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -17,6 +21,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.NotNull;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
@@ -30,9 +35,23 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
+@SuppressWarnings({"unused", "deprecation"})
 public class Utils {
 
     private static final DailyShop plugin = DailyShop.get();
+    public static final JTextBuilder JTEXT_PARSER;
+
+    static {
+        JTEXT_PARSER = JText.builder()
+                .withTag("\\{", "\\}")
+                .parseChatColors()
+                .parseHexColors()
+                .parsePlaceholderAPI();
+    }
+
+    public static void sendRawMsg(Player p, String s) {
+        p.sendMessage(JTEXT_PARSER.parse(Settings.PREFIX.getValue().getAsString() + " " + s, p));
+    }
 
     public static void translateAllItemData(ItemStack recipient, ItemStack receiver) {
         try {
@@ -41,7 +60,8 @@ public class Utils {
             receiver.setItemMeta(recipient.getItemMeta());
             receiver.setAmount(recipient.getAmount());
             receiver.setDurability(recipient.getDurability());
-        } catch (IllegalArgumentException ignored) {}
+        } catch (IllegalArgumentException ignored) {
+        }
     }
 
     public static void translateAllItemData(ItemStack recipient,
@@ -53,12 +73,13 @@ public class Utils {
             receiver.setAmount(recipient.getAmount());
             receiver.setDurability(recipient.getDurability());
             //if(dailyMetadata) dailyItem.transferDailyMetadata(recipient, receiver);
-        } catch (IllegalArgumentException ignored) {}
+        } catch (IllegalArgumentException ignored) {
+        }
     }
 
     public static ItemMeta getItemMeta(ItemStack item) {
         ItemMeta meta;
-        if(item.hasItemMeta()) meta = item.getItemMeta();
+        if (item.hasItemMeta()) meta = item.getItemMeta();
         else meta = Bukkit.getItemFactory().getItemMeta(item.getType());
         return meta;
     }
@@ -86,15 +107,19 @@ public class Utils {
         return item == null || item.getType() == Material.AIR;
     }
 
-    public static boolean isEmpty(String s) { return s == null || s.isEmpty(); }
+    public static boolean isEmpty(String s) {
+        return s == null || s.isEmpty();
+    }
 
-    public static boolean isEmpty(List<String> s) { return s == null || s.isEmpty(); }
+    public static boolean isEmpty(List<String> s) {
+        return s == null || s.isEmpty();
+    }
 
 
     public static void sendSound(Player p, Sound s) {
         try {
             p.playSound(p.getLocation(), s, 0.5F, 1);
-        } catch (NoSuchFieldError Ignored) {
+        } catch (NoSuchFieldError ignored) {
         }
     }
 
@@ -112,13 +137,12 @@ public class Utils {
         return null;
     }
 
-    @Deprecated
     public static ItemStack getRedPane() {
         return ItemBuilder.of(XMaterial.RED_STAINED_GLASS_PANE)
                 .setName("&cOut of stock"); //TODO
     }
 
-    public static void removeFlag(ItemStack i, ItemFlag f) {
+    public static void removeFlag(ItemStack i, @NotNull ItemFlag f) {
         ItemMeta meta = i.getItemMeta();
         meta.removeItemFlags(f);
         i.setItemMeta(meta);
@@ -131,12 +155,10 @@ public class Utils {
 
 
     /**
-     *
-     * @param inv
      * @return amount of free slots on inventory (excluding armor). If inventory is full returns 0
      */
 
-    public static int inventoryFull (Inventory inv) {
+    public static int inventoryFull(Inventory inv) {
 
         int freeSlots = 0;
         for (int i = 0; i < 36; i++) {
@@ -149,11 +171,11 @@ public class Utils {
     }
 
     public static void noPerms(CommandSender p) {
-        Msg.sendMsg((Player) p, plugin.configM.getLangYml().MSG_NOT_PERMS);
+        Messages.MSG_NOT_PERMS.send(p);
     }
 
     public static void noCmd(CommandSender p) {
-        Msg.sendMsg((Player) p, "&7Console is no allow to do this command");
+        Utils.sendRawMsg((Player) p, "&7Console is no allow to do this command");
     }
 
 
@@ -164,11 +186,13 @@ public class Utils {
             String perm = perms.getPermission();
             if (perm.startsWith("DailyShop.sellpricemodifier.")) {
                 String[] splitStr = perm.split("DailyShop.sellpricemodifier.");
-                if(splitStr.length == 1) return;
+                if (splitStr.length == 1) return;
                 double newValue;
-                try{
+                try {
                     newValue = Math.abs(Double.parseDouble(splitStr[1]));
-                } catch (NumberFormatException e) { return; }
+                } catch (NumberFormatException e) {
+                    return;
+                }
                 if (newValue > modifier.get())
                     modifier.set(newValue);
             }
@@ -223,10 +247,6 @@ public class Utils {
         return true;
     }
 
-    public static void sendMsg(Player p, String s) {
-        Msg.sendMsg(p, s);
-    }
-
     public static String getDiffActualTimer(dShop shop) {
 
         int timeInSeconds = (int) (shop.getTimer() - timeStampUtils.diff(shop.getTimestamp(),
@@ -264,8 +284,9 @@ public class Utils {
         }
     }
 
-    private static Gson gson = new Gson();
-    private static Yaml yaml = new Yaml();
+    private static final Gson gson = new Gson();
+    private static final Yaml yaml = new Yaml();
+
     public static JsonElement getJsonFromFile(File file) {
 
         Object loadedYaml = null;

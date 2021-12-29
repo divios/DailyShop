@@ -7,7 +7,7 @@ import io.github.divios.lib.dLib.priceModifiers.priceModifier;
 import java.util.HashSet;
 import java.util.Set;
 
-public class priceModifiersResource extends resource{
+public class priceModifiersResource extends resource {
 
     protected priceModifiersResource() {
         super("priceModifiers.yml", false);
@@ -55,8 +55,7 @@ public class priceModifiersResource extends resource{
 
         if (super.firstTime) {
             DailyShop.get().getPriceModifiers().addAll(modifiers);
-        }
-        else {
+        } else {
             DailyShop.get().getPriceModifiers().clearAll();
             DailyShop.get().getPriceModifiers().addAll(modifiers);
         }

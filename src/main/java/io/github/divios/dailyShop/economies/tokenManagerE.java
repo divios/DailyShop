@@ -7,9 +7,13 @@ import org.bukkit.entity.Player;
 
 public class tokenManagerE extends abstractEconomy {
 
-    public tokenManagerE() { this(""); }
+    public tokenManagerE() {
+        this("");
+    }
 
-    public tokenManagerE(String currency) { super(currency, "TokenManager", econTypes.tokenManager); }
+    public tokenManagerE(String currency) {
+        super(currency, "TokenManager", econTypes.tokenManager);
+    }
 
     private transient static final TokenManager api = hooksManager.getInstance().getTokenManagerApi();
 

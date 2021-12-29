@@ -39,7 +39,7 @@ public interface RandomSelector<E> {
      * Creates a uniform selector which picks elements randomly.
      *
      * @param elements the elements to pick from
-     * @param <E> the element type
+     * @param <E>      the element type
      * @return the selector instance
      */
     static <E> RandomSelector<E> uniform(Collection<E> elements) {
@@ -52,7 +52,7 @@ public interface RandomSelector<E> {
      * according to the weigher function.
      *
      * @param elements the elements to pick from
-     * @param <E> the element type
+     * @param <E>      the element type
      * @return the selector instance
      */
     static <E> RandomSelector<E> weighted(Collection<E> elements, Weigher<? super E> weigher) {

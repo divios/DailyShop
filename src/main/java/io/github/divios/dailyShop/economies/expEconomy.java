@@ -5,7 +5,7 @@ import org.bukkit.entity.Player;
 public class expEconomy extends abstractEconomy {
 
     public expEconomy() {
-        this ("");
+        this("");
     }
 
     protected expEconomy(String name) {

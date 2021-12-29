@@ -8,6 +8,7 @@ import io.github.divios.core_lib.misc.ChatPrompt;
 import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.dailyShop.DailyShop;
+import io.github.divios.dailyShop.files.Lang;
 import io.github.divios.lib.dLib.dItem;
 import org.bukkit.entity.Player;
 
@@ -40,18 +41,18 @@ public class customizePerms {
                 ItemButton.create(
                         item.getPermsBuy().isPresent() ?
                                 ItemBuilder.of(XMaterial.PLAYER_HEAD)
-                                        .setName(plugin.configM.getLangYml().CUSTOMIZE_PERMS_NAME_BUY)
+                                        .setName(Lang.CUSTOMIZE_PERMS_NAME_BUY.getAsString(p))
                                         .applyTexture("4e68435e9dd05dbe2e7bb45c5d3c95d0c9d8cb4c062d30e9b4aed1ccfa65a49b")
-                                        .addLore(plugin.configM.getLangYml().CUSTOMIZE_PERMS_LORE_ON)
+                                        .addLore(Lang.CUSTOMIZE_PERMS_LORE_ON.getAsListString(p))
                                         .addLore("")
                                         .addLore(item.getPermsBuy().get()
                                                 .stream().map(s -> FormatUtils.color("&f&l" + s))
                                                 .collect(Collectors.toList()))
                                 :
                                 ItemBuilder.of(XMaterial.PLAYER_HEAD)
-                                        .setName(plugin.configM.getLangYml().CUSTOMIZE_PERMS_NAME_BUY)
+                                        .setName(Lang.CUSTOMIZE_PERMS_NAME_BUY.getAsString(p))
                                         .applyTexture("4e68435e9dd05dbe2e7bb45c5d3c95d0c9d8cb4c062d30e9b4aed1ccfa65a49b")
-                                        .addLore(plugin.configM.getLangYml().CUSTOMIZE_PERMS_LORE)
+                                        .addLore(Lang.CUSTOMIZE_PERMS_LORE.getAsListString(p))
 
                         , e -> {
 
@@ -97,18 +98,18 @@ public class customizePerms {
                 ItemButton.create(
                         item.getPermsSell().isPresent() ?
                                 ItemBuilder.of(XMaterial.PLAYER_HEAD)
-                                        .setName(plugin.configM.getLangYml().CUSTOMIZE_PERMS_NAME_SELL)
+                                        .setName(Lang.CUSTOMIZE_PERMS_NAME_SELL.getAsString(p))
                                         .applyTexture("4e68435e9dd05dbe2e7bb45c5d3c95d0c9d8cb4c062d30e9b4aed1ccfa65a49b")
-                                        .addLore(plugin.configM.getLangYml().CUSTOMIZE_PERMS_LORE_ON)
+                                        .addLore(Lang.CUSTOMIZE_PERMS_LORE_ON.getAsListString(p))
                                         .addLore("")
                                         .addLore(item.getPermsSell().get()
                                                 .stream().map(s -> FormatUtils.color("&f&l" + s))
                                                 .collect(Collectors.toList()))
                                 :
                                 ItemBuilder.of(XMaterial.PLAYER_HEAD)
-                                        .setName(plugin.configM.getLangYml().CUSTOMIZE_PERMS_NAME_SELL)
+                                        .setName(Lang.CUSTOMIZE_PERMS_NAME_SELL.getAsString(p))
                                         .applyTexture("4e68435e9dd05dbe2e7bb45c5d3c95d0c9d8cb4c062d30e9b4aed1ccfa65a49b")
-                                        .addLore(plugin.configM.getLangYml().CUSTOMIZE_PERMS_LORE)
+                                        .addLore(Lang.CUSTOMIZE_PERMS_LORE.getAsString(p))
 
                         , e -> {
 
@@ -153,8 +154,8 @@ public class customizePerms {
         gui.addButton(
                 ItemButton.create(
                         ItemBuilder.of(XMaterial.OAK_DOOR)
-                            .setName(plugin.configM.getLangYml().CONFIRM_GUI_RETURN_NAME)
-                            .setLore(plugin.configM.getLangYml().CONFIRM_GUI_RETURN_PANE_LORE)
+                                .setName(Lang.CONFIRM_GUI_RETURN_NAME.getAsString(p))
+                                .setLore(Lang.CONFIRM_GUI_RETURN_PANE_LORE.getAsListString(p))
                         , e -> back.accept(item)),
                 22);
 

@@ -32,7 +32,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.stream.IntStream;
 
-@SuppressWarnings({"ConstantConditions", "deprecation", "unchecked", "unused"})
+@SuppressWarnings({"ConstantConditions", "unchecked", "unused"})
 public class dInventory {
 
     protected static final DailyShop plugin = DailyShop.get();
@@ -52,7 +52,7 @@ public class dInventory {
     }
 
     public dInventory(String title, int size, dShop shop) {
-        this(title, Bukkit.createInventory(null, size, FormatUtils.color(title)), shop);
+        this(title, Bukkit.createInventory(null, size, Utils.JTEXT_PARSER.parse(title)), shop);
     }
 
     public dInventory(dShop shop) {
@@ -64,6 +64,7 @@ public class dInventory {
         this.inv = inv;
         this.shop = shop;
 
+        setInventoryTitle(title);
         IntStream.range(0, inv.getSize()).forEach(dailyItemsSlots::add);
         createListeners();
     }
@@ -93,8 +94,8 @@ public class dInventory {
      */
     public void setInventoryTitle(String title) {
         this.title = title;
-        Inventory temp = Bukkit.createInventory(null, inv.getSize(), FormatUtils.color(title));
-        inventoryUtils.translateContents(inv, temp);
+        Inventory temp = Bukkit.createInventory(null, inv.getSize(), Utils.JTEXT_PARSER.parse(title));
+        temp.setContents(inv.getContents());
         inv = temp;
     }
 
@@ -126,7 +127,7 @@ public class dInventory {
     public boolean addInventoryRow() {
         if (inv.getSize() == 54) return false;
 
-        Inventory aux = Bukkit.createInventory(null, inv.getSize() + 9, FormatUtils.color(title));
+        Inventory aux = Bukkit.createInventory(null, inv.getSize() + 9, Utils.JTEXT_PARSER.parse(title));
         inventoryUtils.translateContents(inv, aux);
         IntStream.range(inv.getSize(), inv.getSize() + 9).forEach(dailyItemsSlots::add);
         inv = aux;
@@ -144,7 +145,7 @@ public class dInventory {
     public boolean removeInventoryRow() {
         if (inv.getSize() == 9) return false;
 
-        Inventory aux = Bukkit.createInventory(null, inv.getSize() - 9, FormatUtils.color(title));
+        Inventory aux = Bukkit.createInventory(null, inv.getSize() - 9, Utils.JTEXT_PARSER.parse(title));
         inventoryUtils.translateContents(inv, aux);
         IntStream.range(inv.getSize() - 9, inv.getSize()).forEach(value -> {
             removeButton(value);

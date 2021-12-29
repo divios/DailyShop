@@ -5,11 +5,11 @@ import io.github.divios.core_lib.misc.XSymbols;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.utils.PriceWrapper;
 import io.github.divios.dailyShop.utils.Utils;
-import io.github.divios.lib.dLib.priceModifiers.modifierContext;
 import io.github.divios.lib.dLib.priceModifiers.priceModifier;
 import org.bukkit.entity.Player;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 public class dPrice implements Serializable {
 
@@ -17,6 +17,10 @@ public class dPrice implements Serializable {
     private double minPrice = 0;
     private double maxPrice = 0;
     private double actualPrice;
+
+    public static dPrice EMPTY() {
+        return new dPrice();
+    }
 
     private dPrice() {
     }
@@ -43,8 +47,7 @@ public class dPrice implements Serializable {
      * @return the price of the item
      */
     private double generateRandomPrice() {
-        return Utils.round(minPrice + Math.random() *
-                (maxPrice - minPrice), 2);
+        return Utils.round(minPrice + Math.random() * (maxPrice - minPrice), 2);
     }
 
     public double getPrice() {
@@ -80,6 +83,19 @@ public class dPrice implements Serializable {
         if (randomFlag)
             return minPrice + " : " + maxPrice;
         else return String.valueOf(actualPrice);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        dPrice dPrice = (dPrice) o;
+        return randomFlag == dPrice.randomFlag && Double.compare(dPrice.minPrice, minPrice) == 0 && Double.compare(dPrice.maxPrice, maxPrice) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(randomFlag, minPrice, maxPrice, actualPrice);
     }
 
     public enum type {

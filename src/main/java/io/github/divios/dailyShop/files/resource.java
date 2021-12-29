@@ -7,6 +7,7 @@ import io.github.divios.dailyShop.utils.Timer;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 
 public abstract class resource {
 
@@ -72,11 +73,7 @@ public abstract class resource {
 
     private void copyDefaults() {
         Reader defConfigStream = null;
-        try {
-            defConfigStream = new InputStreamReader(plugin.getResource(name), "UTF8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
+        defConfigStream = new InputStreamReader(plugin.getResource(name), StandardCharsets.UTF_8);
         YamlConfiguration defConfig = null;
         if (defConfigStream != null) {
             defConfig = YamlConfiguration.loadConfiguration(defConfigStream);
@@ -84,10 +81,24 @@ public abstract class resource {
             yaml.options().copyDefaults(true);
         }
 
-        try { yaml.save(file); }
-        catch (IOException e) { e.printStackTrace(); }
+        try {
+            yaml.save(file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         if (defConfig != null) yaml.setDefaults(defConfig);
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public File getFile() {
+        return file;
+    }
+
+    public YamlConfiguration getYaml() {
+        return yaml;
+    }
 }

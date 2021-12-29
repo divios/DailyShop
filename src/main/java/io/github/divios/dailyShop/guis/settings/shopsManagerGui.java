@@ -11,13 +11,14 @@ import io.github.divios.core_lib.misc.Msg;
 import io.github.divios.core_lib.misc.confirmIH;
 import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.dailyShop.DailyShop;
+import io.github.divios.dailyShop.files.Lang;
+import io.github.divios.dailyShop.files.Messages;
 import io.github.divios.dailyShop.lorestategy.loreStrategy;
 import io.github.divios.dailyShop.lorestategy.shopsManagerLore;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.managers.shopsManager;
 import io.github.divios.lib.serialize.serializerApi;
-import io.github.divios.lib.storage.databaseManager;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -75,7 +76,8 @@ public class shopsManagerGui {
                 )
 
                 .withItems(
-                        DailyShop.get().getShopsManager().getShops().stream().parallel()
+                        DailyShop.get().getShopsManager().getShops().stream()
+                                .parallel()
                                 .map(dShop -> ItemButton.create(
                                         strategy.applyLore(ItemBuilder.of(XMaterial.PLAYER_HEAD)
                                                 .setName("&8> &6" + dShop.getName())
@@ -92,28 +94,26 @@ public class shopsManagerGui {
                                 .setName("&1&lPrevious").applyTexture("bd69e06e5dadfd84e5f3d1c21063f2553b2fa945ee1d4d7152fdc5425bc12a9")
                         , 47)
 
-                .withButtons((inventoryGUI, integer) -> {
-
-                    inventoryGUI.addButton(ItemButton.create(ItemBuilder.of(XMaterial.PLAYER_HEAD)
-                            .setName(plugin.configM.getLangYml().SHOPS_MANAGER_CREATE)
-                            .addLore(plugin.configM.getLangYml().SHOPS_MANAGER_CREATE_LORE)
-                            .applyTexture("9b425aa3d94618a87dac9c94f377af6ca4984c07579674fad917f602b7bf235")
-                            , e -> nonContentAction()), 53);
-                })
+                .withButtons((inventoryGUI, integer) ->
+                        inventoryGUI.addButton(ItemButton.create(ItemBuilder.of(XMaterial.PLAYER_HEAD)
+                                        .setName(Lang.SHOPS_MANAGER_CREATE.getAsString(p))
+                                        .addLore(Lang.SHOPS_MANAGER_CREATE_LORE.getAsListString(p))
+                                        .applyTexture("9b425aa3d94618a87dac9c94f377af6ca4984c07579674fad917f602b7bf235")
+                                , e -> nonContentAction()), 53))
 
                 .withExitButton(
                         ItemButton.create(ItemBuilder.of(XMaterial.PLAYER_HEAD)
-                                .setName(plugin.configM.getLangYml().SHOPS_MANAGER_RETURN)
-                                .setLore(plugin.configM.getLangYml().SHOPS_MANAGER_RETURN_LORE)
-                                .applyTexture("19bf3292e126a105b54eba713aa1b152d541a1d8938829c56364d178ed22bf")
+                                        .setName(Lang.SHOPS_MANAGER_RETURN.getAsString(p))
+                                        .setLore(Lang.SHOPS_MANAGER_RETURN_LORE.getAsListString(p))
+                                        .applyTexture("19bf3292e126a105b54eba713aa1b152d541a1d8938829c56364d178ed22bf")
                                 , e -> {
-                            Schedulers.sync().runLater(() -> inv.destroy() , 3L);
-                            p.closeInventory();
-                        })
+                                    Schedulers.sync().runLater(() -> inv.destroy(), 3L);
+                                    p.closeInventory();
+                                })
                         , 8
                 )
 
-                .withTitle(plugin.configM.getLangYml().SHOPS_MANAGER_TITLE)
+                .withTitle(Lang.SHOPS_MANAGER_TITLE.getAsString(p))
 
                 .build();
 
@@ -131,7 +131,7 @@ public class shopsManagerGui {
         ItemStack selected = e.getCurrentItem();
 
         if (!sManager.getShop(ItemUtils.getMetadata(selected, SHOP_META, String.class)).isPresent()) {      // PreConditions
-            Msg.sendMsg(p, "&7That shop doesn't exist anymore");
+            Utils.sendRawMsg(p, "&7That shop doesn't exist anymore");
             return;
         }
 
@@ -149,13 +149,13 @@ public class shopsManagerGui {
                     .withResponse(s -> {
 
                         if (!Utils.isInteger(s)) {
-                            Utils.sendMsg(p, plugin.configM.getLangYml().MSG_NOT_INTEGER);
+                            Messages.MSG_NOT_INTEGER.send(p);
                             Schedulers.sync().run(() -> refresh(p));
                             return;
                         }
 
                         if (Integer.parseInt(s) < 50 && Integer.parseInt(s) != -1) {
-                            Utils.sendMsg(p, "&7Time cannot be less than 50");
+                            Utils.sendRawMsg(p, "&7Time cannot be less than 50");
                             Schedulers.sync().run(() -> refresh(p));
                             return;
                         }
@@ -180,9 +180,9 @@ public class shopsManagerGui {
                         refresh(p);
                     })
                     .withItem(selected)
-                    .withTitle(plugin.configM.getLangYml().CONFIRM_GUI_ACTION_NAME)
-                    .withConfirmLore(plugin.configM.getLangYml().CONFIRM_GUI_YES, plugin.configM.getLangYml().CONFIRM_GUI_YES_LORE)
-                    .withCancelLore(plugin.configM.getLangYml().CONFIRM_GUI_NO, plugin.configM.getLangYml().CONFIRM_GUI_NO_LORE)
+                    .withTitle(Lang.CONFIRM_GUI_ACTION_NAME.getAsString(p))
+                    .withConfirmLore(Lang.CONFIRM_GUI_YES.getAsString(p), Lang.CONFIRM_GUI_YES_LORE.getAsListString(p))
+                    .withCancelLore(Lang.CONFIRM_GUI_NO.getAsString(p), Lang.CONFIRM_GUI_NO_LORE.getAsListString(p))
                     .prompt();
 
         } else shop.manageItems(p);
@@ -195,19 +195,19 @@ public class shopsManagerGui {
                 .withResponse(s -> {
 
                     if (s.isEmpty()) {
-                        Utils.sendMsg(p, "&7Cant be empty");
+                        Utils.sendRawMsg(p, "&7Cant be empty");
                         Schedulers.sync().run(() -> refresh(p));
                         return;
                     }
 
                     if (s.split("\\s+").length > 1) {
-                        Utils.sendMsg(p, "&7Name cannot have white spaces");
+                        Utils.sendRawMsg(p, "&7Name cannot have white spaces");
                         Schedulers.sync().run(() -> refresh(p));
                         return;
                     }
 
                     if (sManager.getShop(s).isPresent()) {
-                        Utils.sendMsg(p, "&7Already Exist");
+                        Utils.sendRawMsg(p, "&7Already Exist");
                         Schedulers.sync().run(() -> refresh(p));
                         return;
                     }
@@ -215,13 +215,13 @@ public class shopsManagerGui {
                     Pattern pattern = Pattern.compile("[!@#$%&*()_+=|<>?{}\\[\\]~-]");
                     Matcher m = pattern.matcher(s);
                     if (m.find()) {
-                        Utils.sendMsg(p, "&7Name cannot contain special characters");
+                        Utils.sendRawMsg(p, "&7Name cannot contain special characters");
                         Schedulers.sync().run(() -> refresh(p));
                         return;
                     }
 
                     DailyShop.get().getShopsManager().createShop(s);
-                    serializerApi.saveShopToFileAsync(DailyShop.get().getShopsManager().getShop(s).get());
+                    serializerApi.saveShopToFileAsync(DailyShop.get().getShopsManager().getShop(s).orElse(null));
                     Schedulers.sync().run(() -> refresh(p));
                 })
                 .withCancel(cancelReason -> Schedulers.sync().run(() -> refresh(p)))
@@ -231,6 +231,7 @@ public class shopsManagerGui {
     }
 
     static List<Integer> itemSlots = null;
+
     private void updateTask() {
 
         Schedulers.builder()

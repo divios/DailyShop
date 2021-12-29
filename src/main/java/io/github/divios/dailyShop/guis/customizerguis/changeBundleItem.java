@@ -13,7 +13,6 @@ import org.bukkit.inventory.ItemFlag;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -68,8 +67,8 @@ public class changeBundleItem {
                             }).collect(Collectors.toList());
 
                 }).addItems((inventory, integer) ->
-                inventory.setItem(47, ItemBuilder.of(XMaterial.EMERALD_BLOCK)
-                        .setName("&6&lConfirm").setLore("&7Click to confirm")))
+                        inventory.setItem(47, ItemBuilder.of(XMaterial.EMERALD_BLOCK)
+                                .setName("&6&lConfirm").setLore("&7Click to confirm")))
 
                 .contentAction(event -> {
 
@@ -82,12 +81,12 @@ public class changeBundleItem {
                     return dynamicGui.Response.update();
                 }).nonContentAction((integer, player) -> {
 
-            if (integer == 47) {
-                confirm.accept(added);
-            }
-            return dynamicGui.Response.nu();
+                    if (integer == 47) {
+                        confirm.accept(added);
+                    }
+                    return dynamicGui.Response.nu();
 
-        }).setSearch(false)
+                }).setSearch(false)
                 .back(player -> back.run())
                 .title(_i -> "&6Set items on the bundle")
                 .plugin(DailyShop.get())

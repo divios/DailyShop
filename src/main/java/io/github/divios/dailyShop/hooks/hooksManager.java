@@ -16,7 +16,8 @@ public class hooksManager {
     private static final DailyShop main = DailyShop.get();
     private static hooksManager instance = null;
 
-    private hooksManager() {}
+    private hooksManager() {
+    }
 
     public static hooksManager getInstance() {
         if (instance == null) {
@@ -65,18 +66,32 @@ public class hooksManager {
         return vaultHook.getEcon();
     }
 
-    public GemsEconomyAPI getGemsEcon() { return gemsEconomyHook.getGemsEcon(); }
+    public GemsEconomyAPI getGemsEcon() {
+        return gemsEconomyHook.getGemsEcon();
+    }
 
-    public TokenEnchantAPI getTokenEnchantApi() {return tokenEnchantsHook.getEcon(); }
+    public TokenEnchantAPI getTokenEnchantApi() {
+        return tokenEnchantsHook.getEcon();
+    }
 
-    public TokenManager getTokenManagerApi() { return tokenManagerHook.getApi(); }
+    public TokenManager getTokenManagerApi() {
+        return tokenManagerHook.getApi();
+    }
 
-    public MPointsAPI getMPointsApi() { return MPointsHook.getApi(); }
+    public MPointsAPI getMPointsApi() {
+        return MPointsHook.getApi();
+    }
 
-    public PlayerPointsAPI getPlayerPointsApi() { return  playerPointsHook.getApi(); }
+    public PlayerPointsAPI getPlayerPointsApi() {
+        return playerPointsHook.getApi();
+    }
 
-    public UltraEconomyAPI getUltraEconomyApi() { return UltraEconomyHook.getApi(); }
+    public UltraEconomyAPI getUltraEconomyApi() {
+        return UltraEconomyHook.getApi();
+    }
 
-    public Object getShopGuiPlusApi() { return shopGuiPlusHook.getApi(); }
+    public Object getShopGuiPlusApi() {
+        return shopGuiPlusHook.getApi();
+    }
 
 }

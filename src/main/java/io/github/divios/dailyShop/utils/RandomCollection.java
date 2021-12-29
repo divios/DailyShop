@@ -45,7 +45,7 @@ public class RandomCollection<E> {
             this.result = result;
         }
 
-        public static<E> wrappedResult<E> of(double weight, E result) {
+        public static <E> wrappedResult<E> of(double weight, E result) {
             Log.severe(String.valueOf(weight));
             return new wrappedResult<>(weight, result);
         }

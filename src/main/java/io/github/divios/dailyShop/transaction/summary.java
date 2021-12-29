@@ -31,7 +31,9 @@ public class summary {
         return r;
     }
 
-    public economy getEcon() {return econ; }
+    public economy getEcon() {
+        return econ;
+    }
 
     public void setSlots(int slots) {
         this.slots = slots;
@@ -45,7 +47,9 @@ public class summary {
         this.r = r;
     }
 
-    public void setEcon(economy econ) { this.econ = econ; }
+    public void setEcon(economy econ) {
+        this.econ = econ;
+    }
 
     public void addRunnable(Runnable _r) {
         r.add(_r);

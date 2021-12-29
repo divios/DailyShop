@@ -8,6 +8,7 @@ import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.core_lib.misc.confirmIH;
 import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.dailyShop.DailyShop;
+import io.github.divios.dailyShop.files.Lang;
 import io.github.divios.dailyShop.guis.settings.shopsManagerGui;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.dItem;
@@ -43,7 +44,7 @@ public class customizeGui implements Listener, InventoryHolder {
     private final dInventory _gui;
     private Inventory inv;
 
-    private boolean preventClose = true;
+    private final boolean preventClose = true;
     private boolean refreshFlag = false;
 
     private dItem toClone = null;
@@ -337,8 +338,8 @@ public class customizeGui implements Listener, InventoryHolder {
                     })
                     .withItem(e.getCurrentItem())
                     .withTitle("&a&lConfirm Action")
-                    .withConfirmLore(plugin.configM.getLangYml().CONFIRM_GUI_YES, plugin.configM.getLangYml().CONFIRM_GUI_YES_LORE)
-                    .withCancelLore(plugin.configM.getLangYml().CONFIRM_GUI_NO, plugin.configM.getLangYml().CONFIRM_GUI_NO_LORE)
+                    .withConfirmLore(Lang.CONFIRM_GUI_YES.getAsString(p), Lang.CONFIRM_GUI_YES_LORE.getAsListString(p))
+                    .withCancelLore(Lang.CONFIRM_GUI_NO.getAsString(p), Lang.CONFIRM_GUI_NO_LORE.getAsListString(p))
                     .prompt();
 
             refreshFlag = false;

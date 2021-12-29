@@ -13,12 +13,15 @@ import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.core_lib.misc.Msg;
 import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.dailyShop.DailyShop;
+import io.github.divios.dailyShop.files.Lang;
+import io.github.divios.dailyShop.files.Messages;
 import io.github.divios.dailyShop.guis.settings.shopGui;
 import io.github.divios.dailyShop.utils.Utils;
+import io.github.divios.jtext.wrappers.Template;
 import io.github.divios.lib.dLib.dItem;
+import io.github.divios.lib.dLib.dPrice;
 import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.dLib.stock.factory.dStockFactory;
-import io.github.divios.lib.managers.shopsManager;
 import io.github.divios.lib.serialize.serializerApi;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -28,9 +31,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
+@SuppressWarnings("deprecation")
 public class CustomizerMenu {
 
     private final static DailyShop plugin = DailyShop.get();
@@ -64,7 +67,7 @@ public class CustomizerMenu {
 
     private void build() {
 
-        inv = new InventoryGUI(plugin, 54, FormatUtils.color(plugin.configM.getLangYml().CUSTOMIZE_TITLE));
+        inv = new InventoryGUI(plugin, 54, Utils.JTEXT_PARSER.parse(Lang.CUSTOMIZE_TITLE.getAsString(p)));
 
         inventoryPopulator.builder()
                 .ofGlass()
@@ -88,8 +91,8 @@ public class CustomizerMenu {
         inv.addButton(                                                  // Craft button
                 ItemButton.create(
                         ItemBuilder.of(XMaterial.PLAYER_HEAD)
-                                .setName(plugin.configM.getLangYml().CUSTOMIZE_CRAFT)
-                                .addLore(plugin.configM.getLangYml().CUSTOMIZE_CRAFT_LORE)
+                                .setName(Lang.CUSTOMIZE_CRAFT.getAsString(p))
+                                .addLore(Lang.CUSTOMIZE_CRAFT_LORE.getAsListString(p))
                                 .applyTexture("2a3b8f681daad8bf436cae8da3fe8131f62a162ab81af639c3e0644aa6abac2f")
                         , e -> {
 
@@ -122,8 +125,8 @@ public class CustomizerMenu {
         inv.addButton(                                                  // Return button
                 ItemButton.create(
                         ItemBuilder.of(XMaterial.PLAYER_HEAD)
-                                .setName(plugin.configM.getLangYml().CUSTOMIZE_RETURN)
-                                .setLore(plugin.configM.getLangYml().CUSTOMIZE_RETURN_LORE)
+                                .setName(Lang.CUSTOMIZE_RETURN.getAsString(p))
+                                .setLore(Lang.CUSTOMIZE_RETURN_LORE.getAsListString(p))
                                 .applyTexture("19bf3292e126a105b54eba713aa1b152d541a1d8938829c56364d178ed22bf")
                         , e -> shopGui.open(p, shop.getName())),
                 8
@@ -132,8 +135,8 @@ public class CustomizerMenu {
         inv.addButton(                                                  // Rename
                 ItemButton.create(
                         ItemBuilder.of(XMaterial.NAME_TAG)
-                                .setName(plugin.configM.getLangYml().CUSTOMIZE_RENAME_NAME)
-                                .setLore(plugin.configM.getLangYml().CUSTOMIZE_RENAME_LORE)
+                                .setName(Lang.CUSTOMIZE_RENAME_NAME.getAsString(p))
+                                .setLore(Lang.CUSTOMIZE_RENAME_LORE.getAsListString(p))
                         , e ->
                                 ChatPrompt.builder()
                                         .withPlayer(p)
@@ -150,8 +153,8 @@ public class CustomizerMenu {
         inv.addButton(                                                  // Material
                 ItemButton.create(
                         ItemBuilder.of(XMaterial.SLIME_BALL)
-                                .setName(plugin.configM.getLangYml().CUSTOMIZE_MATERIAL_NAME)
-                                .setLore(plugin.configM.getLangYml().CUSTOMIZE_MATERIAL_LORE)
+                                .setName(Lang.CUSTOMIZE_MATERIAL_NAME.getAsString(p))
+                                .setLore(Lang.CUSTOMIZE_MATERIAL_LORE.getAsListString(p))
                         , e ->
 
                                 materialsPrompt.open(plugin, p, (aBoolean, material) -> {
@@ -165,8 +168,8 @@ public class CustomizerMenu {
         inv.addButton(                                                  // Lore
                 ItemButton.create(
                         ItemBuilder.of(XMaterial.PLAYER_HEAD)
-                                .setName(plugin.configM.getLangYml().CUSTOMIZE_LORE_NAME)
-                                .addLore(plugin.configM.getLangYml().CUSTOMIZE_LORE_LORE)
+                                .setName(Lang.CUSTOMIZE_LORE_NAME.getAsString(p))
+                                .addLore(Lang.CUSTOMIZE_LORE_LORE.getAsListString(p))
                                 .addLore("")
                                 .addLore(ItemUtils.getLore(item.getItem()))
                                 .applyTexture("c6692f99cc6d78242304110553589484298b2e4a0233b76753f888e207ef5")
@@ -192,7 +195,7 @@ public class CustomizerMenu {
                                             Schedulers.sync().run(this::refresh);
                                         })
                                         .withCancel(cancelReason -> Schedulers.sync().run(this::refresh))
-                                        .withTitle(plugin.configM.getLangYml().CUSTOMIZE_RENAME_TITLE)
+                                        .withTitle(Lang.CUSTOMIZE_RENAME_TITLE.getAsString(p))
                                         .prompt();
 
                         }),
@@ -202,8 +205,8 @@ public class CustomizerMenu {
         inv.addButton(                                                  // Perms
                 ItemButton.create(
                         ItemBuilder.of(XMaterial.BOOKSHELF)
-                            .setName(plugin.configM.getLangYml().CUSTOMIZE_PERMS_NAME)
-                            .setLore(plugin.configM.getLangYml().CUSTOMIZE_PERMS_LORE_DEFAULT)
+                                .setName(Lang.CUSTOMIZE_PERMS_NAME.getAsString(p))
+                                .setLore(Lang.CUSTOMIZE_PERMS_LORE_DEFAULT.getAsListString(p))
                         , e ->
                                 customizePerms.builder()
                                         .withPlayer(p)
@@ -214,8 +217,8 @@ public class CustomizerMenu {
         inv.addButton(                                                  // Enchantments
                 ItemButton.create(
                         ItemBuilder.of(XMaterial.ENCHANTING_TABLE)
-                                .setName(plugin.configM.getLangYml().CUSTOMIZE_ENCHANTS_NAME)
-                                .addLore(plugin.configM.getLangYml().CUSTOMIZE_ENCHANTS_LORE)
+                                .setName(Lang.CUSTOMIZE_ENCHANTS_NAME.getAsString(p))
+                                .addLore(Lang.CUSTOMIZE_ENCHANTS_LORE.getAsListString(p))
                                 .addLore(item.getItem().getEnchantments().entrySet().stream()
                                         .map(entry -> "&f&l" + entry.getKey()
                                                 .getName() + ":" + entry.getValue()).collect(Collectors.toList()))
@@ -245,8 +248,8 @@ public class CustomizerMenu {
         inv.addButton(                                                  // Econ
                 ItemButton.create(
                         ItemBuilder.of(XMaterial.PLAYER_HEAD)
-                                .setName(plugin.configM.getLangYml().CUSTOMIZE_ECON_NAME)
-                                .addLore(plugin.configM.getLangYml().CUSTOMIZE_ECON_LORE)
+                                .setName(Lang.CUSTOMIZE_ECON_NAME.getAsString(p))
+                                .addLore(Lang.CUSTOMIZE_ECON_LORE.getAsListString(p))
                                 .addLore("", "&7Current: &e" + item.getEconomy().getName())
                                 .applyTexture("e36e94f6c34a35465fce4a90f2e25976389eb9709a12273574ff70fd4daa6852")
                         , e ->
@@ -261,12 +264,12 @@ public class CustomizerMenu {
         inv.addButton(                                                  // Price
                 ItemButton.create(
                         ItemBuilder.of(XMaterial.EMERALD)
-                                .setName(plugin.configM.getLangYml().CUSTOMIZE_PRICE_NAME)
+                                .setName(Lang.CUSTOMIZE_PRICE_NAME.getAsString(p))
                                 .addLore(
-                                        Msg.msgList(plugin.configM.getLangYml().CUSTOMIZE_PRICE_LORE)
-                                                .add("\\{buy_price}", item.getBuyPrice().get().getVisualPrice())
-                                                .add("\\{sell_price}", item.getSellPrice().get().getVisualPrice())
-                                                .build()
+                                        Lang.CUSTOMIZE_PRICE_LORE.getAsListString(p,
+                                                Template.of("buy_price", item.getBuyPrice().orElse(dPrice.EMPTY()).getVisualPrice()),
+                                                Template.of("sell_price", item.getSellPrice().orElse(dPrice.EMPTY()).getVisualPrice())
+                                        )
                                 )
                         , e ->
                                 changePrice.builder()
@@ -283,7 +286,7 @@ public class CustomizerMenu {
                 ItemButton.create(
                         ItemBuilder.of(item.getRarity().getAsItem())
                                 .setName(item.getRarity().toString())
-                                .addLore(plugin.configM.getLangYml().CUSTOMIZE_RARITY_NAME)
+                                .addLore(Lang.CUSTOMIZE_RARITY_NAME.getAsListString(p))
 
                         , e -> {
                             item.nextRarity();
@@ -296,8 +299,8 @@ public class CustomizerMenu {
                 ItemButton.create(
                         item.getItem().getType().getMaxDurability() != 0 ?
                                 ItemBuilder.of(XMaterial.DAMAGED_ANVIL)
-                                        .setName(plugin.configM.getLangYml().CUSTOMIZE_DURABILITY_NAME)
-                                        .setLore(plugin.configM.getLangYml().CUSTOMIZE_DURABILITY_LORE)
+                                        .setName(Lang.CUSTOMIZE_DURABILITY_NAME.getAsString(p))
+                                        .setLore(Lang.CUSTOMIZE_DURABILITY_LORE.getAsListString(p))
                                 :
                                 ItemBuilder.of(XMaterial.GRAY_STAINED_GLASS_PANE).setName("&c")
 
@@ -306,7 +309,7 @@ public class CustomizerMenu {
                                         .withPlayer(p)
                                         .withResponse(s -> {
                                             if (Utils.isShort(s)) item.setDurability(Short.parseShort(s), false);
-                                            else Msg.sendMsg(p, plugin.configM.getLangYml().MSG_NOT_INTEGER);
+                                            else Messages.MSG_NOT_INTEGER.send(p);
                                         })
                                         .withCancel(cancelReason -> Schedulers.sync().run(this::refresh))
                                         .withTitle("&c&lInput Durability")
@@ -317,9 +320,12 @@ public class CustomizerMenu {
         inv.addButton(                                                  // Hide Attributes
                 ItemButton.create(
                         ItemBuilder.of(XMaterial.BLACK_BANNER)   //add/remove enchants visible
-                                .setName(plugin.configM.getLangYml().CUSTOMIZE_TOGGLE_ATTIBUTES_NAME)
-                                .setLore(Msg.msgList(plugin.configM.getLangYml().CUSTOMIZE_TOGGLE_ATTIBUTES_LORE)
-                                        .add("\\{status}", "" + item.hasFlag(ItemFlag.HIDE_ATTRIBUTES)).build())
+                                .setName(Lang.CUSTOMIZE_TOGGLE_ATTRIBUTES_NAME.getAsString(p))
+                                .setLore(Lang.CUSTOMIZE_TOGGLE_ATTRIBUTES_LORE.getAsListString(p,
+                                                Template.of("status", item.hasFlag(ItemFlag.HIDE_ATTRIBUTES)
+                                                )
+                                        )
+                                )
 
                         , e -> {
                             item.toggleFlag(ItemFlag.HIDE_ATTRIBUTES);
@@ -331,10 +337,11 @@ public class CustomizerMenu {
         inv.addButton(                                                  // Confirm Gui
                 ItemButton.create(
                         ItemBuilder.of(XMaterial.LEVER)
-                                .setName(plugin.configM.getLangYml().CUSTOMIZE_CONFIRM_GUI_NAME)
-                                .setLore(Msg.msgList(plugin.configM.getLangYml().CUSTOMIZE_CONFIRM_GUI_LORE)
-                                        .add("\\{status}", "" + item.isConfirmGuiEnabled()).build())
-
+                                .setName(Lang.CUSTOMIZE_CONFIRM_GUI_NAME.getAsString(p))
+                                .setLore(Lang.CUSTOMIZE_CONFIRM_GUI_LORE.getAsListString(p,
+                                                Template.of("status", item.isConfirmGuiEnabled())
+                                        )
+                                )
                         , e -> {
                             item.toggleConfirm_gui();
                             refresh();
@@ -346,9 +353,11 @@ public class CustomizerMenu {
                 ItemButton.create(
                         Utils.isPotion(item.getItem()) ?
                                 ItemBuilder.of(XMaterial.CAULDRON)
-                                        .setName(plugin.configM.getLangYml().CUSTOMIZE_TOGGLE_EFFECTS_NAME)
-                                        .setLore(Msg.msgList(plugin.configM.getLangYml().CUSTOMIZE_TOGGLE_EFFECTS_LORE)
-                                                .add("\\{status}", "" + item.hasFlag(ItemFlag.HIDE_POTION_EFFECTS)).build())
+                                        .setName(Lang.CUSTOMIZE_TOGGLE_EFFECTS_NAME.getAsString(p))
+                                        .setLore(Lang.CUSTOMIZE_TOGGLE_EFFECTS_LORE.getAsListString(p,
+                                                        Template.of("status", item.hasFlag(ItemFlag.HIDE_POTION_EFFECTS))
+                                                )
+                                        )
                                 :
                                 ItemBuilder.of(XMaterial.GRAY_STAINED_GLASS_PANE).setName("&c")
 
@@ -363,9 +372,11 @@ public class CustomizerMenu {
         inv.addButton(                                                  // Hide Enchantments
                 ItemButton.create(
                         ItemBuilder.of(XMaterial.BOOKSHELF)
-                                .setName(plugin.configM.getLangYml().CUSTOMIZE_TOGGLE_ENCHANTS_NAME)
-                                .setLore(Msg.msgList(plugin.configM.getLangYml().CUSTOMIZE_TOGGLE_ENCHANTS_LORE)
-                                        .add("\\{status}", "" + item.hasFlag(ItemFlag.HIDE_ENCHANTS)).build())
+                                .setName(Lang.CUSTOMIZE_TOGGLE_ENCHANTS_NAME.getAsString(p))
+                                .setLore(Lang.CUSTOMIZE_TOGGLE_ENCHANTS_LORE.getAsListString(p,
+                                                Template.of("status", item.hasFlag(ItemFlag.HIDE_ENCHANTS))
+                                        )
+                                )
 
                         , e -> {
                             item.toggleFlag(ItemFlag.HIDE_ENCHANTS);
@@ -377,17 +388,19 @@ public class CustomizerMenu {
         inv.addButton(                                                  // Set
                 ItemButton.create(
                         item.hasStock() ?
-                                ItemBuilder.of(XMaterial.BARRIER).setName(plugin.configM.getLangYml().CUSTOMIZE_UNAVAILABLE)
+                                ItemBuilder.of(XMaterial.BARRIER).setName(Lang.CUSTOMIZE_UNAVAILABLE.getAsString(p))
                                 :
                                 item.getSetItems().isPresent() ?
                                         ItemBuilder.of(XMaterial.CHEST_MINECART)    //set of items
-                                                .setName(plugin.configM.getLangYml().CUSTOMIZE_SET_NAME)
-                                                .addLore(Msg.msgList(plugin.configM.getLangYml().CUSTOMIZE_SET_LORE_ON).add("\\{amount}",
-                                                        "" + item.getSetItems().get()).build())
+                                                .setName(Lang.CUSTOMIZE_SET_NAME.getAsString(p))
+                                                .addLore(Lang.CUSTOMIZE_SET_LORE_ON.getAsListString(p,
+                                                                Template.of("amount", item.getSetItems().get())
+                                                        )
+                                                )
                                         :
                                         ItemBuilder.of(XMaterial.CHEST_MINECART)    //set of items
-                                                .setName(plugin.configM.getLangYml().CUSTOMIZE_SET_NAME)
-                                                .addLore(plugin.configM.getLangYml().CUSTOMIZE_SET_LORE)
+                                                .setName(Lang.CUSTOMIZE_SET_NAME.getAsString(p))
+                                                .addLore(Lang.CUSTOMIZE_SET_LORE.getAsListString(p))
 
                         , e -> {
 
@@ -395,7 +408,7 @@ public class CustomizerMenu {
 
                             if (!item.getSetItems().isPresent() && e.isLeftClick()) {  // Boton de edit set
                                 if (item.hasStock()) {
-                                    Msg.sendMsg(p, "&7You can't enable this when the stock feature is enable");
+                                    Utils.sendRawMsg(p, "&7You can't enable this when the stock feature is enable");
                                     return;
                                 }
                                 item.setSetItems(1);
@@ -408,9 +421,9 @@ public class CustomizerMenu {
                                             .withPlayer(p)
                                             .withResponse(s -> {
                                                 if (!Utils.isInteger(s))
-                                                    Msg.sendMsg(p, plugin.configM.getLangYml().MSG_NOT_INTEGER);
+                                                    Messages.MSG_NOT_INTEGER.send(p);
                                                 int i = Integer.parseInt(s);
-                                                if (i < 1 || i > 64) Msg.sendMsg(p, "&7Invalid amount");
+                                                if (i < 1 || i > 64) Utils.sendRawMsg(p, "&7Invalid amount");
                                                 item.setSetItems(i);
                                                 item.setQuantity(i);
                                                 Schedulers.sync().run(this::refresh);
@@ -432,19 +445,20 @@ public class CustomizerMenu {
         inv.addButton(                                                  // Stock
                 ItemButton.create(
                         item.getSetItems().isPresent() ?
-                                ItemBuilder.of(XMaterial.BARRIER).setName(plugin.configM.getLangYml().CUSTOMIZE_UNAVAILABLE)
+                                ItemBuilder.of(XMaterial.BARRIER).setName(Lang.CUSTOMIZE_UNAVAILABLE.getAsString(p))
                                 :
                                 item.hasStock() ?
                                         ItemBuilder.of(XMaterial.STONE_BUTTON)  //Change stock
-                                                .setName(plugin.configM.getLangYml().CUSTOMIZE_STOCK_NAME)
-                                                .setLore(Msg.msgList(plugin.configM.getLangYml().CUSTOMIZE_STOCK_LORE_ON)
-                                                        .add("\\{amount}", "" + item.getStock().getDefault())
-                                                        .add("\\{stock_type}", item.getStock().getName())
-                                                        .build())
+                                                .setName(Lang.CUSTOMIZE_STOCK_NAME.getAsString(p))
+                                                .setLore(Lang.CUSTOMIZE_STOCK_LORE_ON.getAsListString(p,
+                                                                Template.of("amount", item.getStock().getDefault()),
+                                                                Template.of("stock_type", item.getStock().getName())
+                                                        )
+                                                )
                                         :
                                         ItemBuilder.of(XMaterial.STONE_BUTTON)  //Change stock
-                                                .setName(plugin.configM.getLangYml().CUSTOMIZE_STOCK_NAME)
-                                                .setLore(plugin.configM.getLangYml().CUSTOMIZE_STOCK_LORE)
+                                                .setName(Lang.CUSTOMIZE_STOCK_NAME.getAsString(p))
+                                                .setLore(Lang.CUSTOMIZE_STOCK_LORE.getAsListString(p))
 
                         , e -> {
 
@@ -464,7 +478,7 @@ public class CustomizerMenu {
                                         .withResponse(s -> {
                                             if (Utils.isInteger(s))
                                                 item.setStock(dStockFactory.INDIVIDUAL(Integer.parseInt(s)));
-                                            else Utils.sendMsg(p, plugin.configM.getLangYml().MSG_NOT_INTEGER);
+                                            else Messages.MSG_NOT_INTEGER.send(p);
 
                                             Schedulers.sync().run(this::refresh);
                                         })
@@ -484,16 +498,18 @@ public class CustomizerMenu {
                 ItemButton.create(
                         item.getCommands().isPresent() ?
                                 ItemBuilder.of(XMaterial.COMMAND_BLOCK)  //Change commands
-                                        .setName(plugin.configM.getLangYml().CUSTOMIZE_COMMANDS_NAME_ON)
-                                        .setLore(plugin.configM.getLangYml().CUSTOMIZE_COMMANDS_LORE_ON)
+                                        .setName(Lang.CUSTOMIZE_COMMANDS_NAME_ON.getAsString(p))
+                                        .setLore(Lang.CUSTOMIZE_COMMANDS_LORE_ON.getAsListString(p))
                                         .addLore("")
                                         .addLore(item.getCommands().get()
                                                 .stream().map(s -> FormatUtils.color("&f&l" + s)).collect(Collectors.toList()))
                                 :
                                 ItemBuilder.of(XMaterial.COMMAND_BLOCK)  //set commands
-                                        .setName(plugin.configM.getLangYml().CUSTOMIZE_COMMANDS_NAME)
-                                        .setLore(Msg.msgList(plugin.configM.getLangYml().CUSTOMIZE_COMMANDS_LORE)
-                                                .add("\\{status}", "false").build())
+                                        .setName(Lang.CUSTOMIZE_COMMANDS_NAME.getAsString(p))
+                                        .setLore(Lang.CUSTOMIZE_COMMANDS_LORE.getAsListString(p,
+                                                        Template.of("status", false)
+                                                )
+                                        )
 
                         , e -> {
 

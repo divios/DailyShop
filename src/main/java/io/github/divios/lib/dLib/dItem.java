@@ -11,12 +11,12 @@ import de.tr7zw.nbtapi.NBTCompound;
 import de.tr7zw.nbtapi.NBTContainer;
 import de.tr7zw.nbtapi.NBTItem;
 import io.github.divios.core_lib.cache.Lazy;
-import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.Pair;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.economies.economy;
 import io.github.divios.dailyShop.economies.vault;
+import io.github.divios.dailyShop.files.Settings;
 import io.github.divios.dailyShop.lorestategy.loreStrategy;
 import io.github.divios.dailyShop.utils.MMOUtils;
 import io.github.divios.dailyShop.utils.Utils;
@@ -170,8 +170,8 @@ public class dItem implements Serializable, Cloneable {
             setRarity(new dRarity());       //Defaults to Common
             setConfirm_gui(true);           // Defaults true
             setEconomy(new vault());        // Default Vault
-            setBuyPrice(plugin.configM.getSettingsYml().DEFAULT_BUY); // Default buy price
-            setSellPrice(plugin.configM.getSettingsYml().DEFAULT_SELL); // Default sell price
+            setBuyPrice(Settings.DEFAULT_BUY.getValue().getAsDouble()); // Default buy price
+            setSellPrice(Settings.DEFAULT_SELL.getValue().getAsDouble()); // Default sell price
             if (getQuantity() > 1) setSetItems(getQuantity());   // Initialize quantity
         }
 
@@ -728,8 +728,9 @@ public class dItem implements Serializable, Cloneable {
         return this;
     }
 
-    public void setSellPrice(dPrice price) {
+    public dItem setSellPrice(dPrice price) {
         item.setObject("rds_sellPrice", price);
+        return this;
     }
 
     public dItem generateNewSellPrice() {
@@ -1150,19 +1151,29 @@ public class dItem implements Serializable, Cloneable {
         dItem firstItem = this.clone().setStock(null);
         dItem secondItem = o.clone().setStock(null);
 
-        boolean similarStock;
+        boolean similarStock = compareStocks(o.getStock(), this.getStock());
+        boolean similarBuyPrice = o.getBuyPrice().orElse(dPrice.EMPTY()).equals(this.getBuyPrice().orElse(dPrice.EMPTY()));
+        boolean similarSellPrice = o.getSellPrice().orElse(dPrice.EMPTY()).equals(this.getSellPrice().orElse(dPrice.EMPTY()));
 
-        if (o.getStock() == null && this.getStock() == null)
-            similarStock = true;
+        return removePrices(firstItem).getItem().isSimilar(removePrices(this).getItem())
+                && similarBuyPrice
+                && similarSellPrice
+                && similarStock;
+    }
 
-        else if ((o.getStock() == null && this.getStock() != null) ||
-                o.getStock() != null && this.getStock() == null)
-            similarStock = false;
+    private dItem removePrices(dItem item) {
+        return item.clone().setSellPrice(null).setBuyPrice(null);
+    }
+
+    private boolean compareStocks(dStock o1, dStock o2) {
+        if (o1 == null && o2 == null)
+            return true;
+
+        else if (o1 == null || o2 == null)
+            return false;
 
         else
-            similarStock = this.getStock().toString().equals(o.getStock().toString());
-
-        return firstItem.getItem().isSimilar(secondItem.getItem()) && similarStock;
+            return o1.toString().equals(o2.toString());
     }
 
     public static final class encodeOptions {

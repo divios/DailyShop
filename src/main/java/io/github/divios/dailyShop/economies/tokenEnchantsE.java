@@ -6,9 +6,13 @@ import org.bukkit.entity.Player;
 
 public class tokenEnchantsE extends abstractEconomy {
 
-    public tokenEnchantsE() { this(""); }
+    public tokenEnchantsE() {
+        this("");
+    }
 
-    public tokenEnchantsE(String currency) { super(currency, "TokenEnchants", econTypes.tokenEnchants); }
+    public tokenEnchantsE(String currency) {
+        super(currency, "TokenEnchants", econTypes.tokenEnchants);
+    }
 
     private transient final static TokenEnchantAPI api = hooksManager.getInstance().getTokenEnchantApi();
 

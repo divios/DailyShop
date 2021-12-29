@@ -4,11 +4,11 @@ import com.google.common.base.Objects;
 import io.github.divios.core_lib.events.Events;
 import io.github.divios.core_lib.events.Subscription;
 import io.github.divios.core_lib.itemutils.ItemUtils;
-import io.github.divios.core_lib.misc.Msg;
 import io.github.divios.core_lib.scheduler.Task;
-import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.events.updateItemEvent;
+import io.github.divios.dailyShop.files.Messages;
 import io.github.divios.dailyShop.guis.customizerguis.customizeGui;
+import io.github.divios.jtext.wrappers.Template;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.dLib.synchronizedGui.singleGui.dInventory;
@@ -207,10 +207,8 @@ public abstract class abstractSyncMenu implements syncMenu {
         base.restock();                                            // Renovates base
         players.forEach(uuid -> Optional.ofNullable(Bukkit.getPlayer(uuid)).ifPresent(this::generate));
         if (!silent)
-            Msg.broadcast(
-                    Msg.singletonMsg(DailyShop.get().configM.getLangYml().MSG_RESTOCK)
-                            .add("\\{shop}", shop.getName())
-                            .build()
+            Messages.MSG_RESTOCK.broadcast(
+                    Template.of("shop", shop.getName())
             );
     }
 

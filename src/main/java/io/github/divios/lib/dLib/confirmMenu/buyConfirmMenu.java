@@ -2,10 +2,12 @@ package io.github.divios.lib.dLib.confirmMenu;
 
 import io.github.divios.core_lib.events.Events;
 import io.github.divios.core_lib.itemutils.ItemUtils;
+import io.github.divios.dailyShop.files.Lang;
 import io.github.divios.dailyShop.utils.CompareItemUtils;
 import io.github.divios.dailyShop.utils.FutureUtils;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.dItem;
+import io.github.divios.lib.dLib.dPrice;
 import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.dLib.priceModifiers.priceModifier;
 import io.github.divios.lib.dLib.stock.dStock;
@@ -71,7 +73,7 @@ public class buyConfirmMenu extends abstractConfirmMenu {
 
     @Override
     protected String getTitle() {
-        return plugin.configM.getLangYml().CONFIRM_GUI_BUY_NAME;
+        return Lang.CONFIRM_GUI_BUY_NAME.getAsString(player);
     }
 
     @Override
@@ -113,12 +115,12 @@ public class buyConfirmMenu extends abstractConfirmMenu {
 
     @Override
     protected String getConfirmName() {
-        return plugin.configM.getLangYml().CONFIRM_GUI_YES;
+        return Lang.CONFIRM_GUI_YES.getAsString(player);
     }
 
     @Override
     protected String getBackName() {
-        return plugin.configM.getLangYml().CONFIRM_GUI_NO;
+        return Lang.CONFIRM_GUI_NO.getAsString(player);
     }
 
     @Override
@@ -136,7 +138,7 @@ public class buyConfirmMenu extends abstractConfirmMenu {
 
     @Override
     protected double getItemPrice() {
-        return item.getBuyPrice().orElse(null).getPriceForPlayer(player, shop, item.getID(), priceModifier.type.BUY);
+        return item.getBuyPrice().orElse(dPrice.EMPTY()).getPriceForPlayer(player, shop, item.getID(), priceModifier.type.BUY);
     }
 
     private int getMinLimit() {
@@ -176,15 +178,15 @@ public class buyConfirmMenu extends abstractConfirmMenu {
     }
 
     private int getItemStock() {
-        return FutureUtils.waitFor(dStock.searchStock(player, shop, item.getUid()));
+        return dStock.searchStock(player, shop, item.getUid());
     }
 
     public static final class buyConfirmMenuBuilder {
-        protected dShop shop;
-        protected Player player;
-        protected dItem item;
-        protected Consumer<Integer> onCompleteAction;
-        protected Runnable fallback;
+        private dShop shop;
+        private Player player;
+        private dItem item;
+        private Consumer<Integer> onCompleteAction;
+        private Runnable fallback;
 
         private buyConfirmMenuBuilder() {
         }
@@ -216,29 +218,6 @@ public class buyConfirmMenu extends abstractConfirmMenu {
 
         public buyConfirmMenu prompt() {
             return new buyConfirmMenu(shop, player, item, onCompleteAction, fallback);
-        }
-    }
-
-    static final class cacheEntry {
-
-        private final ItemStack item;
-        private final int quantity;
-
-        public cacheEntry(ItemStack item, int quantity) {
-            this.item = item;
-            this.quantity = quantity;
-        }
-
-        public ItemStack getItem() {
-            return item;
-        }
-
-        public int getQuantity() {
-            return quantity;
-        }
-
-        public void restore(Player p) {
-            ItemUtils.give(p, item, quantity);
         }
     }
 
