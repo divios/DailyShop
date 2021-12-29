@@ -10,7 +10,6 @@ import io.github.divios.dailyShop.utils.Timer;
 import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.storage.databaseManager;
 import io.github.divios.lib.serialize.serializerApi;
-import org.checkerframework.checker.nullness.Opt;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -19,31 +18,32 @@ import java.util.concurrent.TimeUnit;
 
 public class shopsManager {
 
-    private final Set<dShop> shops = ConcurrentHashMap.newKeySet();
+    private final Map<String, dShop> shops = new ConcurrentHashMap<>();
     private final databaseManager dManager;
     private final Set<Task> task = new HashSet<>();
 
     public shopsManager(databaseManager databaseManager) {
         dManager = databaseManager;
+        initialise();
+    }
+
+    private void initialise() {
         Log.info("Importing database data...");
         Timer timer = Timer.create();
-        shops.addAll(databaseManager.getShops());
+        dManager.getShops().forEach(shop -> shops.put(shop.getName(), shop));
         timer.stop();
         Log.info("Imported database data in " + timer.getTime() + " ms");
 
         Schedulers.sync().runRepeating(this::updateShopsAsync, 15, TimeUnit.MINUTES, 15, TimeUnit.MINUTES);
     }
 
+
     private void updateShops() {
-        shops.forEach(shop -> {
-            dManager.updateGui(shop.getName(), shop.getGuis());
-        });
+        shops.values().forEach(shop -> dManager.updateGui(shop.getName(), shop.getGuis()));
     }
 
     private void updateShopsAsync() {
-        shops.forEach(shop -> {
-            dManager.updateGuiAsync(shop.getName(), shop.getGuis());
-        });
+        shops.values().forEach(shop -> dManager.updateGuiAsync(shop.getName(), shop.getGuis()));
     }
 
     /**
@@ -52,8 +52,8 @@ public class shopsManager {
      * @return a list of all the shops. Note that the returned list
      * is a copy of the original.
      */
-    public Set<dShop> getShops() {
-        return Collections.unmodifiableSet(shops);
+    public Collection<dShop> getShops() {
+        return Collections.unmodifiableCollection(shops.values());
     }
 
     /**
@@ -92,7 +92,7 @@ public class shopsManager {
     public void createShop(dShop newShop) {
         dShop newShop_ = WrappedShop.wrap(newShop);
 
-        shops.add(newShop_);
+        shops.put(newShop.getName(), newShop_);
         newShop_.reStock();
         Schedulers.sync().run(() -> Events.callEvent(new createdShopEvent(newShop_)));
         dManager.createShop(newShop_);
@@ -109,7 +109,7 @@ public class shopsManager {
     public void createShopAsync(dShop newShop) {
         dShop newShop_ = WrappedShop.wrap(newShop);
 
-        shops.add(newShop_);
+        shops.put(newShop.getName(), newShop_);
         newShop_.reStock();
         Schedulers.sync().run(() -> Events.callEvent(new createdShopEvent(newShop_)));
         dManager.createShopAsync(newShop_).thenAccept(unused -> {
@@ -126,9 +126,7 @@ public class shopsManager {
      * @return shop with the name. Null if it does not exist
      */
     public Optional<dShop> getShop(String name) {
-        return shops.stream()
-                .filter(shop -> shop.getName().equalsIgnoreCase(name))
-                .findFirst();
+        return Optional.of(shops.get(name));
     }
 
     /**
@@ -136,7 +134,7 @@ public class shopsManager {
      * @return Optional with the default shop
      */
     public Optional<dShop> getDefaultShop() {
-        return shops.stream()
+        return shops.values().stream()
                 .filter(dShop::isDefault)
                 .findFirst();
     }
@@ -158,39 +156,33 @@ public class shopsManager {
      * from the database
      */
     public void deleteShop(String name) {
+        dShop removed = shops.remove(name);
+        if (removed == null) return;
 
-        Optional<dShop> result = getShop(name);
-        if (!result.isPresent()) return;
-
-        deletedShopEvent event = new deletedShopEvent(result.get());
+        deletedShopEvent event = new deletedShopEvent(removed);
         Events.callEvent(event);     // throw new event
 
-        // auto-destroy is handled via event on dShop
-        shops.remove(result.get());
-        result.get().destroy();
+        removed.destroy();
         dManager.deleteShop(name);
     }
 
     public void deleteShopAsync(String name) {
+        dShop removed = shops.remove(name);
+        if (removed == null) return;
 
-        Optional<dShop> result = getShop(name);
-        if (!result.isPresent()) return;
-
-        deletedShopEvent event = new deletedShopEvent(result.get());
+        deletedShopEvent event = new deletedShopEvent(removed);
         Events.callEvent(event);     // throw new event
 
-        // auto-destroy is handled via event on dShop
-        shops.remove(result.get());
-        result.get().destroy();
+        removed.destroy();
         dManager.deleteShopAsync(name);
     }
 
     public void deleteAllShops() {
-        new HashSet<>(shops).forEach(this::deleteShop);
+        new HashSet<>(shops.keySet()).forEach(this::deleteShop);
     }
 
     public void deleteAllShopsAsync() {
-        new HashSet<>(shops).forEach(this::deleteShopAsync);
+        new HashSet<>(shops.keySet()).forEach(this::deleteShopAsync);
     }
 
     public void saveShop(String name) {
@@ -198,7 +190,7 @@ public class shopsManager {
     }
 
     public void saveAllShops() {
-        shops.forEach(serializerApi::saveShopToFile);
+        shops.values().forEach(serializerApi::saveShopToFile);
     }
 
 }
