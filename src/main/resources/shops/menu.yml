@@ -1,6 +1,6 @@
 id: menu
 timer: -1
-announce_restock: true
+default: true
 shop:
   title: menu
   size: 45
