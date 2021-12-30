@@ -9,8 +9,10 @@ import io.github.divios.jcommands.JCommands;
 import io.github.divios.lib.dLib.priceModifiers.priceModifierManager;
 import io.github.divios.lib.managers.shopsManager;
 import io.github.divios.lib.storage.databaseManager;
-import me.pikamug.localelib.LocaleManager;
+import net.milkbowl.vault.economy.Economy;
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginDescriptionFile;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.java.JavaPluginLoader;
 
@@ -34,6 +36,15 @@ public class DailyShop extends JavaPlugin {
 
     @Override
     public void onEnable() {
+
+        try {
+            meetsStartRequirements();
+
+        } catch (Exception | Error e) {
+            getLogger().severe("Disabled due to: " + e.getMessage());
+            Bukkit.getPluginManager().disablePlugin(this);
+            return;
+        }
 
         INSTANCE = this;
         Core_lib.setPlugin(this);       /* Set plugin for aux libraries */
@@ -68,6 +79,7 @@ public class DailyShop extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        if (sManager == null) return;
         sManager.getShops()       // Updates all the guis before disable
                 .forEach(shop -> dManager.updateGui(shop.getName(), shop.getGuis()));
     }
@@ -95,4 +107,16 @@ public class DailyShop extends JavaPlugin {
     public priceModifierManager getPriceModifiers() {
         return modifiers;
     }
+
+
+    private void meetsStartRequirements() {
+        if (!Utils.isOperative("Vault"))
+            throw new RuntimeException("Vault is not installed");
+
+        RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
+        if (rsp == null) {
+            throw new RuntimeException("No economy provider found");
+        }
+    }
+
 }
