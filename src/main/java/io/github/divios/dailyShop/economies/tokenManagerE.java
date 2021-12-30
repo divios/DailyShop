@@ -1,8 +1,7 @@
 package io.github.divios.dailyShop.economies;
 
 import io.github.divios.dailyShop.DailyShop;
-import io.github.divios.dailyShop.hooks.hooksManager;
-import me.realized.tokenmanager.api.TokenManager;
+import io.github.divios.dailyShop.hooks.Hooks;
 import org.bukkit.entity.Player;
 
 public class tokenManagerE extends abstractEconomy {
@@ -15,26 +14,24 @@ public class tokenManagerE extends abstractEconomy {
         super(currency, "TokenManager", econTypes.tokenManager);
     }
 
-    private transient static final TokenManager api = hooksManager.getInstance().getTokenManagerApi();
-
     @Override
     public void test() {
-        api.getShop("aa");
+        Hooks.TOKEN_MANAGER.getApi().getShop("aa");
     }
 
     @Override
     public void witchDrawMoney(Player p, Double price) {
         DailyShop.get().getLogger().info("" + price.longValue());
-        api.removeTokens(p, price.longValue());
+        Hooks.TOKEN_MANAGER.getApi().removeTokens(p, price.longValue());
     }
 
     @Override
     public void depositMoney(Player p, Double price) {
-        api.addTokens(p, price.longValue());
+        Hooks.TOKEN_MANAGER.getApi().addTokens(p, price.longValue());
     }
 
     @Override
     public double getBalance(Player p) {
-        return api.getTokens(p).getAsLong();
+        return Hooks.TOKEN_MANAGER.getApi().getTokens(p).getAsLong();
     }
 }

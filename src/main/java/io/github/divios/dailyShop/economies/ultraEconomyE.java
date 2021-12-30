@@ -1,6 +1,6 @@
 package io.github.divios.dailyShop.economies;
 
-import io.github.divios.dailyShop.hooks.hooksManager;
+import io.github.divios.dailyShop.hooks.Hooks;
 import me.TechsCode.UltraEconomy.UltraEconomyAPI;
 import me.TechsCode.UltraEconomy.objects.Account;
 import me.TechsCode.UltraEconomy.objects.Currency;
@@ -8,22 +8,21 @@ import org.bukkit.entity.Player;
 
 public class ultraEconomyE extends abstractEconomy {
 
-    private static final UltraEconomyAPI api = hooksManager.getInstance().getUltraEconomyApi();
     private final Currency currency;
 
     public ultraEconomyE(String currency) {
         super(currency, currency, econTypes.ultraEconomy);
-        this.currency = api.getCurrencies().name(currency).get();
+        this.currency = Hooks.ULTRA_ECONOMY.getApi().getCurrencies().name(currency).get();
     }
 
     @Override
     public void test() {
-        api.getAccounts();
+        Hooks.ULTRA_ECONOMY.getApi().getAccounts();
     }
 
     @Override
     public void witchDrawMoney(Player p, Double price) {
-        Account account = api.getAccounts().stream()
+        Account account = Hooks.ULTRA_ECONOMY.getApi().getAccounts().stream()
                 .filter(account1 -> account1.getUuid().equals(p.getUniqueId()))
                 .findFirst().orElse(null);
         if (account == null) return;
@@ -32,7 +31,7 @@ public class ultraEconomyE extends abstractEconomy {
 
     @Override
     public void depositMoney(Player p, Double price) {
-        Account account = api.getAccounts().stream()
+        Account account = Hooks.ULTRA_ECONOMY.getApi().getAccounts().stream()
                 .filter(account1 -> account1.getUuid().equals(p.getUniqueId()))
                 .findFirst().orElse(null);
         if (account == null) return;
@@ -41,7 +40,7 @@ public class ultraEconomyE extends abstractEconomy {
 
     @Override
     public double getBalance(Player p) {
-        return api.getAccounts().stream()
+        return Hooks.ULTRA_ECONOMY.getApi().getAccounts().stream()
                 .filter(account1 -> account1.getUuid().equals(p.getUniqueId()))
                 .findFirst().orElse(null).getBalance(currency).getOnHand();
     }

@@ -1,25 +1,33 @@
 package io.github.divios.dailyShop.hooks;
 
-import io.github.divios.dailyShop.DailyShop;
+import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.utils.Utils;
+import me.elementalgaming.ElementalGems.ElementalGems;
+import me.elementalgaming.ElementalGems.GemAPI;
+import org.bukkit.Bukkit;
 
-public class elementalGemsHook {
+public class elementalGemsHook implements Hook<GemAPI> {
 
-    private static final DailyShop main = DailyShop.get();
     private static boolean hooked = false;
 
-    private elementalGemsHook() {
+    elementalGemsHook() {
+        tryToHook();
     }
 
-    public static void tryToHook() {
+    private void tryToHook() {
         if (Utils.isOperative("ElementalGems")) {
-            main.getLogger().info("Hooked to ElementalGems");
+            Log.info("Hooked to ElementalGems");
             hooked = true;
         }
     }
 
-    public static boolean isHooked() {
+    @Override
+    public boolean isOn() {
         return hooked;
     }
 
+    @Override
+    public GemAPI getApi() {
+        return isOn() ?((ElementalGems) Bukkit.getPluginManager().getPlugin("ElementalGems")).getGemAPI() : null;
+    }
 }

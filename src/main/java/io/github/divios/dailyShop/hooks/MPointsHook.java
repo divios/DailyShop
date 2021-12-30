@@ -1,19 +1,32 @@
 package io.github.divios.dailyShop.hooks;
 
-import io.github.divios.dailyShop.DailyShop;
+import io.github.divios.core_lib.utils.Log;
+import io.github.divios.dailyShop.utils.Utils;
 import me.yic.mpoints.MPointsAPI;
 
-public class MPointsHook {
+public class MPointsHook implements Hook<MPointsAPI> {
 
-    private static final DailyShop plugin = DailyShop.get();
-    private static MPointsAPI api = null;
+    private MPointsAPI api = null;
+    private boolean isHooked = false;
 
-    public static void hook() {
-        plugin.getLogger().info("Hooked to MPoints");
-        api = new MPointsAPI();
+    MPointsHook() {
+        tryToHook();
     }
 
-    public static MPointsAPI getApi() {
+    private void tryToHook() {
+        if (Utils.isOperative("MPoints")) {
+            Log.info("Hooked to MPoints");
+            isHooked = true;
+            api = new MPointsAPI();
+        }
+    }
+
+    @Override
+    public boolean isOn() {
+        return isHooked;
+    }
+
+    public MPointsAPI getApi() {
         return api;
     }
 

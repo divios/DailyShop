@@ -1,24 +1,33 @@
 package io.github.divios.dailyShop.hooks;
 
+import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
 import me.xanium.gemseconomy.api.GemsEconomyAPI;
 
-class gemsEconomyHook {
+public class gemsEconomyHook implements Hook<GemsEconomyAPI> {
 
-    private static final DailyShop main = DailyShop.get();
-    private static GemsEconomyAPI gemsEcon = null;
+    private GemsEconomyAPI gemsEcon = null;
+    private boolean isHook = false;
 
-    private gemsEconomyHook() {
+    gemsEconomyHook() {
+        tryToHook();
     }
 
-    public static void tryToHook() {
-        if (main.getServer().getPluginManager().getPlugin("GemsEconomy") != null) {
-            main.getLogger().info("Hooked to GemsEconomy");
+    private void tryToHook() {
+        if (DailyShop.get().getServer().getPluginManager().getPlugin("GemsEconomy") != null) {
+            Log.info("Hooked to GemsEconomy");
             gemsEcon = new GemsEconomyAPI();
+            isHook = true;
         }
     }
 
-    public static GemsEconomyAPI getGemsEcon() {
+    @Override
+    public boolean isOn() {
+        return isHook;
+    }
+
+    @Override
+    public GemsEconomyAPI getApi() {
         return gemsEcon;
     }
 }

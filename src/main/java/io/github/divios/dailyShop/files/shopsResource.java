@@ -50,7 +50,10 @@ public class shopsResource {
 
         new HashSet<>(sManager.getShops()).stream()         // Delete removed shops
                 .filter(shop -> !newShops.contains(shop))
-                .forEach(shop -> sManager.deleteShop(shop.getName()));
+                .forEach(shop -> {
+                    cacheCheckSums.remove(shop.getName());
+                    sManager.deleteShop(shop.getName());
+                });
 
         newShops.forEach(shop -> {                          // Process read Shops
             if (flaggedShops.contains(shop)) {              // If flagged, skip since no changes were made
@@ -90,11 +93,12 @@ public class shopsResource {
         for (File shopFile : Objects.requireNonNull(shopsFolder.listFiles((dir, name) -> name.endsWith(".yml")), "The shop directory does not exits")) {
 
             Long checkSum;      // Check if same checkSum
-            if ((checkSum = cacheCheckSums.get(shopFile.getName())) != null)
+            if ((checkSum = cacheCheckSums.get(getIdFromFile(shopFile))) != null)
                 if (checkSum == FileUtils.getFileCheckSum(shopFile)) {
-                    dShop sameShop = sManager.getShop(getIdFromFile(shopFile)).get();  // get only the id of the shop
-                    shops.add(sameShop);
-                    flaggedShops.add(sameShop);
+                    sManager.getShop(getIdFromFile(shopFile)).ifPresent(sameShop -> {
+                        shops.add(sameShop);
+                        flaggedShops.add(sameShop);
+                    });  // get only the id of the shop
                     continue;
                 }
 
@@ -102,7 +106,7 @@ public class shopsResource {
                 dShop newShop = serializerApi.getShopFromFile(shopFile);
                 newShop.destroy();
                 shops.add(newShop);
-                cacheCheckSums.put(shopFile.getName(), FileUtils.getFileCheckSum(shopFile));
+                cacheCheckSums.put(newShop.getName(), FileUtils.getFileCheckSum(shopFile));
 
             } catch (Exception e) {
                 Log.warn("There was a problem with the shop " + shopFile.getName());
@@ -114,7 +118,7 @@ public class shopsResource {
 
     private String getIdFromFile(File file) {
         YamlConfiguration yaml = YamlConfiguration.loadConfiguration(file);
-        return yaml.getString("id");
+        return Objects.requireNonNull(yaml.getString("id"), "Shop File needs an ID!").toLowerCase();
     }
 
 }

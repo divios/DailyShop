@@ -1,7 +1,7 @@
 package io.github.divios.dailyShop.economies;
 
 import com.vk2gpz.tokenenchant.api.TokenEnchantAPI;
-import io.github.divios.dailyShop.hooks.hooksManager;
+import io.github.divios.dailyShop.hooks.Hooks;
 import org.bukkit.entity.Player;
 
 public class tokenEnchantsE extends abstractEconomy {
@@ -14,25 +14,23 @@ public class tokenEnchantsE extends abstractEconomy {
         super(currency, "TokenEnchants", econTypes.tokenEnchants);
     }
 
-    private transient final static TokenEnchantAPI api = hooksManager.getInstance().getTokenEnchantApi();
-
     @Override
     public void test() {
-        api.getBalanceTop();
+        Hooks.TOKEN_ENCHANT.getApi().getBalanceTop();
     }
 
     @Override
     public void witchDrawMoney(Player p, Double price) {
-        api.removeTokens(p, price);
+        Hooks.TOKEN_ENCHANT.getApi().removeTokens(p, price);
     }
 
     @Override
     public void depositMoney(Player p, Double price) {
-        api.addTokens(p, price);
+        Hooks.TOKEN_ENCHANT.getApi().addTokens(p, price);
     }
 
     @Override
     public double getBalance(Player p) {
-        return api.getTokens(p);
+        return Hooks.TOKEN_ENCHANT.getApi().getTokens(p);
     }
 }

@@ -3,7 +3,7 @@ package io.github.divios.dailyShop;
 import io.github.divios.core_lib.Core_lib;
 import io.github.divios.dailyShop.commands.commandsManager;
 import io.github.divios.dailyShop.files.resourceManager;
-import io.github.divios.dailyShop.hooks.hooksManager;
+import io.github.divios.dailyShop.hooks.Hooks;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.jcommands.JCommands;
 import io.github.divios.lib.dLib.priceModifiers.priceModifierManager;
@@ -51,12 +51,12 @@ public class DailyShop extends JavaPlugin {
         JCommands.register(this);
         Utils.JTEXT_PARSER.getTemplates();     /* Init JText
 
+        /* Init hooks  */
+        Hooks.B_STATS.getApi();
+
         /* Init conf & msgs & modifiers*/
         modifiers = new priceModifierManager();
         resourcesManager = resourceManager.generate();
-
-        /* Init hooks  */
-        hooksManager.getInstance();
 
         /* Initiate database + getAllItems + timer */
         dManager = new databaseManager();

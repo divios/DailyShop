@@ -3,17 +3,24 @@ package io.github.divios.dailyShop.hooks;
 import io.github.divios.dailyShop.DailyShop;
 import org.bstats.bukkit.Metrics;
 
-public class bstatsHook {
+public class bstatsHook implements Hook<Void> {
 
-    private static final DailyShop main = DailyShop.get();
-
-    private bstatsHook() {
+    bstatsHook() {
+        hook();
     }
 
-    public static void init() {
+    private void hook() {
         int pluginId = 9721;
-        Metrics metrics = new Metrics(main, pluginId);
-
+        Metrics metrics = new Metrics(DailyShop.get(), pluginId);
     }
 
+    @Override
+    public boolean isOn() {
+        return true;
+    }
+
+    @Override
+    public Void getApi() {
+        return null;
+    }
 }

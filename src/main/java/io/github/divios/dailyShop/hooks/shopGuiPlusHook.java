@@ -1,17 +1,32 @@
 package io.github.divios.dailyShop.hooks;
 
-import io.github.divios.dailyShop.DailyShop;
+import io.github.divios.core_lib.utils.Log;
+import io.github.divios.dailyShop.utils.Utils;
+import net.brcdev.shopgui.ShopGuiPlusApi;
 
-public class shopGuiPlusHook {
+public class shopGuiPlusHook implements Hook<ShopGuiPlusApi>  {
 
-    public static Object api = null;
+    private ShopGuiPlusApi api = null;
+    private boolean isHook = false;
 
-    public static void hook() {
-        DailyShop.get().getLogger().info("Hooked to ShopGUIPlus");
-        api = new Object();
+    shopGuiPlusHook() {
+        tryToHook();
     }
 
-    public static Object getApi() {
+    public void tryToHook() {
+        if (Utils.isOperative("ShopGUIPlus")) {
+            Log.info("Hooked to ShopGUIPlus");
+            isHook = true;
+            api = new ShopGuiPlusApi();
+        }
+    }
+
+    @Override
+    public boolean isOn() {
+        return isHook;
+    }
+
+    public ShopGuiPlusApi getApi() {
         return api;
     }
 

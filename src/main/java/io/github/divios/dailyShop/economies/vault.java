@@ -1,12 +1,10 @@
 package io.github.divios.dailyShop.economies;
 
-import io.github.divios.dailyShop.hooks.hooksManager;
+import io.github.divios.dailyShop.hooks.Hooks;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.entity.Player;
 
 public class vault extends abstractEconomy {
-
-    private transient static final Economy vault = hooksManager.getInstance().getVault();
 
     public vault() {
         this("");
@@ -22,15 +20,15 @@ public class vault extends abstractEconomy {
     }
 
     public void witchDrawMoney(Player p, Double price) {
-        vault.withdrawPlayer(p, price);
+        Hooks.VAULT.getApi().withdrawPlayer(p, price);
     }
 
     public void depositMoney(Player p, Double price) {
-        vault.depositPlayer(p, price);
+        Hooks.VAULT.getApi().depositPlayer(p, price);
     }
 
     @Override
     public double getBalance(Player p) {
-        return vault.getBalance(p);
+        return Hooks.VAULT.getApi().getBalance(p);
     }
 }

@@ -1,20 +1,33 @@
 package io.github.divios.dailyShop.hooks;
 
-import io.github.divios.dailyShop.DailyShop;
+import io.github.divios.core_lib.utils.Log;
+import io.github.divios.dailyShop.utils.Utils;
 import me.realized.tokenmanager.api.TokenManager;
 import org.bukkit.Bukkit;
 
-public class tokenManagerHook {
+public class tokenManagerHook implements Hook<TokenManager> {
 
-    private static final DailyShop main = DailyShop.get();
-    static TokenManager api = null;
+    private TokenManager api = null;
+    private boolean isHooked = false;
 
-    public static void hook() {
-        main.getLogger().info("Hooked to TokenManager");
-        api = (TokenManager) Bukkit.getServer().getPluginManager().getPlugin("TokenManager");
+    tokenManagerHook() {
+        hook();
     }
 
-    public static TokenManager getApi() {
+    public void hook() {
+        if (Utils.isOperative("TokenManager")) {
+            Log.info("Hooked to TokenManager");
+            isHooked = true;
+            api = (TokenManager) Bukkit.getServer().getPluginManager().getPlugin("TokenManager");
+        }
+    }
+
+    @Override
+    public boolean isOn() {
+        return isHooked;
+    }
+
+    public TokenManager getApi() {
         return api;
     }
 

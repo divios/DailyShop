@@ -1,30 +1,42 @@
 package io.github.divios.dailyShop.hooks;
 
 import io.github.divios.core_lib.misc.XSymbols;
+import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.dShop;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
-class placeholderApiHook extends PlaceholderExpansion {
+class placeholderApiHook extends PlaceholderExpansion implements Hook<PlaceholderExpansion> {
 
-    private static final DailyShop plugin = DailyShop.get();
-    private static placeholderApiHook instance = null;
+    private boolean isHook = false;
 
-    private placeholderApiHook() {
+    placeholderApiHook() {
+        tryToHook();
+        Log.info("Hooked to PlaceholderAPI");
+        this.register();
     }
 
-    public static placeholderApiHook getInstance() {
-        if (instance == null) {
-            instance = new placeholderApiHook();
-            instance.register();
-            plugin.getLogger().info("Hooked to PlaceholderAPI");
+    private void tryToHook() {
+        if (Utils.isOperative("PlaceholderApi")) {
+            isHook = true;
         }
-        return instance;
     }
+
+    @Override
+    public boolean isOn() {
+        return isHook;
+    }
+
+    @Override
+    public PlaceholderExpansion getApi() {
+        return isHook ? this : null;
+    }
+
 
     /**
      * Because this is an internal class,
@@ -55,9 +67,10 @@ class placeholderApiHook extends PlaceholderExpansion {
      *
      * @return The name of the author as a String.
      */
+    @NotNull
     @Override
     public String getAuthor() {
-        return plugin.getDescription().getAuthors().toString();
+        return DailyShop.get().getDescription().getAuthors().toString();
     }
 
     /**
@@ -69,6 +82,7 @@ class placeholderApiHook extends PlaceholderExpansion {
      *
      * @return The identifier in {@code %<identifier>_<value>%} as String.
      */
+    @NotNull
     @Override
     public String getIdentifier() {
         return "DailyShop";
@@ -82,9 +96,10 @@ class placeholderApiHook extends PlaceholderExpansion {
      *
      * @return The version as a String.
      */
+    @NotNull
     @Override
     public String getVersion() {
-        return plugin.getDescription().getVersion();
+        return DailyShop.get().getDescription().getVersion();
     }
 
     /**

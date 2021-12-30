@@ -11,8 +11,8 @@ import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.economies.*;
 import io.github.divios.dailyShop.files.Lang;
+import io.github.divios.dailyShop.hooks.Hooks;
 import io.github.divios.dailyShop.hooks.elementalGemsHook;
-import io.github.divios.dailyShop.hooks.hooksManager;
 import io.github.divios.lib.dLib.dItem;
 import me.TechsCode.UltraEconomy.UltraEconomyAPI;
 import me.realized.tokenmanager.api.TokenManager;
@@ -31,12 +31,12 @@ public class changeEcon {
 
     private static final DailyShop plugin = DailyShop.get();
 
-    private static final GemsEconomyAPI gemsApi = hooksManager.getInstance().getGemsEcon();
-    private static final TokenEnchantAPI tokenEnchantsApi = hooksManager.getInstance().getTokenEnchantApi();
-    private static final TokenManager tokenManagerApi = hooksManager.getInstance().getTokenManagerApi();
-    private static final MPointsAPI mPointsAPI = hooksManager.getInstance().getMPointsApi();
-    private static final PlayerPointsAPI pPointsApi = hooksManager.getInstance().getPlayerPointsApi();
-    private static final UltraEconomyAPI uEconApi = hooksManager.getInstance().getUltraEconomyApi();
+    private static final GemsEconomyAPI gemsApi = Hooks.GEMS_ECONOMY.getApi();
+    private static final TokenEnchantAPI tokenEnchantsApi = Hooks.TOKEN_ENCHANT.getApi();
+    private static final TokenManager tokenManagerApi = Hooks.TOKEN_MANAGER.getApi();
+    private static final MPointsAPI mPointsAPI = Hooks.M_POINTS.getApi();
+    private static final PlayerPointsAPI pPointsApi = Hooks.PLAYER_POINTS.getApi();
+    private static final UltraEconomyAPI uEconApi = Hooks.ULTRA_ECONOMY.getApi();
 
     private final dItem item;
     private final Player p;
@@ -75,7 +75,7 @@ public class changeEcon {
         if (mPointsAPI != null) createMPointsButton(menu);
         if (pPointsApi != null) createPlayerPointsButton(menu);
         if (uEconApi != null) createUltraEconomyButtons(menu);
-        if (elementalGemsHook.isHooked()) createElementalGemsButton(menu);
+        if (Hooks.ELEMENTAL_GEMS.isOn()) createElementalGemsButton(menu);
         return menu;
     }
 

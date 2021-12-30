@@ -1,20 +1,33 @@
 package io.github.divios.dailyShop.hooks;
 
-import io.github.divios.dailyShop.DailyShop;
+import io.github.divios.core_lib.utils.Log;
+import io.github.divios.dailyShop.utils.Utils;
 import me.TechsCode.UltraEconomy.UltraEconomy;
 import me.TechsCode.UltraEconomy.UltraEconomyAPI;
 
-public class UltraEconomyHook {
+public class UltraEconomyHook implements Hook<UltraEconomyAPI> {
 
-    private static final DailyShop plugin = DailyShop.get();
-    private static UltraEconomyAPI api = null;
+    private UltraEconomyAPI api = null;
+    private boolean isHooked = false;
 
-    public static void hook() {
-        plugin.getLogger().info("Hooked to UltraEconomy");
-        api = UltraEconomy.getAPI();
+    UltraEconomyHook() {
+        hook();
     }
 
-    public static UltraEconomyAPI getApi() {
+    public void hook() {
+        if (Utils.isOperative("ShopGUIPlus")) {
+            Log.info("Hooked to UltraEconomy");
+            isHooked = true;
+            api = UltraEconomy.getAPI();
+        }
+    }
+
+    @Override
+    public boolean isOn() {
+        return isHooked;
+    }
+
+    public UltraEconomyAPI getApi() {
         return api;
     }
 
