@@ -2,25 +2,24 @@ package io.github.divios.lib.managers;
 
 import io.github.divios.core_lib.events.Events;
 import io.github.divios.core_lib.scheduler.Schedulers;
-import io.github.divios.core_lib.scheduler.Task;
 import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.events.createdShopEvent;
 import io.github.divios.dailyShop.events.deletedShopEvent;
 import io.github.divios.dailyShop.utils.Timer;
 import io.github.divios.lib.dLib.dShop;
-import io.github.divios.lib.storage.databaseManager;
 import io.github.divios.lib.serialize.serializerApi;
+import io.github.divios.lib.storage.databaseManager;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
+@SuppressWarnings("unused")
 public class shopsManager {
 
     private final Map<String, dShop> shops = new ConcurrentHashMap<>();
     private final databaseManager dManager;
-    private final Set<Task> task = new HashSet<>();
 
     public shopsManager(databaseManager databaseManager) {
         dManager = databaseManager;
@@ -30,7 +29,7 @@ public class shopsManager {
     private void initialise() {
         Log.info("Importing database data...");
         Timer timer = Timer.create();
-        dManager.getShops().forEach(shop -> shops.put(shop.getName(), shop));
+        dManager.getShops().forEach(shop -> shops.put(shop.getName().toLowerCase(), shop));
         timer.stop();
         Log.info("Imported database data in " + timer.getTime() + " ms");
 
@@ -58,8 +57,6 @@ public class shopsManager {
 
     /**
      * Sets the shops. Private
-     *
-     * @param shops
      */
     private void setShops(Set<dShop> shops) {
         deleteAllShops();
@@ -68,8 +65,6 @@ public class shopsManager {
 
     /**
      * Sets the shops. Private
-     *
-     * @param shops
      */
     private CompletableFuture<Void> setShopsAsync(Set<dShop> shops) {
         return CompletableFuture.runAsync(() -> {
@@ -82,7 +77,6 @@ public class shopsManager {
      * Creates a new shop
      *
      * @param name the name of the shop
-     * @return CompletableFuture that ends when the shop is added to the database
      */
 
     public void createShop(String name) {
@@ -92,13 +86,11 @@ public class shopsManager {
     public void createShop(dShop newShop) {
         dShop newShop_ = WrappedShop.wrap(newShop);
 
-        shops.put(newShop.getName(), newShop_);
+        shops.put(newShop.getName().toLowerCase(), newShop_);
         newShop_.reStock();
         Schedulers.sync().run(() -> Events.callEvent(new createdShopEvent(newShop_)));
         dManager.createShop(newShop_);
-        newShop_.getItems().forEach(dItem -> {
-            dManager.addItem(newShop.getName(), dItem);
-        });
+        newShop_.getItems().forEach(dItem -> dManager.addItem(newShop.getName(), dItem));
 
     }
 
@@ -109,14 +101,12 @@ public class shopsManager {
     public void createShopAsync(dShop newShop) {
         dShop newShop_ = WrappedShop.wrap(newShop);
 
-        shops.put(newShop.getName(), newShop_);
+        shops.put(newShop.getName().toLowerCase(), newShop_);
         newShop_.reStock();
         Schedulers.sync().run(() -> Events.callEvent(new createdShopEvent(newShop_)));
-        dManager.createShopAsync(newShop_).thenAccept(unused -> {
-            newShop_.getItems().forEach(dItem -> {
-                dManager.addItemAsync(newShop.getName(), dItem);
-            });
-        });
+        dManager.createShopAsync(newShop_).thenAccept(unused ->
+                newShop_.getItems().forEach(dItem ->
+                        dManager.addItemAsync(newShop.getName(), dItem)));
     }
 
     /**
@@ -126,11 +116,12 @@ public class shopsManager {
      * @return shop with the name. Null if it does not exist
      */
     public Optional<dShop> getShop(String name) {
-        return Optional.of(shops.get(name));
+        return Optional.ofNullable(shops.get(name.toLowerCase()));
     }
 
     /**
      * Return the default shop, if any
+     *
      * @return Optional with the default shop
      */
     public Optional<dShop> getDefaultShop() {
@@ -152,8 +143,6 @@ public class shopsManager {
      * Deletes a shop by name
      *
      * @param name name of the shop to be deleted
-     * @return returns a completableFuture that ends when the shop is deleted
-     * from the database
      */
     public void deleteShop(String name) {
         dShop removed = shops.remove(name);
