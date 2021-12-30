@@ -110,7 +110,7 @@ public class shopGui {
                 .withItems(
                         entries.stream().parallel()
                                 .map(dItem ->
-                                        ItemButton.create(strategy.applyLore(dItem.getItem().clone())
+                                        ItemButton.create(strategy.applyLore(dItem.getDailyItem().clone())
                                                 , this::contentAction))
                 )
 
@@ -192,7 +192,7 @@ public class shopGui {
                     .withTitle(Lang.CONFIRM_GUI_ACTION_NAME.getAsString(p))
                     .withConfirmLore(Lang.CONFIRM_GUI_YES.getAsString(p), Lang.CONFIRM_GUI_YES_LORE.getAsListString(p))
                     .withCancelLore(Lang.CONFIRM_GUI_NO.getAsString(p), Lang.CONFIRM_GUI_NO_LORE.getAsListString(p))
-                    .withItem(dItem.of(e.getCurrentItem()).getRawItem())
+                    .withItem(dItem.of(e.getCurrentItem()).getRealItem())
                     .prompt();
 
     }

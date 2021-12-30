@@ -322,7 +322,7 @@ public class customizeGui implements Listener, InventoryHolder {
                 && e.isShiftClick()) {  //add empty slot
             dItem air = dItem.AIR();
             _gui.addButton(air, e.getSlot());
-            _gui.getInventory().setItem(e.getSlot(), air.getItem());
+            _gui.getInventory().setItem(e.getSlot(), air.getDailyItem());
             refresh();
             return;
         }

@@ -15,7 +15,7 @@ public class WrappedMaterial {
     public static String getMaterial(dItem item) {
         String material;
         if (!item.isCustomHead())
-            material = ItemUtils.getMaterial(item.getRawItem()).name();
+            material = ItemUtils.getMaterial(item.getRealItem()).name();
         else
             material = "base64:" + item.getCustomHeadUrl();
 

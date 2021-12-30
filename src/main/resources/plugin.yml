@@ -8,3 +8,14 @@ softdepend: [ PlaceholderAPI, GemsEconomy, MMOItems, MMOLib, Oraxen,
               TokenEnchant, TokenManager, MPoints, PlayerPoints, ShopGUIPlus, BossShopPro, ElementalGems]
 authors: [ Divios ]
 description: Daily random items to buy on a shop
+permissions:
+  DailyRandomShop.open:
+    default: op
+  DailyRandomShop.open.others:
+    default: op
+  DailyRandomShop.settings:
+    default: op
+  DailyRandomShop.renovate:
+    default: op
+  DailyRandomShop.reload:
+    default: op

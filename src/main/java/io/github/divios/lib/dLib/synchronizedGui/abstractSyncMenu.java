@@ -115,8 +115,8 @@ public abstract class abstractSyncMenu implements syncMenu {
                 dItem aux1;
                 dItem aux2;
 
-                ItemStack actualItem = (aux1 = actualContent.get(i)) == null ? null : aux1.getItem();
-                ItemStack newItem = (aux2 = newContent.get(i)) == null ? null : aux2.getItem();
+                ItemStack actualItem = (aux1 = actualContent.get(i)) == null ? null : aux1.getDailyItem();
+                ItemStack newItem = (aux2 = newContent.get(i)) == null ? null : aux2.getDailyItem();
 
                 if (dailySlots.contains(i)) actualItem = null;      // If is a dailyItem, set as if nothing was there
 

@@ -1,7 +1,6 @@
 package io.github.divios.lib.dLib;
 
 import io.github.divios.core_lib.inventory.dynamicGui;
-import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.lorestategy.loreStrategy;
 import io.github.divios.dailyShop.lorestategy.shopItemsLore;
@@ -48,7 +47,7 @@ public enum dAction {
                 .contents(() -> manager.getShop(s)
                         .get().getItems()
                         .parallelStream()
-                        .map(dItem -> strategy.applyLore(dItem.getItem().clone(), p))
+                        .map(dItem -> strategy.applyLore(dItem.getDailyItem().clone(), p))
                         .collect(Collectors.toList()))
                 .title(integer -> "&6&l" + manager.getShop(s).get().getName() + " items")
                 .back(player -> manager.getShop(s).get().openShop(p))

@@ -4,7 +4,6 @@ import io.github.divios.core_lib.events.Events;
 import io.github.divios.core_lib.inventory.inventoryUtils;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
-import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.events.updateItemEvent;
 import io.github.divios.dailyShop.files.Lang;
 import io.github.divios.dailyShop.files.Messages;
@@ -24,10 +23,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 import java.util.stream.IntStream;
 
 public class transaction {
@@ -121,7 +116,7 @@ public class transaction {
                         .withPlayer(p)
                         .withShopID(shop.getName())
                         .withItemUUID(item.getUid())
-                        .withRawItem(item.getRawItem())
+                        .withRawItem(item.getRealItem())
                         .withQuantity(amount)
                         .withType(dLogEntry.Type.BUY)
                         .withPrice(s.getPrice())
@@ -228,12 +223,12 @@ public class transaction {
 
     private static void giveOptimizedItem(Player player, dItem itemToGive, int amount) {
 
-        if (MMOUtils.isMMOItemsOn() && MMOUtils.isMMOItem(itemToGive.getRawItem())) {
-            if (itemToGive.getRawItem(true).equals(itemToGive.getRawItem(true))) {
-                ItemUtils.give(player, itemToGive.getRawItem(), amount);
+        if (MMOUtils.isMMOItemsOn() && MMOUtils.isMMOItem(itemToGive.getRealItem())) {
+            if (itemToGive.getRealItem(true).equals(itemToGive.getRealItem(true))) {
+                ItemUtils.give(player, itemToGive.getRealItem(), amount);
             } else
-                IntStream.range(0, amount).forEach(value -> player.getInventory().addItem(ItemBuilder.of(itemToGive.getRawItem(true)).setCount(1)));
-        } else ItemUtils.give(player, itemToGive.getRawItem(), amount);
+                IntStream.range(0, amount).forEach(value -> player.getInventory().addItem(ItemBuilder.of(itemToGive.getRealItem(true)).setCount(1)));
+        } else ItemUtils.give(player, itemToGive.getRealItem(), amount);
 
     }
 

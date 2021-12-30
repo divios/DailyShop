@@ -14,7 +14,6 @@ public class commandsManager {
                 .withSubcommands(new loggerCommand().getCommand())
                 .withSubcommands(new importShops().getCommand())
                 .withSubcommands(new reloadCommand().getCommand())
-                .executesPlayer((player, values) -> player.sendMessage("Help here"))
                 .register();
     }
 

@@ -2,10 +2,7 @@ package io.github.divios.dailyShop.transaction;
 
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
-import io.github.divios.core_lib.misc.FormatUtils;
-import io.github.divios.core_lib.misc.Msg;
 import io.github.divios.core_lib.misc.confirmIH;
-import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.files.Lang;
 import io.github.divios.dailyShop.files.Messages;
 import io.github.divios.dailyShop.files.Settings;
@@ -129,7 +126,7 @@ public class sellTransaction {
     }
 
     private void removeItemsFromPlayer() {
-        ItemUtils.remove(player.getInventory(), item.getRawItem(), quantity, CompareItemUtils::compareItems);
+        ItemUtils.remove(player.getInventory(), item.getRealItem(), quantity, CompareItemUtils::compareItems);
     }
 
     private void depositMoney() {
@@ -151,7 +148,7 @@ public class sellTransaction {
     }
 
     private ItemStack getItem() {
-        return ItemBuilder.of(item.getItem().clone()).
+        return ItemBuilder.of(item.getDailyItem().clone()).
                 addLore(getItemLore());
     }
 
@@ -183,7 +180,7 @@ public class sellTransaction {
     }
 
     private void hasEnoughItems() throws Exception {
-        int maxItemsToRemove = ItemUtils.count(player.getInventory(), item.getRawItem(), CompareItemUtils::compareItems);
+        int maxItemsToRemove = ItemUtils.count(player.getInventory(), item.getRealItem(), CompareItemUtils::compareItems);
         if (maxItemsToRemove < quantity)
             throw new Exception("MSG_NOT_ITEMS");
     }
@@ -194,7 +191,7 @@ public class sellTransaction {
                 .withPlayer(player)
                 .withShopID(shop.getName())
                 .withItemUUID(item.getUid())
-                .withRawItem(item.getRawItem())
+                .withRawItem(item.getRealItem())
                 .withQuantity(quantity)
                 .withType(dLogEntry.Type.SELL)
                 .withPrice(getItemPrice())
@@ -202,7 +199,7 @@ public class sellTransaction {
     }
 
     private boolean itemWithCustomName() {
-        return item.getItem().getItemMeta().getDisplayName().isEmpty();
+        return item.getDailyItem().getItemMeta().getDisplayName().isEmpty();
     }
 
 
@@ -211,7 +208,7 @@ public class sellTransaction {
     }
 
     private void sendTranslatedMaterialMessage(List<String> msg) {
-        sendTranslatedMaterialMessageToPlayer(getFormattedMessageForMaterialTranslation(msg), item.getItem().getType());
+        sendTranslatedMaterialMessageToPlayer(getFormattedMessageForMaterialTranslation(msg), item.getDailyItem().getType());
     }
 
     private List<String> getItemLore() {

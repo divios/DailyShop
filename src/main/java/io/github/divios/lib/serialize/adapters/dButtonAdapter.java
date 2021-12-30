@@ -36,16 +36,16 @@ public class dButtonAdapter implements JsonSerializer<dItem>, JsonDeserializer<d
             return getAirItemAsJson(dItem);
         }
 
-        String name = ItemUtils.getName(dItem.getItem());
+        String name = ItemUtils.getName(dItem.getDailyItem());
         if (!name.isEmpty())
             merchant.addProperty("name", FormatUtils.unColor(name));
 
-        List<String> lore = ItemUtils.getLore(dItem.getItem());
+        List<String> lore = ItemUtils.getLore(dItem.getDailyItem());
         if (!lore.isEmpty())
             merchant.add("lore", gson.toJsonTree(lore));
 
         if (!dItem.isCustomHead())
-            merchant.addProperty("material", ItemUtils.getMaterial(dItem.getRawItem()).name());
+            merchant.addProperty("material", ItemUtils.getMaterial(dItem.getRealItem()).name());
         else
             merchant.addProperty("material", "base64:" + dItem.getCustomHeadUrl());
 

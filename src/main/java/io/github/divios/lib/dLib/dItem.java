@@ -89,10 +89,10 @@ public class dItem implements Serializable, Cloneable {
     private void initializeCache() {
         if (cache == null) cache = new HashMap<>();    //   ReadObject java bullshit
         cache.put("slot", LazyWrapper.suppliedBy(() -> item.getInteger("dailySlots")));
-        cache.put("lore", LazyWrapper.suppliedBy(() -> ItemUtils.getLore(getItem())));
-        cache.put("material", LazyWrapper.suppliedBy(() -> getItem().getType()));
-        cache.put("durability", LazyWrapper.suppliedBy(() -> getItem().getDurability()));
-        cache.put("enchantments", LazyWrapper.suppliedBy(() -> getItem().getEnchantments()));
+        cache.put("lore", LazyWrapper.suppliedBy(() -> ItemUtils.getLore(getDailyItem())));
+        cache.put("material", LazyWrapper.suppliedBy(() -> getDailyItem().getType()));
+        cache.put("durability", LazyWrapper.suppliedBy(() -> getDailyItem().getDurability()));
+        cache.put("enchantments", LazyWrapper.suppliedBy(() -> getDailyItem().getEnchantments()));
         cache.put("sellPrice", LazyWrapper.suppliedBy(() -> item.getObject("rds_sellPrice", dPrice.class)));
         cache.put("buyPrice", LazyWrapper.suppliedBy(() -> item.getObject("rds_buyPrice", dPrice.class)));
         cache.put("id", LazyWrapper.suppliedBy(() -> item.getString("rds_UUID")));
@@ -124,7 +124,7 @@ public class dItem implements Serializable, Cloneable {
     /**
      * @return the ItemStack that this instance holds
      */
-    public ItemStack getItem() {
+    public ItemStack getDailyItem() {
         saveStock();
         return item.getItem();
     }
@@ -134,8 +134,8 @@ public class dItem implements Serializable, Cloneable {
         this.rawItem = Lazy.suppliedBy(() -> ItemUtils.deserialize(item.getString("rds_rawItem")));
     }
 
-    public ItemStack getRawItem() {
-        return getRawItem(false);
+    public ItemStack getRealItem() {
+        return getRealItem(false);
     }
 
     /**
@@ -144,7 +144,7 @@ public class dItem implements Serializable, Cloneable {
      *
      * @return s
      */
-    public ItemStack getRawItem(boolean getAsNewItem) {
+    public ItemStack getRealItem(boolean getAsNewItem) {
 
         if (getAsNewItem && MMOUtils.isMMOItemsOn() && MMOUtils.isMMOItem(rawItem.get().clone())) {
             try {
@@ -208,7 +208,7 @@ public class dItem implements Serializable, Cloneable {
         transfer.setPermsSell(getPermsSell().get());
         transfer.setConfirm_gui(isConfirmGuiEnabled());
 
-        return transfer.getItem();
+        return transfer.getDailyItem();
     }
 
     /**
@@ -253,11 +253,11 @@ public class dItem implements Serializable, Cloneable {
      * @return
      */
     public dItem setMeta(ItemMeta meta) {
-        ItemStack itemA = getItem();
+        ItemStack itemA = getDailyItem();
         itemA.setItemMeta(meta);
         setItem(itemA);
 
-        ItemStack itemB = getRawItem();
+        ItemStack itemB = getRealItem();
         itemA.setItemMeta(meta);
         setRawItem(itemB);
 
@@ -286,7 +286,7 @@ public class dItem implements Serializable, Cloneable {
         compound.setString("id", "mob_spawner");
 
         // RawItem
-        NBTItem rawItem = new NBTItem(getRawItem());
+        NBTItem rawItem = new NBTItem(getRealItem());
 
         compound = rawItem.getOrCreateCompound("SilkSpawners");  // SilkSpawner
         compound.setString("entity", type.getName());
@@ -326,8 +326,8 @@ public class dItem implements Serializable, Cloneable {
      * @return
      */
     public dItem setDisplayName(@NotNull String name) {
-        setItem(ItemUtils.setName(getItem(), name));
-        setRawItem(ItemUtils.setName(getRawItem(), name));
+        setItem(ItemUtils.setName(getDailyItem(), name));
+        setRawItem(ItemUtils.setName(getRealItem(), name));
         return this;
     }
 
@@ -337,9 +337,9 @@ public class dItem implements Serializable, Cloneable {
      * @return
      */
     public String getDisplayName() {
-        return Utils.isEmpty(ItemUtils.getName(getItem())) ?
-                getItem().getType().name() :
-                ItemUtils.getName(getItem());
+        return Utils.isEmpty(ItemUtils.getName(getDailyItem())) ?
+                getDailyItem().getType().name() :
+                ItemUtils.getName(getDailyItem());
     }
 
     /**
@@ -349,8 +349,8 @@ public class dItem implements Serializable, Cloneable {
      * @return
      */
     public dItem setLore(@NotNull List<String> lore) {
-        setItem(ItemUtils.setLore(getItem(), lore));
-        setRawItem(ItemUtils.setLore(getRawItem(), lore));
+        setItem(ItemUtils.setLore(getDailyItem(), lore));
+        setRawItem(ItemUtils.setLore(getRealItem(), lore));
         cache.get("lore").reset();
         return this;
     }
@@ -379,8 +379,8 @@ public class dItem implements Serializable, Cloneable {
      * @return
      */
     public dItem setMaterial(@NotNull XMaterial m) {
-        setItem(ItemUtils.setMaterial(getItem(), m));
-        setRawItem(ItemUtils.setMaterial(getRawItem(), m));
+        setItem(ItemUtils.setMaterial(getDailyItem(), m));
+        setRawItem(ItemUtils.setMaterial(getRealItem(), m));
         if (m.name().contains("GLASS"))
             setDurability(m.parseItem().getDurability(), true);
         cache.get("material").reset();
@@ -407,8 +407,8 @@ public class dItem implements Serializable, Cloneable {
 
     public dItem setCustomPlayerHead(String s) {
         setMaterial(XMaterial.PLAYER_HEAD);
-        setItem(ItemUtils.applyTexture(getItem(), s));
-        setRawItem(ItemUtils.applyTexture(getRawItem(), s));
+        setItem(ItemUtils.applyTexture(getDailyItem(), s));
+        setRawItem(ItemUtils.applyTexture(getRealItem(), s));
         item.setString("rds_headUrl", s);
         return this;
     }
@@ -440,11 +440,11 @@ public class dItem implements Serializable, Cloneable {
      */
     public dItem setDurability(short durability, boolean glass) {
         if (!glass) {
-            setItem(ItemUtils.setDurability(getItem(), (short) (getItem().getType().getMaxDurability() - durability)));
-            setRawItem(ItemUtils.setDurability(getRawItem(), (short) (getRawItem().getType().getMaxDurability() - durability)));
+            setItem(ItemUtils.setDurability(getDailyItem(), (short) (getDailyItem().getType().getMaxDurability() - durability)));
+            setRawItem(ItemUtils.setDurability(getRealItem(), (short) (getRealItem().getType().getMaxDurability() - durability)));
         } else {
-            setItem(ItemUtils.setDurability(getItem(), durability));
-            setRawItem(ItemUtils.setDurability(getRawItem(), durability));
+            setItem(ItemUtils.setDurability(getDailyItem(), durability));
+            setRawItem(ItemUtils.setDurability(getRealItem(), durability));
         }
         cache.get("durability").reset();
         return this;
@@ -466,8 +466,8 @@ public class dItem implements Serializable, Cloneable {
      * @return
      */
     public dItem addEnchantments(@NotNull Enchantment ench, int lvl) {
-        setItem(ItemUtils.addEnchant(getItem(), ench, lvl));
-        setRawItem(ItemUtils.addEnchant(getRawItem(), ench, lvl));
+        setItem(ItemUtils.addEnchant(getDailyItem(), ench, lvl));
+        setRawItem(ItemUtils.addEnchant(getRealItem(), ench, lvl));
         cache.get("enchantments").reset();
         return this;
     }
@@ -479,8 +479,8 @@ public class dItem implements Serializable, Cloneable {
      * @return
      */
     public dItem removeEnchantments(@NotNull Enchantment ench) {
-        setItem(ItemUtils.removeEnchant(getItem(), ench));
-        setRawItem(ItemUtils.removeEnchant(getRawItem(), ench));
+        setItem(ItemUtils.removeEnchant(getDailyItem(), ench));
+        setRawItem(ItemUtils.removeEnchant(getRealItem(), ench));
         cache.get("enchantments").reset();
         return this;
     }
@@ -502,9 +502,9 @@ public class dItem implements Serializable, Cloneable {
      * @return
      */
     public dItem setQuantity(int amount) {
-        ItemStack auxI = getItem();
+        ItemStack auxI = getDailyItem();
         auxI.setAmount(amount);
-        ItemStack auxE = getRawItem();
+        ItemStack auxE = getRealItem();
         auxE.setAmount(amount);
         setItem(auxI);
         setRawItem(auxE);
@@ -536,7 +536,7 @@ public class dItem implements Serializable, Cloneable {
      * @return
      */
     public boolean hasFlag(ItemFlag flag) {
-        return ItemUtils.hasItemFlags(getItem(), flag);
+        return ItemUtils.hasItemFlags(getDailyItem(), flag);
     }
 
     /**
@@ -546,8 +546,8 @@ public class dItem implements Serializable, Cloneable {
      * @return
      */
     public dItem setFlag(ItemFlag flag) {
-        setItem(ItemUtils.addItemFlags(getItem(), flag));
-        setRawItem(ItemUtils.addItemFlags(getRawItem(), flag));
+        setItem(ItemUtils.addItemFlags(getDailyItem(), flag));
+        setRawItem(ItemUtils.addItemFlags(getRealItem(), flag));
         return this;
     }
 
@@ -559,12 +559,12 @@ public class dItem implements Serializable, Cloneable {
      */
     public dItem toggleFlag(ItemFlag flag) {
 
-        if (ItemUtils.hasItemFlags(getItem(), flag)) {
-            setItem(ItemUtils.removeItemFlags(getItem(), flag));
-            setRawItem(ItemUtils.removeItemFlags(getRawItem(), flag));
+        if (ItemUtils.hasItemFlags(getDailyItem(), flag)) {
+            setItem(ItemUtils.removeItemFlags(getDailyItem(), flag));
+            setRawItem(ItemUtils.removeItemFlags(getRealItem(), flag));
         } else {
-            setItem(ItemUtils.addItemFlags(getItem(), flag));
-            setRawItem(ItemUtils.addItemFlags(getRawItem(), flag));
+            setItem(ItemUtils.addItemFlags(getDailyItem(), flag));
+            setRawItem(ItemUtils.addItemFlags(getRealItem(), flag));
         }
         return this;
     }
@@ -586,7 +586,7 @@ public class dItem implements Serializable, Cloneable {
      * @return
      */
     public boolean isUnbreakble() {
-        return getItem().getItemMeta().isUnbreakable();
+        return getDailyItem().getItemMeta().isUnbreakable();
     }
 
     /**
@@ -595,8 +595,8 @@ public class dItem implements Serializable, Cloneable {
      * @return
      */
     public dItem setUnbreakable() {
-        setItem(ItemUtils.setUnbreakable(getItem()));
-        setRawItem(ItemUtils.setUnbreakable(getRawItem()));
+        setItem(ItemUtils.setUnbreakable(getDailyItem()));
+        setRawItem(ItemUtils.setUnbreakable(getRealItem()));
         return this;
     }
 
@@ -611,28 +611,28 @@ public class dItem implements Serializable, Cloneable {
      * @return true if it has, or false if not or the item is not a potion
      */
     public boolean hasPotionEffect(PotionEffect effect) {
-        return ItemUtils.hasPotionEffect(getItem(), effect);
+        return ItemUtils.hasPotionEffect(getDailyItem(), effect);
     }
 
     public List<PotionEffect> getAllPotionEffects() {
-        return ItemUtils.getAllPotionEffects(getItem());
+        return ItemUtils.getAllPotionEffects(getDailyItem());
     }
 
     public dItem addPotionEffect(PotionEffect... effect) {
-        setItem(ItemUtils.addPotionEffects(getItem(), effect));
-        setRawItem(ItemUtils.addPotionEffects(getItem(), effect));
+        setItem(ItemUtils.addPotionEffects(getDailyItem(), effect));
+        setRawItem(ItemUtils.addPotionEffects(getDailyItem(), effect));
         return this;
     }
 
     public dItem addPotionEffect(List<PotionEffect> effect) {
-        setItem(ItemUtils.addPotionEffects(getItem(), effect));
-        setRawItem(ItemUtils.addPotionEffects(getItem(), effect));
+        setItem(ItemUtils.addPotionEffects(getDailyItem(), effect));
+        setRawItem(ItemUtils.addPotionEffects(getDailyItem(), effect));
         return this;
     }
 
     public dItem removePotionEffect(List<PotionEffect> effect) {
-        setItem(ItemUtils.removePotionEffects(getItem(), effect));
-        setRawItem(ItemUtils.removePotionEffects(getItem(), effect));
+        setItem(ItemUtils.removePotionEffects(getDailyItem(), effect));
+        setRawItem(ItemUtils.removePotionEffects(getDailyItem(), effect));
         return this;
     }
 
@@ -1091,7 +1091,7 @@ public class dItem implements Serializable, Cloneable {
      * @return
      */
     public dItem copy() {
-        dItem cloned = new dItem(getItem());
+        dItem cloned = new dItem(getDailyItem());
         cloned.setID(UUID.randomUUID().toString());
         cloned.setStock(getStock());
         return cloned;
@@ -1104,7 +1104,7 @@ public class dItem implements Serializable, Cloneable {
      */
     @Override
     public dItem clone() {
-        return new dItem(getItem());
+        return new dItem(getDailyItem());
     }
 
     public static dItem AIR() {
@@ -1155,7 +1155,7 @@ public class dItem implements Serializable, Cloneable {
         boolean similarBuyPrice = o.getBuyPrice().orElse(dPrice.EMPTY()).equals(this.getBuyPrice().orElse(dPrice.EMPTY()));
         boolean similarSellPrice = o.getSellPrice().orElse(dPrice.EMPTY()).equals(this.getSellPrice().orElse(dPrice.EMPTY()));
 
-        return removePrices(firstItem).getItem().isSimilar(removePrices(this).getItem())
+        return removePrices(firstItem).getDailyItem().isSimilar(removePrices(this).getDailyItem())
                 && similarBuyPrice
                 && similarSellPrice
                 && similarStock;
@@ -1213,7 +1213,7 @@ public class dItem implements Serializable, Cloneable {
         public String serialize(dItem item) {
             try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
                 try (BukkitObjectOutputStream dataOutput = new BukkitObjectOutputStream(outputStream)) {
-                    dataOutput.writeObject(item.getItem());
+                    dataOutput.writeObject(item.getDailyItem());
                     return Base64.getEncoder().encodeToString(outputStream.toByteArray());
                 }
             } catch (Exception e) {
@@ -1239,7 +1239,7 @@ public class dItem implements Serializable, Cloneable {
     public static final class reflectionSerialization {
 
         public String serialize(dItem item) {
-            return Base64Coder.encodeString(NBTItem.convertItemtoNBT(item.getItem()).toString());
+            return Base64Coder.encodeString(NBTItem.convertItemtoNBT(item.getDailyItem()).toString());
         }
 
         public dItem deserialize(String s) {

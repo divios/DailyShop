@@ -10,7 +10,6 @@ import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.ChatPrompt;
 import io.github.divios.core_lib.misc.FormatUtils;
-import io.github.divios.core_lib.misc.Msg;
 import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.files.Lang;
@@ -86,7 +85,7 @@ public class CustomizerMenu {
                 .apply(inv.getInventory());
 
 
-        inv.getInventory().setItem(5, item.getRawItem());             // The item itself
+        inv.getInventory().setItem(5, item.getRealItem());             // The item itself
 
         inv.addButton(                                                  // Craft button
                 ItemButton.create(
@@ -171,7 +170,7 @@ public class CustomizerMenu {
                                 .setName(Lang.CUSTOMIZE_LORE_NAME.getAsString(p))
                                 .addLore(Lang.CUSTOMIZE_LORE_LORE.getAsListString(p))
                                 .addLore("")
-                                .addLore(ItemUtils.getLore(item.getItem()))
+                                .addLore(ItemUtils.getLore(item.getDailyItem()))
                                 .applyTexture("c6692f99cc6d78242304110553589484298b2e4a0233b76753f888e207ef5")
                         , e -> {
 
@@ -219,7 +218,7 @@ public class CustomizerMenu {
                         ItemBuilder.of(XMaterial.ENCHANTING_TABLE)
                                 .setName(Lang.CUSTOMIZE_ENCHANTS_NAME.getAsString(p))
                                 .addLore(Lang.CUSTOMIZE_ENCHANTS_LORE.getAsListString(p))
-                                .addLore(item.getItem().getEnchantments().entrySet().stream()
+                                .addLore(item.getDailyItem().getEnchantments().entrySet().stream()
                                         .map(entry -> "&f&l" + entry.getKey()
                                                 .getName() + ":" + entry.getValue()).collect(Collectors.toList()))
                         , e -> {
@@ -297,7 +296,7 @@ public class CustomizerMenu {
 
         inv.addButton(                                                  // Durability
                 ItemButton.create(
-                        item.getItem().getType().getMaxDurability() != 0 ?
+                        item.getDailyItem().getType().getMaxDurability() != 0 ?
                                 ItemBuilder.of(XMaterial.DAMAGED_ANVIL)
                                         .setName(Lang.CUSTOMIZE_DURABILITY_NAME.getAsString(p))
                                         .setLore(Lang.CUSTOMIZE_DURABILITY_LORE.getAsListString(p))
@@ -351,7 +350,7 @@ public class CustomizerMenu {
 
         inv.addButton(                                                  // Hide Effects
                 ItemButton.create(
-                        Utils.isPotion(item.getItem()) ?
+                        Utils.isPotion(item.getDailyItem()) ?
                                 ItemBuilder.of(XMaterial.CAULDRON)
                                         .setName(Lang.CUSTOMIZE_TOGGLE_EFFECTS_NAME.getAsString(p))
                                         .setLore(Lang.CUSTOMIZE_TOGGLE_EFFECTS_LORE.getAsListString(p,

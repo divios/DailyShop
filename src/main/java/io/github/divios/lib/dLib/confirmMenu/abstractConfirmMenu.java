@@ -52,7 +52,7 @@ public abstract class abstractConfirmMenu {
     private void createMenu() {
         menu = new InventoryGUI(plugin, 54, getTitle());
         setActionOnDestroy();
-        menu.getInventory().setItem(22, item.getRawItem());
+        menu.getInventory().setItem(22, item.getRealItem());
         updateButtons();
     }
 
@@ -168,7 +168,7 @@ public abstract class abstractConfirmMenu {
 
     private void createItemDisplayButton() {
         menu.addButton(ItemButton.create(
-                item.getRawItem()
+                item.getRealItem()
                 , e -> {
                 }), 22);
     }
@@ -230,7 +230,7 @@ public abstract class abstractConfirmMenu {
     }
 
     protected ItemStack getMarkedItem() {
-        NBTItem markedItem = new NBTItem(item.getRawItem().clone());
+        NBTItem markedItem = new NBTItem(item.getRealItem().clone());
         markedItem.setBoolean(MARK_KEY, true);
         return markedItem.getItem();
     }

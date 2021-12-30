@@ -7,7 +7,6 @@ import io.github.divios.core_lib.gson.JsonBuilder;
 import io.github.divios.dailyShop.utils.MMOUtils;
 import io.github.divios.dailyShop.utils.OraxenUtils;
 import io.github.divios.lib.dLib.dItem;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.Arrays;
 import java.util.Objects;
@@ -70,15 +69,15 @@ public class WrappedCustomItem {
             case MMOITEM:
                 object.add("mmoItem",
                         JsonBuilder.object()
-                                .add("type", MMOUtils.getType(item.getItem()))
-                                .add("id", MMOUtils.getType(item.getItem()))
+                                .add("type", MMOUtils.getType(item.getDailyItem()))
+                                .add("id", MMOUtils.getType(item.getDailyItem()))
                                 .build()
                 );
                 break;
             case ORAXEN:
                 object.add("oraxenItem",
                         JsonBuilder.object()
-                                .add("id", OraxenUtils.getId(item.getItem()))
+                                .add("id", OraxenUtils.getId(item.getDailyItem()))
                                 .build()
                 );
                 break;
@@ -91,8 +90,8 @@ public class WrappedCustomItem {
 
 
     private enum customItemType {
-        MMOITEM(object -> object.has("mmoItem"), dItem -> MMOUtils.isMMOItem(dItem.getItem())),
-        ORAXEN(object -> object.has("oraxenItem"), dItem -> OraxenUtils.isOraxenItem(dItem.getItem()));
+        MMOITEM(object -> object.has("mmoItem"), dItem -> MMOUtils.isMMOItem(dItem.getDailyItem())),
+        ORAXEN(object -> object.has("oraxenItem"), dItem -> OraxenUtils.isOraxenItem(dItem.getDailyItem()));
 
         Predicate<JsonObject> isElementType;
         Predicate<dItem> isType;

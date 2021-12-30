@@ -6,7 +6,6 @@ import com.google.common.reflect.TypeToken;
 import com.google.gson.*;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.FormatUtils;
-import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.economies.economy;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.dItem;
@@ -17,10 +16,7 @@ import io.github.divios.lib.serialize.wrappers.*;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemFlag;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 
 import java.lang.reflect.Type;
 import java.util.Arrays;
@@ -47,11 +43,11 @@ public class dItemAdapter implements JsonSerializer<dItem>, JsonDeserializer<dIt
     public JsonElement serialize(dItem dItem, Type type, JsonSerializationContext jsonSerializationContext) {
         JsonObject merchant = new JsonObject();
 
-        String name = ItemUtils.getName(dItem.getRawItem());
+        String name = ItemUtils.getName(dItem.getRealItem());
         if (!name.isEmpty()) merchant.addProperty("name", FormatUtils.unColor(name));
 
-        List<String> lore = ItemUtils.getLore(dItem.getRawItem());
-        if (!lore.isEmpty()) merchant.add("lore", gson.toJsonTree(ItemUtils.getLore(dItem.getRawItem())));
+        List<String> lore = ItemUtils.getLore(dItem.getRealItem());
+        if (!lore.isEmpty()) merchant.add("lore", gson.toJsonTree(ItemUtils.getLore(dItem.getRealItem())));
 
         if (WrappedCustomItem.isCustomItem(dItem))
             merchant.add("item", WrappedCustomItem.serializeCustomItem(dItem));
@@ -76,7 +72,7 @@ public class dItemAdapter implements JsonSerializer<dItem>, JsonDeserializer<dIt
         if (dItem.isUnbreakble()) merchant.addProperty("unbreakable", true);
 
         if (dItem.isPotion()) {
-            merchant.add("potion", gson.toJsonTree(ItemUtils.getPotionMeta(dItem.getItem()), PotionMeta.class));
+            merchant.add("potion", gson.toJsonTree(ItemUtils.getPotionMeta(dItem.getDailyItem()), PotionMeta.class));
         }
 
         List<String> flags;

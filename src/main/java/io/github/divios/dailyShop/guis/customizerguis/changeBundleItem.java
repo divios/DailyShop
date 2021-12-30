@@ -56,7 +56,7 @@ public class changeBundleItem {
                     //loreStrategy ls = new bundleSettingsLore();
                     return shop.getItems().stream()
                             .filter(dItem -> !dItem.getID().equals(ownId))
-                            .map(dItem -> dItem.getItem().clone())  // Todo Aplicar lore strategy a los items
+                            .map(dItem -> dItem.getDailyItem().clone())  // Todo Aplicar lore strategy a los items
                             .map(_item -> {
                                 if (added.contains(dItem.getId(_item))) {
                                     _item = ItemUtils.addEnchant(_item, Enchantment.DAMAGE_ALL, 1);

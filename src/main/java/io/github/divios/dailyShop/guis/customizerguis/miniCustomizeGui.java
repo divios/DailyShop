@@ -189,7 +189,7 @@ public class miniCustomizeGui {
                     customizeAction.open(p, shop, (dAction, s) -> {
                         dItem aux = new dItem(item);
                         aux.setAction(dAction, s);
-                        item = aux.getItem();
+                        item = aux.getDailyItem();
                         refresh();
                     }, (p) -> refresh());
                 }));

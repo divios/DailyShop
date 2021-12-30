@@ -7,7 +7,6 @@ import io.github.divios.core_lib.gson.JsonBuilder;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.synchronizedGui.singleGui.dInventory;
-import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Type;
 import java.util.*;
@@ -71,7 +70,7 @@ public class dInventoryAdapter implements JsonSerializer<dInventory>, JsonDeseri
             if (flaggedSlots.contains(dItem.getSlot())) return;
 
             List<Integer> similarItemsSlots = buttons.values().stream()
-                    .filter(dItem1 -> dItem1.getRawItem().isSimilar(dItem.getRawItem()))
+                    .filter(dItem1 -> dItem1.getRealItem().isSimilar(dItem.getRealItem()))
                     .map(io.github.divios.lib.dLib.dItem::getSlot)
                     .sorted()
                     .collect(Collectors.toList());

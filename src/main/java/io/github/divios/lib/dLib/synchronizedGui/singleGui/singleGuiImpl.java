@@ -121,8 +121,8 @@ public class singleGuiImpl implements singleGui {
                 } else
                     oldItem = buttons.get(integer);
 
-                newItem = ItemBuilder.of(oldItem.getItem().clone()).setLore(Collections.emptyList());
-                newItem = newItem.setName(PlaceholderAPIWrapper.setPlaceholders(p, ItemUtils.getName(oldItem.getRawItem())));
+                newItem = ItemBuilder.of(oldItem.getDailyItem().clone()).setLore(Collections.emptyList());
+                newItem = newItem.setName(PlaceholderAPIWrapper.setPlaceholders(p, ItemUtils.getName(oldItem.getRealItem())));
 
                 for (String s : oldItem.getLore())
                     newItem = newItem.addLore(PlaceholderAPIWrapper.setPlaceholders(p, s));

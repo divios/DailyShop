@@ -5,7 +5,6 @@ import io.github.divios.core_lib.events.Events;
 import io.github.divios.core_lib.events.Subscription;
 import io.github.divios.core_lib.inventory.inventoryUtils;
 import io.github.divios.core_lib.itemutils.ItemUtils;
-import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.transaction.sellTransaction;
@@ -189,7 +188,7 @@ public class dInventory {
         buttonsSlot.put(slot, cloned);
         dailyItemsSlots.remove(slot);
         if (!item.isAIR())
-            inv.setItem(slot, cloned.getItem());
+            inv.setItem(slot, cloned.getDailyItem());
         else
             inv.clear(slot);
     }
@@ -300,7 +299,7 @@ public class dInventory {
 
         cloned.buttons.entrySet().stream()   // gets the AIR buttons back
                 .filter(entry -> entry.getValue().isAIR())
-                .forEach(entry -> cloned.inv.setItem(entry.getValue().getSlot(), entry.getValue().getItem()));
+                .forEach(entry -> cloned.inv.setItem(entry.getValue().getSlot(), entry.getValue().getDailyItem()));
 
         return cloned;
     }

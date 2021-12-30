@@ -119,7 +119,7 @@ public class sellConfirmMenu extends abstractConfirmMenu {
     }
 
     private int countSimilarItems() {
-        return ItemUtils.count(player.getInventory(), item.getRawItem(), CompareItemUtils::compareItems);
+        return ItemUtils.count(player.getInventory(), item.getRealItem(), CompareItemUtils::compareItems);
     }
 
     private void addToCache(List<ItemStack> items) {
@@ -136,7 +136,7 @@ public class sellConfirmMenu extends abstractConfirmMenu {
 
         for (ItemStack item : playerItems) {
             if (quantity <= 0) break;
-            if (!CompareItemUtils.compareItems(item, this.item.getRawItem())) continue;
+            if (!CompareItemUtils.compareItems(item, this.item.getRealItem())) continue;
 
             if (item.getAmount() <= quantity) {
                 quantity -= item.getAmount();
