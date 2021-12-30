@@ -15,7 +15,13 @@ permissions:
     default: op
   DailyRandomShop.settings:
     default: op
-  DailyRandomShop.renovate:
+  DailyRandomShop.restock:
     default: op
   DailyRandomShop.reload:
+    default: op
+  DailyRandomShop.log:
+    default: op
+  DailyRandomShop.addDailyItem:
+    default: op
+  DailyRandomShop.import:
     default: op
