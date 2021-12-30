@@ -53,7 +53,7 @@ public class dShop {
     }
 
     public dShop(String name, int timer, Timestamp timestamp) {
-        this.name = name;
+        this.name = name.toLowerCase();
         this.timer = timer;
         this.timestamp = timestamp;
         this.guis = syncHashMenu.create(this);
@@ -69,7 +69,7 @@ public class dShop {
 
     @Deprecated
     public dShop(String name, String base64, Timestamp timestamp, int timer, Set<dItem> items) {
-        this.name = name;
+        this.name = name.toLowerCase();
         this.timestamp = timestamp;
         this.timer = timer;
         items.forEach(dItem -> this.items.put(dItem.getUid(), dItem));
@@ -321,7 +321,7 @@ public class dShop {
 
     @Override
     public boolean equals(Object o) {
-        return o instanceof dShop && this.getName().equals(((dShop) o).getName());
+        return o instanceof dShop && this.getName().equalsIgnoreCase(((dShop) o).getName());
     }
 
     @Override
