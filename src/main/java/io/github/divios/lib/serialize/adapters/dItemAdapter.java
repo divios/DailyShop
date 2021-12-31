@@ -66,7 +66,7 @@ public class dItemAdapter implements JsonSerializer<dItem>, JsonDeserializer<dIt
         dItem.getPermsSell().ifPresent(strings -> merchant.add("sellPerms", gson.toJsonTree(strings)));
         merchant.addProperty("rarity", dItem.getRarity().getKey());
         merchant.add("econ", gson.toJsonTree(dItem.getEconomy()));
-        merchant.addProperty("confirm_gui", dItem.isConfirmGuiEnabled());
+        if (!dItem.isConfirmGuiEnabled()) merchant.addProperty("confirm_gui", false);
         dItem.getBundle().ifPresent(ids -> merchant.add("bundle", gson.toJsonTree(ids, stringListToken.getType())));
 
         if (dItem.isUnbreakble()) merchant.addProperty("unbreakable", true);
