@@ -10,6 +10,7 @@ import io.github.divios.jcommands.arguments.Argument;
 import io.github.divios.jcommands.arguments.types.StringArgument;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
+import io.github.divios.lib.serialize.serializerApi;
 import net.brcdev.shopgui.ShopGuiPlusApi;
 import net.brcdev.shopgui.shop.ShopManager;
 import org.black_ixx.bossshop.BossShop;
@@ -51,11 +52,12 @@ public class importShops {
                                             if (newItem.getQuantity() != 1)
                                                 newItem.setSetItems(newItem.getQuantity());
 
-                                            newItem.setBuyPrice(shopItem.getBuyPrice());
-                                            newItem.setSellPrice(shopItem.getSellPrice());
+                                            newItem.setBuyPrice(shopItem.getBuyPrice() / newItem.getQuantity());
+                                            newItem.setSellPrice(shopItem.getSellPrice() / newItem.getQuantity());
                                             shop.addItem(newItem);
                                         });
                                 Utils.sendRawMsg(player, "&7Items imported successfully");
+                                serializerApi.saveShopToFileAsync(shop);
                                 shopGui.open(player, shop);
                             });
                 })
@@ -101,6 +103,7 @@ public class importShops {
                                             shop.addItem(newItem);
                                         });
                                 Utils.sendRawMsg(player, "&7Items imported successfully");
+                                serializerApi.saveShopToFileAsync(shop);
                                 shopGui.open(player, shop);
                             });
                 });

@@ -103,12 +103,12 @@ public class shopItemsLore implements loreStrategy {
 
     private boolean itemHasValidBuyPrice() {
         return dItem.of(itemToApplyLore).getDBuyPrice().isPresent()
-                && dItem.of(itemToApplyLore).getDBuyPrice().get().getPrice() != -1;
+                && dItem.of(itemToApplyLore).getDBuyPrice().get().getPrice() > 0;
     }
 
     private boolean itemHasValidSellPrice() {
         return dItem.of(itemToApplyLore).getDSellPrice().isPresent() &&
-                dItem.of(itemToApplyLore).getDSellPrice().get().getPrice() != -1;
+                dItem.of(itemToApplyLore).getDSellPrice().get().getPrice() > 0;
     }
 
     private String getItemBuyPriceDoubleFormatted() {
