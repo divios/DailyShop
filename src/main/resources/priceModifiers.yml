@@ -26,18 +26,18 @@
 # =========================================================
 
 modifiers:
-  example1:
-    scope: GLOBAL
-    type: BOTH
-    value: 2.0
-  example2:
-    scope: SHOP
-    type: BOTH
-    value: 1.5
-    shop: blocks
-  example3:
-    scope: ITEM
-    type: BUY
-    value: -0.25
-    shop: drops
-    itemID: 1
+#  example1:
+#    scope: GLOBAL
+#    type: BOTH
+#    value: 2.0
+#  example2:
+#    scope: SHOP
+#    type: BOTH
+#    value: 1.5
+#    shop: blocks
+#  example3:
+#    scope: ITEM
+#    type: BUY
+#    value: -0.25
+#    shop: drops
+#    itemID: 1
