@@ -84,7 +84,7 @@ public class dShopAdapter implements JsonSerializer<dShop>, JsonDeserializer<dSh
                 .add("timer", shop.getTimer());
 
         if (!shop.get_announce()) builder.add("announce_restock", false);
-        if (!shop.isDefault()) builder.add("default", true);
+        if (shop.isDefault()) builder.add("default", true);
 
         return builder.add("timeStamp", (Boolean) null)  // dateFormat.format(shop.getTimestamp()
                 .add("shop", gson.toJsonTree(shop.getGuis().getDefault()))
