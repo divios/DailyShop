@@ -157,7 +157,7 @@ public class sellTransaction {
     }
 
     private boolean invalidSellPrice() {
-        return !item.getSellPrice().isPresent() || item.getSellPrice().get().getPrice() == -1;
+        return !item.getDSellPrice().isPresent() || item.getDSellPrice().get().getPrice() == -1;
     }
 
     private boolean itemExistOnShop() {
@@ -169,7 +169,7 @@ public class sellTransaction {
     }
 
     private double getItemPrice() {
-        return item.getSellPrice().orElse(null).getPriceForPlayer(player, shop, item.getID(), priceModifier.type.SELL) * quantity;
+        return item.getDSellPrice().orElse(null).getPriceForPlayer(player, shop, item.getID(), priceModifier.type.SELL) * quantity;
     }
 
     private void hasNecessaryPermissions() throws Exception {

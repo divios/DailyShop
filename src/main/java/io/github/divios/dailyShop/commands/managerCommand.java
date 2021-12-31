@@ -10,7 +10,9 @@ public class managerCommand {
         return JCommand.create("manager")
                 .assertPermission("DailyRandomShop.settings")
                 .assertUsage(FormatUtils.color("&8- &6/rdshop manager [player] &8- &7Opens the shops manager gui"))
-                .executesPlayer((player, values) -> shopsManagerGui.open(player));
+                .executesPlayer((player, values) -> shopsManagerGui.open(player))
+                .executesConsole((consoleCommandSender, valueMap) ->
+                        consoleCommandSender.sendMessage("This command can only be executed by players"));
     }
 
 }

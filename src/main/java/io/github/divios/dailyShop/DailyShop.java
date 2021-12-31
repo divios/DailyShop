@@ -38,8 +38,7 @@ public class DailyShop extends JavaPlugin {
     public void onEnable() {
 
         try {
-            meetsStartRequirements();
-
+            meetsStartRequirements();           // Check hard dependencies
         } catch (Exception | Error e) {
             getLogger().severe("Disabled due to: " + e.getMessage());
             Bukkit.getPluginManager().disablePlugin(this);

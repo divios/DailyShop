@@ -199,8 +199,8 @@ public class dItem implements Serializable, Cloneable {
         transfer.setSetItems(getSetItems().get());
         transfer.setQuantity(getQuantity());
         transfer.setBundle(getBundle().get());
-        transfer.setBuyPrice(getBuyPrice().get());
-        transfer.setSellPrice(getSellPrice().get());
+        transfer.setBuyPrice(getDBuyPrice().get());
+        transfer.setSellPrice(getDSellPrice().get());
         transfer.setEconomy(getEconomy());
         transfer.setDurability(getDurability(), false);
         transfer.setRarity(getRarity());
@@ -639,9 +639,16 @@ public class dItem implements Serializable, Cloneable {
     /**
      * @return the price of the item. Can be random price between the values asigned
      */
-    public Optional<dPrice> getBuyPrice() {
+    @Deprecated
+    public Optional<dPrice> getDBuyPrice() {
         Object o;
         return Optional.ofNullable((o = cache.get("buyPrice").get()) == null ? null : (dPrice) o);
+    }
+
+    public double getBuyPrice() {
+        dPrice buyPrice;
+        return (buyPrice = (dPrice) cache.get("buyPrice").get()) == null ?
+                buyPrice.getPrice() / getQuantity() : -1;
     }
 
     /**
@@ -687,7 +694,7 @@ public class dItem implements Serializable, Cloneable {
      * @return
      */
     public dItem generateNewBuyPrice() {
-        getBuyPrice().ifPresent(dPrice -> {
+        getDBuyPrice().ifPresent(dPrice -> {
             dPrice.generateNewPrice();
             setBuyPrice(dPrice);
         });
@@ -698,9 +705,16 @@ public class dItem implements Serializable, Cloneable {
     /**
      * @return the price of the item. Can be random price between the values asigned
      */
-    public Optional<dPrice> getSellPrice() {
+    @Deprecated
+    public Optional<dPrice> getDSellPrice() {
         Object o;
         return Optional.ofNullable((o = cache.get("sellPrice").get()) == null ? null : (dPrice) o);
+    }
+
+    public double getSellPrice() {
+        dPrice sellPrice;
+        return (sellPrice = (dPrice) cache.get("sellPrice").get()) == null ?
+                sellPrice.getPrice() / getQuantity() : -1;
     }
 
     /**
@@ -734,7 +748,7 @@ public class dItem implements Serializable, Cloneable {
     }
 
     public dItem generateNewSellPrice() {
-        getSellPrice().ifPresent(dPrice -> {
+        getDSellPrice().ifPresent(dPrice -> {
             dPrice.generateNewPrice();
             setSellPrice(dPrice);
         });
@@ -1152,8 +1166,8 @@ public class dItem implements Serializable, Cloneable {
         dItem secondItem = o.clone().setStock(null);
 
         boolean similarStock = compareStocks(o.getStock(), this.getStock());
-        boolean similarBuyPrice = o.getBuyPrice().orElse(dPrice.EMPTY()).equals(this.getBuyPrice().orElse(dPrice.EMPTY()));
-        boolean similarSellPrice = o.getSellPrice().orElse(dPrice.EMPTY()).equals(this.getSellPrice().orElse(dPrice.EMPTY()));
+        boolean similarBuyPrice = o.getDBuyPrice().orElse(dPrice.EMPTY()).equals(this.getDBuyPrice().orElse(dPrice.EMPTY()));
+        boolean similarSellPrice = o.getDSellPrice().orElse(dPrice.EMPTY()).equals(this.getDSellPrice().orElse(dPrice.EMPTY()));
 
         return firstItem.getDailyItem().isSimilar(secondItem.getDailyItem())
                 && similarStock;

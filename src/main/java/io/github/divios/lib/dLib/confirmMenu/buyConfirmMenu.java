@@ -4,7 +4,6 @@ import io.github.divios.core_lib.events.Events;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.dailyShop.files.Lang;
 import io.github.divios.dailyShop.utils.CompareItemUtils;
-import io.github.divios.dailyShop.utils.FutureUtils;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dPrice;
@@ -138,7 +137,7 @@ public class buyConfirmMenu extends abstractConfirmMenu {
 
     @Override
     protected double getItemPrice() {
-        return item.getBuyPrice().orElse(dPrice.EMPTY()).getPriceForPlayer(player, shop, item.getID(), priceModifier.type.BUY);
+        return item.getDBuyPrice().orElse(dPrice.EMPTY()).getPriceForPlayer(player, shop, item.getID(), priceModifier.type.BUY);
     }
 
     private int getMinLimit() {
@@ -163,7 +162,7 @@ public class buyConfirmMenu extends abstractConfirmMenu {
     }
 
     private int getBalanceLimit() {
-        return (int) Math.floor(item.getEconomy().getBalance(player) / item.getBuyPrice().orElse(null).getPriceForPlayer(player, shop, item.getID(), priceModifier.type.BUY)) - nAddedItems;
+        return (int) Math.floor(item.getEconomy().getBalance(player) / item.getDBuyPrice().orElse(null).getPriceForPlayer(player, shop, item.getID(), priceModifier.type.BUY)) - nAddedItems;
     }
 
     private int getPlayerInventoryLimit() {

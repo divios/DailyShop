@@ -31,7 +31,10 @@ public class addCommand {
                                     shop.addItem(new dItem(itemStack));
                                     serializerApi.saveShopToFileAsync(shop);
                                     shopGui.open(player, shop);
-                                }, () -> shopsManagerGui.open(player))));
+                                }, () -> shopsManagerGui.open(player))))
+                .executesConsole((consoleCommandSender, valueMap) -> {
+                    consoleCommandSender.sendMessage("This command can only be executed by players");
+                });
     }
 
     private Argument getShopsArgument() {

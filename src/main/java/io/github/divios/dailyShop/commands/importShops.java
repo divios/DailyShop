@@ -1,7 +1,6 @@
 package io.github.divios.dailyShop.commands;
 
 import io.github.divios.core_lib.misc.FormatUtils;
-import io.github.divios.core_lib.misc.Msg;
 import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.guis.settings.shopGui;
@@ -59,6 +58,9 @@ public class importShops {
                                 Utils.sendRawMsg(player, "&7Items imported successfully");
                                 shopGui.open(player, shop);
                             });
+                })
+                .executesConsole((consoleCommandSender, valueMap) -> {
+                    consoleCommandSender.sendMessage("This command can only be executed by players");
                 });
     }
 
@@ -79,17 +81,19 @@ public class importShops {
                             .ifPresent(shop -> {
                                 plugin.getAPI().getShop(args.get("bossShop").getAsString())
                                         .getItems().forEach(bsBuy -> {
-                                            dItem newItem = dItem.of(bsBuy.getItem());
+                                            dItem newItem = dItem.of(bsBuy.getItem()).setQuantity(bsBuy.getItem().getAmount());
 
                                             try {
                                                 newItem.setBuyPrice(Double.parseDouble(
-                                                        String.valueOf(bsBuy.getPrice(null) == null ?
-                                                                bsBuy.getPrice(ClickType.LEFT) : bsBuy.getPrice(null))
-                                                ));
+                                                                String.valueOf(bsBuy.getPrice(null) == null ?
+                                                                        bsBuy.getPrice(ClickType.LEFT) : bsBuy.getPrice(null))
+                                                        ) / bsBuy.getItem().getAmount()
+                                                );
                                                 newItem.setSellPrice(Double.parseDouble(
-                                                        String.valueOf(bsBuy.getPrice(null) == null ?
-                                                                bsBuy.getPrice(ClickType.RIGHT) : bsBuy.getPrice(null))
-                                                ));
+                                                                String.valueOf(bsBuy.getPrice(null) == null ?
+                                                                        bsBuy.getPrice(ClickType.RIGHT) : bsBuy.getPrice(null))
+                                                        ) / bsBuy.getItem().getAmount()
+                                                );
                                             } catch (Exception e) {
                                                 Log.info("Could not import item of name " + bsBuy.getName());
                                                 return;

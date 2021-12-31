@@ -115,7 +115,7 @@ public class sellConfirmMenu extends abstractConfirmMenu {
 
     @Override
     protected double getItemPrice() {
-        return item.getSellPrice().orElse(dPrice.EMPTY()).getPriceForPlayer(player, shop, item.getID(), priceModifier.type.SELL);
+        return item.getDSellPrice().orElse(dPrice.EMPTY()).getPriceForPlayer(player, shop, item.getID(), priceModifier.type.SELL);
     }
 
     private int countSimilarItems() {

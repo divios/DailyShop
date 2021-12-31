@@ -114,8 +114,8 @@ public class singleGuiImpl implements singleGui {
                     if (oldItem == null || buttons.get(integer) == null) return;
                     oldItem = oldItem.clone();
                     oldItem.setStock(buttons.get(integer).getStock());   // Set the stock of the actual item
-                    oldItem.setBuyPrice(buttons.get(integer).getBuyPrice().orElse(dPrice.EMPTY()));  // Set buyPrice (randomPrice bug)
-                    oldItem.setSellPrice(buttons.get(integer).getSellPrice().orElse(dPrice.EMPTY()));  // Set sellPrice (randomPrice bug)
+                    oldItem.setBuyPrice(buttons.get(integer).getDBuyPrice().orElse(dPrice.EMPTY()));  // Set buyPrice (randomPrice bug)
+                    oldItem.setSellPrice(buttons.get(integer).getDSellPrice().orElse(dPrice.EMPTY()));  // Set sellPrice (randomPrice bug)
                     oldItem = oldItem.applyLore(loreStrategy, p, shop);
 
                 } else
@@ -185,8 +185,8 @@ public class singleGuiImpl implements singleGui {
     private final static class dRandomItemsSelector {
 
         private static final Predicate<dItem> filterItems = item ->
-                !(item.getBuyPrice().orElse(dPrice.EMPTY()).getPrice() < 0 &&
-                        item.getSellPrice().orElse(dPrice.EMPTY()).getPrice() < 0) || item.getRarity().getWeight() != 0;
+                !(item.getDBuyPrice().orElse(dPrice.EMPTY()).getPrice() < 0 &&
+                        item.getDSellPrice().orElse(dPrice.EMPTY()).getPrice() < 0) || item.getRarity().getWeight() != 0;
 
         private static final Function<dItem, Integer> getWeights = dItem -> dItem.getRarity().getWeight();
 

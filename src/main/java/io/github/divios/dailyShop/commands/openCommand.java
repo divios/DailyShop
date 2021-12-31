@@ -43,7 +43,6 @@ public class openCommand {
                 .assertUsage(FormatUtils.color("&8- &6/rdshop open [shop] [player] &8- &7Opens a gui for yourself or for the given player"))
                 .withArguments(getShopsArgument(), new PlayerArgument("target"))
                 .executes((commandSender, args) -> {
-                    Log.info("oke");
                     DailyShop.get().getShopsManager().getShop(args.get("dailyShop").getAsString())
                             .ifPresent(shop -> shop.openShop(args.get("target").getAsPlayer()));
                 });

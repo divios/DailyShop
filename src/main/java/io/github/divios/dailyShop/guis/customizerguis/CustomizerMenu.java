@@ -266,8 +266,8 @@ public class CustomizerMenu {
                                 .setName(Lang.CUSTOMIZE_PRICE_NAME.getAsString(p))
                                 .addLore(
                                         Lang.CUSTOMIZE_PRICE_LORE.getAsListString(p,
-                                                Template.of("buy_price", item.getBuyPrice().orElse(dPrice.EMPTY()).getVisualPrice()),
-                                                Template.of("sell_price", item.getSellPrice().orElse(dPrice.EMPTY()).getVisualPrice())
+                                                Template.of("buy_price", item.getDBuyPrice().orElse(dPrice.EMPTY()).getVisualPrice()),
+                                                Template.of("sell_price", item.getDSellPrice().orElse(dPrice.EMPTY()).getVisualPrice())
                                         )
                                 )
                         , e ->

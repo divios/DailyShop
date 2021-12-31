@@ -41,7 +41,7 @@ public class transaction {
             return;
         }
 
-        if (!item.getBuyPrice().isPresent() || item.getBuyPrice().get().getPrice() == -1) {
+        if (!item.getDBuyPrice().isPresent() || item.getDBuyPrice().get().getPrice() == -1) {
             Messages.MSG_INVALID_BUY.send(p);
             //shop.openShop(p);
             return;
@@ -52,7 +52,7 @@ public class transaction {
             return;
         }
 
-        if (!item.getEconomy().hasMoney(p, item.getBuyPrice().get().getPriceForPlayer(p, shop, item.getID(), priceModifier.type.BUY))) {
+        if (!item.getEconomy().hasMoney(p, item.getDBuyPrice().get().getPriceForPlayer(p, shop, item.getID(), priceModifier.type.BUY))) {
             Messages.MSG_NOT_MONEY.send(p);
             //shop.openShop(p);
             return;
@@ -197,7 +197,7 @@ public class transaction {
 
         /// A PARTIR DE AQUI YA SOLO COMPROBAR SLOTS Y PRICE ///
 
-        s.setPrice(item.getBuyPrice().orElse(dPrice.empty()).getPriceForPlayer(p, shop, item.getID(), priceModifier.type.BUY) * amount);
+        s.setPrice(item.getDBuyPrice().orElse(dPrice.empty()).getPriceForPlayer(p, shop, item.getID(), priceModifier.type.BUY) * amount);
 
         s.setSlots(item.getMaxStackSize() == 1 ?
                 s.getSlots() + amount : s.getSlots() + 1);

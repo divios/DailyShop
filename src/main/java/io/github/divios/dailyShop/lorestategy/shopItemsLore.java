@@ -102,13 +102,13 @@ public class shopItemsLore implements loreStrategy {
     }
 
     private boolean itemHasValidBuyPrice() {
-        return dItem.of(itemToApplyLore).getBuyPrice().isPresent()
-                && dItem.of(itemToApplyLore).getBuyPrice().get().getPrice() != -1;
+        return dItem.of(itemToApplyLore).getDBuyPrice().isPresent()
+                && dItem.of(itemToApplyLore).getDBuyPrice().get().getPrice() != -1;
     }
 
     private boolean itemHasValidSellPrice() {
-        return dItem.of(itemToApplyLore).getSellPrice().isPresent() &&
-                dItem.of(itemToApplyLore).getSellPrice().get().getPrice() != -1;
+        return dItem.of(itemToApplyLore).getDSellPrice().isPresent() &&
+                dItem.of(itemToApplyLore).getDSellPrice().get().getPrice() != -1;
     }
 
     private String getItemBuyPriceDoubleFormatted() {
@@ -120,11 +120,11 @@ public class shopItemsLore implements loreStrategy {
     }
 
     private double getItemBuyPriceDouble() {
-        return dItem.of(itemToApplyLore).getBuyPrice().orElse(new dPrice(-1)).getPriceForPlayer(player, shop, dItem.getId(itemToApplyLore), priceModifier.type.BUY);
+        return dItem.of(itemToApplyLore).getDBuyPrice().orElse(new dPrice(-1)).getPriceForPlayer(player, shop, dItem.getId(itemToApplyLore), priceModifier.type.BUY);
     }
 
     private double getItemSellPriceDouble() {
-        return dItem.of(itemToApplyLore).getSellPrice().orElse(new dPrice(-1)).getPriceForPlayer(player, shop, dItem.getId(itemToApplyLore), priceModifier.type.SELL);
+        return dItem.of(itemToApplyLore).getDSellPrice().orElse(new dPrice(-1)).getPriceForPlayer(player, shop, dItem.getId(itemToApplyLore), priceModifier.type.SELL);
     }
 
 

@@ -57,8 +57,8 @@ public class dItemAdapter implements JsonSerializer<dItem>, JsonDeserializer<dIt
         }
 
         dItem.getSetItems().ifPresent(integer -> merchant.addProperty("quantity", integer));
-        merchant.add("buyPrice", gson.toJsonTree(dItem.getBuyPrice().orElse(dPrice.EMPTY())));
-        merchant.add("sellPrice", gson.toJsonTree(dItem.getSellPrice().orElse(dPrice.EMPTY())));
+        merchant.add("buyPrice", gson.toJsonTree(dItem.getDBuyPrice().orElse(dPrice.EMPTY())));
+        merchant.add("sellPrice", gson.toJsonTree(dItem.getDSellPrice().orElse(dPrice.EMPTY())));
         if (dItem.hasStock()) merchant.add("stock", gson.toJsonTree(dItem.getStock()));
         if (!dItem.getEnchantments().isEmpty()) merchant.add("enchantments", gson.toJsonTree(wrapEnchants(dItem.getEnchantments())));
         dItem.getCommands().ifPresent(strings -> merchant.add("commands", gson.toJsonTree(strings)));

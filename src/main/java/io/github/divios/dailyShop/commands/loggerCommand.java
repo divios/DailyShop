@@ -14,7 +14,9 @@ public class loggerCommand {
                     LogGui.builder()
                             .withPlayer(player)
                             .prompt();
-                });
+                })
+                .executesConsole((consoleCommandSender, valueMap) ->
+                        consoleCommandSender.sendMessage("This command can only be executed by players"));
     }
 
 }

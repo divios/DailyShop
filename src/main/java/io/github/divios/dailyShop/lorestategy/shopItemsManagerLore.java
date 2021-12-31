@@ -73,11 +73,11 @@ public class shopItemsManagerLore implements loreStrategy {
     }
 
     private String getBuyVisualPrice(ItemStack item) {
-        return dItem.of(item).getBuyPrice().orElse(new dPrice(-1)).getVisualPrice();
+        return dItem.of(item).getDBuyPrice().orElse(new dPrice(-1)).getVisualPrice();
     }
 
     private String getSellVisualPrice(ItemStack item) {
-        return dItem.of(item).getSellPrice().orElse(new dPrice(-1)).getVisualPrice();
+        return dItem.of(item).getDSellPrice().orElse(new dPrice(-1)).getVisualPrice();
     }
 
 
