@@ -1155,14 +1155,12 @@ public class dItem implements Serializable, Cloneable {
         boolean similarBuyPrice = o.getBuyPrice().orElse(dPrice.EMPTY()).equals(this.getBuyPrice().orElse(dPrice.EMPTY()));
         boolean similarSellPrice = o.getSellPrice().orElse(dPrice.EMPTY()).equals(this.getSellPrice().orElse(dPrice.EMPTY()));
 
-        return removePrices(firstItem).getDailyItem().isSimilar(removePrices(this).getDailyItem())
-                && similarBuyPrice
-                && similarSellPrice
+        return firstItem.getDailyItem().isSimilar(secondItem.getDailyItem())
                 && similarStock;
     }
 
     private dItem removePrices(dItem item) {
-        return item.clone().setSellPrice(null).setBuyPrice(null);
+        return item.setSellPrice(null).setBuyPrice(null);
     }
 
     private boolean compareStocks(dStock o1, dStock o2) {
