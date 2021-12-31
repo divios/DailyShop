@@ -74,7 +74,7 @@ public class dPrice implements Serializable {
     public String getVisualPrice() {
         if (randomFlag)
             return PriceWrapper.format(minPrice) + " - " + PriceWrapper.format(maxPrice);
-        else if (actualPrice == -1) return FormatUtils.color("&c" + XSymbols.TIMES_3.parseSymbol());
+        else if (actualPrice <= 0) return FormatUtils.color("&c" + XSymbols.TIMES_3.parseSymbol());
         else return PriceWrapper.format(actualPrice);
     }
 

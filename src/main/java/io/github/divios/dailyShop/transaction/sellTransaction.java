@@ -157,7 +157,7 @@ public class sellTransaction {
     }
 
     private boolean invalidSellPrice() {
-        return !item.getDSellPrice().isPresent() || item.getDSellPrice().get().getPrice() == -1;
+        return !item.getDSellPrice().isPresent() || item.getDSellPrice().get().getPrice() <= 0;
     }
 
     private boolean itemExistOnShop() {

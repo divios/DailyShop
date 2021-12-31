@@ -41,7 +41,7 @@ public class transaction {
             return;
         }
 
-        if (!item.getDBuyPrice().isPresent() || item.getDBuyPrice().get().getPrice() == -1) {
+        if (!item.getDBuyPrice().isPresent() || item.getDBuyPrice().get().getPrice() <= 0) {
             Messages.MSG_INVALID_BUY.send(p);
             //shop.openShop(p);
             return;
