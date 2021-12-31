@@ -462,10 +462,10 @@ public class dInventory {
                 return newInv[0];
             }
 
-        } catch (Exception e) {
+        } catch (Exception | Error e) {
             Log.severe("Unable to deserialize gui of shop "
-                    + shop.getName() + ", setting it to default");
-            e.printStackTrace();
+                    + shop.getName() + ", . Probably is caused by a server downgrade? Setting it to default");
+            //e.printStackTrace();
             return new dInventory(shop);
         }
 
