@@ -1,8 +1,10 @@
 package io.github.divios.lib.dLib.stock.factory;
 
+import io.github.divios.lib.dLib.stock.dStock;
+
 import java.util.UUID;
 
-final class dStockGlobal extends dStockAbstract {
+final class dStockGlobal extends dStock {
 
     private final UUID globalKey = UUID.randomUUID();
     

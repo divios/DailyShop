@@ -1,9 +1,11 @@
 package io.github.divios.lib.dLib.stock.factory;
 
 
+import io.github.divios.lib.dLib.stock.dStock;
+
 import java.util.UUID;
 
-final class dStockIndividual extends dStockAbstract {
+final class dStockIndividual extends dStock {
 
     dStockIndividual(int defaultStock) {
         super(defaultStock);
