@@ -7,6 +7,7 @@ import io.github.divios.dailyShop.utils.PriceWrapper;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.priceModifiers.priceModifier;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -94,8 +95,9 @@ public class dPrice implements Serializable, Cloneable {
         else return String.valueOf(actualPrice);
     }
 
-    public boolean isSimilar(dPrice price) {
-        if (randomFlag != price.randomFlag) return false;
+    public boolean isSimilar(@Nullable dPrice price) {
+        if (this == price) return true;
+        if (price == null || randomFlag != price.randomFlag) return false;
 
         if (randomFlag) {
             return maxPrice == price.maxPrice
@@ -110,7 +112,10 @@ public class dPrice implements Serializable, Cloneable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         dPrice dPrice = (dPrice) o;
-        return randomFlag == dPrice.randomFlag && Double.compare(dPrice.minPrice, minPrice) == 0 && Double.compare(dPrice.maxPrice, maxPrice) == 0;
+        return randomFlag == dPrice.randomFlag
+                && Double.compare(dPrice.minPrice, minPrice) == 0
+                && Double.compare(dPrice.maxPrice, maxPrice) == 0
+                && Double.compare(actualPrice, dPrice.actualPrice) == 0;
     }
 
     @Override
