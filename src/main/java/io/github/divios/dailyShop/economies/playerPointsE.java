@@ -1,39 +1,38 @@
 package io.github.divios.dailyShop.economies;
 
 
+import io.github.divios.dailyShop.hooks.Hooks;
 import org.black_ixx.playerpoints.PlayerPoints;
 import org.black_ixx.playerpoints.PlayerPointsAPI;
 import org.bukkit.entity.Player;
 
-public class playerPointsE extends abstractEconomy {
+public class playerPointsE extends economy {
 
-    public playerPointsE() {
+    playerPointsE() {
         this("");
     }
 
-    public playerPointsE(String currency) {
-        super(currency, "PlayerPoints", econTypes.playerPoints);
+    playerPointsE(String currency) {
+        super(currency, "PlayerPoints", Economies.playerPoints);
     }
-
-    private transient static final PlayerPointsAPI api = PlayerPoints.getInstance().getAPI();
 
     @Override
     public void test() {
-        api.getClass().getName();
+        Hooks.PLAYER_POINTS.getApi().getClass().getName();
     }
 
     @Override
     public void witchDrawMoney(Player p, Double price) {
-        api.takeAsync(p.getUniqueId(), (int) Math.round(price));
+        Hooks.PLAYER_POINTS.getApi().takeAsync(p.getUniqueId(), (int) Math.round(price));
     }
 
     @Override
     public void depositMoney(Player p, Double price) {
-        api.giveAsync(p.getUniqueId(), (int) Math.round(price));
+        Hooks.PLAYER_POINTS.getApi().giveAsync(p.getUniqueId(), (int) Math.round(price));
     }
 
     @Override
     public double getBalance(Player p) {
-        return api.look(p.getUniqueId());
+        return Hooks.PLAYER_POINTS.getApi().look(p.getUniqueId());
     }
 }

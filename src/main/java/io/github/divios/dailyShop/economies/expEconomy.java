@@ -2,14 +2,14 @@ package io.github.divios.dailyShop.economies;
 
 import org.bukkit.entity.Player;
 
-public class expEconomy extends abstractEconomy {
+public class expEconomy extends economy {
 
-    public expEconomy() {
+    expEconomy() {
         this("");
     }
 
-    protected expEconomy(String name) {
-        super("", "exp", econTypes.exp);
+    expEconomy(String name) {
+        super("", "exp", Economies.exp);
     }
 
     @Override

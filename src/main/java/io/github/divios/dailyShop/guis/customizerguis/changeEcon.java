@@ -9,10 +9,10 @@ import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.dailyShop.DailyShop;
-import io.github.divios.dailyShop.economies.*;
+import io.github.divios.dailyShop.economies.Economies;
+import io.github.divios.dailyShop.economies.economy;
 import io.github.divios.dailyShop.files.Lang;
 import io.github.divios.dailyShop.hooks.Hooks;
-import io.github.divios.dailyShop.hooks.elementalGemsHook;
 import io.github.divios.lib.dLib.dItem;
 import me.TechsCode.UltraEconomy.UltraEconomyAPI;
 import me.realized.tokenmanager.api.TokenManager;
@@ -95,7 +95,7 @@ public class changeEcon {
     }
 
     private void createExpButton(InventoryGUI menu) {
-        addButton(menu, createEconomyButton(XMaterial.EXPERIENCE_BOTTLE, "&f&lExp", new expEconomy()));
+        addButton(menu, createEconomyButton(XMaterial.EXPERIENCE_BOTTLE, "&f&lExp", Economies.exp.getEconomy()));
     }
 
     /*private void createItemButton(InventoryGUI menu) {
@@ -108,30 +108,31 @@ public class changeEcon {
                     ItemButton.create(
                             createEconomyItem(XMaterial.SUNFLOWER, "&f&l" + s),
                             e -> {
-                                item.setEconomy(new MPointsE(FormatUtils.stripColor(ItemUtils.getName(e.getCurrentItem()))));
+                                if (e.getCurrentItem() == null) return;
+                                item.setEconomy(Economies.MPoints.getEconomy(FormatUtils.stripColor(ItemUtils.getName(e.getCurrentItem()))));
                                 consumer.accept(item);
                             }));
         }
     }
 
     private void createPlayerPointsButton(InventoryGUI menu) {
-        addButton(menu, createEconomyButton(XMaterial.PLAYER_HEAD, "&f&lPlayerPoints", new playerPointsE()));
+        addButton(menu, createEconomyButton(XMaterial.PLAYER_HEAD, "&f&lPlayerPoints", Economies.playerPoints.getEconomy()));
     }
 
     private void createUltraEconomyButtons(InventoryGUI menu) {
         uEconApi.getCurrencies().forEach(currency ->
                 addButton(menu, createEconomyButton(XMaterial.TRIPWIRE_HOOK, "&f&l" + currency.getName(),
-                        new ultraEconomyE(currency.getName()))
+                        Economies.ultraEconomy.getEconomy(currency.getName()))
                 )
         );
     }
 
     private void createTokenManagerButton(InventoryGUI menu) {
-        addButton(menu, createEconomyButton(XMaterial.DIAMOND, "&b&lTokenManager", new tokenManagerE()));
+        addButton(menu, createEconomyButton(XMaterial.DIAMOND, "&b&lTokenManager", Economies.tokenManager.getEconomy()));
     }
 
     private void createTokenEnchantsButton(InventoryGUI menu) {
-        addButton(menu, createEconomyButton(XMaterial.ENCHANTED_BOOK, "&d&lTokenEnchants", new tokenManagerE()));
+        addButton(menu, createEconomyButton(XMaterial.ENCHANTED_BOOK, "&d&lTokenEnchants", Economies.tokenEnchants.getEconomy()));
     }
 
     private void createGemsApiButton(InventoryGUI menu) {
@@ -141,18 +142,19 @@ public class changeEcon {
                     ItemButton.create(
                             createEconomyItem(XMaterial.EMERALD, "&f&l" + s),
                             e -> {
-                                item.setEconomy(new gemEcon(FormatUtils.stripColor(ItemUtils.getName(e.getCurrentItem()))));
+                                if (e.getCurrentItem() == null) return;
+                                item.setEconomy(Economies.gemsEconomy.getEconomy(FormatUtils.stripColor(ItemUtils.getName(e.getCurrentItem()))));
                                 consumer.accept(item);
                             }));
         }
     }
 
     private void createElementalGemsButton(InventoryGUI menu) {
-        addButton(menu, createEconomyButton(XMaterial.EMERALD, "&d&lElementalGems", new ElementalGemsEcon()));
+        addButton(menu, createEconomyButton(XMaterial.EMERALD, "&d&lElementalGems", Economies.elementalGems.getEconomy()));
     }
 
     private void createVaultButton(InventoryGUI menu) {
-        addButton(menu, createEconomyButton(XMaterial.CHEST, "&f&lVault", new vault()));
+        addButton(menu, createEconomyButton(XMaterial.CHEST, "&f&lVault", Economies.vault.getEconomy()));
     }
 
     private void createReturnButton(InventoryGUI menu) {

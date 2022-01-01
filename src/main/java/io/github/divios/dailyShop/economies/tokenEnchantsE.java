@@ -1,17 +1,16 @@
 package io.github.divios.dailyShop.economies;
 
-import com.vk2gpz.tokenenchant.api.TokenEnchantAPI;
 import io.github.divios.dailyShop.hooks.Hooks;
 import org.bukkit.entity.Player;
 
-public class tokenEnchantsE extends abstractEconomy {
+public class tokenEnchantsE extends economy {
 
-    public tokenEnchantsE() {
+    tokenEnchantsE() {
         this("");
     }
 
-    public tokenEnchantsE(String currency) {
-        super(currency, "TokenEnchants", econTypes.tokenEnchants);
+    tokenEnchantsE(String currency) {
+        super(currency, "TokenEnchants", Economies.tokenEnchants);
     }
 
     @Override

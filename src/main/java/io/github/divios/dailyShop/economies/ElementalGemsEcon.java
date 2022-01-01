@@ -3,14 +3,14 @@ package io.github.divios.dailyShop.economies;
 import me.elementalgaming.ElementalGems.GemAPI;
 import org.bukkit.entity.Player;
 
-public class ElementalGemsEcon extends abstractEconomy {
+public class ElementalGemsEcon extends economy {
 
-    public ElementalGemsEcon() {
+    ElementalGemsEcon() {
         this("");
     }
 
-    protected ElementalGemsEcon(String name) {
-        super("", "elementalGems", econTypes.elementalGems);
+    ElementalGemsEcon(String name) {
+        super("", "elementalGems", Economies.elementalGems);
     }
 
     @Override

@@ -1,35 +1,86 @@
 package io.github.divios.dailyShop.economies;
 
+import io.github.divios.dailyShop.DailyShop;
+import io.github.divios.dailyShop.files.Settings;
 import me.realized.tokenmanager.util.Log;
 import org.bukkit.entity.Player;
 import org.bukkit.util.io.BukkitObjectInputStream;
+import org.bukkit.util.io.BukkitObjectOutputStream;
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.function.Supplier;
 
-public interface economy {
+public abstract class economy implements Serializable, Cloneable {
 
-    void test();
-
-    default boolean hasMoney(Player p, Double price) {
-        return getBalance(p) >= price;
+    public static economy fromString(String str) {
+        String[] econ = str.split(":");
+        return getFromKey(econ[0], econ[1]);
     }
 
-    void witchDrawMoney(Player p, Double price);
+    protected static final DailyShop plugin = DailyShop.get();
 
-    void depositMoney(Player p, Double price);
+    protected final String currency;
+    private final Supplier<String> name;
+    private final Economies key;
 
-    double getBalance(Player p);
+    protected economy(String currency, Supplier<String> name, Economies key) {
+        this.currency = currency;
+        this.name = name;
+        this.key = key;
+    }
 
-    String getName();
+    protected economy(String currency, String name, Economies key) {
+        this.currency = currency;
+        this.name = () -> name;
+        this.key = key;
+    }
 
-    String getCurrency();
+    public abstract void test();
 
-    String getKey();
+    public abstract void witchDrawMoney(Player p, Double price);
 
-    String serialize();
+    public abstract void depositMoney(Player p, Double price);
 
-    static economy deserialize(String base64) {
+    public boolean hasMoney(Player p, double amount) {
+        return getBalance(p) >= amount;
+    }
+
+    public abstract double getBalance(Player p);
+
+    public String getName() {
+        return Settings.ECON_NAMES.getEconNameOrDefault(name.get(), name.get());
+    }
+
+    public String getCurrency() {
+        return currency;
+    }
+
+    public String getKey() {
+        return key.name();
+    }
+
+    public String serialize() {
+        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+            try (BukkitObjectOutputStream dataOutput = new BukkitObjectOutputStream(outputStream)) {
+                dataOutput.writeObject(getKey());
+                dataOutput.writeObject(this.currency);
+                return Base64Coder.encodeLines(outputStream.toByteArray());
+            }
+        } catch (IOException e) {
+            throw new IllegalStateException("Unable to serialize economy.", e);
+        }
+    }
+
+    @Override
+    public String toString() {
+        return name.get() + ":" + currency;
+    }
+
+    public static economy deserialize(String base64) {
         try (ByteArrayInputStream InputStream = new ByteArrayInputStream(Base64Coder.decodeLines(base64))) {
             try (BukkitObjectInputStream dataInput = new BukkitObjectInputStream(InputStream)) {
                 String key = (String) dataInput.readObject();
@@ -41,9 +92,9 @@ public interface economy {
         }
     }
 
-    static economy getFromKey(String key, String currency) {
+    public static economy getFromKey(String key, String currency) {
         try {
-            for (econTypes value : econTypes.values()) {
+            for (Economies value : Economies.values()) {
                 if (value.name().equalsIgnoreCase(key))
                     return value.getEconomy(currency);
             }
@@ -53,4 +104,12 @@ public interface economy {
         return new vault();
     }
 
+    @Override
+    public economy clone() {
+        try {
+            return (economy) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
+    }
 }

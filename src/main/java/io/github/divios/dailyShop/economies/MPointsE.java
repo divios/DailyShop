@@ -1,15 +1,14 @@
 package io.github.divios.dailyShop.economies;
 
 import io.github.divios.dailyShop.hooks.Hooks;
-import me.yic.mpoints.MPointsAPI;
 import org.bukkit.entity.Player;
 
 import java.math.BigDecimal;
 
-public class MPointsE extends abstractEconomy {
+public class MPointsE extends economy {
 
-    public MPointsE(String point) {
-        super(point, point, econTypes.MPoints);
+    MPointsE(String point) {
+        super(point, point, Economies.MPoints);
     }
 
     @Override

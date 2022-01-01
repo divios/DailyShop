@@ -1,17 +1,16 @@
 package io.github.divios.dailyShop.economies;
 
 import io.github.divios.dailyShop.hooks.Hooks;
-import net.milkbowl.vault.economy.Economy;
 import org.bukkit.entity.Player;
 
-public class vault extends abstractEconomy {
+public class vault extends economy {
 
-    public vault() {
+    vault() {
         this("");
     }
 
-    public vault(String currency) {
-        super(currency, () -> "Vault", econTypes.vault);
+    vault(String currency) {
+        super(currency, () -> "Vault", Economies.vault);
     }
 
     @Override

@@ -4,16 +4,16 @@ import io.github.divios.core_lib.itemutils.ItemUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-public class itemEconomy extends abstractEconomy {
+public class itemEconomy extends economy {
 
     private final ItemStack item;
 
-    public itemEconomy(ItemStack item) {
+    itemEconomy(ItemStack item) {
         this(ItemUtils.serialize(item));
     }
 
-    protected itemEconomy(String currency) {
-        super("item", currency, econTypes.exp);
+    itemEconomy(String currency) {
+        super("item", currency, Economies.exp);
         item = ItemUtils.deserialize(currency);
     }
 

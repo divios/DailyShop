@@ -4,14 +4,14 @@ import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.hooks.Hooks;
 import org.bukkit.entity.Player;
 
-public class tokenManagerE extends abstractEconomy {
+public class tokenManagerE extends economy {
 
-    public tokenManagerE() {
+    tokenManagerE() {
         this("");
     }
 
-    public tokenManagerE(String currency) {
-        super(currency, "TokenManager", econTypes.tokenManager);
+    tokenManagerE(String currency) {
+        super(currency, "TokenManager", Economies.tokenManager);
     }
 
     @Override

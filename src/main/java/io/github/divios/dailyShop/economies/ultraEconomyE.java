@@ -1,17 +1,16 @@
 package io.github.divios.dailyShop.economies;
 
 import io.github.divios.dailyShop.hooks.Hooks;
-import me.TechsCode.UltraEconomy.UltraEconomyAPI;
 import me.TechsCode.UltraEconomy.objects.Account;
 import me.TechsCode.UltraEconomy.objects.Currency;
 import org.bukkit.entity.Player;
 
-public class ultraEconomyE extends abstractEconomy {
+public class ultraEconomyE extends economy {
 
     private final Currency currency;
 
-    public ultraEconomyE(String currency) {
-        super(currency, currency, econTypes.ultraEconomy);
+    ultraEconomyE(String currency) {
+        super(currency, currency, Economies.ultraEconomy);
         this.currency = Hooks.ULTRA_ECONOMY.getApi().getCurrencies().name(currency).get();
     }
 

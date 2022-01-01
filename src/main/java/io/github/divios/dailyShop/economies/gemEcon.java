@@ -1,16 +1,15 @@
 package io.github.divios.dailyShop.economies;
 
 import io.github.divios.dailyShop.hooks.Hooks;
-import me.xanium.gemseconomy.api.GemsEconomyAPI;
 import me.xanium.gemseconomy.currency.Currency;
 import org.bukkit.entity.Player;
 
-public class gemEcon extends abstractEconomy {
+public class gemEcon extends economy {
 
     private final Currency _currency;
 
-    public gemEcon(String currency) {
-        super(currency, currency, econTypes.gemsEconomy);
+    gemEcon(String currency) {
+        super(currency, currency, Economies.gemsEconomy);
         this._currency = Hooks.GEMS_ECONOMY.getApi().getCurrency(currency);
     }
 
