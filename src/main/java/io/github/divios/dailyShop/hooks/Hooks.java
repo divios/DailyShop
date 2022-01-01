@@ -1,5 +1,7 @@
 package io.github.divios.dailyShop.hooks;
 
+import io.github.divios.dailyShop.utils.Utils;
+
 public class Hooks {
 
     public final static bstatsHook B_STATS;
@@ -20,7 +22,7 @@ public class Hooks {
         ELEMENTAL_GEMS = new elementalGemsHook();
         GEMS_ECONOMY = new gemsEconomyHook();
         M_POINTS = new MPointsHook();
-        PLACEHOLDER_API = new placeholderApiHook();
+        PLACEHOLDER_API = Utils.isOperative("PlaceholderApi") ? new placeholderApiHook() : null;
         PLAYER_POINTS = new playerPointsHook();
         SHOP_GUI_PLUS = new shopGuiPlusHook();
         TOKEN_ENCHANT = new tokenEnchantsHook();

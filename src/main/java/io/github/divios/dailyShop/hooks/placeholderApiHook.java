@@ -17,12 +17,12 @@ class placeholderApiHook extends PlaceholderExpansion implements Hook<Placeholde
 
     placeholderApiHook() {
         tryToHook();
-        Log.info("Hooked to PlaceholderAPI");
-        this.register();
     }
 
     private void tryToHook() {
         if (Utils.isOperative("PlaceholderApi")) {
+            Log.info("Hooked to PlaceholderAPI");
+            this.register();
             isHook = true;
         }
     }
