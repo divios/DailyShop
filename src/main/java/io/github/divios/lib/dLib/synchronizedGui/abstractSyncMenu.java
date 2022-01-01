@@ -144,9 +144,7 @@ public abstract class abstractSyncMenu implements syncMenu {
 
     public synchronized void updateItem(updateItemEvent o) {
         base.updateItem(o);
-        guis.forEach((uuid, singleGui) -> {
-            singleGui.updateItem(o);
-        });
+        guis.forEach((uuid, singleGui) -> singleGui.updateItem(o));
     }
 
     protected abstract Map<UUID, singleGui> createMap();
@@ -189,7 +187,11 @@ public abstract class abstractSyncMenu implements syncMenu {
 
     @Override
     public synchronized void destroy() {
-        guis.keySet().forEach(uuid -> Bukkit.getPlayer(uuid).closeInventory());     // Triggers invalidate
+        guis.keySet().forEach(uuid -> {
+            Player p;
+            if ((p = Bukkit.getPlayer(uuid)) != null)
+                p.closeInventory();
+        });
         invalidateAll();
 
         listeners.forEach(Subscription::unregister);

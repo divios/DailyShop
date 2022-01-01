@@ -13,6 +13,7 @@ import java.util.UUID;
  * Interface declaring the contract of a syncMenu
  */
 
+@SuppressWarnings("unused")
 public interface syncMenu {
 
     void generate(Player p);

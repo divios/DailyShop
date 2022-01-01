@@ -436,13 +436,12 @@ public class dInventory {
     }
 
     private static dInventory deserialize(String base64, dShop shop) {
-        dInventory newInv[] = {null};
+        dInventory[] newInv = {null};
         try (ByteArrayInputStream InputStream = new ByteArrayInputStream(Base64Coder.decodeLines(base64))) {
             try (BukkitObjectInputStream dataInput = new BukkitObjectInputStream(InputStream)) {
 
-                inventoryUtils.deserialize((String) dataInput.readObject()).stream((s1, inv) -> {
-                    newInv[0] = new dInventory(s1, inv, shop);
-                });
+                inventoryUtils.deserialize((String) dataInput.readObject()).stream((s1, inv) ->
+                        newInv[0] = new dInventory(s1, inv, shop));
 
                 newInv[0].dailyItemsSlots.clear();
                 newInv[0].dailyItemsSlots.addAll((Set<Integer>) dataInput.readObject());
@@ -472,8 +471,8 @@ public class dInventory {
     }
 
     private boolean compareInvs(Inventory inv1, Inventory inv2) {
-        ItemStack contents1[] = inv1.getContents();
-        ItemStack contents2[] = inv2.getContents();
+        ItemStack[] contents1 = inv1.getContents();
+        ItemStack[] contents2 = inv2.getContents();
 
         if (contents1.length != contents2.length) return false;
 

@@ -12,13 +12,14 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.function.Supplier;
 
 public abstract class economy implements Serializable {
 
     public static economy fromString(String str) {
         String[] econ = str.split(":");
-        return getFromKey(econ[0], econ[1]);
+        return getFromKey(econ[0], econ.length >= 2 ? econ[1] : "");
     }
 
     protected static final DailyShop plugin = DailyShop.get();
@@ -73,6 +74,22 @@ public abstract class economy implements Serializable {
         } catch (IOException e) {
             throw new IllegalStateException("Unable to serialize economy.", e);
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        economy economy = (economy) o;
+        return Objects.equals(currency, economy.currency)
+                && Objects.equals(name.get(), economy.name.get())
+                && key == economy.key;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(currency, name, key);
     }
 
     @Override

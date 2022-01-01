@@ -15,6 +15,7 @@ public class commandsManager {
                 .withSubcommands(new loggerCommand().getCommand())
                 .withSubcommands(new importShops().getCommand())
                 .withSubcommands(new reloadCommand().getCommand())
+                .withSubcommands(new testNewStockCommand().getCommand())  // TODO remove this
                 .executes((sender, valueMap) -> {
                     sender.sendMessage(FormatUtils.color("&8 ------- &6 Help &8 -------"));
                     sender.sendMessage(FormatUtils.color("&8- &6/rdshop open [shop] [player] &8- &7Opens a gui for yourself or for the given player"));

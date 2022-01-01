@@ -13,12 +13,14 @@ import io.github.divios.dailyShop.utils.InterfaceAdapter;
 import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.dLib.stock.factory.dStockFactory;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
+import java.io.Serializable;
 import java.util.*;
 
-@SuppressWarnings({"unused", "UnstableApiUsage"})
-public abstract class dStock {
+@SuppressWarnings({"unused", "UnstableApiUsage", "unchecked"})
+public abstract class dStock implements Cloneable, Serializable {
 
     private static final Gson gson = new Gson();
     private static final TypeToken<Map<UUID, Integer>> mapToken = new TypeToken<Map<UUID, Integer>>() {
@@ -64,7 +66,7 @@ public abstract class dStock {
     }
 
     protected final int defaultStock;
-    protected final HashMap<UUID, Integer> stocks = new HashMap<>();
+    protected HashMap<UUID, Integer> stocks = new HashMap<>();
 
     protected dStock(int defaultStock, Map<UUID, Integer> stocks) {
         this.defaultStock = defaultStock;
@@ -81,54 +83,54 @@ public abstract class dStock {
         return defaultStock;
     }
 
-    public Integer get(Player p) {
-        return get(p.getUniqueId());
+    public Integer get(@Nullable Player p) {
+        return get(p == null ? null : p.getUniqueId());
     }
 
-    public Integer get(UUID p) {
+    public Integer get(@Nullable UUID p) {
         if (!exists(p) && isIndividual()) reset(p);          // If doesn't exist on individual, create it
         return stocks.get(getKey(p));
     }
 
-    public void set(Player p, int stock) {
-        set(p.getUniqueId(), stock);
+    public void set(@Nullable Player p, int stock) {
+        set(p == null ? null : p.getUniqueId(), stock);
     }
 
-    public void set(UUID p, int stock) {
+    public void set(@Nullable UUID p, int stock) {
         stocks.put(getKey(p), stock);
     }
 
-    public boolean exists(Player p) {
-        return exists(p.getUniqueId());
+    public boolean exists(@Nullable Player p) {
+        return exists(p == null ? null : p.getUniqueId());
     }
 
-    public boolean exists(UUID p) {
+    public boolean exists(@Nullable UUID p) {
         return stocks.containsKey(getKey(p));
     }
 
-    public void increment(Player p, int amount) {
-        increment(p.getUniqueId(), amount);
+    public void increment(@Nullable Player p, int amount) {
+        increment(p == null ? null : p.getUniqueId(), amount);
     }
 
-    public void increment(UUID p, int amount) {
+    public void increment(@Nullable UUID p, int amount) {
         if (!exists(p)) stocks.put(p, defaultStock + amount);
-        else stocks.compute(getKey(p), (uuid, integer) -> integer + amount);
+        else stocks.computeIfPresent(getKey(p), (uuid, integer) -> integer + amount);
     }
 
-    public void decrement(Player p, int amount) {
-        decrement(p.getUniqueId(), amount);
+    public void decrement(@Nullable Player p, int amount) {
+        decrement(p == null ? null : p.getUniqueId(), amount);
     }
 
-    public void decrement(UUID p, int amount) {
+    public void decrement(@Nullable UUID p, int amount) {
         if (!exists(p)) stocks.put(p, defaultStock - amount);
-        else stocks.compute(getKey(p), (uuid, integer) -> integer - amount);
+        else stocks.computeIfPresent(getKey(p), (uuid, integer) -> integer - amount);
     }
 
-    public void reset(Player p) {
-        reset(p.getUniqueId());
+    public void reset(@Nullable Player p) {
+        reset(p == null ? null : p.getUniqueId());
     }
 
-    public void reset(UUID p) {
+    public void reset(@Nullable UUID p) {
         stocks.put(getKey(p), defaultStock);
     }
 
@@ -152,9 +154,13 @@ public abstract class dStock {
     @Override
     public dStock clone() {
         try {
-            return (dStock) super.clone();
+            dStock cloned = (dStock) super.clone();
+            cloned.stocks.clear();
+            cloned.stocks = (HashMap<UUID, Integer>) stocks.clone();
+
+            return cloned;
         } catch (CloneNotSupportedException e) {
-            throw new AssertionError();
+            throw new RuntimeException(e);
         }
     }
 
@@ -162,9 +168,10 @@ public abstract class dStock {
      * Compares stocks without having into account
      * the stocks of players saved
      */
-    public boolean isSimilar(dStock stock) {
-        return getName().equals(stock.getName())
-                && defaultStock == stock.defaultStock;
+    public boolean isSimilar(@Nullable dStock stock) {
+        return (this == stock) || (stock != null
+                && Objects.equals(getName(), stock.getName())
+                && defaultStock == stock.defaultStock);
     }
 
     @Override
