@@ -11,7 +11,7 @@ import org.bukkit.entity.Player;
 import java.io.Serializable;
 import java.util.Objects;
 
-public class dPrice implements Serializable {
+public class dPrice implements Serializable, Cloneable {
 
     private boolean randomFlag = false;
     private double minPrice = 0;
@@ -20,6 +20,14 @@ public class dPrice implements Serializable {
 
     public static dPrice EMPTY() {
         return new dPrice();
+    }
+
+    public static dPrice fromString(String str) {
+        String[] prices = str.split(":");
+        if (prices.length == 1)
+            return new dPrice(Double.parseDouble(prices[0]));
+        else
+            return new dPrice(Double.parseDouble(prices[0]), Double.parseDouble(prices[1]));
     }
 
     private dPrice() {
@@ -54,6 +62,7 @@ public class dPrice implements Serializable {
         return actualPrice;
     }
 
+    @Deprecated
     public double getPriceForPlayer(Player p, dShop shop, String itemID, priceModifier.type type) {
         double price = getPrice();
         double modifier = DailyShop.get().getPriceModifiers().getModifier(p, shop == null ? null : shop.getName(), itemID, type);
@@ -85,6 +94,17 @@ public class dPrice implements Serializable {
         else return String.valueOf(actualPrice);
     }
 
+    public boolean isSimilar(dPrice price) {
+        if (randomFlag != price.randomFlag) return false;
+
+        if (randomFlag) {
+            return maxPrice == price.maxPrice
+                    && minPrice == price.minPrice;
+        } else {
+            return actualPrice == price.actualPrice;
+        }
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -96,6 +116,18 @@ public class dPrice implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hash(randomFlag, minPrice, maxPrice, actualPrice);
+    }
+
+    @Override
+    public dPrice clone() {
+        dPrice T;
+        try {
+            T = (dPrice) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
+
+        return T;
     }
 
     public enum type {
