@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.function.Supplier;
 
-public abstract class economy implements Serializable, Cloneable {
+public abstract class economy implements Serializable {
 
     public static economy fromString(String str) {
         String[] econ = str.split(":");
@@ -102,14 +102,5 @@ public abstract class economy implements Serializable, Cloneable {
             Log.info("Cannot get economy " + currency + ", check if the corresponding plugin is enabled. Setting it to vault");
         }
         return new vault();
-    }
-
-    @Override
-    public economy clone() {
-        try {
-            return (economy) super.clone();
-        } catch (CloneNotSupportedException e) {
-            throw new AssertionError();
-        }
     }
 }
