@@ -2,18 +2,15 @@ package io.github.divios.lib.dLib;
 
 import com.cryptomorin.xseries.XMaterial;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
-import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.files.Lang;
-import io.github.divios.dailyShop.files.Settings;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
-public class dRarity {
-
-    private static final DailyShop plugin = DailyShop.get();
+public class dRarity implements Cloneable {
 
     private transient static final List<ItemStack> items = new ArrayList<ItemStack>() {{
         add(XMaterial.GRAY_DYE.parseItem());
@@ -43,7 +40,6 @@ public class dRarity {
 
     /**
      * Gets the rarity as an item
-     * @return
      */
     public ItemStack getAsItem() {
         return ItemBuilder.of(items.get(rarity.ordinal()).clone())
@@ -60,13 +56,11 @@ public class dRarity {
 
     /**
      * Gets the weight of this rarity
-     * @return
      */
     public int getWeight() { return rarity.getWeight(); }
 
     /**
      * Gets the rarity lore
-     * @return
      */
     private String getRarityLore() {
         try {
@@ -81,6 +75,28 @@ public class dRarity {
     @Override
     public String toString() {
         return getRarityLore();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        dRarity dRarity = (dRarity) o;
+        return rarity == dRarity.rarity;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(rarity);
+    }
+
+    @Override
+    public dRarity clone() {
+        try {
+            return (dRarity) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError(e);
+        }
     }
 
     private enum rarityT {
