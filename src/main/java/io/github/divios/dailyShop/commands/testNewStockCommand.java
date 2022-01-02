@@ -5,6 +5,7 @@ import com.google.common.base.Preconditions;
 import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.economies.Economies;
 import io.github.divios.dailyShop.economies.economy;
+import io.github.divios.dailyShop.files.Settings;
 import io.github.divios.jcommands.JCommand;
 import io.github.divios.lib.dLib.dPrice;
 import io.github.divios.lib.dLib.dRarity;
@@ -26,6 +27,7 @@ public class testNewStockCommand {
 
     public JCommand getCommand() {
         return JCommand.create("testNewStock")
+                .assertRequirements(sender -> Settings.DEBUG.getValue().getAsBoolean())
                 .executesPlayer((sender, valueMap) -> {
                     this.p = sender;
 

@@ -13,7 +13,6 @@ import io.github.divios.dailyShop.economies.Economies;
 import io.github.divios.dailyShop.economies.economy;
 import io.github.divios.dailyShop.files.Lang;
 import io.github.divios.dailyShop.hooks.Hooks;
-import io.github.divios.lib.dLib.dItem;
 import me.TechsCode.UltraEconomy.UltraEconomyAPI;
 import me.realized.tokenmanager.api.TokenManager;
 import me.xanium.gemseconomy.api.GemsEconomyAPI;
@@ -38,22 +37,15 @@ public class changeEcon {
     private static final PlayerPointsAPI pPointsApi = Hooks.PLAYER_POINTS.getApi();
     private static final UltraEconomyAPI uEconApi = Hooks.ULTRA_ECONOMY.getApi();
 
-    private final dItem item;
     private final Player p;
-    private final Consumer<dItem> consumer;
+    private final Consumer<economy> consumer;
 
     public static changeEconBuilder builder() {
         return new changeEconBuilder();
     }
 
-    @Deprecated
-    public static void open(Player p, dItem item, Consumer<dItem> consumer) {
-        new changeEcon(p, item, consumer);
-    }
-
-    private changeEcon(Player p, dItem item, Consumer<dItem> consumer) {
+    private changeEcon(Player p, Consumer<economy> consumer) {
         this.p = p;
-        this.item = item;
         this.consumer = consumer;
 
         InventoryGUI menu = createMenu();
@@ -84,10 +76,7 @@ public class changeEcon {
     }
 
     private ItemButton createEconomyButton(XMaterial material, String name, economy econ) {
-        return new ItemButton(createEconomyItem(material, name), e -> {
-            item.setEconomy(econ);
-            consumer.accept(item);
-        });
+        return new ItemButton(createEconomyItem(material, name), e -> consumer.accept(econ));
     }
 
     private ItemStack createEconomyItem(XMaterial material, String name) {
@@ -109,9 +98,11 @@ public class changeEcon {
                             createEconomyItem(XMaterial.SUNFLOWER, "&f&l" + s),
                             e -> {
                                 if (e.getCurrentItem() == null) return;
-                                item.setEconomy(Economies.MPoints.getEconomy(FormatUtils.stripColor(ItemUtils.getName(e.getCurrentItem()))));
-                                consumer.accept(item);
-                            }));
+                                consumer.accept(Economies.MPoints.getEconomy(
+                                        FormatUtils.stripColor(ItemUtils.getName(e.getCurrentItem())))
+                                );
+                            })
+            );
         }
     }
 
@@ -143,8 +134,11 @@ public class changeEcon {
                             createEconomyItem(XMaterial.EMERALD, "&f&l" + s),
                             e -> {
                                 if (e.getCurrentItem() == null) return;
-                                item.setEconomy(Economies.gemsEconomy.getEconomy(FormatUtils.stripColor(ItemUtils.getName(e.getCurrentItem()))));
-                                consumer.accept(item);
+                                consumer.accept(
+                                        Economies.gemsEconomy.getEconomy(FormatUtils.stripColor(
+                                                ItemUtils.getName(e.getCurrentItem()))
+                                        )
+                                );
                             }));
         }
     }
@@ -160,7 +154,7 @@ public class changeEcon {
     private void createReturnButton(InventoryGUI menu) {
         menu.addButton(ItemButton.create(ItemBuilder.of(XMaterial.PLAYER_HEAD)
                         .setName("&c&lReturn").applyTexture("19bf3292e126a105b54eba713aa1b152d541a1d8938829c56364d178ed22bf")
-                , e -> consumer.accept(item)), 8);
+                , e -> consumer.accept(null)), 8);
     }
 
     private void createLightBluePanes(InventoryGUI menu) {
@@ -180,16 +174,10 @@ public class changeEcon {
     }
 
     public static final class changeEconBuilder {
-        private dItem item;
         private Player p;
-        private Consumer<dItem> consumer;
+        private Consumer<economy> consumer;
 
         private changeEconBuilder() {
-        }
-
-        public changeEconBuilder withItem(dItem item) {
-            this.item = item;
-            return this;
         }
 
         public changeEconBuilder withPlayer(Player p) {
@@ -197,13 +185,13 @@ public class changeEcon {
             return this;
         }
 
-        public changeEconBuilder withConsumer(Consumer<dItem> consumer) {
+        public changeEconBuilder withConsumer(Consumer<economy> consumer) {
             this.consumer = consumer;
             return this;
         }
 
         public changeEcon prompt() {
-            return new changeEcon(p, item, consumer);
+            return new changeEcon(p, consumer);
         }
     }
 }

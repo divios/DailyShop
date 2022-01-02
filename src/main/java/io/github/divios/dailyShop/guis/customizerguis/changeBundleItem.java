@@ -7,34 +7,36 @@ import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
+import io.github.divios.lib.dLib.newDItem;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class changeBundleItem {
 
-
     private final Player p;
-    private final dItem item;
+    private final newDItem item;
     private final dShop shop;
     private final Consumer<List<String>> confirm;
     private final Runnable back;
 
     @Deprecated
     public changeBundleItem(
-            Player p,
-            dItem item,
-            dShop shop,
-            Consumer<List<String>> confirm,
-            Runnable back
+            @NotNull Player p,
+            @NotNull newDItem item,
+            @NotNull dShop shop,
+            @NotNull Consumer<List<String>> confirm,
+            @NotNull Runnable back
     ) {
         this.p = p;
-        this.item = item.clone();
+        this.item = item;
         this.shop = shop;
         this.confirm = confirm;
         this.back = back;
@@ -48,7 +50,7 @@ public class changeBundleItem {
 
     private void open() {
 
-        List<String> added = item.getBundle().orElse(new ArrayList<>());
+        List<String> added = Optional.ofNullable(item.getBundle()).orElse(new ArrayList<>());
         String ownId = item.getID();
 
         new dynamicGui.Builder()
@@ -56,22 +58,20 @@ public class changeBundleItem {
                     //loreStrategy ls = new bundleSettingsLore();
                     return shop.getItems().stream()
                             .filter(dItem -> !dItem.getID().equals(ownId))
-                            .map(dItem -> dItem.getDailyItem().clone())  // Todo Aplicar lore strategy a los items
+                            .map(dItem -> dItem.getDailyItem().clone())
                             .map(_item -> {
                                 if (added.contains(dItem.getId(_item))) {
                                     _item = ItemUtils.addEnchant(_item, Enchantment.DAMAGE_ALL, 1);
                                     _item = ItemUtils.addItemFlags(_item, ItemFlag.HIDE_ENCHANTS);
                                 }
-
                                 return _item;
-                            }).collect(Collectors.toList());
-
-                }).addItems((inventory, integer) ->
+                            })
+                            .collect(Collectors.toList());
+                })
+                .addItems((inventory, integer) ->
                         inventory.setItem(47, ItemBuilder.of(XMaterial.EMERALD_BLOCK)
                                 .setName("&6&lConfirm").setLore("&7Click to confirm")))
-
                 .contentAction(event -> {
-
                     String uid = dItem.getId(event.getCurrentItem());
                     if (added.contains(uid)) {
                         added.remove(uid);
@@ -79,24 +79,23 @@ public class changeBundleItem {
                         added.add(uid);
                     }
                     return dynamicGui.Response.update();
-                }).nonContentAction((integer, player) -> {
-
+                })
+                .nonContentAction((integer, player) -> {
                     if (integer == 47) {
                         confirm.accept(added);
                     }
                     return dynamicGui.Response.nu();
-
-                }).setSearch(false)
+                })
+                .setSearch(false)
                 .back(player -> back.run())
                 .title(_i -> "&6Set items on the bundle")
                 .plugin(DailyShop.get())
                 .open(p);
-
     }
 
     public static final class changeBundleItemBuilder {
         private Player p;
-        private dItem item;
+        private newDItem item;
         private dShop shop;
         private Consumer<List<String>> confirm;
         private Runnable back;
@@ -109,7 +108,7 @@ public class changeBundleItem {
             return this;
         }
 
-        public changeBundleItemBuilder withItem(dItem item) {
+        public changeBundleItemBuilder withItem(newDItem item) {
             this.item = item;
             return this;
         }
