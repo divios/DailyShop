@@ -14,6 +14,7 @@ import io.github.divios.core_lib.cache.Lazy;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.Pair;
 import io.github.divios.dailyShop.DailyShop;
+import io.github.divios.dailyShop.economies.Economies;
 import io.github.divios.dailyShop.economies.economy;
 import io.github.divios.dailyShop.economies.vault;
 import io.github.divios.dailyShop.files.Settings;
@@ -98,14 +99,14 @@ public class dItem implements Serializable, Cloneable {
         cache.put("id", LazyWrapper.suppliedBy(() -> item.getString("rds_UUID")));
         cache.put("rarity", LazyWrapper.suppliedBy(() -> item.getObject("rds_rarity", dRarity.class)));
         cache.put("economy", LazyWrapper.suppliedBy(() -> {
-            economy[] econ = {new vault()};
+            economy[] econ = {Economies.vault.getEconomy()};
             if (item.hasKey("rds_econ")) {
                 econ[0] = economy.deserialize(item.getString("rds_econ"));
-                Utils.tryCatchAbstraction(() -> econ[0].test(), e -> econ[0] = new vault());
+                Utils.tryCatchAbstraction(() -> econ[0].test(), e -> econ[0] = Economies.vault.getEconomy());
                 try {
                     econ[0].test();
                 } catch (NoClassDefFoundError e) {
-                    econ[0] = new vault();
+                    econ[0] = Economies.vault.getEconomy();
                 }
             }
             return econ[0];
@@ -169,7 +170,7 @@ public class dItem implements Serializable, Cloneable {
             setSlot(slot);
             setRarity(new dRarity());       //Defaults to Common
             setConfirm_gui(true);           // Defaults true
-            setEconomy(new vault());        // Default Vault
+            setEconomy(Economies.vault.getEconomy());        // Default Vault
             setBuyPrice(Settings.DEFAULT_BUY.getValue().getAsDouble()); // Default buy price
             setSellPrice(Settings.DEFAULT_SELL.getValue().getAsDouble()); // Default sell price
             if (getQuantity() > 1) setSetItems(getQuantity());   // Initialize quantity
@@ -823,7 +824,7 @@ public class dItem implements Serializable, Cloneable {
             item.getString("rds_stock");
         } catch (ClassCastException e) {
             int legacyStock = item.getInteger("rds_stock");
-            item.setString("rds_stock", dStockFactory.GLOBAL(legacyStock).toBase64());
+            item.setString("rds_stock", dStockFactory.GLOBAL(legacyStock).legacyToBase64());
         }
 
         String base64 = item.getString("rds_stock");
@@ -831,14 +832,14 @@ public class dItem implements Serializable, Cloneable {
             return dStockFactory.GLOBAL(item.getInteger("rds_stock"));
         }
 
-        return dStock.fromBase64(base64);
+        return dStock.legacyFromBase64(base64);
     }
 
     /**
      * Saves the stock as base64
      */
     private void saveStock() {
-        item.setString("rds_stock", stock == null ? null : stock.toBase64());    // Check null to reset Stock
+        item.setString("rds_stock", stock == null ? null : stock.legacyToBase64());    // Check null to reset Stock
     }
 
     /**

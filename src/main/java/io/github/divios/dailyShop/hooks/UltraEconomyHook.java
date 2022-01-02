@@ -15,7 +15,7 @@ public class UltraEconomyHook implements Hook<UltraEconomyAPI> {
     }
 
     public void hook() {
-        if (Utils.isOperative("ShopGUIPlus")) {
+        if (Utils.isOperative("UltraEconomy")) {
             Log.info("Hooked to UltraEconomy");
             isHooked = true;
             api = UltraEconomy.getAPI();
