@@ -4,6 +4,7 @@ import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.utils.Utils;
 import org.black_ixx.playerpoints.PlayerPoints;
 import org.black_ixx.playerpoints.PlayerPointsAPI;
+import org.bukkit.Bukkit;
 
 public class playerPointsHook implements Hook<PlayerPointsAPI> {
 
@@ -16,7 +17,7 @@ public class playerPointsHook implements Hook<PlayerPointsAPI> {
 
     private void tryToHook() {
         if (Utils.isOperative("PlayerPoints")) {
-            api = PlayerPoints.getInstance().getAPI();
+            api = ((PlayerPoints)Bukkit.getPluginManager().getPlugin("PlayerPoints")).getAPI();
             isHook = true;
             Log.info("Hooked to PlayerPoints");
         }
