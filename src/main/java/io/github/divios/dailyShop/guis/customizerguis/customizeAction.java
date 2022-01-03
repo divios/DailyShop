@@ -2,12 +2,13 @@ package io.github.divios.dailyShop.guis.customizerguis;
 
 import com.cryptomorin.xseries.XMaterial;
 import com.google.common.base.Preconditions;
+import io.github.divios.core_lib.events.Events;
+import io.github.divios.core_lib.events.Subscription;
 import io.github.divios.core_lib.inventory.InventoryGUI;
 import io.github.divios.core_lib.inventory.ItemButton;
 import io.github.divios.core_lib.inventory.inventoryUtils;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.misc.ChatPrompt;
-import io.github.divios.core_lib.misc.EventListener;
 import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.utils.Utils;
@@ -32,7 +33,7 @@ public class customizeAction {
 
     private boolean flagPass = false;
 
-    private final EventListener<InventoryCloseEvent> preventClose;
+    private final Subscription preventClose;
 
     private customizeAction(Player p, dShop shop,
                             BiConsumer<dAction, String> onComplete,
@@ -47,14 +48,15 @@ public class customizeAction {
         initialize();
         inv.open(p);
 
-        preventClose = new EventListener<>(InventoryCloseEvent.class,
-                e -> {
-                    if (!e.getInventory().equals(inv.getInventory())) return;
+        preventClose = Events.subscribe(InventoryCloseEvent.class)
+                .handler(
+                        e -> {
+                            if (!e.getInventory().equals(inv.getInventory())) return;
 
-                    if (flagPass) return;
+                            if (flagPass) return;
 
-                    Schedulers.sync().runLater(() -> inv.open(p), 1L);
-                });
+                            Schedulers.sync().runLater(() -> inv.open(p), 1L);
+                        });
     }
 
     @Deprecated
@@ -94,35 +96,45 @@ public class customizeAction {
                         .applyTexture("7e3deb57eaa2f4d403ad57283ce8b41805ee5b6de912ee2b4ea736a9d1f465a7"),
                 e -> {
                     flagPass = true;
-                    ChatPrompt.prompt(plugin, p, (s) -> {
-                        if (!DailyShop.get().getShopsManager().getShop(s).isPresent()) {
-                            Utils.sendRawMsg(p, "&7That shop doesnt exist");
-                            Schedulers.sync().run(() -> inv.open(p));
-                            flagPass = true;
-                            return;
-                        }
-                        preventClose.unregister();
-                        inv.destroy();
-                        Schedulers.sync().runLater(() ->
-                                onComplete.accept(dAction.OPEN_SHOP, s), 1L);
-                    }, (cause) -> {
-                        Schedulers.sync().run(() -> inv.open(p));
-                        flagPass = true;
-                    }, "&a&lInput shop name", "");
+                    ChatPrompt.builder()
+                            .withPlayer(p)
+                            .withResponse(s -> {
+                                if (!DailyShop.get().getShopsManager().getShop(s).isPresent()) {
+                                    Utils.sendRawMsg(p, "&7That shop doesnt exist");
+                                    Schedulers.sync().run(() -> inv.open(p));
+                                    flagPass = true;
+                                    return;
+                                }
+                                preventClose.unregister();
+                                inv.destroy();
+                                Schedulers.sync().runLater(() ->
+                                        onComplete.accept(dAction.OPEN_SHOP, s), 1L);
+                            })
+                            .withCancel(cancelReason -> {
+                                Schedulers.sync().run(() -> inv.open(p));
+                                flagPass = true;
+                            })
+                            .withTitle("&a&lInput shop name")
+                            .prompt();
+
                 }), inventoryUtils.getFirstEmpty(inv.getInventory()));
 
         inv.addButton(ItemButton.create(ItemBuilder.of(XMaterial.COMMAND_BLOCK)
                         .setName("&aRun command").setLore("&7Runs command when this", "&7item is clicked"),
                 e -> {
                     flagPass = true;
-                    ChatPrompt.prompt(plugin, p, (s) -> {
-                        preventClose.unregister();
-                        inv.destroy();
-                        Schedulers.sync().run(() -> onComplete.accept(dAction.RUN_CMD, s));
-                    }, (player -> {
-                        Schedulers.sync().run(() -> inv.open(p));
-                        flagPass = true;
-                    }), "", "");
+                    ChatPrompt.builder()
+                            .withPlayer(p)
+                            .withResponse(s -> {
+                                preventClose.unregister();
+                                inv.destroy();
+                                Schedulers.sync().run(() -> onComplete.accept(dAction.RUN_CMD, s));
+                            })
+                            .withCancel(cancelReason -> {
+                                Schedulers.sync().run(() -> inv.open(p));
+                                flagPass = true;
+                            })
+                            .prompt();
                 }), inventoryUtils.getFirstEmpty(inv.getInventory()));
 
         inv.addButton(ItemButton.create(ItemBuilder.of(XMaterial.BOOKSHELF)

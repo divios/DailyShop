@@ -126,8 +126,7 @@ public class transaction {
     }
 
     private static summary printSummary(Player p, UUID uid, dShop shop) throws transactionExc {
-        return printSummary(p, shop.getItem(uid).orElse(dItem.AIR()),
-                shop.getItem(uid).orElse(dItem.AIR()).getQuantity(), shop);
+        return null; //printSummary(p, shop.getItem(uid), shop.getItem(uid).getQuantity(), shop);
     }
 
     private static summary printSummary(Player p, dItem item, int amount, dShop shop) throws transactionExc {
@@ -217,7 +216,7 @@ public class transaction {
             int callback = dStock.searchStock(p, shop, item.getUid());
             result = callback > 0 && callback >= amount;
         }
-        return shop.getItem(item.getUid()).isPresent() && result;
+        return true; //shop.getItem(item.getUid()).isPresent() && result;
 
     }
 

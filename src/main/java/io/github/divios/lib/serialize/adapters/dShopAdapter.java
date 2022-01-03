@@ -5,11 +5,10 @@ import com.google.common.reflect.TypeToken;
 import com.google.gson.*;
 import io.github.divios.core_lib.gson.JsonBuilder;
 import io.github.divios.core_lib.utils.Log;
-import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.files.Settings;
 import io.github.divios.dailyShop.utils.Utils;
-import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
+import io.github.divios.lib.dLib.newDItem;
 import io.github.divios.lib.dLib.synchronizedGui.singleGui.dInventory;
 
 import java.lang.reflect.Type;
@@ -18,15 +17,17 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+@SuppressWarnings({"unused", "UnstableApiUsage", "UnusedReturnValue"})
 public class dShopAdapter implements JsonSerializer<dShop>, JsonDeserializer<dShop> {
 
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss");
     private static final Gson gson = new GsonBuilder()
-            .registerTypeAdapter(dItem.class, new dItemAdapter())
+            .registerTypeAdapter(newDItem.class, new dItemAdapter())
             .registerTypeAdapter(dInventory.class, new dInventoryAdapter())
             .create();
 
-    private static final TypeToken<LinkedHashMap<String, JsonElement>> diItemsToken = new TypeToken<LinkedHashMap<String, JsonElement>>(){};
+    private static final TypeToken<LinkedHashMap<String, JsonElement>> diItemsToken = new TypeToken<LinkedHashMap<String, JsonElement>>() {
+    };
 
     @Override
     public dShop deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
@@ -38,10 +39,13 @@ public class dShopAdapter implements JsonSerializer<dShop>, JsonDeserializer<dSh
 
         Preconditions.checkArgument(object.has("id"), "A shop needs an ID");
         Preconditions.checkArgument(object.has("items"), "A shop needs items");
-        if (object.has("timer")) Preconditions.checkArgument(Utils.testRunnable(() -> timer[0] = object.get("timer").getAsInt()), "Timer needs to be an integer");
+        if (object.has("timer"))
+            Preconditions.checkArgument(Utils.testRunnable(() -> timer[0] = object.get("timer").getAsInt()), "Timer needs to be an integer");
         Preconditions.checkArgument((timer[0] >= 50 || timer[0] == -1), "timer needs to be >= 50");
-        if (object.has("announce_restock")) Preconditions.checkArgument(Utils.testRunnable(() -> object.get("announce_restock").getAsBoolean()), "announce_restock field needs to be a boolean");
-        if (object.has("default")) Preconditions.checkArgument(Utils.testRunnable(() -> object.get("default").getAsBoolean()), "default field needs to be a boolean");
+        if (object.has("announce_restock"))
+            Preconditions.checkArgument(Utils.testRunnable(() -> object.get("announce_restock").getAsBoolean()), "announce_restock field needs to be a boolean");
+        if (object.has("default"))
+            Preconditions.checkArgument(Utils.testRunnable(() -> object.get("default").getAsBoolean()), "default field needs to be a boolean");
 
         dShop deserializedShop;
 
@@ -52,7 +56,8 @@ public class dShopAdapter implements JsonSerializer<dShop>, JsonDeserializer<dSh
         deserializedShop = new dShop(id, timer[0], timestamp);
 
         // Set miscellaneous fields
-        if (object.has("announce_restock")) deserializedShop.set_announce(object.get("announce_restock").getAsBoolean());
+        if (object.has("announce_restock"))
+            deserializedShop.set_announce(object.get("announce_restock").getAsBoolean());
         if (object.has("default")) deserializedShop.setDefault(object.get("default").getAsBoolean());
 
         // Deserialize shop display
@@ -65,8 +70,8 @@ public class dShopAdapter implements JsonSerializer<dShop>, JsonDeserializer<dSh
         Map<String, JsonElement> items = gson.fromJson(object.get("items").getAsJsonObject(), diItemsToken.getType());
         for (Map.Entry<String, JsonElement> itemEntry : items.entrySet()) {
             try {
-                dItem ditem = dItem.encodeOptions.JSON.fromJson(itemEntry.getValue());
-                deserializedShop.addItem(ditem.setID(itemEntry.getKey()));
+                newDItem dItem = gson.fromJson(itemEntry.getValue(), newDItem.class);
+                deserializedShop.addItem(dItem.setID(itemEntry.getKey()));
             } catch (Exception e) {
                 Log.warn("There was a problem parsing the item with id " + itemEntry.getKey());
                 Log.warn(e.getMessage());
@@ -93,10 +98,12 @@ public class dShopAdapter implements JsonSerializer<dShop>, JsonDeserializer<dSh
 
     }
 
-    /** Utils **/
+    /**
+     * Utils
+     **/
 
-    private Map<String, dItem> parseUUIDs(Collection<dItem> items) {
-        Map<String, dItem> newMap = new HashMap<>();
+    private Map<String, newDItem> parseUUIDs(Collection<newDItem> items) {
+        Map<String, newDItem> newMap = new HashMap<>();
         items.forEach(dItem -> newMap.put(dItem.getID(), dItem));
 
         return newMap;

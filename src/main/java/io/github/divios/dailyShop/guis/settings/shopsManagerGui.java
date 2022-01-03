@@ -7,13 +7,11 @@ import io.github.divios.core_lib.inventory.builder.paginatedGui;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.ChatPrompt;
-import io.github.divios.core_lib.misc.Msg;
 import io.github.divios.core_lib.misc.confirmIH;
 import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.files.Lang;
 import io.github.divios.dailyShop.files.Messages;
-import io.github.divios.dailyShop.lorestategy.loreStrategy;
 import io.github.divios.dailyShop.lorestategy.shopsManagerLore;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.dShop;
@@ -32,12 +30,10 @@ import java.util.regex.Pattern;
 
 public class shopsManagerGui {
 
-    private static final DailyShop plugin = DailyShop.get();
     private static final shopsManager sManager = DailyShop.get().getShopsManager();
 
     private static final String SHOP_META = "dShopD";
 
-    private static final loreStrategy strategy = new shopsManagerLore();
     private paginatedGui inv;
 
     private final Player p;
@@ -79,7 +75,7 @@ public class shopsManagerGui {
                         DailyShop.get().getShopsManager().getShops().stream()
                                 .parallel()
                                 .map(dShop -> ItemButton.create(
-                                        strategy.applyLore(ItemBuilder.of(XMaterial.PLAYER_HEAD)
+                                        shopsManagerLore.applyLore(ItemBuilder.of(XMaterial.PLAYER_HEAD)
                                                 .setName("&8> &6" + dShop.getName())
                                                 .applyTexture("7e3deb57eaa2f4d403ad57283ce8b41805ee5b6de912ee2b4ea736a9d1f465a7")
                                                 .setMetadata(SHOP_META, dShop.getName())),
@@ -129,6 +125,7 @@ public class shopsManagerGui {
     private void contentAction(InventoryClickEvent e) {
 
         ItemStack selected = e.getCurrentItem();
+        if (selected == null) return;
 
         if (!sManager.getShop(ItemUtils.getMetadata(selected, SHOP_META, String.class)).isPresent()) {      // PreConditions
             Utils.sendRawMsg(p, "&7That shop doesn't exist anymore");
@@ -258,18 +255,16 @@ public class shopsManagerGui {
 
                     }
 
-                    loreStrategy stategy = new shopsManagerLore();
-                    inv.getInvs().stream().parallel().forEach(inventoryGUI -> {
-                        itemSlots.forEach(slot -> {
-                            ItemStack itemToUpdate = inventoryGUI.getInventory().getItem(slot);
-                            if (ItemUtils.isEmpty(itemToUpdate)) return;
+                    inv.getInvs().stream().parallel().forEach(inventoryGUI ->
+                            itemSlots.forEach(slot -> {
+                                ItemStack itemToUpdate = inventoryGUI.getInventory().getItem(slot);
+                                if (ItemUtils.isEmpty(itemToUpdate)) return;
 
-                            ItemStack newItem = stategy.applyLore(ItemBuilder.of(itemToUpdate.clone()).setLore(Collections.emptyList()));
+                                ItemStack newItem = shopsManagerLore.applyLore(ItemBuilder.of(itemToUpdate.clone()).setLore(Collections.emptyList()));
 
-                            inventoryGUI.getInventory().setItem(slot, newItem);
+                                inventoryGUI.getInventory().setItem(slot, newItem);
 
-                        });
-                    });
+                            }));
 
                 });
 

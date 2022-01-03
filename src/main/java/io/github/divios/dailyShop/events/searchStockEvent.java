@@ -7,7 +7,6 @@ import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 
 public class searchStockEvent extends Event {
 
@@ -32,7 +31,7 @@ public class searchStockEvent extends Event {
         return shop;
     }
 
-    public UUID getUuid() {
+    public UUID getUUID() {
         return uuid;
     }
 

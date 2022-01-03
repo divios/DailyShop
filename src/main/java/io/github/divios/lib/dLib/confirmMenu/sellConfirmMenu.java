@@ -58,6 +58,7 @@ public class sellConfirmMenu extends abstractConfirmMenu {
     }
 
     private boolean retrievedItemsFlag = false;
+
     private sellConfirmMenu(dShop shop, Player player, dItem item, Consumer<Integer> onCompleteAction, Runnable fallback) {
         super(shop, player, item, onCompleteAction, fallback);
     }

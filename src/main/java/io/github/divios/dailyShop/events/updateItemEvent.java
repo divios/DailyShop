@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import java.sql.Timestamp;
 import java.util.UUID;
 
+@SuppressWarnings("unused")
 public class updateItemEvent extends Event {
 
     private static final HandlerList HANDLERS_LIST = new HandlerList();

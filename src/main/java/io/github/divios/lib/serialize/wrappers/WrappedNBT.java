@@ -23,7 +23,7 @@ public class WrappedNBT {
     }
 
     private void removeDailyNBT() {
-        nbt.remove("rds_UUID");
+        nbt.remove("rds_id");
         nbt.remove("rds_rarity");
         nbt.remove("rds_sellPrice");
         nbt.remove("dailySlots");

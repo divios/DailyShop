@@ -1,14 +1,15 @@
 package io.github.divios.lib.storage;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import io.github.divios.core_lib.database.DataManagerAbstract;
-import io.github.divios.core_lib.database.DatabaseConnector;
 import io.github.divios.core_lib.database.SQLiteConnector;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.timeStampUtils;
 import io.github.divios.dailyShop.DailyShop;
-import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.dLib.log.options.dLogEntry;
+import io.github.divios.lib.dLib.newDItem;
 import io.github.divios.lib.dLib.synchronizedGui.syncMenu;
 import io.github.divios.lib.managers.WrappedShop;
 import io.github.divios.lib.storage.migrations.initialMigration;
@@ -22,6 +23,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
+@SuppressWarnings({"UnusedReturnValue", "unused"})
 public class databaseManager extends DataManagerAbstract {
 
     private static final DailyShop plugin = DailyShop.get();
@@ -33,15 +35,18 @@ public class databaseManager extends DataManagerAbstract {
 
     public Set<dShop> getShops() {
         Set<dShop> shops = new LinkedHashSet<>();
+
         this.databaseConnector.connect(connection -> {
             try (Statement statement = connection.createStatement()) {
+
                 String selectFarms = "SELECT * FROM " + this.getTablePrefix() + "active_shops";
                 ResultSet result = statement.executeQuery(selectFarms);
 
+                JsonParser parser = new JsonParser();
                 while (result.next()) {
                     String name = result.getString("name");
                     dShop shop = new dShop(name,
-                            result.getString("gui"),
+                            parser.parse(result.getString("gui")),
                             timeStampUtils.deserialize(result.getString("timestamp")),
                             result.getInt("timer"),
                             getShopItems(name));
@@ -59,24 +64,26 @@ public class databaseManager extends DataManagerAbstract {
     }
 
 
-    public Set<dItem> getShopItems(String name) {
-        Set<dItem> items = new LinkedHashSet<>();
+    public Set<newDItem> getShopItems(String name) {
+        Set<newDItem> items = new LinkedHashSet<>();
 
         this.databaseConnector.connect(connection -> {
             try (Statement statement = connection.createStatement()) {
+
                 String selectFarms = "SELECT * FROM " + this.getTablePrefix() + "shop_" + name;
                 ResultSet result = statement.executeQuery(selectFarms);
 
+                JsonParser parser = new JsonParser();
                 while (result.next()) {
-                    dItem newItem = dItem.encodeOptions.REFLECTION.deserialize(result.getString("itemSerial"));
-                    items.add(newItem);
+                    JsonElement json = parser.parse(result.getString("itemSerial"));
+                    items.add(newDItem.fromJson(json));
                 }
             }
         });
         return items;
     }
 
-    public CompletableFuture<Set<dItem>> getShopItemsAsync(String name) {
+    public CompletableFuture<Set<newDItem>> getShopItemsAsync(String name) {
         return CompletableFuture.supplyAsync(() -> getShopItems(name));
 
     }
@@ -88,7 +95,7 @@ public class databaseManager extends DataManagerAbstract {
                     "active_shops (name, type, gui, timestamp, timer) VALUES (?, ?, ?, ?, ?)";
             try (PreparedStatement statement = connection.prepareStatement(createShop)) {
                 statement.setString(1, shop.getName());
-                statement.setString(3, shop.getGuis().toJson());
+                statement.setString(3, shop.getGuis().toJson().toString());
                 statement.setString(4, timeStampUtils.serialize(shop.getTimestamp()));
                 statement.setInt(5, shop.getTimer());
                 statement.executeUpdate();
@@ -149,28 +156,28 @@ public class databaseManager extends DataManagerAbstract {
         return CompletableFuture.runAsync(() -> deleteShop(name));
     }
 
-    public void addItem(String name, dItem item) {
+    public void addItem(String name, newDItem item) {
         this.databaseConnector.connect(connection -> {
 
             String createShop = "INSERT OR REPLACE INTO " + this.getTablePrefix() +
                     "shop_" + name + " (itemSerial, uuid) VALUES (?, ?)";
             try (PreparedStatement statement = connection.prepareStatement(createShop)) {
 
-                statement.setString(1, dItem.encodeOptions.REFLECTION.serialize(item));
-                statement.setString(2, item.getUid().toString());
+                statement.setString(1, item.toJson().toString());
+                statement.setString(2, item.getUUID().toString());
                 statement.executeUpdate();
             }
         });
     }
 
-    public CompletableFuture<Void> addItemAsync(String name, dItem item) {
+    public CompletableFuture<Void> addItemAsync(String name, newDItem item) {
         return CompletableFuture.runAsync(() -> addItem(name, item));
     }
 
     public void deleteItem(String shopName, UUID uid) {
         this.databaseConnector.connect(connection -> {
-            String deeleteItem = "DELETE FROM " + this.getTablePrefix() + "shop_" + shopName + " WHERE uuid = ?";
-            try (PreparedStatement statement = connection.prepareStatement(deeleteItem)) {
+            String deleteItem = "DELETE FROM " + this.getTablePrefix() + "shop_" + shopName + " WHERE uuid = ?";
+            try (PreparedStatement statement = connection.prepareStatement(deleteItem)) {
                 statement.setString(1, uid.toString());
                 statement.executeUpdate();
             }
@@ -202,19 +209,19 @@ public class databaseManager extends DataManagerAbstract {
         return CompletableFuture.runAsync(() -> deleteAllItems(shopName));
     }
 
-    public void updateItem(String name, dItem item) {
+    public void updateItem(String name, newDItem item) {
         this.databaseConnector.connect(connection -> {
             String updateItem = "UPDATE " + this.getTablePrefix() + "shop_" + name +
                     " SET itemSerial = ? WHERE uuid = ?";
             try (PreparedStatement statement = connection.prepareStatement(updateItem)) {
-                statement.setString(1, dItem.encodeOptions.REFLECTION.serialize(item));
-                statement.setString(2, item.getUid().toString());
+                statement.setString(1, item.toJson().toString());
+                statement.setString(2, item.getUUID().toString());
                 statement.executeUpdate();
             }
         });
     }
 
-    public CompletableFuture<Void> updateItemAsync(String name, dItem item) {
+    public CompletableFuture<Void> updateItemAsync(String name, newDItem item) {
         return CompletableFuture.runAsync(() -> updateItem(name, item));
     }
 
@@ -223,7 +230,7 @@ public class databaseManager extends DataManagerAbstract {
             String updateGui = "UPDATE " + this.getTablePrefix() + "active_shops " +
                     "SET gui = ? WHERE name = ?";
             try (PreparedStatement statement = connection.prepareStatement(updateGui)) {
-                statement.setString(1, gui.toJson());
+                statement.setString(1, gui.toJson().toString());
                 statement.setString(2, name);
                 statement.executeUpdate();
             }
@@ -304,7 +311,8 @@ public class databaseManager extends DataManagerAbstract {
                     Date timestamp = null;
 
                     try {
-                        timestamp = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").parse(result.getString("timestamp"));
+                        timestamp = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss")
+                                .parse(result.getString("timestamp"));
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }

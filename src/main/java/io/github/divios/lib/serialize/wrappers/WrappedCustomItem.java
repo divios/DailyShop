@@ -6,7 +6,7 @@ import com.google.gson.JsonObject;
 import io.github.divios.core_lib.gson.JsonBuilder;
 import io.github.divios.dailyShop.utils.MMOUtils;
 import io.github.divios.dailyShop.utils.OraxenUtils;
-import io.github.divios.lib.dLib.dItem;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.Arrays;
 import java.util.Objects;
@@ -16,7 +16,7 @@ public class WrappedCustomItem {
 
     private final JsonObject object;
 
-    public static boolean isCustomItem(dItem item) {
+    public static boolean isCustomItem(ItemStack item) {
         return customItemType.isCustomItem(item);
     }
 
@@ -28,8 +28,8 @@ public class WrappedCustomItem {
         this.object = element;
     }
 
-    public dItem parseItem() {
-        dItem item = null;
+    public ItemStack parseItem() {
+        ItemStack item;
 
         Preconditions.checkArgument(customItemType.isCustomObject(object), "Invalid object, check the format or if the plugin is running");
 
@@ -40,7 +40,7 @@ public class WrappedCustomItem {
                 Preconditions.checkArgument(mmoItemObject.has("type"), "MMOItem needs a type field");
                 Preconditions.checkArgument(mmoItemObject.has("id"), "MMOItem needs an id field");
 
-                item = dItem.of(MMOUtils.createMMOItem(object.get("type").getAsString(), object.get("id").getAsString()));
+                item = MMOUtils.createMMOItem(object.get("type").getAsString(), object.get("id").getAsString());
                 break;
 
             case ORAXEN:
@@ -50,7 +50,7 @@ public class WrappedCustomItem {
                 Preconditions.checkArgument(oraxenObject.has("id"), "Oraxen item needs an id");
                 Preconditions.checkArgument(OraxenUtils.isValidId(id = object.get("id").getAsString()), "That oraxen ID does not exist");
 
-                item = dItem.of(OraxenUtils.createItemByID(id));
+                item = OraxenUtils.createItemByID(id);
                 break;
 
             default:
@@ -60,7 +60,7 @@ public class WrappedCustomItem {
         return Objects.requireNonNull(item, "Something went wrong while parsing custom Item");
     }
 
-    public static JsonElement serializeCustomItem(dItem item) {
+    public static JsonElement serializeCustomItem(ItemStack item) {
         Preconditions.checkArgument(customItemType.isCustomItem(item), "Can't serialize item, is not custom item");
 
         JsonObject object = new JsonObject();
@@ -69,15 +69,15 @@ public class WrappedCustomItem {
             case MMOITEM:
                 object.add("mmoItem",
                         JsonBuilder.object()
-                                .add("type", MMOUtils.getType(item.getDailyItem()))
-                                .add("id", MMOUtils.getType(item.getDailyItem()))
+                                .add("type", MMOUtils.getType(item))
+                                .add("id", MMOUtils.getType(item))
                                 .build()
                 );
                 break;
             case ORAXEN:
                 object.add("oraxenItem",
                         JsonBuilder.object()
-                                .add("id", OraxenUtils.getId(item.getDailyItem()))
+                                .add("id", OraxenUtils.getId(item))
                                 .build()
                 );
                 break;
@@ -90,18 +90,18 @@ public class WrappedCustomItem {
 
 
     private enum customItemType {
-        MMOITEM(object -> object.has("mmoItem"), dItem -> MMOUtils.isMMOItem(dItem.getDailyItem())),
-        ORAXEN(object -> object.has("oraxenItem"), dItem -> OraxenUtils.isOraxenItem(dItem.getDailyItem()));
+        MMOITEM(object -> object.has("mmoItem"), MMOUtils::isMMOItem),
+        ORAXEN(object -> object.has("oraxenItem"), OraxenUtils::isOraxenItem);
 
         Predicate<JsonObject> isElementType;
-        Predicate<dItem> isType;
+        Predicate<ItemStack> isType;
 
-        customItemType(Predicate<JsonObject> isElementType, Predicate<dItem> isType) {
+        customItemType(Predicate<JsonObject> isElementType, Predicate<ItemStack> isType) {
             this.isElementType = isElementType;
             this.isType = isType;
         }
 
-        public static boolean isCustomItem(dItem item) {
+        public static boolean isCustomItem(ItemStack item) {
             for (customItemType value : values()) {
                 if (value.isType.test(item)) return true;
             }
@@ -122,7 +122,7 @@ public class WrappedCustomItem {
                     .orElse(null);
         }
 
-        public static customItemType getItemType(dItem item) {
+        public static customItemType getItemType(ItemStack item) {
             return Arrays.stream(values())
                     .filter(customItemType -> customItemType.isType.test(item))
                     .findFirst()

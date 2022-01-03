@@ -13,6 +13,7 @@ import io.github.divios.dailyShop.guis.settings.shopsManagerGui;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
+import io.github.divios.lib.dLib.newDItem;
 import io.github.divios.lib.dLib.synchronizedGui.singleGui.dInventory;
 import io.github.divios.lib.serialize.serializerApi;
 import org.bukkit.Bukkit;
@@ -47,7 +48,7 @@ public class customizeGui implements Listener, InventoryHolder {
     private final boolean preventClose = true;
     private boolean refreshFlag = false;
 
-    private dItem toClone = null;
+    private newDItem toClone = null;
 
     private final Map<Integer, ItemStack> pItems = new LinkedHashMap<>();
 
@@ -115,8 +116,6 @@ public class customizeGui implements Listener, InventoryHolder {
     /**
      * Iterates throughout the player's inventory saving the items and their position.
      * Also clears the player inventory except the armor
-     *
-     * @return the map with the items and it's position
      */
     private void withdrawPlayerItems() {
         Inventory pInv = p.getInventory();
@@ -312,17 +311,16 @@ public class customizeGui implements Listener, InventoryHolder {
             return;
         }
 
-        if (!Utils.isEmpty(e.getCurrentItem()) &&
-                e.getClick().equals(ClickType.MIDDLE)) {        // copy to clipboard
-            toClone = dItem.of(e.getCurrentItem());
+        if (e.getCurrentItem() != null && e.getClick().equals(ClickType.MIDDLE)) {        // copy to clipboard
+            toClone = _gui.getButtons().get(newDItem.getUUIDKey(e.getCurrentItem()));
             return;
         }
 
         if (Utils.isEmpty(e.getCurrentItem())
                 && e.isShiftClick()) {  //add empty slot
-            dItem air = dItem.AIR();
-            _gui.addButton(air, e.getSlot());
-            _gui.getInventory().setItem(e.getSlot(), air.getDailyItem());
+            newDItem air = newDItem.AIR();
+            _gui.addButton(newDItem.AIR(), e.getSlot());
+            _gui.getInventory().setItem(e.getSlot(), air.getItem());
             refresh();
             return;
         }
@@ -357,7 +355,7 @@ public class customizeGui implements Listener, InventoryHolder {
                 .withItem(Utils.isEmpty(e.getCurrentItem()) ?
                         XMaterial.GRASS_BLOCK.parseItem() : e.getCurrentItem().clone())
                 .withConsumer(itemS -> {
-                    _gui.addButton(new dItem(itemS), e.getSlot());
+                    _gui.addButton(newDItem.of(itemS), e.getSlot());
                     withdrawPlayerItems();
                     refresh();
                 })

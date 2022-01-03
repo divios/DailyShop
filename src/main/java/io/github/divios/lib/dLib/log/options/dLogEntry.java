@@ -68,7 +68,9 @@ public class dLogEntry {
         return timestamp;
     }
 
-    public static dLogEntryBuilder builder() { return new dLogEntryBuilder(); }
+    public static dLogEntryBuilder builder() {
+        return new dLogEntryBuilder();
+    }
 
     public dLogEntryState toState() {
         return new dLogEntryState(p, shopID, itemUUID.toString(), rawItem.getType().name(), type.name(), price, quantity, FORMAT.format(timestamp));
@@ -85,7 +87,8 @@ public class dLogEntry {
         private Integer quantity;
         private Timestamp timestamp;
 
-        private dLogEntryBuilder() {}
+        private dLogEntryBuilder() {
+        }
 
         public dLogEntryBuilder withPlayer(Player p) {
             return withPlayer(p.getDisplayName());

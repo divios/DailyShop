@@ -16,19 +16,21 @@ import io.github.divios.dailyShop.files.Lang;
 import io.github.divios.dailyShop.files.Messages;
 import io.github.divios.dailyShop.guis.settings.shopGui;
 import io.github.divios.dailyShop.utils.Utils;
+import io.github.divios.jcommands.utils.Primitives;
 import io.github.divios.jtext.wrappers.Template;
-import io.github.divios.lib.dLib.dItem;
-import io.github.divios.lib.dLib.dPrice;
 import io.github.divios.lib.dLib.dShop;
+import io.github.divios.lib.dLib.newDItem;
+import io.github.divios.lib.dLib.stock.dStock;
 import io.github.divios.lib.dLib.stock.factory.dStockFactory;
 import io.github.divios.lib.serialize.serializerApi;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemFlag;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,14 +40,14 @@ public class CustomizerMenu {
     private final static DailyShop plugin = DailyShop.get();
 
     private final Player p;
-    private final dItem item;
+    private final newDItem item;
     private final dShop shop;
 
     private InventoryGUI inv;
 
     private CustomizerMenu(
             Player p,
-            dItem item,
+            newDItem item,
             dShop shop
     ) {
         this.p = p;
@@ -56,7 +58,7 @@ public class CustomizerMenu {
         inv.open(p);
     }
 
-    public static void open(@NotNull Player p, @NotNull dItem item, @NotNull dShop shop) {
+    public static void open(@NotNull Player p, @NotNull newDItem item, @NotNull dShop shop) {
         new CustomizerMenu(p, item, shop);
     }
 
@@ -85,7 +87,7 @@ public class CustomizerMenu {
                 .apply(inv.getInventory());
 
 
-        inv.getInventory().setItem(5, item.getRealItem());             // The item itself
+        inv.getInventory().setItem(5, item.getItem());             // The item itself
 
         inv.addButton(                                                  // Craft button
                 ItemButton.create(
@@ -95,22 +97,8 @@ public class CustomizerMenu {
                                 .applyTexture("2a3b8f681daad8bf436cae8da3fe8131f62a162ab81af639c3e0644aa6abac2f")
                         , e -> {
 
-                            // Preconditions of some features
-
-                            if (item.getCommands().isPresent() && item.getCommands().get().isEmpty())
-                                item.setCommands(null);
-
-                            if (item.getPermsBuy().isPresent() && item.getPermsBuy().get().isEmpty())
-                                item.setPermsBuy(null);
-
-                            if (item.getPermsSell().isPresent() && item.getPermsSell().get().isEmpty())
-                                item.setPermsSell(null);
-
-                            if (item.getBundle().isPresent() && item.getBundle().get().isEmpty())
-                                item.setBundle(null);
-
                             // Check to update or add item
-                            if (shop.hasItem(item.getUid())) {
+                            if (shop.hasItem(item.getUUID())) {
                                 shop.updateItem(item);
                             } else {
                                 shop.addItem(item);
@@ -140,7 +128,8 @@ public class CustomizerMenu {
                                 ChatPrompt.builder()
                                         .withPlayer(p)
                                         .withResponse(s -> {
-                                            item.setDisplayName(s);
+                                            ItemStack toRename = item.getItem();
+                                            item.setItem(ItemUtils.rename(toRename, Utils.JTEXT_PARSER.parse(s)));
                                             Schedulers.sync().run(this::refresh);
                                         })
                                         .withCancel(cancelReason -> Schedulers.sync().run(this::refresh))
@@ -157,8 +146,10 @@ public class CustomizerMenu {
                         , e ->
 
                                 materialsPrompt.open(plugin, p, (aBoolean, material) -> {
-                                    if (aBoolean)
-                                        item.setMaterial(material);
+                                    if (aBoolean) {
+                                        ItemStack toChange = item.getItem();
+                                        item.setItem(ItemUtils.setMaterial(toChange, material));
+                                    }
                                     refresh();
                                 })),
                 11
@@ -170,15 +161,16 @@ public class CustomizerMenu {
                                 .setName(Lang.CUSTOMIZE_LORE_NAME.getAsString(p))
                                 .addLore(Lang.CUSTOMIZE_LORE_LORE.getAsListString(p))
                                 .addLore("")
-                                .addLore(ItemUtils.getLore(item.getDailyItem()))
+                                .addLore(ItemUtils.getLore(item.getItem()))
                                 .applyTexture("c6692f99cc6d78242304110553589484298b2e4a0233b76753f888e207ef5")
                         , e -> {
 
                             if (e.isRightClick()) {
-                                List<String> lore = item.getLore();
+                                ItemStack toChange = item.getItem();
+                                List<String> lore = ItemUtils.getLore(toChange);
                                 if (lore.isEmpty()) return;
                                 lore.remove(lore.size() - 1);
-                                item.setLore(lore);
+                                item.setItem(ItemUtils.setLore(toChange, lore));
                                 refresh();
 
                             } else if (e.isLeftClick())
@@ -187,9 +179,10 @@ public class CustomizerMenu {
                                         .withPlayer(p)
                                         .withResponse(s -> {
                                             if (!s.isEmpty()) {
-                                                List<String> lore = item.getLore();
+                                                ItemStack toChange = item.getItem();
+                                                List<String> lore = ItemUtils.getLore(toChange);
                                                 lore.add(s);
-                                                item.setLore(lore);
+                                                item.setItem(ItemUtils.setLore(toChange, Utils.JTEXT_PARSER.parse(lore)));
                                             }
                                             Schedulers.sync().run(this::refresh);
                                         })
@@ -209,8 +202,11 @@ public class CustomizerMenu {
                         , e ->
                                 customizePerms.builder()
                                         .withPlayer(p)
-                                        .withItem(item)
-                                        .withBack((dItem) -> new CustomizerMenu(p, dItem, shop))
+                                        .withBack((strings, strings2) -> {
+                                            item.setBuyPerms(strings);
+                                            item.setSellPerms(strings2);
+                                            refresh();
+                                        })
                                         .open()), 19);
 
         inv.addButton(                                                  // Enchantments
@@ -218,7 +214,7 @@ public class CustomizerMenu {
                         ItemBuilder.of(XMaterial.ENCHANTING_TABLE)
                                 .setName(Lang.CUSTOMIZE_ENCHANTS_NAME.getAsString(p))
                                 .addLore(Lang.CUSTOMIZE_ENCHANTS_LORE.getAsListString(p))
-                                .addLore(item.getDailyItem().getEnchantments().entrySet().stream()
+                                .addLore(item.getItem().getEnchantments().entrySet().stream()
                                         .map(entry -> "&f&l" + entry.getKey()
                                                 .getName() + ":" + entry.getValue()).collect(Collectors.toList()))
                         , e -> {
@@ -227,17 +223,23 @@ public class CustomizerMenu {
 
                                 changeEnchantments.builder()
                                         .withPlayer(p)
-                                        .withDitem(item)
-                                        .withShop(shop)
+                                        .withAccept(itemStack -> {
+                                            item.setItem(itemStack);
+                                            refresh();
+                                        })
+                                        .withFallback(this::refresh)
                                         .prompt();
 
-                            else if (e.isRightClick() && !item.getEnchantments().isEmpty())
+                            else if (e.isRightClick() && !item.getItem().getEnchantments().isEmpty())
 
                                 changeEnchantments.builder()
                                         .withPlayer(p)
-                                        .withDitem(item)
-                                        .withShop(shop)
-                                        .withEnchants(item.getEnchantments())
+                                        .withEnchants(item.getItem().getEnchantments())
+                                        .withAccept(itemStack -> {
+                                            item.setItem(itemStack);
+                                            refresh();
+                                        })
+                                        .withFallback(this::refresh)
                                         .prompt();
 
                         }),
@@ -249,13 +251,16 @@ public class CustomizerMenu {
                         ItemBuilder.of(XMaterial.PLAYER_HEAD)
                                 .setName(Lang.CUSTOMIZE_ECON_NAME.getAsString(p))
                                 .addLore(Lang.CUSTOMIZE_ECON_LORE.getAsListString(p))
-                                .addLore("", "&7Current: &e" + item.getEconomy().getName())
+                                .addLore("", "&7Current: &e" + item.getEcon().getName())
                                 .applyTexture("e36e94f6c34a35465fce4a90f2e25976389eb9709a12273574ff70fd4daa6852")
                         , e ->
                                 changeEcon.builder()
                                         .withPlayer(p)
-                                        .withItem(item)
-                                        .withConsumer(dItem -> refresh())
+                                        .withConsumer(economy -> {
+                                            if (economy != null)        // If null no economy
+                                                item.setEcon(economy);
+                                            refresh();
+                                        })
                                         .prompt()
                 ), 23
         );
@@ -266,16 +271,18 @@ public class CustomizerMenu {
                                 .setName(Lang.CUSTOMIZE_PRICE_NAME.getAsString(p))
                                 .addLore(
                                         Lang.CUSTOMIZE_PRICE_LORE.getAsListString(p,
-                                                Template.of("buy_price", item.getDBuyPrice().orElse(dPrice.EMPTY()).getVisualPrice()),
-                                                Template.of("sell_price", item.getDSellPrice().orElse(dPrice.EMPTY()).getVisualPrice())
+                                                Template.of("buy_price", item.getVisualBuyPrice()),
+                                                Template.of("sell_price", item.getVisualSellPrice())
                                         )
                                 )
                         , e ->
                                 changePrice.builder()
                                         .withPlayer(p)
-                                        .withType(e.isLeftClick() ? changePrice.Type.BUY : changePrice.Type.SELL)
-                                        .withItem(item)
-                                        .withAccept(dItem -> new CustomizerMenu(p, dItem, shop))
+                                        .withAccept(price -> {
+                                            if (e.isLeftClick()) item.setBuyPrice(price);
+                                            else item.setSellPrice(price);
+                                            refresh();
+                                        })
                                         .withBack(this::refresh)
                                         .prompt()
                 ), 24
@@ -296,7 +303,7 @@ public class CustomizerMenu {
 
         inv.addButton(                                                  // Durability
                 ItemButton.create(
-                        item.getDailyItem().getType().getMaxDurability() != 0 ?
+                        item.getItem().getType().getMaxDurability() != 0 ?
                                 ItemBuilder.of(XMaterial.DAMAGED_ANVIL)
                                         .setName(Lang.CUSTOMIZE_DURABILITY_NAME.getAsString(p))
                                         .setLore(Lang.CUSTOMIZE_DURABILITY_LORE.getAsListString(p))
@@ -307,8 +314,13 @@ public class CustomizerMenu {
                                 ChatPrompt.builder()
                                         .withPlayer(p)
                                         .withResponse(s -> {
-                                            if (Utils.isShort(s)) item.setDurability(Short.parseShort(s), false);
-                                            else Messages.MSG_NOT_INTEGER.send(p);
+                                            if (Primitives.isShort(s)) {
+                                                ItemStack toChange = item.getItem();
+                                                item.setItem(ItemUtils.setDurability(toChange, Primitives.getAsShort(s)));
+                                                refresh();
+                                            } else {
+                                                Messages.MSG_NOT_INTEGER.send(p);
+                                            }
                                         })
                                         .withCancel(cancelReason -> Schedulers.sync().run(this::refresh))
                                         .withTitle("&c&lInput Durability")
@@ -321,13 +333,18 @@ public class CustomizerMenu {
                         ItemBuilder.of(XMaterial.BLACK_BANNER)   //add/remove enchants visible
                                 .setName(Lang.CUSTOMIZE_TOGGLE_ATTRIBUTES_NAME.getAsString(p))
                                 .setLore(Lang.CUSTOMIZE_TOGGLE_ATTRIBUTES_LORE.getAsListString(p,
-                                                Template.of("status", item.hasFlag(ItemFlag.HIDE_ATTRIBUTES)
+                                                Template.of("status",
+                                                        ItemUtils.hasItemFlags(item.getItem(), ItemFlag.HIDE_ATTRIBUTES)
                                                 )
                                         )
                                 )
 
                         , e -> {
-                            item.toggleFlag(ItemFlag.HIDE_ATTRIBUTES);
+                            ItemStack toChange = item.getItem();
+                            if (ItemUtils.hasItemFlags(toChange, ItemFlag.HIDE_ATTRIBUTES))
+                                item.setItem(ItemUtils.removeItemFlags(toChange, ItemFlag.HIDE_ATTRIBUTES));
+                            else
+                                item.setItem(ItemUtils.addItemFlags(toChange, ItemFlag.HIDE_ATTRIBUTES));
                             refresh();
                         }
                 ), 32
@@ -338,11 +355,11 @@ public class CustomizerMenu {
                         ItemBuilder.of(XMaterial.LEVER)
                                 .setName(Lang.CUSTOMIZE_CONFIRM_GUI_NAME.getAsString(p))
                                 .setLore(Lang.CUSTOMIZE_CONFIRM_GUI_LORE.getAsListString(p,
-                                                Template.of("status", item.isConfirmGuiEnabled())
+                                                Template.of("status", item.isConfirmGui())
                                         )
                                 )
                         , e -> {
-                            item.toggleConfirm_gui();
+                            item.setConfirmGui(!item.isConfirmGui());
                             refresh();
                         }
                 ), 34
@@ -350,19 +367,23 @@ public class CustomizerMenu {
 
         inv.addButton(                                                  // Hide Effects
                 ItemButton.create(
-                        Utils.isPotion(item.getDailyItem()) ?
+                        Utils.isPotion(item.getItem()) ?
                                 ItemBuilder.of(XMaterial.CAULDRON)
                                         .setName(Lang.CUSTOMIZE_TOGGLE_EFFECTS_NAME.getAsString(p))
                                         .setLore(Lang.CUSTOMIZE_TOGGLE_EFFECTS_LORE.getAsListString(p,
-                                                        Template.of("status", item.hasFlag(ItemFlag.HIDE_POTION_EFFECTS))
+                                                        Template.of("status",
+                                                                ItemUtils.hasItemFlags(item.getItem(), ItemFlag.HIDE_POTION_EFFECTS))
                                                 )
                                         )
                                 :
                                 ItemBuilder.of(XMaterial.GRAY_STAINED_GLASS_PANE).setName("&c")
 
                         , e -> {
-                            if (ItemUtils.isEmpty(e.getCurrentItem())) return;
-                            item.toggleFlag(ItemFlag.HIDE_POTION_EFFECTS);
+                            ItemStack toChange = item.getItem();
+                            if (ItemUtils.hasItemFlags(toChange, ItemFlag.HIDE_POTION_EFFECTS))
+                                item.setItem(ItemUtils.removeItemFlags(toChange, ItemFlag.HIDE_POTION_EFFECTS));
+                            else
+                                item.setItem(ItemUtils.addItemFlags(toChange, ItemFlag.HIDE_POTION_EFFECTS));
                             refresh();
                         }
                 ), 41
@@ -373,20 +394,27 @@ public class CustomizerMenu {
                         ItemBuilder.of(XMaterial.BOOKSHELF)
                                 .setName(Lang.CUSTOMIZE_TOGGLE_ENCHANTS_NAME.getAsString(p))
                                 .setLore(Lang.CUSTOMIZE_TOGGLE_ENCHANTS_LORE.getAsListString(p,
-                                                Template.of("status", item.hasFlag(ItemFlag.HIDE_ENCHANTS))
+                                                Template.of("status", ItemUtils.hasItemFlags(
+                                                        item.getItem(), ItemFlag.HIDE_ENCHANTS
+                                                ))
                                         )
                                 )
 
                         , e -> {
-                            item.toggleFlag(ItemFlag.HIDE_ENCHANTS);
+                            ItemStack toChange = item.getItem();
+                            if (ItemUtils.hasItemFlags(toChange, ItemFlag.HIDE_ENCHANTS))
+                                item.setItem(ItemUtils.removeItemFlags(toChange, ItemFlag.HIDE_ENCHANTS));
+                            else
+                                item.setItem(ItemUtils.addItemFlags(toChange, ItemFlag.HIDE_ENCHANTS));
                             refresh();
                         }
                 ), 43
         );
 
+        /*
         inv.addButton(                                                  // Set
                 ItemButton.create(
-                        item.hasStock() ?
+                        item.getItem().getAmount() == 1 ?
                                 ItemBuilder.of(XMaterial.BARRIER).setName(Lang.CUSTOMIZE_UNAVAILABLE.getAsString(p))
                                 :
                                 item.getSetItems().isPresent() ?
@@ -439,38 +467,34 @@ public class CustomizerMenu {
                             }
                         }
                 ), 45
-        );
+        );  TODO: do quantity */
 
+        dStock stock = item.getDStock();
         inv.addButton(                                                  // Stock
                 ItemButton.create(
-                        item.getSetItems().isPresent() ?
-                                ItemBuilder.of(XMaterial.BARRIER).setName(Lang.CUSTOMIZE_UNAVAILABLE.getAsString(p))
-                                :
-                                item.hasStock() ?
-                                        ItemBuilder.of(XMaterial.STONE_BUTTON)  //Change stock
-                                                .setName(Lang.CUSTOMIZE_STOCK_NAME.getAsString(p))
-                                                .setLore(Lang.CUSTOMIZE_STOCK_LORE_ON.getAsListString(p,
-                                                                Template.of("amount", item.getStock().getDefault()),
-                                                                Template.of("stock_type", item.getStock().getName())
-                                                        )
+                        stock != null ?
+                                ItemBuilder.of(XMaterial.STONE_BUTTON)  //Change stock
+                                        .setName(Lang.CUSTOMIZE_STOCK_NAME.getAsString(p))
+                                        .setLore(Lang.CUSTOMIZE_STOCK_LORE_ON.getAsListString(p,
+                                                        Template.of("amount", stock.getDefault()),
+                                                        Template.of("stock_type", stock.getName())
                                                 )
-                                        :
-                                        ItemBuilder.of(XMaterial.STONE_BUTTON)  //Change stock
-                                                .setName(Lang.CUSTOMIZE_STOCK_NAME.getAsString(p))
-                                                .setLore(Lang.CUSTOMIZE_STOCK_LORE.getAsListString(p))
+                                        )
+                                :
+                                ItemBuilder.of(XMaterial.STONE_BUTTON)  //Change stock
+                                        .setName(Lang.CUSTOMIZE_STOCK_NAME.getAsString(p))
+                                        .setLore(Lang.CUSTOMIZE_STOCK_LORE.getAsListString(p))
 
                         , e -> {
 
-                            if (item.getSetItems().isPresent()) return;
-
-                            if (e.getClick().equals(ClickType.DROP)) {
-                                int defaultStock = item.getStock().getDefault();
+                            if (e.getClick().equals(ClickType.DROP) && stock != null) {
+                                int defaultStock = item.getDStock().getDefault();
                                 item.setStock(
-                                        item.getStock().getName().equals("INDIVIDUAL") ?
+                                        stock.getName().equals("INDIVIDUAL") ?
                                                 dStockFactory.GLOBAL(defaultStock) : dStockFactory.INDIVIDUAL(defaultStock)
                                 );
                                 refresh();
-                            } else if (e.isLeftClick()) {
+                            } else if (e.isLeftClick() && stock == null) {
 
                                 ChatPrompt.builder()
                                         .withPlayer(p)
@@ -493,14 +517,15 @@ public class CustomizerMenu {
                 ), 46
         );
 
+        LinkedList<String> commands = item.getCommands();
         inv.addButton(                                                  // Commands
                 ItemButton.create(
-                        item.getCommands().isPresent() ?
+                        commands != null ?
                                 ItemBuilder.of(XMaterial.COMMAND_BLOCK)  //Change commands
                                         .setName(Lang.CUSTOMIZE_COMMANDS_NAME_ON.getAsString(p))
                                         .setLore(Lang.CUSTOMIZE_COMMANDS_LORE_ON.getAsListString(p))
                                         .addLore("")
-                                        .addLore(item.getCommands().get()
+                                        .addLore(commands
                                                 .stream().map(s -> FormatUtils.color("&f&l" + s)).collect(Collectors.toList()))
                                 :
                                 ItemBuilder.of(XMaterial.COMMAND_BLOCK)  //set commands
@@ -512,19 +537,18 @@ public class CustomizerMenu {
 
                         , e -> {
 
-                            if (!item.getCommands().isPresent()) { // Boton de cambiar commands
+                            if (commands == null) { // Boton de cambiar commands
                                 item.setCommands(new ArrayList<>());
                                 refresh();
 
-                            } else if (item.getCommands().isPresent()) { // Boton de añadir/quitar commands
+                            } else { // Boton de añadir/quitar commands
                                 if (e.isLeftClick()) {
 
                                     ChatPrompt.builder()
                                             .withPlayer(p)
                                             .withResponse(s -> {
-                                                List<String> cmds = item.getCommands().get();
-                                                cmds.add(s);
-                                                item.setCommands(cmds);
+                                                commands.addLast(s);
+                                                item.setCommands(commands);
                                                 refresh();
                                             })
                                             .withCancel(cancelReason -> Schedulers.sync().run(this::refresh))
@@ -533,16 +557,13 @@ public class CustomizerMenu {
 
                                 } else if (e.isRightClick() && !e.isShiftClick()) {
 
-                                    List<String> cmds = item.getCommands().get();
-
-                                    if (!cmds.isEmpty()) {
-                                        cmds.remove(cmds.size() - 1);
-                                        item.setCommands(cmds);
+                                    if (!commands.isEmpty()) {
+                                        commands.pollLast();
+                                        item.setCommands(commands);
                                     }
                                     refresh();
 
                                 } else if (e.isShiftClick() && e.isRightClick()) {
-
                                     item.setCommands(null);
                                     refresh();
                                 }
@@ -551,20 +572,21 @@ public class CustomizerMenu {
                 ), 47
         );
 
+        List<String> bundle = item.getBundle();
         inv.addButton(                                                  // Bundle
                 ItemButton.create(
-                        item.getBundle().isPresent() ?
+                        bundle != null ?
                                 ItemBuilder.of(XMaterial.ITEM_FRAME)  //Change stock
                                         .setName("&f&lChange bundle items")
                                         .setLore("&6Right Click > &7To change items on the bundle")
                                         .addLore("")
-                                        .addLore(item.getBundle().orElse(Collections.emptyList()))
+                                        .addLore(bundle)
                                 :
                                 ItemBuilder.of(XMaterial.GRAY_STAINED_GLASS_PANE).setName("&c")
 
                         , e -> {
 
-                            if (!item.getBundle().isPresent()) return;
+                            if (bundle == null) return;
 
                             changeBundleItem.builder()
                                     .withPlayer(p)
@@ -586,12 +608,13 @@ public class CustomizerMenu {
 
     private void refresh() {
         inv.destroy();
-        new CustomizerMenu(p, item, shop);
+        build();
+        inv.open(p);
     }
 
     public static final class newCustomizerMenuBuilder {
         private Player p;
-        private dItem item;
+        private newDItem item;
         private dShop shop;
 
         private newCustomizerMenuBuilder() {
@@ -602,7 +625,7 @@ public class CustomizerMenu {
             return this;
         }
 
-        public newCustomizerMenuBuilder withItem(dItem item) {
+        public newCustomizerMenuBuilder withItem(newDItem item) {
             this.item = item;
             return this;
         }

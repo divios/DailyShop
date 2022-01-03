@@ -17,7 +17,6 @@ import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.economies.Economies;
 import io.github.divios.dailyShop.economies.economy;
 import io.github.divios.dailyShop.files.Settings;
-import io.github.divios.dailyShop.lorestategy.loreStrategy;
 import io.github.divios.dailyShop.utils.MMOUtils;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.stock.dStock;
@@ -351,13 +350,6 @@ public class dItem implements Serializable, Cloneable {
     public dItem setLore(@NotNull List<String> lore) {
         setItem(ItemUtils.setLore(getDailyItem(), lore));
         setRawItem(ItemUtils.setLore(getRealItem(), lore));
-        cache.get("lore").reset();
-        return this;
-    }
-
-    public dItem applyLore(loreStrategy strategy, Object... data) {
-        setItem(strategy.applyLore(item.getItem(), data));
-        //setRawItem(strategy.applyLore(getRawItem(), data));
         cache.get("lore").reset();
         return this;
     }

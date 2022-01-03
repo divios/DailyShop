@@ -10,8 +10,7 @@ import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.files.Lang;
 import io.github.divios.dailyShop.utils.Utils;
-import io.github.divios.lib.dLib.dItem;
-import io.github.divios.lib.dLib.dShop;
+import io.github.divios.lib.dLib.dPrice;
 import org.bukkit.entity.Player;
 
 import java.util.function.Consumer;
@@ -22,26 +21,16 @@ public class changePrice {
     private static final DailyShop plugin = DailyShop.get();
 
     private final Player p;
-    private final dItem item;
-    private final Type type;
-    private final dShop shop;
-    private final Consumer<dItem> accept;
+    private final Consumer<dPrice> accept;
     private final Runnable back;
 
-    @Deprecated
     public changePrice(
             Player p,
-            dItem item,
-            dShop shop,
-            Type type,
-            Consumer<dItem> accept,
+            Consumer<dPrice> accept,
             Runnable back
     ) {
 
         this.p = p;
-        this.item = item;
-        this.type = type;
-        this.shop = shop;
         this.accept = accept;
         this.back = back;
 
@@ -76,13 +65,9 @@ public class changePrice {
                                                 return;
                                             }
                                             double price = Double.parseDouble(s);
-                                            if (price < 0) price = -1;
+                                            if (price <= 0) price = -1;
 
-                                            if (type == Type.BUY)
-                                                item.setBuyPrice(price);
-                                            else item.setSellPrice(price);
-
-                                            accept.accept(item);
+                                            accept.accept(price == -1 ? null : new dPrice(price));
                                         })
                                         .withCancel(cancelReason -> Schedulers.sync().run(back))
                                         .withTitle("&6&lInput new Price")
@@ -93,52 +78,43 @@ public class changePrice {
         gui.addButton(ItemButton.create(ItemBuilder.of(XMaterial.REPEATER)
                         .setName("&c&lSet interval").addLore("&7The price of the item",
                                 "&7will take a random value between", "&7the given interval"),
-                e -> {
+                e ->
+                        ChatPrompt.builder()
+                                .withPlayer(p)
+                                .withResponse(s -> {
 
-                    ChatPrompt.builder()
-                            .withPlayer(p)
-                            .withResponse(s -> {
+                                    String[] pricesS = s.split(":");
 
-                                String[] pricesS = s.split(":");
+                                    if (pricesS.length != 2) {
+                                        Utils.sendRawMsg(p, "&7Wrong format -> minPrice:maxPrice (Ex 30:50)");
+                                        Schedulers.sync().run(back);
+                                        return;
+                                    }
 
-                                if (pricesS.length != 2) {
-                                    Utils.sendRawMsg(p, "&7Wrong format -> minPrice:maxPrice (Ex 30:50)");
-                                    Schedulers.sync().run(back);
-                                    return;
-                                }
+                                    Double[] prices;
 
-                                Double[] prices;
+                                    try {
+                                        prices = new Double[]{Double.parseDouble(pricesS[0]),
+                                                Double.parseDouble(pricesS[1])};
+                                    } catch (Exception err) {
+                                        Utils.sendRawMsg(p, "&7Not double");
+                                        Schedulers.sync().run(back);
+                                        return;
+                                    }
 
-                                try {
-                                    prices = new Double[]{Double.parseDouble(pricesS[0]),
-                                            Double.parseDouble(pricesS[1])};
-                                } catch (Exception err) {
-                                    Utils.sendRawMsg(p, "&7Not double");
-                                    Schedulers.sync().run(back);
-                                    return;
-                                }
+                                    if (prices[0] >= prices[1]) {
+                                        Utils.sendRawMsg(p, "&7Max price can't be lower than min price");
+                                        Schedulers.sync().run(back);
+                                        return;
+                                    }
 
-                                if (prices[0] >= prices[1]) {
-                                    Utils.sendRawMsg(p, "&7Max price can't be lower than min price");
-                                    Schedulers.sync().run(back);
-                                    return;
-                                }
+                                    accept.accept(new dPrice(prices[0], prices[1]));
+                                })
 
-                                if (type == Type.BUY)
-                                    item.setBuyPrice(prices[0], prices[1]);
-                                else item.setSellPrice(prices[0], prices[1]);
-
-                                accept.accept(item);
-
-                            })
-
-                            .withCancel(cancelReason -> Schedulers.sync().run(back))
-                            .withTitle("&6&lInput new Price")
-                            .withSubtitle("&7Format: minPrice:maxPrice")
-                            .prompt();
-
-
-                }), 15);
+                                .withCancel(cancelReason -> Schedulers.sync().run(back))
+                                .withTitle("&6&lInput new Price")
+                                .withSubtitle("&7Format: minPrice:maxPrice")
+                                .prompt()), 15);
 
         gui.addButton(ItemButton.create(new
                         ItemBuilder(XMaterial.PLAYER_HEAD)
@@ -158,9 +134,7 @@ public class changePrice {
 
     public static final class changePriceBuilder {
         private Player p;
-        private dItem item;
-        private Type type;
-        private Consumer<dItem> accept;
+        private Consumer<dPrice> accept;
         private Runnable back;
 
         private changePriceBuilder() {
@@ -171,17 +145,7 @@ public class changePrice {
             return this;
         }
 
-        public changePriceBuilder withItem(dItem item) {
-            this.item = item;
-            return this;
-        }
-
-        public changePriceBuilder withType(Type type) {
-            this.type = type;
-            return this;
-        }
-
-        public changePriceBuilder withAccept(Consumer<dItem> accept) {
+        public changePriceBuilder withAccept(Consumer<dPrice> accept) {
             this.accept = accept;
             return this;
         }
@@ -192,14 +156,8 @@ public class changePrice {
         }
 
         public changePrice prompt() {
-            // TODO: add preconditions
-            return new changePrice(p, item, null, type, accept, back);
+            return new changePrice(p, accept, back);
         }
-    }
-
-    public enum Type {
-        BUY,
-        SELL
     }
 
 }

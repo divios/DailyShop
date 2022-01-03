@@ -1,17 +1,18 @@
 package io.github.divios.lib.managers;
 
-import io.github.divios.core_lib.scheduler.Schedulers;
+import com.google.gson.JsonElement;
 import io.github.divios.dailyShop.DailyShop;
-import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
-import io.github.divios.lib.serialize.serializerApi;
+import io.github.divios.lib.dLib.newDItem;
 import io.github.divios.lib.storage.databaseManager;
+import org.jetbrains.annotations.NotNull;
 
 import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
+@SuppressWarnings({"unused"})
 public class WrappedShop extends dShop {
 
     private static final databaseManager dManager = DailyShop.get().getDatabaseManager();
@@ -25,16 +26,16 @@ public class WrappedShop extends dShop {
         super(name);
     }
 
-    protected WrappedShop(String name, String base64, Timestamp timestamp, int timer) {
-        super(name, base64, timestamp, timer);
+    protected WrappedShop(String name, JsonElement inv, Timestamp timestamp, int timer) {
+        super(name, inv, timestamp, timer);
     }
 
-    protected WrappedShop(String name, String base64, Timestamp timestamp, int timer, Set<dItem> items) {
-        super(name, base64, timestamp, timer, items);
+    protected WrappedShop(String name, JsonElement inv, Timestamp timestamp, int timer, Set<newDItem> items) {
+        super(name, inv, timestamp, timer, items);
     }
 
     protected WrappedShop(dShop fromShop) {
-        this(fromShop.getName(), fromShop.getGuis().getDefault().toBase64(), fromShop.getTimestamp(), fromShop.getTimer(), new HashSet<>(fromShop.getItems()));
+        this(fromShop.getName(), fromShop.getGuis().getDefault().toJson(), fromShop.getTimestamp(), fromShop.getTimer(), new HashSet<>(fromShop.getItems()));
         this.set_announce(fromShop.get_announce());
         this.setDefault(fromShop.isDefault());
     }
@@ -54,13 +55,13 @@ public class WrappedShop extends dShop {
     }
 
     @Override
-    public synchronized void addItem(dItem item) {
+    public synchronized void addItem(@NotNull newDItem item) {
         super.addItem(item);
         dManager.addItemAsync(this.name, item);
     }
 
     @Override
-    public synchronized void updateItem(dItem newItem) {
+    public synchronized void updateItem(@NotNull newDItem newItem) {
         super.updateItem(newItem);
         dManager.updateItemAsync(getName(), newItem);
     }

@@ -11,6 +11,9 @@ import de.tr7zw.nbtapi.NBTItem;
 import io.github.divios.core_lib.gson.JsonBuilder;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
+import io.github.divios.core_lib.misc.FormatUtils;
+import io.github.divios.core_lib.misc.XSymbols;
+import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.economies.Economies;
 import io.github.divios.dailyShop.economies.economy;
@@ -30,10 +33,23 @@ import java.util.*;
  * This class represents a Daily Item. Contains all the daily
  * meta that is used for various functions and mechanics.
  */
-@SuppressWarnings({"unused", "UnstableApiUsage"})
+@SuppressWarnings({"unused", "UnstableApiUsage", "UnusedReturnValue"})
 public class newDItem implements Cloneable {
 
     private static final String ID_KEY = "rds_id";
+
+    public static @Nullable
+    String getIdKey(@NotNull ItemStack item) {
+        return new NBTItem(item).getString(ID_KEY);
+    }
+
+    public static @Nullable
+    UUID getUUIDKey(@NotNull ItemStack item) {
+        String id = getIdKey(item);
+        if (id == null) return null;
+        return UUID.nameUUIDFromBytes(id.getBytes());
+    }
+
     private static final newDItem AIR;
 
     private static final Gson gson = new Gson();
@@ -48,7 +64,7 @@ public class newDItem implements Cloneable {
     private dPrice sellPrice;
     private economy econ = Economies.vault.getEconomy();
     private dRarity rarity = new dRarity();
-    private WrapperAction action;
+    private WrapperAction action = WrapperAction.of(dAction.EMPTY, "");
     private List<String> buyPerms;
     private List<String> sellPerms;
     private List<String> commands;
@@ -72,32 +88,47 @@ public class newDItem implements Cloneable {
     public static newDItem fromJson(@NotNull JsonElement element) {
         JsonObject object = element.getAsJsonObject();
 
-        if (object.has("air")) return AIR();
-
-        Preconditions.checkArgument(!object.get("id").isJsonNull(), "No ID found");
-        Preconditions.checkArgument(!object.get("item").isJsonNull(), "No item found");
+        Preconditions.checkArgument(object.has("id"), "No ID found");
+        Preconditions.checkArgument(object.has("item"), "No item found");
 
         String id = object.get("id").getAsString();
+
+        if (object.get("item").getAsString().equals("air")) {           // Deserialize air item
+            Log.info("is air?");
+            newDItem air = AIR().setID(object.get("id").getAsString());
+            air.setSlot(object.get("slot").getAsInt());
+            return air;
+        }
+
         NBTContainer container = new NBTContainer(object.get("item").getAsString());
         newDItem item = new newDItem(NBTItem.convertNBTtoItem(container), id);
 
         item.slot = object.get("slot").getAsInt();
-        if (!object.get("stock").isJsonNull()) item.stock = dStock.fromJson(object.get("stock"));
-        if (!object.get("buyPrice").isJsonNull())
+        if (object.has("stock") && !object.get("stock").isJsonNull())
+            item.stock = dStock.fromJson(object.get("stock"));
+
+        if (object.has("buyPrice") && !object.get("buyPrice").isJsonNull())
             item.buyPrice = dPrice.fromString(object.get("buyPrice").getAsString());
-        if (!object.get("sellPrice").isJsonNull())
+
+        if (object.has("sellPrice") && !object.get("sellPrice").isJsonNull())
             item.sellPrice = dPrice.fromString(object.get("sellPrice").getAsString());
+
         item.econ = economy.fromString(object.get("econ").getAsString());
         item.rarity = dRarity.fromKey(object.get("rarity").getAsString());
-        if (!object.get("action").isJsonNull()) item.action = WrapperAction.fromJson(object.get("action"));
-        if (!object.get("buyPerms").isJsonNull())
+        item.action = WrapperAction.fromJson(object.get("action"));
+
+        if (object.has("buyPerms") && !object.get("buyPerms").isJsonNull())
             item.buyPerms = gson.fromJson(object.get("buyPerms"), listStringToken.getType());
-        if (!object.get("sellPerms").isJsonNull())
+
+        if (object.has("sellPerms") && !object.get("sellPerms").isJsonNull())
             item.sellPerms = gson.fromJson(object.get("sellPerms"), listStringToken.getType());
-        if (!object.get("commands").isJsonNull())
+
+        if (object.has("commands") && !object.get("commands").isJsonNull())
             item.commands = gson.fromJson(object.get("commands"), listStringToken.getType());
-        if (!object.get("bundle").isJsonNull())
+
+        if (object.has("bundle") && !object.get("bundle").isJsonNull())
             item.bundle = gson.fromJson(object.get("bundle"), listStringToken.getType());
+
         item.confirmGui = object.get("confirmGui").getAsBoolean();
 
         return item;
@@ -182,23 +213,27 @@ public class newDItem implements Cloneable {
 
     @Nullable
     public dStock getDStock() {
-        return stock.clone();
+        return stock == null ? null : stock.clone();
     }
 
     public void incrementStock(@NotNull Player p, int amount) {
-        stock.increment(p, amount);
+        if (stock != null)
+            stock.increment(p, amount);
     }
 
     public void incrementStock(@NotNull UUID uuid, int amount) {
-        stock.increment(uuid, amount);
+        if (stock != null)
+            stock.increment(uuid, amount);
     }
 
     public void decrementStock(@NotNull Player p, int amount) {
-        stock.decrement(p, amount);
+        if (stock != null)
+            stock.decrement(p, amount);
     }
 
     public void decrementStock(@NotNull UUID uuid, int amount) {
-        stock.decrement(uuid, amount);
+        if (stock != null)
+            stock.decrement(uuid, amount);
     }
 
     public int getPlayerStock(Player p) {
@@ -214,7 +249,11 @@ public class newDItem implements Cloneable {
         return buyPrice == null ? -1 : buyPrice.getPrice() / item.getAmount();
     }
 
-    public double getBuyPrice(@Nullable Player p, @Nullable dShop shop) {
+    public String getVisualBuyPrice() {
+        return buyPrice == null ? FormatUtils.color("&c" + XSymbols.TIMES_3.parseSymbol()) : buyPrice.getVisualPrice();
+    }
+
+    public double getPlayerBuyPrice(@Nullable Player p, @Nullable dShop shop) {
         if (buyPrice == null) return -1;
 
         double modifier = DailyShop.get().getPriceModifiers().getModifier(p, shop == null ? null : shop.getName(), ID, priceModifier.type.BUY);
@@ -232,7 +271,11 @@ public class newDItem implements Cloneable {
         return sellPrice == null ? -1 : sellPrice.getPrice() / item.getAmount();
     }
 
-    public double getSellPrice(Player p, dShop shop) {
+    public String getVisualSellPrice() {
+        return sellPrice == null ? FormatUtils.color("&c" + XSymbols.TIMES_3.parseSymbol()) : sellPrice.getVisualPrice();
+    }
+
+    public double getPlayerSellPrice(Player p, dShop shop) {
         if (sellPrice == null) return -1;
 
         double modifier = DailyShop.get().getPriceModifiers().getModifier(p, shop == null ? null : shop.getName(), ID, priceModifier.type.SELL);
@@ -251,24 +294,24 @@ public class newDItem implements Cloneable {
         return rarity.clone();
     }
 
-    @Nullable
+    @NotNull
     public WrapperAction getAction() {
         return action;      // action is already immutable
     }
 
     @Nullable
-    public List<String> getBuyPerms() {
-        return buyPerms == null ? null : Collections.unmodifiableList(buyPerms);
+    public LinkedList<String> getBuyPerms() {
+        return buyPerms == null ? null : new LinkedList<>(buyPerms);
     }
 
     @Nullable
-    public List<String> getSellPerms() {
-        return sellPerms == null ? null : Collections.unmodifiableList(sellPerms);
+    public LinkedList<String> getSellPerms() {
+        return sellPerms == null ? null : new LinkedList<>(sellPerms);
     }
 
     @Nullable
-    public List<String> getCommands() {
-        return commands == null ? null : Collections.unmodifiableList(commands);
+    public LinkedList<String> getCommands() {
+        return commands == null ? null : new LinkedList<>(commands);
     }
 
     @Nullable
@@ -282,6 +325,21 @@ public class newDItem implements Cloneable {
 
     public boolean isAir() {
         return isAir;
+    }
+
+    public JsonObject getNBT() {
+        return new Gson().fromJson(new NBTItem(item).toString(), JsonObject.class);
+    }
+
+    /**
+     * Returns a copy of this item with the id specified
+     */
+    public newDItem setID(@NotNull String id) {
+        Preconditions.checkNotNull(id, "id is null");
+        newDItem cloned = clone();
+        cloned.ID = id;
+
+        return cloned;
     }
 
     public newDItem setItem(@NotNull ItemStack item) {
@@ -300,20 +358,28 @@ public class newDItem implements Cloneable {
         return this;
     }
 
+    public newDItem setNBT(@NotNull JsonObject nbt) {
+        Preconditions.checkNotNull(nbt, "Nbt is null");
+        NBTItem item = new NBTItem(this.item);
+        item.mergeCompound(new NBTContainer(nbt.toString()));
+
+        return this.setItem(item.getItem());
+    }
+
     public newDItem setSlot(int slot) {
         this.slot = slot;
 
         return this;
     }
 
-    public newDItem setBuyPrice(int minPrice, int maxPrice) {
-        buyPrice = new dPrice(minPrice, maxPrice);
+    public newDItem setBuyPrice(double price) {
+        buyPrice = (price <= 0) ? null : new dPrice(price);
 
         return this;
     }
 
-    public newDItem setBuyPrice(int price) {
-        buyPrice = new dPrice(price);
+    public newDItem setBuyPrice(double minPrice, double maxPrice) {
+        buyPrice = new dPrice(minPrice, maxPrice);
 
         return this;
     }
@@ -324,26 +390,61 @@ public class newDItem implements Cloneable {
         return this;
     }
 
+    public newDItem generateNewBuyPrice() {
+        if (buyPrice != null)
+            buyPrice.generateNewPrice();
+
+        return this;
+    }
+
+    public newDItem setSellPrice(double price) {
+        sellPrice = (price <= 0) ? null : new dPrice(price);
+
+        return this;
+    }
+
+    public newDItem setSellPrice(double minPrice, double maxPrice) {
+        sellPrice = new dPrice(minPrice, maxPrice);
+
+        return this;
+    }
+
     public newDItem setSellPrice(@Nullable dPrice sellPrice) {
         this.sellPrice = sellPrice == null ? null : sellPrice.clone();
 
         return this;
     }
 
+    public newDItem generateNewSellPrice() {
+        if (sellPrice != null)
+            sellPrice.generateNewPrice();
+
+        return this;
+    }
+
     public newDItem setEcon(@NotNull economy econ) {
+        Preconditions.checkNotNull(econ, "Econ is null");
         this.econ = econ;
 
         return this;
     }
 
     public newDItem setRarity(@NotNull String key) {
+        Preconditions.checkNotNull(key, "key is null");
         rarity = dRarity.fromKey(key);
 
         return this;
     }
 
     public newDItem setRarity(@NotNull dRarity rarity) {
+        Preconditions.checkNotNull(rarity, "rarity is null");
         this.rarity = rarity.clone();
+
+        return this;
+    }
+
+    public newDItem nextRarity() {
+        rarity.next();
 
         return this;
     }
@@ -359,6 +460,8 @@ public class newDItem implements Cloneable {
     }
 
     public newDItem setAction(@NotNull dAction type, @NotNull String data) {
+        Preconditions.checkNotNull(type, "Type is null");
+        Preconditions.checkNotNull(data, "data is null");
         return setAction(WrapperAction.of(type, data));
     }
 
@@ -369,25 +472,25 @@ public class newDItem implements Cloneable {
     }
 
     public newDItem setBuyPerms(@Nullable List<String> buyPerms) {
-        this.buyPerms = buyPerms == null ? null : new ArrayList<>(buyPerms);
+        this.buyPerms = (buyPerms == null || buyPerms.isEmpty()) ? null : new ArrayList<>(buyPerms);
 
         return this;
     }
 
     public newDItem setSellPerms(@Nullable List<String> sellPerms) {
-        this.sellPerms = sellPerms == null ? null : new ArrayList<>(sellPerms);
+        this.sellPerms = (sellPerms == null || sellPerms.isEmpty()) ? null : new ArrayList<>(sellPerms);
 
         return this;
     }
 
     public newDItem setCommands(@Nullable List<String> commands) {
-        this.commands = commands == null ? null : new ArrayList<>(commands);
+        this.commands = (commands == null || commands.isEmpty()) ? null : new ArrayList<>(commands);
 
         return this;
     }
 
     public newDItem setBundle(@Nullable List<String> bundle) {
-        this.bundle = bundle == null ? null : new ArrayList<>(bundle);
+        this.bundle = (bundle == null || bundle.isEmpty()) ? null : new ArrayList<>(bundle);
 
         return this;
     }
@@ -400,9 +503,12 @@ public class newDItem implements Cloneable {
 
     @NotNull
     public JsonElement toJson() {
+
         if (isAir)
             return JsonBuilder.object()
-                    .add("air", true)
+                    .add("id", ID)
+                    .add("item", "air")
+                    .add("slot", slot)
                     .build();
 
         return JsonBuilder.object()
@@ -414,7 +520,7 @@ public class newDItem implements Cloneable {
                 .add("sellPrice", sellPrice == null ? null : sellPrice.toString())
                 .add("econ", econ.toString())
                 .add("rarity", rarity.getKey())
-                .add("action", action == null ? null : action.toJson())
+                .add("action", action.toJson())
                 .add("commands", gson.toJsonTree(commands))
                 .add("buyPerms", gson.toJsonTree(buyPerms))
                 .add("sellPerms", gson.toJsonTree(sellPerms))
@@ -523,7 +629,7 @@ public class newDItem implements Cloneable {
     public static class WrapperAction {
 
         public static WrapperAction fromJson(JsonElement element) {
-            JsonObject object = new JsonObject();
+            JsonObject object = element.getAsJsonObject();
 
             Preconditions.checkNotNull(object.get("type"));
             Preconditions.checkNotNull(object.get("data"));
@@ -555,6 +661,10 @@ public class newDItem implements Cloneable {
 
         public String getData() {
             return data;
+        }
+
+        public void execute(@NotNull Player p) {
+            action.execute(p, data);
         }
 
         public JsonElement toJson() {

@@ -1,7 +1,6 @@
 package io.github.divios.dailyShop.commands;
 
 import io.github.divios.core_lib.misc.FormatUtils;
-import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.jcommands.JCommand;
 import io.github.divios.jcommands.arguments.Argument;

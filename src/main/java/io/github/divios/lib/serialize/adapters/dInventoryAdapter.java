@@ -5,39 +5,42 @@ import com.google.common.reflect.TypeToken;
 import com.google.gson.*;
 import io.github.divios.core_lib.gson.JsonBuilder;
 import io.github.divios.dailyShop.utils.Utils;
-import io.github.divios.lib.dLib.dItem;
+import io.github.divios.lib.dLib.newDItem;
 import io.github.divios.lib.dLib.synchronizedGui.singleGui.dInventory;
+import io.github.divios.lib.serialize.wrappers.WrappedDButton;
 
 import java.lang.reflect.Type;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@SuppressWarnings({"unused", "UnstableApiUsage", "UnusedReturnValue"})
 public class dInventoryAdapter implements JsonSerializer<dInventory>, JsonDeserializer<dInventory> {
 
     private static final Gson gson = new GsonBuilder()
-            .registerTypeAdapter(dItem.class, new dButtonAdapter())
+            .registerTypeAdapter(newDItem.class, new dButtonAdapter())
+            .registerTypeAdapter(WrappedDButton.class, new dButtonAdapter())
             .create();
 
-    private static final TypeToken<LinkedHashMap<String, dItem>> itemsToken = new TypeToken<LinkedHashMap<String, dItem>>() {};
+    private static final TypeToken<LinkedHashMap<String, newDItem>> itemsToken = new TypeToken<LinkedHashMap<String, newDItem>>() {
+    };
 
     @Override
     public dInventory deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
         JsonObject object = jsonElement.getAsJsonObject();
 
         String title = object.has("title") ? object.get("title").getAsString() : "";
-        int size[] = {27};
-        Map<String, dItem> buttons = new LinkedHashMap<>();
+        int[] size = {27};
+        Map<String, newDItem> buttons = new LinkedHashMap<>();
 
         if (object.has("size"))
             Preconditions.checkArgument(Utils.testRunnable(() -> size[0] = object.get("size").getAsInt()), "Size field needs to be an integer");
 
         Preconditions.checkArgument(size[0] % 9 == 0, "Inventory size must be a multiple of 9");
 
-        if (object.has("items")) {
+        if (object.has("items"))
             buttons.putAll(gson.fromJson(object.get("items").getAsJsonObject(), itemsToken.getType()));
-        }
 
-        dInventory inv = new dInventory(title, size[0], null);
+        dInventory inv = new dInventory(title, size[0]);
         buttons.forEach((s, dItem) -> inv.addButton(dItem.setID(s), dItem.getSlot()));
 
         addItemsWithMultipleSlots(object, inv);
@@ -54,12 +57,14 @@ public class dInventoryAdapter implements JsonSerializer<dInventory>, JsonDeseri
                 .build();
     }
 
-    /** Utils  **/
+    /**
+     * Utils
+     **/
 
-    private Map<String, dItem> getButtons(dInventory inv) {
-        Map<String, dItem> buttons = new LinkedHashMap<>();
+    private Map<String, WrappedDButton> getButtons(dInventory inv) {
+        Map<String, newDItem> buttons = new LinkedHashMap<>();
         Set<Integer> flaggedSlots = new HashSet<>();
-        Map<String, dItem> finalButtons = new LinkedHashMap<>();
+        Map<String, WrappedDButton> finalButtons = new LinkedHashMap<>();
 
         inv.getButtonsSlots().entrySet().stream()       // Get buttons sorted by slots
                 .sorted(Comparator.comparingInt(Map.Entry::getKey))
@@ -70,16 +75,19 @@ public class dInventoryAdapter implements JsonSerializer<dInventory>, JsonDeseri
             if (flaggedSlots.contains(dItem.getSlot())) return;
 
             List<Integer> similarItemsSlots = buttons.values().stream()
-                    .filter(dItem1 -> dItem1.getRealItem().isSimilar(dItem.getRealItem()))
-                    .map(io.github.divios.lib.dLib.dItem::getSlot)
+                    .filter(dItem1 -> dItem1.getItem().isSimilar(dItem.getItem()))
+                    .map(newDItem::getSlot)
                     .sorted()
                     .collect(Collectors.toList());
 
+            WrappedDButton dButton = WrappedDButton.of(dItem);
             if (similarItemsSlots.size() == 1)
-                finalButtons.put(dItem.getID(), dItem);
+                finalButtons.put(dItem.getID(), dButton);
             else {
-                dItem baseItem = inv.getButtonsSlots().get(similarItemsSlots.get(0)).clone();  // Less slot should be baseItem
-                finalButtons.put(baseItem.getID(), baseItem.setMultipleSlots(similarItemsSlots));
+                newDItem baseItem = inv.getButtonsSlots().get(similarItemsSlots.get(0)).clone();  // Less slot should be baseItem
+                similarItemsSlots.remove(0);   // remove first since is added on WrappedDButton
+                dButton.addMultipleSlots(similarItemsSlots);
+                finalButtons.put(baseItem.getID(), dButton);
                 flaggedSlots.addAll(similarItemsSlots);
             }
         });
@@ -87,7 +95,8 @@ public class dInventoryAdapter implements JsonSerializer<dInventory>, JsonDeseri
         return finalButtons;
     }
 
-    private static final TypeToken<LinkedHashMap<String, JsonObject>> itemsJsonToken = new TypeToken<LinkedHashMap<String, JsonObject>>() {};
+    private static final TypeToken<LinkedHashMap<String, JsonObject>> itemsJsonToken = new TypeToken<LinkedHashMap<String, JsonObject>>() {
+    };
 
     private void addItemsWithMultipleSlots(JsonObject object, dInventory inv) {
         LinkedHashMap<String, JsonObject> items = gson.fromJson(object.get("items"), itemsJsonToken.getType());
@@ -99,7 +108,7 @@ public class dInventoryAdapter implements JsonSerializer<dInventory>, JsonDeseri
 
             item.get("slot").getAsJsonArray().forEach(element -> multipleSlots.add(element.getAsInt()));
 
-            dItem baseItem = inv.getButtonsSlots().get(multipleSlots.pollFirst());
+            newDItem baseItem = inv.getButtonsSlots().get(multipleSlots.pollFirst());
             if (baseItem == null) return;
 
             multipleSlots.forEach(integer -> inv.addButton(baseItem.copy(), integer));

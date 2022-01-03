@@ -2,7 +2,6 @@ package io.github.divios.lib.dLib.log;
 
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.lib.dLib.log.options.dLogEntry;
-import io.github.divios.lib.storage.databaseManager;
 
 public class dLog {
 

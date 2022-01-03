@@ -110,6 +110,7 @@ public class shopsResource {
 
             } catch (Exception e) {
                 Log.warn("There was a problem with the shop " + shopFile.getName());
+                e.printStackTrace();
                 Log.warn(e.getMessage());
             }
         }

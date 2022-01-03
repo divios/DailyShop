@@ -45,7 +45,6 @@ public class miniCustomizeGui {
     private final Subscription preventPicks;
     private final Subscription preventClose;
 
-    @Deprecated
     public miniCustomizeGui(Player p,
                             dShop shop,
                             ItemStack item,

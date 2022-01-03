@@ -9,8 +9,8 @@ import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.files.Lang;
 import io.github.divios.dailyShop.guis.customizerguis.changeBundleItem;
 import io.github.divios.dailyShop.utils.Utils;
-import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
+import io.github.divios.lib.dLib.newDItem;
 import io.github.divios.lib.serialize.serializerApi;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -49,7 +49,6 @@ public class addDailyGuiIH {
 
         InventoryGUI gui = new InventoryGUI(plugin, 27, Lang.ADD_ITEMS_TITLE.getAsString(p));
 
-
         gui.addButton(
                 ItemButton.create(
                         ItemBuilder.of(XMaterial.REDSTONE_TORCH)
@@ -82,11 +81,10 @@ public class addDailyGuiIH {
                         , e ->
                                 changeBundleItem.builder()
                                         .withPlayer(p)
-                                        .withItem(dItem.of(XMaterial.CHEST_MINECART.parseItem()))
                                         .withShop(shop)
                                         .withConfirm(uuids -> {
                                             gui.destroy();
-                                            dItem newBundle = dItem.of(XMaterial.CHEST_MINECART.parseItem());
+                                            newDItem newBundle = newDItem.of(XMaterial.CHEST_MINECART.parseItem());
                                             newBundle.setBundle(uuids);
                                             shop.addItem(newBundle);
                                             serializerApi.saveShopToFileAsync(shop);

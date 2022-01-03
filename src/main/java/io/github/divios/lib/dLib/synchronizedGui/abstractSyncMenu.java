@@ -1,16 +1,17 @@
 package io.github.divios.lib.dLib.synchronizedGui;
 
 import com.google.common.base.Objects;
+import com.google.gson.JsonElement;
 import io.github.divios.core_lib.events.Events;
 import io.github.divios.core_lib.events.Subscription;
-import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.scheduler.Task;
+import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.events.updateItemEvent;
 import io.github.divios.dailyShop.files.Messages;
 import io.github.divios.dailyShop.guis.customizerguis.customizeGui;
 import io.github.divios.jtext.wrappers.Template;
-import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
+import io.github.divios.lib.dLib.newDItem;
 import io.github.divios.lib.dLib.synchronizedGui.singleGui.dInventory;
 import io.github.divios.lib.dLib.synchronizedGui.singleGui.singleGui;
 import org.bukkit.Bukkit;
@@ -19,6 +20,7 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
+import java.sql.Timestamp;
 import java.util.*;
 
 /**
@@ -97,7 +99,7 @@ public abstract class abstractSyncMenu implements syncMenu {
 
         if (inv.getInventorySize() != base.getInventory().getInventorySize()) {  // If the inv has changed size update all
             base.destroy();
-            base = singleGui.fromJson(inv.toBase64(), shop);
+            base = singleGui.fromJson(inv.toJson(), shop);
             reStock(silent);
 
         } else {        // If the inv has same size, update only buttons with the above logic
@@ -106,31 +108,26 @@ public abstract class abstractSyncMenu implements syncMenu {
                 base.getInventory().setInventoryTitle(inv.getInventoryTitle());
 
 
-            Map<Integer, dItem> actualContent = new HashMap<>(base.getInventory().getButtonsSlots());
-            Map<Integer, dItem> newContent = inv.getButtonsSlots();
+            Map<Integer, newDItem> actualContent = new HashMap<>(base.getInventory().getButtonsSlots());
+            Map<Integer, newDItem> newContent = inv.getButtonsSlots();
 
             Set<Integer> dailySlots = base.getInventory().getDailyItemsSlots();
 
             for (int i = 0; i < base.getInventory().getInventorySize(); i++) {
-                dItem aux1;
-                dItem aux2;
+                newDItem aux1;
+                newDItem aux2;
 
-                ItemStack actualItem = (aux1 = actualContent.get(i)) == null ? null : aux1.getDailyItem();
-                ItemStack newItem = (aux2 = newContent.get(i)) == null ? null : aux2.getDailyItem();
+                ItemStack actualItem = (aux1 = actualContent.get(i)) == null ? null : aux1.getItem();
+                ItemStack newItem = (aux2 = newContent.get(i)) == null ? null : aux2.getItem();
 
                 if (dailySlots.contains(i)) actualItem = null;      // If is a dailyItem, set as if nothing was there
 
-                if (ItemUtils.isEmpty(actualItem) && ItemUtils.isEmpty(newItem)) continue;
+                if (actualItem == null && newItem == null) continue;
 
-                if (ItemUtils.isEmpty(actualItem) && !ItemUtils.isEmpty(newItem))
-                    base.getInventory().addButton(newItem, i);
-
-                else if (!ItemUtils.isEmpty(actualItem) && ItemUtils.isEmpty(newItem))
+                if (newItem == null)
                     base.getInventory().removeButton(i);
-
-                else if (!actualItem.isSimilar(newItem)) {
-                    base.getInventory().addButton(newItem, i);
-                }
+                else if (actualItem == null || !aux1.isSimilar(aux2))
+                    base.getInventory().addButton(aux2, i);
 
             }
 
@@ -151,7 +148,9 @@ public abstract class abstractSyncMenu implements syncMenu {
 
     @Override
     public synchronized void generate(Player p) {
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         guis.put(p.getUniqueId(), singleGui.create(p, base, shop));
+        Log.warn("Time elapsed: " + (new Timestamp(System.currentTimeMillis()).getNanos() - timestamp.getNanos()) + " ns");
     }
 
     @Override
@@ -207,6 +206,7 @@ public abstract class abstractSyncMenu implements syncMenu {
 
         invalidateAll();                                            // close all inventories
         base.restock();                                            // Renovates base
+
         players.forEach(uuid -> Optional.ofNullable(Bukkit.getPlayer(uuid)).ifPresent(this::generate));
         if (!silent)
             Messages.MSG_RESTOCK.broadcast(
@@ -230,7 +230,7 @@ public abstract class abstractSyncMenu implements syncMenu {
     }
 
     @Override
-    public String toJson() {
+    public JsonElement toJson() {
         return base.toJson();
     }
 

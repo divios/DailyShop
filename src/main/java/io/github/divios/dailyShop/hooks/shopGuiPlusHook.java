@@ -4,7 +4,7 @@ import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.utils.Utils;
 import net.brcdev.shopgui.ShopGuiPlusApi;
 
-public class shopGuiPlusHook implements Hook<ShopGuiPlusApi>  {
+public class shopGuiPlusHook implements Hook<ShopGuiPlusApi> {
 
     private ShopGuiPlusApi api = null;
     private boolean isHook = false;

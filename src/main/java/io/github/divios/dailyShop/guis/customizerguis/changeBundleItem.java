@@ -27,7 +27,6 @@ public class changeBundleItem {
     private final Consumer<List<String>> confirm;
     private final Runnable back;
 
-    @Deprecated
     public changeBundleItem(
             @NotNull Player p,
             @NotNull newDItem item,
@@ -58,9 +57,9 @@ public class changeBundleItem {
                     //loreStrategy ls = new bundleSettingsLore();
                     return shop.getItems().stream()
                             .filter(dItem -> !dItem.getID().equals(ownId))
-                            .map(dItem -> dItem.getDailyItem().clone())
+                            .map(newDItem::getItemWithId)
                             .map(_item -> {
-                                if (added.contains(dItem.getId(_item))) {
+                                if (added.contains(newDItem.getIdKey(_item))) {
                                     _item = ItemUtils.addEnchant(_item, Enchantment.DAMAGE_ALL, 1);
                                     _item = ItemUtils.addItemFlags(_item, ItemFlag.HIDE_ENCHANTS);
                                 }
@@ -72,7 +71,9 @@ public class changeBundleItem {
                         inventory.setItem(47, ItemBuilder.of(XMaterial.EMERALD_BLOCK)
                                 .setName("&6&lConfirm").setLore("&7Click to confirm")))
                 .contentAction(event -> {
-                    String uid = dItem.getId(event.getCurrentItem());
+                    if (event.getCurrentItem() == null) return dynamicGui.Response.nu();
+
+                    String uid = newDItem.getIdKey(event.getCurrentItem());
                     if (added.contains(uid)) {
                         added.remove(uid);
                     } else {

@@ -21,7 +21,9 @@ public enum Economies {
         this.function = function;
     }
 
-    public economy getEconomy() { return function.apply(""); }
+    public economy getEconomy() {
+        return function.apply("");
+    }
 
     public economy getEconomy(String currency) {
         return function.apply(currency);

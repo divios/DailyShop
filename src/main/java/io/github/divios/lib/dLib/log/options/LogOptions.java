@@ -11,9 +11,12 @@ public class LogOptions {
     private quantityFilter fQuantity = null;
     private boolean display = true;
 
-    public static LogOptions emptyOption() { return new LogOptions(); }
+    public static LogOptions emptyOption() {
+        return new LogOptions();
+    }
 
-    LogOptions() {}
+    LogOptions() {
+    }
 
     LogOptions(String fPlayer, String fShopId, UUID fItemUUID, dLogEntry.Type fType, quantityFilter fQuantity, boolean display) {
         this.fPlayer = fPlayer;

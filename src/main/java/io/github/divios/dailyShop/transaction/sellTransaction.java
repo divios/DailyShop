@@ -161,7 +161,7 @@ public class sellTransaction {
     }
 
     private boolean itemExistOnShop() {
-        return shop.getItem(item.getUid()).isPresent();
+        return shop.getItem(item.getUid()) != null;
     }
 
     private String getItemPriceFormatted() {

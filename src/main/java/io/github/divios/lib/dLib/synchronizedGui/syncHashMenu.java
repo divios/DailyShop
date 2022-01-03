@@ -2,6 +2,7 @@ package io.github.divios.lib.dLib.synchronizedGui;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import com.google.gson.JsonElement;
 import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.dLib.synchronizedGui.singleGui.singleGui;
 
@@ -17,7 +18,7 @@ public class syncHashMenu extends abstractSyncMenu {
         return new syncHashMenu(shop);
     }
 
-    public static syncMenu fromJson(String json, dShop shop) {
+    public static syncMenu fromJson(JsonElement json, dShop shop) {
         syncHashMenu newMenu = new syncHashMenu(shop);
         newMenu.base = singleGui.fromJson(json, shop);
         return newMenu;
