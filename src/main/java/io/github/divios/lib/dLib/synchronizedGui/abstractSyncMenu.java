@@ -4,11 +4,11 @@ import com.google.common.base.Objects;
 import com.google.gson.JsonElement;
 import io.github.divios.core_lib.events.Events;
 import io.github.divios.core_lib.events.Subscription;
-import io.github.divios.core_lib.scheduler.Task;
 import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.events.updateItemEvent;
 import io.github.divios.dailyShop.files.Messages;
 import io.github.divios.dailyShop.guis.customizerguis.customizeGui;
+import io.github.divios.dailyShop.utils.DebugLog;
 import io.github.divios.jtext.wrappers.Template;
 import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.dLib.newDItem;
@@ -40,7 +40,6 @@ public abstract class abstractSyncMenu implements syncMenu {
     protected singleGui base;
 
     private final Set<Subscription> listeners = new HashSet<>();
-    private final Map<UUID, Task> delayedGuisPromises = new HashMap<>();
 
     protected abstractSyncMenu(dShop shop) {
         this(shop, singleGui.create(shop));
@@ -149,8 +148,8 @@ public abstract class abstractSyncMenu implements syncMenu {
     @Override
     public synchronized void generate(Player p) {
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        guis.put(p.getUniqueId(), singleGui.create(p, base, shop));
-        Log.warn("Time elapsed: " + (new Timestamp(System.currentTimeMillis()).getNanos() - timestamp.getNanos()) + " ns");
+        guis.put(p.getUniqueId(), base.copy(p));
+        DebugLog.info("Time elapsed to generate singleGui: " + (new Timestamp(System.currentTimeMillis()).getNanos() - timestamp.getNanos()) + " ns");
     }
 
     @Override
@@ -173,15 +172,12 @@ public abstract class abstractSyncMenu implements syncMenu {
     public synchronized void invalidate(UUID key) {
         singleGui removed = guis.remove(key);
         if (removed != null) removed.destroy();
-        removeAndCancelPromise(key);
     }
 
     @Override
     public synchronized void invalidateAll() {
         guis.values().forEach(singleGui::destroy);
         guis.clear();
-        delayedGuisPromises.values().forEach(Task::stop);
-        delayedGuisPromises.clear();
     }
 
     @Override
@@ -202,10 +198,9 @@ public abstract class abstractSyncMenu implements syncMenu {
     @Override
     public synchronized void reStock(boolean silent) {
         Set<UUID> players = new HashSet<>(guis.keySet());
-        players.removeAll(delayedGuisPromises.keySet());
 
         invalidateAll();                                            // close all inventories
-        base.restock();                                            // Renovates base
+        base.restock();                                             // Renovates base
 
         players.forEach(uuid -> Optional.ofNullable(Bukkit.getPlayer(uuid)).ifPresent(this::generate));
         if (!silent)
@@ -247,11 +242,6 @@ public abstract class abstractSyncMenu implements syncMenu {
 
         return shop.equals(gui.getShop())
                 && guis.hashCode() == gui.getMenus().hashCode();
-    }
-
-    private void removeAndCancelPromise(UUID key) {
-        Task promise = delayedGuisPromises.remove(key);
-        if (promise != null) promise.stop();
     }
 
 }

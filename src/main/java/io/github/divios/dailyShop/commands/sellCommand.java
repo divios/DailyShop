@@ -37,13 +37,13 @@ public class sellCommand {
 
                     for (dShop shop : DailyShop.get().getShopsManager().getShops()) {
                         boolean found = false;
-                        for (dItem shopItem : shop.getItems()) {
+                        /*for (dItem shopItem : shop.getItems()) {
                             if (shopItem.getRealItem().isSimilar(itemToSell)) {
                                 found = true;
                                 itemOnShop = shopItem.clone();
                                 break;
                             }
-                        }
+                        } */
                         if (found) break;
                     }
 

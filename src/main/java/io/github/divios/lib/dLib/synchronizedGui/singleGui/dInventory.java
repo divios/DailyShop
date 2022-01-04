@@ -10,6 +10,7 @@ import io.github.divios.core_lib.inventory.inventoryUtils;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
+import io.github.divios.dailyShop.utils.DebugLog;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.dLib.newDItem;
@@ -30,6 +31,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.function.Function;
 import java.util.stream.IntStream;
 
@@ -44,11 +46,11 @@ public class dInventory implements Cloneable {
 
     private static final TypeToken<ConcurrentHashMap<UUID, newDItem>> buttonsToken = new TypeToken<ConcurrentHashMap<UUID, newDItem>>() {
     };
-    private static final TypeToken<TreeSet<Integer>> dailySlotsToken = new TypeToken<TreeSet<Integer>>() {
+    private static final TypeToken<ConcurrentSkipListSet<Integer>> dailySlotsToken = new TypeToken<ConcurrentSkipListSet<Integer>>() {
     };
 
-    private static final Function<Integer, TreeSet<Integer>> getDefaultSlots = input -> {
-        TreeSet<Integer> defaultList = new TreeSet<>(Integer::compare);
+    private static final Function<Integer, ConcurrentSkipListSet<Integer>> getDefaultSlots = input -> {
+        ConcurrentSkipListSet<Integer> defaultList = new ConcurrentSkipListSet<>();
         IntStream.range(0, input).forEach(defaultList::add);
 
         return defaultList;
@@ -68,12 +70,11 @@ public class dInventory implements Cloneable {
         String title = object.get("title").getAsString();
 
         Inventory inv = inventoryUtils.fromJson(object.get("inventory"));
-        TreeSet<Integer> dailyItemsSlots = gson.fromJson(object.get("dailySlots"), dailySlotsToken.getType());
+        ConcurrentSkipListSet<Integer> dailyItemsSlots = gson.fromJson(object.get("dailySlots"), dailySlotsToken.getType());
         ConcurrentHashMap<UUID, newDItem> buttons = gson.fromJson(object.get("buttons"), buttonsToken.getType());
         ConcurrentHashMap<Integer, newDItem> buttonsSlots = new ConcurrentHashMap<>();
 
         buttons.forEach((uuid, dItem) -> {
-            Log.warn("ID: " + dItem.getID() + " Action: " + dItem.getAction().getAction().name());
             buttonsSlots.put(dItem.getSlot(), dItem);
         });
 
@@ -84,7 +85,7 @@ public class dInventory implements Cloneable {
     protected String title;       // for some reason is throwing noSuchMethod
     protected Inventory inv;
 
-    protected TreeSet<Integer> dailyItemsSlots;
+    protected ConcurrentSkipListSet<Integer> dailyItemsSlots;
     protected ConcurrentHashMap<UUID, newDItem> buttons;
     protected ConcurrentHashMap<Integer, newDItem> buttonsSlot;
 
@@ -103,7 +104,7 @@ public class dInventory implements Cloneable {
 
     private dInventory(String title,
                        Inventory inv,
-                       TreeSet<Integer> dailyItemsSlots,
+                       ConcurrentSkipListSet<Integer> dailyItemsSlots,
                        ConcurrentHashMap<UUID, newDItem> buttons,
                        ConcurrentHashMap<Integer, newDItem> buttonsSlot) {
         this.title = title;
@@ -311,11 +312,12 @@ public class dInventory implements Cloneable {
      *
      * @param item The item to update
      */
-    protected void updateItem(@NotNull newDItem item) {
+    protected void updateDailyItem(@NotNull newDItem item) {
         newDItem toUpdateItem = buttons.get(item.getUUID());
         if (toUpdateItem == null) return;
 
         int slot = toUpdateItem.getSlot();
+        DebugLog.info("Update item on dInventory of ID: " + item.getID() + " Slot: " + slot);
         addButton(item, slot);
         dailyItemsSlots.add(slot);
     }
@@ -327,7 +329,7 @@ public class dInventory implements Cloneable {
      * @return The inventory in question.
      */
     public dInventory skeleton() {
-        dInventory cloned = this.copy();
+        dInventory cloned = this.deepClone();
         cloned.removeDailyItems();
         cloned.listeners.forEach(Subscription::unregister);
 
@@ -396,13 +398,13 @@ public class dInventory implements Cloneable {
 
             clone.inv = inventoryUtils.cloneInventory(inv, title);
 
-            clone.dailyItemsSlots = (TreeSet<Integer>) dailyItemsSlots.clone();
+            //clone.dailyItemsSlots = (TreeSet<Integer>) dailyItemsSlots.clone();       // Shouldn't be necessary to
+                                                                                      // deep copy this, can be shared
+            //clone.buttons = new ConcurrentHashMap<>();
+            //buttons.forEach((uuid, dItem) -> clone.buttons.put(uuid, dItem.clone()));
 
-            clone.buttons = new ConcurrentHashMap<>();
-            buttons.forEach((uuid, dItem) -> clone.buttons.put(uuid, dItem.clone()));
-
-            clone.buttonsSlot = new ConcurrentHashMap<>();
-            buttonsSlot.forEach((integer, dItem) -> clone.buttonsSlot.put(integer, dItem.clone()));
+            //clone.buttonsSlot = new ConcurrentHashMap<>();
+            //buttonsSlot.forEach((integer, dItem) -> clone.buttonsSlot.put(integer, dItem.clone()));
 
             clone.listeners = new HashSet<>();
             clone.createListeners();
@@ -411,6 +413,20 @@ public class dInventory implements Cloneable {
         } catch (CloneNotSupportedException e) {
             throw new AssertionError();
         }
+    }
+
+    public dInventory deepClone() {
+        dInventory clone = clone();
+
+        clone.dailyItemsSlots = dailyItemsSlots.clone();
+
+        clone.buttons = new ConcurrentHashMap<>();
+        buttons.forEach((uuid, dItem) -> clone.buttons.put(uuid, dItem.clone()));
+
+        clone.buttonsSlot = new ConcurrentHashMap<>();
+        buttonsSlot.forEach((integer, dItem) -> clone.buttonsSlot.put(integer, dItem.clone()));
+
+        return clone;
     }
 
     @Override
@@ -482,21 +498,15 @@ public class dInventory implements Cloneable {
                             if (e.getSlot() != e.getRawSlot()) return;  // is not upper inventory
 
                             newDItem itemClicked = buttonsSlot.get(e.getSlot());
-                            Log.info("debug");
                             if (itemClicked == null) return;
-                            Log.info("debug2");
 
                             if (dailyItemsSlots.contains(e.getSlot())) {
-                                Log.info("debug3");
                                 // TODO
                                 //if (e.isLeftClick())
                                 //transaction.init((Player) e.getWhoClicked(), itemClicked.clone(), shop);
                                 //else if (e.isRightClick())
                                 //sellTransaction.create((Player) e.getWhoClicked(), itemClicked.clone(), shop);
                             } else {
-                                Log.info("debug4");
-                                Log.info("ID: " + itemClicked.getID());
-                                Log.info(itemClicked.getAction().getAction().name());
                                 itemClicked.getAction().execute((Player) e.getWhoClicked());
                             }
                         })

@@ -13,10 +13,10 @@ import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.core_lib.misc.XSymbols;
-import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.economies.Economies;
 import io.github.divios.dailyShop.economies.economy;
+import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.priceModifiers.priceModifier;
 import io.github.divios.lib.dLib.stock.dStock;
 import org.bukkit.Material;
@@ -94,7 +94,6 @@ public class newDItem implements Cloneable {
         String id = object.get("id").getAsString();
 
         if (object.get("item").getAsString().equals("air")) {           // Deserialize air item
-            Log.info("is air?");
             newDItem air = AIR().setID(object.get("id").getAsString());
             air.setSlot(object.get("slot").getAsInt());
             return air;
@@ -246,11 +245,14 @@ public class newDItem implements Cloneable {
     }
 
     public double getBuyPrice() {
-        return buyPrice == null ? -1 : buyPrice.getPrice() / item.getAmount();
+        return buyPrice == null ? -1 : Utils.round(buyPrice.getPrice() / item.getAmount(), 2);
     }
 
     public String getVisualBuyPrice() {
-        return buyPrice == null ? FormatUtils.color("&c" + XSymbols.TIMES_3.parseSymbol()) : buyPrice.getVisualPrice();
+        return buyPrice == null ? FormatUtils.color("&c" + XSymbols.TIMES_3.parseSymbol()) :
+                buyPrice.isRandomFlag() ?
+                        "" + buyPrice.getMinPrice() / item.getAmount() + " - " + buyPrice.getMaxPrice() / item.getAmount()
+                        : "" + buyPrice.getActualPrice() / item.getAmount();
     }
 
     public double getPlayerBuyPrice(@Nullable Player p, @Nullable dShop shop) {
@@ -268,11 +270,14 @@ public class newDItem implements Cloneable {
     }
 
     public double getSellPrice() {
-        return sellPrice == null ? -1 : sellPrice.getPrice() / item.getAmount();
+        return sellPrice == null ? -1 : Utils.round(sellPrice.getPrice() / item.getAmount(), 2);
     }
 
     public String getVisualSellPrice() {
-        return sellPrice == null ? FormatUtils.color("&c" + XSymbols.TIMES_3.parseSymbol()) : sellPrice.getVisualPrice();
+        return sellPrice == null ? FormatUtils.color("&c" + XSymbols.TIMES_3.parseSymbol()) :
+                sellPrice.isRandomFlag() ?
+                        "" + sellPrice.getMinPrice() / item.getAmount() + " - " + sellPrice.getMaxPrice() / item.getAmount()
+                        : "" + sellPrice.getActualPrice() / item.getAmount();
     }
 
     public double getPlayerSellPrice(Player p, dShop shop) {

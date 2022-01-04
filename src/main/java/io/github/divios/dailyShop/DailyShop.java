@@ -80,7 +80,11 @@ public class DailyShop extends JavaPlugin {
     public void onDisable() {
         if (sManager == null) return;
         sManager.getShops()       // Updates all the guis before disable
-                .forEach(shop -> dManager.updateGui(shop.getName(), shop.getGuis()));
+                .forEach(shop -> {
+                    dManager.updateGui(shop.getName(), shop.getGuis());
+                    shop.getGuis().invalidateAll();
+                });
+
     }
 
     public void reload() {

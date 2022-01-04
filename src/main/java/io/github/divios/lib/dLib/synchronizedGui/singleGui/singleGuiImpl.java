@@ -6,11 +6,11 @@ import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.WeightedRandom;
 import io.github.divios.core_lib.scheduler.Schedulers;
-import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.events.searchStockEvent;
 import io.github.divios.dailyShop.events.updateItemEvent;
 import io.github.divios.dailyShop.lorestategy.shopItemsLore;
+import io.github.divios.dailyShop.utils.DebugLog;
 import io.github.divios.dailyShop.utils.PlaceholderAPIWrapper;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.dShop;
@@ -32,16 +32,16 @@ import java.util.stream.Collectors;
  * Subscribes to the updatePool to update placeholders
  */
 
-public class singleGuiImpl implements singleGui {
+public class singleGuiImpl implements singleGui, Cloneable {
 
     protected static final DailyShop plugin = DailyShop.get();
 
     protected boolean isDestroyed = false;
 
-    protected final Player p;
+    protected Player p;
     private final dShop shop;
-    private final dInventory own;
-    private final Set<Subscription> events = new HashSet<>();
+    private dInventory own;
+    private Set<Subscription> events = new HashSet<>();
 
     protected singleGuiImpl(Player p, dShop shop, singleGui base) {
         this(p, shop, base.getInventory());
@@ -77,22 +77,25 @@ public class singleGuiImpl implements singleGui {
     @Override
     public void updateItem(updateItemEvent o) {
         updateItemEvent.type type = o.getType();
-        newDItem toUpdateItem = Optional.ofNullable(shop.getItem(o.getUuid())).orElse(null);
+        newDItem toUpdateItem = shop.getItem(o.getUuid());
 
         switch (type) {
             case UPDATE_ITEM:
                 if (toUpdateItem == null) return;
                 ItemStack newItem = shopItemsLore.applyLore(toUpdateItem, p, shop);
                 toUpdateItem.setItem(newItem);
-                own.updateItem(toUpdateItem);
+                DebugLog.info("Updated item from singleGui of id: " + toUpdateItem.getID());
+                own.updateDailyItem(toUpdateItem);
                 break;
             case NEXT_AMOUNT:
                 if (toUpdateItem == null) return;
                 newDItem buttonItem = own.buttons.get(toUpdateItem.getUUID());
                 buttonItem.decrementStock(o.getPlayer(), o.getAmount());
+                DebugLog.info("Decrement stock from singleGui of id: " + toUpdateItem.getID());
                 break;
             case DELETE_ITEM:
                 own.removeButton(o.getUuid());
+                DebugLog.info("Deleted item from singleGui of id: " + o.getUuid());
                 break;
             default:
                 throw new UnsupportedOperationException("Invalid updateItemEvent type");
@@ -159,6 +162,15 @@ public class singleGuiImpl implements singleGui {
     }
 
     @Override
+    public singleGui copy(Player p) {
+        singleGuiImpl clone = clone();
+        clone.p = p;
+        clone.own.openInventory(p);
+
+        return clone;
+    }
+
+    @Override
     public void destroy() {
         if (isDestroyed) return;
         isDestroyed = true;
@@ -188,6 +200,22 @@ public class singleGuiImpl implements singleGui {
     @Override
     public int hashCode() {
         return Objects.hash(isDestroyed, p, shop, own);
+    }
+
+    @Override
+    public singleGuiImpl clone() {
+        try {
+            singleGuiImpl clone = (singleGuiImpl) super.clone();
+
+            clone.own = own.clone();
+            clone.events = new HashSet<>();
+            clone.ready();
+            updatePool.subscribe(clone);
+
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
     }
 
     /**

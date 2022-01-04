@@ -11,10 +11,12 @@ import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.ChatPrompt;
 import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.core_lib.scheduler.Schedulers;
+import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.files.Lang;
 import io.github.divios.dailyShop.files.Messages;
 import io.github.divios.dailyShop.guis.settings.shopGui;
+import io.github.divios.dailyShop.utils.DebugLog;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.jcommands.utils.Primitives;
 import io.github.divios.jtext.wrappers.Template;
@@ -99,8 +101,10 @@ public class CustomizerMenu {
 
                             // Check to update or add item
                             if (shop.hasItem(item.getUUID())) {
+                                DebugLog.info("Update item from customizer menu of ID: " + item.getID());
                                 shop.updateItem(item);
                             } else {
+                                DebugLog.info("Added new item from customizer menu with ID: " + item.getID());
                                 shop.addItem(item);
                             }
                             shopGui.open(p, shop.getName());

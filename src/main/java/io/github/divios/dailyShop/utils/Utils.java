@@ -138,7 +138,7 @@ public class Utils {
 
     public static ItemStack getRedPane() {
         return ItemBuilder.of(XMaterial.RED_STAINED_GLASS_PANE)
-                .setName("&cOut of stock"); //TODO
+                .setName("&cOut of stock");
     }
 
     public static void removeFlag(ItemStack i, @NotNull ItemFlag f) {

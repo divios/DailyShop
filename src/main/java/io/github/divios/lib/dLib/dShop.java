@@ -14,6 +14,7 @@ import io.github.divios.dailyShop.events.reStockShopEvent;
 import io.github.divios.dailyShop.events.updateItemEvent;
 import io.github.divios.dailyShop.files.Settings;
 import io.github.divios.dailyShop.guis.settings.shopGui;
+import io.github.divios.dailyShop.utils.DebugLog;
 import io.github.divios.lib.dLib.synchronizedGui.singleGui.dInventory;
 import io.github.divios.lib.dLib.synchronizedGui.syncHashMenu;
 import io.github.divios.lib.dLib.synchronizedGui.syncMenu;
@@ -182,6 +183,7 @@ public class dShop {
         timestamp = new Timestamp(System.currentTimeMillis());
         Events.callEvent(new reStockShopEvent(this));
         guis.reStock(!announce_restock);
+        DebugLog.info("Time elapsed to restock shop " + name + ": " + (new Timestamp(System.currentTimeMillis()).getNanos() - timestamp.getNanos()));
     }
 
     /**

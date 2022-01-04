@@ -35,6 +35,8 @@ public interface singleGui {
 
     dShop getShop();
 
+    singleGui copy(Player p);
+
     void destroy();
 
     default JsonElement toJson() {
