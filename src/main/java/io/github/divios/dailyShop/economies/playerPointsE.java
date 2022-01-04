@@ -21,12 +21,12 @@ public class playerPointsE extends economy {
 
     @Override
     public void witchDrawMoney(Player p, Double price) {
-        Hooks.PLAYER_POINTS.getApi().takeAsync(p.getUniqueId(), (int) Math.round(price));
+        Hooks.PLAYER_POINTS.getApi().take(p.getUniqueId(), (int) Math.round(price));
     }
 
     @Override
     public void depositMoney(Player p, Double price) {
-        Hooks.PLAYER_POINTS.getApi().giveAsync(p.getUniqueId(), (int) Math.round(price));
+        Hooks.PLAYER_POINTS.getApi().give(p.getUniqueId(), (int) Math.round(price));
     }
 
     @Override
