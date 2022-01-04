@@ -155,7 +155,6 @@ public abstract class dStock implements Cloneable, Serializable {
     public dStock clone() {
         try {
             dStock cloned = (dStock) super.clone();
-            cloned.stocks.clear();
             cloned.stocks = (HashMap<UUID, Integer>) stocks.clone();
 
             return cloned;

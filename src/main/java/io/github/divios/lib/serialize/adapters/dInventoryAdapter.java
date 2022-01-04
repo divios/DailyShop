@@ -111,7 +111,10 @@ public class dInventoryAdapter implements JsonSerializer<dInventory>, JsonDeseri
             newDItem baseItem = inv.getButtonsSlots().get(multipleSlots.pollFirst());
             if (baseItem == null) return;
 
-            multipleSlots.forEach(integer -> inv.addButton(baseItem.copy(), integer));
+            multipleSlots.forEach(integer -> {
+                String newId = baseItem.getID() + integer;
+                inv.addButton(baseItem.setID(newId), integer);
+            });
         }
     }
 

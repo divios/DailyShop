@@ -4,7 +4,6 @@ import com.google.common.base.Objects;
 import com.google.gson.JsonElement;
 import io.github.divios.core_lib.events.Events;
 import io.github.divios.core_lib.events.Subscription;
-import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.events.updateItemEvent;
 import io.github.divios.dailyShop.files.Messages;
 import io.github.divios.dailyShop.guis.customizerguis.customizeGui;
@@ -33,13 +32,13 @@ import java.util.*;
  * Children of this class only have to implement {@link #createMap() }
  */
 
-public abstract class abstractSyncMenu implements syncMenu {
+public abstract class abstractSyncMenu implements syncMenu, Cloneable {
 
-    protected final dShop shop;
-    protected final Map<UUID, singleGui> guis;
+    protected dShop shop;
+    protected Map<UUID, singleGui> guis;
     protected singleGui base;
 
-    private final Set<Subscription> listeners = new HashSet<>();
+    private Set<Subscription> listeners = new HashSet<>();
 
     protected abstractSyncMenu(dShop shop) {
         this(shop, singleGui.create(shop));
@@ -96,16 +95,19 @@ public abstract class abstractSyncMenu implements syncMenu {
                         .forEach(value -> base.getInventory().addInventoryRow());
         } */
 
+        DebugLog.info("Updating base of shop " + shop.getName());
         if (inv.getInventorySize() != base.getInventory().getInventorySize()) {  // If the inv has changed size update all
+            DebugLog.info("Different sizes, force update");
             base.destroy();
             base = singleGui.fromJson(inv.toJson(), shop);
             reStock(silent);
 
         } else {        // If the inv has same size, update only buttons with the above logic
-
-            if (!inv.getInventoryTitle().equals(base.getInventory().getInventoryTitle()))
+            DebugLog.info("Same size, updating items only");
+            if (!inv.getInventoryTitle().equals(base.getInventory().getInventoryTitle())) {
+                DebugLog.info("Updated title");
                 base.getInventory().setInventoryTitle(inv.getInventoryTitle());
-
+            }
 
             Map<Integer, newDItem> actualContent = new HashMap<>(base.getInventory().getButtonsSlots());
             Map<Integer, newDItem> newContent = inv.getButtonsSlots();
@@ -148,8 +150,8 @@ public abstract class abstractSyncMenu implements syncMenu {
     @Override
     public synchronized void generate(Player p) {
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        guis.put(p.getUniqueId(), base.copy(p));
-        DebugLog.info("Time elapsed to generate singleGui: " + (new Timestamp(System.currentTimeMillis()).getNanos() - timestamp.getNanos()) + " ns");
+        guis.put(p.getUniqueId(), base.deepCopy(p));
+        DebugLog.info("Time elapsed to generate singleGui: " + (new Timestamp(System.currentTimeMillis()).getTime() - timestamp.getTime()) + " ns");
     }
 
     @Override
@@ -244,4 +246,27 @@ public abstract class abstractSyncMenu implements syncMenu {
                 && guis.hashCode() == gui.getMenus().hashCode();
     }
 
+    @Override
+    public Object copy(dShop shop) {
+        abstractSyncMenu clone = (abstractSyncMenu) clone();
+        clone.shop = shop;
+
+        return clone;
+    }
+
+    @Override
+    public Object clone() {
+        try {
+            abstractSyncMenu clone = (abstractSyncMenu) super.clone();
+
+            clone.base = base.deepCopy(null);
+            clone.guis = clone.createMap();
+            clone.listeners = new HashSet<>();
+            clone.ready();
+
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
+    }
 }

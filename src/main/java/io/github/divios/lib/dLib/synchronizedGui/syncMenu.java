@@ -63,6 +63,8 @@ public interface syncMenu {
 
     dShop getShop();
 
+    Object copy(dShop shop);
+
     JsonElement toJson();
 
     int hashCode();

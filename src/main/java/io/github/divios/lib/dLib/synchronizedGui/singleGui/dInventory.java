@@ -74,9 +74,7 @@ public class dInventory implements Cloneable {
         ConcurrentHashMap<UUID, newDItem> buttons = gson.fromJson(object.get("buttons"), buttonsToken.getType());
         ConcurrentHashMap<Integer, newDItem> buttonsSlots = new ConcurrentHashMap<>();
 
-        buttons.forEach((uuid, dItem) -> {
-            buttonsSlots.put(dItem.getSlot(), dItem);
-        });
+        buttons.forEach((uuid, dItem) -> buttonsSlots.put(dItem.getSlot(), dItem));
 
         return new dInventory(title, inv, dailyItemsSlots, buttons, buttonsSlots);
 
@@ -211,24 +209,33 @@ public class dInventory implements Cloneable {
      * @param slot Integer representing the position of the new item on the inventory.
      */
     public void addButton(@NotNull newDItem item, int slot) {
-        if (slot >= inv.getSize()) return;
+        DebugLog.info("Trying to add item of ID " + item.getID() + " in slot " + slot);
+        if (slot >= inv.getSize()) {
+            DebugLog.info("Tried to add item but is out of bounds");
+            return;
+        }
 
         newDItem crashItem;
-        if ((crashItem = buttonsSlot.get(slot)) != null)        // If there is a previous item with that slot, remove first
+        if ((crashItem = buttonsSlot.get(slot)) != null) {        // If there is a previous item with that slot, remove first
+            DebugLog.info("Crashed with another item, removing firsts");
             removeButton(crashItem.getUUID());
+        }
 
         newDItem cloned = item.clone();
-        cloned.generateNewBuyPrice();
-        cloned.generateNewSellPrice();
         cloned.setSlot(slot);
 
         buttons.put(cloned.getUUID(), cloned);
         buttonsSlot.put(slot, cloned);
         dailyItemsSlots.remove(slot);
-        if (!item.isAir())
+
+        if (!item.isAir()) {
+            DebugLog.info("Added item to inventory");
             inv.setItem(slot, cloned.getItemWithId());
-        else
+        }
+        else {
+            DebugLog.info("Not adding since is air");
             inv.clear(slot);
+        }
     }
 
     /**
@@ -250,9 +257,9 @@ public class dInventory implements Cloneable {
      */
     public newDItem removeButton(@NotNull UUID uuid) {
         if (uuid == null) return null;      // ConcurrentHashMap throws error on null keys
-
         newDItem removedItem = buttons.remove(uuid);
         if (removedItem != null) {
+            DebugLog.info("Removed item of ID: " + removedItem.getID() + " on slot: " + removedItem.getSlot());
             buttonsSlot.remove(removedItem.getSlot());
             dailyItemsSlots.add(removedItem.getSlot());
             inv.clear(removedItem.getSlot());

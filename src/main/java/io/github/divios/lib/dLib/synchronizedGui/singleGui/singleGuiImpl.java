@@ -165,7 +165,17 @@ public class singleGuiImpl implements singleGui, Cloneable {
     public singleGui copy(Player p) {
         singleGuiImpl clone = clone();
         clone.p = p;
-        clone.own.openInventory(p);
+        if (p != null) clone.own.openInventory(p);
+
+        return clone;
+    }
+
+    @Override
+    public singleGui deepCopy(Player p) {
+        singleGuiImpl clone = clone();
+        clone.own = own.deepClone();
+        clone.p = p;
+        if (p != null) clone.own.openInventory(p);
 
         return clone;
     }
@@ -177,13 +187,6 @@ public class singleGuiImpl implements singleGui, Cloneable {
         events.forEach(Subscription::unregister);
         own.destroy();
         updatePool.unsubscribe(this);
-    }
-
-    @Override
-    public int hash() {
-        return Arrays.stream(own.getInventory().getContents())
-                .mapToInt(value -> Utils.isEmpty(value) ? 0 : value.hashCode())
-                .sum();
     }
 
     @Override

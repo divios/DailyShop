@@ -2,6 +2,7 @@ package io.github.divios.dailyShop.files;
 
 import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
+import io.github.divios.dailyShop.utils.DebugLog;
 import io.github.divios.dailyShop.utils.FileUtils;
 import io.github.divios.dailyShop.utils.Timer;
 import io.github.divios.lib.dLib.dShop;
@@ -46,7 +47,9 @@ public class shopsResource {
     private void importYamlShops() {
         Log.info("Importing data from shops directory...");
         Timer timer = Timer.create();
+        DebugLog.warn("First reading yaml from shops directory");
         Set<dShop> newShops = readYamlShops();
+        DebugLog.warn("Applying logic...");
 
         new HashSet<>(sManager.getShops()).stream()         // Delete removed shops
                 .filter(shop -> !newShops.contains(shop))
@@ -56,22 +59,26 @@ public class shopsResource {
                 });
 
         newShops.forEach(shop -> {                          // Process read Shops
+            boolean isNew = false;
             if (flaggedShops.contains(shop)) {              // If flagged, skip since no changes were made
                 Log.info("No changes in shop " + shop.getName() + ", skipping...");
                 return;
             }
 
             if (!sManager.getShop(shop.getName()).isPresent()) {        // Create new shops
-                sManager.createShopAsync(shop);
-            } else {                                                    // Update shops if exist
-                dShop currentShop = sManager.getShop(shop.getName()).get();
-
-                currentShop.setTimer(shop.getTimer());
-                currentShop.set_announce(shop.get_announce());
-                currentShop.setDefault(shop.isDefault());
-                currentShop.updateShopGui(shop.getGuis().getDefault().skeleton());
-                currentShop.setItems(shop.getItems());
+                isNew = true;
+                sManager.createShop(shop.getName());
             }
+
+            dShop currentShop = sManager.getShop(shop.getName()).get();         // Update shops
+
+            currentShop.setTimer(shop.getTimer());
+            currentShop.set_announce(shop.get_announce());
+            currentShop.setDefault(shop.isDefault());
+            currentShop.updateShopGui(shop.getGuis().getDefault().skeleton());
+            currentShop.setItems(shop.getItems());
+            if (isNew) currentShop.reStock();
+
             Log.info("Registered shop of name " + shop.getName() + " with " + shop.getItems().size() + " items");
         });
 

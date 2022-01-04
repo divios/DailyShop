@@ -1,9 +1,6 @@
 package io.github.divios.lib.dLib;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import io.github.divios.core_lib.events.Events;
 import io.github.divios.core_lib.events.Subscription;
 import io.github.divios.core_lib.misc.timeStampUtils;
@@ -18,23 +15,23 @@ import io.github.divios.dailyShop.utils.DebugLog;
 import io.github.divios.lib.dLib.synchronizedGui.singleGui.dInventory;
 import io.github.divios.lib.dLib.synchronizedGui.syncHashMenu;
 import io.github.divios.lib.dLib.synchronizedGui.syncMenu;
-import io.github.divios.lib.serialize.adapters.dShopAdapter;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.Timestamp;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-public class dShop {
+public class dShop implements Cloneable {
 
     protected static final DailyShop plugin = DailyShop.get();
 
     protected String name;
-    protected final Map<UUID, newDItem> items = Collections.synchronizedMap(new LinkedHashMap<>());
-    protected final syncMenu guis;
+    protected Map<UUID, newDItem> items = Collections.synchronizedMap(new LinkedHashMap<>());
+    protected syncHashMenu guis;
 
     protected Timestamp timestamp;
     protected int timer;
@@ -42,8 +39,8 @@ public class dShop {
     protected boolean announce_restock = true;
     protected boolean isDefault = false;
 
-    protected final Set<Task> tasks = new HashSet<>();
-    protected final Set<Subscription> listeners = new HashSet<>();
+    protected Set<Task> tasks = new HashSet<>();
+    protected Set<Subscription> listeners = new HashSet<>();
 
     public dShop(String name) {
         this(name, Settings.DEFAULT_TIMER.getValue().getAsInt());
@@ -183,7 +180,7 @@ public class dShop {
         timestamp = new Timestamp(System.currentTimeMillis());
         Events.callEvent(new reStockShopEvent(this));
         guis.reStock(!announce_restock);
-        DebugLog.info("Time elapsed to restock shop " + name + ": " + (new Timestamp(System.currentTimeMillis()).getNanos() - timestamp.getNanos()));
+        DebugLog.info("Time elapsed to restock shop " + name + ": " + (new Timestamp(System.currentTimeMillis()).getTime() - timestamp.getTime()));
     }
 
     /**
@@ -206,6 +203,7 @@ public class dShop {
      * Sets the items of this shop
      */
     public void setItems(@NotNull Collection<newDItem> items) {
+        DebugLog.info("Setting items");
         Map<UUID, newDItem> newItems = new HashMap<>();
         items.forEach(dItem -> newItems.put(dItem.getUUID(), dItem));            // Cache values for a O(1) search
 
@@ -214,13 +212,19 @@ public class dShop {
                 newDItem toUpdateItem = newItems.remove(entry.getKey());
 
                 if (toUpdateItem != null && !toUpdateItem.isSimilar(entry.getValue())) {
+                    DebugLog.info("Updating item with ID: " + toUpdateItem.getID() + " from dShop");
                     updateItem(toUpdateItem);
                 }
-            } else
+            } else {
+                DebugLog.info("Removing item with ID: " + entry.getValue().getID() + " from dShop");
                 removeItem(entry.getKey());
+            }
         }
 
-        newItems.values().forEach(this::addItem);       // Replace the old values for the new ones
+        newItems.values().forEach(newDItem -> {
+            this.addItem(newDItem);             // Add newItems
+            DebugLog.info("Added new item with ID: " + newDItem.getID() + " from dShop");
+        });
     }
 
     /**
@@ -241,7 +245,7 @@ public class dShop {
     public boolean removeItem(UUID uid) {
         newDItem removed = items.remove(uid);
         if (removed == null) return false;
-        Events.callEvent(new updateItemEvent(uid, updateItemEvent.type.DELETE_ITEM, this));
+        guis.updateItem(new updateItemEvent(uid, updateItemEvent.type.DELETE_ITEM, this));
         return true;
     }
 
@@ -324,36 +328,23 @@ public class dShop {
     }
 
 
-    /**
-     * Serializers
-     **/
+    @Override
+    public dShop clone() {
+        try {
+            dShop clone = (dShop) super.clone();
 
-    public static class encodeOptions {
+            clone.items = new ConcurrentHashMap<>();
+            items.forEach((uuid, newDItem) -> clone.items.put(uuid, newDItem.clone()));
+            clone.timestamp = new Timestamp(timestamp.getTime());
+            clone.guis = (syncHashMenu) guis.clone();
+            clone.tasks = new HashSet<>();
+            clone.listeners = new HashSet<>();
+            clone.startListeners();
+            clone.startTimerTask();
 
-        public static transient final jsonSerializer JSON = new jsonSerializer();
-
-        private encodeOptions() {
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
         }
-
     }
-
-    public static final class jsonSerializer {
-
-        private transient static final Gson gson = new GsonBuilder()
-                .registerTypeHierarchyAdapter(dShop.class, new dShopAdapter())
-                .create();
-
-        private jsonSerializer() {
-        }
-
-        public JsonObject toJson(dShop shop) {
-            return gson.toJsonTree(shop).getAsJsonObject();
-        }
-
-        public dShop fromJson(JsonElement element) {
-            return gson.fromJson(element, dShop.class);
-        }
-
-    }
-
 }

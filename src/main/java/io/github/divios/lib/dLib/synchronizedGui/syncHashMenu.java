@@ -14,11 +14,11 @@ public class syncHashMenu extends abstractSyncMenu {
         super(shop);
     }
 
-    public static syncMenu create(dShop shop) {
+    public static syncHashMenu create(dShop shop) {
         return new syncHashMenu(shop);
     }
 
-    public static syncMenu fromJson(JsonElement json, dShop shop) {
+    public static syncHashMenu fromJson(JsonElement json, dShop shop) {
         syncHashMenu newMenu = new syncHashMenu(shop);
         newMenu.base = singleGui.fromJson(json, shop);
         return newMenu;

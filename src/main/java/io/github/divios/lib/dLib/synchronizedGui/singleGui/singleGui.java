@@ -37,12 +37,12 @@ public interface singleGui {
 
     singleGui copy(Player p);
 
+    singleGui deepCopy(Player p);
+
     void destroy();
 
     default JsonElement toJson() {
         return getInventory().toJson();
     }
-
-    int hash();
 
 }

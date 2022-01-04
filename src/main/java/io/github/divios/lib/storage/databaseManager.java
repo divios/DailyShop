@@ -45,14 +45,14 @@ public class databaseManager extends DataManagerAbstract {
                 JsonParser parser = new JsonParser();
                 while (result.next()) {
                     String name = result.getString("name");
-                    dShop shop = new dShop(name,
+                    dShop shop = new WrappedShop(name,
                             parser.parse(result.getString("gui")),
                             timeStampUtils.deserialize(result.getString("timestamp")),
                             result.getInt("timer"),
                             getShopItems(name));
 
                     shop.destroy();
-                    shops.add(WrappedShop.wrap(shop));
+                    shops.add(shop);
                 }
             }
         });

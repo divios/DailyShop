@@ -107,10 +107,10 @@ public class newDItem implements Cloneable {
             item.stock = dStock.fromJson(object.get("stock"));
 
         if (object.has("buyPrice") && !object.get("buyPrice").isJsonNull())
-            item.buyPrice = dPrice.fromString(object.get("buyPrice").getAsString());
+            item.buyPrice = dPrice.fromJson(object.get("buyPrice"));
 
         if (object.has("sellPrice") && !object.get("sellPrice").isJsonNull())
-            item.sellPrice = dPrice.fromString(object.get("sellPrice").getAsString());
+            item.sellPrice = dPrice.fromJson(object.get("sellPrice"));
 
         item.econ = economy.fromString(object.get("econ").getAsString());
         item.rarity = dRarity.fromKey(object.get("rarity").getAsString());
@@ -245,14 +245,14 @@ public class newDItem implements Cloneable {
     }
 
     public double getBuyPrice() {
-        return buyPrice == null ? -1 : Utils.round(buyPrice.getPrice() / item.getAmount(), 2);
+        return buyPrice == null ? -1 : Utils.round(buyPrice.getPrice(), 2);
     }
 
     public String getVisualBuyPrice() {
         return buyPrice == null ? FormatUtils.color("&c" + XSymbols.TIMES_3.parseSymbol()) :
                 buyPrice.isRandomFlag() ?
-                        "" + buyPrice.getMinPrice() / item.getAmount() + " - " + buyPrice.getMaxPrice() / item.getAmount()
-                        : "" + buyPrice.getActualPrice() / item.getAmount();
+                        "" + Utils.round(buyPrice.getMinPrice(), 2) + " - " + Utils.round(buyPrice.getMaxPrice(), 2)
+                        : "" + Utils.round(buyPrice.getActualPrice(), 2);
     }
 
     public double getPlayerBuyPrice(@Nullable Player p, @Nullable dShop shop) {
@@ -261,7 +261,7 @@ public class newDItem implements Cloneable {
         double modifier = DailyShop.get().getPriceModifiers().getModifier(p, shop == null ? null : shop.getName(), ID, priceModifier.type.BUY);
         double price = getBuyPrice();
 
-        return price + (price * modifier);
+        return Utils.round(price + (price * modifier), 2);
     }
 
     @Nullable
@@ -270,14 +270,14 @@ public class newDItem implements Cloneable {
     }
 
     public double getSellPrice() {
-        return sellPrice == null ? -1 : Utils.round(sellPrice.getPrice() / item.getAmount(), 2);
+        return sellPrice == null ? -1 : Utils.round(sellPrice.getPrice(), 2);
     }
 
     public String getVisualSellPrice() {
         return sellPrice == null ? FormatUtils.color("&c" + XSymbols.TIMES_3.parseSymbol()) :
                 sellPrice.isRandomFlag() ?
-                        "" + sellPrice.getMinPrice() / item.getAmount() + " - " + sellPrice.getMaxPrice() / item.getAmount()
-                        : "" + sellPrice.getActualPrice() / item.getAmount();
+                        "" + Utils.round(sellPrice.getMinPrice(), 2) + " - " + Utils.round(sellPrice.getMaxPrice(), 2)
+                        : "" + Utils.round(sellPrice.getActualPrice(), 2);
     }
 
     public double getPlayerSellPrice(Player p, dShop shop) {
@@ -286,7 +286,7 @@ public class newDItem implements Cloneable {
         double modifier = DailyShop.get().getPriceModifiers().getModifier(p, shop == null ? null : shop.getName(), ID, priceModifier.type.SELL);
         double price = getSellPrice();
 
-        return price + (price * modifier);
+        return Utils.round(price + (price * modifier), 2);
     }
 
     @NotNull
@@ -521,8 +521,8 @@ public class newDItem implements Cloneable {
                 .add("item", NBTItem.convertItemtoNBT(item).toString())
                 .add("slot", slot)
                 .add("stock", stock == null ? null : stock.toJson())
-                .add("buyPrice", buyPrice == null ? null : buyPrice.toString())
-                .add("sellPrice", sellPrice == null ? null : sellPrice.toString())
+                .add("buyPrice", buyPrice == null ? null : buyPrice.toJson())
+                .add("sellPrice", sellPrice == null ? null : sellPrice.toJson())
                 .add("econ", econ.toString())
                 .add("rarity", rarity.getKey())
                 .add("action", action.toJson())

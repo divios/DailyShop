@@ -1,5 +1,9 @@
 package io.github.divios.lib.dLib;
 
+import com.google.common.base.Preconditions;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import io.github.divios.core_lib.gson.JsonBuilder;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.priceModifiers.priceModifier;
@@ -27,6 +31,21 @@ public class dPrice implements Serializable, Cloneable {
             return new dPrice(Double.parseDouble(prices[0]));
         else
             return new dPrice(Double.parseDouble(prices[0]), Double.parseDouble(prices[1]));
+    }
+
+    public static dPrice fromJson(JsonElement json) {
+        JsonObject object = json.getAsJsonObject();
+
+        Preconditions.checkArgument(object.has("actualPrice"), "No actual price");
+
+        dPrice price = EMPTY();
+
+        price.actualPrice = object.get("actualPrice").getAsDouble();
+        price.minPrice = object.get("minPrice").getAsDouble();
+        price.minPrice = object.get("maxPrice").getAsDouble();
+        price.randomFlag = object.get("randomFlag").getAsBoolean();
+
+        return price;
     }
 
     private dPrice() {
@@ -107,6 +126,15 @@ public class dPrice implements Serializable, Cloneable {
         } else {
             return actualPrice == price.actualPrice;
         }
+    }
+
+    public JsonElement toJson() {
+        return JsonBuilder.object()
+                .add("randomFlag", randomFlag)
+                .add("minPrice", minPrice)
+                .add("maxPrice", maxPrice)
+                .add("actualPrice", actualPrice)
+                .build();
     }
 
     @Override

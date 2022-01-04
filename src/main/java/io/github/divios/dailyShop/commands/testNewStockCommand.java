@@ -7,6 +7,7 @@ import io.github.divios.dailyShop.economies.Economies;
 import io.github.divios.dailyShop.economies.economy;
 import io.github.divios.dailyShop.files.Settings;
 import io.github.divios.jcommands.JCommand;
+import io.github.divios.lib.dLib.dAction;
 import io.github.divios.lib.dLib.dPrice;
 import io.github.divios.lib.dLib.dRarity;
 import io.github.divios.lib.dLib.newDItem;
@@ -32,6 +33,7 @@ public class testNewStockCommand {
                     this.p = sender;
 
                     testStockClone();
+                    testStockClone2();
                     testStockSimilar();
                     testStockSimilar2();
                     testPricesClone();
@@ -45,6 +47,7 @@ public class testNewStockCommand {
 
                     testInitializer();
                     testSimilar();
+                    testSimilar2();
                     testDItemClone();
                     testDItemClone2();
                     testDItemCopy();
@@ -66,6 +69,19 @@ public class testNewStockCommand {
         stock1.decrement(p, 1);
 
         if (stock1.get(p) == 3 && stock2.get(p) == 4) {
+            Log.info("Test successfully");
+        } else {
+            Log.severe("Test Unsuccessfully");
+        }
+    }
+
+    private void testStockClone2() {
+        dStock stock1 = dStockFactory.INDIVIDUAL(4);
+
+        stock1.decrement(p, 1);
+        dStock stock2 = stock1.clone();
+
+        if (stock1.get(p) == 3 && stock2.get(p) == 3) {
             Log.info("Test successfully");
         } else {
             Log.severe("Test Unsuccessfully");
@@ -199,6 +215,29 @@ public class testNewStockCommand {
         Log.info("Test successfully");
     }
 
+    private void testSimilar2() {
+        newDItem item = newDItem.from(XMaterial.DIRT, "dirt");
+        item.setAction(dAction.OPEN_SHOP, "prueba");
+        item.setBundle(Arrays.asList("wow", "much wow", "Nooo"));
+        item.setCommands(Arrays.asList("dogee", "bitcoin"));
+        item.setConfirmGui(false);
+        item.setEcon(Economies.exp.getEconomy());
+        item.setItemQuantity(5);
+        item.setRarity("Rare");
+
+        newDItem item2 = newDItem.from(XMaterial.DIRT, "dirt");
+        item2.setAction(dAction.OPEN_SHOP, "prueba");
+        item2.setBundle(Arrays.asList("wow", "much wow", "Nooo"));
+        item2.setCommands(Arrays.asList("dogee", "bitcoin"));
+        item2.setConfirmGui(false);
+        item2.setEcon(Economies.exp.getEconomy());
+        item2.setItemQuantity(5);
+        item2.setRarity("Rare");
+
+        Preconditions.checkArgument(newDItem.DailyObject.isSimilar(item, item2), "test unsuccessful");
+        Log.info("Test successfully");
+    }
+
     private void testDItemClone() {
         newDItem.of(XMaterial.POTION).clone();
         Log.info("Test successfully");
@@ -250,11 +289,11 @@ public class testNewStockCommand {
 
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         a.clone();
-        Log.info("Clone time: " + (new Timestamp(System.currentTimeMillis()).getNanos() - timestamp.getNanos()) + " ns");
+        Log.info("Clone time: " + (new Timestamp(System.currentTimeMillis()).getTime() - timestamp.getTime()) + " ns");
 
         timestamp = new Timestamp(System.currentTimeMillis());
         newDItem.fromJson(a.toJson());
-        Log.info("From/to json time: " + (new Timestamp(System.currentTimeMillis()).getNanos() - timestamp.getNanos()) + " ns");
+        Log.info("From/to json time: " + (new Timestamp(System.currentTimeMillis()).getTime() - timestamp.getTime()) + " ns");
     }
 
     private void testUnmodifiableItem() {

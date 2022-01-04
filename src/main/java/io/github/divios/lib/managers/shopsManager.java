@@ -11,7 +11,6 @@ import io.github.divios.lib.serialize.serializerApi;
 import io.github.divios.lib.storage.databaseManager;
 
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
@@ -56,57 +55,27 @@ public class shopsManager {
     }
 
     /**
-     * Sets the shops. Private
-     */
-    private void setShops(Set<dShop> shops) {
-        deleteAllShops();
-        shops.forEach(this::createShop);
-    }
-
-    /**
-     * Sets the shops. Private
-     */
-    private CompletableFuture<Void> setShopsAsync(Set<dShop> shops) {
-        return CompletableFuture.runAsync(() -> {
-            deleteAllShops();
-            shops.forEach(this::createShop);
-        });
-    }
-
-    /**
      * Creates a new shop
      *
      * @param name the name of the shop
      */
 
     public void createShop(String name) {
-        createShop(new WrappedShop(name));
-    }
+        dShop newShop_ = new WrappedShop(name);
 
-    public void createShop(dShop newShop) {
-        dShop newShop_ = WrappedShop.wrap(newShop);
-
-        shops.put(newShop.getName().toLowerCase(), newShop_);
+        shops.put(newShop_.getName().toLowerCase(), newShop_);
         newShop_.reStock();
         Schedulers.sync().run(() -> Events.callEvent(new createdShopEvent(newShop_)));
         dManager.createShop(newShop_);
-        newShop_.getItems().forEach(dItem -> dManager.addItem(newShop.getName(), dItem));
-
     }
 
     public void createShopAsync(String name) {
-        createShopAsync(new WrappedShop(name));
-    }
+        dShop newShop_ = new WrappedShop(name);
 
-    public void createShopAsync(dShop newShop) {
-        dShop newShop_ = WrappedShop.wrap(newShop);
-
-        shops.put(newShop.getName().toLowerCase(), newShop_);
+        shops.put(newShop_.getName().toLowerCase(), newShop_);
         newShop_.reStock();
         Schedulers.sync().run(() -> Events.callEvent(new createdShopEvent(newShop_)));
-        dManager.createShopAsync(newShop_).thenAccept(unused ->
-                newShop_.getItems().forEach(dItem ->
-                        dManager.addItemAsync(newShop.getName(), dItem)));
+        dManager.createShopAsync(newShop_);
     }
 
     /**
