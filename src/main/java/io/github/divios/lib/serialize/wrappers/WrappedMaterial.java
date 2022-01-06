@@ -3,7 +3,10 @@ package io.github.divios.lib.serialize.wrappers;
 import com.cryptomorin.xseries.SkullUtils;
 import com.cryptomorin.xseries.XMaterial;
 import io.github.divios.core_lib.itemutils.ItemUtils;
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.Objects;
 
 public class WrappedMaterial {
 
@@ -29,12 +32,8 @@ public class WrappedMaterial {
     }
 
     public ItemStack parseItem() {
-        //dItem ditem = dItem.of(XMaterial.DIRT.parseItem());
-
-        //if (material.startsWith("base64:")) ditem.setCustomPlayerHead(material.replace("base64:", ""));
-        //else ditem.setMaterial(XMaterial.valueOf(material));
-
-        return XMaterial.valueOf(material).parseItem();
+        ItemStack item = XMaterial.valueOf(material).parseItem();
+        return Objects.requireNonNull(item, "Material not supported in this version?");
     }
 
 }

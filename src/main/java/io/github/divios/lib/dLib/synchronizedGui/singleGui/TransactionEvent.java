@@ -17,7 +17,7 @@ class TransactionEvent extends Event {
     private final dItem item;
 
 
-    public TransactionEvent(@NotNull dInventory caller,
+    TransactionEvent(@NotNull dInventory caller,
                             @NotNull SingleTransaction.Type type,
                             @NotNull Player player,
                             @NotNull dItem item) {
