@@ -4,7 +4,7 @@ import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.dailyShop.files.Lang;
 import io.github.divios.jtext.wrappers.Template;
-import io.github.divios.lib.dLib.newDItem;
+import io.github.divios.lib.dLib.dItem;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,7 +14,7 @@ public class shopItemsManagerLore {
         throw new RuntimeException("This class cannot be instantiated");
     }
 
-    public static ItemStack applyLore(@NotNull newDItem item) {
+    public static ItemStack applyLore(@NotNull dItem item) {
         ItemStack toReturn = item.getItemWithId();
 
         toReturn = new ItemBuilder(toReturn)                            // Prices lore

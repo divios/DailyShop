@@ -6,6 +6,8 @@ public interface Transactions {
         return new BuyTransaction();
     }
 
-    static SellTransaction SellTransaction() { return new SellTransaction(); }
+    static SellTransaction SellTransaction() {
+        return new SellTransaction();
+    }
 
 }

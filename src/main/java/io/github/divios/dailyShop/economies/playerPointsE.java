@@ -4,7 +4,7 @@ package io.github.divios.dailyShop.economies;
 import io.github.divios.dailyShop.hooks.Hooks;
 import org.bukkit.entity.Player;
 
-public class playerPointsE extends economy {
+public class playerPointsE extends Economy {
 
     playerPointsE() {
         this("");

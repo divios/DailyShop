@@ -10,7 +10,7 @@ import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.economies.Economies;
-import io.github.divios.dailyShop.economies.economy;
+import io.github.divios.dailyShop.economies.Economy;
 import io.github.divios.dailyShop.files.Lang;
 import io.github.divios.dailyShop.hooks.Hooks;
 import me.TechsCode.UltraEconomy.UltraEconomyAPI;
@@ -38,13 +38,13 @@ public class changeEcon {
     private static final UltraEconomyAPI uEconApi = Hooks.ULTRA_ECONOMY.getApi();
 
     private final Player p;
-    private final Consumer<economy> consumer;
+    private final Consumer<Economy> consumer;
 
     public static changeEconBuilder builder() {
         return new changeEconBuilder();
     }
 
-    private changeEcon(Player p, Consumer<economy> consumer) {
+    private changeEcon(Player p, Consumer<Economy> consumer) {
         this.p = p;
         this.consumer = consumer;
 
@@ -75,7 +75,7 @@ public class changeEcon {
         menu.addButton(itemButtonToAdd, inventoryUtils.getFirstEmpty(menu.getInventory()));
     }
 
-    private ItemButton createEconomyButton(XMaterial material, String name, economy econ) {
+    private ItemButton createEconomyButton(XMaterial material, String name, Economy econ) {
         return new ItemButton(createEconomyItem(material, name), e -> consumer.accept(econ));
     }
 
@@ -175,7 +175,7 @@ public class changeEcon {
 
     public static final class changeEconBuilder {
         private Player p;
-        private Consumer<economy> consumer;
+        private Consumer<Economy> consumer;
 
         private changeEconBuilder() {
         }
@@ -185,7 +185,7 @@ public class changeEcon {
             return this;
         }
 
-        public changeEconBuilder withConsumer(Consumer<economy> consumer) {
+        public changeEconBuilder withConsumer(Consumer<Economy> consumer) {
             this.consumer = consumer;
             return this;
         }

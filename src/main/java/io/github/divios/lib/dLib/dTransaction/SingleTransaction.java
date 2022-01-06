@@ -7,8 +7,8 @@ import io.github.divios.dailyShop.files.Messages;
 import io.github.divios.dailyShop.utils.DebugLog;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.jtext.wrappers.Template;
+import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
-import io.github.divios.lib.dLib.newDItem;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -33,10 +33,10 @@ public class SingleTransaction {
         private dShop shop;
         private Type type;
         private Player player;
-        private newDItem item;
+        private dItem item;
         private int amount = 1;
         private Consumer<Bill> onComplete;
-        private BiConsumer<newDItem, TransactionError> onFail;
+        private BiConsumer<dItem, TransactionError> onFail;
 
         private SingleTransactionBuilder() {
         }
@@ -60,7 +60,7 @@ public class SingleTransaction {
             return this;
         }
 
-        public SingleTransactionBuilder withItem(newDItem item) {
+        public SingleTransactionBuilder withItem(dItem item) {
             this.item = item;
             return this;
         }
@@ -75,7 +75,7 @@ public class SingleTransaction {
             return this;
         }
 
-        public SingleTransactionBuilder withOnFail(BiConsumer<newDItem, TransactionError> onFail) {
+        public SingleTransactionBuilder withOnFail(BiConsumer<dItem, TransactionError> onFail) {
             this.onFail = onFail;
             return this;
         }
@@ -118,12 +118,12 @@ public class SingleTransaction {
         private final dShop shop;
         private final Player player;
         private final Type type = Type.BUY;
-        private final newDItem item;
+        private final dItem item;
         private final int amount;
         private final Consumer<Bill> onComplete;
-        private final BiConsumer<newDItem, TransactionError> onFail;
+        private final BiConsumer<dItem, TransactionError> onFail;
 
-        private BuyTransaction(dShop shop, Player player, newDItem item, int amount, Consumer<Bill> onComplete, BiConsumer<newDItem, TransactionError> onFail) {
+        private BuyTransaction(dShop shop, Player player, dItem item, int amount, Consumer<Bill> onComplete, BiConsumer<dItem, TransactionError> onFail) {
             this.shop = Objects.requireNonNull(shop);
             this.player = Objects.requireNonNull(player);
             this.item = Objects.requireNonNull(item);
@@ -212,12 +212,12 @@ public class SingleTransaction {
         private final dShop shop;
         private final Player player;
         private final Type type = Type.BUY;
-        private final newDItem item;
+        private final dItem item;
         private final int amount;
         private final Consumer<Bill> onComplete;
-        private final BiConsumer<newDItem, TransactionError> onFail;
+        private final BiConsumer<dItem, TransactionError> onFail;
 
-        private SellTransaction(dShop shop, Player player, newDItem item, int amount, Consumer<Bill> onComplete, BiConsumer<newDItem, TransactionError> onFail) {
+        private SellTransaction(dShop shop, Player player, dItem item, int amount, Consumer<Bill> onComplete, BiConsumer<dItem, TransactionError> onFail) {
             this.shop = Objects.requireNonNull(shop);
             this.player = Objects.requireNonNull(player);
             this.item = Objects.requireNonNull(item);

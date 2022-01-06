@@ -18,6 +18,7 @@ import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
 import java.io.Serializable;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 @SuppressWarnings({"unused", "UnstableApiUsage", "unchecked"})
 public abstract class dStock implements Cloneable, Serializable {
@@ -66,7 +67,7 @@ public abstract class dStock implements Cloneable, Serializable {
     }
 
     protected final int defaultStock;
-    protected HashMap<UUID, Integer> stocks = new HashMap<>();
+    protected ConcurrentHashMap<UUID, Integer> stocks = new ConcurrentHashMap<>();
 
     protected dStock(int defaultStock, Map<UUID, Integer> stocks) {
         this.defaultStock = defaultStock;
@@ -88,8 +89,7 @@ public abstract class dStock implements Cloneable, Serializable {
     }
 
     public Integer get(@NotNull UUID p) {
-        if (!exists(p) && isIndividual()) reset(p);          // If it doesn't exist on individual, create it
-        return stocks.get(getKey(p));
+        return stocks.getOrDefault(getKey(p), defaultStock);
     }
 
     public void set(@NotNull Player p, int stock) {
@@ -113,8 +113,7 @@ public abstract class dStock implements Cloneable, Serializable {
     }
 
     public void increment(@NotNull UUID p, int amount) {
-        if (!exists(p)) stocks.put(getKey(p), defaultStock + amount);
-        else stocks.computeIfPresent(getKey(p), (uuid, integer) -> integer + amount);
+        stocks.compute(getKey(p), (uuid, integer) -> (integer == null ? defaultStock : integer) + amount);
     }
 
     public void decrement(@NotNull Player p, int amount) {
@@ -122,8 +121,7 @@ public abstract class dStock implements Cloneable, Serializable {
     }
 
     public void decrement(@NotNull UUID p, int amount) {
-        if (!exists(p)) stocks.put(getKey(p), defaultStock - amount);
-        else stocks.computeIfPresent(getKey(p), (uuid, integer) -> integer - amount);
+        stocks.compute(getKey(p), (uuid, integer) -> (integer == null ? defaultStock : integer) - amount);
     }
 
     public void reset(@NotNull Player p) {
@@ -155,7 +153,7 @@ public abstract class dStock implements Cloneable, Serializable {
     public dStock clone() {
         try {
             dStock cloned = (dStock) super.clone();
-            cloned.stocks = (HashMap<UUID, Integer>) stocks.clone();
+            cloned.stocks = new ConcurrentHashMap<>(stocks);
 
             return cloned;
         } catch (CloneNotSupportedException e) {

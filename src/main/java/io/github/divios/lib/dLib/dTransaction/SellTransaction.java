@@ -1,15 +1,15 @@
 package io.github.divios.lib.dLib.dTransaction;
 
-import io.github.divios.lib.dLib.confirmMenu.sellConfirmMenu;
+import io.github.divios.lib.dLib.confirmMenu.SellConfirmMenu;
+import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
-import io.github.divios.lib.dLib.newDItem;
 import org.bukkit.entity.Player;
 
 public class SellTransaction {
 
     private dShop shop;
     private Player vendor;
-    private newDItem item;
+    private dItem item;
 
     public SellTransaction withShop(dShop shop) {
         this.shop = shop;
@@ -21,14 +21,14 @@ public class SellTransaction {
         return this;
     }
 
-    public SellTransaction withItem(newDItem item) {
+    public SellTransaction withItem(dItem item) {
         this.item = item;
         return this;
     }
 
     public void execute() {
         if (item.isConfirmGui())
-            sellConfirmMenu.builder()
+            SellConfirmMenu.builder()
                     .withPlayer(vendor)
                     .withShop(shop)
                     .withItem(item)
@@ -50,6 +50,7 @@ public class SellTransaction {
                     .withType(SingleTransaction.Type.SELL)
                     .withItem(item)
                     .withAmount(item.getItem().getAmount())
+                    .withOnComplete(bill -> shop.computeBill(bill))
                     .execute();
     }
 

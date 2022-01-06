@@ -8,8 +8,8 @@ import io.github.divios.dailyShop.guis.settings.shopsManagerGui;
 import io.github.divios.jcommands.JCommand;
 import io.github.divios.jcommands.arguments.Argument;
 import io.github.divios.jcommands.arguments.types.StringArgument;
+import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
-import io.github.divios.lib.dLib.newDItem;
 import io.github.divios.lib.managers.shopsManager;
 import io.github.divios.lib.serialize.serializerApi;
 
@@ -28,7 +28,7 @@ public class addCommand {
                 .executesPlayer((player, values) ->
                         sManager.getShop(values.get("dailyShop").getAsString()).ifPresent(shop ->
                                 addDailyGuiIH.open(player, shop, itemStack -> {
-                                    shop.addItem(newDItem.of(itemStack));
+                                    shop.addItem(dItem.of(itemStack));
                                     serializerApi.saveShopToFileAsync(shop);
                                     shopGui.open(player, shop);
                                 }, () -> shopsManagerGui.open(player))))

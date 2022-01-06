@@ -8,8 +8,8 @@ import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.jcommands.JCommand;
 import io.github.divios.jcommands.arguments.Argument;
 import io.github.divios.jcommands.arguments.types.StringArgument;
+import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
-import io.github.divios.lib.dLib.newDItem;
 import io.github.divios.lib.serialize.serializerApi;
 import net.brcdev.shopgui.ShopGuiPlusApi;
 import net.brcdev.shopgui.shop.ShopManager;
@@ -47,7 +47,7 @@ public class importShops {
 
                                             if (shopItem.getType().equals(ShopManager.ItemType.DUMMY)) return;
 
-                                            newDItem newItem = newDItem.of(shopItem.getItem());
+                                            dItem newItem = dItem.of(shopItem.getItem());
 
                                             newItem.setBuyPrice(shopItem.getBuyPrice());
                                             newItem.setSellPrice(shopItem.getSellPrice());
@@ -80,7 +80,7 @@ public class importShops {
                             .ifPresent(shop -> {
                                 plugin.getAPI().getShop(args.get("bossShop").getAsString())
                                         .getItems().forEach(bsBuy -> {
-                                            newDItem newItem = newDItem.of(bsBuy.getItem());
+                                            dItem newItem = dItem.of(bsBuy.getItem());
 
                                             try {
                                                 newItem.setBuyPrice(Double.parseDouble(

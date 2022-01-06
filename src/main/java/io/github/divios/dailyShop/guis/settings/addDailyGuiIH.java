@@ -9,8 +9,8 @@ import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.files.Lang;
 import io.github.divios.dailyShop.guis.customizerguis.changeBundleItem;
 import io.github.divios.dailyShop.utils.Utils;
+import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
-import io.github.divios.lib.dLib.newDItem;
 import io.github.divios.lib.serialize.serializerApi;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -84,7 +84,7 @@ public class addDailyGuiIH {
                                         .withShop(shop)
                                         .withConfirm(uuids -> {
                                             gui.destroy();
-                                            newDItem newBundle = newDItem.of(XMaterial.CHEST_MINECART.parseItem());
+                                            dItem newBundle = dItem.of(XMaterial.CHEST_MINECART.parseItem());
                                             newBundle.setBundle(uuids);
                                             shop.addItem(newBundle);
                                             serializerApi.saveShopToFileAsync(shop);

@@ -13,9 +13,10 @@ import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.files.Messages;
 import io.github.divios.dailyShop.utils.DebugLog;
 import io.github.divios.dailyShop.utils.Utils;
+import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.dLib.dTransaction.SingleTransaction;
-import io.github.divios.lib.dLib.newDItem;
+import io.th0rgal.oraxen.utils.message.MessageAction;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventPriority;
@@ -43,11 +44,11 @@ public class dInventory implements Cloneable {
 
     protected static final DailyShop plugin = DailyShop.get();
     private static final Gson gson = new GsonBuilder()
-            .registerTypeAdapter(newDItem.class, (JsonSerializer<newDItem>) (dItem, type, jsonSerializationContext) -> dItem.toJson())
-            .registerTypeAdapter(newDItem.class, (JsonDeserializer<newDItem>) (jsonElement, type, jsonDeserializationContext) -> newDItem.fromJson(jsonElement))
+            .registerTypeAdapter(dItem.class, (JsonSerializer<dItem>) (dItem, type, jsonSerializationContext) -> dItem.toJson())
+            .registerTypeAdapter(dItem.class, (JsonDeserializer<dItem>) (jsonElement, type, jsonDeserializationContext) -> dItem.fromJson(jsonElement))
             .create();
 
-    private static final TypeToken<ConcurrentHashMap<UUID, newDItem>> buttonsToken = new TypeToken<ConcurrentHashMap<UUID, newDItem>>() {
+    private static final TypeToken<ConcurrentHashMap<UUID, dItem>> buttonsToken = new TypeToken<ConcurrentHashMap<UUID, dItem>>() {
     };
     private static final TypeToken<ConcurrentSkipListSet<Integer>> dailySlotsToken = new TypeToken<ConcurrentSkipListSet<Integer>>() {
     };
@@ -74,8 +75,8 @@ public class dInventory implements Cloneable {
 
         Inventory inv = inventoryUtils.fromJson(object.get("inventory"));
         ConcurrentSkipListSet<Integer> dailyItemsSlots = gson.fromJson(object.get("dailySlots"), dailySlotsToken.getType());
-        ConcurrentHashMap<UUID, newDItem> buttons = gson.fromJson(object.get("buttons"), buttonsToken.getType());
-        ConcurrentHashMap<Integer, newDItem> buttonsSlots = new ConcurrentHashMap<>();
+        ConcurrentHashMap<UUID, dItem> buttons = gson.fromJson(object.get("buttons"), buttonsToken.getType());
+        ConcurrentHashMap<Integer, dItem> buttonsSlots = new ConcurrentHashMap<>();
 
         buttons.forEach((uuid, dItem) -> buttonsSlots.put(dItem.getSlot(), dItem));
 
@@ -87,8 +88,8 @@ public class dInventory implements Cloneable {
     protected Inventory inv;
 
     protected ConcurrentSkipListSet<Integer> dailyItemsSlots;
-    protected ConcurrentHashMap<UUID, newDItem> buttons;
-    protected ConcurrentHashMap<Integer, newDItem> buttonsSlot;
+    protected ConcurrentHashMap<UUID, dItem> buttons;
+    protected ConcurrentHashMap<Integer, dItem> buttonsSlot;
 
     private Set<Subscription> listeners = new HashSet<>();
 
@@ -106,8 +107,8 @@ public class dInventory implements Cloneable {
     private dInventory(String title,
                        Inventory inv,
                        ConcurrentSkipListSet<Integer> dailyItemsSlots,
-                       ConcurrentHashMap<UUID, newDItem> buttons,
-                       ConcurrentHashMap<Integer, newDItem> buttonsSlot) {
+                       ConcurrentHashMap<UUID, dItem> buttons,
+                       ConcurrentHashMap<Integer, dItem> buttonsSlot) {
         this.title = title;
         this.inv = inv;
         this.dailyItemsSlots = dailyItemsSlots;
@@ -211,20 +212,20 @@ public class dInventory implements Cloneable {
      * @param item ItemStack to be added
      * @param slot Integer representing the position of the new item on the inventory.
      */
-    public void addButton(@NotNull newDItem item, int slot) {
+    public void addButton(@NotNull dItem item, int slot) {
         DebugLog.info("Trying to add item of ID " + item.getID() + " in slot " + slot);
         if (slot >= inv.getSize()) {
             DebugLog.info("Tried to add item but is out of bounds");
             return;
         }
 
-        newDItem crashItem;
+        dItem crashItem;
         if ((crashItem = buttonsSlot.get(slot)) != null) {        // If there is a previous item with that slot, remove first
             DebugLog.info("Crashed with another item, removing firsts");
             removeButton(crashItem.getUUID());
         }
 
-        newDItem cloned = item.clone();
+        dItem cloned = item.clone();
         cloned.setSlot(slot);
 
         buttons.put(cloned.getUUID(), cloned);
@@ -246,8 +247,8 @@ public class dInventory implements Cloneable {
      * @param slot The Integer representing the slot to be removed.
      * @return The item that was removed if any.
      */
-    public newDItem removeButton(int slot) {
-        newDItem item;
+    public dItem removeButton(int slot) {
+        dItem item;
         return removeButton((item = buttonsSlot.get(slot)) == null ? null : item.getUUID());
     }
 
@@ -257,9 +258,9 @@ public class dInventory implements Cloneable {
      * @param uuid The UUID of the item to be removed.
      * @return The item that was removed if any.
      */
-    public newDItem removeButton(@NotNull UUID uuid) {
+    public dItem removeButton(@NotNull UUID uuid) {
         if (uuid == null) return null;      // ConcurrentHashMap throws error on null keys
-        newDItem removedItem = buttons.remove(uuid);
+        dItem removedItem = buttons.remove(uuid);
         if (removedItem != null) {
             DebugLog.info("Removed item of ID: " + removedItem.getID() + " on slot: " + removedItem.getSlot());
             buttonsSlot.remove(removedItem.getSlot());
@@ -274,7 +275,7 @@ public class dInventory implements Cloneable {
      *
      * @return A map representing the buttons of this inventory.
      */
-    public Map<UUID, newDItem> getButtons() {
+    public Map<UUID, dItem> getButtons() {
         return Collections.unmodifiableMap(buttons);
     }
 
@@ -283,7 +284,7 @@ public class dInventory implements Cloneable {
      *
      * @return A map representing the buttons of this inventory.
      */
-    public Map<Integer, newDItem> getButtonsSlots() {
+    public Map<Integer, dItem> getButtonsSlots() {
         return Collections.unmodifiableMap(buttonsSlot);
     }
 
@@ -302,14 +303,14 @@ public class dInventory implements Cloneable {
      *
      * @param itemsToRoll A collection of items that will be chosen as daily items.
      */
-    protected void restock(@NotNull Set<newDItem> itemsToRoll) {
+    protected void restock(@NotNull Set<dItem> itemsToRoll) {
         if (dailyItemsSlots.isEmpty()) return;
 
         removeAirItems();     // Just in case
         removeDailyItems();
 
         int index = dailyItemsSlots.first();
-        for (newDItem item : itemsToRoll) {
+        for (dItem item : itemsToRoll) {
             addButton(item, (index = dailyItemsSlots.ceiling(index)));
             dailyItemsSlots.add(index++);     // Restore slot
         }
@@ -321,8 +322,8 @@ public class dInventory implements Cloneable {
      *
      * @param item The item to update
      */
-    protected void updateDailyItem(@NotNull newDItem item) {
-        newDItem toUpdateItem = buttons.get(item.getUUID());
+    protected void updateDailyItem(@NotNull dItem item) {
+        dItem toUpdateItem = buttons.get(item.getUUID());
         if (toUpdateItem == null) return;
 
         int slot = toUpdateItem.getSlot();
@@ -430,10 +431,12 @@ public class dInventory implements Cloneable {
         clone.dailyItemsSlots = dailyItemsSlots.clone();
 
         clone.buttons = new ConcurrentHashMap<>();
-        buttons.forEach((uuid, dItem) -> clone.buttons.put(uuid, dItem.clone()));
-
         clone.buttonsSlot = new ConcurrentHashMap<>();
-        buttonsSlot.forEach((integer, dItem) -> clone.buttonsSlot.put(integer, dItem.clone()));
+        buttons.forEach((uuid, dItem) -> {
+            dItem cloned = dItem.clone();
+            clone.buttons.put(uuid, cloned);
+            clone.buttonsSlot.put(dItem.getSlot(), cloned);
+        });
 
         return clone;
     }
@@ -506,12 +509,15 @@ public class dInventory implements Cloneable {
                             e.setCancelled(true);
                             if (e.getSlot() != e.getRawSlot()) return;  // is not upper inventory
 
-                            newDItem itemClicked = buttonsSlot.get(e.getSlot());
+                            dItem itemClicked = buttonsSlot.get(e.getSlot());
                             if (itemClicked == null) return;
+                            itemClicked = itemClicked.clone();
 
                             Player player = (Player) e.getWhoClicked();
                             if (dailyItemsSlots.contains(e.getSlot())) {
                                 if (e.isLeftClick()) {
+
+                                    DebugLog.info("ItemClicked: " + itemClicked.toJson());
 
                                     if (!meetsPermissions(player, itemClicked.getBuyPerms())) {
                                         Messages.MSG_NOT_PERMS.send(player);
@@ -525,6 +531,12 @@ public class dInventory implements Cloneable {
 
                                     if (itemClicked.getBuyPrice() <= 0) {
                                         Messages.MSG_INVALID_BUY.send(player);
+                                        return;
+                                    }
+
+                                    if (Arrays.stream(Arrays.copyOf(player.getInventory().getContents(), 36))
+                                            .noneMatch(Objects::isNull)) {
+                                        Messages.MSG_INV_FULL.send(player);
                                         return;
                                     }
 
@@ -588,8 +600,8 @@ public class dInventory implements Cloneable {
     }
 
     private void removeDailyItems() {
-        for (Iterator<Map.Entry<UUID, newDItem>> it = buttons.entrySet().iterator(); it.hasNext(); ) {
-            Map.Entry<UUID, newDItem> entry = it.next();
+        for (Iterator<Map.Entry<UUID, dItem>> it = buttons.entrySet().iterator(); it.hasNext(); ) {
+            Map.Entry<UUID, dItem> entry = it.next();
             if (dailyItemsSlots.contains(entry.getValue().getSlot())) {
                 it.remove();
                 buttonsSlot.remove(entry.getValue().getSlot());
@@ -611,12 +623,12 @@ public class dInventory implements Cloneable {
 
                 Object o = dataInput.readObject();
                 if (o instanceof Set)
-                    ((Set<newDItem>) o).forEach(dItem -> {
+                    ((Set<dItem>) o).forEach(dItem -> {
                         newInv[0].buttons.put(dItem.getUUID(), dItem);
                         newInv[0].buttonsSlot.put(dItem.getSlot(), dItem);
                     });
                 else            // Remember that for some reason java cannot serialize/deserialize UUIDs
-                    ((Map<UUID, newDItem>) o).values().forEach(dItem -> {
+                    ((Map<UUID, dItem>) o).values().forEach(dItem -> {
                         newInv[0].buttons.put(dItem.getUUID(), dItem);
                         newInv[0].buttonsSlot.put(dItem.getSlot(), dItem);
                     });

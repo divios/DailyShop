@@ -22,7 +22,7 @@ public class Hooks {
         ELEMENTAL_GEMS = new elementalGemsHook();
         GEMS_ECONOMY = new gemsEconomyHook();
         M_POINTS = new MPointsHook();
-        PLACEHOLDER_API = Utils.isOperative("PlaceholderApi") ? new placeholderApiHook() : null;
+        PLACEHOLDER_API = Utils.isOperative("PlaceholderAPI") ? new placeholderApiHook() : null;
         PLAYER_POINTS = new playerPointsHook();
         SHOP_GUI_PLUS = new shopGuiPlusHook();
         TOKEN_ENCHANT = new tokenEnchantsHook();

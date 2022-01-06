@@ -7,16 +7,15 @@ import com.google.common.reflect.TypeToken;
 import com.google.gson.*;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.FormatUtils;
-import io.github.divios.dailyShop.economies.economy;
+import io.github.divios.dailyShop.economies.Economy;
 import io.github.divios.dailyShop.utils.Utils;
+import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dPrice;
 import io.github.divios.lib.dLib.dRarity;
-import io.github.divios.lib.dLib.newDItem;
 import io.github.divios.lib.dLib.stock.dStock;
 import io.github.divios.lib.serialize.wrappers.*;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Item;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
@@ -28,7 +27,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @SuppressWarnings({"unused", "UnstableApiUsage", "UnusedReturnValue"})
-public class dItemAdapter implements JsonSerializer<newDItem>, JsonDeserializer<newDItem> {
+public class dItemAdapter implements JsonSerializer<dItem>, JsonDeserializer<dItem> {
 
     private static final TypeToken<List<String>> stringListToken = new TypeToken<List<String>>() {
     };
@@ -38,13 +37,13 @@ public class dItemAdapter implements JsonSerializer<newDItem>, JsonDeserializer<
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(WrappedEnchantment.class, new enchantmentAdapter())
             .registerTypeHierarchyAdapter(dStock.class, new dStockAdapter())
-            .registerTypeHierarchyAdapter(economy.class, new economyAdapter())
+            .registerTypeHierarchyAdapter(Economy.class, new economyAdapter())
             .registerTypeAdapter(dPrice.class, new dPriceAdapter())
             .registerTypeHierarchyAdapter(PotionMeta.class, new potionEffectsAdapter())
             .create();
 
     @Override
-    public JsonElement serialize(newDItem dItem, Type type, JsonSerializationContext jsonSerializationContext) {
+    public JsonElement serialize(dItem dItem, Type type, JsonSerializationContext jsonSerializationContext) {
         JsonObject merchant = new JsonObject();
 
         ItemStack item = dItem.getItem();
@@ -95,18 +94,18 @@ public class dItemAdapter implements JsonSerializer<newDItem>, JsonDeserializer<
     }
 
     @Override
-    public newDItem deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
+    public dItem deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
         JsonObject object = jsonElement.getAsJsonObject();
 
         Preconditions.checkArgument(object.has("material") || object.has("item"), "An item needs a material");
         Preconditions.checkArgument(Utils.testRunnable(() -> XMaterial.valueOf(object.get("material").getAsString())) || object.get("material").getAsString().startsWith("base64:"), "Invalid material");
 
-        newDItem ditem;
+        dItem ditem;
 
         if (object.has("material"))    // Normal Item
-            ditem = newDItem.of(WrappedMaterial.of(object.get("material").getAsString()).parseItem());
+            ditem = dItem.of(WrappedMaterial.of(object.get("material").getAsString()).parseItem());
         else if (object.has("item"))   // Custom item
-            ditem = newDItem.of(WrappedCustomItem.from(object).parseItem());
+            ditem = dItem.of(WrappedCustomItem.from(object).parseItem());
         else
             throw new RuntimeException("Invalid configuration");
 
@@ -122,11 +121,12 @@ public class dItemAdapter implements JsonSerializer<newDItem>, JsonDeserializer<
             ditem.setItem(spawner);
         }
 
-        if (object.has("name")) ditem.setItem(ItemUtils.setName(ditem.getItem(), Utils.JTEXT_PARSER.parse(object.get("name").getAsString())));
+        if (object.has("name"))
+            ditem.setItem(ItemUtils.setName(ditem.getItem(), Utils.JTEXT_PARSER.parse(object.get("name").getAsString())));
         if (object.has("lore"))
             ditem.setItem(ItemUtils.setLore(ditem.getItem(), Utils.JTEXT_PARSER.parse((List<String>) gson.fromJson(object.get("lore"), stringListToken.getType()))));
         if (object.has("rarity")) ditem.setRarity(dRarity.fromKey(object.get("rarity").getAsString()));
-        if (object.has("econ")) ditem.setEcon(gson.fromJson(object.get("econ").getAsJsonObject(), economy.class));
+        if (object.has("econ")) ditem.setEcon(gson.fromJson(object.get("econ").getAsJsonObject(), Economy.class));
         if (object.has("buyPrice")) ditem.setBuyPrice(gson.fromJson(object.get("buyPrice"), dPrice.class));
         if (object.has("sellPrice")) ditem.setSellPrice(gson.fromJson(object.get("sellPrice"), dPrice.class));
         if (object.has("buyPerms")) ditem.setBuyPerms(gson.fromJson(object.get("buyPerms"), stringListToken.getType()));

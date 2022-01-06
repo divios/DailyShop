@@ -20,7 +20,7 @@ class placeholderApiHook extends PlaceholderExpansion implements Hook<Placeholde
     }
 
     private void tryToHook() {
-        if (Utils.isOperative("PlaceholderApi")) {
+        if (Utils.isOperative("PlaceholderAPI")) {
             Log.info("Hooked to PlaceholderAPI");
             this.register();
             isHook = true;

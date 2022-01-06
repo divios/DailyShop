@@ -15,8 +15,8 @@ import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.files.Lang;
 import io.github.divios.dailyShop.guis.customizerguis.CustomizerMenu;
 import io.github.divios.dailyShop.lorestategy.shopItemsManagerLore;
+import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
-import io.github.divios.lib.dLib.newDItem;
 import io.github.divios.lib.managers.shopsManager;
 import io.github.divios.lib.serialize.serializerApi;
 import org.bukkit.entity.Player;
@@ -81,7 +81,7 @@ public class shopGui {
 
     private void createGuis() {
 
-        Deque<newDItem> entries = new ArrayDeque<>();
+        Deque<dItem> entries = new ArrayDeque<>();
         shop.getItems().forEach(entries::addFirst);
 
         inv = paginatedGui.Builder()
@@ -148,7 +148,7 @@ public class shopGui {
                                                 .applyTexture("9b425aa3d94618a87dac9c94f377af6ca4984c07579674fad917f602b7bf235"),
 
                                         e -> addDailyGuiIH.open(p, shop, itemStack -> {
-                                            shop.addItem(newDItem.of(itemStack));
+                                            shop.addItem(dItem.of(itemStack));
                                             serializerApi.saveShopToFileAsync(shop);
                                             refresh();
                                         }, this::refresh)), 53)
@@ -166,13 +166,13 @@ public class shopGui {
 
         Player p = (Player) e.getWhoClicked();
 
-        UUID uid = newDItem.getUUIDKey(e.getCurrentItem());
+        UUID uid = dItem.getUUIDKey(e.getCurrentItem());
         if (uid == null) {
             refresh();
             return;
         }
 
-        newDItem item = shop.getItem(uid);
+        dItem item = shop.getItem(uid);
         if (item == null) {
             refresh();
             return;

@@ -33,7 +33,7 @@ public class dShop {
     protected static final DailyShop plugin = DailyShop.get();
 
     protected String name;
-    protected Map<UUID, newDItem> items = Collections.synchronizedMap(new LinkedHashMap<>());
+    protected Map<UUID, dItem> items = Collections.synchronizedMap(new LinkedHashMap<>());
     protected syncHashMenu guis;
     protected Timestamp timestamp;
     protected int timer;
@@ -55,7 +55,7 @@ public class dShop {
         this(name, timer, timestamp, Collections.EMPTY_LIST);
     }
 
-    public dShop(String name, int timer, Timestamp timestamp, Collection<newDItem> items) {
+    public dShop(String name, int timer, Timestamp timestamp, Collection<dItem> items) {
         this.name = name.toLowerCase();
         this.timer = timer;
         this.timestamp = timestamp;
@@ -70,7 +70,7 @@ public class dShop {
         this(name, gui, timestamp, timer, new HashSet<>());
     }
 
-    public dShop(String name, JsonElement gui, Timestamp timestamp, int timer, Set<newDItem> items) {
+    public dShop(String name, JsonElement gui, Timestamp timestamp, int timer, Set<dItem> items) {
         this.name = name.toLowerCase();
         this.timestamp = timestamp;
         this.timer = timer;
@@ -151,10 +151,10 @@ public class dShop {
      * any change made to it won't affect the original one
      */
     public @NotNull
-    Set<newDItem> getItems() {
+    Set<dItem> getItems() {
         return items.values().stream()
                 .filter(Objects::nonNull)
-                .map(newDItem::clone)
+                .map(dItem::clone)
                 .collect(Collectors.toSet());
     }
 
@@ -165,7 +165,7 @@ public class dShop {
      * @return null if it does not exist
      */
     public @Nullable
-    newDItem getItem(@NotNull String ID) {
+    dItem getItem(@NotNull String ID) {
         return getItem(UUID.nameUUIDFromBytes(ID.getBytes()));
     }
 
@@ -176,8 +176,8 @@ public class dShop {
      * @return null if it does not exist
      */
     public @Nullable
-    newDItem getItem(@NotNull UUID uid) {
-        newDItem item;
+    dItem getItem(@NotNull UUID uid) {
+        dItem item;
         return (item = items.get(uid)) == null ? null : item.clone();
     }
 
@@ -208,7 +208,7 @@ public class dShop {
     /**
      * Updates the item of the shop
      */
-    public void updateItem(@NotNull newDItem newItem) {
+    public void updateItem(@NotNull dItem newItem) {
         UUID uid = newItem.getUUID();
 
         if (!items.containsKey(uid)) {
@@ -224,14 +224,14 @@ public class dShop {
     /**
      * Sets the items of this shop
      */
-    public void setItems(@NotNull Collection<newDItem> items) {
+    public void setItems(@NotNull Collection<dItem> items) {
         DebugLog.info("Setting items");
-        Map<UUID, newDItem> newItems = new HashMap<>();
+        Map<UUID, dItem> newItems = new HashMap<>();
         items.forEach(dItem -> newItems.put(dItem.getUUID(), dItem));            // Cache values for a O(1) search
 
-        for (Map.Entry<UUID, newDItem> entry : new HashMap<>(this.items).entrySet()) {          // Remove or update
+        for (Map.Entry<UUID, dItem> entry : new HashMap<>(this.items).entrySet()) {          // Remove or update
             if (newItems.containsKey(entry.getKey())) {     // Update items if changed
-                newDItem toUpdateItem = newItems.remove(entry.getKey());
+                dItem toUpdateItem = newItems.remove(entry.getKey());
 
                 if (toUpdateItem != null && !toUpdateItem.isSimilar(entry.getValue())) {
                     DebugLog.info("Updating item with ID: " + toUpdateItem.getID() + " from dShop");
@@ -254,7 +254,7 @@ public class dShop {
      *
      * @param item item to be added
      */
-    public void addItem(@NotNull newDItem item) {
+    public void addItem(@NotNull dItem item) {
         items.put(item.getUUID(), item);
     }
 
@@ -265,7 +265,7 @@ public class dShop {
      * @return true if the item was removed. False if not
      */
     public boolean removeItem(UUID uid) {
-        newDItem removed = items.remove(uid);
+        dItem removed = items.remove(uid);
         if (removed == null) return false;
         guis.updateItem(new updateItemEvent(uid, updateItemEvent.type.DELETE_ITEM, this));
         return true;
@@ -283,7 +283,7 @@ public class dShop {
         DebugLog.info("Received bill on shop " + name);
         bill.getBillTable().forEach((s, entry) -> {
 
-            newDItem shopItem = getItem(s);
+            dItem shopItem = getItem(s);
             if (shopItem == null) return;
 
             if (shopItem.getDStock() != null)

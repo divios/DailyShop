@@ -10,8 +10,8 @@ import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.files.Lang;
 import io.github.divios.dailyShop.guis.settings.shopsManagerGui;
 import io.github.divios.dailyShop.utils.Utils;
+import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
-import io.github.divios.lib.dLib.newDItem;
 import io.github.divios.lib.dLib.synchronizedGui.singleGui.dInventory;
 import io.github.divios.lib.serialize.serializerApi;
 import org.bukkit.Bukkit;
@@ -46,7 +46,7 @@ public class customizeGui implements Listener, InventoryHolder {
     private final boolean preventClose = true;
     private boolean refreshFlag = false;
 
-    private newDItem toClone = null;
+    private dItem toClone = null;
 
     private final Map<Integer, ItemStack> pItems = new LinkedHashMap<>();
 
@@ -310,14 +310,14 @@ public class customizeGui implements Listener, InventoryHolder {
         }
 
         if (e.getCurrentItem() != null && e.getClick().equals(ClickType.MIDDLE)) {        // copy to clipboard
-            toClone = _gui.getButtons().get(newDItem.getUUIDKey(e.getCurrentItem()));
+            toClone = _gui.getButtons().get(dItem.getUUIDKey(e.getCurrentItem()));
             return;
         }
 
         if (Utils.isEmpty(e.getCurrentItem())
                 && e.isShiftClick()) {  //add empty slot
-            newDItem air = newDItem.AIR();
-            _gui.addButton(newDItem.AIR(), e.getSlot());
+            dItem air = dItem.AIR();
+            _gui.addButton(dItem.AIR(), e.getSlot());
             _gui.getInventory().setItem(e.getSlot(), air.getItem());
             refresh();
             return;
@@ -330,7 +330,7 @@ public class customizeGui implements Listener, InventoryHolder {
                     .withPlayer(p)
                     .withAction(aBoolean -> {
                         if (aBoolean) _gui.removeButton(e.getSlot());
-                            refresh();
+                        refresh();
                     })
                     .withItem(e.getCurrentItem())
                     .withTitle("&a&lConfirm Action")
@@ -353,7 +353,7 @@ public class customizeGui implements Listener, InventoryHolder {
                 .withPlayer(p)
                 .withShop(shop)
                 .withItem(_gui.getButtonsSlots().get(e.getSlot()) == null ?
-                        newDItem.of(XMaterial.DIRT) : _gui.getButtonsSlots().get(e.getSlot()))
+                        dItem.of(XMaterial.DIRT) : _gui.getButtonsSlots().get(e.getSlot()))
                 .withConsumer(itemS -> {
                     _gui.addButton(itemS, e.getSlot());
                     withdrawPlayerItems();
