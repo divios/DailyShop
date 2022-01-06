@@ -7,7 +7,8 @@ public enum TransactionError {
     noPerms(Messages.MSG_NOT_PERMS_ITEM),
     noMoney(Messages.MSG_NOT_MONEY),
     noSpace(Messages.MSG_INV_FULL),
-    noStock(Messages.MSG_NOT_STOCK);
+    noStock(Messages.MSG_NOT_STOCK),
+    noEnoughItems(Messages.MSG_NOT_ITEMS);
 
     private final Messages msg;
 

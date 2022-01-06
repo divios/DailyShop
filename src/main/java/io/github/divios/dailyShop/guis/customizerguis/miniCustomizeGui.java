@@ -12,12 +12,10 @@ import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.ChatPrompt;
 import io.github.divios.core_lib.misc.EventListener;
 import io.github.divios.core_lib.misc.FormatUtils;
-import io.github.divios.core_lib.misc.Pair;
 import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.dailyShop.DailyShop;
-import io.github.divios.lib.dLib.dAction;
-import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
+import io.github.divios.lib.dLib.newDItem;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -35,9 +33,9 @@ public class miniCustomizeGui {
     private static final DailyShop plugin = DailyShop.get();
 
     private final Player p;
-    private ItemStack item;
+    private newDItem item;
     private final dShop shop;
-    private final Consumer<ItemStack> consumer;
+    private final Consumer<newDItem> consumer;
     private InventoryGUI inv;
 
     private boolean preventCloseB = false;      // preventClose glitch
@@ -47,8 +45,8 @@ public class miniCustomizeGui {
 
     public miniCustomizeGui(Player p,
                             dShop shop,
-                            ItemStack item,
-                            Consumer<ItemStack> consumer) {
+                            newDItem item,
+                            Consumer<newDItem> consumer) {
         this.p = p;
         this.item = item;
         this.shop = shop;
@@ -129,7 +127,9 @@ public class miniCustomizeGui {
                 , e -> {
                     preventCloseB = false;
                     ChatPrompt.prompt(plugin, p, (s) -> {
-                        item = ItemUtils.setName(item, s);
+                        ItemStack toChange = item.getItem();
+                        toChange = ItemUtils.setName(toChange, s);
+                        item.setItem(toChange);
                         refreshItem();
                         Schedulers.sync().run(this::refresh);
                     }, cause -> Schedulers.sync().run(this::refresh), "&6&lInput Item Name", "");
@@ -142,9 +142,9 @@ public class miniCustomizeGui {
                     preventCloseB = false;
                     materialsPrompt.open(plugin, p, (aBoolean, material) -> {
                         if (aBoolean) {
-                            item.setType(material.parseMaterial());
-                            if (material.name().contains("GLASS"))
-                                item.setDurability(material.parseItem().getDurability());
+                            ItemStack toChange = item.getItem();
+                            toChange = ItemUtils.setMaterial(toChange, material);
+                            item.setItem(toChange);
                         }
                         refresh();
                     });
@@ -160,7 +160,8 @@ public class miniCustomizeGui {
                         ChatPrompt.builder()
                                 .withPlayer(p)
                                 .withResponse(s -> {
-                                    item = ItemUtils.addLore(item, s);
+                                    ItemStack toChange = item.getItem();
+                                    item.setItem(ItemUtils.addLore(toChange, s));
                                     Schedulers.sync().run(this::refresh);
                                 })
                                 .withCancel(cancelReason -> refresh())
@@ -169,26 +170,26 @@ public class miniCustomizeGui {
 
                     } else if (e.isRightClick()) {
 
-                        if (ItemUtils.getLore(item).isEmpty()) return;
+                        if (ItemUtils.getLore(item.getItem()).isEmpty()) return;
 
-                        item = ItemUtils.removeLore(item, ItemUtils.getLore(item).size() - 1);
+                        ItemStack toChange = item.getItem();
+                        toChange = ItemUtils.removeLore(toChange, ItemUtils.getLore(toChange).size() - 1);
+                        item.setItem(toChange);
                         refreshItem();
                     }
 
 
                 }), 29);
 
-        Pair<dAction, String> action = new dItem(item).getAction();
+        newDItem.WrapperAction action = item.getAction();
 
         gui.addButton(24, ItemButton.create(ItemBuilder.of(XMaterial.STICKY_PISTON)
                         .setName("&c&lAdd actions").setLore("&7Action to perform when this", "&7item is clicked",
-                                "", "&6Current action: &7" + action.get1().name() + ":" + action.get2()),
+                                "", "&6Current action: &7" + action.getAction().name() + ":" + action.getData()),
                 e -> {
                     preventCloseB = false;
                     customizeAction.open(p, shop, (dAction, s) -> {
-                        dItem aux = new dItem(item);
-                        aux.setAction(dAction, s);
-                        item = aux.getDailyItem();
+                        item.setAction(dAction, s);
                         refresh();
                     }, (p) -> refresh());
                 }));
@@ -200,15 +201,17 @@ public class miniCustomizeGui {
                     preventCloseB = false;
                     p.closeInventory();
                     ChatPrompt.prompt(plugin, p, (s) -> {
-                                item.setType(XMaterial.PLAYER_HEAD.parseMaterial());
-                                item = ItemUtils.applyTexture(item, s);
+                                ItemStack toChange = item.getItem();
+                                toChange = ItemUtils.setMaterial(toChange, XMaterial.PLAYER_HEAD);
+                                toChange = ItemUtils.applyTexture(toChange, s);
+                                item.setItem(toChange);
                                 Schedulers.sync().run(this::refresh);
 
                             }, cause -> Schedulers.sync().run(this::refresh),
                             FormatUtils.color("&7Input base64 texture"), "");
                 }), 23);
 
-        gui.addButton(ItemButton.create(item.clone(), e -> {
+        gui.addButton(ItemButton.create(item.getItem(), e -> {
         }), 5);
 
         gui.addButton(ItemButton.create(ItemBuilder.of(XMaterial.PLAYER_HEAD)
@@ -227,7 +230,7 @@ public class miniCustomizeGui {
     }
 
     private void refreshItem() {
-        inv.addButton(ItemButton.create(item.clone(), e -> {
+        inv.addButton(ItemButton.create(item.getItem(), e -> {
         }), 5);
     }
 
@@ -256,9 +259,9 @@ public class miniCustomizeGui {
 
     public static final class miniCustomizeGuiBuilder {
         private Player p;
-        private ItemStack item;
+        private newDItem item;
         private dShop shop;
-        private Consumer<ItemStack> consumer;
+        private Consumer<newDItem> consumer;
 
         private miniCustomizeGuiBuilder() {
         }
@@ -268,7 +271,7 @@ public class miniCustomizeGui {
             return this;
         }
 
-        public miniCustomizeGuiBuilder withItem(ItemStack item) {
+        public miniCustomizeGuiBuilder withItem(newDItem item) {
             this.item = item;
             return this;
         }
@@ -278,7 +281,7 @@ public class miniCustomizeGui {
             return this;
         }
 
-        public miniCustomizeGuiBuilder withConsumer(Consumer<ItemStack> consumer) {
+        public miniCustomizeGuiBuilder withConsumer(Consumer<newDItem> consumer) {
             this.consumer = consumer;
             return this;
         }
@@ -287,7 +290,6 @@ public class miniCustomizeGui {
 
             Preconditions.checkNotNull(p, "player null");
             Preconditions.checkNotNull(shop, "shop null");
-            Preconditions.checkNotNull(item, "item null");
             Preconditions.checkNotNull(consumer, "consumer null");
 
             return new miniCustomizeGui(p, shop, item, consumer);

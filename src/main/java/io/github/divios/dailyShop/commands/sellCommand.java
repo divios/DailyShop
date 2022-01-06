@@ -3,7 +3,6 @@ package io.github.divios.dailyShop.commands;
 import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.jcommands.JCommand;
-import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
 import org.bukkit.inventory.ItemStack;
 
@@ -13,7 +12,7 @@ public class sellCommand {
         return JCommand.create("sell")
                 .assertPermission("DailyRandomShop.sell")
                 .assertUsage("/ds sell")
-                .withSubcommands(getSellAllCommand(), getSellHandCommand(), getsellGuiCommand());
+                .withSubcommands(getSellAllCommand(), getSellHandCommand(), getSellGuiCommand());
     }
 
     private JCommand getSellAllCommand() {
@@ -33,7 +32,7 @@ public class sellCommand {
                 .assertUsage(FormatUtils.color("&8- &6/rdshop open [shop] [player] &8- &7Opens a gui for yourself or for the given player"))
                 .executesPlayer((player, valueMap) -> {
                     ItemStack itemToSell = player.getItemInHand();
-                    dItem itemOnShop;
+                    //dItem itemOnShop;
 
                     for (dShop shop : DailyShop.get().getShopsManager().getShops()) {
                         boolean found = false;
@@ -52,7 +51,7 @@ public class sellCommand {
                 });
     }
 
-    private JCommand getsellGuiCommand() {
+    private JCommand getSellGuiCommand() {
         return new JCommand("gui")
                 .assertPermission("DailyRandomShop.sell.gui")
                 .assertUsage(FormatUtils.color("&8- &6/rdshop open [shop] [player] &8- &7Opens a gui for yourself or for the given player"))

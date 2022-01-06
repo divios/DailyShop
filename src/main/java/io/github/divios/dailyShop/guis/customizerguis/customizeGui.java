@@ -2,7 +2,6 @@ package io.github.divios.dailyShop.guis.customizerguis;
 
 import com.cryptomorin.xseries.XMaterial;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
-import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.ChatPrompt;
 import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.core_lib.misc.confirmIH;
@@ -11,7 +10,6 @@ import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.files.Lang;
 import io.github.divios.dailyShop.guis.settings.shopsManagerGui;
 import io.github.divios.dailyShop.utils.Utils;
-import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.dLib.newDItem;
 import io.github.divios.lib.dLib.synchronizedGui.singleGui.dInventory;
@@ -331,8 +329,8 @@ public class customizeGui implements Listener, InventoryHolder {
             confirmIH.builder()
                     .withPlayer(p)
                     .withAction(aBoolean -> {
-                        if (aBoolean) _gui.removeButton(dItem.getUid(e.getCurrentItem()));
-                        refresh();
+                        if (aBoolean) _gui.removeButton(e.getSlot());
+                            refresh();
                     })
                     .withItem(e.getCurrentItem())
                     .withTitle("&a&lConfirm Action")
@@ -344,7 +342,9 @@ public class customizeGui implements Listener, InventoryHolder {
             return;
         }
 
-        if (!ItemUtils.isEmpty(e.getCurrentItem()) && dItem.of(e.getCurrentItem()).isAIR()) return;
+        if (e.getCurrentItem() != null
+                && _gui.getButtonsSlots().get(e.getSlot()).isAir())
+            return;
 
         refreshFlag = true;
         depositPlayerItems();
@@ -352,10 +352,10 @@ public class customizeGui implements Listener, InventoryHolder {
         miniCustomizeGui.builder()
                 .withPlayer(p)
                 .withShop(shop)
-                .withItem(Utils.isEmpty(e.getCurrentItem()) ?
-                        XMaterial.GRASS_BLOCK.parseItem() : e.getCurrentItem().clone())
+                .withItem(_gui.getButtonsSlots().get(e.getSlot()) == null ?
+                        newDItem.of(XMaterial.DIRT) : _gui.getButtonsSlots().get(e.getSlot()))
                 .withConsumer(itemS -> {
-                    _gui.addButton(newDItem.of(itemS), e.getSlot());
+                    _gui.addButton(itemS, e.getSlot());
                     withdrawPlayerItems();
                     refresh();
                 })

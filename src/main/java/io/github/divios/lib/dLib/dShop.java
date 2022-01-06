@@ -48,14 +48,19 @@ public class dShop {
     }
 
     public dShop(String name, int timer) {
-        this(name, timer, new Timestamp(System.currentTimeMillis()));
+        this(name, timer, new Timestamp(System.currentTimeMillis()), Collections.EMPTY_LIST);
     }
 
     public dShop(String name, int timer, Timestamp timestamp) {
+        this(name, timer, timestamp, Collections.EMPTY_LIST);
+    }
+
+    public dShop(String name, int timer, Timestamp timestamp, Collection<newDItem> items) {
         this.name = name.toLowerCase();
         this.timer = timer;
         this.timestamp = timestamp;
         this.guis = syncHashMenu.create(this);
+        items.forEach(dItem -> this.items.put(dItem.getUUID(), dItem));
 
         startTimerTask();
         startListeners();
@@ -121,7 +126,7 @@ public class dShop {
      * Gets the name of the shop
      */
     public String getName() {
-        return name;
+        return name.toLowerCase();
     }
 
     /**
@@ -148,6 +153,7 @@ public class dShop {
     public @NotNull
     Set<newDItem> getItems() {
         return items.values().stream()
+                .filter(Objects::nonNull)
                 .map(newDItem::clone)
                 .collect(Collectors.toSet());
     }
@@ -274,13 +280,15 @@ public class dShop {
     }
 
     public void computeBill(Bill bill) {
+        DebugLog.info("Received bill on shop " + name);
         bill.getBillTable().forEach((s, entry) -> {
 
             newDItem shopItem = getItem(s);
             if (shopItem == null) return;
 
             if (shopItem.getDStock() != null)
-                guis.updateItem(new updateItemEvent(shopItem.getUUID(),
+                guis.updateItem(new updateItemEvent(bill.getPlayer(),
+                                shopItem.getUUID(),
                                 entry.getValue(),
                                 updateItemEvent.type.NEXT_AMOUNT,
                                 this

@@ -24,32 +24,8 @@ public class WrappedNBT {
 
     private void removeDailyNBT() {
         nbt.remove("rds_id");
-        nbt.remove("rds_rarity");
-        nbt.remove("rds_sellPrice");
-        nbt.remove("dailySlots");
-        nbt.remove("slots");
-        nbt.remove("rds_buyPrice");
-        nbt.remove("rds_stock");
-        nbt.remove("rds_cmds");
-        nbt.remove("rds_AIR");
-        nbt.remove("rds_action");
-        nbt.remove("dailySlots");
-        nbt.remove("rds_setItems");
-        nbt.remove("rds_perms_buy");
-        nbt.remove("rds_perms_sell");
-        nbt.remove("rds_confirm_gui");
-        nbt.remove("rds_bundle");
-        nbt.remove("rds_econ");
-        nbt.remove("rds_rawItem");
-        nbt.remove("rds_econ");
         nbt.remove("display");
-        nbt.remove("lore");
-        nbt.remove("Enchantments");
-        nbt.remove("rds_headUrl");
         nbt.remove("SkullOwner");
-        nbt.remove("Damage");
-        nbt.remove("Potion");
-        nbt.remove("CustomPotionColor");
         nbt.remove("BlockEntityTag");
         nbt.remove("ms_mob");
         nbt.remove("SilkSpawners");

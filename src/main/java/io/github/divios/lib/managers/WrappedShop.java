@@ -9,6 +9,7 @@ import io.github.divios.lib.storage.databaseManager;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.Timestamp;
+import java.util.Collection;
 import java.util.Set;
 import java.util.UUID;
 
@@ -27,6 +28,10 @@ public class WrappedShop extends dShop {
 
     public WrappedShop(String name, int timer, Timestamp timestamp) {
         super(name, timer, timestamp);
+    }
+
+    public WrappedShop(String name, int timer, Timestamp timestamp, Collection<newDItem> items) {
+        super(name, timer, timestamp, items);
     }
 
     public WrappedShop(String name, JsonElement gui, Timestamp timestamp, int timer) {

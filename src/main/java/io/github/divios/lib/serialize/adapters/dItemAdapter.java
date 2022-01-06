@@ -16,6 +16,7 @@ import io.github.divios.lib.dLib.stock.dStock;
 import io.github.divios.lib.serialize.wrappers.*;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Item;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
@@ -48,8 +49,8 @@ public class dItemAdapter implements JsonSerializer<newDItem>, JsonDeserializer<
 
         ItemStack item = dItem.getItem();
 
-        String name = ItemUtils.getName(item);
-        if (!name.isEmpty()) merchant.addProperty("name", FormatUtils.unColor(name));
+        if (ItemUtils.getMetadata(item).hasDisplayName())
+            merchant.addProperty("name", FormatUtils.unColor(ItemUtils.getName(item)));
 
         List<String> lore = ItemUtils.getLore(dItem.getItem());
         if (!lore.isEmpty()) merchant.add("lore", gson.toJsonTree(lore));
@@ -58,7 +59,8 @@ public class dItemAdapter implements JsonSerializer<newDItem>, JsonDeserializer<
             merchant.add("item", WrappedCustomItem.serializeCustomItem(item));
         else {
             merchant.addProperty("material", WrappedMaterial.getMaterial(item));
-            //if (dItem.isSpawner()) merchant.addProperty("mob", dItem.getSpawnerType().name());
+            if (ItemUtils.getMaterial(item) == XMaterial.SPAWNER.parseMaterial())
+                merchant.addProperty("mob", WrapperSpawnerItem.getSpawnerName(item));
         }
 
         if (item.getAmount() > 1) merchant.addProperty("quantity", item.getAmount());
@@ -72,7 +74,7 @@ public class dItemAdapter implements JsonSerializer<newDItem>, JsonDeserializer<
         if (dItem.getSellPerms() != null) merchant.add("sellPerms", gson.toJsonTree(dItem.getSellPerms()));
         merchant.addProperty("rarity", dItem.getRarity().getKey());
         merchant.add("econ", gson.toJsonTree(dItem.getEcon()));
-        if (!dItem.isConfirmGui()) merchant.addProperty("confirm_gui", false);
+        merchant.addProperty("confirm_gui", false);
         if (dItem.getBundle() != null) merchant.add("bundle", gson.toJsonTree(dItem.getBundle()));
 
         if (ItemUtils.getMetadata(item).isUnbreakable()) merchant.addProperty("unbreakable", true);
@@ -108,17 +110,21 @@ public class dItemAdapter implements JsonSerializer<newDItem>, JsonDeserializer<
         else
             throw new RuntimeException("Invalid configuration");
 
-        //if (ditem.isPotion() && object.has("potion"))         // TODO
-        //   ditem.setMeta(gson.fromJson(object.get("potion"), PotionMeta.class));
+        if (XPotion.canHaveEffects(ItemUtils.getMaterial(ditem.getItem())) && object.has("potion")) {
+            ItemStack potionItem = ditem.getItem();
+            potionItem.setItemMeta(gson.fromJson(object.get("potion"), PotionMeta.class));
+            ditem.setItem(potionItem);
+        }
 
         if (object.has("mob")) {
             Preconditions.checkArgument(Arrays.stream(EntityType.values()).anyMatch(entityType -> entityType.getName().equalsIgnoreCase(object.get("mob").getAsString())), "Invalid mob type");
-            // ditem.setSpawnerType(EntityType.fromName(object.get("mob").getAsString())); // TODO
+            ItemStack spawner = WrapperSpawnerItem.setSpawnerMeta(ditem.getItem(), EntityType.fromName(object.get("mob").getAsString()));
+            ditem.setItem(spawner);
         }
 
-        if (object.has("name")) ditem.setItem(ItemUtils.setName(ditem.getItem(), object.get("name").getAsString()));
+        if (object.has("name")) ditem.setItem(ItemUtils.setName(ditem.getItem(), Utils.JTEXT_PARSER.parse(object.get("name").getAsString())));
         if (object.has("lore"))
-            ditem.setItem(ItemUtils.setLore(ditem.getItem(), (List<String>) gson.fromJson(object.get("lore"), stringListToken.getType())));
+            ditem.setItem(ItemUtils.setLore(ditem.getItem(), Utils.JTEXT_PARSER.parse((List<String>) gson.fromJson(object.get("lore"), stringListToken.getType()))));
         if (object.has("rarity")) ditem.setRarity(dRarity.fromKey(object.get("rarity").getAsString()));
         if (object.has("econ")) ditem.setEcon(gson.fromJson(object.get("econ").getAsJsonObject(), economy.class));
         if (object.has("buyPrice")) ditem.setBuyPrice(gson.fromJson(object.get("buyPrice"), dPrice.class));

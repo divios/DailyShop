@@ -13,7 +13,7 @@ import io.github.divios.dailyShop.utils.InterfaceAdapter;
 import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.dLib.stock.factory.dStockFactory;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
 import java.io.Serializable;
@@ -83,54 +83,54 @@ public abstract class dStock implements Cloneable, Serializable {
         return defaultStock;
     }
 
-    public Integer get(@Nullable Player p) {
-        return get(p == null ? null : p.getUniqueId());
+    public Integer get(@NotNull Player p) {
+        return get(p.getUniqueId());
     }
 
-    public Integer get(@Nullable UUID p) {
-        if (!exists(p) && isIndividual()) reset(p);          // If doesn't exist on individual, create it
+    public Integer get(@NotNull UUID p) {
+        if (!exists(p) && isIndividual()) reset(p);          // If it doesn't exist on individual, create it
         return stocks.get(getKey(p));
     }
 
-    public void set(@Nullable Player p, int stock) {
-        set(p == null ? null : p.getUniqueId(), stock);
+    public void set(@NotNull Player p, int stock) {
+        set(p.getUniqueId(), stock);
     }
 
-    public void set(@Nullable UUID p, int stock) {
+    public void set(@NotNull UUID p, int stock) {
         stocks.put(getKey(p), stock);
     }
 
-    public boolean exists(@Nullable Player p) {
-        return exists(p == null ? null : p.getUniqueId());
+    public boolean exists(@NotNull Player p) {
+        return exists(p.getUniqueId());
     }
 
-    public boolean exists(@Nullable UUID p) {
+    public boolean exists(@NotNull UUID p) {
         return stocks.containsKey(getKey(p));
     }
 
-    public void increment(@Nullable Player p, int amount) {
-        increment(p == null ? null : p.getUniqueId(), amount);
+    public void increment(@NotNull Player p, int amount) {
+        increment(p.getUniqueId(), amount);
     }
 
-    public void increment(@Nullable UUID p, int amount) {
-        if (!exists(p)) stocks.put(p, defaultStock + amount);
+    public void increment(@NotNull UUID p, int amount) {
+        if (!exists(p)) stocks.put(getKey(p), defaultStock + amount);
         else stocks.computeIfPresent(getKey(p), (uuid, integer) -> integer + amount);
     }
 
-    public void decrement(@Nullable Player p, int amount) {
-        decrement(p == null ? null : p.getUniqueId(), amount);
+    public void decrement(@NotNull Player p, int amount) {
+        decrement(p.getUniqueId(), amount);
     }
 
-    public void decrement(@Nullable UUID p, int amount) {
-        if (!exists(p)) stocks.put(p, defaultStock - amount);
+    public void decrement(@NotNull UUID p, int amount) {
+        if (!exists(p)) stocks.put(getKey(p), defaultStock - amount);
         else stocks.computeIfPresent(getKey(p), (uuid, integer) -> integer - amount);
     }
 
-    public void reset(@Nullable Player p) {
-        reset(p == null ? null : p.getUniqueId());
+    public void reset(@NotNull Player p) {
+        reset(p.getUniqueId());
     }
 
-    public void reset(@Nullable UUID p) {
+    public void reset(@NotNull UUID p) {
         stocks.put(getKey(p), defaultStock);
     }
 
@@ -167,9 +167,8 @@ public abstract class dStock implements Cloneable, Serializable {
      * Compares stocks without having into account
      * the stocks of players saved
      */
-    public boolean isSimilar(@Nullable dStock stock) {
-        return (this == stock) || (stock != null
-                && Objects.equals(getName(), stock.getName())
+    public boolean isSimilar(@NotNull dStock stock) {
+        return (this == stock) || (Objects.equals(getName(), stock.getName())
                 && defaultStock == stock.defaultStock);
     }
 

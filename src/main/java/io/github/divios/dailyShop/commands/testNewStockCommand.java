@@ -36,6 +36,7 @@ public class testNewStockCommand {
                     testStockClone2();
                     testStockSimilar();
                     testStockSimilar2();
+                    testStockClone3();
                     testPricesClone();
                     testPricesSimilar();
                     testPricesEquals1();
@@ -82,6 +83,20 @@ public class testNewStockCommand {
         dStock stock2 = stock1.clone();
 
         if (stock1.get(p) == 3 && stock2.get(p) == 3) {
+            Log.info("Test successfully");
+        } else {
+            Log.severe("Test Unsuccessfully");
+        }
+    }
+
+    private void testStockClone3() {
+        dStock stock1 = dStockFactory.INDIVIDUAL(4);
+
+        stock1.decrement(p, 1);
+
+        stock1 = dStock.fromJson(stock1.toJson());
+
+        if (stock1.get(p) == 3) {
             Log.info("Test successfully");
         } else {
             Log.severe("Test Unsuccessfully");

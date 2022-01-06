@@ -1,5 +1,6 @@
 package io.github.divios.lib.dLib.dTransaction;
 
+import com.google.common.base.Preconditions;
 import io.github.divios.dailyShop.economies.economy;
 import org.bukkit.entity.Player;
 
@@ -25,10 +26,10 @@ public class Bill {
                 SingleTransaction.Type type,
                 Map<String, Map.Entry<Double, Integer>> items,
                 economy economy) {
-        this.player = player;
-        this.type = type;
+        this.player = Objects.requireNonNull(player);
+        this.type = Objects.requireNonNull(type);
         this.billTable = new HashMap<>();
-        this.economy = economy;
+        this.economy = Objects.requireNonNull(economy);
 
         items.forEach((s, entry) -> {
             billTable.put(s, entry);
@@ -104,6 +105,10 @@ public class Bill {
         }
 
         public Bill printBill() {
+            Preconditions.checkNotNull(player);
+            Preconditions.checkNotNull(type);
+            Preconditions.checkNotNull(economy);
+
             return new Bill(player, type, billTable, economy);
         }
     }

@@ -9,6 +9,7 @@ import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.events.searchStockEvent;
 import io.github.divios.dailyShop.events.updateItemEvent;
+import io.github.divios.dailyShop.files.Messages;
 import io.github.divios.dailyShop.lorestategy.shopItemsLore;
 import io.github.divios.dailyShop.utils.DebugLog;
 import io.github.divios.dailyShop.utils.PlaceholderAPIWrapper;
@@ -77,8 +78,22 @@ public class singleGuiImpl implements singleGui, Cloneable {
                 Events.subscribe(TransactionEvent.class)
                         .filter(o -> o.getCaller() == own)
                         .handler(o -> {
-                            if (o.getType() == SingleTransaction.Type.BUY)
-                                Transactions.createBuyType()
+                            if (o.getType() == SingleTransaction.Type.BUY) {
+
+                                double basePrice = o.getItem().getPlayerBuyPrice(p, shop) / o.getItem().getItem().getAmount();
+                                if (!o.getItem().getEcon().hasMoney(p, basePrice)) {
+                                    Messages.MSG_NOT_MONEY.send(p);
+                                    return;
+                                }
+
+                                Transactions.BuyTransaction()
+                                        .withShop(shop)
+                                        .withBuyer(o.getPlayer())
+                                        .withItem(o.getItem())
+                                        .execute();
+                            }
+                            else if (o.getType() == SingleTransaction.Type.SELL)
+                                Transactions.SellTransaction()
                                         .withShop(shop)
                                         .withVendor(o.getPlayer())
                                         .withItem(o.getItem())
@@ -96,10 +111,9 @@ public class singleGuiImpl implements singleGui, Cloneable {
         switch (type) {
             case UPDATE_ITEM:
                 if (toUpdateItem == null) return;
-                ItemStack newItem = shopItemsLore.applyLore(toUpdateItem, p, shop);
-                toUpdateItem.setItem(newItem);
                 DebugLog.info("Updated item from singleGui of id: " + toUpdateItem.getID());
                 own.updateDailyItem(toUpdateItem);
+                updateTask();
                 break;
             case NEXT_AMOUNT:
                 if (toUpdateItem == null) return;
@@ -119,7 +133,6 @@ public class singleGuiImpl implements singleGui, Cloneable {
     @Override
     public void updateTask() {
         Set<Integer> dailySlots = own.dailyItemsSlots;
-        Map<Integer, newDItem> buttons = own.buttonsSlot;
 
         own.buttonsSlot.forEach((integer, dItem) -> {
             if (dItem.isAir()) return;
@@ -127,15 +140,9 @@ public class singleGuiImpl implements singleGui, Cloneable {
                 ItemStack oldItem;
                 ItemBuilder newItem;
                 if (dailySlots.contains(integer)) {
-                    newDItem aux = shop.getItem(dItem.getUUID());
-                    if (aux == null || buttons.get(integer) == null) return;
-                    aux.setStock(buttons.get(integer).getDStock());   // Set the stock of the actual item
-                    aux.setBuyPrice(buttons.get(integer).getDBuyPrice());  // Set buyPrice (randomPrice bug)
-                    aux.setSellPrice(buttons.get(integer).getDSellPrice());  // Set sellPrice (randomPrice bug)
-                    oldItem = shopItemsLore.applyLore(aux, p, shop);
-
+                    oldItem = shopItemsLore.applyLore(dItem, p, shop);
                 } else
-                    oldItem = buttons.get(integer).getItemWithId();
+                    oldItem = dItem.getItemWithId();
 
                 newItem = ItemBuilder.of(oldItem).setLore(Collections.emptyList());
                 newItem = newItem.setName(PlaceholderAPIWrapper.setPlaceholders(p, ItemUtils.getName(oldItem)));
@@ -152,12 +159,10 @@ public class singleGuiImpl implements singleGui, Cloneable {
 
     @Override
     public void restock() {
-        Set<newDItem> newItems = dRandomItemsSelector.of(shop.getItems(), dItem -> {
-                    ItemStack aux = shopItemsLore.applyLore(dItem, p, shop);
-                    return dItem.setItem(aux);
-                })
+        Set<newDItem> newItems = dRandomItemsSelector.fromItems(shop.getItems())
                 .roll(own.dailyItemsSlots.size());
         own.restock(newItems);
+        updateTask();
     }
 
     @Override

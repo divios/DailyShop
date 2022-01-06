@@ -523,6 +523,11 @@ public class dInventory implements Cloneable {
                                         return;
                                     }
 
+                                    if (itemClicked.getBuyPrice() <= 0) {
+                                        Messages.MSG_INVALID_BUY.send(player);
+                                        return;
+                                    }
+
                                     Events.callEvent(new TransactionEvent(this,
                                             SingleTransaction.Type.BUY,
                                             player,
@@ -535,7 +540,21 @@ public class dInventory implements Cloneable {
                                         return;
                                     }
 
-                                    // TODO
+                                    if (itemClicked.getSellPrice() <= 0) {
+                                        Messages.MSG_INVALID_SELL.send(player);
+                                        return;
+                                    }
+
+                                    if (ItemUtils.count(player.getInventory(), itemClicked.getItem()) <= 0) {
+                                        Messages.MSG_NOT_ITEMS.send(player);
+                                        return;
+                                    }
+
+                                    Events.callEvent(new TransactionEvent(this,
+                                            SingleTransaction.Type.SELL,
+                                            player,
+                                            itemClicked
+                                    ));
 
                                 }
                             } else {

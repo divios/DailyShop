@@ -1,57 +1,56 @@
 package io.github.divios.lib.dLib.dTransaction;
 
-import io.github.divios.lib.dLib.confirmMenu.buyConfirmMenu;
+import io.github.divios.lib.dLib.confirmMenu.sellConfirmMenu;
 import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.dLib.newDItem;
 import org.bukkit.entity.Player;
 
-public class BuyTransaction {
+public class SellTransaction {
 
     private dShop shop;
-    private Player buyer;
+    private Player vendor;
     private newDItem item;
 
-    public BuyTransaction withShop(dShop shop) {
+    public SellTransaction withShop(dShop shop) {
         this.shop = shop;
         return this;
     }
 
-    public BuyTransaction withBuyer(Player buyer) {
-        this.buyer = buyer;
+    public SellTransaction withVendor(Player vendor) {
+        this.vendor = vendor;
         return this;
     }
 
-    public BuyTransaction withItem(newDItem item) {
+    public SellTransaction withItem(newDItem item) {
         this.item = item;
         return this;
     }
 
     public void execute() {
-        if (item.isConfirmGui() && item.getBundle() == null)
-            buyConfirmMenu.builder()
-                    .withPlayer(buyer)
+        if (item.isConfirmGui())
+            sellConfirmMenu.builder()
+                    .withPlayer(vendor)
                     .withShop(shop)
                     .withItem(item)
                     .withOnCompleteAction(integer -> {
                         SingleTransaction.create()
-                                .withPlayer(buyer)
+                                .withPlayer(vendor)
                                 .withShop(shop)
-                                .withType(SingleTransaction.Type.BUY)
+                                .withType(SingleTransaction.Type.SELL)
                                 .withItem(item)
                                 .withAmount(integer)
                                 .execute();
                     })
-                    .withFallback(() -> shop.openShop(buyer))
+                    .withFallback(() -> shop.openShop(vendor))
                     .prompt();
-        else {
+        else
             SingleTransaction.create()
-                    .withPlayer(buyer)
+                    .withPlayer(vendor)
                     .withShop(shop)
-                    .withType(SingleTransaction.Type.BUY)
+                    .withType(SingleTransaction.Type.SELL)
                     .withItem(item)
                     .withAmount(item.getItem().getAmount())
                     .execute();
-        }
     }
 
 }

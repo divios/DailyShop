@@ -21,10 +21,7 @@ import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
 
 @SuppressWarnings({"UnusedReturnValue", "unused"})
 public class databaseManager extends DataManagerAbstract {
@@ -50,11 +47,20 @@ public class databaseManager extends DataManagerAbstract {
                 JsonParser parser = new JsonParser();
                 while (result.next()) {
                     String name = result.getString("name");
-                    dShop shop = new WrappedShop(name,
-                            parser.parse(result.getString("gui")),
-                            timeStampUtils.deserialize(result.getString("timestamp")),
-                            result.getInt("timer"),
-                            getShopItems(name));
+                    dShop shop;
+
+                    try {
+                        shop = new WrappedShop(name,
+                                parser.parse(result.getString("gui")),
+                                timeStampUtils.deserialize(result.getString("timestamp")),
+                                result.getInt("timer"),
+                                getShopItems(name));
+                    } catch (Exception | Error e) {
+                        e.printStackTrace();
+                        shop = new WrappedShop(name,
+                                result.getInt("timer"),
+                                timeStampUtils.deserialize(result.getString("timestamp")));
+                    }
 
                     shop.destroy();
                     shops.add(shop);
@@ -342,6 +348,15 @@ public class databaseManager extends DataManagerAbstract {
 
     public CompletableFuture<Collection<dLogEntry>> getLogEntriesAsync() {
         return CompletableFuture.supplyAsync(this::getLogEntries);
+    }
+
+    public void finishAsyncQueries() {
+        asyncPool.shutdown();
+        try {
+            asyncPool.awaitTermination(3, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
 }

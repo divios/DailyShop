@@ -1,5 +1,6 @@
 package io.github.divios.lib.serialize.adapters;
 
+import com.cryptomorin.xseries.SkullUtils;
 import com.cryptomorin.xseries.XMaterial;
 import com.google.common.base.Preconditions;
 import com.google.common.reflect.TypeToken;
@@ -43,18 +44,19 @@ public class dButtonAdapter implements JsonSerializer<WrappedDButton>, JsonDeser
         }
 
         ItemStack item = dItem.getDItem().getItem();
-        String name = ItemUtils.getName(item);
-        if (!name.isEmpty())
-            merchant.addProperty("name", FormatUtils.unColor(name));
+
+        if (ItemUtils.getMetadata(item).hasDisplayName())
+            merchant.addProperty("name", FormatUtils.unColor(ItemUtils.getName(item)));
 
         List<String> lore = ItemUtils.getLore(item);
         if (!lore.isEmpty())
             merchant.add("lore", gson.toJsonTree(lore));
 
-        // if (!dItem.isCustomHead())   // TODO
-        merchant.addProperty("material", ItemUtils.getMaterial(item).name());
-        //else
-        //  merchant.addProperty("material", "base64:" + dItem.getCustomHeadUrl());
+        if (ItemUtils.getMaterial(item) == XMaterial.PLAYER_HEAD.parseMaterial()
+                && SkullUtils.getSkinValue(ItemUtils.getMetadata(item)) != null)
+            merchant.addProperty("material", "base64:" + SkullUtils.getSkinValue(ItemUtils.getMetadata(item)));
+        else
+            merchant.addProperty("material", ItemUtils.getMaterial(item).name());
 
         newDItem.WrapperAction action = dItem.getDItem().getAction();
         Pair<dAction, String> pair = Pair.of(action.getAction(), action.getData());
@@ -94,16 +96,18 @@ public class dButtonAdapter implements JsonSerializer<WrappedDButton>, JsonDeser
         }
 
         String material = object.get("material").getAsString();
-        //if (material.startsWith("base64:"))
-        //  ditem.setCustomPlayerHead(material.replace("base64:", ""));
-        //else
-        ditem.setItem(ItemUtils.setMaterial(ditem.getItem(), XMaterial.valueOf(material)));
+        if (material.startsWith("base64:")) {
+            ItemStack itemSkull = ItemUtils.setMaterial(ditem.getItem(), XMaterial.PLAYER_HEAD);
+            itemSkull = ItemUtils.applyTexture(itemSkull, material.replace("base64:", ""));
+            ditem.setItem(itemSkull);
+        } else
+            ditem.setItem(ItemUtils.setMaterial(ditem.getItem(), XMaterial.valueOf(material)));
 
         if (object.has("name"))
-            ditem.setItem(ItemUtils.setName(ditem.getItem(), object.get("name").getAsString()));
+            ditem.setItem(ItemUtils.setName(ditem.getItem(), Utils.JTEXT_PARSER.parse(object.get("name").getAsString())));
 
         if (object.has("lore"))
-            ditem.setItem(ItemUtils.setLore(ditem.getItem(), (List<String>) gson.fromJson(object.get("lore"), stringListToken.getType())));
+            ditem.setItem(ItemUtils.setLore(ditem.getItem(), Utils.JTEXT_PARSER.parse((List<String>) gson.fromJson(object.get("lore"), stringListToken.getType()))));
 
         if (object.has("enchantments")) {
             List<WrappedEnchantment> enchants = gson.fromJson(object.get("enchantments"), enchantsListToken.getType());

@@ -212,7 +212,7 @@ public class sellConfirmMenu extends abstractConfirmMenu {
             return this;
         }
 
-        public sellConfirmMenu build() {
+        public sellConfirmMenu prompt() {
             return new sellConfirmMenu(shop, player, item, onCompleteAction, fallback);
         }
     }

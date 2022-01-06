@@ -6,7 +6,7 @@ import java.util.UUID;
 
 final class dStockGlobal extends dStock {
 
-    private final UUID globalKey = UUID.randomUUID();
+    private final UUID globalKey = UUID.nameUUIDFromBytes("randomString_rds".getBytes());
 
     dStockGlobal(int defaultStock) {
         super(defaultStock);

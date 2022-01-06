@@ -151,4 +151,8 @@ public class shopsManager {
         shops.values().forEach(serializerApi::saveShopToFile);
     }
 
+    public void saveAllShopsToDatabase() {
+        shops.values().forEach(shop -> dManager.updateGuiAsync(shop.getName(), shop.getGuis()));
+    }
+
 }

@@ -1,5 +1,6 @@
 package io.github.divios.lib.serialize.wrappers;
 
+import com.cryptomorin.xseries.SkullUtils;
 import com.cryptomorin.xseries.XMaterial;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import org.bukkit.inventory.ItemStack;
@@ -14,10 +15,11 @@ public class WrappedMaterial {
 
     public static String getMaterial(ItemStack item) {
         String material;
-        //if (!item.isCustomHead())
-        material = ItemUtils.getMaterial(item).name();
-        //else  // TODO
-        //    material = "base64:" + item.getCustomHeadUrl();
+        if (ItemUtils.getMaterial(item) == XMaterial.PLAYER_HEAD.parseMaterial()
+                && SkullUtils.getSkinValue(ItemUtils.getMetadata(item)) != null)
+            material = "base64:" + SkullUtils.getSkinValue(ItemUtils.getMetadata(item));
+        else
+            material = ItemUtils.getMaterial(item).name();
 
         return material;
     }

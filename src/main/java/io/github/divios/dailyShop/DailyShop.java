@@ -6,6 +6,7 @@ import io.github.divios.dailyShop.files.resourceManager;
 import io.github.divios.dailyShop.hooks.Hooks;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.jcommands.JCommands;
+import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.dLib.priceModifiers.priceModifierManager;
 import io.github.divios.lib.managers.shopsManager;
 import io.github.divios.lib.storage.databaseManager;
@@ -79,12 +80,9 @@ public class DailyShop extends JavaPlugin {
     @Override
     public void onDisable() {
         if (sManager == null) return;
-        sManager.getShops()       // Updates all the guis before disable
-                .forEach(shop -> {
-                    dManager.updateGui(shop.getName(), shop.getGuis());
-                    shop.getGuis().invalidateAll();
-                });
-
+        sManager.saveAllShopsToDatabase();
+        dManager.finishAsyncQueries();
+        sManager.getShops().forEach(dShop::destroy);
     }
 
     public void reload() {

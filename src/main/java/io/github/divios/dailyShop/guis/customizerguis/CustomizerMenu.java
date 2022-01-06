@@ -414,63 +414,34 @@ public class CustomizerMenu {
                 ), 43
         );
 
-        /*
+
         inv.addButton(                                                  // Set
                 ItemButton.create(
-                        item.getItem().getAmount() == 1 ?
-                                ItemBuilder.of(XMaterial.BARRIER).setName(Lang.CUSTOMIZE_UNAVAILABLE.getAsString(p))
-                                :
-                                item.getSetItems().isPresent() ?
-                                        ItemBuilder.of(XMaterial.CHEST_MINECART)    //set of items
-                                                .setName(Lang.CUSTOMIZE_SET_NAME.getAsString(p))
-                                                .addLore(Lang.CUSTOMIZE_SET_LORE_ON.getAsListString(p,
-                                                                Template.of("amount", item.getSetItems().get())
-                                                        )
-                                                )
-                                        :
-                                        ItemBuilder.of(XMaterial.CHEST_MINECART)    //set of items
-                                                .setName(Lang.CUSTOMIZE_SET_NAME.getAsString(p))
-                                                .addLore(Lang.CUSTOMIZE_SET_LORE.getAsListString(p))
-
+                        ItemBuilder.of(XMaterial.CHEST_MINECART)    //set of items
+                                .setName(Lang.CUSTOMIZE_SET_NAME.getAsString(p))
+                                .addLore(Lang.CUSTOMIZE_SET_LORE_ON.getAsListString(p,
+                                                Template.of("amount", item.getItem().getAmount())
+                                        )
+                                )
                         , e -> {
-
-                            if (item.hasStock()) return;
-
-                            if (!item.getSetItems().isPresent() && e.isLeftClick()) {  // Boton de edit set
-                                if (item.hasStock()) {
-                                    Utils.sendRawMsg(p, "&7You can't enable this when the stock feature is enable");
-                                    return;
-                                }
-                                item.setSetItems(1);
-                                item.setQuantity(1);
-                                refresh();
-                            } else if (item.getSetItems().isPresent()) {
-                                if (e.isLeftClick()) {
-
-                                    ChatPrompt.builder()
-                                            .withPlayer(p)
-                                            .withResponse(s -> {
-                                                if (!Utils.isInteger(s))
-                                                    Messages.MSG_NOT_INTEGER.send(p);
-                                                int i = Integer.parseInt(s);
-                                                if (i < 1 || i > 64) Utils.sendRawMsg(p, "&7Invalid amount");
-                                                item.setSetItems(i);
-                                                item.setQuantity(i);
-                                                Schedulers.sync().run(this::refresh);
-                                            })
-                                            .withCancel(cancelReason -> Schedulers.sync().run(this::refresh))
-                                            .withTitle("&e&lInput Set Amount")
-                                            .prompt();
-
-                                } else if (e.isRightClick()) {
-                                    item.setSetItems(null);
-                                    item.setQuantity(1);
-                                    refresh();
-                                }
-                            }
+                            ChatPrompt.builder()
+                                    .withPlayer(p)
+                                    .withResponse(s -> {
+                                        if (!Primitives.isInteger(s))
+                                            Messages.MSG_NOT_INTEGER.send(p);
+                                        int i = Primitives.getAsInteger(s);
+                                        if (i < 1 || i > 64) Utils.sendRawMsg(p, "&7Invalid amount");
+                                        ItemStack toChange = item.getItem();
+                                        toChange.setAmount(i);
+                                        item.setItem(toChange);
+                                        Schedulers.sync().run(this::refresh);
+                                    })
+                                    .withCancel(cancelReason -> Schedulers.sync().run(this::refresh))
+                                    .withTitle("&e&lInput Set Amount")
+                                    .prompt();
                         }
                 ), 45
-        );  TODO: do quantity */
+        );
 
         dStock stock = item.getDStock();
         inv.addButton(                                                  // Stock

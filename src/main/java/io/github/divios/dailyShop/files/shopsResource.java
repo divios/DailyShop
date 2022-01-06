@@ -56,6 +56,7 @@ public class shopsResource {
                 .forEach(shop -> {
                     cacheCheckSums.remove(shop.getName());
                     sManager.deleteShop(shop.getName());
+                    DebugLog.info("removed shop");
                 });
 
         newShops.forEach(shop -> {                          // Process read Shops
