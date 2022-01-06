@@ -7,9 +7,9 @@ import io.github.divios.core_lib.database.SQLiteConnector;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.timeStampUtils;
 import io.github.divios.dailyShop.DailyShop;
+import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.dLib.log.options.dLogEntry;
-import io.github.divios.lib.dLib.newDItem;
 import io.github.divios.lib.dLib.synchronizedGui.syncMenu;
 import io.github.divios.lib.managers.WrappedShop;
 import io.github.divios.lib.storage.migrations.initialMigration;
@@ -75,8 +75,8 @@ public class databaseManager extends DataManagerAbstract {
     }
 
 
-    public Set<newDItem> getShopItems(String name) {
-        Set<newDItem> items = new LinkedHashSet<>();
+    public Set<dItem> getShopItems(String name) {
+        Set<dItem> items = new LinkedHashSet<>();
 
         this.databaseConnector.connect(connection -> {
             try (Statement statement = connection.createStatement()) {
@@ -87,14 +87,14 @@ public class databaseManager extends DataManagerAbstract {
                 JsonParser parser = new JsonParser();
                 while (result.next()) {
                     JsonElement json = parser.parse(result.getString("itemSerial"));
-                    items.add(newDItem.fromJson(json));
+                    items.add(dItem.fromJson(json));
                 }
             }
         });
         return items;
     }
 
-    public CompletableFuture<Set<newDItem>> getShopItemsAsync(String name) {
+    public CompletableFuture<Set<dItem>> getShopItemsAsync(String name) {
         return CompletableFuture.supplyAsync(() -> getShopItems(name));
 
     }
@@ -167,7 +167,7 @@ public class databaseManager extends DataManagerAbstract {
         return asyncPool.submit(() -> deleteShop(name));
     }
 
-    public void addItem(String name, newDItem item) {
+    public void addItem(String name, dItem item) {
         this.databaseConnector.connect(connection -> {
 
             String createShop = "INSERT OR REPLACE INTO " + this.getTablePrefix() +
@@ -181,7 +181,7 @@ public class databaseManager extends DataManagerAbstract {
         });
     }
 
-    public Future<?> addItemAsync(String name, newDItem item) {
+    public Future<?> addItemAsync(String name, dItem item) {
         return asyncPool.submit(() -> addItem(name, item));
     }
 
@@ -220,7 +220,7 @@ public class databaseManager extends DataManagerAbstract {
         return asyncPool.submit(() -> deleteAllItems(shopName));
     }
 
-    public void updateItem(String name, newDItem item) {
+    public void updateItem(String name, dItem item) {
         this.databaseConnector.connect(connection -> {
             String updateItem = "UPDATE " + this.getTablePrefix() + "shop_" + name +
                     " SET itemSerial = ? WHERE uuid = ?";
@@ -232,7 +232,7 @@ public class databaseManager extends DataManagerAbstract {
         });
     }
 
-    public Future<?> updateItemAsync(String name, newDItem item) {
+    public Future<?> updateItemAsync(String name, dItem item) {
         return asyncPool.submit(() -> updateItem(name, item));
     }
 

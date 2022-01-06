@@ -9,8 +9,8 @@ import io.github.divios.dailyShop.files.Messages;
 import io.github.divios.dailyShop.guis.customizerguis.customizeGui;
 import io.github.divios.dailyShop.utils.DebugLog;
 import io.github.divios.jtext.wrappers.Template;
+import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
-import io.github.divios.lib.dLib.newDItem;
 import io.github.divios.lib.dLib.synchronizedGui.singleGui.dInventory;
 import io.github.divios.lib.dLib.synchronizedGui.singleGui.singleGui;
 import org.bukkit.Bukkit;
@@ -109,14 +109,14 @@ public abstract class abstractSyncMenu implements syncMenu, Cloneable {
                 base.getInventory().setInventoryTitle(inv.getInventoryTitle());
             }
 
-            Map<Integer, newDItem> actualContent = new HashMap<>(base.getInventory().getButtonsSlots());
-            Map<Integer, newDItem> newContent = inv.getButtonsSlots();
+            Map<Integer, dItem> actualContent = new HashMap<>(base.getInventory().getButtonsSlots());
+            Map<Integer, dItem> newContent = inv.getButtonsSlots();
 
             Set<Integer> dailySlots = base.getInventory().getDailyItemsSlots();
 
             for (int i = 0; i < base.getInventory().getInventorySize(); i++) {
-                newDItem aux1;
-                newDItem aux2;
+                dItem aux1;
+                dItem aux2;
 
                 ItemStack actualItem = (aux1 = actualContent.get(i)) == null ? null : aux1.getItem();
                 ItemStack newItem = (aux2 = newContent.get(i)) == null ? null : aux2.getItem();

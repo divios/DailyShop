@@ -2,23 +2,23 @@ package io.github.divios.lib.serialize.adapters;
 
 import com.google.common.base.Preconditions;
 import com.google.gson.*;
-import io.github.divios.dailyShop.economies.economy;
+import io.github.divios.dailyShop.economies.Economy;
 
 import java.lang.reflect.Type;
 
-public class economyAdapter implements JsonSerializer<economy>, JsonDeserializer<economy> {
+public class economyAdapter implements JsonSerializer<Economy>, JsonDeserializer<Economy> {
 
     @Override
-    public economy deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
+    public Economy deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
         JsonObject object = jsonElement.getAsJsonObject();
 
         Preconditions.checkArgument(object.has("name"), "econ needs a name");
 
-        return economy.getFromKey(object.get("name").getAsString(), object.has("currency") ? object.get("currency").getAsString() : "");
+        return Economy.getFromKey(object.get("name").getAsString(), object.has("currency") ? object.get("currency").getAsString() : "");
     }
 
     @Override
-    public JsonElement serialize(economy economy, Type type, JsonSerializationContext jsonSerializationContext) {
+    public JsonElement serialize(Economy economy, Type type, JsonSerializationContext jsonSerializationContext) {
         JsonObject object = new JsonObject();
         object.addProperty("name", economy.getKey());
         if (!economy.getCurrency().isEmpty()) object.addProperty("currency", economy.getCurrency());

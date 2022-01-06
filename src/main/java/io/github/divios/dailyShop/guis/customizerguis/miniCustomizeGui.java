@@ -14,8 +14,8 @@ import io.github.divios.core_lib.misc.EventListener;
 import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.dailyShop.DailyShop;
+import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
-import io.github.divios.lib.dLib.newDItem;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -33,9 +33,9 @@ public class miniCustomizeGui {
     private static final DailyShop plugin = DailyShop.get();
 
     private final Player p;
-    private newDItem item;
+    private final dItem item;
     private final dShop shop;
-    private final Consumer<newDItem> consumer;
+    private final Consumer<dItem> consumer;
     private InventoryGUI inv;
 
     private boolean preventCloseB = false;      // preventClose glitch
@@ -45,8 +45,8 @@ public class miniCustomizeGui {
 
     public miniCustomizeGui(Player p,
                             dShop shop,
-                            newDItem item,
-                            Consumer<newDItem> consumer) {
+                            dItem item,
+                            Consumer<dItem> consumer) {
         this.p = p;
         this.item = item;
         this.shop = shop;
@@ -181,7 +181,7 @@ public class miniCustomizeGui {
 
                 }), 29);
 
-        newDItem.WrapperAction action = item.getAction();
+        dItem.WrapperAction action = item.getAction();
 
         gui.addButton(24, ItemButton.create(ItemBuilder.of(XMaterial.STICKY_PISTON)
                         .setName("&c&lAdd actions").setLore("&7Action to perform when this", "&7item is clicked",
@@ -259,9 +259,9 @@ public class miniCustomizeGui {
 
     public static final class miniCustomizeGuiBuilder {
         private Player p;
-        private newDItem item;
+        private dItem item;
         private dShop shop;
-        private Consumer<newDItem> consumer;
+        private Consumer<dItem> consumer;
 
         private miniCustomizeGuiBuilder() {
         }
@@ -271,7 +271,7 @@ public class miniCustomizeGui {
             return this;
         }
 
-        public miniCustomizeGuiBuilder withItem(newDItem item) {
+        public miniCustomizeGuiBuilder withItem(dItem item) {
             this.item = item;
             return this;
         }
@@ -281,7 +281,7 @@ public class miniCustomizeGui {
             return this;
         }
 
-        public miniCustomizeGuiBuilder withConsumer(Consumer<newDItem> consumer) {
+        public miniCustomizeGuiBuilder withConsumer(Consumer<dItem> consumer) {
             this.consumer = consumer;
             return this;
         }

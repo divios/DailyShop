@@ -71,7 +71,7 @@ public class DailyShop extends JavaPlugin {
         }
 
         try {
-            Class.forName("io.github.divios.lib.dLib.confirmMenu.buyConfirmMenu");  // loads Events
+            Class.forName("io.github.divios.lib.dLib.confirmMenu.BuyConfirmMenu");  // loads Events
         } catch (ClassNotFoundException ignored) {
         }
 

@@ -1,7 +1,7 @@
 package io.github.divios.lib.dLib.dTransaction;
 
 import com.google.common.base.Preconditions;
-import io.github.divios.dailyShop.economies.economy;
+import io.github.divios.dailyShop.economies.Economy;
 import org.bukkit.entity.Player;
 
 import java.util.*;
@@ -11,7 +11,7 @@ public class Bill {
 
     public static BillBuilder start(Player p,
                                     SingleTransaction.Type type,
-                                    economy economy
+                                    Economy economy
     ) {
         return new BillBuilder(p, type, economy);
     }
@@ -19,13 +19,13 @@ public class Bill {
     private final Player player;
     private final SingleTransaction.Type type;
     private final HashMap<String, Map.Entry<Double, Integer>> billTable;
-    private final economy economy;
+    private final Economy economy;
     private double totalPrice = 0;
 
     public Bill(Player player,
                 SingleTransaction.Type type,
                 Map<String, Map.Entry<Double, Integer>> items,
-                economy economy) {
+                Economy economy) {
         this.player = Objects.requireNonNull(player);
         this.type = Objects.requireNonNull(type);
         this.billTable = new HashMap<>();
@@ -45,7 +45,7 @@ public class Bill {
         return type;
     }
 
-    public economy getEconomy() {
+    public Economy getEconomy() {
         return economy;
     }
 
@@ -89,10 +89,10 @@ public class Bill {
     public static final class BillBuilder {
         private final Player player;
         private final SingleTransaction.Type type;
-        private final economy economy;
-        private HashMap<String, Map.Entry<Double, Integer>> billTable;
+        private final Economy economy;
+        private final HashMap<String, Map.Entry<Double, Integer>> billTable;
 
-        BillBuilder(Player player, SingleTransaction.Type type, economy economy) {
+        BillBuilder(Player player, SingleTransaction.Type type, Economy economy) {
             this.player = player;
             this.type = type;
             this.economy = economy;

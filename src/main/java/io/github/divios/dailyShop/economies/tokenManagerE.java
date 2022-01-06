@@ -4,7 +4,7 @@ import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.hooks.Hooks;
 import org.bukkit.entity.Player;
 
-public class tokenManagerE extends economy {
+public class tokenManagerE extends Economy {
 
     tokenManagerE() {
         this("");

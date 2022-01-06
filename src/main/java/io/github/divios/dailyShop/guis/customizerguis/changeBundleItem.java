@@ -5,8 +5,8 @@ import io.github.divios.core_lib.inventory.dynamicGui;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.dailyShop.DailyShop;
+import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
-import io.github.divios.lib.dLib.newDItem;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
@@ -21,14 +21,14 @@ import java.util.stream.Collectors;
 public class changeBundleItem {
 
     private final Player p;
-    private final newDItem item;
+    private final dItem item;
     private final dShop shop;
     private final Consumer<List<String>> confirm;
     private final Runnable back;
 
     public changeBundleItem(
             @NotNull Player p,
-            @NotNull newDItem item,
+            @NotNull dItem item,
             @NotNull dShop shop,
             @NotNull Consumer<List<String>> confirm,
             @NotNull Runnable back
@@ -56,9 +56,9 @@ public class changeBundleItem {
                     //loreStrategy ls = new bundleSettingsLore();
                     return shop.getItems().stream()
                             .filter(dItem -> !dItem.getID().equals(ownId))
-                            .map(newDItem::getItemWithId)
+                            .map(dItem::getItemWithId)
                             .map(_item -> {
-                                if (added.contains(newDItem.getIdKey(_item))) {
+                                if (added.contains(dItem.getIdKey(_item))) {
                                     _item = ItemUtils.addEnchant(_item, Enchantment.DAMAGE_ALL, 1);
                                     _item = ItemUtils.addItemFlags(_item, ItemFlag.HIDE_ENCHANTS);
                                 }
@@ -72,7 +72,7 @@ public class changeBundleItem {
                 .contentAction(event -> {
                     if (event.getCurrentItem() == null) return dynamicGui.Response.nu();
 
-                    String uid = newDItem.getIdKey(event.getCurrentItem());
+                    String uid = dItem.getIdKey(event.getCurrentItem());
                     if (added.contains(uid)) {
                         added.remove(uid);
                     } else {
@@ -95,7 +95,7 @@ public class changeBundleItem {
 
     public static final class changeBundleItemBuilder {
         private Player p;
-        private newDItem item;
+        private dItem item;
         private dShop shop;
         private Consumer<List<String>> confirm;
         private Runnable back;
@@ -108,7 +108,7 @@ public class changeBundleItem {
             return this;
         }
 
-        public changeBundleItemBuilder withItem(newDItem item) {
+        public changeBundleItemBuilder withItem(dItem item) {
             this.item = item;
             return this;
         }

@@ -4,7 +4,7 @@ import io.github.divios.core_lib.itemutils.ItemUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-public class itemEconomy extends economy {
+public class itemEconomy extends Economy {
 
     private final ItemStack item;
 

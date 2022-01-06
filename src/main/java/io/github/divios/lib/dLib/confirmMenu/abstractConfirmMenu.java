@@ -12,8 +12,8 @@ import io.github.divios.dailyShop.files.Lang;
 import io.github.divios.dailyShop.utils.PriceWrapper;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.jtext.wrappers.Template;
+import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
-import io.github.divios.lib.dLib.newDItem;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -30,7 +30,7 @@ public abstract class abstractConfirmMenu {
 
     protected final dShop shop;
     protected final Player player;
-    protected final newDItem item;
+    protected final dItem item;
     protected final Consumer<Integer> onCompleteAction;
     protected final Runnable fallback;
 
@@ -39,7 +39,7 @@ public abstract class abstractConfirmMenu {
 
     public abstractConfirmMenu(dShop shop,
                                Player player,
-                               newDItem item,
+                               dItem item,
                                Consumer<Integer> onCompleteAction, Runnable fallback
     ) {
         this.shop = shop;

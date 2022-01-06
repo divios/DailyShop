@@ -15,17 +15,17 @@ public enum Economies {
     exp(expEconomy::new),
     elementalGems(ElementalGemsEcon::new);
 
-    private final Function<String, economy> function;
+    private final Function<String, Economy> function;
 
-    Economies(Function<String, economy> function) {
+    Economies(Function<String, Economy> function) {
         this.function = function;
     }
 
-    public economy getEconomy() {
+    public Economy getEconomy() {
         return function.apply("");
     }
 
-    public economy getEconomy(String currency) {
+    public Economy getEconomy(String currency) {
         return function.apply(currency);
     }
 

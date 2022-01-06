@@ -12,7 +12,7 @@ import io.github.divios.core_lib.misc.Pair;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.jcommands.utils.Primitives;
 import io.github.divios.lib.dLib.dAction;
-import io.github.divios.lib.dLib.newDItem;
+import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.serialize.wrappers.WrappedDButton;
 import io.github.divios.lib.serialize.wrappers.WrappedEnchantment;
 import io.github.divios.lib.serialize.wrappers.WrappedItemFlags;
@@ -24,7 +24,7 @@ import java.lang.reflect.Type;
 import java.util.List;
 
 @SuppressWarnings({"unused", "UnstableApiUsage", "UnusedReturnValue"})
-public class dButtonAdapter implements JsonSerializer<WrappedDButton>, JsonDeserializer<newDItem> {
+public class dButtonAdapter implements JsonSerializer<WrappedDButton>, JsonDeserializer<dItem> {
 
     private static final TypeToken<List<String>> stringListToken = new TypeToken<List<String>>() {
     };
@@ -58,7 +58,7 @@ public class dButtonAdapter implements JsonSerializer<WrappedDButton>, JsonDeser
         else
             merchant.addProperty("material", ItemUtils.getMaterial(item).name());
 
-        newDItem.WrapperAction action = dItem.getDItem().getAction();
+        io.github.divios.lib.dLib.dItem.WrapperAction action = dItem.getDItem().getAction();
         Pair<dAction, String> pair = Pair.of(action.getAction(), action.getData());
         if (pair.get1() != dAction.EMPTY)
             merchant.add("action", gson.toJsonTree(pair, Pair.class));
@@ -81,16 +81,16 @@ public class dButtonAdapter implements JsonSerializer<WrappedDButton>, JsonDeser
     }
 
     @Override
-    public newDItem deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
+    public dItem deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
         JsonObject object = jsonElement.getAsJsonObject();
-        newDItem ditem = newDItem.of(XMaterial.DIRT_PATH.parseItem());
+        dItem ditem = dItem.of(XMaterial.DIRT_PATH.parseItem());
 
         Preconditions.checkArgument(object.has("material"), "An item needs a material");
         Preconditions.checkArgument(Utils.testRunnable(() -> XMaterial.valueOf(object.get("material").getAsString())) || object.get("material").getAsString().startsWith("base64:"), "Invalid material");
         Preconditions.checkArgument(object.has("slot"), "An item needs a slot");
 
         if (object.get("material").getAsString().equals("AIR")) {
-            newDItem air = newDItem.AIR();
+            dItem air = dItem.AIR();
             deserializeSlots(object.get("slot"), air);
             return air;
         }
@@ -151,7 +151,7 @@ public class dButtonAdapter implements JsonSerializer<WrappedDButton>, JsonDeser
         return builder.build();
     }
 
-    private void deserializeSlots(JsonElement object, newDItem item) {
+    private void deserializeSlots(JsonElement object, dItem item) {
 
         if (object.isJsonArray()) {     // Get the min slot if multipleSlots
             int minSlot = 999;

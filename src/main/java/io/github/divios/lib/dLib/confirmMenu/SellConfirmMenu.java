@@ -5,8 +5,8 @@ import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.dailyShop.files.Lang;
 import io.github.divios.dailyShop.utils.CompareItemUtils;
+import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
-import io.github.divios.lib.dLib.newDItem;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -17,7 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
 @SuppressWarnings({"unused"})
-public class sellConfirmMenu extends abstractConfirmMenu {
+public class SellConfirmMenu extends abstractConfirmMenu {
 
     private static final Map<UUID, List<ItemStack>> retrievedItemsCache = new ConcurrentHashMap<>();
 
@@ -57,9 +57,9 @@ public class sellConfirmMenu extends abstractConfirmMenu {
 
     private boolean retrievedItemsFlag = false;
 
-    private sellConfirmMenu(dShop shop,
+    private SellConfirmMenu(dShop shop,
                             Player player,
-                            newDItem item,
+                            dItem item,
                             Consumer<Integer> onCompleteAction,
                             Runnable fallback
     ) {
@@ -180,7 +180,7 @@ public class sellConfirmMenu extends abstractConfirmMenu {
     public static final class sellConfirmMenuBuilder {
         private dShop shop;
         private Player player;
-        private newDItem item;
+        private dItem item;
         private Consumer<Integer> onCompleteAction;
         private Runnable fallback;
 
@@ -197,7 +197,7 @@ public class sellConfirmMenu extends abstractConfirmMenu {
             return this;
         }
 
-        public sellConfirmMenuBuilder withItem(newDItem item) {
+        public sellConfirmMenuBuilder withItem(dItem item) {
             this.item = item;
             return this;
         }
@@ -212,8 +212,8 @@ public class sellConfirmMenu extends abstractConfirmMenu {
             return this;
         }
 
-        public sellConfirmMenu prompt() {
-            return new sellConfirmMenu(shop, player, item, onCompleteAction, fallback);
+        public SellConfirmMenu prompt() {
+            return new SellConfirmMenu(shop, player, item, onCompleteAction, fallback);
         }
     }
 }

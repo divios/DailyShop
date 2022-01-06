@@ -2,7 +2,7 @@ package io.github.divios.dailyShop.economies;
 
 import org.bukkit.entity.Player;
 
-public class expEconomy extends economy {
+public class expEconomy extends Economy {
 
     expEconomy() {
         this("");

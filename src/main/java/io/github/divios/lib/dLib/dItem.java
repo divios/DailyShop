@@ -15,7 +15,7 @@ import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.core_lib.misc.XSymbols;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.economies.Economies;
-import io.github.divios.dailyShop.economies.economy;
+import io.github.divios.dailyShop.economies.Economy;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.priceModifiers.priceModifier;
 import io.github.divios.lib.dLib.stock.dStock;
@@ -34,7 +34,7 @@ import java.util.*;
  * meta that is used for various functions and mechanics.
  */
 @SuppressWarnings({"unused", "UnstableApiUsage", "UnusedReturnValue"})
-public class newDItem implements Cloneable {
+public class dItem implements Cloneable {
 
     private static final String ID_KEY = "rds_id";
 
@@ -50,7 +50,7 @@ public class newDItem implements Cloneable {
         return UUID.nameUUIDFromBytes(id.getBytes());
     }
 
-    private static final newDItem AIR;
+    private static final dItem AIR;
 
     private static final Gson gson = new Gson();
     private static final TypeToken<List<String>> listStringToken = new TypeToken<List<String>>() {
@@ -62,7 +62,7 @@ public class newDItem implements Cloneable {
     private dStock stock;
     private dPrice buyPrice;
     private dPrice sellPrice;
-    private economy econ = Economies.vault.getEconomy();
+    private Economy econ = Economies.vault.getEconomy();
     private dRarity rarity = new dRarity();
     private WrapperAction action = WrapperAction.of(dAction.EMPTY, "");
     private List<String> buyPerms;
@@ -78,14 +78,14 @@ public class newDItem implements Cloneable {
                 .addEnchant(Enchantment.ARROW_FIRE, 1)
                 .addItemFlags(ItemFlag.HIDE_ENCHANTS);
 
-        AIR = new newDItem(airItem, UUID.randomUUID().toString(), true);
+        AIR = new dItem(airItem, UUID.randomUUID().toString(), true);
     }
 
-    public static newDItem AIR() {
+    public static dItem AIR() {
         return AIR.copy();
     }
 
-    public static newDItem fromJson(@NotNull JsonElement element) {
+    public static dItem fromJson(@NotNull JsonElement element) {
         JsonObject object = element.getAsJsonObject();
 
         Preconditions.checkArgument(object.has("id"), "No ID found");
@@ -94,13 +94,13 @@ public class newDItem implements Cloneable {
         String id = object.get("id").getAsString();
 
         if (object.get("item").getAsString().equals("air")) {           // Deserialize air item
-            newDItem air = AIR().setID(object.get("id").getAsString());
+            dItem air = AIR().setID(object.get("id").getAsString());
             air.setSlot(object.get("slot").getAsInt());
             return air;
         }
 
         NBTContainer container = new NBTContainer(object.get("item").getAsString());
-        newDItem item = new newDItem(NBTItem.convertNBTtoItem(container), id);
+        dItem item = new dItem(NBTItem.convertNBTtoItem(container), id);
 
         item.slot = object.get("slot").getAsInt();
         if (object.has("stock") && !object.get("stock").isJsonNull())
@@ -112,7 +112,7 @@ public class newDItem implements Cloneable {
         if (object.has("sellPrice") && !object.get("sellPrice").isJsonNull())
             item.sellPrice = dPrice.fromJson(object.get("sellPrice"));
 
-        item.econ = economy.fromString(object.get("econ").getAsString());
+        item.econ = Economy.fromString(object.get("econ").getAsString());
         item.rarity = dRarity.fromKey(object.get("rarity").getAsString());
         item.action = WrapperAction.fromJson(object.get("action"));
 
@@ -133,51 +133,51 @@ public class newDItem implements Cloneable {
         return item;
     }
 
-    public static newDItem of(Material material) {
-        return new newDItem(new ItemStack(material));
+    public static dItem of(Material material) {
+        return new dItem(new ItemStack(material));
     }
 
-    public static newDItem of(XMaterial material) {
-        return new newDItem(material.parseItem());
+    public static dItem of(XMaterial material) {
+        return new dItem(material.parseItem());
     }
 
-    public static newDItem of(ItemStack item) {
-        return new newDItem(item, UUID.randomUUID().toString());
+    public static dItem of(ItemStack item) {
+        return new dItem(item, UUID.randomUUID().toString());
     }
 
-    public static newDItem from(Material material, String id) {
-        return new newDItem(new ItemStack(material), id);
+    public static dItem from(Material material, String id) {
+        return new dItem(new ItemStack(material), id);
     }
 
-    public static newDItem from(XMaterial material, String id) {
-        return new newDItem(material.parseItem(), id);
+    public static dItem from(XMaterial material, String id) {
+        return new dItem(material.parseItem(), id);
     }
 
-    public newDItem(Material material) {
+    public dItem(Material material) {
         this(new ItemStack(material));
     }
 
-    public newDItem(XMaterial material) {
+    public dItem(XMaterial material) {
         this(material.parseItem());
     }
 
-    public newDItem(ItemStack item) {
+    public dItem(ItemStack item) {
         this(item, UUID.randomUUID().toString());
     }
 
-    public newDItem(Material material, String id) {
+    public dItem(Material material, String id) {
         this(new ItemStack(material), id);
     }
 
-    public newDItem(XMaterial material, String id) {
+    public dItem(XMaterial material, String id) {
         this(material.parseItem(), id);
     }
 
-    public newDItem(ItemStack item, String id) {
+    public dItem(ItemStack item, String id) {
         this(item, id, false);
     }
 
-    private newDItem(ItemStack item, String id, boolean isAir) {
+    private dItem(ItemStack item, String id, boolean isAir) {
         this.item = item.clone();
         this.ID = id;
         this.isAir = isAir;
@@ -290,7 +290,7 @@ public class newDItem implements Cloneable {
     }
 
     @NotNull
-    public economy getEcon() {
+    public Economy getEcon() {
         return econ;
     }
 
@@ -339,22 +339,22 @@ public class newDItem implements Cloneable {
     /**
      * Returns a copy of this item with the id specified
      */
-    public newDItem setID(@NotNull String id) {
+    public dItem setID(@NotNull String id) {
         Preconditions.checkNotNull(id, "id is null");
-        newDItem cloned = clone();
+        dItem cloned = clone();
         cloned.ID = id;
 
         return cloned;
     }
 
-    public newDItem setItem(@NotNull ItemStack item) {
+    public dItem setItem(@NotNull ItemStack item) {
         Preconditions.checkArgument(!ItemUtils.isEmpty(item), "Item cannot be null/AIR!");
         this.item = item.clone();
 
         return this;
     }
 
-    public newDItem setItemQuantity(int amount) {
+    public dItem setItemQuantity(int amount) {
         Preconditions.checkArgument(amount > 0, "Amount cannot be less than 0");
         ItemStack newItem = item.clone();
         newItem.setAmount(amount);
@@ -363,7 +363,7 @@ public class newDItem implements Cloneable {
         return this;
     }
 
-    public newDItem setNBT(@NotNull JsonObject nbt) {
+    public dItem setNBT(@NotNull JsonObject nbt) {
         Preconditions.checkNotNull(nbt, "Nbt is null");
         NBTItem item = new NBTItem(this.item);
         item.mergeCompound(new NBTContainer(nbt.toString()));
@@ -371,136 +371,136 @@ public class newDItem implements Cloneable {
         return this.setItem(item.getItem());
     }
 
-    public newDItem setSlot(int slot) {
+    public dItem setSlot(int slot) {
         this.slot = slot;
 
         return this;
     }
 
-    public newDItem setBuyPrice(double price) {
+    public dItem setBuyPrice(double price) {
         buyPrice = (price <= 0) ? null : new dPrice(price);
 
         return this;
     }
 
-    public newDItem setBuyPrice(double minPrice, double maxPrice) {
+    public dItem setBuyPrice(double minPrice, double maxPrice) {
         buyPrice = new dPrice(minPrice, maxPrice);
 
         return this;
     }
 
-    public newDItem setBuyPrice(@Nullable dPrice buyPrice) {
+    public dItem setBuyPrice(@Nullable dPrice buyPrice) {
         this.buyPrice = buyPrice == null ? null : buyPrice.clone();
 
         return this;
     }
 
-    public newDItem generateNewBuyPrice() {
+    public dItem generateNewBuyPrice() {
         if (buyPrice != null)
             buyPrice.generateNewPrice();
 
         return this;
     }
 
-    public newDItem setSellPrice(double price) {
+    public dItem setSellPrice(double price) {
         sellPrice = (price <= 0) ? null : new dPrice(price);
 
         return this;
     }
 
-    public newDItem setSellPrice(double minPrice, double maxPrice) {
+    public dItem setSellPrice(double minPrice, double maxPrice) {
         sellPrice = new dPrice(minPrice, maxPrice);
 
         return this;
     }
 
-    public newDItem setSellPrice(@Nullable dPrice sellPrice) {
+    public dItem setSellPrice(@Nullable dPrice sellPrice) {
         this.sellPrice = sellPrice == null ? null : sellPrice.clone();
 
         return this;
     }
 
-    public newDItem generateNewSellPrice() {
+    public dItem generateNewSellPrice() {
         if (sellPrice != null)
             sellPrice.generateNewPrice();
 
         return this;
     }
 
-    public newDItem setEcon(@NotNull economy econ) {
+    public dItem setEcon(@NotNull Economy econ) {
         Preconditions.checkNotNull(econ, "Econ is null");
         this.econ = econ;
 
         return this;
     }
 
-    public newDItem setRarity(@NotNull String key) {
+    public dItem setRarity(@NotNull String key) {
         Preconditions.checkNotNull(key, "key is null");
         rarity = dRarity.fromKey(key);
 
         return this;
     }
 
-    public newDItem setRarity(@NotNull dRarity rarity) {
+    public dItem setRarity(@NotNull dRarity rarity) {
         Preconditions.checkNotNull(rarity, "rarity is null");
         this.rarity = rarity.clone();
 
         return this;
     }
 
-    public newDItem nextRarity() {
+    public dItem nextRarity() {
         rarity.next();
 
         return this;
     }
 
-    public newDItem setStock(@Nullable dStock stock) {
+    public dItem setStock(@Nullable dStock stock) {
         this.stock = stock == null ? null : stock.clone();
 
         return this;
     }
 
-    public newDItem setAction(@Nullable dAction type) {
+    public dItem setAction(@Nullable dAction type) {
         return type == null ? null : setAction(WrapperAction.of(type));
     }
 
-    public newDItem setAction(@NotNull dAction type, @NotNull String data) {
+    public dItem setAction(@NotNull dAction type, @NotNull String data) {
         Preconditions.checkNotNull(type, "Type is null");
         Preconditions.checkNotNull(data, "data is null");
         return setAction(WrapperAction.of(type, data));
     }
 
-    private newDItem setAction(@NotNull WrapperAction action) {
+    private dItem setAction(@NotNull WrapperAction action) {
         this.action = action;
 
         return this;
     }
 
-    public newDItem setBuyPerms(@Nullable List<String> buyPerms) {
+    public dItem setBuyPerms(@Nullable List<String> buyPerms) {
         this.buyPerms = (buyPerms == null || buyPerms.isEmpty()) ? null : new ArrayList<>(buyPerms);
 
         return this;
     }
 
-    public newDItem setSellPerms(@Nullable List<String> sellPerms) {
+    public dItem setSellPerms(@Nullable List<String> sellPerms) {
         this.sellPerms = (sellPerms == null || sellPerms.isEmpty()) ? null : new ArrayList<>(sellPerms);
 
         return this;
     }
 
-    public newDItem setCommands(@Nullable List<String> commands) {
+    public dItem setCommands(@Nullable List<String> commands) {
         this.commands = (commands == null || commands.isEmpty()) ? null : new ArrayList<>(commands);
 
         return this;
     }
 
-    public newDItem setBundle(@Nullable List<String> bundle) {
+    public dItem setBundle(@Nullable List<String> bundle) {
         this.bundle = (bundle == null || bundle.isEmpty()) ? null : new ArrayList<>(bundle);
 
         return this;
     }
 
-    public newDItem setConfirmGui(boolean confirmGui) {
+    public dItem setConfirmGui(boolean confirmGui) {
         this.confirmGui = confirmGui;
 
         return this;
@@ -535,10 +535,10 @@ public class newDItem implements Cloneable {
     }
 
     @Override
-    public newDItem clone() {
-        newDItem T;
+    public dItem clone() {
+        dItem T;
         try {
-            T = (newDItem) super.clone();
+            T = (dItem) super.clone();
             T.item = item.clone();
             if (stock != null) T.stock = stock.clone();
             if (buyPrice != null) T.buyPrice = buyPrice.clone();
@@ -559,14 +559,14 @@ public class newDItem implements Cloneable {
      * Returns a deep copy of this item with
      * a different ID
      */
-    public newDItem copy() {
-        newDItem cloned = clone();
+    public dItem copy() {
+        dItem cloned = clone();
         cloned.ID = UUID.randomUUID().toString();
 
         return cloned;
     }
 
-    public boolean isSimilar(@Nullable newDItem dItem) {
+    public boolean isSimilar(@Nullable dItem dItem) {
         if (dItem == null) return false;
         if ((this == dItem) || isAir && dItem.isAir) return true;
 
@@ -591,7 +591,7 @@ public class newDItem implements Cloneable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        newDItem newDItem = (newDItem) o;
+        dItem newDItem = (dItem) o;
 
         return slot == newDItem.slot
                 && Objects.equals(stock, newDItem.stock)
@@ -703,7 +703,7 @@ public class newDItem implements Cloneable {
 
     public static final class DailyObject {
 
-        public static boolean isSimilar(@Nullable newDItem a, @Nullable newDItem b) {
+        public static boolean isSimilar(@Nullable dItem a, @Nullable dItem b) {
             return (a == b) || (a != null && b != null && a.isSimilar(b));
         }
 

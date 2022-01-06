@@ -1,7 +1,7 @@
 package io.github.divios.lib.dLib.synchronizedGui.singleGui;
 
+import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dTransaction.SingleTransaction;
-import io.github.divios.lib.dLib.newDItem;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
@@ -14,13 +14,13 @@ class TransactionEvent extends Event {
     private final dInventory caller;
     private final SingleTransaction.Type type;
     private final Player player;
-    private final newDItem item;
+    private final dItem item;
 
 
     public TransactionEvent(@NotNull dInventory caller,
                             @NotNull SingleTransaction.Type type,
                             @NotNull Player player,
-                            @NotNull newDItem item) {
+                            @NotNull dItem item) {
         this.caller = caller;
         this.type = type;
         this.player = player;
@@ -39,7 +39,7 @@ class TransactionEvent extends Event {
         return player;
     }
 
-    public newDItem getItem() {
+    public dItem getItem() {
         return item;
     }
 

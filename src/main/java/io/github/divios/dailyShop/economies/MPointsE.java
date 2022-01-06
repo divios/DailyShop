@@ -5,7 +5,7 @@ import org.bukkit.entity.Player;
 
 import java.math.BigDecimal;
 
-public class MPointsE extends economy {
+public class MPointsE extends Economy {
 
     MPointsE(String point) {
         super(point, point, Economies.MPoints);

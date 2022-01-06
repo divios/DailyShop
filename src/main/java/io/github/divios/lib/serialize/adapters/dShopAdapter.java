@@ -7,8 +7,8 @@ import io.github.divios.core_lib.gson.JsonBuilder;
 import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.files.Settings;
 import io.github.divios.dailyShop.utils.Utils;
+import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
-import io.github.divios.lib.dLib.newDItem;
 import io.github.divios.lib.dLib.synchronizedGui.singleGui.dInventory;
 
 import java.lang.reflect.Type;
@@ -22,7 +22,7 @@ public class dShopAdapter implements JsonSerializer<dShop>, JsonDeserializer<dSh
 
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss");
     private static final Gson gson = new GsonBuilder()
-            .registerTypeAdapter(newDItem.class, new dItemAdapter())
+            .registerTypeAdapter(dItem.class, new dItemAdapter())
             .registerTypeAdapter(dInventory.class, new dInventoryAdapter())
             .create();
 
@@ -70,7 +70,7 @@ public class dShopAdapter implements JsonSerializer<dShop>, JsonDeserializer<dSh
         Map<String, JsonElement> items = gson.fromJson(object.get("items").getAsJsonObject(), diItemsToken.getType());
         for (Map.Entry<String, JsonElement> itemEntry : items.entrySet()) {
             try {
-                newDItem dItem = gson.fromJson(itemEntry.getValue(), newDItem.class);
+                dItem dItem = gson.fromJson(itemEntry.getValue(), io.github.divios.lib.dLib.dItem.class);
                 deserializedShop.addItem(dItem.setID(itemEntry.getKey()));
             } catch (Exception e) {
                 Log.warn("There was a problem parsing the item with id " + itemEntry.getKey());
@@ -102,8 +102,8 @@ public class dShopAdapter implements JsonSerializer<dShop>, JsonDeserializer<dSh
      * Utils
      **/
 
-    private Map<String, newDItem> parseUUIDs(Collection<newDItem> items) {
-        Map<String, newDItem> newMap = new HashMap<>();
+    private Map<String, dItem> parseUUIDs(Collection<dItem> items) {
+        Map<String, dItem> newMap = new HashMap<>();
         items.forEach(dItem -> newMap.put(dItem.getID(), dItem));
 
         return newMap;

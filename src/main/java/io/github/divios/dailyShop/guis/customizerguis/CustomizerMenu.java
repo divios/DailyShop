@@ -19,8 +19,8 @@ import io.github.divios.dailyShop.utils.DebugLog;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.jcommands.utils.Primitives;
 import io.github.divios.jtext.wrappers.Template;
+import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
-import io.github.divios.lib.dLib.newDItem;
 import io.github.divios.lib.dLib.stock.dStock;
 import io.github.divios.lib.dLib.stock.factory.dStockFactory;
 import io.github.divios.lib.serialize.serializerApi;
@@ -41,14 +41,14 @@ public class CustomizerMenu {
     private final static DailyShop plugin = DailyShop.get();
 
     private final Player p;
-    private final newDItem item;
+    private final dItem item;
     private final dShop shop;
 
     private InventoryGUI inv;
 
     private CustomizerMenu(
             Player p,
-            newDItem item,
+            dItem item,
             dShop shop
     ) {
         this.p = p;
@@ -59,7 +59,7 @@ public class CustomizerMenu {
         inv.open(p);
     }
 
-    public static void open(@NotNull Player p, @NotNull newDItem item, @NotNull dShop shop) {
+    public static void open(@NotNull Player p, @NotNull dItem item, @NotNull dShop shop) {
         new CustomizerMenu(p, item, shop);
     }
 
@@ -588,7 +588,7 @@ public class CustomizerMenu {
 
     public static final class newCustomizerMenuBuilder {
         private Player p;
-        private newDItem item;
+        private dItem item;
         private dShop shop;
 
         private newCustomizerMenuBuilder() {
@@ -599,7 +599,7 @@ public class CustomizerMenu {
             return this;
         }
 
-        public newCustomizerMenuBuilder withItem(newDItem item) {
+        public newCustomizerMenuBuilder withItem(dItem item) {
             this.item = item;
             return this;
         }

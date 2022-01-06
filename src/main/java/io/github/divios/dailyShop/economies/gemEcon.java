@@ -4,7 +4,7 @@ import io.github.divios.dailyShop.hooks.Hooks;
 import me.xanium.gemseconomy.currency.Currency;
 import org.bukkit.entity.Player;
 
-public class gemEcon extends economy {
+public class gemEcon extends Economy {
 
     private final Currency _currency;
 

@@ -6,8 +6,8 @@ import io.github.divios.core_lib.misc.XSymbols;
 import io.github.divios.dailyShop.files.Lang;
 import io.github.divios.jcommands.utils.Primitives;
 import io.github.divios.jtext.wrappers.Template;
+import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
-import io.github.divios.lib.dLib.newDItem;
 import io.github.divios.lib.dLib.stock.dStock;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -20,7 +20,7 @@ public class shopItemsLore {
         throw new RuntimeException("This class cannot be instantiated");
     }
 
-    public static ItemStack applyLore(@NotNull newDItem item, @Nullable Player p, @Nullable dShop shop) {
+    public static ItemStack applyLore(@NotNull dItem item, @Nullable Player p, @Nullable dShop shop) {
         ItemStack toReturn = item.getItemWithId();
 
         dStock stock;
@@ -47,7 +47,7 @@ public class shopItemsLore {
 
     }
 
-    private static String getItemBuyPrice(newDItem item, Player p, dShop shop) {
+    private static String getItemBuyPrice(dItem item, Player p, dShop shop) {
         double price;
         if ((price = item.getPlayerBuyPrice(p, shop)) > 0)
             return Primitives.getAsString(price);
@@ -55,7 +55,7 @@ public class shopItemsLore {
             return getRedCross();
     }
 
-    private static String getItemSellPrice(newDItem item, Player p, dShop shop) {
+    private static String getItemSellPrice(dItem item, Player p, dShop shop) {
         double price;
         if ((price = item.getPlayerSellPrice(p, shop)) > 0)
             return Primitives.getAsString(price);

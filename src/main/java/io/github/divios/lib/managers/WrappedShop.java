@@ -3,8 +3,8 @@ package io.github.divios.lib.managers;
 import com.google.gson.JsonElement;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.utils.DebugLog;
+import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
-import io.github.divios.lib.dLib.newDItem;
 import io.github.divios.lib.storage.databaseManager;
 import org.jetbrains.annotations.NotNull;
 
@@ -30,7 +30,7 @@ public class WrappedShop extends dShop {
         super(name, timer, timestamp);
     }
 
-    public WrappedShop(String name, int timer, Timestamp timestamp, Collection<newDItem> items) {
+    public WrappedShop(String name, int timer, Timestamp timestamp, Collection<dItem> items) {
         super(name, timer, timestamp, items);
     }
 
@@ -38,7 +38,7 @@ public class WrappedShop extends dShop {
         super(name, gui, timestamp, timer);
     }
 
-    public WrappedShop(String name, JsonElement gui, Timestamp timestamp, int timer, Set<newDItem> items) {
+    public WrappedShop(String name, JsonElement gui, Timestamp timestamp, int timer, Set<dItem> items) {
         super(name, gui, timestamp, timer, items);
     }
 
@@ -58,13 +58,13 @@ public class WrappedShop extends dShop {
     }
 
     @Override
-    public void addItem(@NotNull newDItem item) {
+    public void addItem(@NotNull dItem item) {
         super.addItem(item);
         dManager.addItemAsync(super.getName(), item);
     }
 
     @Override
-    public void updateItem(@NotNull newDItem newItem) {
+    public void updateItem(@NotNull dItem newItem) {
         DebugLog.warn("updateItem");
         super.updateItem(newItem);
         dManager.updateItemAsync(super.getName(), newItem);

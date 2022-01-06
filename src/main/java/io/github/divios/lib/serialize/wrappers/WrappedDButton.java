@@ -1,6 +1,6 @@
 package io.github.divios.lib.serialize.wrappers;
 
-import io.github.divios.lib.dLib.newDItem;
+import io.github.divios.lib.dLib.dItem;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -10,14 +10,14 @@ import java.util.List;
 @SuppressWarnings("unused")
 public class WrappedDButton {
 
-    public static WrappedDButton of(newDItem item) {
+    public static WrappedDButton of(dItem item) {
         return new WrappedDButton(item);
     }
 
-    private final newDItem item;
+    private final dItem item;
     private final LinkedList<Integer> slots = new LinkedList<>();
 
-    public WrappedDButton(newDItem item) {
+    public WrappedDButton(dItem item) {
         this.item = item;
         slots.addFirst(item.getSlot());
     }
@@ -38,7 +38,7 @@ public class WrappedDButton {
         return Collections.unmodifiableList(slots);
     }
 
-    public newDItem getDItem() {
+    public dItem getDItem() {
         return item;
     }
 }

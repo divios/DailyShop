@@ -5,8 +5,8 @@ import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.dailyShop.files.Lang;
 import io.github.divios.dailyShop.utils.CompareItemUtils;
 import io.github.divios.dailyShop.utils.Utils;
+import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
-import io.github.divios.lib.dLib.newDItem;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.PlayerDeathEvent;
@@ -19,7 +19,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class buyConfirmMenu extends abstractConfirmMenu {
+public class BuyConfirmMenu extends abstractConfirmMenu {
 
     static {
         createPlayerDeathListener();
@@ -58,11 +58,11 @@ public class buyConfirmMenu extends abstractConfirmMenu {
         return new buyConfirmMenuBuilder();
     }
 
-    public static buyConfirmMenu create(dShop shop, Player player, newDItem item, Consumer<Integer> onCompleteAction, Runnable fallback) {
-        return new buyConfirmMenu(shop, player, item, onCompleteAction, fallback);
+    public static BuyConfirmMenu create(dShop shop, Player player, dItem item, Consumer<Integer> onCompleteAction, Runnable fallback) {
+        return new BuyConfirmMenu(shop, player, item, onCompleteAction, fallback);
     }
 
-    public buyConfirmMenu(dShop shop, Player player, newDItem item, Consumer<Integer> onCompleteAction, Runnable fallback) {
+    public BuyConfirmMenu(dShop shop, Player player, dItem item, Consumer<Integer> onCompleteAction, Runnable fallback) {
         super(shop, player, item, onCompleteAction, fallback);
     }
 
@@ -179,7 +179,7 @@ public class buyConfirmMenu extends abstractConfirmMenu {
     public static final class buyConfirmMenuBuilder {
         private dShop shop;
         private Player player;
-        private newDItem item;
+        private dItem item;
         private Consumer<Integer> onCompleteAction;
         private Runnable fallback;
 
@@ -196,7 +196,7 @@ public class buyConfirmMenu extends abstractConfirmMenu {
             return this;
         }
 
-        public buyConfirmMenuBuilder withItem(newDItem item) {
+        public buyConfirmMenuBuilder withItem(dItem item) {
             this.item = item;
             return this;
         }
@@ -211,8 +211,8 @@ public class buyConfirmMenu extends abstractConfirmMenu {
             return this;
         }
 
-        public buyConfirmMenu prompt() {
-            return new buyConfirmMenu(shop, player, item, onCompleteAction, fallback);
+        public BuyConfirmMenu prompt() {
+            return new BuyConfirmMenu(shop, player, item, onCompleteAction, fallback);
         }
     }
 

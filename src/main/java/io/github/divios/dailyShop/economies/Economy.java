@@ -15,9 +15,9 @@ import java.io.Serializable;
 import java.util.Objects;
 import java.util.function.Supplier;
 
-public abstract class economy implements Serializable {
+public abstract class Economy implements Serializable {
 
-    public static economy fromString(String str) {
+    public static Economy fromString(String str) {
         String[] econ = str.split(":");
         return getFromKey(econ[0], econ.length >= 2 ? econ[1] : "");
     }
@@ -28,13 +28,13 @@ public abstract class economy implements Serializable {
     private final Supplier<String> name;
     private final Economies key;
 
-    protected economy(String currency, Supplier<String> name, Economies key) {
+    protected Economy(String currency, Supplier<String> name, Economies key) {
         this.currency = currency;
         this.name = name;
         this.key = key;
     }
 
-    protected economy(String currency, String name, Economies key) {
+    protected Economy(String currency, String name, Economies key) {
         this.currency = currency;
         this.name = () -> name;
         this.key = key;
@@ -81,7 +81,7 @@ public abstract class economy implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        economy economy = (economy) o;
+        Economy economy = (Economy) o;
         return Objects.equals(currency, economy.currency)
                 && Objects.equals(name.get(), economy.name.get())
                 && key == economy.key;
@@ -97,7 +97,7 @@ public abstract class economy implements Serializable {
         return name.get() + ":" + currency;
     }
 
-    public static economy deserialize(String base64) {
+    public static Economy deserialize(String base64) {
         try (ByteArrayInputStream InputStream = new ByteArrayInputStream(Base64Coder.decodeLines(base64))) {
             try (BukkitObjectInputStream dataInput = new BukkitObjectInputStream(InputStream)) {
                 String key = (String) dataInput.readObject();
@@ -109,7 +109,7 @@ public abstract class economy implements Serializable {
         }
     }
 
-    public static economy getFromKey(String key, String currency) {
+    public static Economy getFromKey(String key, String currency) {
         try {
             for (Economies value : Economies.values()) {
                 if (value.name().equalsIgnoreCase(key))

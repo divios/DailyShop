@@ -13,10 +13,10 @@ import io.github.divios.dailyShop.files.Messages;
 import io.github.divios.dailyShop.lorestategy.shopItemsLore;
 import io.github.divios.dailyShop.utils.DebugLog;
 import io.github.divios.dailyShop.utils.PlaceholderAPIWrapper;
+import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.dLib.dTransaction.SingleTransaction;
 import io.github.divios.lib.dLib.dTransaction.Transactions;
-import io.github.divios.lib.dLib.newDItem;
 import io.github.divios.lib.dLib.stock.dStock;
 import io.github.divios.lib.dLib.synchronizedGui.taskPool.updatePool;
 import org.bukkit.entity.Player;
@@ -55,8 +55,8 @@ public class singleGuiImpl implements singleGui, Cloneable {
         this.own = base.clone();
 
         if (p != null) {
-            updateTask();
-            Schedulers.sync().runLater(() -> updatePool.subscribe(this), 1L);
+            //updateTask();
+            updatePool.subscribe(this);
             this.own.openInventory(p);
         } else
             ready();
@@ -67,7 +67,7 @@ public class singleGuiImpl implements singleGui, Cloneable {
                 Events.subscribe(searchStockEvent.class)                // Respond to search events
                         .filter(o -> o.getShop().equals(shop))
                         .handler(o -> {
-                                    newDItem itemToSearch;
+                                    dItem itemToSearch;
                                     if ((itemToSearch = own.getButtons().get(o.getUUID())) != null) {
                                         dStock stock;
                                         o.respond((stock = itemToSearch.getDStock()) == null ? -1 : stock.get(p));
@@ -91,8 +91,7 @@ public class singleGuiImpl implements singleGui, Cloneable {
                                         .withBuyer(o.getPlayer())
                                         .withItem(o.getItem())
                                         .execute();
-                            }
-                            else if (o.getType() == SingleTransaction.Type.SELL)
+                            } else if (o.getType() == SingleTransaction.Type.SELL)
                                 Transactions.SellTransaction()
                                         .withShop(shop)
                                         .withVendor(o.getPlayer())
@@ -106,24 +105,25 @@ public class singleGuiImpl implements singleGui, Cloneable {
     @Override
     public void updateItem(updateItemEvent o) {
         updateItemEvent.type type = o.getType();
-        newDItem toUpdateItem = shop.getItem(o.getUuid());
+        dItem toUpdateItem = shop.getItem(o.getUuid());
 
         switch (type) {
             case UPDATE_ITEM:
                 if (toUpdateItem == null) return;
-                DebugLog.info("Updated item from singleGui of id: " + toUpdateItem.getID());
+                DebugLog.info("Updated item from singleGui of id: " + toUpdateItem.getID() + " with player " + (p == null ? "null" : p.getName()));
                 own.updateDailyItem(toUpdateItem);
                 updateTask();
                 break;
             case NEXT_AMOUNT:
                 if (toUpdateItem == null) return;
-                newDItem buttonItem = own.buttons.get(toUpdateItem.getUUID());
+                DebugLog.info("Decrement stock from singleGui of id: " + toUpdateItem.getID() + " with player " + (p == null ? "null" : p.getName()));
+                dItem buttonItem = own.buttons.get(toUpdateItem.getUUID());
                 buttonItem.decrementStock(o.getPlayer(), o.getAmount());
-                DebugLog.info("Decrement stock from singleGui of id: " + toUpdateItem.getID());
+                updateTask();
                 break;
             case DELETE_ITEM:
                 own.removeButton(o.getUuid());
-                DebugLog.info("Deleted item from singleGui of id: " + o.getUuid());
+                DebugLog.info("Deleted item from singleGui of id: " + o.getUuid() + " with player " + (p == null ? "null" : p.getName()));
                 break;
             default:
                 throw new UnsupportedOperationException("Invalid updateItemEvent type");
@@ -159,7 +159,7 @@ public class singleGuiImpl implements singleGui, Cloneable {
 
     @Override
     public void restock() {
-        Set<newDItem> newItems = dRandomItemsSelector.fromItems(shop.getItems())
+        Set<dItem> newItems = dRandomItemsSelector.fromItems(shop.getItems())
                 .roll(own.dailyItemsSlots.size());
         own.restock(newItems);
         updateTask();
@@ -246,28 +246,28 @@ public class singleGuiImpl implements singleGui, Cloneable {
     @SuppressWarnings("unused")
     private final static class dRandomItemsSelector {
 
-        private static final Predicate<newDItem> filterItems = item ->
+        private static final Predicate<dItem> filterItems = item ->
                 !(item.getBuyPrice() <= 0 && item.getSellPrice() <= 0)
                         || item.getRarity().getWeight() != 0;
 
-        private static final Function<newDItem, Integer> getWeights = dItem -> dItem.getRarity().getWeight();
+        private static final Function<dItem, Integer> getWeights = dItem -> dItem.getRarity().getWeight();
 
-        public static dRandomItemsSelector fromItems(Collection<newDItem> items) {
+        public static dRandomItemsSelector fromItems(Collection<dItem> items) {
             return new dRandomItemsSelector(items, Function.identity());
         }
 
-        public static dRandomItemsSelector of(Collection<newDItem> items, Function<newDItem, newDItem> action) {
+        public static dRandomItemsSelector of(Collection<dItem> items, Function<dItem, dItem> action) {
             return new dRandomItemsSelector(items, action);
         }
 
-        private final Map<UUID, newDItem> items;
-        private final Function<newDItem, newDItem> action;
+        private final Map<UUID, dItem> items;
+        private final Function<dItem, dItem> action;
 
-        private dRandomItemsSelector(Collection<newDItem> items, Function<newDItem, newDItem> action) {
-            this(items.stream().collect(Collectors.toMap(newDItem::getUUID, dItem -> dItem)), action);
+        private dRandomItemsSelector(Collection<dItem> items, Function<dItem, dItem> action) {
+            this(items.stream().collect(Collectors.toMap(dItem::getUUID, dItem -> dItem)), action);
         }
 
-        private dRandomItemsSelector(Map<UUID, newDItem> items, Function<newDItem, newDItem> action) {
+        private dRandomItemsSelector(Map<UUID, dItem> items, Function<dItem, dItem> action) {
             this.items = items.entrySet().stream()
                     .filter(entry -> filterItems.test(entry.getValue()))
                     .collect(Collectors
@@ -276,33 +276,33 @@ public class singleGuiImpl implements singleGui, Cloneable {
             this.action = action;
         }
 
-        public void add(newDItem item) {
+        public void add(dItem item) {
             items.put(item.getUUID(), item);
         }
 
-        public newDItem remove(String id) {
+        public dItem remove(String id) {
             return remove(UUID.nameUUIDFromBytes(id.getBytes()));
         }
 
-        public newDItem remove(UUID uuid) {
+        public dItem remove(UUID uuid) {
             return items.remove(uuid);
         }
 
-        public Set<newDItem> getItems() {
+        public Set<dItem> getItems() {
             return Collections.unmodifiableSet(new HashSet<>(items.values()));
         }
 
-        public Set<newDItem> roll() {
+        public Set<dItem> roll() {
             return roll(54);
         }
 
-        public Set<newDItem> roll(int max) {
-            Set<newDItem> rolledItems = new LinkedHashSet<>();
+        public Set<dItem> roll(int max) {
+            Set<dItem> rolledItems = new LinkedHashSet<>();
 
-            WeightedRandom<newDItem> randomSelector = WeightedRandom.fromCollection(items.values(), newDItem::clone, getWeights::apply);
+            WeightedRandom<dItem> randomSelector = WeightedRandom.fromCollection(items.values(), dItem::clone, getWeights::apply);
 
             for (int i = 0; i < max; i++) {
-                newDItem rolledItem = randomSelector.roll();
+                dItem rolledItem = randomSelector.roll();
                 if (rolledItem == null) break;
 
                 rolledItem.generateNewBuyPrice();
