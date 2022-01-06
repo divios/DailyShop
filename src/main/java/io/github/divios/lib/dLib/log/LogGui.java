@@ -59,7 +59,7 @@ public class LogGui {
                                                         "",
                                                         "&7Player: &e" + dLogEntry.getPlayer(),
                                                         "&7ShopId: &e" + dLogEntry.getShopID(),
-                                                        "&7itemUUID: &e" + dLogEntry.getItemUUID(),
+                                                        "&7ID: &e" + dLogEntry.getItemID(),
                                                         "&7Quantity: &e" + dLogEntry.getQuantity(),
                                                         "&7Type: &e" + dLogEntry.getType(),
                                                         "&7Price: &e" + PriceWrapper.format(dLogEntry.getPrice()),

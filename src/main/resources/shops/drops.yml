@@ -45,18 +45,18 @@ shop:
       nbt:
         Damage: 0
     'GREEN_PANE':
-        name: '&c'
-        material: GREEN_STAINED_GLASS_PANE
-        slot:
-          - 27
-          - 28
-          - 29
-          - 30
-          - 31
-          - 32
-          - 33
-          - 34
-          - 35
+      name: '&c'
+      material: GREEN_STAINED_GLASS_PANE
+      slot:
+        - 27
+        - 28
+        - 29
+        - 30
+        - 31
+        - 32
+        - 33
+        - 34
+        - 35
     'back_button':
       name: '&cGo back to Menu'
       material: BARRIER

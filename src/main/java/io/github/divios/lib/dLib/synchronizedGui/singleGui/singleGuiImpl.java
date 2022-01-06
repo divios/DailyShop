@@ -12,8 +12,9 @@ import io.github.divios.dailyShop.events.updateItemEvent;
 import io.github.divios.dailyShop.lorestategy.shopItemsLore;
 import io.github.divios.dailyShop.utils.DebugLog;
 import io.github.divios.dailyShop.utils.PlaceholderAPIWrapper;
-import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.dShop;
+import io.github.divios.lib.dLib.dTransaction.SingleTransaction;
+import io.github.divios.lib.dLib.dTransaction.Transactions;
 import io.github.divios.lib.dLib.newDItem;
 import io.github.divios.lib.dLib.stock.dStock;
 import io.github.divios.lib.dLib.synchronizedGui.taskPool.updatePool;
@@ -72,6 +73,19 @@ public class singleGuiImpl implements singleGui, Cloneable {
                                     }
                                 }
                         ));
+        events.add(
+                Events.subscribe(TransactionEvent.class)
+                        .filter(o -> o.getCaller() == own)
+                        .handler(o -> {
+                            if (o.getType() == SingleTransaction.Type.BUY)
+                                Transactions.createBuyType()
+                                        .withShop(shop)
+                                        .withVendor(o.getPlayer())
+                                        .withItem(o.getItem())
+                                        .execute();
+                        })
+        );
+
     }
 
     @Override

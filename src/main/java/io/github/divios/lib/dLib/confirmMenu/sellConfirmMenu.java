@@ -5,10 +5,8 @@ import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.dailyShop.files.Lang;
 import io.github.divios.dailyShop.utils.CompareItemUtils;
-import io.github.divios.lib.dLib.dItem;
-import io.github.divios.lib.dLib.dPrice;
 import io.github.divios.lib.dLib.dShop;
-import io.github.divios.lib.dLib.priceModifiers.priceModifier;
+import io.github.divios.lib.dLib.newDItem;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -18,7 +16,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
-@SuppressWarnings({"ConstantConditions", "unused"})
+@SuppressWarnings({"unused"})
 public class sellConfirmMenu extends abstractConfirmMenu {
 
     private static final Map<UUID, List<ItemStack>> retrievedItemsCache = new ConcurrentHashMap<>();
@@ -59,7 +57,12 @@ public class sellConfirmMenu extends abstractConfirmMenu {
 
     private boolean retrievedItemsFlag = false;
 
-    private sellConfirmMenu(dShop shop, Player player, dItem item, Consumer<Integer> onCompleteAction, Runnable fallback) {
+    private sellConfirmMenu(dShop shop,
+                            Player player,
+                            newDItem item,
+                            Consumer<Integer> onCompleteAction,
+                            Runnable fallback
+    ) {
         super(shop, player, item, onCompleteAction, fallback);
     }
 
@@ -116,11 +119,11 @@ public class sellConfirmMenu extends abstractConfirmMenu {
 
     @Override
     protected double getItemPrice() {
-        return item.getDSellPrice().orElse(dPrice.EMPTY()).getPriceForPlayer(player, shop, item.getID(), priceModifier.type.SELL);
+        return item.getPlayerSellPrice(player, shop) / item.getItem().getAmount();
     }
 
     private int countSimilarItems() {
-        return ItemUtils.count(player.getInventory(), item.getRealItem(), CompareItemUtils::compareItems);
+        return ItemUtils.count(player.getInventory(), item.getItem(), CompareItemUtils::compareItems);
     }
 
     private void addToCache(List<ItemStack> items) {
@@ -137,7 +140,7 @@ public class sellConfirmMenu extends abstractConfirmMenu {
 
         for (ItemStack item : playerItems) {
             if (quantity <= 0) break;
-            if (!CompareItemUtils.compareItems(item, this.item.getRealItem())) continue;
+            if (!CompareItemUtils.compareItems(item, this.item.getItem())) continue;
 
             if (item.getAmount() <= quantity) {
                 quantity -= item.getAmount();
@@ -177,7 +180,7 @@ public class sellConfirmMenu extends abstractConfirmMenu {
     public static final class sellConfirmMenuBuilder {
         private dShop shop;
         private Player player;
-        private dItem item;
+        private newDItem item;
         private Consumer<Integer> onCompleteAction;
         private Runnable fallback;
 
@@ -194,7 +197,7 @@ public class sellConfirmMenu extends abstractConfirmMenu {
             return this;
         }
 
-        public sellConfirmMenuBuilder withItem(dItem item) {
+        public sellConfirmMenuBuilder withItem(newDItem item) {
             this.item = item;
             return this;
         }

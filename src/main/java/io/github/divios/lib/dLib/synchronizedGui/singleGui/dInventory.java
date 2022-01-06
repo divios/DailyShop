@@ -10,9 +10,11 @@ import io.github.divios.core_lib.inventory.inventoryUtils;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
+import io.github.divios.dailyShop.files.Messages;
 import io.github.divios.dailyShop.utils.DebugLog;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.dShop;
+import io.github.divios.lib.dLib.dTransaction.SingleTransaction;
 import io.github.divios.lib.dLib.newDItem;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -24,6 +26,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.io.BukkitObjectInputStream;
 import org.bukkit.util.io.BukkitObjectOutputStream;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
 import java.io.ByteArrayInputStream;
@@ -231,8 +234,7 @@ public class dInventory implements Cloneable {
         if (!item.isAir()) {
             DebugLog.info("Added item to inventory");
             inv.setItem(slot, cloned.getItemWithId());
-        }
-        else {
+        } else {
             DebugLog.info("Not adding since is air");
             inv.clear(slot);
         }
@@ -406,7 +408,7 @@ public class dInventory implements Cloneable {
             clone.inv = inventoryUtils.cloneInventory(inv, title);
 
             //clone.dailyItemsSlots = (TreeSet<Integer>) dailyItemsSlots.clone();       // Shouldn't be necessary to
-                                                                                      // deep copy this, can be shared
+            // deep copy this, can be shared
             //clone.buttons = new ConcurrentHashMap<>();
             //buttons.forEach((uuid, dItem) -> clone.buttons.put(uuid, dItem.clone()));
 
@@ -507,17 +509,48 @@ public class dInventory implements Cloneable {
                             newDItem itemClicked = buttonsSlot.get(e.getSlot());
                             if (itemClicked == null) return;
 
+                            Player player = (Player) e.getWhoClicked();
                             if (dailyItemsSlots.contains(e.getSlot())) {
-                                // TODO
-                                //if (e.isLeftClick())
-                                //transaction.init((Player) e.getWhoClicked(), itemClicked.clone(), shop);
-                                //else if (e.isRightClick())
-                                //sellTransaction.create((Player) e.getWhoClicked(), itemClicked.clone(), shop);
+                                if (e.isLeftClick()) {
+
+                                    if (!meetsPermissions(player, itemClicked.getBuyPerms())) {
+                                        Messages.MSG_NOT_PERMS.send(player);
+                                        return;
+                                    }
+
+                                    if (itemClicked.getDStock() != null && itemClicked.getPlayerStock(player) <= 0) {
+                                        Messages.MSG_NOT_STOCK.send(player);
+                                        return;
+                                    }
+
+                                    Events.callEvent(new TransactionEvent(this,
+                                            SingleTransaction.Type.BUY,
+                                            player,
+                                            itemClicked
+                                    ));
+
+                                } else if (e.isRightClick()) {
+                                    if (!meetsPermissions(player, itemClicked.getSellPerms())) {
+                                        Messages.MSG_NOT_PERMS.send(player);
+                                        return;
+                                    }
+
+                                    // TODO
+
+                                }
                             } else {
-                                itemClicked.getAction().execute((Player) e.getWhoClicked());
+                                itemClicked.getAction().execute(player);
                             }
                         })
         );
+    }
+
+    private boolean meetsPermissions(@NotNull Player player, @Nullable List<String> perms) {
+        if (perms == null) return true;
+        for (String perm : perms) {
+            if (!player.hasPermission(perm)) return false;
+        }
+        return true;
     }
 
     private void createDragEventListener() {

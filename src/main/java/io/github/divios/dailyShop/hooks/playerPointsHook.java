@@ -17,7 +17,7 @@ public class playerPointsHook implements Hook<PlayerPointsAPI> {
 
     private void tryToHook() {
         if (Utils.isOperative("PlayerPoints")) {
-            api = ((PlayerPoints)Bukkit.getPluginManager().getPlugin("PlayerPoints")).getAPI();
+            api = ((PlayerPoints) Bukkit.getPluginManager().getPlugin("PlayerPoints")).getAPI();
             isHook = true;
             Log.info("Hooked to PlayerPoints");
         }

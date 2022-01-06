@@ -5,15 +5,12 @@ import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.utils.DebugLog;
 import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.dLib.newDItem;
-import io.github.divios.lib.dLib.synchronizedGui.singleGui.dInventory;
-import io.github.divios.lib.dLib.synchronizedGui.syncMenu;
 import io.github.divios.lib.storage.databaseManager;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.sql.Timestamp;
-import java.util.*;
+import java.util.Set;
+import java.util.UUID;
 
 @SuppressWarnings({"unused"})
 public class WrappedShop extends dShop {
@@ -38,11 +35,6 @@ public class WrappedShop extends dShop {
 
     public WrappedShop(String name, JsonElement gui, Timestamp timestamp, int timer, Set<newDItem> items) {
         super(name, gui, timestamp, timer, items);
-    }
-
-    @Override
-    public dShop clone() {
-        return super.clone();
     }
 
     @Override

@@ -23,7 +23,8 @@ public class dRarity implements Cloneable {
             add(XMaterial.YELLOW_DYE.parseItem());
             add(XMaterial.BARRIER.parseItem());
 
-        } };
+        }
+    };
 
     private rarityT rarity = rarityT.Common;
 

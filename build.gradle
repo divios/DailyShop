@@ -95,13 +95,13 @@ task cloneDependencies {
 task updateJars {
     doLast {
         // windows
-
+        /*
         copy {
             from 'build/libs/DailyShop-' + pluginVersion + "-all.jar"
             into 'C:/Users/serbe/OneDrive/Desktop/server_pruebas/server/plugins'
             rename("DailyShop-" + pluginVersion + "-all.jar"
                     , "DailyShop-" + pluginVersion + ".jar")
-        }
+        } */
         // MAC
         copy {
             from 'build/libs/DailyShop-' + pluginVersion + "-all.jar"

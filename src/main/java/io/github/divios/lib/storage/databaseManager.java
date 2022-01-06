@@ -22,11 +22,16 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 @SuppressWarnings({"UnusedReturnValue", "unused"})
 public class databaseManager extends DataManagerAbstract {
 
     private static final DailyShop plugin = DailyShop.get();
+
+    protected final ExecutorService asyncPool = Executors.newSingleThreadExecutor();
 
     public databaseManager() {
         super(new SQLiteConnector(plugin));
@@ -112,8 +117,8 @@ public class databaseManager extends DataManagerAbstract {
         });
     }
 
-    public CompletableFuture<Void> createShopAsync(dShop shop) {
-        return CompletableFuture.runAsync(() -> createShop(shop));
+    public Future<?> createShopAsync(dShop shop) {
+        return asyncPool.submit(() -> createShop(shop));
     }
 
     public void renameShop(String oldName, String newName) {
@@ -134,8 +139,8 @@ public class databaseManager extends DataManagerAbstract {
         });
     }
 
-    public CompletableFuture<Void> renameShopAsync(String oldName, String newName) {
-        return CompletableFuture.runAsync(() -> renameShop(oldName, newName));
+    public Future<?> renameShopAsync(String oldName, String newName) {
+        return asyncPool.submit(() -> renameShop(oldName, newName));
     }
 
     public void deleteShop(String name) {
@@ -152,8 +157,8 @@ public class databaseManager extends DataManagerAbstract {
         });
     }
 
-    public CompletableFuture<Void> deleteShopAsync(String name) {
-        return CompletableFuture.runAsync(() -> deleteShop(name));
+    public Future<?> deleteShopAsync(String name) {
+        return asyncPool.submit(() -> deleteShop(name));
     }
 
     public void addItem(String name, newDItem item) {
@@ -170,8 +175,8 @@ public class databaseManager extends DataManagerAbstract {
         });
     }
 
-    public CompletableFuture<Void> addItemAsync(String name, newDItem item) {
-        return CompletableFuture.runAsync(() -> addItem(name, item));
+    public Future<?> addItemAsync(String name, newDItem item) {
+        return asyncPool.submit(() -> addItem(name, item));
     }
 
     public void deleteItem(String shopName, UUID uid) {
@@ -184,8 +189,8 @@ public class databaseManager extends DataManagerAbstract {
         });
     }
 
-    public CompletableFuture<Void> deleteItemAsync(String shopName, UUID uid) {
-        return CompletableFuture.runAsync(() -> deleteItem(shopName, uid));
+    public Future<?> deleteItemAsync(String shopName, UUID uid) {
+        return asyncPool.submit(() -> deleteItem(shopName, uid));
     }
 
     public void deleteAllItems(String shopName) {
@@ -205,8 +210,8 @@ public class databaseManager extends DataManagerAbstract {
         });
     }
 
-    public CompletableFuture<Void> deleteAllItemsAsync(String shopName) {
-        return CompletableFuture.runAsync(() -> deleteAllItems(shopName));
+    public Future<?> deleteAllItemsAsync(String shopName) {
+        return asyncPool.submit(() -> deleteAllItems(shopName));
     }
 
     public void updateItem(String name, newDItem item) {
@@ -221,8 +226,8 @@ public class databaseManager extends DataManagerAbstract {
         });
     }
 
-    public CompletableFuture<Void> updateItemAsync(String name, newDItem item) {
-        return CompletableFuture.runAsync(() -> updateItem(name, item));
+    public Future<?> updateItemAsync(String name, newDItem item) {
+        return asyncPool.submit(() -> updateItem(name, item));
     }
 
     public void updateGui(String name, syncMenu gui) {
@@ -237,8 +242,8 @@ public class databaseManager extends DataManagerAbstract {
         });
     }
 
-    public CompletableFuture<Void> updateGuiAsync(String name, syncMenu gui) {
-        return CompletableFuture.runAsync(() -> updateGui(name, gui));
+    public Future<?> updateGuiAsync(String name, syncMenu gui) {
+        return asyncPool.submit(() -> updateGui(name, gui));
     }
 
     public void updateTimeStamp(String name, Timestamp timestamp) {
@@ -253,8 +258,8 @@ public class databaseManager extends DataManagerAbstract {
         });
     }
 
-    public CompletableFuture<Void> updateTimeStampAsync(String name, Timestamp timestamp) {
-        return CompletableFuture.runAsync(() -> updateTimeStamp(name, timestamp));
+    public Future<?> updateTimeStampAsync(String name, Timestamp timestamp) {
+        return asyncPool.submit(() -> updateTimeStamp(name, timestamp));
     }
 
     public void updateTimer(String name, int timer) {
@@ -269,8 +274,8 @@ public class databaseManager extends DataManagerAbstract {
         });
     }
 
-    public CompletableFuture<Void> updateTimerAsync(String name, int timer) {
-        return CompletableFuture.runAsync(() -> updateTimer(name, timer));
+    public Future<?> updateTimerAsync(String name, int timer) {
+        return asyncPool.submit(() -> updateTimer(name, timer));
     }
 
     public void addLogEntry(dLogEntry entry) {
@@ -282,7 +287,7 @@ public class databaseManager extends DataManagerAbstract {
 
                 statement.setString(1, entry.getPlayer());
                 statement.setString(2, entry.getShopID());
-                statement.setString(3, entry.getItemUUID().toString());
+                statement.setString(3, entry.getItemID());
                 statement.setString(4, ItemUtils.serialize(entry.getRawItem()));
                 statement.setString(5, entry.getType().name());
                 statement.setDouble(6, entry.getPrice());
@@ -293,8 +298,8 @@ public class databaseManager extends DataManagerAbstract {
         });
     }
 
-    public CompletableFuture<Void> addLogEntryAsync(dLogEntry entry) {
-        return CompletableFuture.runAsync(() -> addLogEntry(entry));
+    public Future<?> addLogEntryAsync(dLogEntry entry) {
+        return asyncPool.submit(() -> addLogEntry(entry));
     }
 
     public Collection<dLogEntry> getLogEntries() {
@@ -320,12 +325,12 @@ public class databaseManager extends DataManagerAbstract {
                     dLogEntry entry = dLogEntry.builder()
                             .withPlayer(result.getString("player"))
                             .withShopID(result.getString("shopID"))
-                            .withItemUUID(result.getString("itemUUID"))
+                            .withItemID(result.getString("itemUUID"))
                             .withRawItem(ItemUtils.deserialize(result.getString("rawItem")))
                             .withType(dLogEntry.Type.valueOf(result.getString("type")))
                             .withPrice(result.getDouble("price"))
                             .withQuantity(result.getInt("quantity"))
-                            .withTimestamp(timestamp)
+                            .withTimestamp(timestamp == null ? new Timestamp(System.currentTimeMillis()) : timestamp)
                             .build();
 
                     entries.push(entry);

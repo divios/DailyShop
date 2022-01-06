@@ -67,7 +67,7 @@ public class shopsResource {
 
             if (!sManager.getShop(shop.getName()).isPresent()) {        // Create new shops
                 isNew = true;
-                sManager.createShop(shop.getName());
+                sManager.createShopAsync(shop.getName());
             }
 
             dShop currentShop = sManager.getShop(shop.getName()).get();         // Update shops

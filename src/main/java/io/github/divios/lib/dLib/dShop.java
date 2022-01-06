@@ -12,6 +12,9 @@ import io.github.divios.dailyShop.events.updateItemEvent;
 import io.github.divios.dailyShop.files.Settings;
 import io.github.divios.dailyShop.guis.settings.shopGui;
 import io.github.divios.dailyShop.utils.DebugLog;
+import io.github.divios.lib.dLib.dTransaction.Bill;
+import io.github.divios.lib.dLib.log.dLog;
+import io.github.divios.lib.dLib.log.options.dLogEntry;
 import io.github.divios.lib.dLib.synchronizedGui.singleGui.dInventory;
 import io.github.divios.lib.dLib.synchronizedGui.syncHashMenu;
 import io.github.divios.lib.dLib.synchronizedGui.syncMenu;
@@ -21,21 +24,19 @@ import org.jetbrains.annotations.Nullable;
 
 import java.sql.Timestamp;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-public class dShop implements Cloneable {
+@SuppressWarnings("unused")
+public class dShop {
 
     protected static final DailyShop plugin = DailyShop.get();
 
     protected String name;
     protected Map<UUID, newDItem> items = Collections.synchronizedMap(new LinkedHashMap<>());
     protected syncHashMenu guis;
-
     protected Timestamp timestamp;
     protected int timer;
-
     protected boolean announce_restock = true;
     protected boolean isDefault = false;
 
@@ -152,6 +153,17 @@ public class dShop implements Cloneable {
     }
 
     /**
+     * Gets the item by ID
+     *
+     * @param ID the ID to search
+     * @return null if it does not exist
+     */
+    public @Nullable
+    newDItem getItem(@NotNull String ID) {
+        return getItem(UUID.nameUUIDFromBytes(ID.getBytes()));
+    }
+
+    /**
      * Gets the item by uuid
      *
      * @param uid the UUID to search
@@ -161,6 +173,10 @@ public class dShop implements Cloneable {
     newDItem getItem(@NotNull UUID uid) {
         newDItem item;
         return (item = items.get(uid)) == null ? null : item.clone();
+    }
+
+    public boolean hasItem(@NotNull String id) {
+        return hasItem(UUID.nameUUIDFromBytes(id.getBytes()));
     }
 
     /**
@@ -257,6 +273,34 @@ public class dShop implements Cloneable {
         guis.updateBase(inv, isSilent);
     }
 
+    public void computeBill(Bill bill) {
+        bill.getBillTable().forEach((s, entry) -> {
+
+            newDItem shopItem = getItem(s);
+            if (shopItem == null) return;
+
+            if (shopItem.getDStock() != null)
+                guis.updateItem(new updateItemEvent(shopItem.getUUID(),
+                                entry.getValue(),
+                                updateItemEvent.type.NEXT_AMOUNT,
+                                this
+                        )
+                );
+
+            dLog.log(
+                    dLogEntry.builder()
+                            .withPlayer(bill.getPlayer())
+                            .withShopID(name)
+                            .withItemID(s)
+                            .withRawItem(shopItem.getItem())
+                            .withQuantity(entry.getValue())
+                            .withType(dLogEntry.Type.valueOf(bill.getType().name()))
+                            .withPrice(entry.getKey())
+                            .build()
+            );
+        });
+    }
+
     /**
      * Return the dGui of this shop
      */
@@ -327,24 +371,4 @@ public class dShop implements Cloneable {
         return this.getName().hashCode();
     }
 
-
-    @Override
-    public dShop clone() {
-        try {
-            dShop clone = (dShop) super.clone();
-
-            clone.items = new ConcurrentHashMap<>();
-            items.forEach((uuid, newDItem) -> clone.items.put(uuid, newDItem.clone()));
-            clone.timestamp = new Timestamp(timestamp.getTime());
-            clone.guis = (syncHashMenu) guis.clone();
-            clone.tasks = new HashSet<>();
-            clone.listeners = new HashSet<>();
-            clone.startListeners();
-            clone.startTimerTask();
-
-            return clone;
-        } catch (CloneNotSupportedException e) {
-            throw new AssertionError();
-        }
-    }
 }
