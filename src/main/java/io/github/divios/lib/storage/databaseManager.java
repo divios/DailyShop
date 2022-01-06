@@ -7,6 +7,7 @@ import io.github.divios.core_lib.database.SQLiteConnector;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.timeStampUtils;
 import io.github.divios.dailyShop.DailyShop;
+import io.github.divios.dailyShop.utils.DebugLog;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.dLib.log.options.dLogEntry;
@@ -56,7 +57,8 @@ public class databaseManager extends DataManagerAbstract {
                                 result.getInt("timer"),
                                 getShopItems(name));
                     } catch (Exception | Error e) {
-                        e.printStackTrace();
+                        //e.printStackTrace();
+                        DebugLog.info(e.getMessage());
                         shop = new WrappedShop(name,
                                 result.getInt("timer"),
                                 timeStampUtils.deserialize(result.getString("timestamp")));
