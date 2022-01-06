@@ -28,6 +28,6 @@ public class elementalGemsHook implements Hook<GemAPI> {
 
     @Override
     public GemAPI getApi() {
-        return isOn() ?((ElementalGems) Bukkit.getPluginManager().getPlugin("ElementalGems")).getGemAPI() : null;
+        return isOn() ? ((ElementalGems) Bukkit.getPluginManager().getPlugin("ElementalGems")).getGemAPI() : null;
     }
 }

@@ -10,15 +10,17 @@ import io.github.divios.lib.dLib.dAction;
 import java.lang.reflect.Type;
 import java.util.List;
 
+@SuppressWarnings({"unused", "UnstableApiUsage", "UnusedReturnValue"})
 public class dActionAdapter implements JsonSerializer<Pair<dAction, String>>, JsonDeserializer<Pair<dAction, String>> {
 
     private final static Gson gson = new Gson();
-    private final static TypeToken<List<String>> listStringType = new TypeToken<List<String>>() {};
+    private final static TypeToken<List<String>> listStringType = new TypeToken<List<String>>() {
+    };
 
     @Override
     public Pair<dAction, String> deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
         JsonObject action = jsonElement.getAsJsonObject();
-        dAction typeAction[] = {null};
+        dAction[] typeAction = {null};
         String data = "";
 
         Preconditions.checkArgument(action.has("type"), "An action needs a type field");

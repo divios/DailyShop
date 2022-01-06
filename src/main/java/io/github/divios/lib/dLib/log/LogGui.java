@@ -6,7 +6,6 @@ import io.github.divios.core_lib.inventory.ItemButton;
 import io.github.divios.core_lib.inventory.builder.inventoryPopulator;
 import io.github.divios.core_lib.inventory.builder.paginatedGui;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
-import io.github.divios.core_lib.misc.Msg;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.files.Lang;
 import io.github.divios.dailyShop.utils.FutureUtils;
@@ -60,7 +59,7 @@ public class LogGui {
                                                         "",
                                                         "&7Player: &e" + dLogEntry.getPlayer(),
                                                         "&7ShopId: &e" + dLogEntry.getShopID(),
-                                                        "&7itemUUID: &e" + dLogEntry.getItemUUID(),
+                                                        "&7ID: &e" + dLogEntry.getItemID(),
                                                         "&7Quantity: &e" + dLogEntry.getQuantity(),
                                                         "&7Type: &e" + dLogEntry.getType(),
                                                         "&7Price: &e" + PriceWrapper.format(dLogEntry.getPrice()),

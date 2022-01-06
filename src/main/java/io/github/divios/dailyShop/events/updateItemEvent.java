@@ -7,8 +7,10 @@ import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.Timestamp;
+import java.util.Objects;
 import java.util.UUID;
 
+@SuppressWarnings("unused")
 public class updateItemEvent extends Event {
 
     private static final HandlerList HANDLERS_LIST = new HandlerList();
@@ -34,10 +36,10 @@ public class updateItemEvent extends Event {
 
     public updateItemEvent(Player p, UUID uuid, int amount, updateItemEvent.type type, dShop shop) {
         this.p = p;
-        this.uuid = uuid;
+        this.uuid = Objects.requireNonNull(uuid);
         this.amount = amount;
-        this.type = type;
-        this.shop = shop;
+        this.type = Objects.requireNonNull(type);
+        this.shop = Objects.requireNonNull(shop);
         this.timestamp = new Timestamp(System.currentTimeMillis());
     }
 

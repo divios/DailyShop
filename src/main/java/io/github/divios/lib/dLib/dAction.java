@@ -2,7 +2,6 @@ package io.github.divios.lib.dLib;
 
 import io.github.divios.core_lib.inventory.dynamicGui;
 import io.github.divios.dailyShop.DailyShop;
-import io.github.divios.dailyShop.lorestategy.loreStrategy;
 import io.github.divios.dailyShop.lorestategy.shopItemsLore;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.managers.shopsManager;
@@ -42,12 +41,11 @@ public enum dAction {
 
     SHOW_ALL_ITEMS((p, s) -> {
         shopsManager manager = DailyShop.get().getShopsManager();
-        loreStrategy strategy = new shopItemsLore();
         new dynamicGui.Builder()
                 .contents(() -> manager.getShop(s)
                         .get().getItems()
                         .parallelStream()
-                        .map(dItem -> strategy.applyLore(dItem.getDailyItem().clone(), p))
+                        .map(dItem -> shopItemsLore.applyLore(dItem, p, null))
                         .collect(Collectors.toList()))
                 .title(integer -> "&6&l" + manager.getShop(s).get().getName() + " items")
                 .back(player -> manager.getShop(s).get().openShop(p))
@@ -62,7 +60,7 @@ public enum dAction {
         this.action = action;
     }
 
-    public void run(Player p, String s) {
+    public void execute(Player p, String s) {
         action.accept(p, s);
     }
 

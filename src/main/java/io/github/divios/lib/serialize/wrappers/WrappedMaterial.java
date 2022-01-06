@@ -1,8 +1,9 @@
 package io.github.divios.lib.serialize.wrappers;
 
+import com.cryptomorin.xseries.SkullUtils;
 import com.cryptomorin.xseries.XMaterial;
 import io.github.divios.core_lib.itemutils.ItemUtils;
-import io.github.divios.lib.dLib.dItem;
+import org.bukkit.inventory.ItemStack;
 
 public class WrappedMaterial {
 
@@ -12,12 +13,13 @@ public class WrappedMaterial {
         return new WrappedMaterial(material);
     }
 
-    public static String getMaterial(dItem item) {
+    public static String getMaterial(ItemStack item) {
         String material;
-        if (!item.isCustomHead())
-            material = ItemUtils.getMaterial(item.getRealItem()).name();
+        if (ItemUtils.getMaterial(item) == XMaterial.PLAYER_HEAD.parseMaterial()
+                && SkullUtils.getSkinValue(ItemUtils.getMetadata(item)) != null)
+            material = "base64:" + SkullUtils.getSkinValue(ItemUtils.getMetadata(item));
         else
-            material = "base64:" + item.getCustomHeadUrl();
+            material = ItemUtils.getMaterial(item).name();
 
         return material;
     }
@@ -26,13 +28,13 @@ public class WrappedMaterial {
         this.material = material;
     }
 
-    public dItem parseItem() {
-        dItem ditem = dItem.of(XMaterial.DIRT.parseItem());
+    public ItemStack parseItem() {
+        //dItem ditem = dItem.of(XMaterial.DIRT.parseItem());
 
-        if (material.startsWith("base64:")) ditem.setCustomPlayerHead(material.replace("base64:", ""));
-        else ditem.setMaterial(XMaterial.valueOf(material));
+        //if (material.startsWith("base64:")) ditem.setCustomPlayerHead(material.replace("base64:", ""));
+        //else ditem.setMaterial(XMaterial.valueOf(material));
 
-        return ditem;
+        return XMaterial.valueOf(material).parseItem();
     }
 
 }

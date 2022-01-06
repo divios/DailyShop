@@ -12,8 +12,8 @@ import io.github.divios.dailyShop.files.Lang;
 import io.github.divios.dailyShop.utils.PriceWrapper;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.jtext.wrappers.Template;
-import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
+import io.github.divios.lib.dLib.newDItem;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -30,21 +30,25 @@ public abstract class abstractConfirmMenu {
 
     protected final dShop shop;
     protected final Player player;
-    protected final dItem item;
+    protected final newDItem item;
     protected final Consumer<Integer> onCompleteAction;
     protected final Runnable fallback;
 
     protected int nAddedItems = 0;
     protected InventoryGUI menu;
 
-    public abstractConfirmMenu(dShop shop, Player player, dItem item, Consumer<Integer> onCompleteAction, Runnable fallback) {
+    public abstractConfirmMenu(dShop shop,
+                               Player player,
+                               newDItem item,
+                               Consumer<Integer> onCompleteAction, Runnable fallback
+    ) {
         this.shop = shop;
         this.player = player;
         this.item = item.clone();
         this.onCompleteAction = onCompleteAction;
         this.fallback = fallback;
 
-        addItemsAndIncrement(item.getSetItems().isPresent() ? this.item.setQuantity(1).getSetItems().orElse(1) : 1);
+        addItemsAndIncrement(item.getItem().getAmount());
         createMenu();
         openMenu();
     }
@@ -52,7 +56,6 @@ public abstract class abstractConfirmMenu {
     private void createMenu() {
         menu = new InventoryGUI(plugin, 54, getTitle());
         setActionOnDestroy();
-        menu.getInventory().setItem(22, item.getRealItem());
         updateButtons();
     }
 
@@ -168,7 +171,7 @@ public abstract class abstractConfirmMenu {
 
     private void createItemDisplayButton() {
         menu.addButton(ItemButton.create(
-                item.getRealItem()
+                item.getItem()
                 , e -> {
                 }), 22);
     }
@@ -178,7 +181,7 @@ public abstract class abstractConfirmMenu {
                         .setName(Lang.CONFIRM_GUI_STATS_NAME.getAsString(player))
                         .setLore(Lang.CONFIRM_GUI_STATS_LORE
                                 .getAsListString(player,
-                                        Template.of("price", getFormattedPrice(getItemPrice() * nAddedItems) + " " + item.getEconomy().getName()),
+                                        Template.of("price", getFormattedPrice(getItemPrice() * nAddedItems) + " " + item.getEcon().getName()),
                                         Template.of("quantity", String.valueOf(nAddedItems))
                                 )
                         )
@@ -213,7 +216,7 @@ public abstract class abstractConfirmMenu {
     private List<String> setItemPricePlaceholder(List<String> str) {
         return Utils.JTEXT_PARSER
                 .withTemplate(
-                        Template.of("price", getFormattedPrice(getItemPrice() * nAddedItems) + " " + item.getEconomy().getName()),
+                        Template.of("price", getFormattedPrice(getItemPrice() * nAddedItems) + " " + item.getEcon().getName()),
                         Template.of("quantity", nAddedItems)
                 )
                 .parse(str, player);
@@ -230,9 +233,11 @@ public abstract class abstractConfirmMenu {
     }
 
     protected ItemStack getMarkedItem() {
-        NBTItem markedItem = new NBTItem(item.getRealItem().clone());
+        NBTItem markedItem = new NBTItem(item.getItem());
         markedItem.setBoolean(MARK_KEY, true);
-        return markedItem.getItem();
+        ItemStack toReturn = markedItem.getItem();
+        toReturn.setAmount(1);
+        return toReturn;
     }
 
     protected static void deleteItem(ItemStack item) {

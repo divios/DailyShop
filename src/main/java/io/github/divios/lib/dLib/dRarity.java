@@ -12,21 +12,24 @@ import java.util.Objects;
 
 public class dRarity implements Cloneable {
 
-    private transient static final List<ItemStack> items = new ArrayList<ItemStack>() {{
-        add(XMaterial.GRAY_DYE.parseItem());
-        add(XMaterial.PINK_DYE.parseItem());
-        add(XMaterial.MAGENTA_DYE.parseItem());
-        add(XMaterial.PURPLE_DYE.parseItem());
-        add(XMaterial.CYAN_DYE.parseItem());
-        add(XMaterial.ORANGE_DYE.parseItem());
-        add(XMaterial.YELLOW_DYE.parseItem());
-        add(XMaterial.BARRIER.parseItem());
+    private transient static final List<ItemStack> items = new ArrayList<ItemStack>() {
+        {
+            add(XMaterial.GRAY_DYE.parseItem());
+            add(XMaterial.PINK_DYE.parseItem());
+            add(XMaterial.MAGENTA_DYE.parseItem());
+            add(XMaterial.PURPLE_DYE.parseItem());
+            add(XMaterial.CYAN_DYE.parseItem());
+            add(XMaterial.ORANGE_DYE.parseItem());
+            add(XMaterial.YELLOW_DYE.parseItem());
+            add(XMaterial.BARRIER.parseItem());
 
-    } };
+        }
+    };
 
     private rarityT rarity = rarityT.Common;
 
-    public dRarity() {}
+    public dRarity() {
+    }
 
     public static dRarity fromKey(String key) {
         dRarity dRarity = new dRarity();
@@ -57,7 +60,9 @@ public class dRarity implements Cloneable {
     /**
      * Gets the weight of this rarity
      */
-    public int getWeight() { return rarity.getWeight(); }
+    public int getWeight() {
+        return rarity.getWeight();
+    }
 
     /**
      * Gets the rarity lore
@@ -70,7 +75,9 @@ public class dRarity implements Cloneable {
         }
     }
 
-    public String getKey() { return rarity.name(); }
+    public String getKey() {
+        return rarity.name();
+    }
 
     @Override
     public String toString() {
@@ -112,12 +119,15 @@ public class dRarity implements Cloneable {
         private static final List<Integer> weights = Arrays.asList(100, 80, 60, 40, 20, 10, 5, 0);
         private static final rarityT[] vals = values();
 
-        rarityT() {}
+        rarityT() {
+        }
 
-        private int getWeight() { return weights.get(this.ordinal()); }
+        private int getWeight() {
+            return weights.get(this.ordinal());
+        }
 
         private rarityT next() {
-            return vals[(this.ordinal()+1) % vals.length];
+            return vals[(this.ordinal() + 1) % vals.length];
         }
 
 

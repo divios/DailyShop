@@ -2,8 +2,6 @@ package io.github.divios.dailyShop.economies;
 
 
 import io.github.divios.dailyShop.hooks.Hooks;
-import org.black_ixx.playerpoints.PlayerPoints;
-import org.black_ixx.playerpoints.PlayerPointsAPI;
 import org.bukkit.entity.Player;
 
 public class playerPointsE extends economy {

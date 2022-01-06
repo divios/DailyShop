@@ -1,6 +1,5 @@
 package io.github.divios.lib.dLib.stock.factory;
 
-
 import io.github.divios.lib.dLib.stock.dStock;
 
 import java.util.UUID;

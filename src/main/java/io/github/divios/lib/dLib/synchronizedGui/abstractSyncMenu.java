@@ -1,16 +1,16 @@
 package io.github.divios.lib.dLib.synchronizedGui;
 
 import com.google.common.base.Objects;
+import com.google.gson.JsonElement;
 import io.github.divios.core_lib.events.Events;
 import io.github.divios.core_lib.events.Subscription;
-import io.github.divios.core_lib.itemutils.ItemUtils;
-import io.github.divios.core_lib.scheduler.Task;
 import io.github.divios.dailyShop.events.updateItemEvent;
 import io.github.divios.dailyShop.files.Messages;
 import io.github.divios.dailyShop.guis.customizerguis.customizeGui;
+import io.github.divios.dailyShop.utils.DebugLog;
 import io.github.divios.jtext.wrappers.Template;
-import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
+import io.github.divios.lib.dLib.newDItem;
 import io.github.divios.lib.dLib.synchronizedGui.singleGui.dInventory;
 import io.github.divios.lib.dLib.synchronizedGui.singleGui.singleGui;
 import org.bukkit.Bukkit;
@@ -19,6 +19,7 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
+import java.sql.Timestamp;
 import java.util.*;
 
 /**
@@ -31,14 +32,13 @@ import java.util.*;
  * Children of this class only have to implement {@link #createMap() }
  */
 
-public abstract class abstractSyncMenu implements syncMenu {
+public abstract class abstractSyncMenu implements syncMenu, Cloneable {
 
-    protected final dShop shop;
-    protected final Map<UUID, singleGui> guis;
+    protected dShop shop;
+    protected Map<UUID, singleGui> guis;
     protected singleGui base;
 
-    private final Set<Subscription> listeners = new HashSet<>();
-    private final Map<UUID, Task> delayedGuisPromises = new HashMap<>();
+    private Set<Subscription> listeners = new HashSet<>();
 
     protected abstractSyncMenu(dShop shop) {
         this(shop, singleGui.create(shop));
@@ -95,42 +95,40 @@ public abstract class abstractSyncMenu implements syncMenu {
                         .forEach(value -> base.getInventory().addInventoryRow());
         } */
 
+        DebugLog.info("Updating base of shop " + shop.getName());
         if (inv.getInventorySize() != base.getInventory().getInventorySize()) {  // If the inv has changed size update all
+            DebugLog.info("Different sizes, force update");
             base.destroy();
-            base = singleGui.fromJson(inv.toBase64(), shop);
+            base = singleGui.fromJson(inv.toJson(), shop);
             reStock(silent);
 
         } else {        // If the inv has same size, update only buttons with the above logic
-
-            if (!inv.getInventoryTitle().equals(base.getInventory().getInventoryTitle()))
+            DebugLog.info("Same size, updating items only");
+            if (!inv.getInventoryTitle().equals(base.getInventory().getInventoryTitle())) {
+                DebugLog.info("Updated title");
                 base.getInventory().setInventoryTitle(inv.getInventoryTitle());
+            }
 
-
-            Map<Integer, dItem> actualContent = new HashMap<>(base.getInventory().getButtonsSlots());
-            Map<Integer, dItem> newContent = inv.getButtonsSlots();
+            Map<Integer, newDItem> actualContent = new HashMap<>(base.getInventory().getButtonsSlots());
+            Map<Integer, newDItem> newContent = inv.getButtonsSlots();
 
             Set<Integer> dailySlots = base.getInventory().getDailyItemsSlots();
 
             for (int i = 0; i < base.getInventory().getInventorySize(); i++) {
-                dItem aux1;
-                dItem aux2;
+                newDItem aux1;
+                newDItem aux2;
 
-                ItemStack actualItem = (aux1 = actualContent.get(i)) == null ? null : aux1.getDailyItem();
-                ItemStack newItem = (aux2 = newContent.get(i)) == null ? null : aux2.getDailyItem();
+                ItemStack actualItem = (aux1 = actualContent.get(i)) == null ? null : aux1.getItem();
+                ItemStack newItem = (aux2 = newContent.get(i)) == null ? null : aux2.getItem();
 
                 if (dailySlots.contains(i)) actualItem = null;      // If is a dailyItem, set as if nothing was there
 
-                if (ItemUtils.isEmpty(actualItem) && ItemUtils.isEmpty(newItem)) continue;
+                if (actualItem == null && newItem == null) continue;
 
-                if (ItemUtils.isEmpty(actualItem) && !ItemUtils.isEmpty(newItem))
-                    base.getInventory().addButton(newItem, i);
-
-                else if (!ItemUtils.isEmpty(actualItem) && ItemUtils.isEmpty(newItem))
+                if (newItem == null)
                     base.getInventory().removeButton(i);
-
-                else if (!actualItem.isSimilar(newItem)) {
-                    base.getInventory().addButton(newItem, i);
-                }
+                else if (actualItem == null || !aux1.isSimilar(aux2))
+                    base.getInventory().addButton(aux2, i);
 
             }
 
@@ -144,16 +142,16 @@ public abstract class abstractSyncMenu implements syncMenu {
 
     public synchronized void updateItem(updateItemEvent o) {
         base.updateItem(o);
-        guis.forEach((uuid, singleGui) -> {
-            singleGui.updateItem(o);
-        });
+        guis.forEach((uuid, singleGui) -> singleGui.updateItem(o));
     }
 
     protected abstract Map<UUID, singleGui> createMap();
 
     @Override
     public synchronized void generate(Player p) {
-        guis.put(p.getUniqueId(), singleGui.create(p, base, shop));
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        guis.put(p.getUniqueId(), base.deepCopy(p));
+        DebugLog.info("Time elapsed to generate singleGui: " + (new Timestamp(System.currentTimeMillis()).getTime() - timestamp.getTime()) + " ns");
     }
 
     @Override
@@ -176,20 +174,21 @@ public abstract class abstractSyncMenu implements syncMenu {
     public synchronized void invalidate(UUID key) {
         singleGui removed = guis.remove(key);
         if (removed != null) removed.destroy();
-        removeAndCancelPromise(key);
     }
 
     @Override
     public synchronized void invalidateAll() {
         guis.values().forEach(singleGui::destroy);
         guis.clear();
-        delayedGuisPromises.values().forEach(Task::stop);
-        delayedGuisPromises.clear();
     }
 
     @Override
     public synchronized void destroy() {
-        guis.keySet().forEach(uuid -> Bukkit.getPlayer(uuid).closeInventory());     // Triggers invalidate
+        guis.keySet().forEach(uuid -> {
+            Player p;
+            if ((p = Bukkit.getPlayer(uuid)) != null)
+                p.closeInventory();
+        });
         invalidateAll();
 
         listeners.forEach(Subscription::unregister);
@@ -201,10 +200,10 @@ public abstract class abstractSyncMenu implements syncMenu {
     @Override
     public synchronized void reStock(boolean silent) {
         Set<UUID> players = new HashSet<>(guis.keySet());
-        players.removeAll(delayedGuisPromises.keySet());
 
         invalidateAll();                                            // close all inventories
-        base.restock();                                            // Renovates base
+        base.restock();                                             // Renovates base
+
         players.forEach(uuid -> Optional.ofNullable(Bukkit.getPlayer(uuid)).ifPresent(this::generate));
         if (!silent)
             Messages.MSG_RESTOCK.broadcast(
@@ -228,7 +227,7 @@ public abstract class abstractSyncMenu implements syncMenu {
     }
 
     @Override
-    public String toJson() {
+    public JsonElement toJson() {
         return base.toJson();
     }
 
@@ -247,9 +246,27 @@ public abstract class abstractSyncMenu implements syncMenu {
                 && guis.hashCode() == gui.getMenus().hashCode();
     }
 
-    private void removeAndCancelPromise(UUID key) {
-        Task promise = delayedGuisPromises.remove(key);
-        if (promise != null) promise.stop();
+    @Override
+    public Object copy(dShop shop) {
+        abstractSyncMenu clone = (abstractSyncMenu) clone();
+        clone.shop = shop;
+
+        return clone;
     }
 
+    @Override
+    public Object clone() {
+        try {
+            abstractSyncMenu clone = (abstractSyncMenu) super.clone();
+
+            clone.base = base.deepCopy(null);
+            clone.guis = clone.createMap();
+            clone.listeners = new HashSet<>();
+            clone.ready();
+
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
+    }
 }

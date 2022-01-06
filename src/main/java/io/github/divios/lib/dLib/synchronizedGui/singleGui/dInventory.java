@@ -1,17 +1,21 @@
 package io.github.divios.lib.dLib.synchronizedGui.singleGui;
 
-import de.tr7zw.nbtapi.NBTItem;
+import com.google.common.base.Preconditions;
+import com.google.common.reflect.TypeToken;
+import com.google.gson.*;
 import io.github.divios.core_lib.events.Events;
 import io.github.divios.core_lib.events.Subscription;
+import io.github.divios.core_lib.gson.JsonBuilder;
 import io.github.divios.core_lib.inventory.inventoryUtils;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
-import io.github.divios.dailyShop.transaction.sellTransaction;
-import io.github.divios.dailyShop.transaction.transaction;
+import io.github.divios.dailyShop.files.Messages;
+import io.github.divios.dailyShop.utils.DebugLog;
 import io.github.divios.dailyShop.utils.Utils;
-import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
+import io.github.divios.lib.dLib.dTransaction.SingleTransaction;
+import io.github.divios.lib.dLib.newDItem;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventPriority;
@@ -21,6 +25,8 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.io.BukkitObjectInputStream;
 import org.bukkit.util.io.BukkitObjectOutputStream;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
 import java.io.ByteArrayInputStream;
@@ -29,42 +35,85 @@ import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.function.Function;
 import java.util.stream.IntStream;
 
-@SuppressWarnings({"ConstantConditions", "unchecked", "unused"})
-public class dInventory {
+@SuppressWarnings({"ConstantConditions", "unchecked", "unused", "UnusedReturnValue", "UnstableApiUsage"})
+public class dInventory implements Cloneable {
 
     protected static final DailyShop plugin = DailyShop.get();
+    private static final Gson gson = new GsonBuilder()
+            .registerTypeAdapter(newDItem.class, (JsonSerializer<newDItem>) (dItem, type, jsonSerializationContext) -> dItem.toJson())
+            .registerTypeAdapter(newDItem.class, (JsonDeserializer<newDItem>) (jsonElement, type, jsonDeserializationContext) -> newDItem.fromJson(jsonElement))
+            .create();
 
-    protected String title;       // for some reason is throwing noSuchMethod
-    protected Inventory inv;
-    protected final dShop shop;
+    private static final TypeToken<ConcurrentHashMap<UUID, newDItem>> buttonsToken = new TypeToken<ConcurrentHashMap<UUID, newDItem>>() {
+    };
+    private static final TypeToken<ConcurrentSkipListSet<Integer>> dailySlotsToken = new TypeToken<ConcurrentSkipListSet<Integer>>() {
+    };
 
-    protected final ConcurrentSkipListSet<Integer> dailyItemsSlots = new ConcurrentSkipListSet<>();
-    protected final ConcurrentHashMap<UUID, dItem> buttons = new ConcurrentHashMap<>();
-    protected final ConcurrentHashMap<Integer, dItem> buttonsSlot = new ConcurrentHashMap<>();
+    private static final Function<Integer, ConcurrentSkipListSet<Integer>> getDefaultSlots = input -> {
+        ConcurrentSkipListSet<Integer> defaultList = new ConcurrentSkipListSet<>();
+        IntStream.range(0, input).forEach(defaultList::add);
 
-    private final Set<Subscription> listeners = new HashSet<>();
+        return defaultList;
+    };
 
+    @Deprecated
     public static dInventory fromBase64(String base64, dShop shop) {
         return deserialize(base64, shop);
     }
 
-    public dInventory(String title, int size, dShop shop) {
-        this(title, Bukkit.createInventory(null, size, Utils.JTEXT_PARSER.parse(title)), shop);
+    public static dInventory fromJson(JsonElement element) {
+        JsonObject object = element.getAsJsonObject();
+
+        Preconditions.checkArgument(!object.get("title").isJsonNull());
+        Preconditions.checkArgument(!object.get("inventory").isJsonNull());
+
+        String title = object.get("title").getAsString();
+
+        Inventory inv = inventoryUtils.fromJson(object.get("inventory"));
+        ConcurrentSkipListSet<Integer> dailyItemsSlots = gson.fromJson(object.get("dailySlots"), dailySlotsToken.getType());
+        ConcurrentHashMap<UUID, newDItem> buttons = gson.fromJson(object.get("buttons"), buttonsToken.getType());
+        ConcurrentHashMap<Integer, newDItem> buttonsSlots = new ConcurrentHashMap<>();
+
+        buttons.forEach((uuid, dItem) -> buttonsSlots.put(dItem.getSlot(), dItem));
+
+        return new dInventory(title, inv, dailyItemsSlots, buttons, buttonsSlots);
+
     }
 
-    public dInventory(dShop shop) {
-        this(shop.getName(), 27, shop);
+    protected String title;       // for some reason is throwing noSuchMethod
+    protected Inventory inv;
+
+    protected ConcurrentSkipListSet<Integer> dailyItemsSlots;
+    protected ConcurrentHashMap<UUID, newDItem> buttons;
+    protected ConcurrentHashMap<Integer, newDItem> buttonsSlot;
+
+    private Set<Subscription> listeners = new HashSet<>();
+
+    public dInventory(String title, int size) {
+        this(title, Bukkit.createInventory(null, size, Utils.JTEXT_PARSER.parse(title)));
     }
 
-    protected dInventory(String title, Inventory inv, dShop shop) {
+    protected dInventory(String title, Inventory inv) {
+        this(title, inv,
+                getDefaultSlots.apply(inv.getSize()),
+                new ConcurrentHashMap<>(),
+                new ConcurrentHashMap<>());
+    }
+
+    private dInventory(String title,
+                       Inventory inv,
+                       ConcurrentSkipListSet<Integer> dailyItemsSlots,
+                       ConcurrentHashMap<UUID, newDItem> buttons,
+                       ConcurrentHashMap<Integer, newDItem> buttonsSlot) {
         this.title = title;
         this.inv = inv;
-        this.shop = shop;
+        this.dailyItemsSlots = dailyItemsSlots;
+        this.buttons = buttons;
+        this.buttonsSlot = buttonsSlot;
 
-        setInventoryTitle(title);
-        IntStream.range(0, inv.getSize()).forEach(dailyItemsSlots::add);
         createListeners();
     }
 
@@ -73,7 +122,7 @@ public class dInventory {
      *
      * @param p The player to open the inventory to.
      */
-    public void openInventory(Player p) {
+    public void openInventory(@NotNull Player p) {
         p.openInventory(inv);
     }
 
@@ -91,7 +140,7 @@ public class dInventory {
      *
      * @param title String representing the new title of the inventory.
      */
-    public void setInventoryTitle(String title) {
+    public void setInventoryTitle(@NotNull String title) {
         this.title = title;
         Inventory temp = Bukkit.createInventory(null, inv.getSize(), Utils.JTEXT_PARSER.parse(title));
         temp.setContents(inv.getContents());
@@ -157,40 +206,38 @@ public class dInventory {
 
     /**
      * Adds an item to the inventory. When this item is clicked, the action
-     * attached to it will be executed
-     *
-     * @param item ItemStack to be added
-     * @param slot Integer representing the position of the new item on the inventory.
-     */
-    public void addButton(ItemStack item, int slot) {
-        addButton(dItem.of(item), slot);
-    }
-
-    /**
-     * Adds an item to the inventory. When this item is clicked, the action
      * attacked to it will be executed
      *
      * @param item ItemStack to be added
      * @param slot Integer representing the position of the new item on the inventory.
      */
-    public void addButton(dItem item, int slot) {
-        if (slot >= inv.getSize()) return;
+    public void addButton(@NotNull newDItem item, int slot) {
+        DebugLog.info("Trying to add item of ID " + item.getID() + " in slot " + slot);
+        if (slot >= inv.getSize()) {
+            DebugLog.info("Tried to add item but is out of bounds");
+            return;
+        }
 
-        dItem crashItem;
-        if ((crashItem = buttonsSlot.get(slot)) != null)        // If there is a previous item with that slot, remove first
-            removeButton(crashItem.getUid());
+        newDItem crashItem;
+        if ((crashItem = buttonsSlot.get(slot)) != null) {        // If there is a previous item with that slot, remove first
+            DebugLog.info("Crashed with another item, removing firsts");
+            removeButton(crashItem.getUUID());
+        }
 
-        dItem cloned = item.clone();
-        cloned.generateNewBuyPrice();
-        cloned.generateNewSellPrice();
+        newDItem cloned = item.clone();
         cloned.setSlot(slot);
-        buttons.put(cloned.getUid(), cloned);
+
+        buttons.put(cloned.getUUID(), cloned);
         buttonsSlot.put(slot, cloned);
         dailyItemsSlots.remove(slot);
-        if (!item.isAIR())
-            inv.setItem(slot, cloned.getDailyItem());
-        else
+
+        if (!item.isAir()) {
+            DebugLog.info("Added item to inventory");
+            inv.setItem(slot, cloned.getItemWithId());
+        } else {
+            DebugLog.info("Not adding since is air");
             inv.clear(slot);
+        }
     }
 
     /**
@@ -199,9 +246,9 @@ public class dInventory {
      * @param slot The Integer representing the slot to be removed.
      * @return The item that was removed if any.
      */
-    public dItem removeButton(int slot) {
-        dItem item;
-        return removeButton((item = buttonsSlot.get(slot)) == null ? null : item.getUid());
+    public newDItem removeButton(int slot) {
+        newDItem item;
+        return removeButton((item = buttonsSlot.get(slot)) == null ? null : item.getUUID());
     }
 
     /**
@@ -210,10 +257,11 @@ public class dInventory {
      * @param uuid The UUID of the item to be removed.
      * @return The item that was removed if any.
      */
-    public dItem removeButton(UUID uuid) {
+    public newDItem removeButton(@NotNull UUID uuid) {
         if (uuid == null) return null;      // ConcurrentHashMap throws error on null keys
-        dItem removedItem = buttons.remove(uuid);
+        newDItem removedItem = buttons.remove(uuid);
         if (removedItem != null) {
+            DebugLog.info("Removed item of ID: " + removedItem.getID() + " on slot: " + removedItem.getSlot());
             buttonsSlot.remove(removedItem.getSlot());
             dailyItemsSlots.add(removedItem.getSlot());
             inv.clear(removedItem.getSlot());
@@ -226,7 +274,7 @@ public class dInventory {
      *
      * @return A map representing the buttons of this inventory.
      */
-    public Map<UUID, dItem> getButtons() {
+    public Map<UUID, newDItem> getButtons() {
         return Collections.unmodifiableMap(buttons);
     }
 
@@ -235,7 +283,7 @@ public class dInventory {
      *
      * @return A map representing the buttons of this inventory.
      */
-    public Map<Integer, dItem> getButtonsSlots() {
+    public Map<Integer, newDItem> getButtonsSlots() {
         return Collections.unmodifiableMap(buttonsSlot);
     }
 
@@ -254,12 +302,14 @@ public class dInventory {
      *
      * @param itemsToRoll A collection of items that will be chosen as daily items.
      */
-    protected void restock(Set<dItem> itemsToRoll) {
+    protected void restock(@NotNull Set<newDItem> itemsToRoll) {
         if (dailyItemsSlots.isEmpty()) return;
+
         removeAirItems();     // Just in case
         removeDailyItems();
+
         int index = dailyItemsSlots.first();
-        for (dItem item : itemsToRoll) {
+        for (newDItem item : itemsToRoll) {
             addButton(item, (index = dailyItemsSlots.ceiling(index)));
             dailyItemsSlots.add(index++);     // Restore slot
         }
@@ -269,21 +319,16 @@ public class dInventory {
      * Updates a dailyItem of the inventory.
      * This function should only be called from protected sources.
      *
-     * @param item   The item to update
-     * @param delete If the item should be deleted or updated
+     * @param item The item to update
      */
-    protected void updateItem(dItem item, boolean delete) {
-        dItem toUpdateItem = buttons.get(item.getUid());
+    protected void updateDailyItem(@NotNull newDItem item) {
+        newDItem toUpdateItem = buttons.get(item.getUUID());
         if (toUpdateItem == null) return;
 
         int slot = toUpdateItem.getSlot();
-        if (delete) {
-            removeButton(item.getUid());
-            inv.setItem(slot, Utils.getRedPane());
-        } else {
-            addButton(item, slot);
-            dailyItemsSlots.add(slot);
-        }
+        DebugLog.info("Update item on dInventory of ID: " + item.getID() + " Slot: " + slot);
+        addButton(item, slot);
+        dailyItemsSlots.add(slot);
     }
 
     /**
@@ -293,24 +338,25 @@ public class dInventory {
      * @return The inventory in question.
      */
     public dInventory skeleton() {
-        dInventory cloned = this.copy();
+        dInventory cloned = this.deepClone();
         cloned.removeDailyItems();
         cloned.listeners.forEach(Subscription::unregister);
 
         cloned.buttons.entrySet().stream()   // gets the AIR buttons back
-                .filter(entry -> entry.getValue().isAIR())
-                .forEach(entry -> cloned.inv.setItem(entry.getValue().getSlot(), entry.getValue().getDailyItem()));
+                .filter(entry -> entry.getValue().isAir())
+                .forEach(entry -> cloned.inv.setItem(entry.getValue().getSlot(), entry.getValue().getItemWithId()));
 
         return cloned;
     }
 
     /**
-     * Returns a full copy of this inventory
+     * Returns a full copy of this inventory. This is
+     * the same as calling clone()
      *
      * @return The copy of this inventory.
      */
     public dInventory copy() {
-        return fromBase64(toBase64(), shop);
+        return clone();
     }
 
     /**
@@ -327,7 +373,6 @@ public class dInventory {
         return "dInventory{" +
                 "title='" + title + '\'' +
                 ", inv=" + inv +
-                ", shop=" + shop +
                 ", dailyItemsSlots=" + dailyItemsSlots +
                 ", buttons=" + buttons +
                 ", buttonsSlots=" + buttonsSlot +
@@ -335,11 +380,100 @@ public class dInventory {
                 '}';
     }
 
+    private boolean isSimilar(Inventory inv1, Inventory inv2) {
+        ItemStack[] contents1 = inv1.getContents();
+        ItemStack[] contents2 = inv2.getContents();
+
+        if (contents1.length != contents2.length) return false;
+
+        for (int i = 0; i < contents1.length; i++) {
+
+            if ((contents1[i] != null && contents2[i] == null)
+                    || (contents1[i] == null && contents2[i] != null)) return false;
+
+            if (contents1[i] == null && contents2[i] == null) continue;
+
+            if (!contents1[i].isSimilar(contents2[i]))
+                return false;
+
+        }
+        return true;
+    }
+
+    @Override
+    public dInventory clone() {
+        try {
+            dInventory clone = (dInventory) super.clone();
+
+            clone.inv = inventoryUtils.cloneInventory(inv, title);
+
+            //clone.dailyItemsSlots = (TreeSet<Integer>) dailyItemsSlots.clone();       // Shouldn't be necessary to
+            // deep copy this, can be shared
+            //clone.buttons = new ConcurrentHashMap<>();
+            //buttons.forEach((uuid, dItem) -> clone.buttons.put(uuid, dItem.clone()));
+
+            //clone.buttonsSlot = new ConcurrentHashMap<>();
+            //buttonsSlot.forEach((integer, dItem) -> clone.buttonsSlot.put(integer, dItem.clone()));
+
+            clone.listeners = new HashSet<>();
+            clone.createListeners();
+
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
+    }
+
+    public dInventory deepClone() {
+        dInventory clone = clone();
+
+        clone.dailyItemsSlots = dailyItemsSlots.clone();
+
+        clone.buttons = new ConcurrentHashMap<>();
+        buttons.forEach((uuid, dItem) -> clone.buttons.put(uuid, dItem.clone()));
+
+        clone.buttonsSlot = new ConcurrentHashMap<>();
+        buttonsSlot.forEach((integer, dItem) -> clone.buttonsSlot.put(integer, dItem.clone()));
+
+        return clone;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        dInventory that = (dInventory) o;
+        return Objects.equals(title, that.title)
+                && Objects.equals(inv, that.inv)
+                && Objects.equals(dailyItemsSlots, that.dailyItemsSlots)
+                && Objects.equals(buttons, that.buttons)
+                && Objects.equals(buttonsSlot, that.buttonsSlot);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(title,
+                inv,
+                dailyItemsSlots,
+                buttons,
+                buttonsSlot);
+    }
+
+    public JsonElement toJson() {
+        return JsonBuilder.object()
+                .add("title", title)
+                .add("inventory", inventoryUtils.toJson(title, inv))
+                .add("dailySlots", gson.toJsonTree(this.dailyItemsSlots, dailySlotsToken.getType()))
+                .add("buttons", gson.toJsonTree(buttons, buttonsToken.getType()))
+                .build();
+    }
+
     /**
      * Serializes this inventory into base64.
      *
      * @return The String representing this inventory as base64.
      */
+    @Deprecated
     public String toBase64() {
         try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
             try (BukkitObjectOutputStream dataOutput = new BukkitObjectOutputStream(outputStream)) {
@@ -354,28 +488,6 @@ public class dInventory {
         } catch (IOException e) {
             throw new IllegalStateException("Unable to serialize inventory.", e);
         }
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        dInventory that = (dInventory) o;
-        /*Log.info("Titles: " + Objects.equals(title, that.title));
-        Log.info("Invs: " + compareInvs(that.inv, inv));
-        Log.info("Shop: " + Objects.equals(shop, that.shop));
-        Log.info("DailySlots: " + Objects.equals(dailyItemsSlots, that.dailyItemsSlots));*/
-        return Objects.equals(title, that.title) && compareInvs(that.inv, inv) && Objects.equals(shop, that.shop) && Objects.equals(dailyItemsSlots, that.dailyItemsSlots);
-    }
-
-    @Override
-    public int hashCode() {
-        int invHash = Arrays.stream(inv.getContents())
-                .map(itemStack -> new NBTItem(itemStack).toString())
-                .mapToInt(String::hashCode)
-                .sum();
-
-        return Objects.hash(title, invHash, shop, dailyItemsSlots);
     }
 
     /**********  Utils  **********/
@@ -394,19 +506,70 @@ public class dInventory {
                             e.setCancelled(true);
                             if (e.getSlot() != e.getRawSlot()) return;  // is not upper inventory
 
-                            dItem itemClicked = buttons.get(dItem.getUid(e.getCurrentItem()));
+                            newDItem itemClicked = buttonsSlot.get(e.getSlot());
                             if (itemClicked == null) return;
 
-                            if (dailyItemsSlots.contains(itemClicked.getSlot())) {
-                                if (e.isLeftClick())
-                                    transaction.init((Player) e.getWhoClicked(), buttons.get(itemClicked.getUid()), shop);
-                                else if (e.isRightClick())
-                                    sellTransaction.create((Player) e.getWhoClicked(), buttons.get(itemClicked.getUid()), shop);
+                            Player player = (Player) e.getWhoClicked();
+                            if (dailyItemsSlots.contains(e.getSlot())) {
+                                if (e.isLeftClick()) {
+
+                                    if (!meetsPermissions(player, itemClicked.getBuyPerms())) {
+                                        Messages.MSG_NOT_PERMS.send(player);
+                                        return;
+                                    }
+
+                                    if (itemClicked.getDStock() != null && itemClicked.getPlayerStock(player) <= 0) {
+                                        Messages.MSG_NOT_STOCK.send(player);
+                                        return;
+                                    }
+
+                                    if (itemClicked.getBuyPrice() <= 0) {
+                                        Messages.MSG_INVALID_BUY.send(player);
+                                        return;
+                                    }
+
+                                    Events.callEvent(new TransactionEvent(this,
+                                            SingleTransaction.Type.BUY,
+                                            player,
+                                            itemClicked
+                                    ));
+
+                                } else if (e.isRightClick()) {
+                                    if (!meetsPermissions(player, itemClicked.getSellPerms())) {
+                                        Messages.MSG_NOT_PERMS.send(player);
+                                        return;
+                                    }
+
+                                    if (itemClicked.getSellPrice() <= 0) {
+                                        Messages.MSG_INVALID_SELL.send(player);
+                                        return;
+                                    }
+
+                                    if (ItemUtils.count(player.getInventory(), itemClicked.getItem()) <= 0) {
+                                        Messages.MSG_NOT_ITEMS.send(player);
+                                        return;
+                                    }
+
+                                    Events.callEvent(new TransactionEvent(this,
+                                            SingleTransaction.Type.SELL,
+                                            player,
+                                            itemClicked
+                                    ));
+
+                                }
                             } else {
-                                itemClicked.getAction().stream((dAction, s) -> dAction.run((Player) e.getWhoClicked(), s));
+                                itemClicked.getAction().execute(player);
                             }
                         })
         );
+    }
+
+    private boolean meetsPermissions(@NotNull Player player, @Nullable List<String> perms) {
+        if (perms == null) return true;
+        for (String perm : perms) {
+            if (!player.hasPermission(perm)) return false;
+        }
+        return true;
     }
 
     private void createDragEventListener() {
@@ -420,13 +583,13 @@ public class dInventory {
     private void removeAirItems() {
         buttons.entrySet()
                 .stream()
-                .filter(entry -> entry.getValue().isAIR())
+                .filter(entry -> entry.getValue().isAir())
                 .forEach(entry -> inv.clear(entry.getValue().getSlot()));  // Clear AIR items
     }
 
     private void removeDailyItems() {
-        for (Iterator<Map.Entry<UUID, dItem>> it = buttons.entrySet().iterator(); it.hasNext(); ) {
-            Map.Entry<UUID, dItem> entry = it.next();
+        for (Iterator<Map.Entry<UUID, newDItem>> it = buttons.entrySet().iterator(); it.hasNext(); ) {
+            Map.Entry<UUID, newDItem> entry = it.next();
             if (dailyItemsSlots.contains(entry.getValue().getSlot())) {
                 it.remove();
                 buttonsSlot.remove(entry.getValue().getSlot());
@@ -436,26 +599,25 @@ public class dInventory {
     }
 
     private static dInventory deserialize(String base64, dShop shop) {
-        dInventory newInv[] = {null};
+        dInventory[] newInv = {null};
         try (ByteArrayInputStream InputStream = new ByteArrayInputStream(Base64Coder.decodeLines(base64))) {
             try (BukkitObjectInputStream dataInput = new BukkitObjectInputStream(InputStream)) {
 
-                inventoryUtils.deserialize((String) dataInput.readObject()).stream((s1, inv) -> {
-                    newInv[0] = new dInventory(s1, inv, shop);
-                });
+                inventoryUtils.deserialize((String) dataInput.readObject()).stream((s1, inv) ->
+                        newInv[0] = new dInventory(s1, inv));
 
                 newInv[0].dailyItemsSlots.clear();
                 newInv[0].dailyItemsSlots.addAll((Set<Integer>) dataInput.readObject());
 
                 Object o = dataInput.readObject();
                 if (o instanceof Set)
-                    ((Set<dItem>) o).forEach(dItem -> {
-                        newInv[0].buttons.put(dItem.getUid(), dItem);
+                    ((Set<newDItem>) o).forEach(dItem -> {
+                        newInv[0].buttons.put(dItem.getUUID(), dItem);
                         newInv[0].buttonsSlot.put(dItem.getSlot(), dItem);
                     });
                 else            // Remember that for some reason java cannot serialize/deserialize UUIDs
-                    ((Map<UUID, dItem>) o).values().forEach(dItem -> {
-                        newInv[0].buttons.put(dItem.getUid(), dItem);
+                    ((Map<UUID, newDItem>) o).values().forEach(dItem -> {
+                        newInv[0].buttons.put(dItem.getUUID(), dItem);
                         newInv[0].buttonsSlot.put(dItem.getSlot(), dItem);
                     });
 
@@ -466,31 +628,9 @@ public class dInventory {
             Log.severe("Unable to deserialize gui of shop "
                     + shop.getName() + ", . Probably is caused by a server downgrade? Setting it to default");
             //e.printStackTrace();
-            return new dInventory(shop);
+            return new dInventory(shop.getName(), 27);
         }
 
-    }
-
-    private boolean compareInvs(Inventory inv1, Inventory inv2) {
-        ItemStack contents1[] = inv1.getContents();
-        ItemStack contents2[] = inv2.getContents();
-
-        if (contents1.length != contents2.length) return false;
-
-        for (int i = 0; i < contents1.length; i++) {
-
-            //Log.info((ItemUtils.isEmpty(contents1[i]) ? "" : contents1[i].getType().name()) + " -----> " + (ItemUtils.isEmpty(contents2[i]) ? "" : contents2[i].getType().name()));
-
-            if ((contents1[i] != null && contents2[i] == null)
-                    || (contents1[i] == null && contents2[i] != null)) return false;
-
-            if (contents1[i] == null && contents2[i] == null) continue;
-
-            if (!contents1[i].isSimilar(contents2[i]))
-                return false;
-
-        }
-        return true;
     }
 
 }

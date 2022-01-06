@@ -4,7 +4,6 @@ import com.cryptomorin.xseries.XMaterial;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
-import io.github.divios.core_lib.misc.Msg;
 import io.github.divios.core_lib.misc.timeStampUtils;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.files.Messages;
@@ -139,7 +138,7 @@ public class Utils {
 
     public static ItemStack getRedPane() {
         return ItemBuilder.of(XMaterial.RED_STAINED_GLASS_PANE)
-                .setName("&cOut of stock"); //TODO
+                .setName("&cOut of stock");
     }
 
     public static void removeFlag(ItemStack i, @NotNull ItemFlag f) {

@@ -10,7 +10,6 @@ import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.UUID;
 
 public class dLogEntry {
 
@@ -18,17 +17,25 @@ public class dLogEntry {
 
     private final String p;
     private final String shopID;
-    private final UUID itemUUID;
+    private final String ID;
     private final ItemStack rawItem;
     private final Type type;
     private final double price;
     private final int quantity;
     private final Timestamp timestamp;
 
-    private dLogEntry(String p, String shopID, UUID itemUUID, ItemStack rawItem, Type type, double price, int quantity, Timestamp timestamp) {
+    private dLogEntry(String p,
+                      String shopID,
+                      String ID,
+                      ItemStack rawItem,
+                      Type type,
+                      double price,
+                      int quantity,
+                      Timestamp timestamp
+    ) {
         this.p = p;
         this.shopID = shopID;
-        this.itemUUID = itemUUID;
+        this.ID = ID;
         this.rawItem = rawItem;
         this.type = type;
         this.price = price;
@@ -44,8 +51,8 @@ public class dLogEntry {
         return shopID;
     }
 
-    public UUID getItemUUID() {
-        return itemUUID;
+    public String getItemID() {
+        return ID;
     }
 
     public ItemStack getRawItem() {
@@ -68,24 +75,35 @@ public class dLogEntry {
         return timestamp;
     }
 
-    public static dLogEntryBuilder builder() { return new dLogEntryBuilder(); }
+    public static dLogEntryBuilder builder() {
+        return new dLogEntryBuilder();
+    }
 
     public dLogEntryState toState() {
-        return new dLogEntryState(p, shopID, itemUUID.toString(), rawItem.getType().name(), type.name(), price, quantity, FORMAT.format(timestamp));
+        return new dLogEntryState(p,
+                shopID,
+                ID,
+                rawItem.getType().name(),
+                type.name(),
+                price,
+                quantity,
+                FORMAT.format(timestamp)
+        );
     }
 
 
     public static final class dLogEntryBuilder {
         private String p;
         private String shopID;
-        private UUID itemUUID;
+        private String ID;
         private ItemStack rawItem;
         private Type type;
         private Double price;
         private Integer quantity;
         private Timestamp timestamp;
 
-        private dLogEntryBuilder() {}
+        private dLogEntryBuilder() {
+        }
 
         public dLogEntryBuilder withPlayer(Player p) {
             return withPlayer(p.getDisplayName());
@@ -101,13 +119,8 @@ public class dLogEntry {
             return this;
         }
 
-        public dLogEntryBuilder withItemUUID(UUID itemUUID) {
-            this.itemUUID = itemUUID;
-            return this;
-        }
-
-        public dLogEntryBuilder withItemUUID(String itemUUID) {
-            this.itemUUID = UUID.fromString(itemUUID);
+        public dLogEntryBuilder withItemID(String ID) {
+            this.ID = ID;
             return this;
         }
 
@@ -145,7 +158,7 @@ public class dLogEntry {
 
             Preconditions.checkNotNull(p, "player");
             Preconditions.checkNotNull(shopID, "shopID");
-            Preconditions.checkNotNull(itemUUID, "itemUUID");
+            Preconditions.checkNotNull(ID, "ID");
             Preconditions.checkNotNull(rawItem, "rawItem");
             Preconditions.checkNotNull(type, "type");
             Preconditions.checkNotNull(price, "price");
@@ -153,7 +166,7 @@ public class dLogEntry {
             if (quantity == null) quantity = 1;
             if (timestamp == null) timestamp = new Timestamp(System.currentTimeMillis());
 
-            return new dLogEntry(p, shopID, itemUUID, rawItem, type, price, quantity, timestamp);
+            return new dLogEntry(p, shopID, ID, rawItem, type, price, quantity, timestamp);
         }
     }
 
@@ -161,17 +174,25 @@ public class dLogEntry {
 
         private final String p;
         private final String shopID;
-        private final String itemUUID;
+        private final String ID;
         private final String item;
         private final String type;
         private final double price;
         private final int quantity;
         private final String timestamp;
 
-        public dLogEntryState(String p, String shopID, String itemUUID, String rawItem, String type, double price, int quantity, String timestamp) {
+        public dLogEntryState(String p,
+                              String shopID,
+                              String ID,
+                              String rawItem,
+                              String type,
+                              double price,
+                              int quantity,
+                              String timestamp
+        ) {
             this.p = p;
             this.shopID = shopID;
-            this.itemUUID = itemUUID;
+            this.ID = ID;
             this.item = rawItem;
             this.type = type;
             this.price = price;
@@ -187,8 +208,8 @@ public class dLogEntry {
             return shopID;
         }
 
-        public String getItemUUID() {
-            return itemUUID;
+        public String getID() {
+            return ID;
         }
 
         public String getItem() {
@@ -220,7 +241,15 @@ public class dLogEntry {
                 e.printStackTrace();
             }
 
-            return new dLogEntry(p, shopID, UUID.fromString(itemUUID), ItemUtils.deserialize(item), Type.valueOf(type), price, quantity, new Timestamp(date.getTime()));
+            return new dLogEntry(p,
+                    shopID,
+                    ID,
+                    ItemUtils.deserialize(item),
+                    Type.valueOf(type),
+                    price,
+                    quantity,
+                    new Timestamp(date.getTime())
+            );
         }
 
     }

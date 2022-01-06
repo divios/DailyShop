@@ -10,49 +10,32 @@ import io.github.divios.jtext.wrappers.Template;
 import io.github.divios.lib.dLib.dShop;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.List;
-
 @SuppressWarnings({"ConstantConditions"})
-public class shopsManagerLore implements loreStrategy {
+public class shopsManagerLore {
 
-    @Override
-    public ItemStack applyLore(ItemStack item, Object... data) {
+    private shopsManagerLore() {
+        throw new RuntimeException("This class cannot be instantiated");
+    }
+
+    public static ItemStack applyLore(ItemStack item) {
 
         String name = FormatUtils.stripColor(item.getItemMeta().getDisplayName().substring(4));
         dShop shop = DailyShop.get().getShopsManager().getShop(name).orElse(null);
 
-        return addLore(item, shop);
+        return new ItemBuilder(item)
+                .addLore(Lang.SHOPS_MANAGER_LORE.getAsListString(
+                                Template.of("timer", shop.getTimer()),
+                                Template.of("amount", shop.size()),
+                                Template.of("c_timer", getShopTimerFormatted(shop))
+                        )
+                );
     }
 
-    private ItemStack addLore(ItemStack item, dShop shop) {
-        return ItemBuilder.of(item).addLore(getLore(shop));
-    }
-
-    private List<String> getLore(dShop shop) {
-        return Lang.SHOPS_MANAGER_LORE.getAsListString(
-                Template.of("timer", shop.getTimer()),
-                Template.of("amount", getShopAmountOfItems(shop)),
-                Template.of("c_timer", getShopTimerFormatted(shop))
-        );
-    }
-
-    private String getShopAmountOfItems(dShop shop) {
-        return String.valueOf(shop.getItems().size());
-    }
-
-    private String getShopTimerFormatted(dShop shop) {
-        if (shopTimerIsDisabled(shop))
-            return getRedCross();
+    private static String getShopTimerFormatted(dShop shop) {
+        if (shop.getTimer() == -1)
+            return XSymbols.TIMES_3.parseSymbol();
         else
             return Utils.getDiffActualTimer(shop);
-    }
-
-    private boolean shopTimerIsDisabled(dShop shop) {
-        return shop.getTimer() == -1;
-    }
-
-    private String getRedCross() {
-        return XSymbols.TIMES_3.parseSymbol();
     }
 
 }

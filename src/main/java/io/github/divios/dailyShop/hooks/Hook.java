@@ -5,6 +5,8 @@ import org.jetbrains.annotations.Nullable;
 interface Hook<T> {
 
     boolean isOn();
-    @Nullable T getApi();
+
+    @Nullable
+    T getApi();
 
 }

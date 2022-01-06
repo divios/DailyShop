@@ -15,8 +15,8 @@ import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.files.Lang;
 import io.github.divios.dailyShop.guis.customizerguis.CustomizerMenu;
 import io.github.divios.dailyShop.lorestategy.shopItemsManagerLore;
-import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
+import io.github.divios.lib.dLib.newDItem;
 import io.github.divios.lib.managers.shopsManager;
 import io.github.divios.lib.serialize.serializerApi;
 import org.bukkit.entity.Player;
@@ -38,13 +38,10 @@ public class shopGui {
     private final Player p;
     private final dShop shop;
 
-    private final shopItemsManagerLore strategy;
-
     private shopGui(Player p, dShop shop) {
 
         this.p = p;
         this.shop = shop;
-        this.strategy = new shopItemsManagerLore();
 
         createGuis();
 
@@ -84,7 +81,7 @@ public class shopGui {
 
     private void createGuis() {
 
-        Deque<dItem> entries = new ArrayDeque<>();
+        Deque<newDItem> entries = new ArrayDeque<>();
         shop.getItems().forEach(entries::addFirst);
 
         inv = paginatedGui.Builder()
@@ -110,7 +107,7 @@ public class shopGui {
                 .withItems(
                         entries.stream().parallel()
                                 .map(dItem ->
-                                        ItemButton.create(strategy.applyLore(dItem.getDailyItem().clone())
+                                        ItemButton.create(shopItemsManagerLore.applyLore(dItem)
                                                 , this::contentAction))
                 )
 
@@ -151,7 +148,7 @@ public class shopGui {
                                                 .applyTexture("9b425aa3d94618a87dac9c94f377af6ca4984c07579674fad917f602b7bf235"),
 
                                         e -> addDailyGuiIH.open(p, shop, itemStack -> {
-                                            shop.addItem(new dItem(itemStack));
+                                            shop.addItem(newDItem.of(itemStack));
                                             serializerApi.saveShopToFileAsync(shop);
                                             refresh();
                                         }, this::refresh)), 53)
@@ -165,8 +162,21 @@ public class shopGui {
 
     private void contentAction(InventoryClickEvent e) {
 
+        if (e.getCurrentItem() == null) return;
+
         Player p = (Player) e.getWhoClicked();
-        UUID uid = dItem.getUid(e.getCurrentItem());
+
+        UUID uid = newDItem.getUUIDKey(e.getCurrentItem());
+        if (uid == null) {
+            refresh();
+            return;
+        }
+
+        newDItem item = shop.getItem(uid);
+        if (item == null) {
+            refresh();
+            return;
+        }
 
         if (e.isLeftClick()) {
 
@@ -174,7 +184,7 @@ public class shopGui {
             CustomizerMenu.builder()
                     .withPlayer(p)
                     .withShop(shop)
-                    .withItem(shop.getItem(uid).orElse(null))
+                    .withItem(item)
                     .prompt();
 
         } else if (e.isRightClick())
@@ -192,14 +202,15 @@ public class shopGui {
                     .withTitle(Lang.CONFIRM_GUI_ACTION_NAME.getAsString(p))
                     .withConfirmLore(Lang.CONFIRM_GUI_YES.getAsString(p), Lang.CONFIRM_GUI_YES_LORE.getAsListString(p))
                     .withCancelLore(Lang.CONFIRM_GUI_NO.getAsString(p), Lang.CONFIRM_GUI_NO_LORE.getAsListString(p))
-                    .withItem(dItem.of(e.getCurrentItem()).getRealItem())
+                    .withItem(e.getCurrentItem())
                     .prompt();
 
     }
 
     private void refresh() {
-        Schedulers.sync().runLater(() -> inv.destroy(), 3L);
-        open(p, shop);
+        inv.destroy();
+        createGuis();
+        inv.open(p);
     }
 
 }

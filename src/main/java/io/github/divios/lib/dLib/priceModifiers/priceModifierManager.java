@@ -2,7 +2,6 @@ package io.github.divios.lib.dLib.priceModifiers;
 
 import io.github.divios.dailyShop.DailyShop;
 import org.bukkit.entity.Player;
-import org.checkerframework.checker.units.qual.s;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -15,7 +14,8 @@ public class priceModifierManager {
 
     private final Set<priceModifier> modifiers = ConcurrentHashMap.newKeySet();
 
-    public priceModifierManager() {}
+    public priceModifierManager() {
+    }
 
     public boolean hasModifiers(Player p) {
         return modifiers.stream().anyMatch(modifier -> p.hasPermission(modifier.getPermission()));

@@ -1,5 +1,6 @@
 package io.github.divios.lib.dLib.synchronizedGui;
 
+import com.google.gson.JsonElement;
 import io.github.divios.dailyShop.events.updateItemEvent;
 import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.dLib.synchronizedGui.singleGui.dInventory;
@@ -13,15 +14,20 @@ import java.util.UUID;
  * Interface declaring the contract of a syncMenu
  */
 
+@SuppressWarnings("unused")
 public interface syncMenu {
 
     void generate(Player p);
 
-    default void reStock() { reStock(false); }
+    default void reStock() {
+        reStock(false);
+    }
 
     void reStock(boolean silent);
 
-    default singleGui getGui(Player p) { return getGui(p.getUniqueId()); }
+    default singleGui getGui(Player p) {
+        return getGui(p.getUniqueId());
+    }
 
     singleGui getGui(UUID key);
 
@@ -31,7 +37,9 @@ public interface syncMenu {
 
     boolean contains(UUID p);
 
-    default int size() { return getMenus().size(); }
+    default int size() {
+        return getMenus().size();
+    }
 
     Collection<singleGui> getMenus();
 
@@ -55,7 +63,9 @@ public interface syncMenu {
 
     dShop getShop();
 
-    String toJson();
+    Object copy(dShop shop);
+
+    JsonElement toJson();
 
     int hashCode();
 

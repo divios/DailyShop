@@ -5,11 +5,8 @@ import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.dailyShop.files.Lang;
 import io.github.divios.dailyShop.utils.CompareItemUtils;
 import io.github.divios.dailyShop.utils.Utils;
-import io.github.divios.lib.dLib.dItem;
-import io.github.divios.lib.dLib.dPrice;
 import io.github.divios.lib.dLib.dShop;
-import io.github.divios.lib.dLib.priceModifiers.priceModifier;
-import io.github.divios.lib.dLib.stock.dStock;
+import io.github.divios.lib.dLib.newDItem;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.PlayerDeathEvent;
@@ -22,7 +19,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 
-@SuppressWarnings({"ConstantConditions"})
 public class buyConfirmMenu extends abstractConfirmMenu {
 
     static {
@@ -62,11 +58,11 @@ public class buyConfirmMenu extends abstractConfirmMenu {
         return new buyConfirmMenuBuilder();
     }
 
-    public static buyConfirmMenu create(dShop shop, Player player, dItem item, Consumer<Integer> onCompleteAction, Runnable fallback) {
+    public static buyConfirmMenu create(dShop shop, Player player, newDItem item, Consumer<Integer> onCompleteAction, Runnable fallback) {
         return new buyConfirmMenu(shop, player, item, onCompleteAction, fallback);
     }
 
-    public buyConfirmMenu(dShop shop, Player player, dItem item, Consumer<Integer> onCompleteAction, Runnable fallback) {
+    public buyConfirmMenu(dShop shop, Player player, newDItem item, Consumer<Integer> onCompleteAction, Runnable fallback) {
         super(shop, player, item, onCompleteAction, fallback);
     }
 
@@ -137,7 +133,7 @@ public class buyConfirmMenu extends abstractConfirmMenu {
 
     @Override
     protected double getItemPrice() {
-        return item.getDBuyPrice().orElse(dPrice.EMPTY()).getPriceForPlayer(player, shop, item.getID(), priceModifier.type.BUY);
+        return item.getPlayerBuyPrice(player, shop) / item.getItem().getAmount();
     }
 
     private int getMinLimit() {
@@ -158,11 +154,11 @@ public class buyConfirmMenu extends abstractConfirmMenu {
     }
 
     private int getStockLimit() {
-        return (item.hasStock() ? getItemStock() : MAX_INVENTORY_ITEMS) - nAddedItems;
+        return ((item.getDStock() != null) ? getItemStock() : MAX_INVENTORY_ITEMS) - nAddedItems;
     }
 
     private int getBalanceLimit() {
-        return (int) Math.floor(item.getEconomy().getBalance(player) / item.getDBuyPrice().orElse(null).getPriceForPlayer(player, shop, item.getID(), priceModifier.type.BUY)) - nAddedItems;
+        return (int) Math.floor(item.getEcon().getBalance(player) / getItemPrice()) - nAddedItems;
     }
 
     private int getPlayerInventoryLimit() {
@@ -177,13 +173,13 @@ public class buyConfirmMenu extends abstractConfirmMenu {
     }
 
     private int getItemStock() {
-        return dStock.searchStock(player, shop, item.getUid());
+        return item.getPlayerStock(player);
     }
 
     public static final class buyConfirmMenuBuilder {
         private dShop shop;
         private Player player;
-        private dItem item;
+        private newDItem item;
         private Consumer<Integer> onCompleteAction;
         private Runnable fallback;
 
@@ -200,7 +196,7 @@ public class buyConfirmMenu extends abstractConfirmMenu {
             return this;
         }
 
-        public buyConfirmMenuBuilder withItem(dItem item) {
+        public buyConfirmMenuBuilder withItem(newDItem item) {
             this.item = item;
             return this;
         }

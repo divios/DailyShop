@@ -1,16 +1,19 @@
 package io.github.divios.lib.dLib;
 
-import io.github.divios.core_lib.misc.FormatUtils;
-import io.github.divios.core_lib.misc.XSymbols;
+import com.google.common.base.Preconditions;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import io.github.divios.core_lib.gson.JsonBuilder;
 import io.github.divios.dailyShop.DailyShop;
-import io.github.divios.dailyShop.utils.PriceWrapper;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.priceModifiers.priceModifier;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.Serializable;
 import java.util.Objects;
 
+@SuppressWarnings("unused")
 public class dPrice implements Serializable, Cloneable {
 
     private boolean randomFlag = false;
@@ -28,6 +31,21 @@ public class dPrice implements Serializable, Cloneable {
             return new dPrice(Double.parseDouble(prices[0]));
         else
             return new dPrice(Double.parseDouble(prices[0]), Double.parseDouble(prices[1]));
+    }
+
+    public static dPrice fromJson(JsonElement json) {
+        JsonObject object = json.getAsJsonObject();
+
+        Preconditions.checkArgument(object.has("actualPrice"), "No actual price");
+
+        dPrice price = EMPTY();
+
+        price.actualPrice = object.get("actualPrice").getAsDouble();
+        price.minPrice = object.get("minPrice").getAsDouble();
+        price.minPrice = object.get("maxPrice").getAsDouble();
+        price.randomFlag = object.get("randomFlag").getAsBoolean();
+
+        return price;
     }
 
     private dPrice() {
@@ -75,16 +93,20 @@ public class dPrice implements Serializable, Cloneable {
             actualPrice = generateRandomPrice();
     }
 
-    /**
-     * Return a visual representation of the price (Ex: 150 - 170)
-     *
-     * @return price as string
-     */
-    public String getVisualPrice() {
-        if (randomFlag)
-            return PriceWrapper.format(minPrice) + " - " + PriceWrapper.format(maxPrice);
-        else if (actualPrice <= 0) return FormatUtils.color("&c" + XSymbols.TIMES_3.parseSymbol());
-        else return PriceWrapper.format(actualPrice);
+    protected boolean isRandomFlag() {
+        return randomFlag;
+    }
+
+    protected double getMinPrice() {
+        return minPrice;
+    }
+
+    protected double getMaxPrice() {
+        return maxPrice;
+    }
+
+    protected double getActualPrice() {
+        return actualPrice;
     }
 
     @Override
@@ -94,8 +116,9 @@ public class dPrice implements Serializable, Cloneable {
         else return String.valueOf(actualPrice);
     }
 
-    public boolean isSimilar(dPrice price) {
-        if (randomFlag != price.randomFlag) return false;
+    public boolean isSimilar(@Nullable dPrice price) {
+        if (this == price) return true;
+        if (price == null || randomFlag != price.randomFlag) return false;
 
         if (randomFlag) {
             return maxPrice == price.maxPrice
@@ -105,12 +128,24 @@ public class dPrice implements Serializable, Cloneable {
         }
     }
 
+    public JsonElement toJson() {
+        return JsonBuilder.object()
+                .add("randomFlag", randomFlag)
+                .add("minPrice", minPrice)
+                .add("maxPrice", maxPrice)
+                .add("actualPrice", actualPrice)
+                .build();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         dPrice dPrice = (dPrice) o;
-        return randomFlag == dPrice.randomFlag && Double.compare(dPrice.minPrice, minPrice) == 0 && Double.compare(dPrice.maxPrice, maxPrice) == 0;
+        return randomFlag == dPrice.randomFlag
+                && Double.compare(dPrice.minPrice, minPrice) == 0
+                && Double.compare(dPrice.maxPrice, maxPrice) == 0
+                && Double.compare(actualPrice, dPrice.actualPrice) == 0;
     }
 
     @Override

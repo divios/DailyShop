@@ -15,7 +15,7 @@ public class enchantmentAdapter implements JsonSerializer<WrappedEnchantment>, J
         JsonObject object = jsonElement.getAsJsonObject();
 
         String[] enchant = {null};
-        int level[] = {-1};
+        int[] level = {-1};
 
         Preconditions.checkArgument(object.has("enchant"), "An enchantment needs an enchant field");
         Preconditions.checkArgument(Utils.testRunnable(() -> XEnchantment.valueOf(enchant[0] = object.get("enchant").getAsString())));

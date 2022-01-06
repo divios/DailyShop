@@ -7,27 +7,29 @@ import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.misc.ChatPrompt;
 import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.core_lib.scheduler.Schedulers;
-import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.files.Lang;
-import io.github.divios.lib.dLib.dItem;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.function.Consumer;
+import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 public class customizePerms {
 
-    private static final DailyShop plugin = DailyShop.get();
-
     private final Player p;
-    private final dItem item;
-    private final Consumer<dItem> back;
+    private LinkedList<String> buyPerms;
+    private LinkedList<String> sellPerms;
+    private final BiConsumer<List<String>, List<String>> back;
 
-    public customizePerms(Player p, dItem item, Consumer<dItem> back) {
+    public customizePerms(Player p,
+                          @Nullable List<String> buyPerms,
+                          @Nullable List<String> sellPerms,
+                          BiConsumer<List<String>, List<String>> back) {
         this.p = p;
-        this.item = item;
+        this.buyPerms = buyPerms == null ? null : new LinkedList<>(buyPerms);
+        this.sellPerms = sellPerms == null ? null : new LinkedList<>(sellPerms);
         this.back = back;
 
         init();
@@ -39,14 +41,14 @@ public class customizePerms {
 
         gui.addButton(                                                  // Perms Buy
                 ItemButton.create(
-                        item.getPermsBuy().isPresent() ?
+                        buyPerms != null ?
                                 ItemBuilder.of(XMaterial.PLAYER_HEAD)
                                         .setName(Lang.CUSTOMIZE_PERMS_NAME_BUY.getAsString(p))
                                         .applyTexture("4e68435e9dd05dbe2e7bb45c5d3c95d0c9d8cb4c062d30e9b4aed1ccfa65a49b")
                                         .addLore(Lang.CUSTOMIZE_PERMS_LORE_ON.getAsListString(p))
                                         .addLore("")
-                                        .addLore(item.getPermsBuy().get()
-                                                .stream().map(s -> FormatUtils.color("&f&l" + s))
+                                        .addLore(buyPerms.stream()
+                                                .map(s -> FormatUtils.color("&f&l" + s))
                                                 .collect(Collectors.toList()))
                                 :
                                 ItemBuilder.of(XMaterial.PLAYER_HEAD)
@@ -56,20 +58,18 @@ public class customizePerms {
 
                         , e -> {
 
-                            if (!item.getPermsBuy().isPresent()) { // Boton de habilitar perms
-                                item.setPermsBuy(new ArrayList<>());
+                            if (buyPerms == null) { // Boton de habilitar perms
+                                buyPerms = new LinkedList<>();
                                 refresh();
 
-                            } else if (item.getPermsBuy().isPresent()) {  // Boton de añadir/quitar perms
+                            } else {
                                 if (e.isLeftClick())
 
                                     ChatPrompt.builder()
                                             .withPlayer(p)
                                             .withResponse(s -> {
                                                 if (!s.isEmpty()) {
-                                                    List<String> perms = item.getPermsBuy().get();
-                                                    perms.add(s);
-                                                    item.setPermsBuy(perms);
+                                                    buyPerms.add(s);
                                                 }
                                                 Schedulers.sync().run(this::refresh);
                                             })
@@ -78,15 +78,10 @@ public class customizePerms {
                                             .prompt();
 
                                 else if (e.isRightClick() && !e.isShiftClick()) {
-                                    List<String> s = item.getPermsBuy().get();
-
-                                    if (!s.isEmpty()) {
-                                        s.remove(s.size() - 1);
-                                        item.setPermsBuy(s);
-                                    }
+                                    buyPerms.pollLast();
                                     refresh();
                                 } else if (e.isShiftClick() && e.isRightClick()) {
-                                    item.setPermsBuy(null);
+                                    buyPerms = null;
                                     refresh();
                                 }
 
@@ -96,14 +91,14 @@ public class customizePerms {
 
         gui.addButton(                                                  // Perms Sell
                 ItemButton.create(
-                        item.getPermsSell().isPresent() ?
+                        sellPerms != null ?
                                 ItemBuilder.of(XMaterial.PLAYER_HEAD)
                                         .setName(Lang.CUSTOMIZE_PERMS_NAME_SELL.getAsString(p))
                                         .applyTexture("4e68435e9dd05dbe2e7bb45c5d3c95d0c9d8cb4c062d30e9b4aed1ccfa65a49b")
                                         .addLore(Lang.CUSTOMIZE_PERMS_LORE_ON.getAsListString(p))
                                         .addLore("")
-                                        .addLore(item.getPermsSell().get()
-                                                .stream().map(s -> FormatUtils.color("&f&l" + s))
+                                        .addLore(sellPerms.stream()
+                                                .map(s -> FormatUtils.color("&f&l" + s))
                                                 .collect(Collectors.toList()))
                                 :
                                 ItemBuilder.of(XMaterial.PLAYER_HEAD)
@@ -113,20 +108,18 @@ public class customizePerms {
 
                         , e -> {
 
-                            if (!item.getPermsSell().isPresent()) { // Boton de habilitar perms
-                                item.setPermsSell(new ArrayList<>());
+                            if (sellPerms == null) { // Boton de habilitar perms
+                                sellPerms = new LinkedList<>();
                                 refresh();
 
-                            } else if (item.getPermsSell().isPresent()) {  // Boton de añadir/quitar perms
+                            } else {  // Boton de añadir/quitar perms
                                 if (e.isLeftClick())
 
                                     ChatPrompt.builder()
                                             .withPlayer(p)
                                             .withResponse(s -> {
                                                 if (!s.isEmpty()) {
-                                                    List<String> perms = item.getPermsSell().get();
-                                                    perms.add(s);
-                                                    item.setPermsSell(perms);
+                                                    sellPerms.add(s);
                                                 }
                                                 Schedulers.sync().run(this::refresh);
                                             })
@@ -135,15 +128,10 @@ public class customizePerms {
                                             .prompt();
 
                                 else if (e.isRightClick() && !e.isShiftClick()) {
-                                    List<String> s = item.getPermsSell().get();
-
-                                    if (!s.isEmpty()) {
-                                        s.remove(s.size() - 1);
-                                        item.setPermsSell(s);
-                                    }
+                                    sellPerms.pollLast();
                                     refresh();
                                 } else if (e.isShiftClick() && e.isRightClick()) {
-                                    item.setPermsSell(null);
+                                    sellPerms = null;
                                     refresh();
                                 }
 
@@ -156,7 +144,7 @@ public class customizePerms {
                         ItemBuilder.of(XMaterial.OAK_DOOR)
                                 .setName(Lang.CONFIRM_GUI_RETURN_NAME.getAsString(p))
                                 .setLore(Lang.CONFIRM_GUI_RETURN_PANE_LORE.getAsListString(p))
-                        , e -> back.accept(item)),
+                        , e -> back.accept(buyPerms, sellPerms)),
                 22);
 
         gui.open(p);
@@ -164,7 +152,7 @@ public class customizePerms {
     }
 
     private void refresh() {
-        new customizePerms(p, item, back);
+        init();
     }
 
     public static customizePermsBuilder builder() {
@@ -174,8 +162,9 @@ public class customizePerms {
 
     public static final class customizePermsBuilder {
         private Player p;
-        private dItem item;
-        private Consumer<dItem> back;
+        private List<String> buyPerms;
+        private List<String> sellPerms;
+        private BiConsumer<List<String>, List<String>> back;
 
         private customizePermsBuilder() {
         }
@@ -185,18 +174,23 @@ public class customizePerms {
             return this;
         }
 
-        public customizePermsBuilder withItem(dItem item) {
-            this.item = item;
+        public customizePermsBuilder withBuyPerms(@Nullable List<String> buyPerms) {
+            this.buyPerms = buyPerms;
             return this;
         }
 
-        public customizePermsBuilder withBack(Consumer<dItem> back) {
+        public customizePermsBuilder withSellPerms(@Nullable List<String> sellPerms) {
+            this.sellPerms = sellPerms;
+            return this;
+        }
+
+        public customizePermsBuilder withBack(BiConsumer<List<String>, List<String>> back) {
             this.back = back;
             return this;
         }
 
         public customizePerms open() {
-            return new customizePerms(p, item, back);
+            return new customizePerms(p, buyPerms, sellPerms, back);
         }
     }
 }
