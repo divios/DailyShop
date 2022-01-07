@@ -18,9 +18,9 @@ class TransactionEvent extends Event {
 
 
     TransactionEvent(@NotNull dInventory caller,
-                            @NotNull SingleTransaction.Type type,
-                            @NotNull Player player,
-                            @NotNull dItem item) {
+                     @NotNull SingleTransaction.Type type,
+                     @NotNull Player player,
+                     @NotNull dItem item) {
         this.caller = caller;
         this.type = type;
         this.player = player;

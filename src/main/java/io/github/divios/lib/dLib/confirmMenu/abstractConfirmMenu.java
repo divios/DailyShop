@@ -181,8 +181,8 @@ public abstract class abstractConfirmMenu {
                         .setName(Lang.CONFIRM_GUI_STATS_NAME.getAsString(player))
                         .setLore(Lang.CONFIRM_GUI_STATS_LORE
                                 .getAsListString(player,
-                                        Template.of("price", getFormattedPrice(getItemPrice() * nAddedItems) + " " + item.getEcon().getName()),
-                                        Template.of("quantity", String.valueOf(nAddedItems))
+                                        Template.of("economy", Utils.round(item.getEcon().getBalance(player), 2)),
+                                        Template.of("economy_name", item.getEcon().getName())
                                 )
                         )
                 , e -> {

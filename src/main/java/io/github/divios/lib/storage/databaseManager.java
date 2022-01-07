@@ -63,8 +63,7 @@ public class databaseManager extends DataManagerAbstract {
                                 result.getInt("timer"),
                                 timeStampUtils.deserialize(result.getString("timestamp")));
                     }
-
-                    shop.destroy();
+                    //shop.destroy();
                     shops.add(shop);
                 }
             }

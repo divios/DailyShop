@@ -57,6 +57,7 @@ public abstract class abstractSyncMenu implements syncMenu, Cloneable {
      */
 
     private void ready() {
+        DebugLog.severe("Ready");
         listeners.add(
                 Events.subscribe(InventoryCloseEvent.class)
                         .handler(this::checkClosedInv)
@@ -69,8 +70,10 @@ public abstract class abstractSyncMenu implements syncMenu, Cloneable {
      * @param o The InventoryCloseEvent triggered
      */
     private synchronized void checkClosedInv(InventoryCloseEvent o) {
+        DebugLog.info("Called to inventory close");
         singleGui gui = guis.get(o.getPlayer().getUniqueId());
         if (gui != null && gui.getInventory().getInventory().equals(o.getInventory())) {
+            DebugLog.info("Invalidating inventory for " + o.getPlayer().getName());
             invalidate(o.getPlayer().getUniqueId());
         }
     }
@@ -191,6 +194,7 @@ public abstract class abstractSyncMenu implements syncMenu, Cloneable {
         });
         invalidateAll();
 
+        DebugLog.severe("Destroyed");
         listeners.forEach(Subscription::unregister);
         listeners.clear();
 

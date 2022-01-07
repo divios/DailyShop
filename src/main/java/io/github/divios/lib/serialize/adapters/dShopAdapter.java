@@ -75,7 +75,7 @@ public class dShopAdapter implements JsonSerializer<dShop>, JsonDeserializer<dSh
             try {
                 dItem dItem = gson.fromJson(itemEntry.getValue(), io.github.divios.lib.dLib.dItem.class);
                 deserializedShop.addItem(dItem.setID(itemEntry.getKey()));
-            } catch (Exception e) {
+            } catch (Exception | Error e) {
                 Log.warn("There was a problem parsing the item with id " + itemEntry.getKey());
                 //e.printStackTrace();
                 Log.warn(e.getMessage());

@@ -80,7 +80,9 @@ public class shopsResource {
             currentShop.setItems(shop.getItems());
             if (isNew) currentShop.reStock();
 
-            Log.info("Registered shop of name " + shop.getName() + " with " + shop.getItems().size() + " items");
+            if (isNew)
+                Log.info("Registered shop of name " + shop.getName() + " with " + shop.getItems().size() + " items");
+            else Log.info("Updated shop of name " + shop.getName() + " with " + shop.getItems().size() + " items");
         });
 
         timer.stop();
