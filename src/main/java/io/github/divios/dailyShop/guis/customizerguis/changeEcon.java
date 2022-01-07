@@ -97,7 +97,7 @@ public class changeEcon {
                     ItemButton.create(
                             createEconomyItem(XMaterial.SUNFLOWER, "&f&l" + s),
                             e -> {
-                                if (e.getCurrentItem() == null) return;
+                                if (ItemUtils.isEmpty(e.getCurrentItem())) return;
                                 consumer.accept(Economies.MPoints.getEconomy(
                                         FormatUtils.stripColor(ItemUtils.getName(e.getCurrentItem())))
                                 );
@@ -133,7 +133,7 @@ public class changeEcon {
                     ItemButton.create(
                             createEconomyItem(XMaterial.EMERALD, "&f&l" + s),
                             e -> {
-                                if (e.getCurrentItem() == null) return;
+                                if (ItemUtils.isEmpty(e.getCurrentItem())) return;
                                 consumer.accept(
                                         Economies.gemsEconomy.getEconomy(FormatUtils.stripColor(
                                                 ItemUtils.getName(e.getCurrentItem()))

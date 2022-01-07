@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.*;
 import io.github.divios.core_lib.gson.JsonBuilder;
+import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.synchronizedGui.singleGui.dInventory;
@@ -21,7 +22,7 @@ public class dInventoryAdapter implements JsonSerializer<dInventory>, JsonDeseri
             .registerTypeAdapter(WrappedDButton.class, new dButtonAdapter())
             .create();
 
-    private static final TypeToken<LinkedHashMap<String, dItem>> itemsToken = new TypeToken<LinkedHashMap<String, dItem>>() {
+    private static final TypeToken<LinkedHashMap<String, JsonElement>> diItemsToken = new TypeToken<LinkedHashMap<String, JsonElement>>() {
     };
 
     @Override
@@ -37,8 +38,17 @@ public class dInventoryAdapter implements JsonSerializer<dInventory>, JsonDeseri
 
         Preconditions.checkArgument(size[0] % 9 == 0, "Inventory size must be a multiple of 9");
 
-        if (object.has("items"))
-            buttons.putAll(gson.fromJson(object.get("items").getAsJsonObject(), itemsToken.getType()));
+        Map<String, JsonElement> items = gson.fromJson(object.get("items").getAsJsonObject(), diItemsToken.getType());
+        for (Map.Entry<String, JsonElement> itemEntry : items.entrySet()) {
+            try {
+                buttons.put(itemEntry.getKey(), gson.fromJson(itemEntry.getValue(), dItem.class));
+            } catch (Exception | Error e) {
+                Log.warn("There was a problem parsing the item with id " + itemEntry.getKey());
+                //e.printStackTrace();
+                Log.warn(e.getMessage());
+            }
+        }
+
 
         dInventory inv = new dInventory(title, size[0]);
         buttons.forEach((s, dItem) -> inv.addButton(dItem.setID(s), dItem.getSlot()));

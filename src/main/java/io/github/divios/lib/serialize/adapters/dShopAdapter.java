@@ -6,6 +6,7 @@ import com.google.gson.*;
 import io.github.divios.core_lib.gson.JsonBuilder;
 import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.files.Settings;
+import io.github.divios.dailyShop.utils.DebugLog;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
@@ -61,12 +62,14 @@ public class dShopAdapter implements JsonSerializer<dShop>, JsonDeserializer<dSh
         if (object.has("default")) deserializedShop.setDefault(object.get("default").getAsBoolean());
 
         // Deserialize shop display
+        DebugLog.info("Reading shop from shop " + id);
         if (object.has("shop")) {
             dInventory inv = gson.fromJson(object.get("shop"), dInventory.class);
             deserializedShop.updateShopGui(inv, true);
         }
 
         // Deserialize Items
+        DebugLog.info("Reading items from shop " + id);
         Map<String, JsonElement> items = gson.fromJson(object.get("items").getAsJsonObject(), diItemsToken.getType());
         for (Map.Entry<String, JsonElement> itemEntry : items.entrySet()) {
             try {

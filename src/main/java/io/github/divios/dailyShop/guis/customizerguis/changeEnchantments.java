@@ -96,7 +96,7 @@ public class changeEnchantments {
 
     private dynamicGui.Response contentAction(InventoryClickEvent e) {
 
-        if (e.getCurrentItem() == null) return dynamicGui.Response.nu();
+        if (ItemUtils.isEmpty(e.getCurrentItem())) return dynamicGui.Response.nu();
 
         String s = FormatUtils.stripColor(ItemUtils.getName(e.getCurrentItem()));
 
@@ -126,7 +126,7 @@ public class changeEnchantments {
     }
 
     private dynamicGui.Response contentActionX(InventoryClickEvent e) {
-        if (e.getCurrentItem() == null) return dynamicGui.Response.nu();
+        if (ItemUtils.isEmpty(e.getCurrentItem())) return dynamicGui.Response.nu();
 
         String[] entry = FormatUtils.stripColor(ItemUtils.getName(e.getCurrentItem())).split(":");
         item = ItemUtils.removeEnchant(item, Enchantment.getByName(entry[0]));

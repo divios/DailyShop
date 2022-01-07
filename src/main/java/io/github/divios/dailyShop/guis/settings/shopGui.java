@@ -9,6 +9,7 @@ import io.github.divios.core_lib.inventory.ItemButton;
 import io.github.divios.core_lib.inventory.builder.inventoryPopulator;
 import io.github.divios.core_lib.inventory.builder.paginatedGui;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
+import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.confirmIH;
 import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.dailyShop.DailyShop;
@@ -166,7 +167,7 @@ public class shopGui {
 
     private void contentAction(InventoryClickEvent e) {
 
-        if (e.getCurrentItem() == null) return;
+        if (ItemUtils.isEmpty(e.getCurrentItem())) return;
 
         Player p = (Player) e.getWhoClicked();
 

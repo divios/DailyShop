@@ -83,7 +83,6 @@ public class dButtonAdapter implements JsonSerializer<WrappedDButton>, JsonDeser
         dItem ditem = dItem.of(XMaterial.DIRT_PATH.parseItem());
 
         Preconditions.checkArgument(object.has("material"), "An item needs a material");
-        Preconditions.checkArgument(Utils.testRunnable(() -> XMaterial.valueOf(object.get("material").getAsString())) || object.get("material").getAsString().startsWith("base64:"), "Invalid material");
         Preconditions.checkArgument(object.has("slot"), "An item needs a slot");
 
         if (object.get("material").getAsString().equals("AIR")) {

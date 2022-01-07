@@ -98,7 +98,6 @@ public class dItemAdapter implements JsonSerializer<dItem>, JsonDeserializer<dIt
         JsonObject object = jsonElement.getAsJsonObject();
 
         Preconditions.checkArgument(object.has("material") || object.has("item"), "An item needs a material");
-        Preconditions.checkArgument(Utils.testRunnable(() -> XMaterial.valueOf(object.get("material").getAsString())) || object.get("material").getAsString().startsWith("base64:"), "Invalid material");
 
         dItem ditem;
 

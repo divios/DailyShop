@@ -2,6 +2,7 @@ package io.github.divios.dailyShop.guis.customizerguis;
 
 import com.cryptomorin.xseries.XMaterial;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
+import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.ChatPrompt;
 import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.core_lib.misc.confirmIH;
@@ -342,7 +343,7 @@ public class customizeGui implements Listener, InventoryHolder {
             return;
         }
 
-        if (e.getCurrentItem() != null
+        if (!ItemUtils.isEmpty(e.getCurrentItem())
                 && _gui.getButtonsSlots().get(e.getSlot()).isAir())
             return;
 

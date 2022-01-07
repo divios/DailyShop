@@ -26,6 +26,7 @@ public class WrappedNBT {
         nbt.remove("rds_id");
         nbt.remove("display");
         nbt.remove("Enchantments");
+        nbt.remove("Potion");
         nbt.remove("SkullOwner");
         nbt.remove("BlockEntityTag");
         nbt.remove("ms_mob");
