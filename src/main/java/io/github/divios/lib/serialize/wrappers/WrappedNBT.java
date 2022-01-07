@@ -25,6 +25,7 @@ public class WrappedNBT {
     private void removeDailyNBT() {
         nbt.remove("rds_id");
         nbt.remove("display");
+        nbt.remove("Enchantments");
         nbt.remove("SkullOwner");
         nbt.remove("BlockEntityTag");
         nbt.remove("ms_mob");

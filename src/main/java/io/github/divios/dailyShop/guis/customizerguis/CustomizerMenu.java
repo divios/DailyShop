@@ -226,6 +226,7 @@ public class CustomizerMenu {
 
                                 changeEnchantments.builder()
                                         .withPlayer(p)
+                                        .withItem(item.getItem())
                                         .withAccept(itemStack -> {
                                             item.setItem(itemStack);
                                             refresh();
@@ -237,6 +238,7 @@ public class CustomizerMenu {
 
                                 changeEnchantments.builder()
                                         .withPlayer(p)
+                                        .withItem(item.getItem())
                                         .withEnchants(item.getItem().getEnchantments())
                                         .withAccept(itemStack -> {
                                             item.setItem(itemStack);

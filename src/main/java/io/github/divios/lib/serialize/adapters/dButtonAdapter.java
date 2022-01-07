@@ -13,10 +13,7 @@ import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.jcommands.utils.Primitives;
 import io.github.divios.lib.dLib.dAction;
 import io.github.divios.lib.dLib.dItem;
-import io.github.divios.lib.serialize.wrappers.WrappedDButton;
-import io.github.divios.lib.serialize.wrappers.WrappedEnchantment;
-import io.github.divios.lib.serialize.wrappers.WrappedItemFlags;
-import io.github.divios.lib.serialize.wrappers.WrappedNBT;
+import io.github.divios.lib.serialize.wrappers.*;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
@@ -101,7 +98,7 @@ public class dButtonAdapter implements JsonSerializer<WrappedDButton>, JsonDeser
             itemSkull = ItemUtils.applyTexture(itemSkull, material.replace("base64:", ""));
             ditem.setItem(itemSkull);
         } else
-            ditem.setItem(ItemUtils.setMaterial(ditem.getItem(), XMaterial.valueOf(material)));
+            ditem.setItem(WrappedMaterial.of(material).parseItem());
 
         if (object.has("name"))
             ditem.setItem(ItemUtils.setName(ditem.getItem(), Utils.JTEXT_PARSER.parse(object.get("name").getAsString())));

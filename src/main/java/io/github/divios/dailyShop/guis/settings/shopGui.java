@@ -13,6 +13,7 @@ import io.github.divios.core_lib.misc.confirmIH;
 import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.files.Lang;
+import io.github.divios.dailyShop.files.Settings;
 import io.github.divios.dailyShop.guis.customizerguis.CustomizerMenu;
 import io.github.divios.dailyShop.lorestategy.shopItemsManagerLore;
 import io.github.divios.lib.dLib.dItem;
@@ -148,7 +149,10 @@ public class shopGui {
                                                 .applyTexture("9b425aa3d94618a87dac9c94f377af6ca4984c07579674fad917f602b7bf235"),
 
                                         e -> addDailyGuiIH.open(p, shop, itemStack -> {
-                                            shop.addItem(dItem.of(itemStack));
+                                            shop.addItem(dItem.of(itemStack)
+                                                    .setBuyPrice(Settings.DEFAULT_BUY.getValue().getAsDouble())
+                                                    .setSellPrice(Settings.DEFAULT_SELL.getValue().getAsDouble())
+                                            );
                                             serializerApi.saveShopToFileAsync(shop);
                                             refresh();
                                         }, this::refresh)), 53)
