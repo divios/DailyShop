@@ -16,11 +16,16 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import java.io.File;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public class serializerApi {
 
     private static final DailyShop plugin = DailyShop.get();
     private static final Lazy<File> shopsFolder = Lazy.suppliedBy(() -> new File(plugin.getDataFolder(), "shops"));
+
+    protected static final ExecutorService asyncPool = Executors.newSingleThreadExecutor();
 
     private static final Gson gson = new GsonBuilder()
             .registerTypeHierarchyAdapter(dShop.class, new dShopAdapter())
@@ -44,11 +49,12 @@ public class serializerApi {
     }
 
     public static void saveShopToFileAsync(dShop shop) {
-        Schedulers.async().run(() -> saveShopToFile(shop));
+        asyncPool.submit(() -> saveShopToFile(shop));
     }
 
-    public static CompletableFuture<dShop> getShopFromFileAsync(File data) {
-        return CompletableFuture.supplyAsync(() -> getShopFromFile(data));
+    public static Future<dShop> getShopFromFileAsync(File data) {
+        dShop[] shop = {null};
+        return asyncPool.submit(() -> shop[0] = getShopFromFile(data), shop[0]);
     }
 
     public static void deleteShop(String name) {
@@ -61,6 +67,10 @@ public class serializerApi {
                 break;
             }
         }
+    }
+
+    public static void deleteShopAsync(String name) {
+        asyncPool.submit(() -> deleteShop(name));
     }
 
 }

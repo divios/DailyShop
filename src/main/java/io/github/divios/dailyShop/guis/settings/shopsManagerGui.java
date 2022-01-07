@@ -172,7 +172,7 @@ public class shopsManagerGui {
                     .withAction(aBoolean -> {
                         if (aBoolean) {
                             DailyShop.get().getShopsManager().deleteShop(shop.getName());
-                            serializerApi.deleteShop(shop.getName());
+                            serializerApi.deleteShopAsync(shop.getName());
                         }
                         refresh(p);
                     })
