@@ -9,7 +9,7 @@ import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.files.Lang;
 import io.github.divios.dailyShop.utils.FutureUtils;
-import io.github.divios.dailyShop.utils.PriceWrapper;
+import io.github.divios.dailyShop.utils.PrettyPrice;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.log.options.LogOptions;
 import io.github.divios.lib.dLib.log.options.LogOptionsGui;
@@ -62,7 +62,7 @@ public class LogGui {
                                                         "&7ID: &e" + dLogEntry.getItemID(),
                                                         "&7Quantity: &e" + dLogEntry.getQuantity(),
                                                         "&7Type: &e" + dLogEntry.getType(),
-                                                        "&7Price: &e" + PriceWrapper.format(dLogEntry.getPrice()),
+                                                        "&7Price: &e" + PrettyPrice.pretty(dLogEntry.getPrice()),
                                                         "&7TimeStamp &e" + new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(dLogEntry.getTimestamp())
                                                 ),
                                         e -> {

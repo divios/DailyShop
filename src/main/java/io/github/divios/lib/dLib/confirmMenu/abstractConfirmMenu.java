@@ -9,7 +9,7 @@ import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.files.Lang;
-import io.github.divios.dailyShop.utils.PriceWrapper;
+import io.github.divios.dailyShop.utils.PrettyPrice;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.jtext.wrappers.Template;
 import io.github.divios.lib.dLib.dItem;
@@ -223,7 +223,7 @@ public abstract class abstractConfirmMenu {
     }
 
     private String getFormattedPrice(double value) {
-        return PriceWrapper.format(value);
+        return PrettyPrice.pretty(value);
     }
 
     protected abstract double getItemPrice();

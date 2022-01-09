@@ -16,6 +16,7 @@ import io.github.divios.core_lib.misc.XSymbols;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.economies.Economies;
 import io.github.divios.dailyShop.economies.Economy;
+import io.github.divios.dailyShop.utils.PrettyPrice;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.priceModifiers.priceModifier;
 import io.github.divios.lib.dLib.stock.dStock;
@@ -250,9 +251,9 @@ public class dItem implements Cloneable {
 
     public String getVisualBuyPrice() {
         return buyPrice == null ? FormatUtils.color("&c" + XSymbols.TIMES_3.parseSymbol()) :
-                buyPrice.isRandomFlag() ?
-                        "" + Utils.round(buyPrice.getMinPrice(), 2) + " - " + Utils.round(buyPrice.getMaxPrice(), 2)
-                        : "" + Utils.round(buyPrice.getActualPrice(), 2);
+                buyPrice.isRandomFlag()
+                        ? PrettyPrice.pretty(buyPrice.getMinPrice()) + " - " + PrettyPrice.pretty(buyPrice.getMaxPrice())
+                        : PrettyPrice.pretty(buyPrice.getActualPrice());
     }
 
     public double getPlayerBuyPrice(@Nullable Player p, @Nullable dShop shop) {
@@ -275,9 +276,9 @@ public class dItem implements Cloneable {
 
     public String getVisualSellPrice() {
         return sellPrice == null ? FormatUtils.color("&c" + XSymbols.TIMES_3.parseSymbol()) :
-                sellPrice.isRandomFlag() ?
-                        "" + Utils.round(sellPrice.getMinPrice(), 2) + " - " + Utils.round(sellPrice.getMaxPrice(), 2)
-                        : "" + Utils.round(sellPrice.getActualPrice(), 2);
+                sellPrice.isRandomFlag()
+                        ? PrettyPrice.pretty(sellPrice.getMinPrice()) + " - " + PrettyPrice.pretty(sellPrice.getMaxPrice())
+                        : PrettyPrice.pretty(sellPrice.getActualPrice());
     }
 
     public double getPlayerSellPrice(Player p, dShop shop) {

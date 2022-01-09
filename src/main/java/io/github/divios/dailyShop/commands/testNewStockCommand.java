@@ -6,6 +6,8 @@ import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.economies.Economies;
 import io.github.divios.dailyShop.economies.Economy;
 import io.github.divios.dailyShop.files.Settings;
+import io.github.divios.dailyShop.utils.DebugLog;
+import io.github.divios.dailyShop.utils.PrettyPrice;
 import io.github.divios.jcommands.JCommand;
 import io.github.divios.lib.dLib.dAction;
 import io.github.divios.lib.dLib.dItem;
@@ -15,6 +17,7 @@ import io.github.divios.lib.dLib.stock.dStock;
 import io.github.divios.lib.dLib.stock.factory.dStockFactory;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.junit.Assert;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -60,6 +63,8 @@ public class testNewStockCommand {
                     testUnmodifiableItem();
                     testUnmodifiableStock();
                     testUnmodifiablePrice();
+
+                    testPricePretty();
                 });
     }
 
@@ -350,6 +355,16 @@ public class testNewStockCommand {
             Log.info("Test successfully");
         else
             Log.severe("Test Unsuccessfully");
+    }
+
+    private void testPricePretty() {
+        DebugLog.info(String.valueOf(Settings.INTEGER_VAL.getValue().getAsBoolean()));
+        double d = 5000.00;
+        String expect = Settings.INTEGER_VAL.getValue().getAsBoolean()
+                ? "5.000"
+                : "5.000,00";
+
+        Assert.assertEquals(expect, PrettyPrice.pretty(d));
     }
 
 

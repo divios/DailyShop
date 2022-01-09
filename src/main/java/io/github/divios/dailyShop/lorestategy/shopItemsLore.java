@@ -4,6 +4,7 @@ import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.core_lib.misc.XSymbols;
 import io.github.divios.dailyShop.files.Lang;
+import io.github.divios.dailyShop.utils.PrettyPrice;
 import io.github.divios.jcommands.utils.Primitives;
 import io.github.divios.jtext.wrappers.Template;
 import io.github.divios.lib.dLib.dItem;
@@ -50,7 +51,7 @@ public class shopItemsLore {
     private static String getItemBuyPrice(dItem item, Player p, dShop shop) {
         double price;
         if ((price = item.getPlayerBuyPrice(p, shop)) > 0)
-            return Primitives.getAsString(price);
+            return PrettyPrice.pretty(price);
         else
             return getRedCross();
     }
@@ -58,7 +59,7 @@ public class shopItemsLore {
     private static String getItemSellPrice(dItem item, Player p, dShop shop) {
         double price;
         if ((price = item.getPlayerSellPrice(p, shop)) > 0)
-            return Primitives.getAsString(price);
+            return PrettyPrice.pretty(price);
         else
             return getRedCross();
     }

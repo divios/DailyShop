@@ -5,6 +5,7 @@ import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.dailyShop.files.Lang;
 import io.github.divios.dailyShop.files.Messages;
 import io.github.divios.dailyShop.utils.DebugLog;
+import io.github.divios.dailyShop.utils.PrettyPrice;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.jtext.wrappers.Template;
 import io.github.divios.lib.dLib.dItem;
@@ -198,7 +199,7 @@ public class SingleTransaction {
                     Template.of("action", Lang.BUY_ACTION_NAME.getAsString(player)),
                     Template.of("item", ItemUtils.getName(item.getItem())),
                     Template.of("amount", amount),
-                    Template.of("price", finalPrice),
+                    Template.of("price", PrettyPrice.pretty(finalPrice)),
                     Template.of("currency", item.getEcon().getName())
             );
             DebugLog.info("Buy transaction finished on : " + (new Timestamp(System.currentTimeMillis()).getTime() - timestamp.getTime()) + " ms");
@@ -249,7 +250,7 @@ public class SingleTransaction {
                     Template.of("action", Lang.SELL_ACTION_NAME.getAsString(player)),
                     Template.of("item", ItemUtils.getName(item.getItem())),
                     Template.of("amount", amount),
-                    Template.of("price", finalPrice),
+                    Template.of("price", PrettyPrice.pretty(finalPrice)),
                     Template.of("currency", item.getEcon().getName())
             );
             DebugLog.info("Buy transaction finished on : " + (new Timestamp(System.currentTimeMillis()).getTime() - timestamp.getTime()) + " ms");
