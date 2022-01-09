@@ -2,11 +2,13 @@ package io.github.divios.dailyShop.commands;
 
 import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.dailyShop.DailyShop;
+import io.github.divios.dailyShop.files.Messages;
 import io.github.divios.jcommands.JCommand;
 import io.github.divios.jcommands.arguments.Argument;
 import io.github.divios.jcommands.arguments.types.PlayerArgument;
 import io.github.divios.jcommands.arguments.types.StringArgument;
 import io.github.divios.lib.dLib.dShop;
+import org.bukkit.entity.Player;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -33,7 +35,13 @@ public class openCommand {
                 .withArguments(getShopsArgument())
                 .executesPlayer((player, values) ->
                         DailyShop.get().getShopsManager().getShop(values.get("dailyShop").getAsString())
-                                .ifPresent(shop -> shop.openShop(player)));
+                                .ifPresent(shop -> {
+                                    if (!player.hasPermission("DailyRandomShop.open." + shop.getName())) {
+                                        Messages.MSG_NOT_PERMS.send(player);
+                                        return;
+                                    }
+                                    shop.openShop(player);
+                                }));
     }
 
     private JCommand getOtherCommand() {
@@ -43,7 +51,10 @@ public class openCommand {
                 .withArguments(getShopsArgument(), new PlayerArgument("target"))
                 .executes((commandSender, args) -> {
                     DailyShop.get().getShopsManager().getShop(args.get("dailyShop").getAsString())
-                            .ifPresent(shop -> shop.openShop(args.get("target").getAsPlayer()));
+                            .ifPresent(shop -> {
+                                Player p = args.get("target").getAsPlayer();
+                                shop.openShop(p);
+                            });
                 });
     }
 
