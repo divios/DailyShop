@@ -12,6 +12,7 @@ import io.github.divios.dailyShop.files.Messages;
 import io.github.divios.dailyShop.lorestategy.shopItemsLore;
 import io.github.divios.dailyShop.utils.DebugLog;
 import io.github.divios.dailyShop.utils.PlaceholderAPIWrapper;
+import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.dLib.dTransaction.SingleTransaction;
@@ -144,7 +145,7 @@ public class singleGuiImpl implements singleGui, Cloneable {
                     oldItem = dItem.getItemWithId();
 
                 newItem = ItemBuilder.of(oldItem).setLore(Collections.emptyList());
-                newItem = newItem.setName(PlaceholderAPIWrapper.setPlaceholders(p, ItemUtils.getName(oldItem)));
+                newItem = newItem.setName(Utils.JTEXT_PARSER.parse(ItemUtils.getName(oldItem), p));
 
                 for (String s : ItemUtils.getLore(oldItem))
                     newItem = newItem.addLore(PlaceholderAPIWrapper.setPlaceholders(p, s));
