@@ -296,7 +296,7 @@ public class dShop {
                 );
 
             dLog.log(
-                    dLogEntry.builder()
+                    dLogEntry.createEntry()
                             .withPlayer(bill.getPlayer())
                             .withShopID(name)
                             .withItemID(s)
@@ -304,7 +304,7 @@ public class dShop {
                             .withQuantity(entry.getValue())
                             .withType(dLogEntry.Type.valueOf(bill.getType().name()))
                             .withPrice(entry.getKey())
-                            .build()
+                            .create()
             );
         });
     }

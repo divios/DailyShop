@@ -75,7 +75,7 @@ public class dLogEntry {
         return timestamp;
     }
 
-    public static dLogEntryBuilder builder() {
+    public static dLogEntryBuilder createEntry() {
         return new dLogEntryBuilder();
     }
 
@@ -154,7 +154,7 @@ public class dLogEntry {
             return this;
         }
 
-        public dLogEntry build() {
+        public dLogEntry create() {
 
             Preconditions.checkNotNull(p, "player");
             Preconditions.checkNotNull(shopID, "shopID");

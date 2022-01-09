@@ -329,7 +329,7 @@ public class databaseManager extends DataManagerAbstract {
                         e.printStackTrace();
                     }
 
-                    dLogEntry entry = dLogEntry.builder()
+                    dLogEntry entry = dLogEntry.createEntry()
                             .withPlayer(result.getString("player"))
                             .withShopID(result.getString("shopID"))
                             .withItemID(result.getString("itemUUID"))
@@ -338,7 +338,7 @@ public class databaseManager extends DataManagerAbstract {
                             .withPrice(result.getDouble("price"))
                             .withQuantity(result.getInt("quantity"))
                             .withTimestamp(timestamp == null ? new Timestamp(System.currentTimeMillis()) : timestamp)
-                            .build();
+                            .create();
 
                     entries.push(entry);
                 }

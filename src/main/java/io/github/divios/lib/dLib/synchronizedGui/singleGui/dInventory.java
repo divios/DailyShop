@@ -305,6 +305,7 @@ public class dInventory implements Cloneable {
     protected void restock(@NotNull Set<dItem> itemsToRoll) {
         if (dailyItemsSlots.isEmpty()) return;
 
+        DebugLog.info("ItemsToRoll size: " + itemsToRoll);
         removeAirItems();     // Just in case
         removeDailyItems();
 
@@ -637,7 +638,7 @@ public class dInventory implements Cloneable {
 
         } catch (Exception | Error e) {
             Log.severe("Unable to deserialize gui of shop "
-                    + shop.getName() + ", . Probably is caused by a server downgrade? Setting it to default");
+                    + shop.getName() + ", . Probably caused by a server downgrade? Setting it to default");
             //e.printStackTrace();
             return new dInventory(shop.getName(), 27);
         }

@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 @SuppressWarnings("unused")
 public class DebugLog {
 
-    private static final String PREFIX = "&8Debug > ";
+    private static final String PREFIX = "&7Debug > ";
 
     private static boolean isDebugEnabled() {
         return Settings.DEBUG.getValue().getAsBoolean();
