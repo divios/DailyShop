@@ -182,7 +182,7 @@ public class SingleTransaction {
 
                 int aux = amount;
                 while (aux != 0) {
-                    int toRemove = (aux / 64) < 1 ? amount : 64;
+                    int toRemove = (aux / 64) < 1 ? aux : 64;
                     itemToGive.setAmount(toRemove);
 
                     if (!inv.addItem(itemToGive).isEmpty()) {

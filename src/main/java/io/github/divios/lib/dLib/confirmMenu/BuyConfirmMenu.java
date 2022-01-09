@@ -4,12 +4,16 @@ import io.github.divios.core_lib.events.Events;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.dailyShop.files.Lang;
 import io.github.divios.dailyShop.utils.CompareItemUtils;
+import io.github.divios.dailyShop.utils.DebugLog;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.player.PlayerAchievementAwardedEvent;
+import org.bukkit.event.player.PlayerAdvancementDoneEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.Inventory;
@@ -64,6 +68,16 @@ public class BuyConfirmMenu extends abstractConfirmMenu {
 
     public BuyConfirmMenu(dShop shop, Player player, dItem item, Consumer<Integer> onCompleteAction, Runnable fallback) {
         super(shop, player, item, onCompleteAction, fallback);
+
+        Events.subscribe(InventoryCloseEvent.class)
+                .biHandler((o, e) -> {
+                    if (e.getPlayer().getUniqueId().equals(player.getUniqueId())
+                            && super.menu.getInventory().equals(e.getInventory())) {
+                        DebugLog.info("Inventory close event inside buyconfirmMenu");
+                        removeMarkedItems(Arrays.asList(player.getInventory().getContents()));
+                        o.unregister();
+                    }
+                });
     }
 
     @Override
