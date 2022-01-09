@@ -9,6 +9,7 @@ import io.github.divios.jcommands.JCommands;
 import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.dLib.priceModifiers.priceModifierManager;
 import io.github.divios.lib.managers.shopsManager;
+import io.github.divios.lib.serialize.serializerApi;
 import io.github.divios.lib.storage.databaseManager;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
@@ -83,6 +84,7 @@ public class DailyShop extends JavaPlugin {
         sManager.saveAllShopsToDatabase();
         dManager.finishAsyncQueries();
         sManager.getShops().forEach(dShop::destroy);
+        serializerApi.shutdown();
     }
 
     public void reload() {

@@ -15,10 +15,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.util.Objects;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
 
 public class serializerApi {
 
@@ -71,6 +68,15 @@ public class serializerApi {
 
     public static void deleteShopAsync(String name) {
         asyncPool.submit(() -> deleteShop(name));
+    }
+
+    public static void shutdown() {
+        asyncPool.shutdown();
+        try {
+            asyncPool.awaitTermination(3, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
 }
