@@ -45,6 +45,7 @@ repositories {
 
 dependencies {
     compileOnly group: "org.spigotmc", name: "spigot-api", version: "1.18-R0.1-SNAPSHOT"
+    compileOnly 'org.spigotmc:spigot:1.18-R0.1-SNAPSHOT'
     compileOnly 'com.github.MilkBowl:VaultAPI:1.7'
     compileOnly 'me.clip:placeholderapi:2.11.1'
     compileOnly 'com.mojang:authlib:1.5.21'
@@ -105,7 +106,7 @@ task updateJars {
         // MAC
         copy {
             from 'build/libs/DailyShop-' + pluginVersion + "-all.jar"
-            into '/Users/sergiobernalparrondo/Desktop/servers/server-1.12/plugins'
+            into '/Users/sergiobernalparrondo/Desktop/servers/server-1.18/plugins'
             rename("DailyShop-" + pluginVersion + "-all.jar"
                     , "DailyShop-" + pluginVersion + ".jar")
         }

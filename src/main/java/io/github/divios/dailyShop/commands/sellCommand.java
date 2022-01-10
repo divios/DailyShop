@@ -2,6 +2,7 @@ package io.github.divios.dailyShop.commands;
 
 import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.dailyShop.DailyShop;
+import io.github.divios.dailyShop.guis.customizerguis.dragAndSellGui;
 import io.github.divios.jcommands.JCommand;
 import io.github.divios.lib.dLib.dShop;
 import org.bukkit.inventory.ItemStack;
@@ -56,7 +57,7 @@ public class sellCommand {
                 .assertPermission("DailyRandomShop.sell.gui")
                 .assertUsage(FormatUtils.color("&8- &6/rdshop open [shop] [player] &8- &7Opens a gui for yourself or for the given player"))
                 .executesPlayer((player, valueMap) -> {
-                    // TODO
+                    dragAndSellGui.promptGui(player);
                 });
     }
 

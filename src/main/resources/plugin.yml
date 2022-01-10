@@ -25,3 +25,11 @@ permissions:
     default: op
   DailyRandomShop.import:
     default: op
+  DailyRandomShop.sell:
+    default: op
+  DailyRandomShop.sell.gui:
+    default: op
+  DailyRandomShop.sell.hand:
+    default: op
+  DailyRandomShop.sell.all:
+    default: op

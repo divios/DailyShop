@@ -134,26 +134,27 @@ public class singleGuiImpl implements singleGui, Cloneable {
     public void updateTask() {
         Set<Integer> dailySlots = own.dailyItemsSlots;
 
-        own.buttonsSlot.forEach((integer, dItem) -> {
-            if (dItem.isAir()) return;
-            try {
-                ItemStack oldItem;
-                ItemBuilder newItem;
-                if (dailySlots.contains(integer)) {
-                    oldItem = shopItemsLore.applyLore(dItem, p, shop);
-                } else
-                    oldItem = dItem.getItemWithId();
+        own.buttonsSlot
+                .forEach((integer, dItem) -> {
+                    if (dItem.isAir()) return;
+                    try {
+                        ItemStack oldItem;
+                        ItemBuilder newItem;
+                        if (dailySlots.contains(integer)) {
+                            newItem = ItemBuilder.of(shopItemsLore.applyLore(dItem, p, shop));
+                        } else {
+                            oldItem = dItem.getItemWithId();
 
-                newItem = ItemBuilder.of(oldItem).setLore(Collections.emptyList());
-                newItem = newItem.setName(Utils.JTEXT_PARSER.parse(ItemUtils.getName(oldItem), p));
+                            newItem = ItemBuilder.of(oldItem).setLore(Collections.emptyList());
+                            if (ItemUtils.getMetadata(newItem).hasDisplayName())
+                                newItem = newItem.setName(Utils.JTEXT_PARSER.parse(ItemUtils.getName(oldItem), p));
 
-                for (String s : ItemUtils.getLore(oldItem))
-                    newItem = newItem.addLore(PlaceholderAPIWrapper.setPlaceholders(p, s));
-
-                own.getInventory().setItem(integer, newItem);
-            } catch (Exception ignored) {
-            }
-        });
+                            for (String s : ItemUtils.getLore(oldItem))
+                                newItem = newItem.addLore(Utils.JTEXT_PARSER.parse(s, p));
+                        }
+                        own.getInventory().setItem(integer, newItem);
+                    } catch (Exception ignored) {}
+                });
 
     }
 

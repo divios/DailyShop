@@ -158,6 +158,17 @@ public class dShop {
                 .collect(Collectors.toSet());
     }
 
+    public @NotNull
+    Set<dItem> getCurrentItems() {
+        Collection<dItem> button = guis.getDefault().getButtons().values();
+        Set<Integer> dailySlots = guis.getDefault().getDailyItemsSlots();
+
+        return button.stream()
+                .filter(dItem -> dailySlots.contains(dItem.getSlot()))
+                .map(dItem::clone)
+                .collect(Collectors.toSet());
+    }
+
     /**
      * Gets the item by ID
      *

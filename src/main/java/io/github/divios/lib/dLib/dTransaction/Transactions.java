@@ -10,6 +10,8 @@ public interface Transactions {
         return new SellTransaction();
     }
 
-    static SingleTransaction.SingleTransactionBuilder Custom() { return SingleTransaction.create(); }
+    static SingleTransaction.SingleTransactionBuilder Custom() {
+        return SingleTransaction.create();
+    }
 
 }
