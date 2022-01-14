@@ -114,7 +114,14 @@ public class dInventory implements Cloneable {
         this.buttons = buttons;
         this.buttonsSlot = buttonsSlot;
 
+        createInventory();
         createListeners();
+    }
+
+    private void createInventory() {
+        Inventory aux = inv;
+        inv = Bukkit.createInventory(null, aux.getSize(), Utils.JTEXT_PARSER.parse(title));
+        inv.setContents(aux.getContents());
     }
 
     /**
@@ -406,16 +413,7 @@ public class dInventory implements Cloneable {
         try {
             dInventory clone = (dInventory) super.clone();
 
-            clone.inv = inventoryUtils.cloneInventory(inv, title);
-
-            //clone.dailyItemsSlots = (TreeSet<Integer>) dailyItemsSlots.clone();       // Shouldn't be necessary to
-            // deep copy this, can be shared
-            //clone.buttons = new ConcurrentHashMap<>();
-            //buttons.forEach((uuid, dItem) -> clone.buttons.put(uuid, dItem.clone()));
-
-            //clone.buttonsSlot = new ConcurrentHashMap<>();
-            //buttonsSlot.forEach((integer, dItem) -> clone.buttonsSlot.put(integer, dItem.clone()));
-
+            clone.inv = inventoryUtils.cloneInventory(inv, Utils.JTEXT_PARSER.parse(title));
             clone.listeners = new HashSet<>();
             clone.createListeners();
 
