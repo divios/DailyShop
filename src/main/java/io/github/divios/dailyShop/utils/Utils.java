@@ -45,7 +45,8 @@ public class Utils {
                 .withTag("\\{", "\\}")
                 .parseChatColors()
                 .parseHexColors()
-                .parsePlaceholderAPI();
+                .parsePlaceholderAPI()
+                .parseWithAdventure();
     }
 
     public static void sendRawMsg(Player p, String s) {
