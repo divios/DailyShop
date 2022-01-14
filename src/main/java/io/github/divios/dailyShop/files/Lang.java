@@ -162,7 +162,7 @@ public enum Lang {
     public List<String> getAsListString(Player p, Template... templates) {
         return Utils.JTEXT_PARSER
                 .withTemplate(templates)
-                .parse(getListStringFromPath());
+                .parse(getListStringFromPath(), p);
     }
 
     private String getStringFromPath() {

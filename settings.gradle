@@ -1,1 +1,6 @@
 rootProject.name = 'DailyShop'
+
+// NMS
+//include ':NMS'
+//include ':NMS:NMS-v1_17_R1'
+//include ':NMS:NMS-v1_18_R1'

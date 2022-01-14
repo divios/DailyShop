@@ -33,6 +33,7 @@ public abstract class abstractConfirmMenu {
     protected final dItem item;
     protected final Consumer<Integer> onCompleteAction;
     protected final Runnable fallback;
+    protected boolean confirmButton = false;
 
     protected int nAddedItems = 0;
     protected InventoryGUI menu;
@@ -142,6 +143,7 @@ public abstract class abstractConfirmMenu {
                         fallback.run();
                         return;
                     }
+                    confirmButton = true;
                     removeAddedItems();
                     onCompleteAction.accept(nAddedItems);
                 }));
