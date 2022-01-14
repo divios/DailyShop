@@ -19,6 +19,7 @@ import java.util.function.Consumer;
 @SuppressWarnings({"unused"})
 public class SellConfirmMenu extends abstractConfirmMenu {
 
+    private static final int MAX_SELL_ITEMS = 9 * 4 * 64;
     private static final Map<UUID, List<ItemStack>> retrievedItemsCache = new ConcurrentHashMap<>();
 
     /*static {

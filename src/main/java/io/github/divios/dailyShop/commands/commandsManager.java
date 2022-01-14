@@ -5,9 +5,6 @@ import com.cryptomorin.xseries.XMaterial;
 import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.jcommands.JCommand;
-import net.minecraft.network.protocol.game.PacketPlayOutSetSlot;
-import org.bukkit.craftbukkit.v1_18_R1.entity.CraftPlayer;
-import org.bukkit.craftbukkit.v1_18_R1.inventory.CraftItemStack;
 
 public class commandsManager {
 
@@ -22,10 +19,6 @@ public class commandsManager {
                 .withSubcommands(new importShops().getCommand())
                 .withSubcommands(new reloadCommand().getCommand())
                 .withSubcommands(new sellCommand().getCommand())
-                .withSubcommands(new JCommand("packetTest").executesPlayer((player, valueMap) -> {
-                    ReflectionUtils.sendPacket(player, new PacketPlayOutSetSlot(0, 0, 36, CraftItemStack.asNMSCopy(XMaterial.DIRT.parseItem())));
-                    Schedulers.sync().runLater(player::updateInventory, 40);
-                }))          // TODO remove
                 .withSubcommands(new testNewStockCommand().getCommand())
                 .executes((sender, valueMap) -> {
                     sender.sendMessage(FormatUtils.color("&8 ------- &6 Help &8 -------"));

@@ -182,7 +182,7 @@ public class SingleTransaction {
 
                 int aux = amount;
                 while (aux != 0) {
-                    int toRemove = (aux / 64) < 1 ? aux : 64;
+                    int toRemove = Math.min(64, aux);
                     itemToGive.setAmount(toRemove);
 
                     if (!inv.addItem(itemToGive).isEmpty()) {
@@ -237,14 +237,14 @@ public class SingleTransaction {
             double finalPrice = baseCost * amount;
             bill.withItem(item.getID(), finalPrice, amount);
 
-            if (ItemUtils.count(player.getInventory(), item.getItem()) < amount) {
+            /*if (ItemUtils.count(player.getInventory(), item.getItem()) < amount) {
                 onFail.accept(item, TransactionError.noEnoughItems);
                 return;
-            }
+            } */
 
             item.getEcon().depositMoney(player, finalPrice);
 
-            ItemUtils.remove(player.getInventory(), item.getItem(), amount);
+            //ItemUtils.remove(player.getInventory(), item.getItem(), amount);   // Is already removed
 
             Messages.MSG_BUY_ITEM.send(player,
                     Template.of("action", Lang.SELL_ACTION_NAME.getAsString(player)),

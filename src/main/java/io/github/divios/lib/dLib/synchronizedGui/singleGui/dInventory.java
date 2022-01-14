@@ -515,28 +515,7 @@ public class dInventory implements Cloneable {
                             if (dailyItemsSlots.contains(e.getSlot())) {
                                 if (e.isLeftClick()) {
 
-                                    DebugLog.info("ItemClicked: " + itemClicked.toJson());
-
-                                    if (!meetsPermissions(player, itemClicked.getBuyPerms())) {
-                                        Messages.MSG_NOT_PERMS.send(player);
-                                        return;
-                                    }
-
-                                    if (itemClicked.getDStock() != null && itemClicked.getPlayerStock(player) <= 0) {
-                                        Messages.MSG_NOT_STOCK.send(player);
-                                        return;
-                                    }
-
-                                    if (itemClicked.getBuyPrice() <= 0) {
-                                        Messages.MSG_INVALID_BUY.send(player);
-                                        return;
-                                    }
-
-                                    if (Arrays.stream(Arrays.copyOf(player.getInventory().getContents(), 36))
-                                            .noneMatch(Objects::isNull)) {
-                                        Messages.MSG_INV_FULL.send(player);
-                                        return;
-                                    }
+                                    if (!buyPreconditions(itemClicked, player)) return;
 
                                     Events.callEvent(new TransactionEvent(this,
                                             SingleTransaction.Type.BUY,
@@ -545,20 +524,7 @@ public class dInventory implements Cloneable {
                                     ));
 
                                 } else if (e.isRightClick()) {
-                                    if (!meetsPermissions(player, itemClicked.getSellPerms())) {
-                                        Messages.MSG_NOT_PERMS.send(player);
-                                        return;
-                                    }
-
-                                    if (itemClicked.getSellPrice() <= 0) {
-                                        Messages.MSG_INVALID_SELL.send(player);
-                                        return;
-                                    }
-
-                                    if (ItemUtils.count(player.getInventory(), itemClicked.getItem()) <= 0) {
-                                        Messages.MSG_NOT_ITEMS.send(player);
-                                        return;
-                                    }
+                                    if (!sellPreconditions(itemClicked, player)) return;
 
                                     Events.callEvent(new TransactionEvent(this,
                                             SingleTransaction.Type.SELL,
@@ -572,6 +538,50 @@ public class dInventory implements Cloneable {
                             }
                         })
         );
+    }
+
+    private boolean buyPreconditions(dItem itemClicked, Player player) {
+        DebugLog.info("ItemClicked: " + itemClicked.toJson());
+
+        if (!meetsPermissions(player, itemClicked.getBuyPerms())) {
+            Messages.MSG_NOT_PERMS.send(player);
+            return false;
+        }
+
+        if (itemClicked.getDStock() != null && itemClicked.getPlayerStock(player) <= 0) {
+            Messages.MSG_NOT_STOCK.send(player);
+            return false;
+        }
+
+        if (itemClicked.getBuyPrice() <= 0) {
+            Messages.MSG_INVALID_BUY.send(player);
+            return false;
+        }
+
+        if (Arrays.stream(Arrays.copyOf(player.getInventory().getContents(), 36))
+                .noneMatch(Objects::isNull)) {
+            Messages.MSG_INV_FULL.send(player);
+            return false;
+        }
+        return true;
+    }
+
+    private boolean sellPreconditions(dItem itemClicked, Player player) {
+        if (!meetsPermissions(player, itemClicked.getSellPerms())) {
+            Messages.MSG_NOT_PERMS.send(player);
+            return false;
+        }
+
+        if (itemClicked.getSellPrice() <= 0) {
+            Messages.MSG_INVALID_SELL.send(player);
+            return false;
+        }
+
+        if (ItemUtils.count(player.getInventory(), itemClicked.getItem()) <= 0) {
+            Messages.MSG_NOT_ITEMS.send(player);
+            return false;
+        }
+        return true;
     }
 
     private boolean meetsPermissions(@NotNull Player player, @Nullable List<String> perms) {
