@@ -1,5 +1,7 @@
 package io.github.divios.dailyShop.utils.NMSUtils;
 
+import io.github.divios.core_lib.utils.Log;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -119,7 +121,7 @@ public class NMSHelper {
      * @param argTypes The class types for the constructor parameters
      * @return The constructor in the class, or null if none was found
      */
-    public static Constructor getConstructor(Class<?> clazz, Class<?>[] argTypes) {
+    public static Constructor getConstructor(Class<?> clazz, Class<?>... argTypes) {
         Constructor[] methods = clazz.getConstructors();
         methods:
         for (Constructor method : methods) {
@@ -128,6 +130,8 @@ public class NMSHelper {
             }
             Parameter[] params = method.getParameters();
             for (int i = 0; i < params.length; i++) {
+                Log.severe("i: " + i + " es: " + params[i].getType().getName());
+                Log.severe("El nuestro es: " + argTypes[i].getName());
                 if (!params[i].getType().isAssignableFrom(argTypes[i])) {
                     continue methods;
                 }

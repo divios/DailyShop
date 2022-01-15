@@ -1,22 +1,39 @@
 package io.github.divios.lib.dLib.confirmMenu;
 
+import com.cryptomorin.xseries.ReflectionUtils;
 import com.cryptomorin.xseries.XMaterial;
-import de.tr7zw.nbtapi.NBTItem;
+import io.github.divios.core_lib.events.Events;
+import io.github.divios.core_lib.events.Subscription;
 import io.github.divios.core_lib.inventory.InventoryGUI;
 import io.github.divios.core_lib.inventory.ItemButton;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.scheduler.Schedulers;
+import io.github.divios.core_lib.scheduler.Task;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.files.Lang;
+import io.github.divios.dailyShop.utils.DebugLog;
+import io.github.divios.dailyShop.utils.NMSUtils.NMSClass;
+import io.github.divios.dailyShop.utils.NMSUtils.NMSHelper;
+import io.github.divios.dailyShop.utils.NMSUtils.NMSObject;
 import io.github.divios.dailyShop.utils.PrettyPrice;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.jtext.wrappers.Template;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.Constructor;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -25,7 +42,6 @@ public abstract class abstractConfirmMenu {
 
     protected static final DailyShop plugin = DailyShop.get();
 
-    protected static final String MARK_KEY = "rds_temp_item";
     protected static final int MAX_INVENTORY_ITEMS = 9 * 4 * 64;
 
     protected final dShop shop;
@@ -35,8 +51,12 @@ public abstract class abstractConfirmMenu {
     protected final Runnable fallback;
     protected boolean confirmButton = false;
 
-    protected int nAddedItems = 0;
+    protected int nAddedItems = 1;
     protected InventoryGUI menu;
+
+    protected final Inventory clonedPlayerInventory;
+    private final List<Subscription> listeners;
+    private final Task giveItemsLoop;
 
     public abstractConfirmMenu(dShop shop,
                                Player player,
@@ -49,24 +69,43 @@ public abstract class abstractConfirmMenu {
         this.onCompleteAction = onCompleteAction;
         this.fallback = fallback;
 
-        addItemsAndIncrement(item.getItem().getAmount());
+        this.clonedPlayerInventory = Bukkit.createInventory(null, 36, "");
+        this.listeners = new ArrayList<>();
+        this.giveItemsLoop = Schedulers.async().runRepeating(this::update, 20L, 20L);
+
+        update();
         createMenu();
         openMenu();
+
+        listeners.add(
+                Events.subscribe(InventoryCloseEvent.class)
+                        .biHandler((o, e) -> {
+                            if (e.getPlayer().getUniqueId().equals(player.getUniqueId())
+                                    && menu.getInventory().equals(e.getInventory())) {
+                                DebugLog.info("Inventory close event inside buyconfirmMenu");
+                                listeners.forEach(Subscription::unregister);
+                                giveItemsLoop.stop();
+                                Schedulers.sync().runLater(player::updateInventory, 2L);
+                            }
+                        })
+        );
+
+        listeners.add(
+                Events.subscribe(InventoryClickEvent.class)
+                        .filter(e -> e.getWhoClicked().getUniqueId().equals(player.getUniqueId())
+                                && e.getInventory().equals(menu.getInventory()))
+                        .handler(e -> update())
+        );
     }
 
     private void createMenu() {
         menu = new InventoryGUI(plugin, 54, getTitle());
-        setActionOnDestroy();
+        menu.setDestroyOnClose(true);
         updateButtons();
     }
 
     private void openMenu() {
         menu.open(player);
-    }
-
-    private void setActionOnDestroy() {
-        menu.setDestroyOnClose(true);
-        menu.setOnDestroy(() -> Schedulers.sync().runLater(this::removeAddedItems, 2L));
     }
 
     protected abstract String getTitle();
@@ -75,8 +114,6 @@ public abstract class abstractConfirmMenu {
         menu.clear();       // Clears all items and buttons
         createButtons();
     }
-
-    protected abstract void removeAddedItems();
 
     private void createButtons() {
         createAddButtons();
@@ -116,7 +153,8 @@ public abstract class abstractConfirmMenu {
                                 .setCount(quantity)
                         , e -> {
                             if (ItemUtils.isEmpty(e.getCurrentItem())) return;
-                            addItemsAndIncrement(quantity);
+                            nAddedItems += quantity;
+                            update();
                             updateButtons();
                         }), slot);
     }
@@ -129,7 +167,8 @@ public abstract class abstractConfirmMenu {
                                 .setCount(quantity)
                         , e -> {
                             if (ItemUtils.isEmpty(e.getCurrentItem())) return;
-                            removeItemsAndDecrement(quantity);
+                            nAddedItems -= quantity;
+                            update();
                             updateButtons();
                         }), slot);
     }
@@ -144,7 +183,6 @@ public abstract class abstractConfirmMenu {
                         return;
                     }
                     confirmButton = true;
-                    removeAddedItems();
                     onCompleteAction.accept(nAddedItems);
                 }));
     }
@@ -155,10 +193,7 @@ public abstract class abstractConfirmMenu {
                         .setName(getBackName())
                         .setLore(Lang.CONFIRM_GUI_RETURN_PANE_LORE.getAsListString(player))
                 ,
-                e -> {
-                    removeAddedItems();
-                    fallback.run();
-                }));
+                e -> fallback.run()));
     }
 
     private void createSetMaxButton() {
@@ -166,7 +201,8 @@ public abstract class abstractConfirmMenu {
                 ItemBuilder.of(XMaterial.YELLOW_STAINED_GLASS)
                         .setName(Lang.CONFIRM_GUI_SET_PANE.getAsString(player))
                 , e -> {
-                    setMaxItems();
+                    nAddedItems += setMaxItems();
+                    update();
                     updateButtons();
                 }), 40);
     }
@@ -191,19 +227,25 @@ public abstract class abstractConfirmMenu {
                 }), 45);
     }
 
-    private void addItemsAndIncrement(int quantity) {
-        nAddedItems += quantity;
-        addItems(quantity);
+    private void update() {
+        mirrorPlayerInventory();
+        updateMockInventory();
+        sendPackets();
     }
 
-    protected abstract void addItems(int quantity);
-
-    private void removeItemsAndDecrement(int quantity) {
-        nAddedItems -= quantity;
-        removeItems(quantity);
+    private void mirrorPlayerInventory() {
+        clonedPlayerInventory.setContents(Arrays.copyOf(player.getInventory().getContents(), 36));
     }
 
-    protected abstract void removeItems(int quantity);
+    protected abstract void updateMockInventory();
+
+    private void sendPackets() {
+        Schedulers.sync().run(() -> {           // Needs a delay, if not, update between server and client removes items
+            for (int slot = 0; slot < 36; slot++) {
+                SetSlotPacket.constructAndSend(player, clonedPlayerInventory.getItem(slot), slot);
+            }
+        });
+    }
 
     protected abstract String getConfirmName();
 
@@ -213,7 +255,7 @@ public abstract class abstractConfirmMenu {
 
     protected abstract String getBackName();
 
-    protected abstract void setMaxItems();
+    protected abstract int setMaxItems();
 
     private List<String> setItemPricePlaceholder(List<String> str) {
         return Utils.JTEXT_PARSER
@@ -230,20 +272,40 @@ public abstract class abstractConfirmMenu {
 
     protected abstract double getItemPrice();
 
-    protected static boolean isMarkedItem(ItemStack item) {
-        return new NBTItem(item).hasKey(MARK_KEY);
-    }
+    protected static class SetSlotPacket {
 
-    protected ItemStack getMarkedItem() {
-        NBTItem markedItem = new NBTItem(item.getItem());
-        markedItem.setBoolean(MARK_KEY, true);
-        ItemStack toReturn = markedItem.getItem();
-        toReturn.setAmount(1);
-        return toReturn;
-    }
+        protected static final NMSClass packetClazz;
+        protected static final NMSClass CraftItemClazz;
+        protected static final NMSClass NMSItemStackClazz;
 
-    protected static void deleteItem(ItemStack item) {
-        item.setAmount(0);
+        protected static final Constructor<?> packetConstructorPost_1_17;
+        protected static final Constructor<?> packetConstructorPre_1_17;
+
+        static {
+            packetClazz = NMSHelper.getClass(ReflectionUtils.getNMSClass("network.protocol.game", "PacketPlayOutSetSlot").getName());
+            CraftItemClazz = NMSHelper.getClass(ReflectionUtils.CRAFTBUKKIT + "inventory.CraftItemStack");
+            NMSItemStackClazz = ReflectionUtils.VER >= 17
+                    ? NMSHelper.getClass("net.minecraft.world.item.ItemStack")
+                    : NMSHelper.getClass(ReflectionUtils.getNMSClass("ItemStack").getName());
+
+            packetConstructorPost_1_17 = NMSHelper.getConstructor(packetClazz.getWrappedClass(), int.class, int.class, int.class, NMSItemStackClazz.getWrappedClass());
+            packetConstructorPre_1_17 = NMSHelper.getConstructor(packetClazz.getWrappedClass(), int.class, int.class, NMSItemStackClazz.getWrappedClass());
+        }
+
+        protected static void constructAndSend(@NotNull Player p, @Nullable ItemStack item, int slot) {
+            try {
+                if (item == null) item = new ItemStack(Material.AIR);
+                NMSObject craftItem = CraftItemClazz.callStaticMethod("asNMSCopy", item);
+
+                Object packetClass = ReflectionUtils.VER >= 17
+                        ? packetConstructorPost_1_17.newInstance(-2, 1, slot, craftItem.getObject())
+                        : packetConstructorPre_1_17.newInstance(-2, slot, craftItem.getObject());
+                ReflectionUtils.sendPacket(p, packetClass);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
     }
 
 }

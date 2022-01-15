@@ -1,6 +1,6 @@
 package io.github.divios.lib.dLib.dTransaction;
 
-import io.github.divios.lib.dLib.confirmMenu.BuyConfirmPacketsMenu;
+import io.github.divios.lib.dLib.confirmMenu.BuyConfirmMenu;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
 import org.bukkit.entity.Player;
@@ -28,38 +28,21 @@ public class BuyTransaction {
 
     public void execute() {
         if (item.isConfirmGui() && item.getBundle() == null) {
-            //if (Utils.isOperative("ProtocolLib"))
-                BuyConfirmPacketsMenu.builder()
-                        .withPlayer(buyer)
-                        .withShop(shop)
-                        .withItem(item)
-                        .withOnCompleteAction(integer -> {
-                            SingleTransaction.create()
-                                    .withPlayer(buyer)
-                                    .withShop(shop)
-                                    .withType(SingleTransaction.Type.BUY)
-                                    .withItem(item)
-                                    .withAmount(integer)
-                                    .execute();
-                        })
-                        .withFallback(() -> shop.openShop(buyer))
-                        .prompt();
-            /*else
-                BuyConfirmMenu.builder()
-                        .withPlayer(buyer)
-                        .withShop(shop)
-                        .withItem(item)
-                        .withOnCompleteAction(integer -> {
-                            SingleTransaction.create()
-                                    .withPlayer(buyer)
-                                    .withShop(shop)
-                                    .withType(SingleTransaction.Type.BUY)
-                                    .withItem(item)
-                                    .withAmount(integer)
-                                    .execute();
-                        })
-                        .withFallback(() -> shop.openShop(buyer))
-                        .prompt();*/
+            BuyConfirmMenu.builder()
+                    .withPlayer(buyer)
+                    .withShop(shop)
+                    .withItem(item)
+                    .withOnCompleteAction(integer -> {
+                        SingleTransaction.create()
+                                .withPlayer(buyer)
+                                .withShop(shop)
+                                .withType(SingleTransaction.Type.BUY)
+                                .withItem(item)
+                                .withAmount(integer)
+                                .execute();
+                    })
+                    .withFallback(() -> shop.openShop(buyer))
+                    .prompt();
         } else {
             SingleTransaction.create()
                     .withPlayer(buyer)
