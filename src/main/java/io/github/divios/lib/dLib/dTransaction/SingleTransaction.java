@@ -212,7 +212,7 @@ public class SingleTransaction {
 
         private final dShop shop;
         private final Player player;
-        private final Type type = Type.BUY;
+        private final Type type = Type.SELL;
         private final dItem item;
         private final int amount;
         private final Consumer<Bill> onComplete;
