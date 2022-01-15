@@ -1,5 +1,6 @@
 import org.ajoberstar.grgit.Credentials
 import org.ajoberstar.grgit.Grgit
+import org.apache.tools.ant.taskdefs.condition.Os
 
 plugins {
     id 'java'
@@ -46,6 +47,7 @@ repositories {
 
 dependencies {
     compileOnly group: "org.spigotmc", name: "spigot-api", version: "1.18-R0.1-SNAPSHOT"
+    compileOnly group: "org.spigotmc", name: "spigot", version: "1.8-R0.1-SNAPSHOT"
     compileOnly 'com.github.MilkBowl:VaultAPI:1.7'
     compileOnly 'me.clip:placeholderapi:2.11.1'
     compileOnly 'com.mojang:authlib:1.5.21'
@@ -97,19 +99,44 @@ task cloneDependencies {
 task updateJars {
     doLast {
         // windows
-
-        copy {
-            from 'build/libs/DailyShop-' + pluginVersion + "-all.jar"
-            into 'C:/Users/serbe/OneDrive/Desktop/server_pruebas/server/plugins'
-            rename("DailyShop-" + pluginVersion + "-all.jar"
-                    , "DailyShop-" + pluginVersion + ".jar")
-        }
-        // MAC
-        copy {
-            from 'build/libs/DailyShop-' + pluginVersion + "-all.jar"
-            into '/Users/sergiobernalparrondo/Desktop/servers/server-1.18/plugins'
-            rename("DailyShop-" + pluginVersion + "-all.jar"
-                    , "DailyShop-" + pluginVersion + ".jar")
+        if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+            copy {
+                from 'build/libs/DailyShop-' + pluginVersion + "-all.jar"
+                into 'C:/Users/serbe/OneDrive/Desktop/server_pruebas/server/plugins'
+                rename("DailyShop-" + pluginVersion + "-all.jar"
+                        , "DailyShop-" + pluginVersion + ".jar")
+            }
+        } else if (Os.isFamily(Os.FAMILY_MAC)) {  // MAC
+            copy {
+                from 'build/libs/DailyShop-' + pluginVersion + "-all.jar"
+                into '/Users/sergiobernalparrondo/Desktop/servers/server-1.18/plugins'
+                rename("DailyShop-" + pluginVersion + "-all.jar"
+                        , "DailyShop-" + pluginVersion + ".jar")
+            }
+            copy {
+                from 'build/libs/DailyShop-' + pluginVersion + "-all.jar"
+                into '/Users/sergiobernalparrondo/Desktop/servers/server-1.17/plugins'
+                rename("DailyShop-" + pluginVersion + "-all.jar"
+                        , "DailyShop-" + pluginVersion + ".jar")
+            }
+            copy {
+                from 'build/libs/DailyShop-' + pluginVersion + "-all.jar"
+                into '/Users/sergiobernalparrondo/Desktop/servers/server-1.13/plugins'
+                rename("DailyShop-" + pluginVersion + "-all.jar"
+                        , "DailyShop-" + pluginVersion + ".jar")
+            }
+            copy {
+                from 'build/libs/DailyShop-' + pluginVersion + "-all.jar"
+                into '/Users/sergiobernalparrondo/Desktop/servers/server-1.12/plugins'
+                rename("DailyShop-" + pluginVersion + "-all.jar"
+                        , "DailyShop-" + pluginVersion + ".jar")
+            }
+            copy {
+                from 'build/libs/DailyShop-' + pluginVersion + "-all.jar"
+                into '/Users/sergiobernalparrondo/Desktop/servers/server-1.8/plugins'
+                rename("DailyShop-" + pluginVersion + "-all.jar"
+                        , "DailyShop-" + pluginVersion + ".jar")
+            }
         }
     }
 }

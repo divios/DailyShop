@@ -558,8 +558,9 @@ public class dInventory implements Cloneable {
             return false;
         }
 
-        if (Arrays.stream(Arrays.copyOf(player.getInventory().getContents(), 36))
-                .noneMatch(Objects::isNull)) {
+        Inventory cloneInv = Bukkit.createInventory(null, 36);
+        cloneInv.setContents(Arrays.copyOf(player.getInventory().getContents(), 36));
+        if (!cloneInv.addItem(itemClicked.getItem()).isEmpty()) {
             Messages.MSG_INV_FULL.send(player);
             return false;
         }

@@ -1,23 +1,28 @@
 package io.github.divios.lib.dLib.confirmMenu;
 
-import com.comphenix.protocol.PacketType;
-import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.events.PacketContainer;
+import com.cryptomorin.xseries.ReflectionUtils;
 import io.github.divios.core_lib.events.Events;
 import io.github.divios.core_lib.events.Subscription;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.scheduler.Schedulers;
+import io.github.divios.core_lib.scheduler.Task;
 import io.github.divios.dailyShop.files.Lang;
 import io.github.divios.dailyShop.utils.DebugLog;
+import io.github.divios.dailyShop.utils.NMSUtils.NMSClass;
+import io.github.divios.dailyShop.utils.NMSUtils.NMSHelper;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.lang.reflect.InvocationTargetException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -35,10 +40,13 @@ public class BuyConfirmPacketsMenu extends abstractConfirmMenu {
 
     private Inventory clonedPlayerInventory;
     private final List<Subscription> listeners;
+    private final Task giveItemsLoop;
 
     public BuyConfirmPacketsMenu(dShop shop, Player player, dItem item, Consumer<Integer> onCompleteAction, Runnable fallback) {
         super(shop, player, item, onCompleteAction, fallback);
         this.listeners = new ArrayList<>();
+
+        giveItemsLoop = Schedulers.async().runRepeating(() -> addItems(0), 20L, 20L);
 
         listeners.add(
                 Events.subscribe(InventoryCloseEvent.class)
@@ -48,6 +56,7 @@ public class BuyConfirmPacketsMenu extends abstractConfirmMenu {
                                 DebugLog.info("Inventory close event inside buyconfirmMenu");
                                 player.updateInventory();   // Removes the "ghost items"
                                 listeners.forEach(Subscription::unregister);
+                                giveItemsLoop.stop();
                             }
                         })
         );
@@ -56,10 +65,7 @@ public class BuyConfirmPacketsMenu extends abstractConfirmMenu {
                 Events.subscribe(InventoryClickEvent.class)
                         .filter(e -> e.getWhoClicked().getUniqueId().equals(player.getUniqueId())
                                 && e.getInventory().equals(super.menu.getInventory()))
-                        .handler(e -> {
-                            if (e.getSlot() != e.getRawSlot() || e.getSlot() == -999)
-                                addMockedItems();
-                        })
+                        .handler(e -> addMockedItems())
         );
     }
 
@@ -110,23 +116,10 @@ public class BuyConfirmPacketsMenu extends abstractConfirmMenu {
     private void addMockedItems() {
         Schedulers.sync().run(() -> {           // Needs a delay, if not, update between server and client removes items
             for (int slot = 0; slot < 36; slot++) {
-                PacketContainer fakeItem = new PacketContainer(PacketType.Play.Server.SET_SLOT);
-                fakeItem.getIntegers()
-                        .write(0, -2)
-                        .write(1, 0)
-                        .write(2, slot);
-                fakeItem.getItemModifier()
-                        .write(0, clonedPlayerInventory.getItem(slot));
-
-                try {
-                    ProtocolLibrary.getProtocolManager().sendServerPacket(player, fakeItem);
-                } catch (InvocationTargetException e) {
-                    e.printStackTrace();
-                }
-                /*ReflectionUtils.sendPacket(player,
-                        new PacketPlayOutSetSlot(0, 0, 36 + slot, CraftItemStack.asNMSCopy(clonedPlayerInventory.getItem(slot)))
-                );*/
+                if (clonedPlayerInventory.getItem(slot) == null) continue;
+                SetSlotPacket.constructAndSend(player, clonedPlayerInventory.getItem(slot), slot);
             }
+
         });
     }
 
@@ -181,12 +174,11 @@ public class BuyConfirmPacketsMenu extends abstractConfirmMenu {
     private int getPlayerInventoryLimit() {
         int limit = 0;
         Inventory playerMockInventory = Bukkit.createInventory(null, 36);
-        for (int i = 0; i < 36; i++)
-            playerMockInventory.setItem(i, player.getInventory().getItem(i));
+        playerMockInventory.setContents(Arrays.copyOf(player.getInventory().getContents(), 36));
 
-        while (playerMockInventory.addItem(getMarkedItem()).isEmpty()) limit++;
+        while (playerMockInventory.addItem(item.getItem()).isEmpty()) limit++;
 
-        return limit;
+        return limit - nAddedItems;
     }
 
     private int getItemStock() {
@@ -231,6 +223,32 @@ public class BuyConfirmPacketsMenu extends abstractConfirmMenu {
         public BuyConfirmPacketsMenu prompt() {
             return new BuyConfirmPacketsMenu(shop, player, item, onCompleteAction, fallback);
         }
+    }
+
+    private static final class SetSlotPacket {
+
+        private static final NMSClass packetClazz;
+        private static final NMSClass CraftItemClazz;
+
+        static {
+            packetClazz = NMSHelper.getClass(ReflectionUtils.getNMSClass("network.protocol.game", "PacketPlayOutSetSlot").getName());
+            CraftItemClazz = NMSHelper.getClass(ReflectionUtils.CRAFTBUKKIT + "inventory.CraftItemStack");
+        }
+
+        static void constructAndSend(@NotNull Player p, @Nullable ItemStack item, int slot) {
+            try {
+                if (item == null) item = new ItemStack(Material.AIR);
+                Object craftItem = CraftItemClazz.callStaticMethod("asNMSCopy", item).getObject();
+
+                Object packetClass = ReflectionUtils.VER >= 17
+                        ? packetClazz.getInstance(-2, 1, slot, craftItem).getObject()
+                        : packetClazz.getInstance(-2, slot, craftItem).getObject();
+                ReflectionUtils.sendPacket(p, packetClass);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
     }
 
 }
