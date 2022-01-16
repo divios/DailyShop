@@ -15,6 +15,7 @@ import io.github.divios.dailyShop.utils.DebugLog;
 import io.github.divios.lib.dLib.dTransaction.Bill;
 import io.github.divios.lib.dLib.log.dLog;
 import io.github.divios.lib.dLib.log.options.dLogEntry;
+import io.github.divios.lib.dLib.stock.dStock;
 import io.github.divios.lib.dLib.synchronizedGui.singleGui.dInventory;
 import io.github.divios.lib.dLib.synchronizedGui.syncHashMenu;
 import io.github.divios.lib.dLib.synchronizedGui.syncMenu;
@@ -204,6 +205,17 @@ public class dShop {
      */
     public boolean hasItem(UUID uid) {
         return items.containsKey(uid);
+    }
+
+    /**
+     * Gets the dStock for a current daily item. Returns null if the shop does not
+     * have that item on sale or the item has no stock defined.
+     */
+    public dStock getStockForItem(UUID id) {
+        dItem itemToSearch = guis.getDefault().getButtons().get(id);
+        if (itemToSearch == null || itemToSearch.getDStock() == null) return null;
+
+        return itemToSearch.getDStock().clone();
     }
 
     /**

@@ -6,18 +6,15 @@ import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.WeightedRandom;
 import io.github.divios.dailyShop.DailyShop;
-import io.github.divios.dailyShop.events.searchStockEvent;
 import io.github.divios.dailyShop.events.updateItemEvent;
 import io.github.divios.dailyShop.files.Messages;
 import io.github.divios.dailyShop.lorestategy.shopItemsLore;
 import io.github.divios.dailyShop.utils.DebugLog;
-import io.github.divios.dailyShop.utils.PlaceholderAPIWrapper;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.dLib.dTransaction.SingleTransaction;
 import io.github.divios.lib.dLib.dTransaction.Transactions;
-import io.github.divios.lib.dLib.stock.dStock;
 import io.github.divios.lib.dLib.synchronizedGui.taskPool.updatePool;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -63,17 +60,6 @@ public class singleGuiImpl implements singleGui, Cloneable {
     }
 
     private void ready() {
-        events.add(
-                Events.subscribe(searchStockEvent.class)                // Respond to search events
-                        .filter(o -> o.getShop().equals(shop))
-                        .handler(o -> {
-                                    dItem itemToSearch;
-                                    if ((itemToSearch = own.getButtons().get(o.getUUID())) != null) {
-                                        dStock stock;
-                                        o.respond((stock = itemToSearch.getDStock()) == null ? -1 : stock.get(p));
-                                    }
-                                }
-                        ));
         events.add(
                 Events.subscribe(TransactionEvent.class)
                         .filter(o -> o.getCaller() == own)
