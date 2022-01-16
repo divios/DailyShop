@@ -42,7 +42,7 @@ public class dPrice implements Serializable, Cloneable {
 
         price.actualPrice = object.get("actualPrice").getAsDouble();
         price.minPrice = object.get("minPrice").getAsDouble();
-        price.minPrice = object.get("maxPrice").getAsDouble();
+        price.maxPrice = object.get("maxPrice").getAsDouble();
         price.randomFlag = object.get("randomFlag").getAsBoolean();
 
         return price;
@@ -121,10 +121,29 @@ public class dPrice implements Serializable, Cloneable {
         if (price == null || randomFlag != price.randomFlag) return false;
 
         if (randomFlag) {
-            return maxPrice == price.maxPrice
-                    && minPrice == price.minPrice;
+            return Double.compare(maxPrice, price.maxPrice) == 0
+                    && Double.compare(minPrice, price.minPrice) == 0;
         } else {
-            return actualPrice == price.actualPrice;
+            return Double.compare(actualPrice, price.actualPrice) == 0;
+        }
+    }
+
+    public boolean testSimilar(dPrice price) {
+        if (this == price) return true;
+        if (price == null || randomFlag != price.randomFlag) {
+            System.out.println("Oke1");
+            return false;
+        }
+
+        System.out.println("minprice: " + minPrice + "-" + price.minPrice);
+        System.out.println("maxprice: " + maxPrice + "-" + price.maxPrice);
+        System.out.println("actualPrice: " + actualPrice + "-" + price.actualPrice);
+
+        if (randomFlag) {
+            return Double.compare(maxPrice, price.maxPrice) == 0
+                    && Double.compare(minPrice, price.minPrice) == 0;
+        } else {
+            return Double.compare(actualPrice, price.actualPrice) == 0;
         }
     }
 
