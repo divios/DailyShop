@@ -6,11 +6,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import io.github.divios.core_lib.events.Events;
 import io.github.divios.core_lib.gson.JsonBuilder;
-import io.github.divios.dailyShop.events.searchStockEvent;
 import io.github.divios.dailyShop.utils.InterfaceAdapter;
-import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.dLib.stock.factory.dStockFactory;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -205,12 +202,6 @@ public abstract class dStock implements Cloneable, Serializable {
     @Deprecated
     public String legacyToBase64() {
         return Base64Coder.encodeString(legacyToJson());
-    }
-
-    public static int searchStock(Player p, dShop shop, UUID id) {
-        searchStockEvent event = new searchStockEvent(p, shop, id);
-        Events.callEvent(event);
-        return event.getRespond();
     }
 
 }
