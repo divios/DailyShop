@@ -10,7 +10,7 @@ public class initialMigration {
 
         try (Statement statement = connection.createStatement()) {
             statement.execute("CREATE TABLE IF NOT EXISTS " + tablePrefix + "active_shops (" +
-                    "name varchar [255] PRIMARY KEY, " +
+                    "name varchar [255] collate nocase PRIMARY KEY, " +
                     "type varchar [255], " +
                     "timestamp varchar [255], " +
                     "timer INTEGER, " +

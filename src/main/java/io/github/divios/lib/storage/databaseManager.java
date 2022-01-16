@@ -87,8 +87,10 @@ public class databaseManager extends DataManagerAbstract {
 
                 JsonParser parser = new JsonParser();
                 while (result.next()) {
-                    JsonElement json = parser.parse(result.getString("itemSerial"));
-                    items.add(dItem.fromJson(json));
+                    try {
+                        JsonElement json = parser.parse(result.getString("itemSerial"));
+                        items.add(dItem.fromJson(json));
+                    } catch (IllegalStateException ignored) {}
                 }
             }
         });
@@ -131,7 +133,7 @@ public class databaseManager extends DataManagerAbstract {
     public void renameShop(String oldName, String newName) {
         this.databaseConnector.connect(connection -> {
             String renameShop = "UPDATE " + this.getTablePrefix() + "active_shops" +
-                    " SET name = ? WHERE name = ?";
+                    " SET name = ? WHERE name = ? collate nocase";
             try (PreparedStatement statement = connection.prepareStatement(renameShop)) {
                 statement.setString(1, newName);
                 statement.setString(2, oldName);
@@ -152,7 +154,7 @@ public class databaseManager extends DataManagerAbstract {
 
     public void deleteShop(String name) {
         this.databaseConnector.connect(connection -> {
-            String deleteShop = "DELETE FROM " + this.getTablePrefix() + "active_shops WHERE name = ?";
+            String deleteShop = "DELETE FROM " + this.getTablePrefix() + "active_shops WHERE name = ? collate nocase";
             try (PreparedStatement statement = connection.prepareStatement(deleteShop)) {
                 statement.setString(1, name);
                 statement.executeUpdate();
@@ -240,7 +242,7 @@ public class databaseManager extends DataManagerAbstract {
     public void updateGui(String name, syncMenu gui) {
         this.databaseConnector.connect(connection -> {
             String updateGui = "UPDATE " + this.getTablePrefix() + "active_shops " +
-                    "SET gui = ? WHERE name = ?";
+                    "SET gui = ? WHERE name = ? collate nocase";
             try (PreparedStatement statement = connection.prepareStatement(updateGui)) {
                 statement.setString(1, gui.toJson().toString());
                 statement.setString(2, name);
@@ -256,7 +258,7 @@ public class databaseManager extends DataManagerAbstract {
     public void updateTimeStamp(String name, Timestamp timestamp) {
         this.databaseConnector.connect(connection -> {
             String updateTimeStamp = "UPDATE " + this.getTablePrefix() + "active_shops " +
-                    "SET timestamp = ? WHERE name = ?";
+                    "SET timestamp = ? WHERE name = ? collate nocase";
             try (PreparedStatement statement = connection.prepareStatement(updateTimeStamp)) {
                 statement.setString(1, timeStampUtils.serialize(timestamp));
                 statement.setString(2, name);
@@ -272,7 +274,7 @@ public class databaseManager extends DataManagerAbstract {
     public void updateTimer(String name, int timer) {
         this.databaseConnector.connect(connection -> {
             String updateTimeStamp = "UPDATE " + this.getTablePrefix() + "active_shops " +
-                    "SET timer = ? WHERE name = ?";
+                    "SET timer = ? WHERE name = ? collate nocase";
             try (PreparedStatement statement = connection.prepareStatement(updateTimeStamp)) {
                 statement.setInt(1, timer);
                 statement.setString(2, name);
