@@ -289,13 +289,13 @@ public class singleGuiImpl implements singleGui, Cloneable {
             WeightedRandom<dItem> randomSelector = WeightedRandom.fromCollection(items.values(), dItem::clone, getWeights::apply);
 
             for (int i = 0; i < max; i++) {
-                dItem rolledItem = randomSelector.roll();
-                if (rolledItem == null) break;
+                dItem rolledItem;
+                if ((rolledItem = randomSelector.roll()) == null) break;
+                randomSelector.remove(rolledItem);
 
                 rolledItem.generateNewBuyPrice();
                 rolledItem.generateNewSellPrice();
 
-                randomSelector.remove(rolledItem);
                 rolledItems.add(action.apply(rolledItem));
             }
 
