@@ -51,7 +51,7 @@ public abstract class abstractConfirmMenu {
     protected final Runnable fallback;
     protected boolean confirmButton = false;
 
-    protected int nAddedItems = 1;
+    protected int nAddedItems;
     protected InventoryGUI menu;
 
     protected final Inventory clonedPlayerInventory;
@@ -72,6 +72,8 @@ public abstract class abstractConfirmMenu {
         this.clonedPlayerInventory = Bukkit.createInventory(null, 36, "");
         this.listeners = new ArrayList<>();
         this.giveItemsLoop = Schedulers.async().runRepeating(this::update, 20L, 20L);
+
+        this.nAddedItems = initialQuantity();
 
         update();
         createMenu();
@@ -140,6 +142,8 @@ public abstract class abstractConfirmMenu {
         createItemDisplayButton();
         createStatsButton();
     }
+
+    protected abstract int initialQuantity();
 
     protected abstract boolean addConditions(int quantity);
 

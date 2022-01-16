@@ -32,6 +32,13 @@ public class BuyConfirmMenu extends abstractConfirmMenu {
     }
 
     @Override
+    protected int initialQuantity() {
+        return item.getEcon().hasMoney(player, item.getPlayerBuyPrice(player, shop))
+                ? item.getItem().getAmount()
+                : 1;
+    }
+
+    @Override
     protected boolean addConditions(int quantity) {
         return quantity <= getMinLimit();
     }

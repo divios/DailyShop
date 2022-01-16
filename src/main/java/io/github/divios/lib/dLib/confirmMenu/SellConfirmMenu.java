@@ -34,6 +34,13 @@ public class SellConfirmMenu extends abstractConfirmMenu {
     }
 
     @Override
+    protected int initialQuantity() {
+        return countSimilarItems() >= item.getItem().getAmount()
+                ? item.getItem().getAmount()
+                : 1;
+    }
+
+    @Override
     protected boolean addConditions(int quantity) {
         DebugLog.info("Similar items: " + (countSimilarItems() - nAddedItems));
         DebugLog.info("Quantity: " + quantity);
