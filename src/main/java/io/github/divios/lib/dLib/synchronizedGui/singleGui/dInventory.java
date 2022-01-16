@@ -502,9 +502,10 @@ public class dInventory implements Cloneable {
         listeners.add(
                 Events.subscribe(InventoryClickEvent.class, EventPriority.HIGHEST)
                         .filter(e -> e.getInventory().equals(inv))
-                        .filter(e -> !ItemUtils.isEmpty(e.getCurrentItem()))
                         .handler(e -> {
                             e.setCancelled(true);
+
+                            if (ItemUtils.isEmpty(e.getCurrentItem())) return;
                             if (e.getSlot() != e.getRawSlot()) return;  // is not upper inventory
 
                             dItem itemClicked = buttonsSlot.get(e.getSlot());
