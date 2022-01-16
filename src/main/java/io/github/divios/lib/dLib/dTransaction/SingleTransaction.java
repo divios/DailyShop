@@ -149,7 +149,9 @@ public class SingleTransaction {
             }
 
             if (item.getDStock() != null) {
-                if (item.getPlayerStock(player) <= 0) {
+                int stock;
+                if ((stock = shop.getStockForItem(item.getUUID()).get(player)) <= 0
+                        || stock < amount) {        // Check actual item
                     onFail.accept(item, TransactionError.noStock);
                     return;
                 }
