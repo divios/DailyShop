@@ -5,6 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import io.github.divios.core_lib.gson.JsonBuilder;
 import io.github.divios.dailyShop.DailyShop;
+import io.github.divios.dailyShop.utils.DebugLog;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.priceModifiers.priceModifier;
 import org.bukkit.entity.Player;
@@ -120,24 +121,9 @@ public class dPrice implements Serializable, Cloneable {
         if (this == price) return true;
         if (price == null || randomFlag != price.randomFlag) return false;
 
-        if (randomFlag) {
-            return Double.compare(maxPrice, price.maxPrice) == 0
-                    && Double.compare(minPrice, price.minPrice) == 0;
-        } else {
-            return Double.compare(actualPrice, price.actualPrice) == 0;
-        }
-    }
-
-    public boolean testSimilar(dPrice price) {
-        if (this == price) return true;
-        if (price == null || randomFlag != price.randomFlag) {
-            System.out.println("Oke1");
-            return false;
-        }
-
-        System.out.println("minprice: " + minPrice + "-" + price.minPrice);
-        System.out.println("maxprice: " + maxPrice + "-" + price.maxPrice);
-        System.out.println("actualPrice: " + actualPrice + "-" + price.actualPrice);
+        DebugLog.info("minprice: " + minPrice + "-" + price.minPrice);
+        DebugLog.info("maxprice: " + maxPrice + "-" + price.maxPrice);
+        DebugLog.info("actualPrice: " + actualPrice + "-" + price.actualPrice);
 
         if (randomFlag) {
             return Double.compare(maxPrice, price.maxPrice) == 0
