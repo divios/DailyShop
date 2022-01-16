@@ -364,7 +364,7 @@ public class testNewStockCommand {
                 ? "5.000"
                 : "5.000,00";
 
-        Assert.assertEquals(expect, PrettyPrice.pretty(d));
+        Preconditions.checkArgument(expect.equals(PrettyPrice.pretty(d)));
     }
 
 
