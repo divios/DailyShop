@@ -578,7 +578,7 @@ public class dItem implements Cloneable {
                 && Objects.equals(ID, dItem.ID)
                 && item.equals(dItem.item)          // Equals to also compare item amount
                 && DailyObject.isSimilar(buyPrice, dItem.buyPrice)
-                && DailyObject.isSimilar(sellPrice, sellPrice)
+                && DailyObject.isSimilar(sellPrice, dItem.sellPrice)
                 && Objects.equals(econ, dItem.econ)
                 && Objects.equals(rarity, dItem.rarity)
                 && Objects.equals(action, dItem.action)
