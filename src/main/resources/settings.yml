@@ -34,7 +34,6 @@ settings:
   default-buy-price: 500.0
   default-sell-price: 20
   default_timer: 86400
-  vault_name: "&7Vault"
   integer-bal: true
   econ-names:
     economy_name_to_change: "Custom economy name"
