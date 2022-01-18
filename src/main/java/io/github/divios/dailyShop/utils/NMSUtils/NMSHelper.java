@@ -1,6 +1,6 @@
 package io.github.divios.dailyShop.utils.NMSUtils;
 
-import io.github.divios.core_lib.utils.Log;
+import io.github.divios.dailyShop.utils.DebugLog;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -130,8 +130,8 @@ public class NMSHelper {
             }
             Parameter[] params = method.getParameters();
             for (int i = 0; i < params.length; i++) {
-                Log.severe("i: " + i + " es: " + params[i].getType().getName());
-                Log.severe("El nuestro es: " + argTypes[i].getName());
+                DebugLog.severe("i: " + i + " es: " + params[i].getType().getName());
+                DebugLog.severe("El nuestro es: " + argTypes[i].getName());
                 if (!params[i].getType().isAssignableFrom(argTypes[i])) {
                     continue methods;
                 }

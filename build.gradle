@@ -15,7 +15,7 @@ plugins {
 apply plugin: 'maven-publish'
 
 group = 'io.github.divios'
-def pluginVersion = "3.6.5"
+def pluginVersion = "3.6.6"
 version = pluginVersion
 
 sourceCompatibility = '1.8'
@@ -47,7 +47,7 @@ repositories {
 
 dependencies {
     compileOnly group: "org.spigotmc", name: "spigot-api", version: "1.18-R0.1-SNAPSHOT"
-    compileOnly group: "org.spigotmc", name: "spigot", version: "1.8-R0.1-SNAPSHOT"
+    compileOnly group: "org.spigotmc", name: "spigot", version: "1.18-R0.1-SNAPSHOT"
     compileOnly 'com.github.MilkBowl:VaultAPI:1.7'
     compileOnly 'me.clip:placeholderapi:2.11.1'
     compileOnly 'com.mojang:authlib:1.5.21'
@@ -59,8 +59,8 @@ dependencies {
     implementation 'com.github.PikaMug:LocaleLib:2.4'
     implementation 'org.bstats:bstats-bukkit:2.2.1'
     implementation 'io.github.divios:core_lib_api:6.4.1'
-    implementation 'com.github.divios:JCommands:1.6.2'
-    implementation 'com.github.divios:JText:3.3'
+    implementation 'com.github.divios:JCommands:1.6.4'
+    implementation 'com.github.divios:JText:3.4'
 
     compileOnly fileTree(dir: 'libs', include: ['*.jar'])
     compileOnly fileTree(dir: 'libsI', include: ['*.jar'])
@@ -74,12 +74,13 @@ dependencies {
 
 shadowJar {
     relocate('org.jetbrains.annotations', 'io.github.divios.dependencies.annotations')
+    relocate('org.intellij', 'io.github.divios.dependencies.intellij')
     relocate('me.pikamug.localelib', 'io.github.divios.dependencies.localeLib')
     relocate('org.bstats', 'io.github.divios.dependencies.bstats')
     relocate('de.tr7zw', 'io.github.divios.dependencies.nbt')
-    relocate('io.github.divios.core_lib', 'io.github.divios.dependencies.Core_lib')
-    relocate('io.github.divios.jcommands', 'io.github.divios.dependencies.jCommands')
     relocate('com.cryptomorin.xseries', 'io.github.divios.dependencies.XSeries')
+    relocate('net.kyori', 'io.github.divios.dependencies.miniText')
+
     minimize()
 }
 

@@ -1,7 +1,5 @@
 package io.github.divios.dailyShop.utils;
 
-import io.github.divios.core_lib.utils.Log;
-
 import java.util.NavigableMap;
 import java.util.Random;
 import java.util.TreeMap;
@@ -46,7 +44,7 @@ public class RandomCollection<E> {
         }
 
         public static <E> wrappedResult<E> of(double weight, E result) {
-            Log.severe(String.valueOf(weight));
+            DebugLog.severe(String.valueOf(weight));
             return new wrappedResult<>(weight, result);
         }
 
