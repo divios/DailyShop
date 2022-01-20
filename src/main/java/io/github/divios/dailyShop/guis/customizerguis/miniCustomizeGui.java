@@ -14,6 +14,7 @@ import io.github.divios.core_lib.misc.EventListener;
 import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.dailyShop.DailyShop;
+import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
 import org.bukkit.entity.Player;
@@ -128,7 +129,7 @@ public class miniCustomizeGui {
                     preventCloseB = false;
                     ChatPrompt.prompt(plugin, p, (s) -> {
                         ItemStack toChange = item.getItem();
-                        toChange = ItemUtils.setName(toChange, s);
+                        toChange = ItemUtils.setName(toChange, Utils.JTEXT_PARSER.parse(s));
                         item.setItem(toChange);
                         refreshItem();
                         Schedulers.sync().run(this::refresh);
@@ -161,7 +162,7 @@ public class miniCustomizeGui {
                                 .withPlayer(p)
                                 .withResponse(s -> {
                                     ItemStack toChange = item.getItem();
-                                    item.setItem(ItemUtils.addLore(toChange, s));
+                                    item.setItem(ItemUtils.addLore(toChange, Utils.JTEXT_PARSER.parse(s)));
                                     Schedulers.sync().run(this::refresh);
                                 })
                                 .withCancel(cancelReason -> refresh())

@@ -25,10 +25,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 public class shopGui {
 
@@ -107,7 +104,9 @@ public class shopGui {
                 )
 
                 .withItems(
-                        entries.stream().parallel()
+                        entries.stream()
+                                .parallel()
+                                .sorted(Comparator.comparing(dItem::getID))
                                 .map(dItem ->
                                         ItemButton.create(shopItemsManagerLore.applyLore(dItem)
                                                 , this::contentAction))

@@ -1,6 +1,7 @@
 package io.github.divios.dailyShop.guis.settings;
 
 import com.cryptomorin.xseries.XMaterial;
+import com.sun.org.apache.xml.internal.utils.StringComparable;
 import io.github.divios.core_lib.inventory.ItemButton;
 import io.github.divios.core_lib.inventory.builder.inventoryPopulator;
 import io.github.divios.core_lib.inventory.builder.paginatedGui;
@@ -24,6 +25,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -74,6 +76,7 @@ public class shopsManagerGui {
                 .withItems(
                         DailyShop.get().getShopsManager().getShops().stream()
                                 .parallel()
+                                .sorted(Comparator.comparing(dShop::getName))
                                 .map(dShop -> ItemButton.create(
                                         shopsManagerLore.applyLore(ItemBuilder.of(XMaterial.PLAYER_HEAD)
                                                 .setName("&8> &6" + dShop.getName())
