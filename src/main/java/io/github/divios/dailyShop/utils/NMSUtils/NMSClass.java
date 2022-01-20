@@ -7,6 +7,7 @@ import java.lang.reflect.Method;
 
 /**
  * Wraps any class and provides methods for easy reflection
+ *
  * @author Redempt
  */
 public class NMSClass {
@@ -15,6 +16,7 @@ public class NMSClass {
 
     /**
      * Constructs an NMSClass wrapping the given class
+     *
      * @param clazz The class to wrap
      */
     public NMSClass(Class<?> clazz) {
@@ -44,6 +46,7 @@ public class NMSClass {
 
     /**
      * Calls a constructor of this class with the given arguments
+     *
      * @param args The arguments to pass to the constructor
      * @return An NMSObject wrapping the returned value
      */
@@ -58,6 +61,7 @@ public class NMSClass {
 
     /**
      * Creates an array of this class type
+     *
      * @param size The size of the array
      * @return An NMSArray wrapping the array
      */
@@ -67,8 +71,9 @@ public class NMSClass {
 
     /**
      * Calls a static method of this class
+     *
      * @param methodName The name of the static method
-     * @param args The arguments to pass to the static method
+     * @param args       The arguments to pass to the static method
      * @return An NMSObject wrapping the returned value from the method
      */
     public NMSObject callStaticMethod(String methodName, Object... args) {
@@ -82,6 +87,7 @@ public class NMSClass {
 
     /**
      * Gets the value of a static field in the wrapped class
+     *
      * @param name The name of the field
      * @return An NMSObject wrapping the field
      */

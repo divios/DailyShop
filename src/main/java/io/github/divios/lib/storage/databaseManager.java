@@ -2,6 +2,7 @@ package io.github.divios.lib.storage;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
 import io.github.divios.core_lib.database.DataManagerAbstract;
 import io.github.divios.core_lib.database.SQLiteConnector;
 import io.github.divios.core_lib.itemutils.ItemUtils;
@@ -90,7 +91,7 @@ public class databaseManager extends DataManagerAbstract {
                     try {
                         JsonElement json = parser.parse(result.getString("itemSerial"));
                         items.add(dItem.fromJson(json));
-                    } catch (IllegalStateException ignored) {}
+                    } catch (IllegalStateException | JsonSyntaxException ignored) {}
                 }
             }
         });

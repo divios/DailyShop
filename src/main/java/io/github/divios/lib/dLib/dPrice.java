@@ -121,9 +121,9 @@ public class dPrice implements Serializable, Cloneable {
         if (this == price) return true;
         if (price == null || randomFlag != price.randomFlag) return false;
 
-        DebugLog.info("minprice: " + minPrice + "-" + price.minPrice);
-        DebugLog.info("maxprice: " + maxPrice + "-" + price.maxPrice);
-        DebugLog.info("actualPrice: " + actualPrice + "-" + price.actualPrice);
+        //DebugLog.info("minprice: " + minPrice + "-" + price.minPrice);
+        //DebugLog.info("maxprice: " + maxPrice + "-" + price.maxPrice);
+        //DebugLog.info("actualPrice: " + actualPrice + "-" + price.actualPrice);
 
         if (randomFlag) {
             return Double.compare(maxPrice, price.maxPrice) == 0

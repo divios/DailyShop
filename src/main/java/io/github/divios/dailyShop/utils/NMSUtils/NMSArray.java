@@ -4,6 +4,7 @@ import java.lang.reflect.Array;
 
 /**
  * Wraps any type of Array and provides easy reflection access
+ *
  * @author Redempt
  */
 public class NMSArray {
@@ -19,6 +20,7 @@ public class NMSArray {
 
     /**
      * Gets a wrapped NMSObject with the value at a certain index in the array
+     *
      * @param index The index to get
      * @return An NMSObject wrapping the object at the index
      */
@@ -28,6 +30,7 @@ public class NMSArray {
 
     /**
      * Gets the object at the given index in the wrapped array
+     *
      * @param index The index to get
      * @return The object at the index
      */
@@ -37,8 +40,9 @@ public class NMSArray {
 
     /**
      * Sets the object at the index of the wrapped array
+     *
      * @param index The index to set
-     * @param obj The object to set. If it is an {@link NMSObject}, it will be unwrapped automatically.
+     * @param obj   The object to set. If it is an {@link NMSObject}, it will be unwrapped automatically.
      */
     public void set(int index, Object obj) {
         if (obj instanceof NMSObject) {

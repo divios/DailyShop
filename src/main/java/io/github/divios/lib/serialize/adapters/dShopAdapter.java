@@ -99,7 +99,6 @@ public class dShopAdapter implements JsonSerializer<dShop>, JsonDeserializer<dSh
                 .add("shop", gson.toJsonTree(shop.getGuis().getDefault()))
                 .add("items", gson.toJsonTree(parseUUIDs(shop.getItems())))
                 .build();
-
     }
 
     /**

@@ -8,6 +8,7 @@ import java.lang.reflect.Parameter;
 
 /**
  * A set of utility methods useful for handling NMS
+ *
  * @author Redempt
  */
 public class NMSHelper {
@@ -16,6 +17,7 @@ public class NMSHelper {
 
     /**
      * Gets the full name of the NMS package
+     *
      * @return The full name of the NMS package
      */
     public static String getNMSPackage() {
@@ -40,6 +42,7 @@ public class NMSHelper {
 
     /**
      * Unwraps an array of arguments, replacing NMSObjects with their wrapped values
+     *
      * @param args The arguments to unwrap
      */
     public static void unwrapArgs(Object... args) {
@@ -52,6 +55,7 @@ public class NMSHelper {
 
     /**
      * Gets the class list of argument types for finding methods
+     *
      * @param args The arguments to convert to their class types
      * @return The class types of each argument
      */
@@ -91,8 +95,9 @@ public class NMSHelper {
     /**
      * Gets a method by its name and parameter types, accounts for cases where the given class might not be the
      * exact same type as the parameter the method requires, but is a subclass.
-     * @param clazz The class to get the method in
-     * @param name The name of the method
+     *
+     * @param clazz    The class to get the method in
+     * @param name     The name of the method
      * @param argTypes The class types for the method parameters
      * @return The method in the class, or null if none was found
      */
@@ -117,7 +122,8 @@ public class NMSHelper {
     /**
      * Gets a constructor by its parameter types, accounts for cases where the given class might not be the
      * exact same type as the parameter the method requires, but is a subclass.
-     * @param clazz The class to get the constructor in
+     *
+     * @param clazz    The class to get the constructor in
      * @param argTypes The class types for the constructor parameters
      * @return The constructor in the class, or null if none was found
      */
@@ -144,6 +150,7 @@ public class NMSHelper {
     /**
      * Gets an NMS class (a class whose package is net.minecraft.server followed by the version package)
      * by name.
+     *
      * @param name The name of the class
      * @return The NMSClass wrapping the resulting class
      */
@@ -157,6 +164,7 @@ public class NMSHelper {
 
     /**
      * Gets any class and wraps it in an NMSClass
+     *
      * @param name The full name of the class
      * @return The wrapped NMSClass
      */

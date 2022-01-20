@@ -6,6 +6,7 @@ import java.lang.reflect.Method;
 
 /**
  * Wraps any Object and provides easy access to reflection methods
+ *
  * @author Redempt
  */
 public class NMSObject {
@@ -14,6 +15,7 @@ public class NMSObject {
 
     /**
      * Constructs an NMSObject with the object it should wrap
+     *
      * @param obj The object to wrap
      */
     public NMSObject(Object obj) {
@@ -50,8 +52,9 @@ public class NMSObject {
 
     /**
      * Calls a method on the wrapped object
-     * @param name The name of the method
-     * @param args The arguments to pass to the method
+     *
+     * @param name   The name of the method
+     * @param args   The arguments to pass to the method
      * @param supers The number of superclasses to move up before getting the declared method
      * @return An NMSObject which is the returned value from the method
      */
@@ -66,6 +69,7 @@ public class NMSObject {
 
     /**
      * Calls a method on the wrapped object
+     *
      * @param name The name of the method
      * @param args The arguments to pass to the method
      * @return An NMSObject which is the returned value from the method
@@ -76,7 +80,8 @@ public class NMSObject {
 
     /**
      * Gets the value stored in a field in the wrapped object
-     * @param name The name of the field
+     *
+     * @param name   The name of the field
      * @param supers The number of superclasses to move up before getting the declared field
      * @return A wrapped NMSObject with the value of the field
      */
@@ -92,6 +97,7 @@ public class NMSObject {
 
     /**
      * Gets the value stored in a field in the wrapped object
+     *
      * @param name The name of the field
      * @return A wrapped NMSObject with the value of the field
      */
@@ -101,9 +107,10 @@ public class NMSObject {
 
     /**
      * Sets the value stored in a field in the wrapped object
-     * @param name The name of the field
+     *
+     * @param name   The name of the field
      * @param supers The number of superclasses to move up before getting the declared field
-     * @param obj The object to set. Will be unwrapped if it is an NMSObject.
+     * @param obj    The object to set. Will be unwrapped if it is an NMSObject.
      */
     public void setField(int supers, String name, Object obj) {
         if (obj instanceof NMSObject) {
@@ -120,8 +127,9 @@ public class NMSObject {
 
     /**
      * Sets the value stored in a field in the wrapped object
+     *
      * @param name The name of the field
-     * @param obj The object to set. Will be unwrapped if it is an NMSObject.
+     * @param obj  The object to set. Will be unwrapped if it is an NMSObject.
      */
     public void setField(String name, Object obj) {
         setField(0, name, obj);
