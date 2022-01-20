@@ -276,7 +276,7 @@ public class customizeGui implements Listener, InventoryHolder {
                 .withPlayer(p)
                 .withTitle("&5&lInput New Title")
                 .withResponse(s -> {
-                    _gui.setInventoryTitle(FormatUtils.color(s));
+                    _gui.setInventoryTitle(Utils.JTEXT_PARSER.parse(s));
                     Schedulers.sync().run(this::refresh);
                 })
                 .withCancel(cancel -> Schedulers.sync().run(this::refresh))
