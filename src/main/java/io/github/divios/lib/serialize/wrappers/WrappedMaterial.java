@@ -6,8 +6,11 @@ import io.github.divios.core_lib.itemutils.ItemUtils;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Objects;
+import java.util.UUID;
 
 public class WrappedMaterial {
+
+    private static final UUID skullUUID = UUID.nameUUIDFromBytes("randomSkull".getBytes());
 
     private final String material;
 
@@ -31,9 +34,13 @@ public class WrappedMaterial {
     }
 
     public ItemStack parseItem() {
-        XMaterial item = XMaterial.matchXMaterial(material)
-                .orElseThrow(() -> new RuntimeException("Material not supported in this version?"));
-        return Objects.requireNonNull(item.parseItem(), "Material not supported in this version?");
+        if (material.startsWith("base64:")) {
+            return ItemUtils.applyTexture(SkullUtils.getSkull(skullUUID), material.substring(7));
+        } else {
+            XMaterial item = XMaterial.matchXMaterial(material)
+                    .orElseThrow(() -> new RuntimeException("Material not supported in this version?"));
+            return Objects.requireNonNull(item.parseItem(), "Material not supported in this version?");
+        }
     }
 
 }
