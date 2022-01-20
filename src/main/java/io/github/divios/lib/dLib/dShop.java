@@ -159,6 +159,14 @@ public class dShop {
                 .collect(Collectors.toSet());
     }
 
+    /**
+     * Returns an unmodifiable view of the items map
+     */
+    public @NotNull
+    Map<UUID, dItem> getMapItems() {
+        return Collections.unmodifiableMap(items);
+    }
+
     public @NotNull
     Set<dItem> getCurrentItems() {
         Collection<dItem> button = guis.getDefault().getButtons().values();
