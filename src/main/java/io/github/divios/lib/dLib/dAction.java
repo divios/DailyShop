@@ -52,6 +52,10 @@ public enum dAction {
                 .plugin(DailyShop.get())
                 .setSearch(false)
                 .open(p);
+    }),
+
+    CLOSE_INVENTORY((p, s) -> {
+        p.closeInventory();
     });
 
     private final BiConsumer<Player, String> action;
