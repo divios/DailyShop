@@ -24,7 +24,7 @@ public class dActionAdapter implements JsonSerializer<Pair<dAction, String>>, Js
         String data = "";
 
         Preconditions.checkArgument(action.has("type"), "An action needs a type field");
-        Preconditions.checkArgument(Utils.testRunnable(() -> typeAction[0] = dAction.valueOf(action.get("type").getAsString())));
+        Preconditions.checkArgument(Utils.testRunnable(() -> typeAction[0] = dAction.valueOf(action.get("type").getAsString().toUpperCase())), "Invalid action");
 
         if (action.has("data")) {
             switch (typeAction[0]) {
@@ -32,7 +32,7 @@ public class dActionAdapter implements JsonSerializer<Pair<dAction, String>>, Js
                 case RUN_PLAYER_CMD:
                     StringBuilder stringBuilder = new StringBuilder();
                     action.get("data").getAsJsonArray().forEach(element ->
-                            stringBuilder.append(element.getAsString() + ";:"));
+                            stringBuilder.append(element.getAsString()).append(";:"));
                     data = stringBuilder.substring(0, stringBuilder.length() - 2);  // remove last ";:"
                     break;
                 case OPEN_SHOP:
