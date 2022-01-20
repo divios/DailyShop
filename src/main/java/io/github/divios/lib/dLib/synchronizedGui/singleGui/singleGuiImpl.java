@@ -139,16 +139,27 @@ public class singleGuiImpl implements singleGui, Cloneable {
                                 newItem = newItem.addLore(Utils.JTEXT_PARSER.parse(s, p));
                         }
                         own.getInventory().setItem(integer, newItem);
-                    } catch (Exception ignored) {}
+                    } catch (Exception ignored) {
+                    }
                 });
 
     }
 
     @Override
     public void restock() {
-        Set<dItem> newItems = dRandomItemsSelector.fromItems(shop.getItems())
+        Set<dItem> items = shop.getItems();
+        Set<dItem> newItems = dRandomItemsSelector.fromItems(items)
                 .roll(own.dailyItemsSlots.size());
         own.restock(newItems);
+        items.stream()
+                .filter(dItem::isStaticSlot)
+                .filter(dItem -> own.dailyItemsSlots.contains(dItem.getSlot()))
+                .forEach(dItem -> {
+                    dItem.generateNewSellPrice();
+                    dItem.generateNewBuyPrice();
+                    own.addButton(dItem, dItem.getSlot());
+                    own.dailyItemsSlots.add(dItem.getSlot());
+                });
         updateTask();
     }
 
@@ -234,8 +245,8 @@ public class singleGuiImpl implements singleGui, Cloneable {
     private final static class dRandomItemsSelector {
 
         private static final Predicate<dItem> filterItems = item ->
-                !(item.getBuyPrice() <= 0 && item.getSellPrice() <= 0)
-                        || item.getRarity().getWeight() != 0;
+                !item.isStaticSlot() && !(item.getBuyPrice() <= 0 && item.getSellPrice() <= 0)
+                        && item.getRarity().getWeight() != 0;
 
         private static final Function<dItem, Integer> getWeights = dItem -> dItem.getRarity().getWeight();
 
