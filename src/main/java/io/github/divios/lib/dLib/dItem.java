@@ -70,6 +70,7 @@ public class dItem implements Cloneable {
     private List<String> sellPerms;
     private List<String> commands;
     private List<String> bundle;
+    private boolean staticSlot = false;
     private boolean confirmGui = true;
 
     private final boolean isAir;
@@ -129,6 +130,7 @@ public class dItem implements Cloneable {
         if (object.has("bundle") && !object.get("bundle").isJsonNull())
             item.bundle = gson.fromJson(object.get("bundle"), listStringToken.getType());
 
+        item.staticSlot = object.get("static").getAsBoolean();
         item.confirmGui = object.get("confirmGui").getAsBoolean();
 
         return item;
@@ -325,16 +327,16 @@ public class dItem implements Cloneable {
         return bundle == null ? null : Collections.unmodifiableList(bundle);
     }
 
+    public boolean isStaticSlot() {
+        return staticSlot;
+    }
+
     public boolean isConfirmGui() {
         return confirmGui;
     }
 
     public boolean isAir() {
         return isAir;
-    }
-
-    public JsonObject getNBT() {
-        return new Gson().fromJson(new NBTItem(item).toString(), JsonObject.class);
     }
 
     /**
@@ -362,14 +364,6 @@ public class dItem implements Cloneable {
         item = newItem;
 
         return this;
-    }
-
-    public dItem setNBT(@NotNull JsonObject nbt) {
-        Preconditions.checkNotNull(nbt, "Nbt is null");
-        NBTItem item = new NBTItem(this.item);
-        item.mergeCompound(new NBTContainer(nbt.toString()));
-
-        return this.setItem(item.getItem());
     }
 
     public dItem setSlot(int slot) {
@@ -501,6 +495,11 @@ public class dItem implements Cloneable {
         return this;
     }
 
+    public dItem setStaticSlot(boolean staticSlot) {
+        this.staticSlot = staticSlot;
+        return this;
+    }
+
     public dItem setConfirmGui(boolean confirmGui) {
         this.confirmGui = confirmGui;
 
@@ -531,6 +530,7 @@ public class dItem implements Cloneable {
                 .add("buyPerms", gson.toJsonTree(buyPerms))
                 .add("sellPerms", gson.toJsonTree(sellPerms))
                 .add("bundle", gson.toJsonTree(bundle))
+                .add("static", staticSlot)
                 .add("confirmGui", confirmGui)
                 .build();
     }
@@ -573,6 +573,7 @@ public class dItem implements Cloneable {
 
         return slot == dItem.slot
                 && DailyObject.isSimilar(stock, dItem.stock)
+                && staticSlot == dItem.staticSlot
                 && confirmGui == dItem.confirmGui
                 && isAir == dItem.isAir
                 && Objects.equals(ID, dItem.ID)
@@ -596,6 +597,7 @@ public class dItem implements Cloneable {
 
         return slot == newDItem.slot
                 && Objects.equals(stock, newDItem.stock)
+                && isStaticSlot() == staticSlot
                 && confirmGui == newDItem.confirmGui
                 && isAir == newDItem.isAir
                 && Objects.equals(ID, newDItem.ID)
@@ -627,6 +629,7 @@ public class dItem implements Cloneable {
                 sellPerms,
                 commands,
                 bundle,
+                staticSlot,
                 confirmGui,
                 isAir
         );

@@ -1,6 +1,9 @@
 package io.github.divios.lib.serialize.wrappers;
 
-import com.google.gson.JsonObject;
+import com.google.gson.JsonElement;
+import de.tr7zw.nbtapi.NBTContainer;
+import de.tr7zw.nbtapi.NBTItem;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.Arrays;
 import java.util.List;
@@ -11,35 +14,46 @@ public class WrappedNBT {
             Arrays.asList("HideFlags", "HideAttributes", "HideDestroys", "HideDye", "HideEnchants",
                     "HidePlacedOn", "HidePotionEffects", "HideUnbreakable");
 
-    private final JsonObject nbt;
+    private final NBTItem nbt;
 
-    public static WrappedNBT valueOf(JsonObject object) {
-        return new WrappedNBT(object);
+    public static ItemStack mergeNBT(ItemStack item, JsonElement nbt) {
+        NBTItem nbtItem = new NBTItem(item);
+        nbtItem.mergeCompound(new NBTContainer(
+                nbt.isJsonObject()
+                        ? nbt.getAsJsonObject().toString()
+                        : nbt.getAsString()
+        ));
+
+        return nbtItem.getItem();
     }
 
-    public WrappedNBT(JsonObject nbt) {
+    public static WrappedNBT valueOf(ItemStack item) {
+        return new WrappedNBT(new NBTItem(item));
+    }
+
+    public WrappedNBT(NBTItem nbt) {
         this.nbt = nbt;
         removeDailyNBT();
     }
 
     private void removeDailyNBT() {
-        nbt.remove("rds_id");
-        nbt.remove("display");
-        nbt.remove("Enchantments");
-        nbt.remove("Potion");
-        nbt.remove("SkullOwner");
-        nbt.remove("BlockEntityTag");
-        nbt.remove("ms_mob");
-        nbt.remove("SilkSpawners");
-        itemFlags.forEach(nbt::remove);
+        nbt.removeKey("rds_id");
+        nbt.removeKey("display");
+        nbt.removeKey("Enchantments");
+        nbt.removeKey("Potion");
+        nbt.removeKey("SkullOwner");
+        nbt.removeKey("BlockEntityTag");
+        nbt.removeKey("ms_mob");
+        nbt.removeKey("SilkSpawners");
+        itemFlags.forEach(nbt::removeKey);
     }
 
-    public JsonObject getNbt() {
-        return nbt;
+    public String getNbt() {
+        return nbt.toString();
     }
 
     public boolean isEmpty() {
-        return nbt.size() == 0;
+        return nbt == null || nbt.getKeys().isEmpty();
     }
 
 }

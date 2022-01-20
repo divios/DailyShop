@@ -6,7 +6,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.*;
 import io.github.divios.core_lib.itemutils.ItemUtils;
-import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.dailyShop.economies.Economy;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.dItem;
@@ -49,10 +48,10 @@ public class dItemAdapter implements JsonSerializer<dItem>, JsonDeserializer<dIt
         ItemStack item = dItem.getItem();
 
         if (ItemUtils.getMetadata(item).hasDisplayName())
-            merchant.addProperty("name", FormatUtils.unColor(ItemUtils.getName(item)));
+            merchant.addProperty("name", Utils.JTEXT_PARSER.unParse(ItemUtils.getName(item)));
 
         List<String> lore = ItemUtils.getLore(dItem.getItem());
-        if (!lore.isEmpty()) merchant.add("lore", gson.toJsonTree(lore));
+        if (!lore.isEmpty()) merchant.add("lore", gson.toJsonTree(Utils.JTEXT_PARSER.unParse(lore)));
 
         if (WrappedCustomItem.isCustomItem(item))
             merchant.add("item", WrappedCustomItem.serializeCustomItem(item));
@@ -73,6 +72,7 @@ public class dItemAdapter implements JsonSerializer<dItem>, JsonDeserializer<dIt
         if (dItem.getSellPerms() != null) merchant.add("sellPerms", gson.toJsonTree(dItem.getSellPerms()));
         merchant.addProperty("rarity", dItem.getRarity().getKey());
         merchant.add("econ", gson.toJsonTree(dItem.getEcon()));
+        if (dItem.isStaticSlot()) merchant.addProperty("static", dItem.getSlot());
         merchant.addProperty("confirm_gui", dItem.isConfirmGui());
         if (dItem.getBundle() != null) merchant.add("bundle", gson.toJsonTree(dItem.getBundle()));
 
@@ -87,8 +87,8 @@ public class dItemAdapter implements JsonSerializer<dItem>, JsonDeserializer<dIt
             merchant.add("flags", gson.toJsonTree(flags, stringListToken.getType()));
 
         WrappedNBT nbt;
-        if (!(nbt = WrappedNBT.valueOf(dItem.getNBT())).isEmpty())
-            merchant.add("nbt", nbt.getNbt());
+        if (!(nbt = WrappedNBT.valueOf(dItem.getItem())).isEmpty())
+            merchant.addProperty("nbt", nbt.getNbt());
 
         return merchant;
     }
@@ -138,9 +138,16 @@ public class dItemAdapter implements JsonSerializer<dItem>, JsonDeserializer<dIt
         if (object.has("commands")) ditem.setCommands(gson.fromJson(object.get("commands"), stringListToken.getType()));
         if (object.has("quantity")) ditem.setItemQuantity(object.get("quantity").getAsInt());
         if (object.has("stock")) ditem.setStock(gson.fromJson(object.get("stock"), dStock.class));
+        if (object.has("static")) {
+            ditem.setStaticSlot(true);
+            ditem.setSlot(object.get("static").getAsInt());
+        }
         if (object.has("confirm_gui")) ditem.setConfirmGui(object.get("confirm_gui").getAsBoolean());
         if (object.has("bundle")) ditem.setBundle(gson.fromJson(object.get("bundle"), stringListToken.getType()));
-        if (object.has("nbt")) ditem.setNBT(object.get("nbt").getAsJsonObject());
+
+        if (object.has("nbt"))
+            ditem.setItem(WrappedNBT.mergeNBT(ditem.getItem(), object.get("nbt")));
+
         if (object.has("unbreakable") && object.get("unbreakable").getAsBoolean())
             ditem.setItem(ItemUtils.setUnbreakable(ditem.getItem()));
 

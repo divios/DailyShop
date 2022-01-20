@@ -7,7 +7,6 @@ import com.google.common.reflect.TypeToken;
 import com.google.gson.*;
 import io.github.divios.core_lib.gson.JsonBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
-import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.core_lib.misc.Pair;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.jcommands.utils.Primitives;
@@ -43,11 +42,11 @@ public class dButtonAdapter implements JsonSerializer<WrappedDButton>, JsonDeser
         ItemStack item = dItem.getDItem().getItem();
 
         if (ItemUtils.getMetadata(item).hasDisplayName())
-            merchant.addProperty("name", FormatUtils.unColor(ItemUtils.getName(item)));
+            merchant.addProperty("name", Utils.JTEXT_PARSER.unParse(ItemUtils.getName(item)));
 
         List<String> lore = ItemUtils.getLore(item);
         if (!lore.isEmpty())
-            merchant.add("lore", gson.toJsonTree(lore));
+            merchant.add("lore", gson.toJsonTree(Utils.JTEXT_PARSER.unParse(lore)));
 
         if (ItemUtils.getMaterial(item) == XMaterial.PLAYER_HEAD.parseMaterial()
                 && SkullUtils.getSkinValue(ItemUtils.getMetadata(item)) != null)
@@ -71,8 +70,8 @@ public class dButtonAdapter implements JsonSerializer<WrappedDButton>, JsonDeser
         if (!(flags = WrappedItemFlags.of(item).getFlags()).isEmpty())
             merchant.add("flags", gson.toJsonTree(flags, stringListToken.getType()));
 
-        WrappedNBT nbt = WrappedNBT.valueOf(dItem.getDItem().getNBT());
-        if (!nbt.isEmpty()) merchant.add("nbt", nbt.getNbt());
+        WrappedNBT nbt = WrappedNBT.valueOf(dItem.getDItem().getItem());
+        if (!nbt.isEmpty()) merchant.addProperty("nbt", nbt.getNbt());
 
         return merchant;
     }
@@ -91,13 +90,7 @@ public class dButtonAdapter implements JsonSerializer<WrappedDButton>, JsonDeser
             return air;
         }
 
-        String material = object.get("material").getAsString();
-        if (material.startsWith("base64:")) {
-            ItemStack itemSkull = ItemUtils.setMaterial(ditem.getItem(), XMaterial.PLAYER_HEAD);
-            itemSkull = ItemUtils.applyTexture(itemSkull, material.replace("base64:", ""));
-            ditem.setItem(itemSkull);
-        } else
-            ditem.setItem(WrappedMaterial.of(material).parseItem());
+        ditem.setItem(WrappedMaterial.of(object.get("material").getAsString()).parseItem());
 
         if (object.has("name"))
             ditem.setItem(ItemUtils.setName(ditem.getItem(), Utils.JTEXT_PARSER.parse(object.get("name").getAsString())));
@@ -126,7 +119,8 @@ public class dButtonAdapter implements JsonSerializer<WrappedDButton>, JsonDeser
             });
         }
 
-        if (object.has("nbt")) ditem.setNBT(object.get("nbt").getAsJsonObject());
+        if (object.has("nbt"))
+            ditem.setItem(WrappedNBT.mergeNBT(ditem.getItem(), object.get("nbt")));
 
         deserializeSlots(object.get("slot"), ditem);
 
