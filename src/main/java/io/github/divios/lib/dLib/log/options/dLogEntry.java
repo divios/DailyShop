@@ -245,7 +245,7 @@ public class dLogEntry {
                     shopID,
                     ID,
                     ItemUtils.deserialize(item),
-                    Type.valueOf(type),
+                    Type.valueOf(type.toUpperCase()),
                     price,
                     quantity,
                     new Timestamp(date.getTime())
