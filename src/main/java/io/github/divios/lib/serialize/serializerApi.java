@@ -72,7 +72,7 @@ public class serializerApi {
         asyncPool.submit(() -> deleteShop(name));
     }
 
-    public static void shutdown() {
+    public static void stop() {
         asyncPool.shutdown();
         try {
             asyncPool.awaitTermination(3, TimeUnit.SECONDS);

@@ -207,22 +207,6 @@ public class singleGuiImpl implements singleGui, Cloneable {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        singleGuiImpl singleGui = (singleGuiImpl) o;
-        return isDestroyed == singleGui.isDestroyed
-                && Objects.equals(p, singleGui.p)
-                && Objects.equals(shop, singleGui.shop)
-                && Objects.equals(own, singleGui.own);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(isDestroyed, p, shop, own);
-    }
-
-    @Override
     public singleGuiImpl clone() {
         try {
             singleGuiImpl clone = (singleGuiImpl) super.clone();

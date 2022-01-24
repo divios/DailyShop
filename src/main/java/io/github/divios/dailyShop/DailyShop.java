@@ -8,6 +8,7 @@ import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.jcommands.JCommands;
 import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.dLib.priceModifiers.priceModifierManager;
+import io.github.divios.lib.dLib.synchronizedGui.taskPool.updatePool;
 import io.github.divios.lib.managers.shopsManager;
 import io.github.divios.lib.serialize.serializerApi;
 import io.github.divios.lib.storage.databaseManager;
@@ -84,7 +85,8 @@ public class DailyShop extends JavaPlugin {
         sManager.saveAllShopsToDatabase();
         dManager.finishAsyncQueries();
         sManager.getShops().forEach(dShop::destroy);
-        serializerApi.shutdown();
+        serializerApi.stop();
+        updatePool.stop();
     }
 
     public void reload() {
