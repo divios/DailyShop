@@ -46,6 +46,7 @@ public class Utils {
                 .parseChatColors()
                 .parseHexColors()
                 .parsePlaceholderAPI()
+                .parseGradients()
                 .parseWithAdventure();
     }
 
