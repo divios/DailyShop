@@ -15,7 +15,7 @@ public class commandsManager {
                 .withSubcommands(new loggerCommand().getCommand())
                 .withSubcommands(new importShops().getCommand())
                 .withSubcommands(new reloadCommand().getCommand())
-                .withSubcommands(new sellCommand().getCommand())
+                //.withSubcommands(new sellCommand().getCommand())
                 .withSubcommands(new testNewStockCommand().getCommand())
                 .executes((sender, valueMap) -> {
                     sender.sendMessage(FormatUtils.color("&8 ------- &6 Help &8 -------"));
