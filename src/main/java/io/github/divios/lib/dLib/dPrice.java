@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import io.github.divios.core_lib.gson.JsonBuilder;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.utils.DebugLog;
+import io.github.divios.dailyShop.utils.PrettyPrice;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.priceModifiers.priceModifier;
 import org.bukkit.entity.Player;
@@ -113,8 +114,8 @@ public class dPrice implements Serializable, Cloneable {
     @Override
     public String toString() {
         if (randomFlag)
-            return minPrice + " : " + maxPrice;
-        else return String.valueOf(actualPrice);
+            return PrettyPrice.pretty(minPrice) + " : " + PrettyPrice.pretty(maxPrice);
+        else return PrettyPrice.pretty(actualPrice);
     }
 
     public boolean isSimilar(@Nullable dPrice price) {
