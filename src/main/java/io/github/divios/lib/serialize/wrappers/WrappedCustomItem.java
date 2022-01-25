@@ -70,7 +70,7 @@ public class WrappedCustomItem {
                 object.add("mmoItem",
                         JsonBuilder.object()
                                 .add("type", MMOUtils.getType(item))
-                                .add("id", MMOUtils.getType(item))
+                                .add("id", MMOUtils.getId(item))
                                 .build()
                 );
                 break;
