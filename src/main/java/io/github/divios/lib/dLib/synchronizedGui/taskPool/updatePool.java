@@ -13,10 +13,10 @@ import java.util.concurrent.TimeUnit;
 public class updatePool {
 
     private static final Set<singleGui> bucket = Sets.newConcurrentHashSet();
-    private static final ExecutorService asyncPool = Executors.newCachedThreadPool();
+    private static final ExecutorService asyncPool = Executors.newWorkStealingPool();
 
     static {
-        Schedulers.sync().runRepeating(() -> bucket.forEach(singleGui -> asyncPool.submit(singleGui::updateTask)),
+        Schedulers.async().runRepeating(() -> bucket.forEach(singleGui -> asyncPool.execute(singleGui::updateTask)),
                 500, TimeUnit.MILLISECONDS, 500, TimeUnit.MILLISECONDS);
     }
 
