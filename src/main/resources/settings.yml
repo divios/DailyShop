@@ -21,7 +21,7 @@
 #       - Change the name of vault currency when displayed.
 # ============================
 #   <integer-bal>
-#        - If false, round prices like 20.0 would be displayed as 20, if true: 20.0
+#        - If true, round prices like 20.0 would be displayed as 20, if false: 20.0
 # ============================
 #   <econ-names>
 #        - Option to override the displayed economy names

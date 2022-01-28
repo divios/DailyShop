@@ -445,7 +445,7 @@ public class dInventory implements Cloneable {
         if (o == null || getClass() != o.getClass()) return false;
         dInventory that = (dInventory) o;
         return Objects.equals(title, that.title)
-                && Objects.equals(inv, that.inv)
+                && Arrays.equals(inv.getContents(), that.getInventory().getContents())
                 && Objects.equals(dailyItemsSlots, that.dailyItemsSlots)
                 && Objects.equals(buttons, that.buttons)
                 && Objects.equals(buttonsSlot, that.buttonsSlot);
@@ -454,7 +454,7 @@ public class dInventory implements Cloneable {
     @Override
     public int hashCode() {
         return Objects.hash(title,
-                inv,
+                Arrays.stream(inv.getContents()).mapToInt(Objects::hashCode).sum(),
                 dailyItemsSlots,
                 buttons,
                 buttonsSlot);

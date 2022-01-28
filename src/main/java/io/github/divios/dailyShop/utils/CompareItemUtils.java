@@ -11,6 +11,11 @@ public class CompareItemUtils {
         if (MMOUtils.isMMOItemsOn() && MMOUtils.isMMOItem(itemCompared)) {
             return MMOUtils.compareMMOItems(itemCompared, itemToCompare);
         }
+
+        if (OraxenUtils.isOraxenOn() && OraxenUtils.isOraxenItem(itemCompared)) {
+            return OraxenUtils.compareItems(itemCompared, itemToCompare);
+        }
+
         return itemCompared.isSimilar(itemToCompare);
     }
 
