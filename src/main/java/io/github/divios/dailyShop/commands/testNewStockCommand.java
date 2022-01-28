@@ -2,27 +2,24 @@ package io.github.divios.dailyShop.commands;
 
 import com.cryptomorin.xseries.XMaterial;
 import com.google.common.base.Preconditions;
+import io.github.divios.core_lib.misc.WeightedRandom;
 import io.github.divios.core_lib.utils.Log;
+import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.economies.Economies;
 import io.github.divios.dailyShop.economies.Economy;
 import io.github.divios.dailyShop.files.Settings;
 import io.github.divios.dailyShop.utils.DebugLog;
 import io.github.divios.dailyShop.utils.PrettyPrice;
 import io.github.divios.jcommands.JCommand;
-import io.github.divios.lib.dLib.dAction;
-import io.github.divios.lib.dLib.dItem;
-import io.github.divios.lib.dLib.dPrice;
-import io.github.divios.lib.dLib.dRarity;
+import io.github.divios.lib.dLib.*;
 import io.github.divios.lib.dLib.stock.dStock;
 import io.github.divios.lib.dLib.stock.factory.dStockFactory;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
 public class testNewStockCommand {
 
@@ -64,6 +61,9 @@ public class testNewStockCommand {
                     testUnmodifiablePrice();
 
                     testPricePretty();
+                    testHashCode();
+
+                    CompletableFuture.runAsync(this::benchMarkRestock);
                 });
     }
 
@@ -364,6 +364,103 @@ public class testNewStockCommand {
                 : "5.000,00";
 
         Preconditions.checkArgument(expect.equals(PrettyPrice.pretty(d)));
+    }
+
+    public void testHashCode() {
+        dItem a = dItem.of(XMaterial.DIRT);
+        dItem b = dItem.of(XMaterial.DIRT);
+        b = b.setID(a.getID());
+
+        Preconditions.checkArgument(a.equals(b));
+        Preconditions.checkArgument(a.hashCode() == b.hashCode());
+    }
+
+    public void benchMarkRestock() {
+        long totalTime = System.currentTimeMillis();
+
+        benchmarkMethod[] methods =  new benchmarkMethod[]{ this::shuffleMethod , this::weightedRandom};
+        long[] totalMethods = new long[methods.length];
+
+        StringBuilder completedBar = new StringBuilder();
+        for (dShop shop : DailyShop.get().getShopsManager().getShops()) {
+            System.out.println(completedBar.append(" ."));
+            if (shop.getItems().isEmpty()) continue;
+            for (int i = 0; i < 40; i++) {          // nItems to test
+                for (int j = 0; j < 1000; j++) {     // test each nItems 500 times
+
+                    for (int i1 = 0; i1 < totalMethods.length; i1++)
+                        totalMethods[i1] += testTime(methods[i1], shop, i);
+                }
+
+            }
+        }
+
+        System.out.println("# Run Complete. Total time: " + timeDifference(System.currentTimeMillis() - totalTime));
+        System.out.println();
+        System.out.println("benchmark");
+        for (int i = 0; i < methods.length; i++)
+            System.out.println(methods[i].getClass().getSimpleName() + "     score: " + totalMethods[i] / (System.currentTimeMillis() - totalTime) + "     time: " + timeDifference(totalMethods[i]));
+
+    }
+
+    private long testTime(benchmarkMethod method, dShop shop, int nTimes) {
+        long start = System.currentTimeMillis();
+        method.run(shop, nTimes);
+        return System.currentTimeMillis() - start;
+    }
+
+    private static String timeDifference(long timeDifference) {
+        timeDifference = timeDifference / 1000;
+        int h = (int) (timeDifference / (3600));
+        int m = (int) ((timeDifference - (h * 3600)) / 60);
+        int s = (int) (timeDifference - (h * 3600) - m * 60);
+
+        return String.format("%02d:%02d:%02d", h, m, s);
+    }
+
+    @FunctionalInterface
+    private interface benchmarkMethod {
+        void run(dShop shop, int nItems);
+    }
+
+    private void shuffleMethod(dShop shop, int nItems) {
+        List<dItem> itemsPool = new ArrayList<>();
+        Set<String> already = new HashSet<>();
+        Set<dItem> rolledItems = new HashSet<>();
+
+        for (dItem item : shop.getItems())
+            for (int i = 0; i < item.getRarity().getWeight(); i++)
+                itemsPool.add(item);
+
+        Collections.shuffle(itemsPool);
+
+        for (int i = 0; i < nItems; i++) {
+            if (rolledItems.size() == itemsPool.size()) break;
+            dItem rolled = null;
+            for (dItem dItem : itemsPool)
+                if (!already.contains(dItem.getID())) { rolled = dItem; break; }
+
+            if (rolled == null) break;
+            rolledItems.add(rolled);
+            already.add(rolled.getID());
+        }
+
+    }
+
+    private void weightedRandom(dShop shop, int nTimes) {
+        Set<dItem> rolledItems = new HashSet<>();
+
+        WeightedRandom<dItem> random = WeightedRandom
+                .fromCollection(shop.getItems(), dItem::clone, value -> value.getRarity().getWeight());
+
+        for (int i = 0; i < nTimes; i++) {
+            dItem rolled;
+            if ((rolled = random.roll()) == null) break;
+
+            random.remove(rolled);
+            rolledItems.add(rolled);
+        }
+
     }
 
 
