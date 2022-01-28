@@ -32,26 +32,22 @@ public class SellTransaction {
                     .withPlayer(vendor)
                     .withShop(shop)
                     .withItem(item)
-                    .withOnCompleteAction(integer -> {
-                        SingleTransaction.create()
-                                .withPlayer(vendor)
-                                .withShop(shop)
-                                .withType(SingleTransaction.Type.SELL)
-                                .withItem(item)
-                                .withAmount(integer)
-                                .execute();
-                    })
+                    .withOnCompleteAction(this::executeTransaction)
                     .withFallback(() -> shop.openShop(vendor))
                     .prompt();
         else
-            SingleTransaction.create()
-                    .withPlayer(vendor)
-                    .withShop(shop)
-                    .withType(SingleTransaction.Type.SELL)
-                    .withItem(item)
-                    .withAmount(item.getItem().getAmount())
-                    .withOnComplete(bill -> shop.computeBill(bill))
-                    .execute();
+            executeTransaction(item.getItem().getAmount());
+    }
+
+    private void executeTransaction(int amount) {
+        SingleTransaction.create()
+                .withPlayer(vendor)
+                .withShop(shop)
+                .withType(SingleTransaction.Type.SELL)
+                .withItem(item)
+                .withAmount(amount)
+                .withOnComplete(bill -> shop.openShop(vendor))
+                .execute();
     }
 
 }

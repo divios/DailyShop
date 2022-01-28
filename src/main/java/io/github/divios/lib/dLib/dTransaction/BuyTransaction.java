@@ -27,32 +27,27 @@ public class BuyTransaction {
     }
 
     public void execute() {
-        if (item.isConfirmGui() && item.getBundle() == null) {
+        if (item.isConfirmGui() && item.getBundle() == null)
             BuyConfirmMenu.builder()
                     .withPlayer(buyer)
                     .withShop(shop)
                     .withItem(item)
-                    .withOnCompleteAction(integer -> {
-                        SingleTransaction.create()
-                                .withPlayer(buyer)
-                                .withShop(shop)
-                                .withType(SingleTransaction.Type.BUY)
-                                .withItem(item)
-                                .withAmount(integer)
-                                .execute();
-                    })
+                    .withOnCompleteAction(this::executeTransaction)
                     .withFallback(() -> shop.openShop(buyer))
                     .prompt();
-        } else {
-            SingleTransaction.create()
-                    .withPlayer(buyer)
-                    .withShop(shop)
-                    .withType(SingleTransaction.Type.BUY)
-                    .withItem(item)
-                    .withAmount(item.getItem().getAmount())
-                    .withOnComplete(bill -> shop.computeBill(bill))
-                    .execute();
-        }
+        else
+            executeTransaction(item.getItem().getAmount());
+    }
+
+    private void executeTransaction(int amount) {
+        SingleTransaction.create()
+                .withPlayer(buyer)
+                .withShop(shop)
+                .withType(SingleTransaction.Type.BUY)
+                .withItem(item)
+                .withAmount(amount)
+                .withOnComplete(bill -> shop.openShop(buyer))
+                .execute();
     }
 
 }
