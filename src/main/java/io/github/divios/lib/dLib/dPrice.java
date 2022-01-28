@@ -111,11 +111,18 @@ public class dPrice implements Serializable, Cloneable {
         return actualPrice;
     }
 
-    @Override
-    public String toString() {
+    public String toPrettyString() {
         if (randomFlag)
             return PrettyPrice.pretty(minPrice) + " : " + PrettyPrice.pretty(maxPrice);
         else return PrettyPrice.pretty(actualPrice);
+    }
+
+    @Override
+    public String toString() {
+        if (randomFlag)
+            return minPrice + " : " + maxPrice;
+        else
+            return String.valueOf(actualPrice);
     }
 
     public boolean isSimilar(@Nullable dPrice price) {
