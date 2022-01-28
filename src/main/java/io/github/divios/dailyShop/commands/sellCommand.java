@@ -99,7 +99,7 @@ public class sellCommand {
 
         shopLoop:
         for (dShop shop : DailyShop.get().getShopsManager().getShops()) {
-            for (dItem shopItem : shop.getItems()) {
+            for (dItem shopItem : shop.getCurrentItems()) {
                 if (shopItem.getItem().isSimilar(itemToSearch)) {
                     entry = ItemEntry.from(shop, shopItem);
                     break shopLoop;
@@ -228,6 +228,7 @@ public class sellCommand {
             if (e.getSlot() >= 27 && e.getSlot() < 36) {
                 e.setCancelled(true);
                 if (e.getSlot() == 31) {
+                    p.closeInventory();
                     startTransaction();
                 }
             }
@@ -249,12 +250,12 @@ public class sellCommand {
 
 
         private void startTransaction() {
+            Utils.sendRawMsg(p, "&7+-----------------------------+");
             IntStream.range(0, 27).forEach(index -> {
                 ItemStack itemToSell = gui.getItem(index);
                 if (ItemUtils.isEmpty(itemToSell)) return;
 
                 ItemEntry entry = searchItem(itemToSell);
-                Utils.sendRawMsg(p, "&7+-----------------------------+");
                 Transactions.Custom()
                         .withType(SingleTransaction.Type.SELL)
                         .withPlayer(p)
@@ -264,9 +265,8 @@ public class sellCommand {
                         //.withInventoryAction(false)
                         .withOnFail((dItem, transactionError) -> {})
                         .execute();
-                Utils.sendRawMsg(p, "&7+-----------------------------+");
-
             });
+            Utils.sendRawMsg(p, "&7+-----------------------------+");
         }
 
         private void givePlayerItemsBack() {
