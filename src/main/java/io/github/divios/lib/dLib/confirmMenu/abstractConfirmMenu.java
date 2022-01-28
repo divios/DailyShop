@@ -58,7 +58,7 @@ public abstract class abstractConfirmMenu {
     private final List<Subscription> listeners;
     private final Task giveItemsLoop;
 
-    public abstractConfirmMenu(dShop shop,
+    protected abstractConfirmMenu(dShop shop,
                                Player player,
                                dItem item,
                                Consumer<Integer> onCompleteAction, Runnable fallback
@@ -87,7 +87,7 @@ public abstract class abstractConfirmMenu {
                                 DebugLog.info("Inventory close event inside buyconfirmMenu");
                                 listeners.forEach(Subscription::unregister);
                                 giveItemsLoop.stop();
-                                Schedulers.sync().runLater(player::updateInventory, 2L);
+                                Schedulers.sync().runLater(player::updateInventory, 1L);
                             }
                         })
         );
