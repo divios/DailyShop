@@ -36,6 +36,7 @@ public class SingleTransaction {
         private Player player;
         private dItem item;
         private int amount = 1;
+        private boolean inventoryAction = true;
         private Consumer<Bill> onComplete;
         private BiConsumer<dItem, TransactionError> onFail;
 
@@ -71,6 +72,11 @@ public class SingleTransaction {
             return this;
         }
 
+        public SingleTransactionBuilder withInventoryAction(boolean inventoryAction) {
+            this.inventoryAction = inventoryAction;
+            return this;
+        }
+
         public SingleTransactionBuilder withOnComplete(Consumer<Bill> onComplete) {
             this.onComplete = onComplete;
             return this;
@@ -89,9 +95,8 @@ public class SingleTransaction {
 
             if (onComplete == null)
                 onComplete = bill -> {
-                    shop.computeBill(bill);
-                    shop.openShop(player);
                 };
+            onComplete = onComplete.andThen(shop::computeBill);
 
             if (onFail == null)
                 onFail = (item, err) -> {
@@ -99,8 +104,8 @@ public class SingleTransaction {
                     player.closeInventory();
                 };
 
-            if (type == Type.BUY) new BuyTransaction(shop, player, item, amount, onComplete, onFail);
-            else if (type == Type.SELL) new SellTransaction(shop, player, item, amount, onComplete, onFail);
+            if (type == Type.BUY) new BuyTransaction(shop, player, item, amount, inventoryAction, onComplete, onFail);
+            else if (type == Type.SELL) new SellTransaction(shop, player, item, amount, inventoryAction, onComplete, onFail);
         }
     }
 
@@ -121,14 +126,23 @@ public class SingleTransaction {
         private final Type type = Type.BUY;
         private final dItem item;
         private final int amount;
+        private final boolean inventoryAction;
         private final Consumer<Bill> onComplete;
         private final BiConsumer<dItem, TransactionError> onFail;
 
-        private BuyTransaction(dShop shop, Player player, dItem item, int amount, Consumer<Bill> onComplete, BiConsumer<dItem, TransactionError> onFail) {
+        private BuyTransaction(dShop shop,
+                               Player player,
+                               dItem item,
+                               int amount,
+                               boolean inventoryAction,
+                               Consumer<Bill> onComplete,
+                               BiConsumer<dItem, TransactionError> onFail
+        ) {
             this.shop = Objects.requireNonNull(shop);
             this.player = Objects.requireNonNull(player);
             this.item = Objects.requireNonNull(item);
             this.amount = amount;
+            this.inventoryAction = inventoryAction;
             this.onComplete = onComplete;
             this.onFail = onFail;
 
@@ -193,7 +207,8 @@ public class SingleTransaction {
                     }
                     aux -= toRemove;
                 }
-                ItemUtils.give(player, item.getItem(), amount);
+                if (inventoryAction)
+                    ItemUtils.give(player, item.getItem(), amount);
             }
 
             item.getEcon().witchDrawMoney(player, finalPrice);
@@ -217,14 +232,23 @@ public class SingleTransaction {
         private final Type type = Type.SELL;
         private final dItem item;
         private final int amount;
+        private final boolean inventoryAction;
         private final Consumer<Bill> onComplete;
         private final BiConsumer<dItem, TransactionError> onFail;
 
-        private SellTransaction(dShop shop, Player player, dItem item, int amount, Consumer<Bill> onComplete, BiConsumer<dItem, TransactionError> onFail) {
+        private SellTransaction(dShop shop,
+                                Player player,
+                                dItem item,
+                                int amount,
+                                boolean inventoryAction,
+                                Consumer<Bill> onComplete,
+                                BiConsumer<dItem, TransactionError> onFail
+        ) {
             this.shop = Objects.requireNonNull(shop);
             this.player = Objects.requireNonNull(player);
             this.item = Objects.requireNonNull(item);
             this.amount = amount;
+            this.inventoryAction = inventoryAction;
             this.onComplete = onComplete;
             this.onFail = onFail;
 
@@ -246,7 +270,8 @@ public class SingleTransaction {
 
             item.getEcon().depositMoney(player, finalPrice);
 
-            ItemUtils.remove(player.getInventory(), item.getItem(), amount);   // Is already removed
+            if (inventoryAction)
+                ItemUtils.remove(player.getInventory(), item.getItem(), amount);   // Is already removed
 
             Messages.MSG_BUY_ITEM.send(player,
                     Template.of("action", Lang.SELL_ACTION_NAME.getAsString(player)),
