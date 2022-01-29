@@ -105,7 +105,8 @@ public class SingleTransaction {
                 };
 
             if (type == Type.BUY) new BuyTransaction(shop, player, item, amount, inventoryAction, onComplete, onFail);
-            else if (type == Type.SELL) new SellTransaction(shop, player, item, amount, inventoryAction, onComplete, onFail);
+            else if (type == Type.SELL)
+                new SellTransaction(shop, player, item, amount, inventoryAction, onComplete, onFail);
         }
     }
 
@@ -180,35 +181,36 @@ public class SingleTransaction {
                                         .parse(s)
                         )
                 );
-                onComplete.accept(bill.printBill());
-                return;
-            }
 
-            List<String> bundle;
-            if ((bundle = item.getBundle()) != null) {
-                bundle.stream()
-                        .map(shop::getItem)
-                        .filter(Objects::nonNull)
-                        .forEach(newDItem -> ItemUtils.give(player, newDItem.getItem()));
             } else {
-                ItemStack[] playerItems = Arrays.copyOf(player.getInventory().getContents(), 36);
-                Inventory inv = Bukkit.createInventory(null, playerItems.length);
-                inv.setContents(playerItems);
-                ItemStack itemToGive = item.getItem();
 
-                int aux = amount;
-                while (aux != 0) {
-                    int toRemove = Math.min(64, aux);
-                    itemToGive.setAmount(toRemove);
+                List<String> bundle;
+                if ((bundle = item.getBundle()) != null) {
+                    bundle.stream()
+                            .map(shop::getItem)
+                            .filter(Objects::nonNull)
+                            .forEach(newDItem -> ItemUtils.give(player, newDItem.getItem()));
+                } else {
+                    ItemStack[] playerItems = Arrays.copyOf(player.getInventory().getContents(), 36);
+                    Inventory inv = Bukkit.createInventory(null, playerItems.length);
+                    inv.setContents(playerItems);
+                    ItemStack itemToGive = item.getItem();
 
-                    if (!inv.addItem(itemToGive).isEmpty()) {
-                        onFail.accept(item, TransactionError.noSpace);
-                        return;
+                    int aux = amount;
+                    while (aux != 0) {
+                        int toRemove = Math.min(64, aux);
+                        itemToGive.setAmount(toRemove);
+
+                        if (!inv.addItem(itemToGive).isEmpty()) {
+                            onFail.accept(item, TransactionError.noSpace);
+                            return;
+                        }
+                        aux -= toRemove;
                     }
-                    aux -= toRemove;
+
+                    if (inventoryAction)
+                        ItemUtils.give(player, item.getItem(), amount);
                 }
-                if (inventoryAction)
-                    ItemUtils.give(player, item.getItem(), amount);
             }
 
             item.getEcon().witchDrawMoney(player, finalPrice);
