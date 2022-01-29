@@ -114,10 +114,9 @@ lang:
       lore_default: "&7Click to edit|&7the item's permissions"
       lore: "|&8- &9LEFT CLICK|  &7Enable feature||&7Enable this option to allow players to purchase|&7this item if they have certain permissions"
       lore_on: "|&8- &9LEFT CLICK|  &7Add Permission to the list||&8- &9RIGHT CLICK|  &7Remove permission from list||&8- &9SHIFT RIGHT CLICK|  &7Disable Feature"
-    set:
-      name: "&f&lEdit set"
-      lore: "|&8- &9LEFT CLICK|  &7Enable feature||&7Enable this option to lock the amount|&7of an item for a given price"
-      lore_on: "|&8- &9LEFT CLICK|  &7Change set amount||&8- &9RIGHT CLICK|  &7Disable Feature||&7Current amount: &e{amount}"
+    quantity:
+      name: "&f&lSet item's quantity"
+      lore: "&7Click to change|&7the item's quantity"
     toggle:
       enchants:
         name: "&f&lMake enchant visible/invisible"
