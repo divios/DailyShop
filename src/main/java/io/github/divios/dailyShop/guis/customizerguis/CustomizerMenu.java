@@ -417,11 +417,11 @@ public class CustomizerMenu {
         );
 
 
-        inv.addButton(                                                  // Set
+        inv.addButton(                                                  // QUANTITY
                 ItemButton.create(
                         ItemBuilder.of(XMaterial.CHEST_MINECART)    //set of items
-                                .setName(Lang.CUSTOMIZE_SET_NAME.getAsString(p))
-                                .addLore(Lang.CUSTOMIZE_SET_LORE_ON.getAsListString(p,
+                                .setName(Lang.CUSTOMIZE_QUANTITY.getAsString(p))
+                                .addLore(Lang.CUSTOMIZE_QUANTITY_LORE.getAsListString(p,
                                                 Template.of("amount", item.getItem().getAmount())
                                         )
                                 )
@@ -429,8 +429,7 @@ public class CustomizerMenu {
                             ChatPrompt.builder()
                                     .withPlayer(p)
                                     .withResponse(s -> {
-                                        if (!Primitives.isInteger(s))
-                                            Messages.MSG_NOT_INTEGER.send(p);
+                                        if (!Primitives.isInteger(s)) { Messages.MSG_NOT_INTEGER.send(p); return; }
                                         int i = Primitives.getAsInteger(s);
                                         if (i < 1 || i > 64) Utils.sendRawMsg(p, "&7Invalid amount");
                                         ItemStack toChange = item.getItem();
@@ -470,13 +469,19 @@ public class CustomizerMenu {
                                                 dStockFactory.GLOBAL(defaultStock) : dStockFactory.INDIVIDUAL(defaultStock)
                                 );
                                 refresh();
-                            } else if (e.isLeftClick() && stock == null) {
+                            } else if (e.isLeftClick()) {
 
                                 ChatPrompt.builder()
                                         .withPlayer(p)
                                         .withResponse(s -> {
-                                            if (Utils.isInteger(s))
-                                                item.setStock(dStockFactory.INDIVIDUAL(Integer.parseInt(s)));
+                                            if (Primitives.isInteger(s))
+                                                item.setStock(
+                                                        item.getDStock() == null
+                                                                ? dStockFactory.INDIVIDUAL(Integer.parseInt(s))
+                                                                : item.getDStock().getName().equals("GLOBAL")
+                                                                    ? dStockFactory.GLOBAL(Primitives.getAsInteger(s))
+                                                                    : dStockFactory.INDIVIDUAL(Primitives.getAsInteger(s))
+                                                );
                                             else Messages.MSG_NOT_INTEGER.send(p);
 
                                             Schedulers.sync().run(this::refresh);
