@@ -485,7 +485,7 @@ public class dItem implements Cloneable {
     }
 
     public dItem setCommands(@Nullable List<String> commands) {
-        this.commands = (commands == null || commands.isEmpty()) ? null : new ArrayList<>(commands);
+        this.commands = (commands == null) ? null : new ArrayList<>(commands);
 
         return this;
     }
