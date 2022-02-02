@@ -40,7 +40,7 @@ public class WrappedCustomItem {
                 Preconditions.checkArgument(mmoItemObject.has("type"), "MMOItem needs a type field");
                 Preconditions.checkArgument(mmoItemObject.has("id"), "MMOItem needs an id field");
 
-                item = MMOUtils.createMMOItem(object.get("type").getAsString(), object.get("id").getAsString());
+                item = MMOUtils.createMMOItem(mmoItemObject.get("type").getAsString(), mmoItemObject.get("id").getAsString());
                 break;
 
             case ORAXEN:
@@ -48,7 +48,7 @@ public class WrappedCustomItem {
                 String id;
 
                 Preconditions.checkArgument(oraxenObject.has("id"), "Oraxen item needs an id");
-                Preconditions.checkArgument(OraxenUtils.isValidId(id = object.get("id").getAsString()), "That oraxen ID does not exist");
+                Preconditions.checkArgument(OraxenUtils.isValidId(id = oraxenObject.get("id").getAsString()), "That oraxen ID does not exist");
 
                 item = OraxenUtils.createItemByID(id);
                 break;
@@ -57,7 +57,7 @@ public class WrappedCustomItem {
                 throw new RuntimeException("Invalid customItemType");
         }
 
-        return Objects.requireNonNull(item, "Something went wrong while parsing custom Item");
+        return Objects.requireNonNull(item, "Something went wrong while parsing custom Item, maybe the plugin is not running?");
     }
 
     public static JsonElement serializeCustomItem(ItemStack item) {

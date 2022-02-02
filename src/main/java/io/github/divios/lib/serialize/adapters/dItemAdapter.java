@@ -106,7 +106,7 @@ public class dItemAdapter implements JsonSerializer<dItem>, JsonDeserializer<dIt
         if (object.has("material"))    // Normal Item
             ditem = dItem.of(WrappedMaterial.of(object.get("material").getAsString()).parseItem());
         else if (object.has("item"))   // Custom item
-            ditem = dItem.of(WrappedCustomItem.from(object).parseItem());
+            ditem = dItem.of(WrappedCustomItem.from(object.get("item").getAsJsonObject()).parseItem());
         else
             throw new RuntimeException("Invalid configuration");
 
