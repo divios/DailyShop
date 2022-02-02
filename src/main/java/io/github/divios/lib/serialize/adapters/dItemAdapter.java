@@ -43,19 +43,21 @@ public class dItemAdapter implements JsonSerializer<dItem>, JsonDeserializer<dIt
 
     @Override
     public JsonElement serialize(dItem dItem, Type type, JsonSerializationContext jsonSerializationContext) {
+        boolean customItemFlag = false;
         JsonObject merchant = new JsonObject();
 
         ItemStack item = dItem.getItem();
 
-        if (ItemUtils.getMetadata(item).hasDisplayName())
-            merchant.addProperty("name", Utils.JTEXT_PARSER.unParse(ItemUtils.getName(item)));
-
-        List<String> lore = ItemUtils.getLore(dItem.getItem());
-        if (!lore.isEmpty()) merchant.add("lore", gson.toJsonTree(Utils.JTEXT_PARSER.unParse(lore)));
-
-        if (WrappedCustomItem.isCustomItem(item))
+        if (WrappedCustomItem.isCustomItem(item)) {
+            customItemFlag = true;
             merchant.add("item", WrappedCustomItem.serializeCustomItem(item));
-        else {
+        } else {
+            if (ItemUtils.getMetadata(item).hasDisplayName())
+                merchant.addProperty("name", Utils.JTEXT_PARSER.unParse(ItemUtils.getName(item)));
+
+            List<String> lore = ItemUtils.getLore(dItem.getItem());
+            if (!lore.isEmpty()) merchant.add("lore", gson.toJsonTree(Utils.JTEXT_PARSER.unParse(lore)));
+
             merchant.addProperty("material", WrappedMaterial.getMaterial(item));
             if (ItemUtils.getMaterial(item) == XMaterial.SPAWNER.parseMaterial())
                 merchant.addProperty("mob", WrapperSpawnerItem.getSpawnerName(item));
@@ -65,7 +67,7 @@ public class dItemAdapter implements JsonSerializer<dItem>, JsonDeserializer<dIt
         merchant.add("buyPrice", gson.toJsonTree(dItem.getDBuyPrice()));
         merchant.add("sellPrice", gson.toJsonTree(dItem.getDSellPrice()));
         if (dItem.getDStock() != null) merchant.add("stock", gson.toJsonTree(dItem.getDStock()));
-        if (!item.getEnchantments().isEmpty())
+        if (!item.getEnchantments().isEmpty() && !customItemFlag)
             merchant.add("enchantments", gson.toJsonTree(wrapEnchants(item.getEnchantments())));
         if (dItem.getCommands() != null) merchant.add("commands", gson.toJsonTree(dItem.getCommands()));
         if (dItem.getBuyPerms() != null) merchant.add("buyPerms", gson.toJsonTree(dItem.getBuyPerms()));
@@ -74,20 +76,20 @@ public class dItemAdapter implements JsonSerializer<dItem>, JsonDeserializer<dIt
         merchant.add("econ", gson.toJsonTree(dItem.getEcon()));
         if (dItem.isStaticSlot()) merchant.addProperty("static", dItem.getSlot());
         merchant.addProperty("confirm_gui", dItem.isConfirmGui());
-        if (dItem.getBundle() != null) merchant.add("bundle", gson.toJsonTree(dItem.getBundle()));
+        if (dItem.getBundle() != null && !customItemFlag) merchant.add("bundle", gson.toJsonTree(dItem.getBundle()));
 
-        if (ItemUtils.getMetadata(item).isUnbreakable()) merchant.addProperty("unbreakable", true);
+        if (ItemUtils.getMetadata(item).isUnbreakable() && !customItemFlag) merchant.addProperty("unbreakable", true);
 
-        if (XPotion.canHaveEffects(item.getType())) {
+        if (XPotion.canHaveEffects(item.getType()) && !customItemFlag) {
             merchant.add("potion", gson.toJsonTree(ItemUtils.getPotionMeta(item), PotionMeta.class));
         }
 
         List<String> flags;
-        if (!(flags = WrappedItemFlags.of(item).getFlags()).isEmpty())
+        if (!(flags = WrappedItemFlags.of(item).getFlags()).isEmpty() && !customItemFlag)
             merchant.add("flags", gson.toJsonTree(flags, stringListToken.getType()));
 
         WrappedNBT nbt;
-        if (!(nbt = WrappedNBT.valueOf(dItem.getItem())).isEmpty())
+        if (!(nbt = WrappedNBT.valueOf(dItem.getItem())).isEmpty() && !customItemFlag)
             merchant.addProperty("nbt", nbt.getNbt());
 
         return merchant;
