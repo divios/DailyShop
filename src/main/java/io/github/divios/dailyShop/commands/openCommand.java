@@ -25,7 +25,8 @@ public class openCommand {
                 .assertPermission("DailyRandomShop.open")
                 .assertUsage(FormatUtils.color("&8- &6/rdshop open [shop] [player] &8- &7Opens a gui for yourself or for the given player"))
                 .executesPlayer((player, values) ->
-                        DailyShop.get().getShopsManager().getDefaultShop().ifPresent(shop -> shop.openShop(player)));
+                        DailyShop.get().getShopsManager().getDefaultShop().ifPresent(shop -> shop.openShop(player))
+                );
     }
 
     private JCommand getSelfCommand() {
@@ -46,7 +47,7 @@ public class openCommand {
 
     private JCommand getOtherCommand() {
         return JCommand.create("open")
-                .assertPermission("DailyRandomShop.open.others")
+                .assertPermission("DailyRandomShop.others.open")
                 .assertUsage(FormatUtils.color("&8- &6/rdshop open [shop] [player] &8- &7Opens a gui for yourself or for the given player"))
                 .withArguments(getShopsArgument(), new PlayerArgument("target"))
                 .executes((commandSender, args) -> {

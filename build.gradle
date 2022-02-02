@@ -59,7 +59,7 @@ dependencies {
     implementation 'com.github.PikaMug:LocaleLib:2.4'
     implementation 'org.bstats:bstats-bukkit:2.2.1'
     implementation 'io.github.divios:core_lib_api:6.4.1'
-    implementation 'com.github.divios:JCommands:1.6.4'
+    implementation 'com.github.divios:JCommands:1.7'
     implementation 'com.github.divios:JText:3.8'
 
     compileOnly fileTree(dir: 'libs', include: ['*.jar'])

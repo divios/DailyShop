@@ -17,7 +17,7 @@ import io.github.divios.dailyShop.files.Messages;
 import io.github.divios.dailyShop.guis.settings.shopGui;
 import io.github.divios.dailyShop.utils.DebugLog;
 import io.github.divios.dailyShop.utils.Utils;
-import io.github.divios.jcommands.utils.Primitives;
+import io.github.divios.jcommands.util.Primitives;
 import io.github.divios.jtext.wrappers.Template;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;

@@ -9,7 +9,7 @@ import io.github.divios.core_lib.gson.JsonBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.Pair;
 import io.github.divios.dailyShop.utils.Utils;
-import io.github.divios.jcommands.utils.Primitives;
+import io.github.divios.jcommands.util.Primitives;
 import io.github.divios.lib.dLib.dAction;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.serialize.wrappers.*;

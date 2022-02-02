@@ -5,7 +5,7 @@ import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.core_lib.misc.XSymbols;
 import io.github.divios.dailyShop.files.Lang;
 import io.github.divios.dailyShop.utils.PrettyPrice;
-import io.github.divios.jcommands.utils.Primitives;
+import io.github.divios.jcommands.util.Primitives;
 import io.github.divios.jtext.wrappers.Template;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;

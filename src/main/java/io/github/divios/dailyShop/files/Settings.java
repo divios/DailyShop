@@ -1,7 +1,7 @@
 package io.github.divios.dailyShop.files;
 
 import io.github.divios.dailyShop.DailyShop;
-import io.github.divios.jcommands.utils.Value;
+import io.github.divios.jcommands.util.Value;
 import org.bukkit.configuration.ConfigurationSection;
 
 import java.util.Map;
