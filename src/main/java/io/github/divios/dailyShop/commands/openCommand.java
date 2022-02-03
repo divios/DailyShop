@@ -53,6 +53,10 @@ public class openCommand {
                 .executes((commandSender, args) -> {
                     DailyShop.get().getShopsManager().getShop(args.get("dailyShop").getAsString())
                             .ifPresent(shop -> {
+                                if (!commandSender.hasPermission("DailyRandomShop.open." + shop.getName())) {
+                                    Messages.MSG_NOT_PERMS.send(commandSender);
+                                    return;
+                                }
                                 Player p = args.get("target").getAsPlayer();
                                 shop.openShop(p);
                             });
@@ -61,10 +65,11 @@ public class openCommand {
 
     private Argument getShopsArgument() {
         return new StringArgument("dailyShop")
-                .overrideSuggestions(() -> DailyShop.get().getShopsManager()
+                .overrideSuggestions(sender -> DailyShop.get().getShopsManager()
                         .getShops()
                         .stream()
                         .map(dShop::getName)
+                        .filter(s -> sender == null || sender.hasPermission("DailyRandomShop.open." + s))
                         .collect(Collectors.toList())
                 )
                 .setAsImperative();
