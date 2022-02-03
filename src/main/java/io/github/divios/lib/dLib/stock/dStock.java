@@ -64,6 +64,7 @@ public abstract class dStock implements Cloneable, Serializable {
         }
 
         stock.incrementOnSell = replenishOnSell;
+        stock.exceedDefault = exceedDefault;
         stock.stocks.putAll(stocks);
         return stock;
     }
