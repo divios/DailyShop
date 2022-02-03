@@ -28,7 +28,7 @@ public class placeholderModifier extends abstractModifier {
     @Override
     public double getValue(modifierContext context) {
         String valueStr = JText.builder()
-                .withTag("%", "%")
+                .withTag("{", "}")
                 .withTemplate("player", context.getPlayer().getName())
                 .withTemplate("item_id", context.getItemID())
                 .parsePlaceholderAPI()

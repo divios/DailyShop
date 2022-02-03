@@ -81,6 +81,7 @@ public class updateItemEvent extends Event {
     public enum type {
         UPDATE_ITEM,
         NEXT_AMOUNT,
+        REPLENISH,
         DELETE_ITEM
     }
 

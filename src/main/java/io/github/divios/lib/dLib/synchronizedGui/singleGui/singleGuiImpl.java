@@ -104,10 +104,13 @@ public class singleGuiImpl implements singleGui, Cloneable {
                 updateTask();
                 break;
             case NEXT_AMOUNT:
-                if (toUpdateItem == null) return;
+            case REPLENISH:
+                if (toUpdateItem == null || toUpdateItem.getDStock() == null) return;
                 DebugLog.info("Decrement stock from singleGui of id: " + toUpdateItem.getID() + " with player " + (p == null ? "null" : p.getName()));
                 dItem buttonItem = own.buttons.get(toUpdateItem.getUUID());
-                buttonItem.decrementStock(o.getPlayer(), o.getAmount());
+                if (type == updateItemEvent.type.NEXT_AMOUNT) buttonItem.decrementStock(o.getPlayer(), o.getAmount());
+                else if (buttonItem.getDStock() != null && buttonItem.getDStock().isIncrementOnSell())
+                    buttonItem.incrementStock(o.getPlayer(), o.getAmount());
                 updateTask();
                 break;
             case DELETE_ITEM:

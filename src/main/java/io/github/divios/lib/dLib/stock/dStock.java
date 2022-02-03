@@ -48,25 +48,29 @@ public abstract class dStock implements Cloneable, Serializable {
         dStock stock;
         String type = object.get("type").getAsString();
         int defaultStock = object.get("defaultStock").getAsInt();
+        boolean replenishOnSell = object.has("incrementOnSell") && object.get("incrementOnSell").getAsBoolean();
+        boolean exceedDefault = object.has("exceedDefault") && object.get("exceedDefault").getAsBoolean();
         Map<UUID, Integer> stocks = gson.fromJson(object.get("stocks"), mapToken.getType());
 
         switch (type) {
             case "GLOBAL":
                 stock = dStockFactory.GLOBAL(defaultStock);
-                stock.stocks.putAll(stocks);
                 break;
             case "INDIVIDUAL":
                 stock = dStockFactory.INDIVIDUAL(defaultStock);
-                stock.stocks.putAll(stocks);
                 break;
             default:
                 throw new RuntimeException("Invalid type");
         }
 
+        stock.incrementOnSell = replenishOnSell;
+        stock.stocks.putAll(stocks);
         return stock;
     }
 
     protected final int defaultStock;
+    protected boolean incrementOnSell;
+    protected boolean exceedDefault;
     protected ConcurrentHashMap<UUID, Integer> stocks = new ConcurrentHashMap<>();
 
     protected dStock(int defaultStock, Map<UUID, Integer> stocks) {
@@ -82,6 +86,22 @@ public abstract class dStock implements Cloneable, Serializable {
 
     public int getDefault() {
         return defaultStock;
+    }
+
+    public boolean isIncrementOnSell() {
+        return incrementOnSell;
+    }
+
+    public boolean isExceedDefault() {
+        return exceedDefault;
+    }
+
+    public void setIncrementOnSell(boolean incrementOnSell) {
+        this.incrementOnSell = incrementOnSell;
+    }
+
+    public void setExceedDefault(boolean exceedDefault) {
+        this.exceedDefault = exceedDefault;
     }
 
     public Integer get(@NotNull Player p) {
@@ -113,7 +133,12 @@ public abstract class dStock implements Cloneable, Serializable {
     }
 
     public void increment(@NotNull UUID p, int amount) {
-        stocks.compute(getKey(p), (uuid, integer) -> (integer == null ? defaultStock : integer) + amount);
+        stocks.compute(getKey(p), (uuid, integer) -> {
+            int toIncrement = ((integer == null) ? defaultStock : integer) + amount;
+            return exceedDefault
+                    ? toIncrement
+                    : Math.min(defaultStock, toIncrement);
+        });
     }
 
     public void decrement(@NotNull Player p, int amount) {
@@ -121,7 +146,7 @@ public abstract class dStock implements Cloneable, Serializable {
     }
 
     public void decrement(@NotNull UUID p, int amount) {
-        stocks.compute(getKey(p), (uuid, integer) -> (integer == null ? defaultStock : integer) - amount);
+        stocks.compute(getKey(p), (uuid, integer) -> ((integer == null) ? defaultStock : integer) - amount);
     }
 
     public void reset(@NotNull Player p) {
@@ -167,7 +192,10 @@ public abstract class dStock implements Cloneable, Serializable {
      */
     public boolean isSimilar(@NotNull dStock stock) {
         return (this == stock) || (Objects.equals(getName(), stock.getName())
-                && defaultStock == stock.defaultStock);
+                && defaultStock == stock.defaultStock
+                && incrementOnSell == stock.incrementOnSell
+                && exceedDefault == stock.exceedDefault
+        );
     }
 
     @Override
@@ -178,6 +206,8 @@ public abstract class dStock implements Cloneable, Serializable {
         dStock dStock = (dStock) o;
         return dStock.getName().equals(getName())
                 && defaultStock == dStock.defaultStock
+                && incrementOnSell == dStock.incrementOnSell
+                && exceedDefault == dStock.exceedDefault
                 && Objects.equals(stocks, dStock.stocks);
     }
 
@@ -190,6 +220,8 @@ public abstract class dStock implements Cloneable, Serializable {
         return JsonBuilder.object()
                 .add("type", getName())
                 .add("defaultStock", defaultStock)
+                .add("incrementOnSell", incrementOnSell)
+                .add("exceedDefault", exceedDefault)
                 .add("stocks", gson.toJsonTree(stocks))
                 .build();
     }

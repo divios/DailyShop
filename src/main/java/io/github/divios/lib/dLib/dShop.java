@@ -13,6 +13,7 @@ import io.github.divios.dailyShop.files.Settings;
 import io.github.divios.dailyShop.guis.settings.shopGui;
 import io.github.divios.dailyShop.utils.DebugLog;
 import io.github.divios.lib.dLib.dTransaction.Bill;
+import io.github.divios.lib.dLib.dTransaction.SingleTransaction;
 import io.github.divios.lib.dLib.log.dLog;
 import io.github.divios.lib.dLib.log.options.dLogEntry;
 import io.github.divios.lib.dLib.stock.dStock;
@@ -321,7 +322,9 @@ public class dShop {
                 guis.updateItem(new updateItemEvent(bill.getPlayer(),
                                 shopItem.getUUID(),
                                 entry.getValue(),
-                                updateItemEvent.type.NEXT_AMOUNT,
+                                bill.getType() == SingleTransaction.Type.BUY
+                                        ? updateItemEvent.type.NEXT_AMOUNT
+                                        : updateItemEvent.type.REPLENISH,
                                 this
                         )
                 );

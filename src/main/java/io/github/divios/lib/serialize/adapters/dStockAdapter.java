@@ -11,10 +11,14 @@ import java.lang.reflect.Type;
 public class dStockAdapter implements JsonSerializer<dStock>, JsonDeserializer<dStock> {
 
     @Override
-    public JsonElement serialize(dStock dStock, Type type, JsonSerializationContext jsonSerializationContext) {
+    public JsonElement serialize(dStock stock, Type type, JsonSerializationContext jsonSerializationContext) {
         JsonObject object = new JsonObject();
-        object.addProperty("type", dStock.getName());
-        object.addProperty("amount", dStock.getDefault());
+        object.addProperty("type", stock.getName());
+        object.addProperty("amount", stock.getDefault());
+        if (stock.isExceedDefault())
+            object.addProperty("exceedDefault", true);
+        if (stock.isIncrementOnSell())
+            object.addProperty("incrementOnSell", true);
 
         return object;
     }
@@ -34,6 +38,13 @@ public class dStockAdapter implements JsonSerializer<dStock>, JsonDeserializer<d
 
         Preconditions.checkArgument((typeStr.equals("INDIVIDUAL") || typeStr.equals("GLOBAL")), "Invalid type field on stock");
 
-        return type.equals("INDIVIDUAL") ? dStockFactory.INDIVIDUAL(amount[0]) : dStockFactory.GLOBAL(amount[0]);
+        boolean incrementOnSell = object.has("incrementOnSell") && object.get("incrementOnSell").getAsBoolean();
+        boolean exceedDefault = object.has("exceedDefault") && object.get("exceedDefault").getAsBoolean();
+
+        dStock stock = type.equals("INDIVIDUAL") ? dStockFactory.INDIVIDUAL(amount[0]) : dStockFactory.GLOBAL(amount[0]);
+        stock.setIncrementOnSell(incrementOnSell);
+        stock.setExceedDefault(exceedDefault);
+
+        return stock;
     }
 }
