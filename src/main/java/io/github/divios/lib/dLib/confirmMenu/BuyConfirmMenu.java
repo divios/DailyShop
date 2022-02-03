@@ -8,8 +8,10 @@ import io.github.divios.lib.dLib.dShop;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.function.Consumer;
 
 public class BuyConfirmMenu extends abstractConfirmMenu {
@@ -53,12 +55,12 @@ public class BuyConfirmMenu extends abstractConfirmMenu {
         clonedPlayerInventory.setContents(Arrays.copyOf(player.getInventory().getContents(), 36));
 
         int amount = super.nAddedItems;
-        int ceil = (int) Math.ceil(amount / 64F);
-        DebugLog.info("Total Amount: " + amount);
+        int ceil = (int) Math.ceil(amount / item.getItem().getMaxStackSize());
+        //DebugLog.info("Total Amount: " + amount);
         for (int i = 0; i <= ceil; i++) {
-            DebugLog.info("Itit: " + i);
-            int aux = Math.min(amount, 64);
-            DebugLog.info("Aux: " + aux);
+            //DebugLog.info("Itit: " + i);
+            int aux = Math.min(amount, item.getItem().getMaxStackSize());
+            //DebugLog.info("Aux: " + aux);
             clonedPlayerInventory.addItem(ItemUtils.setAmount(item.getItem(), aux));
             amount -= aux;
         }
@@ -89,12 +91,15 @@ public class BuyConfirmMenu extends abstractConfirmMenu {
         int balanceLimit = getBalanceLimit();
         int inventoryLimit = getPlayerInventoryLimit();
 
+        System.out.println("StockLimit: " + stockLimit);
+        System.out.println("balanceLimit: " + balanceLimit);
+        System.out.println("inventoryLimit: " + inventoryLimit);
+
         return getMinimumValue(stockLimit, balanceLimit, inventoryLimit);
     }
 
     private int getMinimumValue(int... values) {
         int minValue = MAX_INVENTORY_ITEMS;
-
         for (int value : values)
             minValue = Math.min(minValue, value);
 
@@ -106,7 +111,10 @@ public class BuyConfirmMenu extends abstractConfirmMenu {
     }
 
     private int getBalanceLimit() {
-        return (int) Math.floor(item.getEcon().getBalance(player) / getItemPrice()) - nAddedItems;
+        double price = getItemPrice();
+        return price == 0.0
+                ? MAX_INVENTORY_ITEMS
+                : (int) Math.floor(item.getEcon().getBalance(player) / price) - nAddedItems;
     }
 
     private int getPlayerInventoryLimit() {
@@ -114,7 +122,13 @@ public class BuyConfirmMenu extends abstractConfirmMenu {
         Inventory playerMockInventory = Bukkit.createInventory(null, 36);
         playerMockInventory.setContents(Arrays.copyOf(player.getInventory().getContents(), 36));
 
-        while (playerMockInventory.addItem(item.getItem()).isEmpty()) limit++;
+        ItemStack clone = item.getItem().clone();
+        int maxStack = clone.getMaxStackSize();
+
+        Collection<ItemStack> rest;
+        while((rest = playerMockInventory.addItem(ItemUtils.setAmount(clone, maxStack)).values()).size() == 0)
+            limit += maxStack;
+        limit += (maxStack - rest.iterator().next().getAmount());
 
         return limit - nAddedItems;
     }
