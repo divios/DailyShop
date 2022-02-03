@@ -4,7 +4,6 @@ import com.cryptomorin.xseries.XMaterial;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.ChatPrompt;
-import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.core_lib.misc.confirmIH;
 import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.dailyShop.DailyShop;

@@ -5,7 +5,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import io.github.divios.core_lib.gson.JsonBuilder;
 import io.github.divios.dailyShop.DailyShop;
-import io.github.divios.dailyShop.utils.DebugLog;
 import io.github.divios.dailyShop.utils.PrettyPrice;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.priceModifiers.priceModifier;

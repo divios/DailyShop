@@ -1,6 +1,5 @@
 package io.github.divios.lib.dLib.priceModifiers;
 
-import io.github.divios.dailyShop.DailyShop;
 import org.bukkit.entity.Player;
 
 import java.util.Collection;
@@ -9,8 +8,6 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class priceModifierManager {
-
-    private static final DailyShop plugin = DailyShop.get();
 
     private final Set<priceModifier> modifiers = ConcurrentHashMap.newKeySet();
 

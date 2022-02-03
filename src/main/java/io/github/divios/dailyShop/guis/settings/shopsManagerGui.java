@@ -1,7 +1,6 @@
 package io.github.divios.dailyShop.guis.settings;
 
 import com.cryptomorin.xseries.XMaterial;
-import com.sun.org.apache.xml.internal.utils.StringComparable;
 import io.github.divios.core_lib.inventory.ItemButton;
 import io.github.divios.core_lib.inventory.builder.inventoryPopulator;
 import io.github.divios.core_lib.inventory.builder.paginatedGui;
