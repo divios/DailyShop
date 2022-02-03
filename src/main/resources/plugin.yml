@@ -11,7 +11,7 @@ description: Daily random items to buy on a shop
 permissions:
   DailyRandomShop.open:
     default: op
-  DailyRandomShop.open.others:
+  DailyRandomShop.others.open:
     default: op
   DailyRandomShop.settings:
     default: op
