@@ -4,6 +4,7 @@ import org.bukkit.entity.Player;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -25,8 +26,8 @@ public class priceModifierManager {
         return modifiers.stream()
                 .filter(priceModifier -> p.hasPermission(priceModifier.getPermission()))
                 .filter(priceModifier -> priceModifier.appliesToContext(context))
-                .map(priceModifier::getValue)
-                .min(Double::compare)
+                .min(Comparator.comparingInt(priceModifier::getPriority))
+                .map(priceModifier -> priceModifier.getValue(context))
                 .orElse(0.0);
     }
 

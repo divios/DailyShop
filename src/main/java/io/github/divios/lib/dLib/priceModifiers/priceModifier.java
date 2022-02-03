@@ -17,10 +17,10 @@ public interface priceModifier extends Comparable<priceModifier> {
 
     boolean appliesToContext(modifierContext context);
 
-    double getValue();
+    double getValue(modifierContext context);
 
     default int getPriority() {
-        return 1;
+        return scope.values().length - scope().ordinal();       // Reverse of ordinal
     }
 
     default int compareTo(priceModifier modifier) {
@@ -34,6 +34,7 @@ public interface priceModifier extends Comparable<priceModifier> {
 
     enum scope {
         GLOBAL,
+        PLACEHOLDER,
         SHOP,
         ITEM;
 
@@ -54,7 +55,7 @@ public interface priceModifier extends Comparable<priceModifier> {
             return Arrays.stream(values())
                     .filter(type1 -> type1.name().equalsIgnoreCase(type))
                     .findFirst()
-                    .orElse(null);
+                    .orElseThrow(() -> new RuntimeException("Invalid key"));
         }
 
         public boolean isEquals(type other) {

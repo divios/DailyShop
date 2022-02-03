@@ -38,7 +38,7 @@ public abstract class abstractModifier implements priceModifier {
     public abstract boolean appliesToContext(modifierContext context);
 
     @Override
-    public double getValue() {
+    public double getValue(modifierContext context) {
         return value;
     }
 

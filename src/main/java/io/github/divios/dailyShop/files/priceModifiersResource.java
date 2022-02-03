@@ -41,7 +41,7 @@ public class priceModifiersResource extends resource {
                                     .withId(s)
                                     .withScope(yaml.getString(innerPath + "scope"))
                                     .withType(yaml.getString(innerPath + "type"))
-                                    .withValue(yaml.getDouble(innerPath + "value"))
+                                    .withValue(yaml.getString(innerPath + "value"))
                                     .withShopID(yaml.getString(innerPath + "shop"))
                                     .withItemID(yaml.getString(innerPath + "itemID"))
                                     .buildModifier()

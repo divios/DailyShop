@@ -1,6 +1,7 @@
 package io.github.divios.lib.dLib.priceModifiers.modifiers;
 
 import com.google.common.base.Preconditions;
+import io.github.divios.core_lib.utils.Primitives;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.priceModifiers.priceModifier;
 
@@ -9,7 +10,7 @@ public class modifiersFactory {
     private String id;
     private String scope;
     private String type;
-    private Double value;
+    private String value;
     private String shopID;
     private String itemID;
 
@@ -28,7 +29,7 @@ public class modifiersFactory {
         return this;
     }
 
-    public modifiersFactory withValue(double value) {
+    public modifiersFactory withValue(String value) {
         this.value = value;
         return this;
     }
@@ -49,7 +50,6 @@ public class modifiersFactory {
         Preconditions.checkNotNull(scope, "Scope cannot be null");
         Preconditions.checkNotNull(type, "Type cannot be null");
         Preconditions.checkNotNull(value, "Value cannot be null");
-        Preconditions.checkArgument(value > -1.0, "Value cannot be less or equal than -100%");
 
         priceModifier.scope[] scope = {null};
         priceModifier.type[] type = {null};
@@ -57,19 +57,27 @@ public class modifiersFactory {
         Preconditions.checkArgument(Utils.testRunnable(() -> scope[0] = priceModifier.scope.getFromKey(this.scope)), "Invalid scope");
         Preconditions.checkArgument(Utils.testRunnable(() -> type[0] = priceModifier.type.getFromKey(this.type)), "Invalid type");
 
+        if (scope[0] != priceModifier.scope.PLACEHOLDER) {
+            Preconditions.checkArgument(Primitives.isDouble(value), "Value needs to be a double");
+            Preconditions.checkArgument(Primitives.getAsDouble(value) > -1.0, "Value cannot be less or equal than -100%");
+        }
+
         priceModifier modifier;
         switch (scope[0]) {
             case GLOBAL:
-                modifier = new globalModifier(this.id, type[0], this.value);
+                modifier = new globalModifier(this.id, type[0], Primitives.getAsDouble(value));
+                break;
+            case PLACEHOLDER:
+                modifier = new placeholderModifier(this.id, type[0], this.value);
                 break;
             case SHOP:
                 Preconditions.checkNotNull(shopID, "Shop id cannot be null on SHOP scope");
-                modifier = new shopModifier(id, type[0], value, shopID);
+                modifier = new shopModifier(id, type[0], Primitives.getAsDouble(value), shopID);
                 break;
             case ITEM:
                 Preconditions.checkNotNull(shopID, "Shop id cannot be null on SHOP scope");
                 Preconditions.checkNotNull(itemID, "Item id cannot be null on ITEM scope");
-                modifier = new itemModifier(id, type[0], value, shopID, itemID);
+                modifier = new itemModifier(id, type[0], Primitives.getAsDouble(value), shopID, itemID);
                 break;
             default:
                 throw new RuntimeException("Invalid scope");
