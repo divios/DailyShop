@@ -373,7 +373,7 @@ public class dItem implements Cloneable {
     }
 
     public dItem setBuyPrice(double price) {
-        buyPrice = (price <= 0) ? null : new dPrice(price);
+        buyPrice = (price < 0) ? null : new dPrice(price);
 
         return this;
     }

@@ -231,7 +231,7 @@ public class singleGuiImpl implements singleGui, Cloneable {
     private final static class dRandomItemsSelector {
 
         private static final Predicate<dItem> filterItems = item ->
-                !item.isStaticSlot() && !(item.getBuyPrice() <= 0 && item.getSellPrice() <= 0)
+                !item.isStaticSlot() && !(item.getBuyPrice() < 0 && item.getSellPrice() <= 0)
                         && item.getRarity().getWeight() != 0;
 
         private static final Function<dItem, Integer> getWeights = dItem -> dItem.getRarity().getWeight();

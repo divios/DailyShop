@@ -554,7 +554,7 @@ public class dInventory implements Cloneable {
             return false;
         }
 
-        if (itemClicked.getBuyPrice() <= 0) {
+        if (itemClicked.getBuyPrice() < 0) {
             Messages.MSG_INVALID_BUY.send(player);
             return false;
         }

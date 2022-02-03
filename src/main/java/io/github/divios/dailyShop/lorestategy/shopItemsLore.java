@@ -50,7 +50,7 @@ public class shopItemsLore {
 
     private static String getItemBuyPrice(dItem item, Player p, dShop shop) {
         double price;
-        if ((price = item.getPlayerBuyPrice(p, shop)) > 0)
+        if ((price = item.getPlayerBuyPrice(p, shop)) >= 0)
             return PrettyPrice.pretty(price);
         else
             return getRedCross();

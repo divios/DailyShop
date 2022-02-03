@@ -16,7 +16,7 @@ public class dPriceAdapter implements JsonSerializer<dPrice>, JsonDeserializer<d
                 || (object.has("min") && object.has("max")), "Invalid price fields");
 
         if (object.has("fixed"))
-            return object.get("fixed").getAsDouble() > 0 ? new dPrice(object.get("fixed").getAsDouble()) : null;
+            return object.get("fixed").getAsDouble() >= 0 ? new dPrice(object.get("fixed").getAsDouble()) : null;
         else
             return new dPrice(object.get("min").getAsDouble(), object.get("max").getAsDouble());
 

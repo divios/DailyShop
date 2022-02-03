@@ -65,7 +65,7 @@ public class changePrice {
                                                 return;
                                             }
                                             double price = Double.parseDouble(s);
-                                            if (price <= 0) price = -1;
+                                            if (price < 0) price = -1;
 
                                             accept.accept(price == -1 ? null : new dPrice(price));
                                         })
