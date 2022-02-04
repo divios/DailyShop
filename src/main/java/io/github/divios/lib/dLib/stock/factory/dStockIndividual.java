@@ -10,6 +10,10 @@ final class dStockIndividual extends dStock {
         super(defaultStock);
     }
 
+    dStockIndividual(int defaultStock, int maximumStock) {
+        super(defaultStock, maximumStock);
+    }
+
     @Override
     public String getName() {
         return "INDIVIDUAL";

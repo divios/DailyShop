@@ -13,6 +13,10 @@ final class dStockGlobal extends dStock {
         super.stocks.put(globalKey, defaultStock);
     }
 
+    dStockGlobal(int defaultStock, int maximumStock) {
+        super(defaultStock, maximumStock);
+    }
+
     @Override
     public String getName() {
         return "GLOBAL";

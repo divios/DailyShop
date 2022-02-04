@@ -38,6 +38,7 @@ public class databaseManager extends DataManagerAbstract {
     }
 
     public Set<dShop> getShops() {
+        
         Set<dShop> shops = new LinkedHashSet<>();
 
         this.databaseConnector.connect(connection -> {

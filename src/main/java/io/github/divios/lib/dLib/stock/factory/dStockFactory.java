@@ -12,4 +12,12 @@ public class dStockFactory {
         return new dStockGlobal(defaultStock);
     }
 
+    public static dStock INDIVIDUAL(int defaultStock, int maxStock) {
+        return new dStockIndividual(defaultStock, maxStock);
+    }
+
+    public static dStock GLOBAL(int defaultStock, int maxStock) {
+        return new dStockGlobal(defaultStock, maxStock);
+    }
+
 }

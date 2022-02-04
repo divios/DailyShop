@@ -48,16 +48,17 @@ public abstract class dStock implements Cloneable, Serializable {
         dStock stock;
         String type = object.get("type").getAsString();
         int defaultStock = object.get("defaultStock").getAsInt();
+        int maxStock = object.has("maxStock") ? object.get("maxStock").getAsInt() : defaultStock;
         boolean replenishOnSell = object.has("incrementOnSell") && object.get("incrementOnSell").getAsBoolean();
         boolean exceedDefault = object.has("exceedDefault") && object.get("exceedDefault").getAsBoolean();
         Map<UUID, Integer> stocks = gson.fromJson(object.get("stocks"), mapToken.getType());
 
         switch (type) {
             case "GLOBAL":
-                stock = dStockFactory.GLOBAL(defaultStock);
+                stock = dStockFactory.GLOBAL(defaultStock, maxStock);
                 break;
             case "INDIVIDUAL":
-                stock = dStockFactory.INDIVIDUAL(defaultStock);
+                stock = dStockFactory.INDIVIDUAL(defaultStock, maxStock);
                 break;
             default:
                 throw new RuntimeException("Invalid type");
@@ -70,17 +71,29 @@ public abstract class dStock implements Cloneable, Serializable {
     }
 
     protected final int defaultStock;
+    protected final int maxStock;
     protected boolean incrementOnSell;
     protected boolean exceedDefault;
     protected ConcurrentHashMap<UUID, Integer> stocks = new ConcurrentHashMap<>();
 
-    protected dStock(int defaultStock, Map<UUID, Integer> stocks) {
+    protected dStock(int defaultStock) {
         this.defaultStock = defaultStock;
+        this.maxStock = defaultStock;
+    }
+
+    protected dStock(int defaultStock, Map<UUID, Integer> stocks) {
+        this(defaultStock);
         this.stocks.putAll(stocks);
     }
 
-    protected dStock(int defaultStock) {
+    public dStock(int defaultStock, int maximumStock) {
         this.defaultStock = defaultStock;
+        this.maxStock = maximumStock;
+    }
+
+    protected dStock(int defaultStock, int maximumStock, Map<UUID, Integer> stocks) {
+        this(defaultStock, maximumStock);
+        this.stocks.putAll(stocks);
     }
 
     public abstract String getName();
@@ -89,11 +102,15 @@ public abstract class dStock implements Cloneable, Serializable {
         return defaultStock;
     }
 
-    public boolean isIncrementOnSell() {
+    public int getMaximum() {
+        return maxStock;
+    }
+
+    public boolean incrementsOnSell() {
         return incrementOnSell;
     }
 
-    public boolean isExceedDefault() {
+    public boolean exceedsDefault() {
         return exceedDefault;
     }
 
@@ -138,7 +155,7 @@ public abstract class dStock implements Cloneable, Serializable {
             int toIncrement = ((integer == null) ? defaultStock : integer) + amount;
             return exceedDefault
                     ? toIncrement
-                    : Math.min(defaultStock, toIncrement);
+                    : Math.min(maxStock, toIncrement);
         });
     }
 
@@ -172,7 +189,13 @@ public abstract class dStock implements Cloneable, Serializable {
 
     @Override
     public String toString() {
-        return getName() + ":" + defaultStock;
+        return "dStock{" +
+                "defaultStock=" + defaultStock +
+                ", maxStock=" + maxStock +
+                ", incrementOnSell=" + incrementOnSell +
+                ", exceedDefault=" + exceedDefault +
+                ", stocks=" + stocks +
+                '}';
     }
 
     @Override
@@ -194,6 +217,7 @@ public abstract class dStock implements Cloneable, Serializable {
     public boolean isSimilar(@NotNull dStock stock) {
         return (this == stock) || (Objects.equals(getName(), stock.getName())
                 && defaultStock == stock.defaultStock
+                && maxStock == stock.maxStock
                 && incrementOnSell == stock.incrementOnSell
                 && exceedDefault == stock.exceedDefault
         );
@@ -207,6 +231,7 @@ public abstract class dStock implements Cloneable, Serializable {
         dStock dStock = (dStock) o;
         return dStock.getName().equals(getName())
                 && defaultStock == dStock.defaultStock
+                && maxStock == dStock.maxStock
                 && incrementOnSell == dStock.incrementOnSell
                 && exceedDefault == dStock.exceedDefault
                 && Objects.equals(stocks, dStock.stocks);
@@ -221,6 +246,7 @@ public abstract class dStock implements Cloneable, Serializable {
         return JsonBuilder.object()
                 .add("type", getName())
                 .add("defaultStock", defaultStock)
+                .add("maxStock", maxStock)
                 .add("incrementOnSell", incrementOnSell)
                 .add("exceedDefault", exceedDefault)
                 .add("stocks", gson.toJsonTree(stocks))

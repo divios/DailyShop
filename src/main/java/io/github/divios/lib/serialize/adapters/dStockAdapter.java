@@ -5,6 +5,7 @@ import com.google.gson.*;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.stock.dStock;
 import io.github.divios.lib.dLib.stock.factory.dStockFactory;
+import org.apache.commons.lang.Validate;
 
 import java.lang.reflect.Type;
 
@@ -15,9 +16,14 @@ public class dStockAdapter implements JsonSerializer<dStock>, JsonDeserializer<d
         JsonObject object = new JsonObject();
         object.addProperty("type", stock.getName());
         object.addProperty("amount", stock.getDefault());
-        if (stock.isExceedDefault())
+
+        if (stock.getMaximum() != stock.getDefault())
+            object.addProperty("max", stock.getMaximum());
+
+        if (stock.exceedsDefault())
             object.addProperty("exceedDefault", true);
-        if (stock.isIncrementOnSell())
+
+        if (stock.incrementsOnSell())
             object.addProperty("incrementOnSell", true);
 
         return object;
@@ -29,6 +35,7 @@ public class dStockAdapter implements JsonSerializer<dStock>, JsonDeserializer<d
 
         String typeStr;
         int[] amount = {0};
+        int max;
 
         Preconditions.checkArgument(object.has("type"), "A stock needs a type field");
         Preconditions.checkArgument(object.has("amount"), "A stock needs an amount field");
@@ -38,10 +45,13 @@ public class dStockAdapter implements JsonSerializer<dStock>, JsonDeserializer<d
 
         Preconditions.checkArgument((typeStr.equals("INDIVIDUAL") || typeStr.equals("GLOBAL")), "Invalid type field on stock");
 
+        max = object.has("max") ? object.get("max").getAsInt() : amount[0];
         boolean incrementOnSell = object.has("incrementOnSell") && object.get("incrementOnSell").getAsBoolean();
         boolean exceedDefault = object.has("exceedDefault") && object.get("exceedDefault").getAsBoolean();
 
-        dStock stock = type.equals("INDIVIDUAL") ? dStockFactory.INDIVIDUAL(amount[0]) : dStockFactory.GLOBAL(amount[0]);
+        Validate.isTrue(amount[0] <= max, "max cannot be less than default amount");
+
+        dStock stock = type.equals("INDIVIDUAL") ? dStockFactory.INDIVIDUAL(amount[0], max) : dStockFactory.GLOBAL(amount[0], max);
         stock.setIncrementOnSell(incrementOnSell);
         stock.setExceedDefault(exceedDefault);
 
