@@ -4,8 +4,10 @@ import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.dailyShop.files.Lang;
 import io.github.divios.dailyShop.utils.CompareItemUtils;
 import io.github.divios.dailyShop.utils.DebugLog;
+import io.github.divios.dailyShop.utils.LimitHelper;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
+import io.github.divios.lib.dLib.dTransaction.Transactions;
 import org.bukkit.entity.Player;
 
 import java.util.function.Consumer;
@@ -69,7 +71,15 @@ public class SellConfirmMenu extends abstractConfirmMenu {
 
     @Override
     protected int setMaxItems() {
-        return countSimilarItems() - super.nAddedItems;
+        int maxItemsCount = (countSimilarItems() - super.nAddedItems);
+        int limitSellLimit = getSellPlayerLimit();
+
+        return Math.min(maxItemsCount, limitSellLimit);
+    }
+
+    private int getSellPlayerLimit() {
+        int limit = LimitHelper.getPlayerLimit(player, shop, item, Transactions.Type.SELL);
+        return Math.max(0, limit);
     }
 
     @Override

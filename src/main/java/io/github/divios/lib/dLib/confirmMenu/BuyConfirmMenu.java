@@ -3,8 +3,10 @@ package io.github.divios.lib.dLib.confirmMenu;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.dailyShop.files.Lang;
 import io.github.divios.dailyShop.utils.DebugLog;
+import io.github.divios.dailyShop.utils.LimitHelper;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
+import io.github.divios.lib.dLib.dTransaction.Transactions;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -90,8 +92,9 @@ public class BuyConfirmMenu extends abstractConfirmMenu {
         int stockLimit = getStockLimit();
         int balanceLimit = getBalanceLimit();
         int inventoryLimit = getPlayerInventoryLimit();
+        int limitLimit = getBuyPlayerLimit();
 
-        return getMinimumValue(stockLimit, balanceLimit, inventoryLimit);
+        return getMinimumValue(stockLimit, balanceLimit, inventoryLimit, limitLimit);
     }
 
     private int getMinimumValue(int... values) {
@@ -127,6 +130,11 @@ public class BuyConfirmMenu extends abstractConfirmMenu {
         limit += (maxStack - rest.iterator().next().getAmount());
 
         return limit - nAddedItems;
+    }
+
+    private int getBuyPlayerLimit() {
+        int limit = LimitHelper.getPlayerLimit(player, shop, item, Transactions.Type.BUY) - nAddedItems;
+        return Math.max(0, limit);
     }
 
     private int getItemStock() {

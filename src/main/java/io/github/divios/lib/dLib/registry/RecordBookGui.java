@@ -1,4 +1,4 @@
-package io.github.divios.lib.dLib.log;
+package io.github.divios.lib.dLib.registry;
 
 import com.cryptomorin.xseries.XMaterial;
 import com.google.common.base.Preconditions;
@@ -11,10 +11,9 @@ import io.github.divios.dailyShop.files.Lang;
 import io.github.divios.dailyShop.utils.FutureUtils;
 import io.github.divios.dailyShop.utils.PrettyPrice;
 import io.github.divios.dailyShop.utils.Utils;
-import io.github.divios.lib.dLib.log.options.LogOptions;
-import io.github.divios.lib.dLib.log.options.LogOptionsGui;
-import io.github.divios.lib.dLib.log.options.dLogEntry;
-import io.github.divios.lib.dLib.log.options.dLogUtils;
+import io.github.divios.lib.dLib.registry.util.RecordBookOptions;
+import io.github.divios.lib.dLib.registry.util.RecordBookOptionsGui;
+import io.github.divios.lib.dLib.registry.util.RecordUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -22,13 +21,13 @@ import java.text.SimpleDateFormat;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
-public class LogGui {
+public class RecordBookGui {
 
     private final Player p;
     private final Runnable fallback;
-    private final LogOptions options;
+    private final RecordBookOptions options;
 
-    private LogGui(Player p, Runnable fallback, LogOptions options) {
+    private RecordBookGui(Player p, Runnable fallback, RecordBookOptions options) {
         this.p = p;
         this.fallback = fallback;
         this.options = options;
@@ -115,7 +114,7 @@ public class LogGui {
                                             ItemBuilder.of(XMaterial.PAPER)
                                                     .setName("&e&lCreate json").setLore("&7Click to create a json file", "&7with the current filtered entries")
                                             , e ->
-                                                    dLogUtils.importToYaml(
+                                                    RecordUtils.importToYaml(
                                                             DailyShop.get().getDatabaseManager().getLogEntries().stream()
                                                                     .filter(dLogEntry -> {
                                                                         boolean result = true;
@@ -127,7 +126,7 @@ public class LogGui {
                                                                             result &= dLogEntry.getType().equals(options.getfType());
                                                                         return result;
                                                                     })
-                                                                    .map(dLogEntry::toState)
+                                                                    .map(RecordBookEntry::toState)
                                                                     .collect(Collectors.toList())
                                                     ).thenAccept(unused -> Utils.sendRawMsg(p, "Entries imported successfully"))
 
@@ -139,10 +138,10 @@ public class LogGui {
                                             ItemBuilder.of(XMaterial.COMMAND_BLOCK)
                                                     .setName("&e&lSettings").setLore("&7Click to change", "&7the view filter")
                                             , e ->
-                                                    LogOptionsGui.builder()
+                                                    RecordBookOptionsGui.builder()
                                                             .withPlayer(p)
                                                             .withOptions(options)
-                                                            .withFallback(logOptions -> new LogGui(p, fallback, logOptions))
+                                                            .withFallback(logOptions -> new RecordBookGui(p, fallback, logOptions))
                                                             .build()
                                     ), 50
                             );
@@ -151,7 +150,7 @@ public class LogGui {
                                     ItemButton.create(
                                             ItemBuilder.of(XMaterial.REDSTONE_TORCH)
                                                     .setName("&e&lSwitch display").setLore("&7Click to change", "&7the items display")
-                                            , e -> new LogGui(p, fallback, options.switchDisplay())
+                                            , e -> new RecordBookGui(p, fallback, options.switchDisplay())
                                     ), 48
                             );
 
@@ -170,7 +169,7 @@ public class LogGui {
     public static final class LogGuiBuilder {
         private Player p;
         private Runnable fallback;
-        private LogOptions options;
+        private RecordBookOptions options;
 
         private LogGuiBuilder() {
         }
@@ -185,19 +184,19 @@ public class LogGui {
             return this;
         }
 
-        public LogGuiBuilder withOptions(LogOptions options) {
+        public LogGuiBuilder withOptions(RecordBookOptions options) {
             this.options = options;
             return this;
         }
 
-        public LogGui prompt() {
+        public RecordBookGui prompt() {
 
             Preconditions.checkNotNull(p, "player null");
 
-            if (options == null) options = LogOptions.emptyOption();
+            if (options == null) options = RecordBookOptions.emptyOption();
             if (fallback == null) fallback = () -> p.closeInventory();
 
-            return new LogGui(p, fallback, options);
+            return new RecordBookGui(p, fallback, options);
         }
     }
 }

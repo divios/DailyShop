@@ -1,24 +1,33 @@
-package io.github.divios.lib.dLib.log.options;
+package io.github.divios.lib.dLib.registry.util;
+
+import io.github.divios.lib.dLib.dTransaction.Transactions;
+import io.github.divios.lib.dLib.registry.RecordBookEntry;
 
 import java.util.UUID;
 
-public class LogOptions {
+public class RecordBookOptions {
 
     private String fPlayer = null;
     private String fShopId = null;
     private UUID fItemUUID = null;
-    private dLogEntry.Type fType = null;
+    private Transactions.Type fType = null;
     private quantityFilter fQuantity = null;
     private boolean display = true;
 
-    public static LogOptions emptyOption() {
-        return new LogOptions();
+    public static RecordBookOptions emptyOption() {
+        return new RecordBookOptions();
     }
 
-    LogOptions() {
+    RecordBookOptions() {
     }
 
-    LogOptions(String fPlayer, String fShopId, UUID fItemUUID, dLogEntry.Type fType, quantityFilter fQuantity, boolean display) {
+    RecordBookOptions(String fPlayer, 
+                      String fShopId,
+                      UUID fItemUUID,
+                      Transactions.Type fType, 
+                      quantityFilter fQuantity, 
+                      boolean display
+    ) {
         this.fPlayer = fPlayer;
         this.fShopId = fShopId;
         this.fItemUUID = fItemUUID;
@@ -27,37 +36,37 @@ public class LogOptions {
         this.display = display;
     }
 
-    public LogOptions setfPlayer(String fPlayer) {
+    public RecordBookOptions setfPlayer(String fPlayer) {
         this.fPlayer = fPlayer;
         return this;
     }
 
-    public LogOptions setfShopId(String fShopId) {
+    public RecordBookOptions setfShopId(String fShopId) {
         this.fShopId = fShopId;
         return this;
     }
 
-    public LogOptions setfItemUUID(UUID fItemUUID) {
+    public RecordBookOptions setfItemUUID(UUID fItemUUID) {
         this.fItemUUID = fItemUUID;
         return this;
     }
 
-    public LogOptions setfType(dLogEntry.Type fType) {
+    public RecordBookOptions setfType(Transactions.Type fType) {
         this.fType = fType;
         return this;
     }
 
-    public LogOptions setfQuantity(quantityFilter fQuantity) {
+    public RecordBookOptions setfQuantity(quantityFilter fQuantity) {
         this.fQuantity = fQuantity;
         return this;
     }
 
-    public LogOptions setDisplay(boolean display) {
+    public RecordBookOptions setDisplay(boolean display) {
         this.display = display;
         return this;
     }
 
-    public LogOptions switchDisplay() {
+    public RecordBookOptions switchDisplay() {
         display = !display;
         return this;
     }
@@ -74,7 +83,7 @@ public class LogOptions {
         return fItemUUID;
     }
 
-    public dLogEntry.Type getfType() {
+    public Transactions.Type getfType() {
         return fType;
     }
 

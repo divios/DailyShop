@@ -1,8 +1,9 @@
-package io.github.divios.lib.dLib.log.options;
+package io.github.divios.lib.dLib.registry.util;
 
 import com.google.gson.GsonBuilder;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.utils.FileUtils;
+import io.github.divios.lib.dLib.registry.RecordBookEntry;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -12,11 +13,11 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.concurrent.CompletableFuture;
 
-public class dLogUtils {
+public class RecordUtils {
 
     private static final DailyShop plugin = DailyShop.get();
 
-    public static CompletableFuture<Void> importToYaml(Collection<dLogEntry.dLogEntryState> entries) {
+    public static CompletableFuture<Void> importToYaml(Collection<RecordBookEntry.dLogEntryState> entries) {
 
         return CompletableFuture.runAsync(() -> {
             File directory = new File(plugin.getDataFolder(), "logs");

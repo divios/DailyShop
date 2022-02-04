@@ -1,21 +1,23 @@
-package io.github.divios.lib.dLib.log.options;
+package io.github.divios.lib.dLib.registry.util;
 
 import com.cryptomorin.xseries.XMaterial;
 import io.github.divios.core_lib.inventory.InventoryGUI;
 import io.github.divios.core_lib.inventory.ItemButton;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.misc.ChatPrompt;
+import io.github.divios.lib.dLib.dTransaction.Transactions;
+import io.github.divios.lib.dLib.registry.RecordBookEntry;
 import org.bukkit.entity.Player;
 
 import java.util.function.Consumer;
 
-public class LogOptionsGui {
+public class RecordBookOptionsGui {
 
     private final Player p;
-    private final LogOptions options;
-    private final Consumer<LogOptions> fallback;
+    private final RecordBookOptions options;
+    private final Consumer<RecordBookOptions> fallback;
 
-    private LogOptionsGui(Player p, LogOptions options, Consumer<LogOptions> fallback) {
+    private RecordBookOptionsGui(Player p, RecordBookOptions options, Consumer<RecordBookOptions> fallback) {
         this.p = p;
         this.options = options;
         this.fallback = fallback;
@@ -38,12 +40,12 @@ public class LogOptionsGui {
                                 ChatPrompt.builder()
                                         .withPlayer(p)
                                         .withSubtitle("&eInput player name to filter")
-                                        .withResponse(s -> new LogOptionsGui(p, options.setfPlayer(s), fallback))
-                                        .withCancel(cancelReason -> new LogOptionsGui(p, options, fallback))
+                                        .withResponse(s -> new RecordBookOptionsGui(p, options.setfPlayer(s), fallback))
+                                        .withCancel(cancelReason -> new RecordBookOptionsGui(p, options, fallback))
                                         .prompt();
 
                             if (e.isRightClick())
-                                new LogOptionsGui(p, options.setfPlayer(null), fallback);
+                                new RecordBookOptionsGui(p, options.setfPlayer(null), fallback);
                         }
 
                 ), 11
@@ -62,12 +64,12 @@ public class LogOptionsGui {
                                 ChatPrompt.builder()
                                         .withPlayer(p)
                                         .withSubtitle("&eInput shop name to filter")
-                                        .withResponse(s -> new LogOptionsGui(p, options.setfShopId(s), fallback))
-                                        .withCancel(cancelReason -> new LogOptionsGui(p, options, fallback))
+                                        .withResponse(s -> new RecordBookOptionsGui(p, options.setfShopId(s), fallback))
+                                        .withCancel(cancelReason -> new RecordBookOptionsGui(p, options, fallback))
                                         .prompt();
 
                             if (e.isRightClick())
-                                new LogOptionsGui(p, options.setfShopId(null), fallback);
+                                new RecordBookOptionsGui(p, options.setfShopId(null), fallback);
 
                         }
 
@@ -80,7 +82,7 @@ public class LogOptionsGui {
                                 .setName("&cChange Type")
                                 .addLore("&7Type: &c" + options.getfType())
                                 .addLore("&7Right click to delete")
-                        , e -> new LogOptionsGui(p, options.setfType(nextType()), fallback)
+                        , e -> new RecordBookOptionsGui(p, options.setfType(nextType()), fallback)
 
                 ), 15
         );
@@ -115,12 +117,12 @@ public class LogOptionsGui {
         inv.open(p);
     }
 
-    private dLogEntry.Type nextType() {
-        if (options.getfType() == dLogEntry.Type.BUY)
-            return dLogEntry.Type.SELL;
-        else if (options.getfType() == dLogEntry.Type.SELL)
+    private Transactions.Type nextType() {
+        if (options.getfType() == Transactions.Type.BUY)
+            return Transactions.Type.SELL;
+        else if (options.getfType() == Transactions.Type.SELL)
             return null;
-        else return dLogEntry.Type.BUY;
+        else return Transactions.Type.BUY;
     }
 
     public static LogOptionsGuiBuilder builder() {
@@ -129,8 +131,8 @@ public class LogOptionsGui {
 
     public static final class LogOptionsGuiBuilder {
         private Player p;
-        private LogOptions options;
-        private Consumer<LogOptions> fallback;
+        private RecordBookOptions options;
+        private Consumer<RecordBookOptions> fallback;
 
         private LogOptionsGuiBuilder() {
         }
@@ -140,18 +142,18 @@ public class LogOptionsGui {
             return this;
         }
 
-        public LogOptionsGuiBuilder withOptions(LogOptions options) {
+        public LogOptionsGuiBuilder withOptions(RecordBookOptions options) {
             this.options = options;
             return this;
         }
 
-        public LogOptionsGuiBuilder withFallback(Consumer<LogOptions> fallback) {
+        public LogOptionsGuiBuilder withFallback(Consumer<RecordBookOptions> fallback) {
             this.fallback = fallback;
             return this;
         }
 
-        public LogOptionsGui build() {
-            return new LogOptionsGui(p, options, fallback);
+        public RecordBookOptionsGui build() {
+            return new RecordBookOptionsGui(p, options, fallback);
         }
     }
 }

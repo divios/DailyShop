@@ -1,6 +1,7 @@
 package io.github.divios.dailyShop;
 
 import io.github.divios.core_lib.Core_lib;
+import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.dailyShop.commands.commandsManager;
 import io.github.divios.dailyShop.files.resourceManager;
 import io.github.divios.dailyShop.hooks.Hooks;
@@ -8,6 +9,7 @@ import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.jcommands.JCommands;
 import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.dLib.priceModifiers.priceModifierManager;
+import io.github.divios.lib.dLib.registry.RecordBook;
 import io.github.divios.lib.dLib.synchronizedGui.taskPool.updatePool;
 import io.github.divios.lib.managers.shopsManager;
 import io.github.divios.lib.serialize.serializerApi;
@@ -28,6 +30,7 @@ public class DailyShop extends JavaPlugin {
     private priceModifierManager modifiers;
     private databaseManager dManager;
     private shopsManager sManager;
+    private RecordBook recordBook;
 
     public DailyShop() {
         super();
@@ -63,6 +66,8 @@ public class DailyShop extends JavaPlugin {
         /* Initiate database + getAllItems + timer */
         dManager = new databaseManager();
         sManager = new shopsManager(dManager);
+
+        Schedulers.sync().run(() -> recordBook = new RecordBook());
 
         /* Load commands */
         new commandsManager().loadCommands();
@@ -113,6 +118,9 @@ public class DailyShop extends JavaPlugin {
         return modifiers;
     }
 
+    public RecordBook getRecordBook() {
+        return recordBook;
+    }
 
     private void meetsStartRequirements() {
         if (!Utils.isOperative("Vault"))

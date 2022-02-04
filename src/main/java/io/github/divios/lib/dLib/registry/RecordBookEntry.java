@@ -1,8 +1,9 @@
-package io.github.divios.lib.dLib.log.options;
+package io.github.divios.lib.dLib.registry;
 
 import com.google.common.base.Preconditions;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.FormatUtils;
+import io.github.divios.lib.dLib.dTransaction.Transactions;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -11,7 +12,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class dLogEntry {
+@SuppressWarnings("unused")
+public class RecordBookEntry {
 
     private static final SimpleDateFormat FORMAT = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
 
@@ -19,19 +21,19 @@ public class dLogEntry {
     private final String shopID;
     private final String ID;
     private final ItemStack rawItem;
-    private final Type type;
+    private final Transactions.Type type;
     private final double price;
     private final int quantity;
     private final Timestamp timestamp;
 
-    private dLogEntry(String p,
-                      String shopID,
-                      String ID,
-                      ItemStack rawItem,
-                      Type type,
-                      double price,
-                      int quantity,
-                      Timestamp timestamp
+    private RecordBookEntry(String p,
+                            String shopID,
+                            String ID,
+                            ItemStack rawItem,
+                            Transactions.Type type,
+                            double price,
+                            int quantity,
+                            Timestamp timestamp
     ) {
         this.p = p;
         this.shopID = shopID;
@@ -59,7 +61,7 @@ public class dLogEntry {
         return rawItem;
     }
 
-    public Type getType() {
+    public Transactions.Type getType() {
         return type;
     }
 
@@ -97,7 +99,7 @@ public class dLogEntry {
         private String shopID;
         private String ID;
         private ItemStack rawItem;
-        private Type type;
+        private Transactions.Type type;
         private Double price;
         private Integer quantity;
         private Timestamp timestamp;
@@ -129,7 +131,7 @@ public class dLogEntry {
             return this;
         }
 
-        public dLogEntryBuilder withType(Type type) {
+        public dLogEntryBuilder withType(Transactions.Type type) {
             this.type = type;
             return this;
         }
@@ -154,7 +156,7 @@ public class dLogEntry {
             return this;
         }
 
-        public dLogEntry create() {
+        public RecordBookEntry create() {
 
             Preconditions.checkNotNull(p, "player");
             Preconditions.checkNotNull(shopID, "shopID");
@@ -166,7 +168,7 @@ public class dLogEntry {
             if (quantity == null) quantity = 1;
             if (timestamp == null) timestamp = new Timestamp(System.currentTimeMillis());
 
-            return new dLogEntry(p, shopID, ID, rawItem, type, price, quantity, timestamp);
+            return new RecordBookEntry(p, shopID, ID, rawItem, type, price, quantity, timestamp);
         }
     }
 
@@ -232,7 +234,7 @@ public class dLogEntry {
             return timestamp;
         }
 
-        public dLogEntry build() {
+        public RecordBookEntry build() {
 
             Date date = null;
             try {
@@ -241,22 +243,17 @@ public class dLogEntry {
                 e.printStackTrace();
             }
 
-            return new dLogEntry(p,
+            return new RecordBookEntry(p,
                     shopID,
                     ID,
                     ItemUtils.deserialize(item),
-                    Type.valueOf(type.toUpperCase()),
+                    Transactions.Type.valueOf(type.toUpperCase()),
                     price,
                     quantity,
                     new Timestamp(date.getTime())
             );
         }
 
-    }
-
-    public enum Type {
-        BUY,
-        SELL
     }
 
 }

@@ -25,7 +25,8 @@ public enum Messages {
     MSG_PERMS_OPEN_SHOP("lang.messages.perms_shop"),
     MSG_CURRENCY_ERROR("lang.messages.currency_error"),
     MSG_INVALID_OPERATION("lang.messages.invalid_operation"),
-    MSG_NOT_INTEGER("lang.messages.not_integer");
+    MSG_NOT_INTEGER("lang.messages.not_integer"),
+    MSG_LIMIT("lang.messages.limit");
 
     private final String path;
 

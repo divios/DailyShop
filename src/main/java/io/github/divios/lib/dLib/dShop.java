@@ -14,8 +14,9 @@ import io.github.divios.dailyShop.guis.settings.shopGui;
 import io.github.divios.dailyShop.utils.DebugLog;
 import io.github.divios.lib.dLib.dTransaction.Bill;
 import io.github.divios.lib.dLib.dTransaction.SingleTransaction;
-import io.github.divios.lib.dLib.log.dLog;
-import io.github.divios.lib.dLib.log.options.dLogEntry;
+import io.github.divios.lib.dLib.dTransaction.Transactions;
+import io.github.divios.lib.dLib.registry.RecordBook;
+import io.github.divios.lib.dLib.registry.RecordBookEntry;
 import io.github.divios.lib.dLib.stock.dStock;
 import io.github.divios.lib.dLib.synchronizedGui.singleGui.dInventory;
 import io.github.divios.lib.dLib.synchronizedGui.syncHashMenu;
@@ -50,11 +51,11 @@ public class dShop {
     }
 
     public dShop(String name, int timer) {
-        this(name, timer, new Timestamp(System.currentTimeMillis()), Collections.EMPTY_LIST);
+        this(name, timer, new Timestamp(System.currentTimeMillis()), new ArrayList<>());
     }
 
     public dShop(String name, int timer, Timestamp timestamp) {
-        this(name, timer, timestamp, Collections.EMPTY_LIST);
+        this(name, timer, timestamp, new ArrayList<>());
     }
 
     public dShop(String name, int timer, Timestamp timestamp, Collection<dItem> items) {
@@ -329,14 +330,14 @@ public class dShop {
                         )
                 );
 
-            dLog.log(
-                    dLogEntry.createEntry()
+            RecordBook.registerEntry(
+                    RecordBookEntry.createEntry()
                             .withPlayer(bill.getPlayer())
                             .withShopID(name)
                             .withItemID(s)
                             .withRawItem(shopItem.getItem())
                             .withQuantity(entry.getValue())
-                            .withType(dLogEntry.Type.valueOf(bill.getType().name()))
+                            .withType(Transactions.Type.valueOf(bill.getType().name()))
                             .withPrice(entry.getKey())
                             .create()
             );

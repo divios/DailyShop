@@ -5,11 +5,14 @@ import io.github.divios.core_lib.events.Subscription;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.WeightedRandom;
+import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.events.updateItemEvent;
 import io.github.divios.dailyShop.files.Messages;
 import io.github.divios.dailyShop.lorestategy.shopItemsLore;
 import io.github.divios.dailyShop.utils.DebugLog;
+import io.github.divios.dailyShop.utils.LimitHelper;
+import io.github.divios.dailyShop.utils.Timer;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
@@ -75,17 +78,34 @@ public class singleGuiImpl implements singleGui, Cloneable {
                                     return;
                                 }
 
+                                int limit;
+                                if ((limit = LimitHelper.getPlayerLimit(p, shop, o.getItem(), Transactions.Type.BUY)) == 0) {
+                                    Messages.MSG_LIMIT.send(p);
+                                    return;
+                                }
+                                DebugLog.info("limit: " + limit);
+
                                 Transactions.BuyTransaction()
                                         .withShop(shop)
                                         .withBuyer(o.getPlayer())
                                         .withItem(o.getItem())
                                         .execute();
-                            } else if (o.getType() == SingleTransaction.Type.SELL)
+
+                            } else if (o.getType() == SingleTransaction.Type.SELL) {
+
+                                int limit;
+                                if ((limit = LimitHelper.getPlayerLimit(p, shop, o.getItem(), Transactions.Type.SELL)) == 0) {
+                                    Messages.MSG_LIMIT.send(p);
+                                    return;
+                                }
+                                DebugLog.info("limit: " + limit);
+
                                 Transactions.SellTransaction()
                                         .withShop(shop)
                                         .withVendor(o.getPlayer())
                                         .withItem(o.getItem())
                                         .execute();
+                            }
                         })
         );
 

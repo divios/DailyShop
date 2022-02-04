@@ -11,7 +11,8 @@ import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.utils.DebugLog;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
-import io.github.divios.lib.dLib.log.options.dLogEntry;
+import io.github.divios.lib.dLib.dTransaction.Transactions;
+import io.github.divios.lib.dLib.registry.RecordBookEntry;
 import io.github.divios.lib.dLib.synchronizedGui.syncMenu;
 import io.github.divios.lib.managers.WrappedShop;
 import io.github.divios.lib.storage.migrations.initialMigration;
@@ -38,7 +39,7 @@ public class databaseManager extends DataManagerAbstract {
     }
 
     public Set<dShop> getShops() {
-        
+
         Set<dShop> shops = new LinkedHashSet<>();
 
         this.databaseConnector.connect(connection -> {
@@ -92,7 +93,8 @@ public class databaseManager extends DataManagerAbstract {
                     try {
                         JsonElement json = parser.parse(result.getString("itemSerial"));
                         items.add(dItem.fromJson(json));
-                    } catch (IllegalStateException | JsonSyntaxException ignored) {}
+                    } catch (IllegalStateException | JsonSyntaxException ignored) {
+                    }
                 }
             }
         });
@@ -289,7 +291,7 @@ public class databaseManager extends DataManagerAbstract {
         return asyncPool.submit(() -> updateTimer(name, timer));
     }
 
-    public void addLogEntry(dLogEntry entry) {
+    public void addLogEntry(RecordBookEntry entry) {
         this.databaseConnector.connect(connection -> {
 
             String createShop = "INSERT INTO " + this.getTablePrefix() +
@@ -309,13 +311,13 @@ public class databaseManager extends DataManagerAbstract {
         });
     }
 
-    public Future<?> addLogEntryAsync(dLogEntry entry) {
+    public Future<?> addLogEntryAsync(RecordBookEntry entry) {
         return asyncPool.submit(() -> addLogEntry(entry));
     }
 
-    public Collection<dLogEntry> getLogEntries() {
+    public Collection<RecordBookEntry> getLogEntries() {
 
-        Deque<dLogEntry> entries = new ArrayDeque<>();
+        Deque<RecordBookEntry> entries = new ArrayDeque<>();
         this.databaseConnector.connect(connection -> {
 
             try (Statement statement = connection.createStatement()) {
@@ -333,12 +335,12 @@ public class databaseManager extends DataManagerAbstract {
                         e.printStackTrace();
                     }
 
-                    dLogEntry entry = dLogEntry.createEntry()
+                    RecordBookEntry entry = RecordBookEntry.createEntry()
                             .withPlayer(result.getString("player"))
                             .withShopID(result.getString("shopID"))
                             .withItemID(result.getString("itemUUID"))
                             .withRawItem(ItemUtils.deserialize(result.getString("rawItem")))
-                            .withType(dLogEntry.Type.valueOf(result.getString("type")))
+                            .withType(Transactions.Type.valueOf(result.getString("type")))
                             .withPrice(result.getDouble("price"))
                             .withQuantity(result.getInt("quantity"))
                             .withTimestamp(timestamp == null ? new Timestamp(System.currentTimeMillis()) : timestamp)
@@ -351,7 +353,7 @@ public class databaseManager extends DataManagerAbstract {
         return entries;
     }
 
-    public CompletableFuture<Collection<dLogEntry>> getLogEntriesAsync() {
+    public CompletableFuture<Collection<RecordBookEntry>> getLogEntriesAsync() {
         return CompletableFuture.supplyAsync(this::getLogEntries);
     }
 

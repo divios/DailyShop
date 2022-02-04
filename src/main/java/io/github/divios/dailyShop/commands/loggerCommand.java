@@ -2,7 +2,7 @@ package io.github.divios.dailyShop.commands;
 
 import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.jcommands.JCommand;
-import io.github.divios.lib.dLib.log.LogGui;
+import io.github.divios.lib.dLib.registry.RecordBookGui;
 
 public class loggerCommand {
 
@@ -11,7 +11,7 @@ public class loggerCommand {
                 .assertPermission("DailyRandomShop.log")
                 .assertUsage(FormatUtils.color("&8- &6/rdshop log &8- &7Shows the log menu"))
                 .executesPlayer((player, values) -> {
-                    LogGui.builder()
+                    RecordBookGui.builder()
                             .withPlayer(player)
                             .prompt();
                 })
