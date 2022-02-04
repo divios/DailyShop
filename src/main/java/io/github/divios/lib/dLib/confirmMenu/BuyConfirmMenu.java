@@ -91,10 +91,6 @@ public class BuyConfirmMenu extends abstractConfirmMenu {
         int balanceLimit = getBalanceLimit();
         int inventoryLimit = getPlayerInventoryLimit();
 
-        System.out.println("StockLimit: " + stockLimit);
-        System.out.println("balanceLimit: " + balanceLimit);
-        System.out.println("inventoryLimit: " + inventoryLimit);
-
         return getMinimumValue(stockLimit, balanceLimit, inventoryLimit);
     }
 
