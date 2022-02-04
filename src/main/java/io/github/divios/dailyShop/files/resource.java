@@ -46,7 +46,7 @@ public abstract class resource {
         Timer timer = Timer.create();
         Log.info(getStartMessage());
         long checkSumAux;
-        if ((checkSumAux = FileUtils.getFileCheckSum(file)) == (checkSum)) { // If same checkSum -> no changes
+        if ((checkSumAux = FileUtils.getFileCheckSum(file)) == checkSum) { // If same checkSum -> no changes
             timer = null;
             Log.info(getCanceledMessage());
             return;
