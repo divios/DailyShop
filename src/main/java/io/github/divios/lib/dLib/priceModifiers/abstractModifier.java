@@ -31,7 +31,7 @@ public abstract class abstractModifier implements priceModifier {
 
     @Override
     public Permission getPermission() {
-        return new Permission("dailyrandomshop.pricemodifiers." + id());
+        return new Permission("dailyrandomshop.pricemodifier." + id());
     }
 
     @Override
