@@ -51,7 +51,7 @@ public class dStockAdapter implements JsonSerializer<dStock>, JsonDeserializer<d
 
         Validate.isTrue(amount[0] <= max, "max cannot be less than default amount");
 
-        dStock stock = type.equals("INDIVIDUAL") ? dStockFactory.INDIVIDUAL(amount[0], max) : dStockFactory.GLOBAL(amount[0], max);
+        dStock stock = typeStr.equals("INDIVIDUAL") ? dStockFactory.INDIVIDUAL(amount[0], max) : dStockFactory.GLOBAL(amount[0], max);
         stock.setIncrementOnSell(incrementOnSell);
         stock.setExceedDefault(exceedDefault);
 
