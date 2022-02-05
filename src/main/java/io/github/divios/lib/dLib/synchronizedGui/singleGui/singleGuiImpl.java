@@ -4,30 +4,25 @@ import io.github.divios.core_lib.events.Events;
 import io.github.divios.core_lib.events.Subscription;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
-import io.github.divios.core_lib.misc.WeightedRandom;
-import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.events.updateItemEvent;
 import io.github.divios.dailyShop.files.Messages;
 import io.github.divios.dailyShop.lorestategy.shopItemsLore;
 import io.github.divios.dailyShop.utils.DebugLog;
 import io.github.divios.dailyShop.utils.LimitHelper;
-import io.github.divios.dailyShop.utils.Timer;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.dLib.dTransaction.SingleTransaction;
 import io.github.divios.lib.dLib.dTransaction.Transactions;
 import io.github.divios.lib.dLib.synchronizedGui.taskPool.updatePool;
+import io.github.divios.lib.dLib.synchronizedGui.util.RandomItemSelector;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 /**
  * Class that holds a {@link dInventory} for a unique player and
@@ -173,8 +168,7 @@ public class singleGuiImpl implements singleGui, Cloneable {
     @Override
     public void restock() {
         Set<dItem> items = shop.getItems();
-        Set<dItem> newItems = dRandomItemsSelector.fromItems(items)
-                .roll(own.dailyItemsSlots.size());
+        Queue<dItem> newItems = RandomItemSelector.roll(items, own.dailyItemsSlots.size());
         own.restock(newItems);
         items.stream()
                 .filter(dItem::isStaticSlot)
@@ -246,82 +240,5 @@ public class singleGuiImpl implements singleGui, Cloneable {
             throw new AssertionError();
         }
     }
-
-    /**
-     * Inner utility class to generate the daily Items
-     */
-    @SuppressWarnings("unused")
-    private final static class dRandomItemsSelector {
-
-        private static final Predicate<dItem> filterItems = item ->
-                !item.isStaticSlot() && !(item.getBuyPrice() < 0 && item.getSellPrice() <= 0)
-                        && item.getRarity().getWeight() != 0;
-
-        private static final Function<dItem, Integer> getWeights = dItem -> dItem.getRarity().getWeight();
-
-        public static dRandomItemsSelector fromItems(Collection<dItem> items) {
-            return new dRandomItemsSelector(items, Function.identity());
-        }
-
-        public static dRandomItemsSelector of(Collection<dItem> items, Function<dItem, dItem> action) {
-            return new dRandomItemsSelector(items, action);
-        }
-
-        private final Map<UUID, dItem> items;
-        private final Function<dItem, dItem> action;
-
-        private dRandomItemsSelector(Collection<dItem> items, Function<dItem, dItem> action) {
-            this(items.stream().collect(Collectors.toMap(dItem::getUUID, dItem -> dItem)), action);
-        }
-
-        private dRandomItemsSelector(Map<UUID, dItem> items, Function<dItem, dItem> action) {
-            this.items = items.entrySet().stream()
-                    .filter(entry -> filterItems.test(entry.getValue()))
-                    .collect(Collectors
-                            .toMap(Map.Entry::getKey, Map.Entry::getValue)
-                    );
-            this.action = action;
-        }
-
-        public void add(dItem item) {
-            items.put(item.getUUID(), item);
-        }
-
-        public dItem remove(String id) {
-            return remove(UUID.nameUUIDFromBytes(id.getBytes()));
-        }
-
-        public dItem remove(UUID uuid) {
-            return items.remove(uuid);
-        }
-
-        public Set<dItem> getItems() {
-            return Collections.unmodifiableSet(new HashSet<>(items.values()));
-        }
-
-        public Set<dItem> roll() {
-            return roll(54);
-        }
-
-        public Set<dItem> roll(int max) {
-            Set<dItem> rolledItems = new LinkedHashSet<>();
-
-            WeightedRandom<dItem> randomSelector = WeightedRandom.fromCollection(items.values(), dItem::clone, getWeights::apply);
-
-            for (int i = 0; i < max; i++) {
-                dItem rolledItem;
-                if ((rolledItem = randomSelector.roll()) == null) break;
-                randomSelector.remove(rolledItem);
-
-                rolledItem.generateNewBuyPrice();
-                rolledItem.generateNewSellPrice();
-
-                rolledItems.add(action.apply(rolledItem));
-            }
-
-            return rolledItems;
-        }
-    }
-
 
 }

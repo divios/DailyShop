@@ -309,15 +309,17 @@ public class dInventory implements Cloneable {
      *
      * @param itemsToRoll A collection of items that will be chosen as daily items.
      */
-    protected void restock(@NotNull Set<dItem> itemsToRoll) {
+    protected void restock(@NotNull Queue<dItem> itemsToRoll) {
         if (dailyItemsSlots.isEmpty()) return;
 
-        DebugLog.info("ItemsToRoll size: " + itemsToRoll);
+        DebugLog.info("ItemsToRoll size: " + itemsToRoll.size());
         removeAirItems();     // Just in case
         removeDailyItems();
 
         int index = dailyItemsSlots.first();
         for (dItem item : itemsToRoll) {
+            item.generateNewBuyPrice();
+            item.generateNewSellPrice();
             addButton(item, (index = dailyItemsSlots.ceiling(index)));
             dailyItemsSlots.add(index++);     // Restore slot
         }
