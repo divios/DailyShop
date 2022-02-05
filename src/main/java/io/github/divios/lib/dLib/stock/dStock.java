@@ -239,7 +239,7 @@ public abstract class dStock implements Cloneable, Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(getName(), defaultStock, stocks);
+        return Objects.hash(getName(), defaultStock, maxStock, incrementOnSell, exceedDefault, stocks);
     }
 
     public JsonElement toJson() {
