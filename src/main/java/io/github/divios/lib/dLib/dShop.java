@@ -232,10 +232,12 @@ public class dShop {
      * Restocks the items of this shop.
      */
     public void reStock() {
-        timestamp = new Timestamp(System.currentTimeMillis());
+        long start = System.currentTimeMillis();
         Events.callEvent(new reStockShopEvent(this));
+
+        DailyShop.get().getRecordBook().flushCache(this);       // Flush limit
         guis.reStock(!announce_restock);
-        DebugLog.info("Time elapsed to restock shop " + name + ": " + (new Timestamp(System.currentTimeMillis()).getTime() - timestamp.getTime()));
+        DebugLog.info("Time elapsed to restock shop " + name + ": " + (System.currentTimeMillis() - start));
     }
 
     /**
