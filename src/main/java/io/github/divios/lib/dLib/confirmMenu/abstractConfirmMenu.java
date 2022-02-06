@@ -1,6 +1,5 @@
 package io.github.divios.lib.dLib.confirmMenu;
 
-import com.cryptomorin.xseries.ReflectionUtils;
 import com.cryptomorin.xseries.XMaterial;
 import io.github.divios.core_lib.events.Events;
 import io.github.divios.core_lib.events.Subscription;
@@ -13,25 +12,18 @@ import io.github.divios.core_lib.scheduler.Task;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.files.Lang;
 import io.github.divios.dailyShop.utils.DebugLog;
-import io.github.divios.dailyShop.utils.NMSUtils.NMSClass;
-import io.github.divios.dailyShop.utils.NMSUtils.NMSHelper;
-import io.github.divios.dailyShop.utils.NMSUtils.NMSObject;
+import io.github.divios.dailyShop.utils.NMSUtils.SetSlotPacket;
 import io.github.divios.dailyShop.utils.PrettyPrice;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.jtext.wrappers.Template;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dShop;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -246,7 +238,7 @@ public abstract class abstractConfirmMenu {
     private void sendPackets() {
         Schedulers.sync().run(() -> {           // Needs a delay, if not, update between server and client removes items
             for (int slot = 0; slot < 36; slot++) {
-                SetSlotPacket.constructAndSend(player, clonedPlayerInventory.getItem(slot), slot);
+                SetSlotPacket.send(player, clonedPlayerInventory.getItem(slot), slot);
             }
         });
     }
@@ -275,41 +267,5 @@ public abstract class abstractConfirmMenu {
     }
 
     protected abstract double getItemPrice();
-
-    protected static class SetSlotPacket {
-
-        protected static final NMSClass packetClazz;
-        protected static final NMSClass CraftItemClazz;
-        protected static final NMSClass NMSItemStackClazz;
-
-        protected static final Constructor<?> packetConstructorPost_1_17;
-        protected static final Constructor<?> packetConstructorPre_1_17;
-
-        static {
-            packetClazz = NMSHelper.getClass(ReflectionUtils.getNMSClass("network.protocol.game", "PacketPlayOutSetSlot").getName());
-            CraftItemClazz = NMSHelper.getClass(ReflectionUtils.CRAFTBUKKIT + "inventory.CraftItemStack");
-            NMSItemStackClazz = ReflectionUtils.VER >= 17
-                    ? NMSHelper.getClass("net.minecraft.world.item.ItemStack")
-                    : NMSHelper.getClass(ReflectionUtils.getNMSClass("ItemStack").getName());
-
-            packetConstructorPost_1_17 = NMSHelper.getConstructor(packetClazz.getWrappedClass(), int.class, int.class, int.class, NMSItemStackClazz.getWrappedClass());
-            packetConstructorPre_1_17 = NMSHelper.getConstructor(packetClazz.getWrappedClass(), int.class, int.class, NMSItemStackClazz.getWrappedClass());
-        }
-
-        protected static void constructAndSend(@NotNull Player p, @Nullable ItemStack item, int slot) {
-            try {
-                if (item == null) item = new ItemStack(Material.AIR);
-                NMSObject craftItem = CraftItemClazz.callStaticMethod("asNMSCopy", item);
-
-                Object packetClass = ReflectionUtils.VER >= 17
-                        ? packetConstructorPost_1_17.newInstance(-2, 1, slot, craftItem.getObject())
-                        : packetConstructorPre_1_17.newInstance(-2, slot, craftItem.getObject());
-                ReflectionUtils.sendPacket(p, packetClass);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-    }
 
 }

@@ -1,8 +1,10 @@
 package io.github.divios.lib.dLib;
 
+import com.cryptomorin.xseries.XMaterial;
 import com.google.gson.JsonElement;
 import io.github.divios.core_lib.events.Events;
 import io.github.divios.core_lib.events.Subscription;
+import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.misc.timeStampUtils;
 import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.core_lib.scheduler.Task;
@@ -15,6 +17,7 @@ import io.github.divios.dailyShop.utils.DebugLog;
 import io.github.divios.lib.dLib.dTransaction.Bill;
 import io.github.divios.lib.dLib.dTransaction.SingleTransaction;
 import io.github.divios.lib.dLib.dTransaction.Transactions;
+import io.github.divios.lib.dLib.nmsInventory.ShopGui;
 import io.github.divios.lib.dLib.registry.RecordBook;
 import io.github.divios.lib.dLib.registry.RecordBookEntry;
 import io.github.divios.lib.dLib.stock.dStock;
@@ -42,6 +45,8 @@ public class dShop {
     protected int timer;
     protected boolean announce_restock = true;
     protected boolean isDefault = false;
+
+    public ShopGui gui;
 
     protected Set<Task> tasks = new HashSet<>();
     protected Set<Subscription> listeners = new HashSet<>();
@@ -82,6 +87,7 @@ public class dShop {
         guis = syncHashMenu.fromJson(gui, this);
         startTimerTask();
         startListeners();
+        this.gui = ShopGui.fromJson(this, gui);
     }
 
     protected void startTimerTask() {
@@ -108,7 +114,10 @@ public class dShop {
      * Opens the actual shop for the player
      */
     public void openShop(Player p) {
-        guis.generate(p);
+        //guis.generate(p);
+        if (gui == null)
+            gui = ShopGui.fromJson(this, guis.getDefault().toJson());
+        gui.open(p);
     }
 
     /**
@@ -235,7 +244,9 @@ public class dShop {
         long start = System.currentTimeMillis();
         Events.callEvent(new reStockShopEvent(this));
 
-        DailyShop.get().getRecordBook().flushCache(this);       // Flush limit
+        if (DailyShop.get().getRecordBook() != null)
+            DailyShop.get().getRecordBook().flushCache(this);       // Flush limit
+
         guis.reStock(!announce_restock);
         DebugLog.info("Time elapsed to restock shop " + name + ": " + (System.currentTimeMillis() - start));
     }
@@ -325,7 +336,7 @@ public class dShop {
                 guis.updateItem(new updateItemEvent(bill.getPlayer(),
                                 shopItem.getUUID(),
                                 entry.getValue(),
-                                bill.getType() == SingleTransaction.Type.BUY
+                                bill.getType() == Transactions.Type.BUY
                                         ? updateItemEvent.type.NEXT_AMOUNT
                                         : updateItemEvent.type.REPLENISH,
                                 this
@@ -339,7 +350,7 @@ public class dShop {
                             .withItemID(s)
                             .withRawItem(shopItem.getItem())
                             .withQuantity(entry.getValue())
-                            .withType(Transactions.Type.valueOf(bill.getType().name()))
+                            .withType(bill.getType())
                             .withPrice(entry.getKey())
                             .create()
             );

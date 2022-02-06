@@ -78,6 +78,9 @@ public class shopsResource {
             currentShop.setDefault(shop.isDefault());
             currentShop.updateShopGui(shop.getGuis().getDefault().skeleton());
             currentShop.setItems(shop.getItems());
+
+            currentShop.gui = shop.gui;
+
             if (isNew) currentShop.reStock();
 
             if (isNew)
