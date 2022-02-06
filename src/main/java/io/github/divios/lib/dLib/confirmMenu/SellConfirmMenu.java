@@ -79,7 +79,9 @@ public class SellConfirmMenu extends abstractConfirmMenu {
 
     private int getSellPlayerLimit() {
         int limit = LimitHelper.getPlayerLimit(player, shop, item, Transactions.Type.SELL);
-        return Math.max(0, limit);
+        return limit == -1
+                ? MAX_SELL_ITEMS
+                : Math.max(0, limit - nAddedItems);
     }
 
     @Override

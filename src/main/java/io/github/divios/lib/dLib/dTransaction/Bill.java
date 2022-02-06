@@ -10,20 +10,20 @@ import java.util.*;
 public class Bill {
 
     public static BillBuilder start(Player p,
-                                    SingleTransaction.Type type,
+                                    Transactions.Type type,
                                     Economy economy
     ) {
         return new BillBuilder(p, type, economy);
     }
 
     private final Player player;
-    private final SingleTransaction.Type type;
+    private final Transactions.Type type;
     private final HashMap<String, Map.Entry<Double, Integer>> billTable;
     private final Economy economy;
     private double totalPrice = 0;
 
     public Bill(Player player,
-                SingleTransaction.Type type,
+                Transactions.Type type,
                 Map<String, Map.Entry<Double, Integer>> items,
                 Economy economy) {
         this.player = Objects.requireNonNull(player);
@@ -41,7 +41,7 @@ public class Bill {
         return player;
     }
 
-    public SingleTransaction.Type getType() {
+    public Transactions.Type getType() {
         return type;
     }
 
@@ -88,11 +88,11 @@ public class Bill {
 
     public static final class BillBuilder {
         private final Player player;
-        private final SingleTransaction.Type type;
+        private final Transactions.Type type;
         private final Economy economy;
         private final HashMap<String, Map.Entry<Double, Integer>> billTable;
 
-        BillBuilder(Player player, SingleTransaction.Type type, Economy economy) {
+        BillBuilder(Player player, Transactions.Type type, Economy economy) {
             this.player = player;
             this.type = type;
             this.economy = economy;

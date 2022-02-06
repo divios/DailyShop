@@ -133,8 +133,10 @@ public class BuyConfirmMenu extends abstractConfirmMenu {
     }
 
     private int getBuyPlayerLimit() {
-        int limit = LimitHelper.getPlayerLimit(player, shop, item, Transactions.Type.BUY) - nAddedItems;
-        return Math.max(0, limit);
+        int limit = LimitHelper.getPlayerLimit(player, shop, item, Transactions.Type.BUY);
+        return limit == -1
+                ? MAX_INVENTORY_ITEMS
+                : Math.max(0, limit - nAddedItems);
     }
 
     private int getItemStock() {

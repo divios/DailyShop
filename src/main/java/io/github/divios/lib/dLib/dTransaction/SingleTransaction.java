@@ -124,7 +124,7 @@ public class SingleTransaction {
 
         private final dShop shop;
         private final Player player;
-        private final Type type = Type.BUY;
+        private final Transactions.Type type = Transactions.Type.BUY;
         private final dItem item;
         private final int amount;
         private final boolean inventoryAction;
@@ -231,7 +231,7 @@ public class SingleTransaction {
 
         private final dShop shop;
         private final Player player;
-        private final Type type = Type.SELL;
+        private final Transactions.Type type = Transactions.Type.SELL;
         private final dItem item;
         private final int amount;
         private final boolean inventoryAction;

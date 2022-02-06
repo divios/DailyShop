@@ -340,7 +340,7 @@ public class databaseManager extends DataManagerAbstract {
                             .withShopID(result.getString("shopID"))
                             .withItemID(result.getString("itemUUID"))
                             .withRawItem(ItemUtils.deserialize(result.getString("rawItem")))
-                            .withType(Transactions.Type.valueOf(result.getString("type")))
+                            .withType(Transactions.Type.valueOf(result.getString("type").toUpperCase()))
                             .withPrice(result.getDouble("price"))
                             .withQuantity(result.getInt("quantity"))
                             .withTimestamp(timestamp == null ? new Timestamp(System.currentTimeMillis()) : timestamp)
