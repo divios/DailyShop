@@ -78,7 +78,7 @@ public class dShopAdapter implements JsonSerializer<dShop>, JsonDeserializer<dSh
                 deserializedShop.addItem(dItem.setID(itemEntry.getKey()));
             } catch (Exception | Error e) {
                 Log.warn("There was a problem parsing the item with id " + itemEntry.getKey());
-                //e.printStackTrace();
+                e.printStackTrace();
                 Log.warn(e.getMessage());
             }
         }

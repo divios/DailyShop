@@ -85,7 +85,7 @@ public class ShopGui {
     private final Set<Subscription> listeners;
 
     public ShopGui(dShop shop) {
-        this(shop, shop.getName());
+        this(shop, shop == null ? "" : shop.getName());
     }
 
     public ShopGui(dShop shop, String title) {
@@ -97,7 +97,7 @@ public class ShopGui {
         this.title = title;
 
         this.viewers = new ConcurrentHashMap<>();
-        this.title = shop.getName();
+        this.title = (shop == null) ? "" : shop.getName();
         this.inv = inv;
 
         this.buttons = new ConcurrentHashMap<>();

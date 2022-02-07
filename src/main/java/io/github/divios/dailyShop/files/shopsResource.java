@@ -120,7 +120,7 @@ public class shopsResource {
                 cacheCheckSums.put(newShop.getName(), FileUtils.getFileCheckSum(shopFile));
             } catch (Exception e) {
                 Log.warn("There was a problem with the shop " + shopFile.getName());
-                //e.printStackTrace();
+                e.printStackTrace();
                 Log.warn(e.getMessage());
             }
         }

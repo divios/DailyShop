@@ -86,7 +86,6 @@ public class dShop {
         this.gui = ShopGui.fromJson(this, guiJson);
         startTimerTask();
         startListeners();
-        this.gui = ShopGui.fromJson(this, guiJson);
     }
 
     protected void startTimerTask() {

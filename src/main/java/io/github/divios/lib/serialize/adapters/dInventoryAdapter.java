@@ -46,13 +46,13 @@ public class dInventoryAdapter implements JsonSerializer<ShopGui>, JsonDeseriali
                 buttons.put(itemEntry.getKey(), gson.fromJson(itemEntry.getValue(), dItem.class));
             } catch (Exception | Error e) {
                 Log.warn("There was a problem parsing the item with id " + itemEntry.getKey());
-                //e.printStackTrace();
+                e.printStackTrace();
                 Log.warn(e.getMessage());
             }
         }
 
 
-        ShopGui inv = new ShopGui(null, title, Bukkit.createInventory(null, buttons.size()));
+        ShopGui inv = new ShopGui(null, title, Bukkit.createInventory(null, size[0]));
         buttons.forEach((s, dItem) -> inv.setButton(dItem.getSlot(), dItem.setID(s)));
 
         addItemsWithMultipleSlots(object, inv);
