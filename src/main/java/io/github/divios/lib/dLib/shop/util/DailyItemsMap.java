@@ -1,4 +1,4 @@
-package io.github.divios.lib.dLib.nmsInventory.util;
+package io.github.divios.lib.dLib.shop.util;
 
 import io.github.divios.lib.dLib.dItem;
 import org.jetbrains.annotations.NotNull;
@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
@@ -36,8 +37,8 @@ public class DailyItemsMap {
         return itemsSlots.containsKey(slot);
     }
 
-    public Collection<dItem> getItems() {
-        return Collections.unmodifiableCollection(itemsIds.values());
+    public Map<String, dItem> getItems() {
+        return Collections.unmodifiableMap(itemsIds);
     }
     public dItem get(String id) {
         return itemsIds.get(id);

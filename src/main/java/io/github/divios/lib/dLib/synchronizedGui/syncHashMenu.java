@@ -3,7 +3,7 @@ package io.github.divios.lib.dLib.synchronizedGui;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.gson.JsonElement;
-import io.github.divios.lib.dLib.dShop;
+import io.github.divios.lib.dLib.shop.dShop;
 import io.github.divios.lib.dLib.synchronizedGui.singleGui.singleGui;
 
 import java.util.UUID;

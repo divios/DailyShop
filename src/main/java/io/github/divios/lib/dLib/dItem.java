@@ -19,6 +19,7 @@ import io.github.divios.dailyShop.economies.Economy;
 import io.github.divios.dailyShop.utils.PrettyPrice;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.priceModifiers.priceModifier;
+import io.github.divios.lib.dLib.shop.dShop;
 import io.github.divios.lib.dLib.stock.dStock;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;

@@ -12,11 +12,11 @@ import io.github.divios.dailyShop.utils.DebugLog;
 import io.github.divios.dailyShop.utils.LimitHelper;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.dItem;
-import io.github.divios.lib.dLib.dShop;
+import io.github.divios.lib.dLib.shop.dShop;
 import io.github.divios.lib.dLib.dTransaction.SingleTransaction;
 import io.github.divios.lib.dLib.dTransaction.Transactions;
 import io.github.divios.lib.dLib.synchronizedGui.taskPool.updatePool;
-import io.github.divios.lib.dLib.synchronizedGui.util.RandomItemSelector;
+import io.github.divios.lib.dLib.shop.util.RandomItemSelector;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 

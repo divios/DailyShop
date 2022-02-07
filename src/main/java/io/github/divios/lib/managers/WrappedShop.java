@@ -4,7 +4,7 @@ import com.google.gson.JsonElement;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.utils.DebugLog;
 import io.github.divios.lib.dLib.dItem;
-import io.github.divios.lib.dLib.dShop;
+import io.github.divios.lib.dLib.shop.dShop;
 import io.github.divios.lib.storage.databaseManager;
 import org.jetbrains.annotations.NotNull;
 
@@ -54,7 +54,7 @@ public class WrappedShop extends dShop {
         super.reStock();
         //serializerApi.savesuperToFileAsync(this);     // save new timestamp
         dManager.updateTimeStampAsync(super.getName(), super.getTimestamp());
-        dManager.updateGuiAsync(super.getName(), super.getGuis());
+        dManager.updateGuiAsync(super.getName(), super.getGui());
     }
 
     @Override

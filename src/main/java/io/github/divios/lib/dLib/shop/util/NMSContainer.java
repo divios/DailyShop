@@ -1,4 +1,4 @@
-package io.github.divios.lib.dLib.nmsInventory.util;
+package io.github.divios.lib.dLib.shop.util;
 
 import com.cryptomorin.xseries.ReflectionUtils;
 import io.github.divios.dailyShop.utils.NMSUtils.NMSHelper;

@@ -9,7 +9,7 @@ import io.github.divios.dailyShop.utils.PrettyPrice;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.jtext.wrappers.Template;
 import io.github.divios.lib.dLib.dItem;
-import io.github.divios.lib.dLib.dShop;
+import io.github.divios.lib.dLib.shop.dShop;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -165,7 +165,7 @@ public class SingleTransaction {
 
             if (item.getDStock() != null) {
                 int stock;
-                if ((stock = shop.getStockForItem(item.getUUID()).get(player)) <= 0
+                if ((stock = shop.getStockForItem(item.getID()).get(player)) <= 0
                         || stock < amount) {        // Check actual item
                     onFail.accept(item, TransactionError.noStock);
                     return;

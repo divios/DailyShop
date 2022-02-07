@@ -9,7 +9,8 @@ import io.github.divios.dailyShop.files.Settings;
 import io.github.divios.dailyShop.utils.DebugLog;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.dItem;
-import io.github.divios.lib.dLib.dShop;
+import io.github.divios.lib.dLib.shop.ShopGui;
+import io.github.divios.lib.dLib.shop.dShop;
 import io.github.divios.lib.dLib.synchronizedGui.singleGui.dInventory;
 
 import java.lang.reflect.Type;
@@ -24,7 +25,7 @@ public class dShopAdapter implements JsonSerializer<dShop>, JsonDeserializer<dSh
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss");
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(dItem.class, new dItemAdapter())
-            .registerTypeAdapter(dInventory.class, new dInventoryAdapter())
+            .registerTypeAdapter(ShopGui.class, new dInventoryAdapter())
             .create();
 
     private static final TypeToken<LinkedHashMap<String, JsonElement>> diItemsToken = new TypeToken<LinkedHashMap<String, JsonElement>>() {
@@ -64,7 +65,7 @@ public class dShopAdapter implements JsonSerializer<dShop>, JsonDeserializer<dSh
         // Deserialize shop display
         DebugLog.info("Reading shop from shop " + id);
         if (object.has("shop")) {
-            dInventory inv = gson.fromJson(object.get("shop"), dInventory.class);
+            ShopGui inv = gson.fromJson(object.get("shop"), ShopGui.class);
             deserializedShop.updateShopGui(inv, true);
         }
 
@@ -96,7 +97,7 @@ public class dShopAdapter implements JsonSerializer<dShop>, JsonDeserializer<dSh
         if (shop.isDefault()) builder.add("default", true);
 
         return builder.add("timeStamp", (Boolean) null)  // dateFormat.format(shop.getTimestamp()
-                .add("shop", gson.toJsonTree(shop.getGuis().getDefault()))
+                .add("shop", gson.toJsonTree(shop.getGui()))
                 .add("items", gson.toJsonTree(parseUUIDs(shop.getItems())))
                 .build();
     }

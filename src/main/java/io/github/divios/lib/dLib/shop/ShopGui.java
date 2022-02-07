@@ -1,4 +1,4 @@
-package io.github.divios.lib.dLib.nmsInventory;
+package io.github.divios.lib.dLib.shop;
 
 import com.google.common.base.Preconditions;
 import com.google.common.reflect.TypeToken;
@@ -17,10 +17,9 @@ import io.github.divios.dailyShop.utils.LimitHelper;
 import io.github.divios.dailyShop.utils.NMSUtils.SetSlotPacket;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.dItem;
-import io.github.divios.lib.dLib.dShop;
 import io.github.divios.lib.dLib.dTransaction.Transactions;
-import io.github.divios.lib.dLib.nmsInventory.util.DailyItemsMap;
-import io.github.divios.lib.dLib.nmsInventory.util.NMSContainer;
+import io.github.divios.lib.dLib.shop.util.DailyItemsMap;
+import io.github.divios.lib.dLib.shop.util.NMSContainer;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -29,10 +28,11 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.concurrent.*;
-import java.util.function.Function;
 import java.util.stream.IntStream;
 
 @SuppressWarnings({"unused", "UnstableApiUsage"})
@@ -72,7 +72,7 @@ public class ShopGui {
         return gui;
     }
 
-    private final dShop shop;
+    dShop shop;
 
     private final ConcurrentHashMap<UUID, Player> viewers;
     private String title;
@@ -149,6 +149,16 @@ public class ShopGui {
         return inv.getSize();
     }
 
+    public Set<Integer> getDailySlots() {
+        Set<Integer> dailySlots = new HashSet<>();
+
+        IntStream.range(0, inv.getSize())
+                .filter(value -> !buttons.containsKey(value))
+                .forEach(dailySlots::add);
+
+        return dailySlots;
+    }
+
     public Collection<Player> getViewers() {
         return Collections.unmodifiableCollection(viewers.values());
     }
@@ -161,8 +171,11 @@ public class ShopGui {
         return Collections.unmodifiableMap(buttons);
     }
 
-    public Collection<dItem> getDailyItems() {
-        return dailyItemsMap.getItems();
+    private Map<String, dItem> values = null;
+
+    public Map<String, dItem> getDailyItems() {
+        if (values == null) values = new dailyItems();
+        return values;
     }
 
     private void setTitle(String title) {
@@ -199,20 +212,43 @@ public class ShopGui {
         buttons.forEach(this::setButton);
     }
 
+    public void updateDailyItem(dItem updatedItem) {
+        dItem oldItem;
+        if ((oldItem = dailyItemsMap.get(updatedItem.getID())) == null) return;
+
+        int slot = oldItem.getSlot();
+        setDailyItem(slot, updatedItem);
+    }
+
+    private void setDailyItem(int slot, dItem item) {
+        Validate.isTrue(!buttons.containsKey(slot), "Cannot set a dailyItem in a button slot");
+
+        dItem clone = item.clone();
+        clone.generateNewBuyPrice();
+        clone.generateNewSellPrice();
+        clone.setSlot(slot);
+
+        dailyItemsMap.put(clone);
+        inv.setItem(slot, clone.getItem());
+    }
+
+    public void removeDailyItem(String id) {
+        dItem toRemove;
+        if ((toRemove = dailyItemsMap.remove(id)) == null) return;
+
+        inv.clear(toRemove.getSlot());
+    }
+
     public void setDailyItems(Queue<dItem> dailyItems) {
+        clearDailyItems();
+
         for (int index = 0; index < inv.getSize(); index++) {
             if (buttons.containsKey(index)) continue;
 
-            dItem clone;
-            if ((clone = dailyItems.poll()) == null) break;     // dailyItems is empty
+            dItem item;
+            if ((item = dailyItems.poll()) == null) break;     // dailyItems is empty
 
-            clone = clone.clone();
-            clone.generateNewBuyPrice();
-            clone.generateNewSellPrice();
-            clone.setSlot(index);
-
-            dailyItemsMap.put(clone);
-            inv.setItem(index, clone.getItem());
+            setDailyItem(index, item);
         }
     }
 
@@ -239,7 +275,8 @@ public class ShopGui {
             iterator.next().closeInventory();
             iterator.remove();
         }
-        updateTask.stop();
+        if (updateTask != null)
+            updateTask.stop();
     }
 
     private void clickHandler(InventoryClickEvent e) {
@@ -364,9 +401,7 @@ public class ShopGui {
         HashMap<UUID, dItem> buttons = new HashMap<>();
         Set<Integer> dailyItemsSlots = new HashSet<>();
 
-        this.buttons.values().forEach(dItem -> {
-            buttons.put(dItem.getUUID(), dItem);
-        });
+        this.buttons.values().forEach(dItem -> buttons.put(dItem.getUUID(), dItem));
 
         this.dailyItemsMap.forEach(dItem -> {
             dailyItemsSlots.add(dItem.getSlot());
@@ -429,6 +464,83 @@ public class ShopGui {
             task.stop();
         }
 
+    }
+
+    public class dailyItems implements Map<String, dItem> {
+
+        @Override
+        public int size() {
+            return dailyItemsMap.size();
+        }
+
+        @Override
+        public boolean isEmpty() {
+            return dailyItemsMap.isEmpty();
+        }
+
+        @Override
+        public boolean containsKey(Object key) {
+            return dailyItemsMap.contains((String) key);
+        }
+
+        @Override
+        public boolean containsValue(Object value) {
+            boolean contains = false;
+            for (Iterator<dItem> iterator = dailyItemsMap.iterator(); iterator.hasNext(); ) {
+                if (iterator.next().equals(value)) {
+                    contains = true;
+                    break;
+                }
+            }
+
+            return contains;
+        }
+
+        @Override
+        public dItem get(Object key) {
+            return dailyItemsMap.get((String) key);
+        }
+
+        @Nullable
+        @Override
+        public dItem put(String key, dItem value) {
+            updateDailyItem(value.setID(key));
+            return null;
+        }
+
+        @Override
+        public dItem remove(Object key) {
+            removeDailyItem((String) key);
+            return null;
+        }
+
+        @Override
+        public void putAll(@NotNull Map<? extends String, ? extends dItem> m) {
+            m.forEach(this::put);
+        }
+
+        @Override
+        public void clear() {
+            clearDailyItems();
+        }
+
+        @NotNull
+        @Override
+        public Set<String> keySet() {
+            return null;
+        }
+
+        @NotNull
+        @Override
+        public Collection<dItem> values() {
+            return null;
+        }
+
+        @NotNull
+        @Override
+        public Set<Entry<String, dItem>> entrySet() {
+            return null;
+        }
     }
 
 }

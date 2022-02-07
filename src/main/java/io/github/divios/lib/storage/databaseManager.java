@@ -10,7 +10,8 @@ import io.github.divios.core_lib.misc.timeStampUtils;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.utils.DebugLog;
 import io.github.divios.lib.dLib.dItem;
-import io.github.divios.lib.dLib.dShop;
+import io.github.divios.lib.dLib.shop.ShopGui;
+import io.github.divios.lib.dLib.shop.dShop;
 import io.github.divios.lib.dLib.dTransaction.Transactions;
 import io.github.divios.lib.dLib.registry.RecordBookEntry;
 import io.github.divios.lib.dLib.synchronizedGui.syncMenu;
@@ -113,7 +114,7 @@ public class databaseManager extends DataManagerAbstract {
                     "active_shops (name, type, gui, timestamp, timer) VALUES (?, ?, ?, ?, ?)";
             try (PreparedStatement statement = connection.prepareStatement(createShop)) {
                 statement.setString(1, shop.getName());
-                statement.setString(3, shop.getGuis().toJson().toString());
+                statement.setString(3, shop.getGui().toJson().toString());
                 statement.setString(4, timeStampUtils.serialize(shop.getTimestamp()));
                 statement.setInt(5, shop.getTimer());
                 statement.executeUpdate();
@@ -243,7 +244,7 @@ public class databaseManager extends DataManagerAbstract {
         return asyncPool.submit(() -> updateItem(name, item));
     }
 
-    public void updateGui(String name, syncMenu gui) {
+    public void updateGui(String name, ShopGui gui) {
         this.databaseConnector.connect(connection -> {
             String updateGui = "UPDATE " + this.getTablePrefix() + "active_shops " +
                     "SET gui = ? WHERE name = ? collate nocase";
@@ -255,7 +256,7 @@ public class databaseManager extends DataManagerAbstract {
         });
     }
 
-    public Future<?> updateGuiAsync(String name, syncMenu gui) {
+    public Future<?> updateGuiAsync(String name, ShopGui gui) {
         return asyncPool.submit(() -> updateGui(name, gui));
     }
 

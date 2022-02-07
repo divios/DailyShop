@@ -11,7 +11,7 @@ import io.github.divios.dailyShop.files.Lang;
 import io.github.divios.dailyShop.guis.settings.shopsManagerGui;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.dItem;
-import io.github.divios.lib.dLib.dShop;
+import io.github.divios.lib.dLib.shop.dShop;
 import io.github.divios.lib.dLib.synchronizedGui.singleGui.dInventory;
 import io.github.divios.lib.serialize.serializerApi;
 import org.bukkit.Bukkit;
@@ -262,7 +262,7 @@ public class customizeGui implements Listener, InventoryHolder {
     }
 
     private void applyChangesAction() {
-        shop.updateShopGui(_gui);
+        //shop.updateShopGui(_gui);     TODO
         unregisterAll();
         depositPlayerItems();
         shopsManagerGui.open(p);
