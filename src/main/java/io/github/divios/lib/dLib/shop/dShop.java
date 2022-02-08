@@ -2,7 +2,6 @@ package io.github.divios.lib.dLib.shop;
 
 import com.google.gson.JsonElement;
 import io.github.divios.core_lib.events.Events;
-import io.github.divios.core_lib.events.Subscription;
 import io.github.divios.core_lib.misc.timeStampUtils;
 import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.core_lib.scheduler.Task;
@@ -10,7 +9,8 @@ import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.events.reStockShopEvent;
 import io.github.divios.dailyShop.files.Messages;
 import io.github.divios.dailyShop.files.Settings;
-import io.github.divios.dailyShop.guis.settings.shopGui;
+import io.github.divios.dailyShop.guis.customizerguis.customizeGui;
+import io.github.divios.dailyShop.guis.settings.shopsItemsManagerGui;
 import io.github.divios.dailyShop.utils.DebugLog;
 import io.github.divios.jtext.wrappers.Template;
 import io.github.divios.lib.dLib.dItem;
@@ -20,9 +20,6 @@ import io.github.divios.lib.dLib.registry.RecordBook;
 import io.github.divios.lib.dLib.registry.RecordBookEntry;
 import io.github.divios.lib.dLib.shop.util.RandomItemSelector;
 import io.github.divios.lib.dLib.stock.dStock;
-import io.github.divios.lib.dLib.synchronizedGui.singleGui.dInventory;
-import io.github.divios.lib.dLib.synchronizedGui.syncMenu;
-import net.brcdev.shopgui.shop.Shop;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -48,7 +45,6 @@ public class dShop {
     protected boolean isDefault = false;
 
     protected Set<Task> tasks = new HashSet<>();
-    protected Set<Subscription> listeners = new HashSet<>();
 
     public dShop(String name) {
         this(name, Settings.DEFAULT_TIMER.getValue().getAsInt());
@@ -66,11 +62,13 @@ public class dShop {
         this.name = name.toLowerCase();
         this.timer = timer;
         this.timestamp = timestamp;
-        this.gui = new ShopGui(this);
+
         items.forEach(dItem -> this.items.put(dItem.getUUID(), dItem));
 
+        this.gui = new ShopGui(this);
+        this.currentItems = gui.getDailyItems();
+
         startTimerTask();
-        startListeners();
     }
 
     public dShop(String name, JsonElement gui, Timestamp timestamp, int timer) {
@@ -84,8 +82,9 @@ public class dShop {
         items.forEach(dItem -> this.items.put(dItem.getUUID(), dItem));
 
         this.gui = ShopGui.fromJson(this, guiJson);
+        this.currentItems = gui.getDailyItems();
+
         startTimerTask();
-        startListeners();
     }
 
     protected void startTimerTask() {
@@ -100,14 +99,6 @@ public class dShop {
         );
     }
 
-    protected void startListeners() {
-        /*listeners.add(            // TODO
-                Events.subscribe(updateItemEvent.class)
-                        .filter(o -> o.getShop().equals(this))
-                        .handler(guis::updateItem)
-        ); */
-    }
-
     /**
      * Opens the actual shop for the player
      */
@@ -119,14 +110,14 @@ public class dShop {
      * Opens the gui to manage the items of this shop
      */
     public void manageItems(Player p) {
-        shopGui.open(p, this);
+        shopsItemsManagerGui.open(p, this);
     }
 
     /**
      * Opens the gui to customize the display of this shop
      */
     public void openCustomizeGui(Player p) {
-        //guis.customizeGui(p);  // TODO
+        customizeGui.open(p, this);
     }
 
     /**
@@ -231,6 +222,7 @@ public class dShop {
      */
     public void reStock() {
         Events.callEvent(new reStockShopEvent(this));
+        timestamp = new Timestamp(System.currentTimeMillis());
 
         if (DailyShop.get().getRecordBook() != null)
             DailyShop.get().getRecordBook().flushCache(this);       // Flush limit
@@ -242,12 +234,12 @@ public class dShop {
         gui.setDailyItems(rolledItems);
         currentItems = gui.getDailyItems();
 
+        DebugLog.info("Time elapsed to restock shop " + name + ": " + (System.currentTimeMillis() - start));
+
         if (announce_restock)
             Messages.MSG_RESTOCK.broadcast(
                     Template.of("shop", name)
             );
-
-        DebugLog.info("Time elapsed to restock shop " + name + ": " + (System.currentTimeMillis() - start));
     }
 
     /**
@@ -300,6 +292,10 @@ public class dShop {
      * @param item item to be added
      */
     public void addItem(@NotNull dItem item) {
+        if (items.containsKey(item.getUUID())) {
+            updateItem(item);
+            return;
+        }
         items.put(item.getUUID(), item);
     }
 
@@ -321,8 +317,9 @@ public class dShop {
         updateShopGui(inv, false);
     }
 
-    public void updateShopGui(ShopGui inv, boolean isSilent) {
-        this.gui.setButtons(inv.getButtons());
+    public void updateShopGui(ShopGui newGui, boolean isSilent) {
+        gui.setSize(newGui.size());
+        gui.setButtons(newGui.getButtons());
     }
 
     public void computeBill(Bill bill) {
@@ -399,10 +396,10 @@ public class dShop {
 
     public void destroy() {
         gui.destroy();
-        tasks.forEach(Task::stop);
-        tasks.clear();
-        listeners.forEach(Subscription::unregister);
-        listeners.clear();
+        for (Iterator<Task> iterator = tasks.iterator(); iterator.hasNext(); ) {
+            iterator.next().stop();
+            iterator.remove();
+        }
     }
 
     @Override
@@ -414,7 +411,6 @@ public class dShop {
                 ", timestamp=" + timestamp +
                 ", timer=" + timer +
                 ", tasks=" + tasks +
-                ", listeners=" + listeners +
                 '}';
     }
 

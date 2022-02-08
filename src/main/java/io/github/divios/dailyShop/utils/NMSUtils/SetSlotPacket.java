@@ -1,9 +1,7 @@
 package io.github.divios.dailyShop.utils.NMSUtils;
 
 import com.cryptomorin.xseries.ReflectionUtils;
-import net.minecraft.server.level.EntityPlayer;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_18_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -42,7 +40,8 @@ public class SetSlotPacket {
 
             Object packetClass = ReflectionUtils.VER >= 17
                     ? packetConstructorPost_1_17.newInstance(containerID, 1, slot, craftItem.getObject())
-                    : packetConstructorPre_1_17.newInstance(-2, slot, craftItem.getObject());
+                    : packetConstructorPre_1_17.newInstance(containerID, slot, craftItem.getObject());
+
             ReflectionUtils.sendPacket(p, packetClass);
 
         } catch (Exception e) {

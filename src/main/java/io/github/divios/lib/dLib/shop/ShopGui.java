@@ -19,7 +19,7 @@ import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dTransaction.Transactions;
 import io.github.divios.lib.dLib.shop.util.DailyItemsMap;
-import io.github.divios.lib.dLib.shop.util.NMSContainer;
+import io.github.divios.lib.dLib.shop.util.NMSContainerID;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -178,18 +178,66 @@ public class ShopGui {
         return values;
     }
 
-    private void setTitle(String title) {
+    public void setTitle(String title) {
         this.title = title;
 
         Inventory newInv = Bukkit.createInventory(null, inv.getSize(), title);
         newInv.setContents(inv.getContents());
-
         inv = newInv;
+
+        viewers.values().forEach(player -> player.openInventory(inv));
+    }
+
+    public void setSize(int size) {
+        int comparator;
+        if ((comparator = Integer.compare(size(), size)) != 0)
+            if (comparator < 0)
+                incrementRows((size - size()) / 9);
+            else
+                decrementRows((size() - size) / 9);
+    }
+
+    public void incrementRows(int rows) {
+        Validate.isTrue(rows >= 0, "N times cannot be less than 0. Got " + rows);
+        if (inv.getSize() == 54) return;
+
+        int newSize = Math.min(54, inv.getSize() + (rows * 9));
+
+        Inventory newInv = Bukkit.createInventory(null, newSize, title);
+        newInv.setContents(inv.getContents());
+        inv = newInv;
+
+        viewers.values().forEach(player -> player.openInventory(inv));
+    }
+
+    public void decrementRows(int rows) {
+        Validate.isTrue(rows >= 0, "N times cannot be less than 0. Got " + rows);
+        if (inv.getSize() == 9) return;
+
+        int newSize = Math.max(9, inv.getSize() - (rows * 9));
+        inv = Bukkit.createInventory(null, newSize, title);
+
+        for (Iterator<Map.Entry<Integer, dItem>> iterator = buttons.entrySet().iterator(); iterator.hasNext(); ) {      // Removed buttons out of newInv bounds
+            Map.Entry<Integer, dItem> entry = iterator.next();
+            if (entry.getKey() < newSize)   // In newInv bounds
+                inv.setItem(entry.getKey(), entry.getValue().getItem());
+            else
+                iterator.remove();
+        }
+
+        for (Iterator<dItem> iterator = dailyItemsMap.iterator(); iterator.hasNext(); ) {       // Remove dailyItems out of newInv bounds
+            dItem item = iterator.next();
+            if (item.getSlot() < newSize)
+                inv.setItem(item.getSlot(), item.getItem());
+            else
+                iterator.remove();
+        }
+
         viewers.values().forEach(player -> player.openInventory(inv));
     }
 
     public void setButton(int slot, dItem item) {
-        Validate.isTrue((slot >= 0) && (slot < inv.getSize()), "Slot out if bounds");
+        Validate.isTrue((slot >= 0) && (slot < inv.getSize()), "Slot out if bounds. Got " + slot + " : " + inv.getSize());
 
         dailyItemsMap.remove(slot);     // remove dailyItems if any
 
@@ -201,7 +249,7 @@ public class ShopGui {
     }
 
     public void removeButton(int slot) {
-        Validate.isTrue((slot >= 0) && (slot < inv.getSize()), "Slot out if bounds");
+        Validate.isTrue((slot >= 0) && (slot < inv.getSize()), "Slot out if bounds. Got " + slot);
 
         buttons.remove(slot);
         inv.clear(slot);
@@ -426,7 +474,7 @@ public class ShopGui {
             task = Schedulers.async().runRepeating(
                     this::updateTask,
                     0, TimeUnit.SECONDS,
-                    500, TimeUnit.MILLISECONDS
+                    200, TimeUnit.MILLISECONDS
             );
         }
 
@@ -449,12 +497,13 @@ public class ShopGui {
                         toSend = ItemUtils.setName(toSend, newName);
                         toSend = ItemUtils.setLore(toSend, newLore);
 
-                        SetSlotPacket.send(player, toSend, dItem.getSlot(), NMSContainer.getPlayerInventoryID(player));
+                        SetSlotPacket.send(player, toSend, dItem.getSlot(), NMSContainerID.getPlayerInventoryID(player));
                     });
 
                     dailyItemsMap.forEach(dItem -> {
                         ItemStack toSend = shopItemsLore.applyLore(dItem, player, shop);
-                        SetSlotPacket.send(player, toSend, dItem.getSlot(), NMSContainer.getPlayerInventoryID(player));
+                        try { SetSlotPacket.send(player, toSend, dItem.getSlot(), NMSContainerID.getPlayerInventoryID(player));}
+                        catch (Exception ignored) {}        // WindowId can throw null pointer due to no synchronization
                     });
                 });
             });

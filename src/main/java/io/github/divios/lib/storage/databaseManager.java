@@ -14,7 +14,6 @@ import io.github.divios.lib.dLib.shop.ShopGui;
 import io.github.divios.lib.dLib.shop.dShop;
 import io.github.divios.lib.dLib.dTransaction.Transactions;
 import io.github.divios.lib.dLib.registry.RecordBookEntry;
-import io.github.divios.lib.dLib.synchronizedGui.syncMenu;
 import io.github.divios.lib.managers.WrappedShop;
 import io.github.divios.lib.storage.migrations.initialMigration;
 

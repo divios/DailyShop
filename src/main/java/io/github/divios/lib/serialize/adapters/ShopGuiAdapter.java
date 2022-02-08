@@ -8,7 +8,6 @@ import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.shop.ShopGui;
-import io.github.divios.lib.dLib.synchronizedGui.singleGui.dInventory;
 import io.github.divios.lib.serialize.wrappers.WrappedDButton;
 import org.bukkit.Bukkit;
 
@@ -17,7 +16,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @SuppressWarnings({"unused", "UnstableApiUsage", "UnusedReturnValue"})
-public class dInventoryAdapter implements JsonSerializer<ShopGui>, JsonDeserializer<ShopGui> {
+public class ShopGuiAdapter implements JsonSerializer<ShopGui>, JsonDeserializer<ShopGui> {
 
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(dItem.class, new dButtonAdapter())
@@ -51,9 +50,11 @@ public class dInventoryAdapter implements JsonSerializer<ShopGui>, JsonDeseriali
             }
         }
 
-
         ShopGui inv = new ShopGui(null, title, Bukkit.createInventory(null, size[0]));
-        buttons.forEach((s, dItem) -> inv.setButton(dItem.getSlot(), dItem.setID(s)));
+        buttons.forEach((s, dItem) -> {
+            if (dItem.getSlot() >= size[0]) return;
+            inv.setButton(dItem.getSlot(), dItem.setID(s));
+        });
 
         addItemsWithMultipleSlots(object, inv);
 
@@ -124,6 +125,8 @@ public class dInventoryAdapter implements JsonSerializer<ShopGui>, JsonDeseriali
             if (baseItem == null) return;
 
             multipleSlots.forEach(integer -> {
+                if (integer >= inv.size()) return;
+
                 String newId = baseItem.getID() + integer;
                 inv.setButton(integer, baseItem.setID(newId));
             });

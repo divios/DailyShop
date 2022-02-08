@@ -4,7 +4,7 @@ import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.files.Settings;
 import io.github.divios.dailyShop.guis.settings.addDailyGuiIH;
-import io.github.divios.dailyShop.guis.settings.shopGui;
+import io.github.divios.dailyShop.guis.settings.shopsItemsManagerGui;
 import io.github.divios.dailyShop.guis.settings.shopsManagerGui;
 import io.github.divios.jcommands.JCommand;
 import io.github.divios.jcommands.arguments.Argument;
@@ -34,7 +34,7 @@ public class addCommand {
                                             .setSellPrice(Settings.DEFAULT_SELL.getValue().getAsDouble())
                                     );
                                     serializerApi.saveShopToFileAsync(shop);
-                                    shopGui.open(player, shop);
+                                    shopsItemsManagerGui.open(player, shop);
                                 }, () -> shopsManagerGui.open(player))))
                 .executesConsole((consoleCommandSender, valueMap) -> {
                     consoleCommandSender.sendMessage("This command can only be executed by players");

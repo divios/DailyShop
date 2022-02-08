@@ -27,7 +27,7 @@ import org.bukkit.event.inventory.InventoryOpenEvent;
 
 import java.util.*;
 
-public class shopGui {
+public class shopsItemsManagerGui {
 
     private static final shopsManager sManager = DailyShop.get().getShopsManager();
 
@@ -37,7 +37,7 @@ public class shopGui {
     private final Player p;
     private final dShop shop;
 
-    private shopGui(Player p, dShop shop) {
+    private shopsItemsManagerGui(Player p, dShop shop) {
 
         this.p = p;
         this.shop = shop;
@@ -75,7 +75,7 @@ public class shopGui {
     }
 
     public static void open(Player p, dShop shop) {
-        new shopGui(p, shop);
+        new shopsItemsManagerGui(p, shop);
     }
 
     private void createGuis() {

@@ -49,7 +49,10 @@ public class shopsResource {
         Timer timer = Timer.create();
         DebugLog.warn("First reading yaml from shops directory");
         Set<dShop> newShops = readYamlShops();
+
+
         DebugLog.warn("Applying logic...");
+
 
         new HashSet<>(sManager.getShops()).stream()         // Delete removed shops
                 .filter(shop -> !newShops.contains(shop))

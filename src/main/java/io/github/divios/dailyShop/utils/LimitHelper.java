@@ -3,10 +3,10 @@ package io.github.divios.dailyShop.utils;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.jcommands.util.Value;
 import io.github.divios.lib.dLib.dItem;
+import io.github.divios.lib.dLib.registry.util.Pair;
 import io.github.divios.lib.dLib.shop.dShop;
 import io.github.divios.lib.dLib.dTransaction.Transactions;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 
@@ -52,7 +52,7 @@ public class LimitHelper {
     private static int getMinPermLimitRegistered(Player p, String perm) {
         return p.getEffectivePermissions().stream()
                 .map(PermissionAttachmentInfo::getPermission)
-                .filter(s -> StringUtils.startsWithIgnoreCase(s, perm))
+                .filter(s -> s.toLowerCase().startsWith(perm.toLowerCase()))
                 .map(s -> s.substring(perm.length()))
                 .mapToInt(value -> Value.ofString(value).getAsIntOrDefault(Integer.MAX_VALUE))
                 .min().orElse(-1);

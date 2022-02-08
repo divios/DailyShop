@@ -12,7 +12,6 @@ import io.github.divios.dailyShop.guis.settings.shopsManagerGui;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.shop.dShop;
-import io.github.divios.lib.dLib.synchronizedGui.singleGui.dInventory;
 import io.github.divios.lib.serialize.serializerApi;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -30,6 +29,7 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.IntStream;
@@ -40,7 +40,9 @@ public class customizeGui implements Listener, InventoryHolder {
 
     private final Player p;
     private final dShop shop;
-    private final dInventory _gui;
+
+    private String title;
+    private int size;
     private Inventory inv;
 
     private final boolean preventClose = true;
@@ -48,23 +50,26 @@ public class customizeGui implements Listener, InventoryHolder {
 
     private dItem toClone = null;
 
+    private final Map<Integer, dItem> buttons;
     private final Map<Integer, ItemStack> pItems = new LinkedHashMap<>();
 
-    private customizeGui(Player p, dShop shop, dInventory inv) {
+    private customizeGui(Player p, dShop shop) {
         this.p = p;
         this.shop = shop;
-        this._gui = inv.skeleton();
+        this.buttons = new HashMap<>(shop.getGui().getButtons());
+
+        this.title = shop.getGui().getTitle();
+        this.size = shop.getGui().size();
 
         Schedulers.sync().runLater(() -> Bukkit.getPluginManager().registerEvents(this, plugin), 1L);
         withdrawPlayerItems();
-
         addCustomizeItems();
-        refresh();          // opens the inventory for the player
 
+        refresh();          // opens the inventory for the player
     }
 
-    public static void open(Player p, dShop shop, dInventory inv) {
-        new customizeGui(p, shop, inv);
+    public static void open(Player p, dShop shop) {
+        new customizeGui(p, shop);
     }
 
     public void addCustomizeItems() {
@@ -137,11 +142,16 @@ public class customizeGui implements Listener, InventoryHolder {
         pItems.clear();
     }
 
+    private void createInventory() {
+        inv = Bukkit.createInventory(null, size, title);
+        buttons.forEach((integer, dItem) -> inv.setItem(integer, dItem.getItem()));
+    }
+
     /**
      * Opens again the inv for the player
      */
     public void refresh() {
-        inv = _gui.getInventory();
+        createInventory();
         Schedulers.sync().runLater(() -> {
             refreshFlag = true;
             addCustomizeItems();
@@ -241,9 +251,9 @@ public class customizeGui implements Listener, InventoryHolder {
         } else if (e.getSlot() == 19) {           //change Name
             changeNameAction();
         } else if (isRemoveRowButton(e)) {           //quitar row
-            removeButtonAction();
+            removeRowAction();
         } else if (isAddRowButton(e)) {           //ampliar row
-            addButtonAction();
+            addRowAction();
         }
     }
 
@@ -262,7 +272,10 @@ public class customizeGui implements Listener, InventoryHolder {
     }
 
     private void applyChangesAction() {
-        //shop.updateShopGui(_gui);     TODO
+        shop.getGui().setTitle(title);
+        shop.getGui().setSize(size);
+        shop.getGui().setButtons(buttons);
+
         unregisterAll();
         depositPlayerItems();
         shopsManagerGui.open(p);
@@ -275,21 +288,26 @@ public class customizeGui implements Listener, InventoryHolder {
                 .withPlayer(p)
                 .withTitle("&5&lInput New Title")
                 .withResponse(s -> {
-                    _gui.setInventoryTitle(Utils.JTEXT_PARSER.parse(s));
+                    title = Utils.JTEXT_PARSER.parse(s);
                     Schedulers.sync().run(this::refresh);
                 })
                 .withCancel(cancel -> Schedulers.sync().run(this::refresh))
                 .prompt();
     }
 
-    private void removeButtonAction() {
-        if (_gui.removeInventoryRow())
-            refresh();
+    private void removeRowAction() {
+        if (size == 9) return;
+
+        size = Math.max(9, (size - 9));
+        buttons.entrySet().removeIf(entry -> entry.getKey() >= size);
+        refresh();
     }
 
-    private void addButtonAction() {
-        if (_gui.addInventoryRow())
-            refresh();
+    private void addRowAction() {
+        if (size == 54) return;
+
+        size = Math.min(54, (size + 9));
+        refresh();
     }
 
     private boolean isRemoveRowButton(InventoryClickEvent e) {
@@ -304,21 +322,22 @@ public class customizeGui implements Listener, InventoryHolder {
 
         if (toClone != null && Utils.isEmpty(e.getCurrentItem())
                 && e.getClick().equals(ClickType.MIDDLE)) {     // paste clipboard
-            _gui.addButton(toClone.copy(), e.getSlot());
+            inv.setItem(e.getSlot(), toClone.getItem());
+            buttons.put(e.getSlot(), toClone.copy());
             refresh();
             return;
         }
 
         if (e.getCurrentItem() != null && e.getClick().equals(ClickType.MIDDLE)) {        // copy to clipboard
-            toClone = _gui.getButtons().get(dItem.getUUIDKey(e.getCurrentItem()));
+            toClone = buttons.get(e.getSlot());
             return;
         }
 
         if (Utils.isEmpty(e.getCurrentItem())
                 && e.isShiftClick()) {  //add empty slot
             dItem air = dItem.AIR();
-            _gui.addButton(dItem.AIR(), e.getSlot());
-            _gui.getInventory().setItem(e.getSlot(), air.getItem());
+            inv.setItem(e.getSlot(), air.getItem());
+            buttons.put(e.getSlot(), air);
             refresh();
             return;
         }
@@ -329,7 +348,8 @@ public class customizeGui implements Listener, InventoryHolder {
             confirmIH.builder()
                     .withPlayer(p)
                     .withAction(aBoolean -> {
-                        if (aBoolean) _gui.removeButton(e.getSlot());
+                        inv.clear(e.getSlot());
+                        buttons.remove(e.getSlot());
                         refresh();
                     })
                     .withItem(e.getCurrentItem())
@@ -343,7 +363,7 @@ public class customizeGui implements Listener, InventoryHolder {
         }
 
         if (!ItemUtils.isEmpty(e.getCurrentItem())
-                && _gui.getButtonsSlots().get(e.getSlot()).isAir())
+                && buttons.get(e.getSlot()).isAir())
             return;
 
         refreshFlag = true;
@@ -352,10 +372,11 @@ public class customizeGui implements Listener, InventoryHolder {
         miniCustomizeGui.builder()
                 .withPlayer(p)
                 .withShop(shop)
-                .withItem(_gui.getButtonsSlots().get(e.getSlot()) == null ?
-                        dItem.of(XMaterial.DIRT) : _gui.getButtonsSlots().get(e.getSlot()))
+                .withItem(buttons.get(e.getSlot()) == null ?
+                        dItem.of(XMaterial.DIRT) : buttons.get(e.getSlot()))
                 .withConsumer(itemS -> {
-                    _gui.addButton(itemS, e.getSlot());
+                    buttons.put(e.getSlot(), itemS);
+                    inv.setItem(e.getSlot(), itemS.getItem());
                     withdrawPlayerItems();
                     refresh();
                 })

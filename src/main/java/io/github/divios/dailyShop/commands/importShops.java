@@ -3,7 +3,7 @@ package io.github.divios.dailyShop.commands;
 import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
-import io.github.divios.dailyShop.guis.settings.shopGui;
+import io.github.divios.dailyShop.guis.settings.shopsItemsManagerGui;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.jcommands.JCommand;
 import io.github.divios.jcommands.arguments.Argument;
@@ -55,7 +55,7 @@ public class importShops {
                                         });
                                 Utils.sendRawMsg(player, "&7Items imported successfully");
                                 serializerApi.saveShopToFileAsync(shop);
-                                shopGui.open(player, shop);
+                                shopsItemsManagerGui.open(player, shop);
                             });
                 })
                 .executesConsole((consoleCommandSender, valueMap) -> {
@@ -101,7 +101,7 @@ public class importShops {
                                         });
                                 Utils.sendRawMsg(player, "&7Items imported successfully");
                                 serializerApi.saveShopToFileAsync(shop);
-                                shopGui.open(player, shop);
+                                shopsItemsManagerGui.open(player, shop);
                             });
                 });
     }

@@ -10,7 +10,6 @@ import io.github.divios.jcommands.JCommands;
 import io.github.divios.lib.dLib.shop.dShop;
 import io.github.divios.lib.dLib.priceModifiers.priceModifierManager;
 import io.github.divios.lib.dLib.registry.RecordBook;
-import io.github.divios.lib.dLib.synchronizedGui.taskPool.updatePool;
 import io.github.divios.lib.managers.shopsManager;
 import io.github.divios.lib.serialize.serializerApi;
 import io.github.divios.lib.storage.databaseManager;
@@ -91,7 +90,6 @@ public class DailyShop extends JavaPlugin {
         dManager.finishAsyncQueries();
         sManager.getShops().forEach(dShop::destroy);
         serializerApi.stop();
-        updatePool.stop();
     }
 
     public void reload() {

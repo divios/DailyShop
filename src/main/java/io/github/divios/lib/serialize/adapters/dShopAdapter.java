@@ -11,7 +11,6 @@ import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.shop.ShopGui;
 import io.github.divios.lib.dLib.shop.dShop;
-import io.github.divios.lib.dLib.synchronizedGui.singleGui.dInventory;
 
 import java.lang.reflect.Type;
 import java.sql.Timestamp;
@@ -25,7 +24,7 @@ public class dShopAdapter implements JsonSerializer<dShop>, JsonDeserializer<dSh
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss");
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(dItem.class, new dItemAdapter())
-            .registerTypeAdapter(ShopGui.class, new dInventoryAdapter())
+            .registerTypeAdapter(ShopGui.class, new ShopGuiAdapter())
             .create();
 
     private static final TypeToken<LinkedHashMap<String, JsonElement>> diItemsToken = new TypeToken<LinkedHashMap<String, JsonElement>>() {

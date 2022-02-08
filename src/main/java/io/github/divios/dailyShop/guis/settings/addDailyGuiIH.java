@@ -92,7 +92,7 @@ public class addDailyGuiIH {
                                             newBundle.setBundle(uuids);
                                             shop.addItem(newBundle);
                                             serializerApi.saveShopToFileAsync(shop);
-                                            shopGui.open(p, shop);
+                                            shopsItemsManagerGui.open(p, shop);
                                         })
                                         .withBack(() -> gui.open(p))
                                         .prompt()), 13);
