@@ -178,6 +178,8 @@ public class SingleTransaction {
                                 Utils.JTEXT_PARSER
                                         .withTag("%", "%")
                                         .withTemplate("player", player.getName())
+                                        .withTemplate("amount", String.valueOf(amount))
+                                        .withTemplate("price", String.valueOf(finalPrice))
                                         .parse(s)
                         )
                 );
