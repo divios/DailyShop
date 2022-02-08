@@ -5,7 +5,7 @@ import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.utils.DebugLog;
 import io.github.divios.dailyShop.utils.FileUtils;
 import io.github.divios.dailyShop.utils.Timer;
-import io.github.divios.lib.dLib.dShop;
+import io.github.divios.lib.dLib.shop.dShop;
 import io.github.divios.lib.managers.shopsManager;
 import io.github.divios.lib.serialize.serializerApi;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -49,7 +49,10 @@ public class shopsResource {
         Timer timer = Timer.create();
         DebugLog.warn("First reading yaml from shops directory");
         Set<dShop> newShops = readYamlShops();
+
+
         DebugLog.warn("Applying logic...");
+
 
         new HashSet<>(sManager.getShops()).stream()         // Delete removed shops
                 .filter(shop -> !newShops.contains(shop))
@@ -76,8 +79,9 @@ public class shopsResource {
             currentShop.setTimer(shop.getTimer());
             currentShop.set_announce(shop.get_announce());
             currentShop.setDefault(shop.isDefault());
-            currentShop.updateShopGui(shop.getGuis().getDefault().skeleton());
+            currentShop.updateShopGui(shop.getGui());
             currentShop.setItems(shop.getItems());
+
             if (isNew) currentShop.reStock();
 
             if (isNew)
@@ -119,7 +123,7 @@ public class shopsResource {
                 cacheCheckSums.put(newShop.getName(), FileUtils.getFileCheckSum(shopFile));
             } catch (Exception e) {
                 Log.warn("There was a problem with the shop " + shopFile.getName());
-                //e.printStackTrace();
+                e.printStackTrace();
                 Log.warn(e.getMessage());
             }
         }

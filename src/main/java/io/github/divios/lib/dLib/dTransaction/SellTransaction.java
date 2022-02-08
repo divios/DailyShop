@@ -2,7 +2,7 @@ package io.github.divios.lib.dLib.dTransaction;
 
 import io.github.divios.lib.dLib.confirmMenu.SellConfirmMenu;
 import io.github.divios.lib.dLib.dItem;
-import io.github.divios.lib.dLib.dShop;
+import io.github.divios.lib.dLib.shop.dShop;
 import org.bukkit.entity.Player;
 
 public class SellTransaction {

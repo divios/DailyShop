@@ -12,6 +12,7 @@ import io.github.divios.dailyShop.utils.DebugLog;
 import io.github.divios.dailyShop.utils.PrettyPrice;
 import io.github.divios.jcommands.JCommand;
 import io.github.divios.lib.dLib.*;
+import io.github.divios.lib.dLib.shop.dShop;
 import io.github.divios.lib.dLib.stock.dStock;
 import io.github.divios.lib.dLib.stock.factory.dStockFactory;
 import org.bukkit.entity.Player;

@@ -15,7 +15,7 @@ import io.github.divios.dailyShop.utils.Timer;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.jcommands.JCommand;
 import io.github.divios.lib.dLib.dItem;
-import io.github.divios.lib.dLib.dShop;
+import io.github.divios.lib.dLib.shop.dShop;
 import io.github.divios.lib.dLib.dTransaction.SingleTransaction;
 import io.github.divios.lib.dLib.dTransaction.Transactions;
 import org.bukkit.Bukkit;
@@ -99,7 +99,7 @@ public class sellCommand {
 
         shopLoop:
         for (dShop shop : DailyShop.get().getShopsManager().getShops()) {
-            for (dItem shopItem : shop.getCurrentItems()) {
+            for (dItem shopItem : shop.getCurrentItems().values()) {
                 if (shopItem.getItem().isSimilar(itemToSearch)) {
                     entry = ItemEntry.from(shop, shopItem);
                     break shopLoop;

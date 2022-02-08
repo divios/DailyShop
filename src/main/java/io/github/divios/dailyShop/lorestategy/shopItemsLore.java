@@ -8,7 +8,7 @@ import io.github.divios.dailyShop.utils.PrettyPrice;
 import io.github.divios.jcommands.util.Primitives;
 import io.github.divios.jtext.wrappers.Template;
 import io.github.divios.lib.dLib.dItem;
-import io.github.divios.lib.dLib.dShop;
+import io.github.divios.lib.dLib.shop.dShop;
 import io.github.divios.lib.dLib.stock.dStock;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;

@@ -8,7 +8,7 @@ import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.utils.FileUtils;
 import io.github.divios.dailyShop.utils.Utils;
-import io.github.divios.lib.dLib.dShop;
+import io.github.divios.lib.dLib.shop.dShop;
 import io.github.divios.lib.serialize.adapters.dShopAdapter;
 import org.bukkit.configuration.file.YamlConfiguration;
 

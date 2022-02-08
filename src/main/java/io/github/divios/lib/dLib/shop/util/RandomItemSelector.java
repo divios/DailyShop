@@ -1,4 +1,4 @@
-package io.github.divios.lib.dLib.synchronizedGui.util;
+package io.github.divios.lib.dLib.shop.util;
 
 import io.github.divios.lib.dLib.dItem;
 

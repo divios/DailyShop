@@ -11,7 +11,7 @@ import io.github.divios.dailyShop.files.Settings;
 import io.github.divios.dailyShop.guis.customizerguis.changeBundleItem;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.dItem;
-import io.github.divios.lib.dLib.dShop;
+import io.github.divios.lib.dLib.shop.dShop;
 import io.github.divios.lib.serialize.serializerApi;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -92,7 +92,7 @@ public class addDailyGuiIH {
                                             newBundle.setBundle(uuids);
                                             shop.addItem(newBundle);
                                             serializerApi.saveShopToFileAsync(shop);
-                                            shopGui.open(p, shop);
+                                            shopsItemsManagerGui.open(p, shop);
                                         })
                                         .withBack(() -> gui.open(p))
                                         .prompt()), 13);

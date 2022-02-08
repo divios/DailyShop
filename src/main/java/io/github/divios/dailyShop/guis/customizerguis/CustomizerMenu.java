@@ -14,13 +14,13 @@ import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.files.Lang;
 import io.github.divios.dailyShop.files.Messages;
-import io.github.divios.dailyShop.guis.settings.shopGui;
+import io.github.divios.dailyShop.guis.settings.shopsItemsManagerGui;
 import io.github.divios.dailyShop.utils.DebugLog;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.jcommands.util.Primitives;
 import io.github.divios.jtext.wrappers.Template;
 import io.github.divios.lib.dLib.dItem;
-import io.github.divios.lib.dLib.dShop;
+import io.github.divios.lib.dLib.shop.dShop;
 import io.github.divios.lib.dLib.stock.dStock;
 import io.github.divios.lib.dLib.stock.factory.dStockFactory;
 import io.github.divios.lib.serialize.serializerApi;
@@ -106,7 +106,7 @@ public class CustomizerMenu {
                                 DebugLog.info("Added new item from customizer menu with ID: " + item.getID());
                                 shop.addItem(item);
                             }
-                            shopGui.open(p, shop.getName());
+                            shopsItemsManagerGui.open(p, shop.getName());
                             serializerApi.saveShopToFileAsync(shop);
                         }),
                 7
@@ -118,7 +118,7 @@ public class CustomizerMenu {
                                 .setName(Lang.CUSTOMIZE_RETURN.getAsString(p))
                                 .setLore(Lang.CUSTOMIZE_RETURN_LORE.getAsListString(p))
                                 .applyTexture("19bf3292e126a105b54eba713aa1b152d541a1d8938829c56364d178ed22bf")
-                        , e -> shopGui.open(p, shop.getName())),
+                        , e -> shopsItemsManagerGui.open(p, shop.getName())),
                 8
         );
 

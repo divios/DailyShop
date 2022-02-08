@@ -10,7 +10,7 @@ import io.github.divios.dailyShop.files.Messages;
 import io.github.divios.dailyShop.files.Settings;
 import io.github.divios.jtext.JText;
 import io.github.divios.jtext.JTextBuilder;
-import io.github.divios.lib.dLib.dShop;
+import io.github.divios.lib.dLib.shop.dShop;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;

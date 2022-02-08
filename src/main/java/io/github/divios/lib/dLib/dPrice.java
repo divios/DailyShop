@@ -8,6 +8,7 @@ import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.utils.PrettyPrice;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.priceModifiers.priceModifier;
+import io.github.divios.lib.dLib.shop.dShop;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 

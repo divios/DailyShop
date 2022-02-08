@@ -5,7 +5,7 @@ import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.jcommands.JCommand;
 import io.github.divios.jcommands.arguments.Argument;
 import io.github.divios.jcommands.arguments.types.StringArgument;
-import io.github.divios.lib.dLib.dShop;
+import io.github.divios.lib.dLib.shop.dShop;
 import org.bukkit.entity.Player;
 
 import java.util.stream.Collectors;

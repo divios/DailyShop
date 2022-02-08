@@ -6,7 +6,7 @@ import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.events.createdShopEvent;
 import io.github.divios.dailyShop.events.deletedShopEvent;
 import io.github.divios.dailyShop.utils.Timer;
-import io.github.divios.lib.dLib.dShop;
+import io.github.divios.lib.dLib.shop.dShop;
 import io.github.divios.lib.serialize.serializerApi;
 import io.github.divios.lib.storage.databaseManager;
 
@@ -37,11 +37,11 @@ public class shopsManager {
 
 
     private void updateShops() {
-        shops.values().forEach(shop -> dManager.updateGui(shop.getName(), shop.getGuis()));
+        shops.values().forEach(shop -> dManager.updateGui(shop.getName(), shop.getGui()));
     }
 
     private void updateShopsAsync() {
-        shops.values().forEach(shop -> dManager.updateGuiAsync(shop.getName(), shop.getGuis()));
+        shops.values().forEach(shop -> dManager.updateGuiAsync(shop.getName(), shop.getGui()));
     }
 
     /**
@@ -152,7 +152,7 @@ public class shopsManager {
     }
 
     public void saveAllShopsToDatabase() {
-        shops.values().forEach(shop -> dManager.updateGuiAsync(shop.getName(), shop.getGuis()));
+        shops.values().forEach(shop -> dManager.updateGuiAsync(shop.getName(), shop.getGui()));
     }
 
 }
