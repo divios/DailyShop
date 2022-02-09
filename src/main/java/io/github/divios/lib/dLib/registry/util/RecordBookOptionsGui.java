@@ -6,7 +6,6 @@ import io.github.divios.core_lib.inventory.ItemButton;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.misc.ChatPrompt;
 import io.github.divios.lib.dLib.dTransaction.Transactions;
-import io.github.divios.lib.dLib.registry.RecordBookEntry;
 import org.bukkit.entity.Player;
 
 import java.util.function.Consumer;

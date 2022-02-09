@@ -1,12 +1,10 @@
 package io.github.divios.dailyShop.utils;
 
-import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.jcommands.util.Value;
 import io.github.divios.lib.dLib.dItem;
+import io.github.divios.lib.dLib.dTransaction.Transactions;
 import io.github.divios.lib.dLib.registry.util.Pair;
 import io.github.divios.lib.dLib.shop.dShop;
-import io.github.divios.lib.dLib.dTransaction.Transactions;
-import org.apache.commons.lang3.StringUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 

@@ -1,7 +1,6 @@
 package io.github.divios.lib.dLib.registry.util;
 
 import io.github.divios.lib.dLib.dTransaction.Transactions;
-import io.github.divios.lib.dLib.registry.RecordBookEntry;
 
 import java.util.UUID;
 
