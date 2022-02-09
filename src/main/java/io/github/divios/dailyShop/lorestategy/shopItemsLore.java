@@ -24,14 +24,17 @@ public class shopItemsLore {
     public static ItemStack applyLore(@NotNull dItem item, @Nullable Player p, @Nullable dShop shop) {
         ItemStack toReturn = item.getItemWithId();
 
-        dStock stock;
+        Lang lore = Lang.SHOPS_ITEMS_LORE;
+
+        dStock stock = null;
         if (p != null && (stock = item.getDStock()) != null)
-            toReturn = ItemBuilder.of(toReturn)
-                    .addLore("")
-                    .addLore(Lang.DAILY_ITEMS_STOCK.getAsString(p) + getStockForPlayer(stock, p));
+            lore = Lang.SHOPS_ITEMS_STOCK_LORE;
 
         return new ItemBuilder(toReturn)
-                .addLore(Lang.SHOPS_ITEMS_LORE.getAsListString(p,
+                .addLore(lore.getAsListString(p,
+                                Template.of("stock", (stock == null)
+                                        ? XSymbols.TIMES_3.parseSymbol()
+                                        : getStockForPlayer(stock, p)),
                                 Template.of("buyPrice", getItemBuyPrice(item, p, shop)),
                                 Template.of("sellPrice", getItemSellPrice(item, p, shop)),
                                 Template.of("currency", item.getEcon().getName()),

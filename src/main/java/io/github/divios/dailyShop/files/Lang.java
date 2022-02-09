@@ -27,7 +27,7 @@ public enum Lang {
     CONFIRM_GUI_STATS_LORE("lang.confirm_gui.stats_lore"),
 
     SHOPS_ITEMS_LORE("lang.shop_items.lore"),
-    SHOPS_ITEMS_STOCK("lang.shop_items.stock"),
+    SHOPS_ITEMS_STOCK_LORE("lang.shop_items.lore_stock"),
 
     SHOPS_MANAGER_TITLE("lang.shops_manager.title"),
     SHOPS_MANAGER_CREATE("lang.shops_manager.create"),

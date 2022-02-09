@@ -6,7 +6,7 @@
 lang:
   shop_items:
     lore: "|&8- &7Buy price: &e{buyPrice}|&8- &7Sell price: &e{sellPrice}||&8- &7Currency: &e{currency}|&8- &7Rarity: &e{rarity}||&7Left Click: &eBuy item|&7Right Click: &eSell item"
-    stock: "&8- &7Stock: &e"
+    lore_stock: "|&8- &7Stock: &e{stock}||&8- &7Buy price: &e{buyPrice}|&8- &7Sell price: &e{sellPrice}||&8- &7Currency: &e{currency}|&8- &7Rarity: &e{rarity}||&7Left Click: &eBuy item|&7Right Click: &eSell item"
   confirm_gui:
     buy_name: "&8Confirm Purchase"
     sell_name: "&8Confirm sell"
