@@ -29,7 +29,7 @@
 # You must restart for changes to take effect when editing this file!
 # =========================================================
 settings:
-  prefix: "&e&lDailyShop &7> "
+  prefix: "<gradient:#FFC300:#FF5733>DailyShop</gradient> &7> "
   debug: false
   default-buy-price: 500.0
   default-sell-price: 20
