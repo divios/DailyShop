@@ -1,7 +1,6 @@
 package io.github.divios.dailyShop;
 
 import io.github.divios.core_lib.Core_lib;
-import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.dailyShop.commands.commandsManager;
 import io.github.divios.dailyShop.files.resourceManager;
 import io.github.divios.dailyShop.hooks.Hooks;
@@ -29,7 +28,6 @@ public class DailyShop extends JavaPlugin {
     private priceModifierManager modifiers;
     private databaseManager dManager;
     private shopsManager sManager;
-    private RecordBook recordBook;
 
     public DailyShop() {
         super();
@@ -66,7 +64,7 @@ public class DailyShop extends JavaPlugin {
         dManager = new databaseManager();
         sManager = new shopsManager(dManager);
 
-        Schedulers.sync().run(() -> recordBook = new RecordBook());
+        RecordBook.iniciate();
 
         /* Load commands */
         new commandsManager().loadCommands();
@@ -114,10 +112,6 @@ public class DailyShop extends JavaPlugin {
 
     public priceModifierManager getPriceModifiers() {
         return modifiers;
-    }
-
-    public RecordBook getRecordBook() {
-        return recordBook;
     }
 
     private void meetsStartRequirements() {

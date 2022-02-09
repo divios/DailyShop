@@ -480,32 +480,29 @@ public class ShopGui {
 
         private void updateTask() {
             if (viewers.isEmpty()) return;
+            viewers.forEach((uuid, player) -> asyncPool.execute(() -> sendPackets(player)));
+        }
 
-            viewers.forEach((uuid, player) -> {
+        private void sendPackets(Player player) {
+            buttons.forEach((integer, dItem) -> {
+                if (dItem.isAir()) return;
 
-                asyncPool.execute(() -> {
+                ItemStack aux = dItem.getItem();
+                ItemStack toSend = aux.clone();
 
-                    buttons.forEach((integer, dItem) -> {
-                        if (dItem.isAir()) return;
+                String newName = Utils.JTEXT_PARSER.parse(ItemUtils.getName(aux), player);
+                List<String> newLore = Utils.JTEXT_PARSER.parse(ItemUtils.getLore(aux), player);
 
-                        ItemStack aux = dItem.getItem();
-                        ItemStack toSend = aux.clone();
+                toSend = ItemUtils.setName(toSend, newName);
+                toSend = ItemUtils.setLore(toSend, newLore);
 
-                        String newName = Utils.JTEXT_PARSER.parse(ItemUtils.getName(aux), player);
-                        List<String> newLore = Utils.JTEXT_PARSER.parse(ItemUtils.getLore(aux), player);
+                SetSlotPacket.send(player, toSend, dItem.getSlot(), NMSContainerID.getPlayerInventoryID(player));
+            });
 
-                        toSend = ItemUtils.setName(toSend, newName);
-                        toSend = ItemUtils.setLore(toSend, newLore);
-
-                        SetSlotPacket.send(player, toSend, dItem.getSlot(), NMSContainerID.getPlayerInventoryID(player));
-                    });
-
-                    dailyItemsMap.forEach(dItem -> {
-                        ItemStack toSend = shopItemsLore.applyLore(dItem, player, shop);
-                        try { SetSlotPacket.send(player, toSend, dItem.getSlot(), NMSContainerID.getPlayerInventoryID(player));}
-                        catch (Exception ignored) {}        // WindowId can throw null pointer due to no synchronization
-                    });
-                });
+            dailyItemsMap.forEach(dItem -> {
+                ItemStack toSend = shopItemsLore.applyLore(dItem, player, shop);
+                try { SetSlotPacket.send(player, toSend, dItem.getSlot(), NMSContainerID.getPlayerInventoryID(player));}
+                catch (Exception ignored) {}        // WindowId can throw null pointer due to no synchronization
             });
         }
 

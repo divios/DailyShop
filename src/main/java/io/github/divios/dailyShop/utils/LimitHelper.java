@@ -21,11 +21,12 @@ public class LimitHelper {
      * Returns -1 if no limit was found.
      */
     public static int getPlayerLimit(Player p, dShop shop, dItem item, Transactions.Type type) {
-        Pair<Integer, Integer> amounts = DailyShop.get().getRecordBook()
-                .getTupleAmount(shop, p, type, item);
-
-        //String a = "dailyrandomshop.limit.shop.sell.drops.15";
-        //String b = "dailyrandomshop.limit.item.buy.DIRT.3";
+        Timer timer = Timer.create();
+        Pair<Integer, Integer> amounts = shop.getShopCache().getAmountTuple(p.getUniqueId(), item, type);
+        timer.stop();
+        DebugLog.info("Time elapsed to search limit: " + timer.getTime() + " ms");
+        // String a = "dailyrandomshop.limit.shop.sell.drops.15";
+        // String b = "dailyrandomshop.limit.item.buy.DIRT.3";
 
         String shopPerm = "dailyRandomShop.limit.shop." +
                 type.name().toLowerCase(Locale.ROOT) + "." +

@@ -18,6 +18,7 @@ import io.github.divios.lib.dLib.dTransaction.Bill;
 import io.github.divios.lib.dLib.dTransaction.Transactions;
 import io.github.divios.lib.dLib.registry.RecordBook;
 import io.github.divios.lib.dLib.registry.RecordBookEntry;
+import io.github.divios.lib.dLib.registry.util.Pair;
 import io.github.divios.lib.dLib.shop.util.RandomItemSelector;
 import io.github.divios.lib.dLib.stock.dStock;
 import org.bukkit.entity.Player;
@@ -37,7 +38,9 @@ public class dShop {
     protected String name;
     protected Map<UUID, dItem> items = Collections.synchronizedMap(new LinkedHashMap<>());
     protected Map<String, dItem> currentItems;
-    //protected syncHashMenu guis;
+
+    private final LogCache logCache = new LogCache();
+
     protected ShopGui gui;
     protected Timestamp timestamp;
     protected int timer;
@@ -217,6 +220,10 @@ public class dShop {
         return itemToSearch.getDStock();
     }
 
+    public LogCache getShopCache() {
+        return logCache;
+    }
+
     /**
      * Restocks the items of this shop.
      */
@@ -224,8 +231,7 @@ public class dShop {
         Events.callEvent(new reStockShopEvent(this));
         timestamp = new Timestamp(System.currentTimeMillis());
 
-        if (DailyShop.get().getRecordBook() != null)
-            DailyShop.get().getRecordBook().flushCache(this);       // Flush limit
+        logCache.clear();
 
         long start = System.currentTimeMillis();
 
@@ -326,9 +332,10 @@ public class dShop {
         DebugLog.info("Received bill on shop " + name);
         bill.getBillTable().forEach((s, entry) -> {
 
+            logCache.register(bill.getPlayer().getUniqueId(), s, entry.getValue(), bill.getType());
+
             dItem shopItem = getItem(s);
             if (shopItem == null) return;
-
 
             if (shopItem.getDStock() != null)           // compute stock
                 currentItems.computeIfPresent(shopItem.getID(), (s1, dItem) -> {
@@ -422,6 +429,136 @@ public class dShop {
     @Override
     public int hashCode() {
         return this.getName().hashCode();
+    }
+
+    public static final class LogCache {
+
+        private final HashMap<UUID, LogEntry> map = new HashMap<>();
+
+        public void register(UUID uuid, String id, int amount, Transactions.Type type) {
+            map.compute(uuid, (uuid1, entry) -> {
+                if (entry == null)
+                    entry = new LogEntry();
+                entry.put(id, amount, type);
+
+                return entry;
+            });
+        }
+
+        public int getTotalAmount(Player p) {
+            LogEntry entry;
+            return (entry = map.get(p.getUniqueId())) == null
+                    ? 0
+                    : entry.getTotalAmount();
+        }
+
+        public int getAmountForItem(Player p, String id, Transactions.Type type) {
+            LogEntry entry;
+            return (entry = map.get(p.getUniqueId())) == null
+                    ? 0
+                    : entry.getAmount(id, type);
+        }
+
+        public Pair<Integer, Integer> getAmountTuple(UUID uuid, dItem item, Transactions.Type type) {
+            int totalAmount = 0;
+            int itemAmount = 0;
+
+            LogEntry entry;
+            if ((entry = map.get(uuid)) == null)
+                return Pair.of(0,0);
+
+            totalAmount = entry.getTotalAmount();
+            itemAmount = entry.getAmount(item.getID(), type);
+
+            return Pair.of(totalAmount, itemAmount);
+        }
+
+        public void clear() {
+            map.clear();
+        }
+
+    }
+
+    private static final class LogEntry {
+
+        private int totalAmount = 0;
+        private final StorageMap itemsMap = new StorageMap();
+
+        public void put(String id, int amount, Transactions.Type type) {
+            totalAmount += amount;
+            itemsMap.put(id, amount, type);
+        }
+
+        public int getAmount(String id, Transactions.Type type) {
+            return itemsMap.getAmount(id, type);
+        }
+
+        public int getTotalAmount() {
+            return totalAmount;
+        }
+
+    }
+
+    private static final class StorageMap {
+
+        private final HashMap<String, StorageMapEntry> itemsMapLimit = new HashMap<>();
+
+        public void put(String id, int amount, Transactions.Type type) {
+            itemsMapLimit.compute(id, (s, storageMapEntry) -> {
+                if (storageMapEntry == null)
+                    storageMapEntry = new StorageMapEntry();
+                storageMapEntry.put(amount, type);
+
+                return storageMapEntry;
+            });
+        }
+
+        public int getAmount(String id, Transactions.Type type) {
+            StorageMapEntry entry;
+            return (entry = itemsMapLimit.get(id)) == null
+                    ? 0
+                    : entry.get(type);
+        }
+
+    }
+
+    private static final class StorageMapEntry {
+
+        private int buyLimit;
+        private int sellLimit;
+
+        public int getBuyLimit() {
+            return buyLimit;
+        }
+
+        public int getSellLimit() {
+            return sellLimit;
+        }
+
+        public int get(Transactions.Type type) {
+            if (type == Transactions.Type.BUY)
+                return getBuyLimit();
+            else if (type == Transactions.Type.SELL)
+                return getSellLimit();
+
+            return 0;
+        }
+
+        public void put(int amount, Transactions.Type type) {
+            if (type == Transactions.Type.BUY)
+                incrementBuy(amount);
+            else if (type == Transactions.Type.SELL)
+                incrementSell(amount);
+        }
+
+        public void incrementBuy(int amount) {
+            buyLimit += amount;
+        }
+
+        public void incrementSell(int amount) {
+            sellLimit += amount;
+        }
+
     }
 
 }

@@ -45,7 +45,7 @@ public class ShopGuiAdapter implements JsonSerializer<ShopGui>, JsonDeserializer
                 buttons.put(itemEntry.getKey(), gson.fromJson(itemEntry.getValue(), dItem.class));
             } catch (Exception | Error e) {
                 Log.warn("There was a problem parsing the item with id " + itemEntry.getKey());
-                e.printStackTrace();
+                // e.printStackTrace();
                 Log.warn(e.getMessage());
             }
         }
