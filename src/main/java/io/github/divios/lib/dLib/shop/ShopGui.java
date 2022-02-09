@@ -215,23 +215,13 @@ public class ShopGui {
         if (inv.getSize() == 9) return;
 
         int newSize = Math.max(9, inv.getSize() - (rows * 9));
-        inv = Bukkit.createInventory(null, newSize, title);
+        Inventory newInv = Bukkit.createInventory(null, newSize, title);
+        newInv.setContents(Arrays.copyOfRange(inv.getContents(), 0, newSize));
+        inv = newInv;
 
-        for (Iterator<Map.Entry<Integer, dItem>> iterator = buttons.entrySet().iterator(); iterator.hasNext(); ) {      // Removed buttons out of newInv bounds
-            Map.Entry<Integer, dItem> entry = iterator.next();
-            if (entry.getKey() < newSize)   // In newInv bounds
-                inv.setItem(entry.getKey(), entry.getValue().getItem());
-            else
-                iterator.remove();
-        }
-
-        for (Iterator<dItem> iterator = dailyItemsMap.iterator(); iterator.hasNext(); ) {       // Remove dailyItems out of newInv bounds
-            dItem item = iterator.next();
-            if (item.getSlot() < newSize)
-                inv.setItem(item.getSlot(), item.getItem());
-            else
-                iterator.remove();
-        }
+        // Removed buttons/dailyItems out of newInv bounds
+        buttons.entrySet().removeIf(entry -> entry.getKey() >= newSize);
+        dailyItemsMap.removeIf(dItem -> dItem.getSlot() >= newSize);
 
         viewers.values().forEach(player -> player.openInventory(inv));
     }
@@ -277,7 +267,7 @@ public class ShopGui {
         clone.setSlot(slot);
 
         dailyItemsMap.put(clone);
-        inv.setItem(slot, clone.getItem());
+        inv.setItem(slot, shopItemsLore.applyLore(clone, null, shop));
     }
 
     public void removeDailyItem(String id) {

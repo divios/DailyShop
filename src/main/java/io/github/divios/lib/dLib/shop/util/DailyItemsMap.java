@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 @SuppressWarnings("unused")
 public class DailyItemsMap {
@@ -67,6 +68,16 @@ public class DailyItemsMap {
 
         itemsIds.remove(removed.getID());
         return removed;
+    }
+
+    public void removeIf(Predicate<dItem> predicate) {
+        for (Iterator<dItem> iterator = itemsSlots.values().iterator(); iterator.hasNext(); ) {
+            dItem next;
+            if (predicate.test(next = iterator.next())) {
+                iterator.remove();
+                itemsIds.remove(next.getID());
+            }
+        }
     }
 
     public void putAll(@NotNull Collection<dItem> items) {
