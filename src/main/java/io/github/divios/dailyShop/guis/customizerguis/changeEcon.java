@@ -68,6 +68,7 @@ public class changeEcon {
         if (pPointsApi != null) createPlayerPointsButton(menu);
         if (uEconApi != null) createUltraEconomyButtons(menu);
         if (Hooks.ELEMENTAL_GEMS.isOn()) createElementalGemsButton(menu);
+        if (Hooks.GETTONI_HOOK.isOn()) createGettoniButton(menu);
         return menu;
     }
 
@@ -145,6 +146,10 @@ public class changeEcon {
 
     private void createElementalGemsButton(InventoryGUI menu) {
         addButton(menu, createEconomyButton(XMaterial.EMERALD, "&d&lElementalGems", Economies.elementalGems.getEconomy()));
+    }
+
+    private void createGettoniButton(InventoryGUI menu) {
+        addButton(menu, createEconomyButton(XMaterial.DIRT, "&d&lGettoni", Economies.gettoni.getEconomy()));
     }
 
     private void createVaultButton(InventoryGUI menu) {

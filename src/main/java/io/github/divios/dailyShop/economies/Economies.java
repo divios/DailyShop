@@ -13,7 +13,8 @@ public enum Economies {
     ultraEconomy(ultraEconomyE::new),
     item(itemEconomy::new),
     exp(expEconomy::new),
-    elementalGems(ElementalGemsEcon::new);
+    elementalGems(ElementalGemsEcon::new),
+    gettoni(s -> new gettoniE());
 
     private final Function<String, Economy> function;
 
