@@ -354,7 +354,7 @@ public class ShopGui {
 
             if (shop.getAccount() != null
                     && Double.compare(shop.getAccount().getBalance(), shop.getAccount().getMaxBalance()) >= 0) {
-                // TODO send message
+                Messages.MSG_LIMIT.send(p);
                 return;
             }
 
@@ -375,7 +375,7 @@ public class ShopGui {
 
             if (shop.getAccount() != null
                     && Double.compare(shop.getAccount().getBalance(), 0) <= 0) {
-                // TODO send message
+                Messages.MSG_LIMIT.send(p);
                 return;
             }
 
