@@ -3,7 +3,9 @@ package io.github.divios.dailyShop.hooks;
 import io.github.divios.core_lib.misc.XSymbols;
 import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
+import io.github.divios.dailyShop.utils.LimitHelper;
 import io.github.divios.dailyShop.utils.Utils;
+import io.github.divios.lib.dLib.dTransaction.Transactions;
 import io.github.divios.lib.dLib.shop.dShop;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.entity.Player;
@@ -108,11 +110,59 @@ class placeholderApiHook extends PlaceholderExpansion implements Hook<Placeholde
      */
     @Override
     public String onPlaceholderRequest(Player player, String identifier) {
+        String placeholder = null;
 
-        Optional<dShop> shop = DailyShop.get().getShopsManager().getShop(identifier.replace("time_", ""));
+        if (identifier.startsWith("time"))
+            placeholder = timerPlaceholder(identifier.replace("time_", ""));
+        else if (identifier.startsWith("balance_"))
+            placeholder = balancePlaceholder(identifier.replace("balance_", ""));
+        else if (identifier.startsWith("limit_"))
+            placeholder = limitPlaceholder(player, identifier.replace("limit_", ""));
+
+        return placeholder;
+    }
+
+    private String timerPlaceholder(String s) {
+        Optional<dShop> shop = DailyShop.get().getShopsManager().getShop(s);
         if (shop.isPresent() && shop.get().getTimer() == -1) return XSymbols.TIMES_3.parseSymbol();
         return shop.map(Utils::getDiffActualTimer).orElse(null);
+    }
 
+    private String balancePlaceholder(String s) {
+        Optional<dShop> shop = DailyShop.get().getShopsManager().getShop(s);
+        if (!shop.isPresent()) return null;
+        if (shop.get().getAccount() == null)
+            return XSymbols.INFINITY.parseSymbol();
+
+        double balance = shop.get().getAccount().getBalance();
+        double maxBalance = shop.get().getAccount().getMaxBalance();
+
+        if (balance == 0 || Double.compare(balance, maxBalance) == 0)
+            return "&c" + balance;
+        else
+            return String.valueOf(balance);
+    }
+
+    // %dailyShop_limit_sell_drops%
+    // %dailyShop_limit_buy_drops_DIRT%
+    private String limitPlaceholder(Player p, String s) {
+        String[] strings = s.split("_");
+        if (strings.length < 2 || strings.length > 3) return null;
+
+        Transactions.Type type;
+        try {type = Transactions.Type.getByKey(strings[0]);}
+        catch (Exception e) {return null;}
+
+        dShop shop = DailyShop.get().getShopsManager().getShop(strings[1]).orElse(null);
+        if (shop == null) return null;
+
+        if (strings.length == 2) {
+            int limit = LimitHelper.getShopLimit(p, shop, type);
+            return limit == -1 ? XSymbols.INFINITY.parseSymbol() : String.valueOf(limit);
+        }
+
+        int limit = LimitHelper.getItemLimit(p, shop, strings[2], type);
+        return limit == -1 ? XSymbols.INFINITY.parseSymbol() : String.valueOf(limit);
     }
 
 }

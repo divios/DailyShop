@@ -31,6 +31,11 @@ public class initialMigration {
                     ")");
         }
 
+        try (Statement statement = connection.createStatement()) {
+            statement.execute("ALTER TABLE " + tablePrefix + "active_shops " +
+                    "RENAME COLUMN type TO account;");
+        } catch (Exception ignored) {}          // Ignored if already renamed
+
     }
 
 }

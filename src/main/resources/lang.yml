@@ -1,7 +1,5 @@
 # Daily Shop Lang
 # Customize it to your liking
-#
-# confirm_gui.stats_lore works with placeHolderApi placeholders if installed
 # =========================================================
 lang:
   shop_items:
@@ -147,3 +145,4 @@ lang:
     currency_error: "&7That currency is not available anymore"
     invalid_operation: "&7That item is not longer available"
     not_integer: "&7Not integer"
+    limit: "Ey! You have reached your limit!"

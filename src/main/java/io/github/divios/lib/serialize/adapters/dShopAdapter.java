@@ -9,8 +9,10 @@ import io.github.divios.dailyShop.files.Settings;
 import io.github.divios.dailyShop.utils.DebugLog;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.dItem;
+import io.github.divios.lib.dLib.shop.ShopAccount;
 import io.github.divios.lib.dLib.shop.ShopGui;
 import io.github.divios.lib.dLib.shop.dShop;
+import io.github.divios.lib.dLib.shop.util.generators.ValueGenerator;
 
 import java.lang.reflect.Type;
 import java.sql.Timestamp;
@@ -40,6 +42,7 @@ public class dShopAdapter implements JsonSerializer<dShop>, JsonDeserializer<dSh
 
         Preconditions.checkArgument(object.has("id"), "A shop needs an ID");
         Preconditions.checkArgument(object.has("items"), "A shop needs items");
+
         if (object.has("timer"))
             Preconditions.checkArgument(Utils.testRunnable(() -> timer[0] = object.get("timer").getAsInt()), "Timer needs to be an integer");
         Preconditions.checkArgument((timer[0] >= 50 || timer[0] == -1), "timer needs to be >= 50");
@@ -59,9 +62,12 @@ public class dShopAdapter implements JsonSerializer<dShop>, JsonDeserializer<dSh
         // Set miscellaneous fields
         if (object.has("announce_restock"))
             deserializedShop.set_announce(object.get("announce_restock").getAsBoolean());
-        if (object.has("default")) deserializedShop.setDefault(object.get("default").getAsBoolean());
+        if (object.has("default"))
+            deserializedShop.setDefault(object.get("default").getAsBoolean());
+        if (object.has("balance"))
+            deserializedShop.setAccount(ShopAccount.fromJson(object.get("balance")));
 
-        // Deserialize shop display
+        // Deserialize shop Gui
         DebugLog.info("Reading shop from shop " + id);
         if (object.has("shop")) {
             ShopGui inv = gson.fromJson(object.get("shop"), ShopGui.class);
@@ -87,13 +93,14 @@ public class dShopAdapter implements JsonSerializer<dShop>, JsonDeserializer<dSh
 
     @Override
     public JsonElement serialize(dShop shop, Type type, JsonSerializationContext jsonSerializationContext) {
-
         JsonBuilder.JsonObjectBuilder builder = JsonBuilder.object()
                 .add("id", shop.getName())
                 .add("timer", shop.getTimer());
 
         if (!shop.get_announce()) builder.add("announce_restock", false);
         if (shop.isDefault()) builder.add("default", true);
+        if (shop.getAccount() != null)
+            builder.add("balance", shop.getAccount().toJson());
 
         return builder.add("timeStamp", (Boolean) null)  // dateFormat.format(shop.getTimestamp()
                 .add("shop", gson.toJsonTree(shop.getGui()))

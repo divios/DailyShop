@@ -16,6 +16,7 @@ import io.github.divios.dailyShop.utils.DebugLog;
 import io.github.divios.dailyShop.utils.LimitHelper;
 import io.github.divios.dailyShop.utils.NMSUtils.SetSlotPacket;
 import io.github.divios.dailyShop.utils.Utils;
+import io.github.divios.jtext.JTextBuilder;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dTransaction.Transactions;
 import io.github.divios.lib.dLib.shop.util.DailyItemsMap;
@@ -351,6 +352,12 @@ public class ShopGui {
             }
             DebugLog.info("limit: " + limit);
 
+            if (shop.getAccount() != null
+                    && Double.compare(shop.getAccount().getBalance(), shop.getAccount().getMaxBalance()) >= 0) {
+                // TODO send message
+                return;
+            }
+
             Transactions.BuyTransaction()
                     .withShop(shop)
                     .withBuyer(p)
@@ -365,6 +372,13 @@ public class ShopGui {
                 Messages.MSG_LIMIT.send(p);
                 return;
             }
+
+            if (shop.getAccount() != null
+                    && Double.compare(shop.getAccount().getBalance(), 0) <= 0) {
+                // TODO send message
+                return;
+            }
+
             DebugLog.info("limit: " + limit);
 
             Transactions.SellTransaction()
@@ -491,8 +505,10 @@ public class ShopGui {
 
             dailyItemsMap.forEach(dItem -> {
                 ItemStack toSend = shopItemsLore.applyLore(dItem, player, shop);
-                try { SetSlotPacket.send(player, toSend, dItem.getSlot(), NMSContainerID.getPlayerInventoryID(player));}
-                catch (Exception ignored) {}        // WindowId can throw null pointer due to no synchronization
+                try {
+                    SetSlotPacket.send(player, toSend, dItem.getSlot(), NMSContainerID.getPlayerInventoryID(player));
+                } catch (Exception ignored) {
+                }        // WindowId can throw null pointer due to no synchronization
             });
         }
 

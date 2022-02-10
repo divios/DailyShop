@@ -152,7 +152,11 @@ public class shopsManager {
     }
 
     public void saveAllShopsToDatabase() {
-        shops.values().forEach(shop -> dManager.updateGuiAsync(shop.getName(), shop.getGui()));
+        shops.values().forEach(shop -> {
+            dManager.updateGuiAsync(shop.getName(), shop.getGui());
+            if (shop.getAccount() != null)
+                dManager.updateAccount(shop.getName(), shop.getAccount());
+        });
     }
 
 }

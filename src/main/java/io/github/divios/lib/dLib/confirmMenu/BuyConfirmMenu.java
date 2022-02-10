@@ -92,8 +92,9 @@ public class BuyConfirmMenu extends abstractConfirmMenu {
         int balanceLimit = getBalanceLimit();
         int inventoryLimit = getPlayerInventoryLimit();
         int limitLimit = getBuyPlayerLimit();
+        int shopAccountLimit = getShopAccountLimit();
 
-        return getMinimumValue(stockLimit, balanceLimit, inventoryLimit, limitLimit);
+        return getMinimumValue(stockLimit, balanceLimit, inventoryLimit, limitLimit, shopAccountLimit);
     }
 
     private int getMinimumValue(int... values) {
@@ -124,7 +125,7 @@ public class BuyConfirmMenu extends abstractConfirmMenu {
         int maxStack = clone.getMaxStackSize();
 
         Collection<ItemStack> rest;
-        while((rest = playerMockInventory.addItem(ItemUtils.setAmount(clone, maxStack)).values()).size() == 0)
+        while ((rest = playerMockInventory.addItem(ItemUtils.setAmount(clone, maxStack)).values()).size() == 0)
             limit += maxStack;
         limit += (maxStack - rest.iterator().next().getAmount());
 
@@ -136,6 +137,17 @@ public class BuyConfirmMenu extends abstractConfirmMenu {
         return limit == -1
                 ? MAX_INVENTORY_ITEMS
                 : Math.max(0, limit - nAddedItems);
+    }
+
+    private int getShopAccountLimit() {
+        if (shop.getAccount() == null) return MAX_INVENTORY_ITEMS;
+
+        double floorPrice = getItemPrice();
+        double max = shop.getAccount().getMaxBalance();
+
+        int limit = (int) Math.floor((max - shop.getAccount().getBalance()) / floorPrice);
+
+        return Math.max(0, (limit - nAddedItems));
     }
 
     private int getItemStock() {

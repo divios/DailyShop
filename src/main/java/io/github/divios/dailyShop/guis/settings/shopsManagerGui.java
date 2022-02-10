@@ -184,7 +184,8 @@ public class shopsManagerGui {
                     .withCancelLore(Lang.CONFIRM_GUI_NO.getAsString(p), Lang.CONFIRM_GUI_NO_LORE.getAsListString(p))
                     .prompt();
 
-        } else shop.manageItems(p);
+        } else
+            shop.manageItems(p);
     }
 
     private void nonContentAction() {

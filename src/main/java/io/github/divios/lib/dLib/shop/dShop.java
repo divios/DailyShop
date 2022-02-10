@@ -41,6 +41,7 @@ public class dShop {
 
     private final LogCache logCache = new LogCache();
 
+    protected ShopAccount account;
     protected ShopGui gui;
     protected Timestamp timestamp;
     protected int timer;
@@ -220,6 +221,10 @@ public class dShop {
         return itemToSearch.getDStock();
     }
 
+    public ShopAccount getAccount() {
+        return account;
+    }
+
     public LogCache getShopCache() {
         return logCache;
     }
@@ -232,6 +237,8 @@ public class dShop {
         timestamp = new Timestamp(System.currentTimeMillis());
 
         logCache.clear();
+        if (account != null)
+            account.generateNewBalance();
 
         long start = System.currentTimeMillis();
 
@@ -334,6 +341,13 @@ public class dShop {
 
             logCache.register(bill.getPlayer().getUniqueId(), s, entry.getValue(), bill.getType());
 
+            if (account != null) {
+                if (bill.getType() == Transactions.Type.BUY)
+                    account.deposit(entry.getKey());
+                else
+                    account.withdraw(entry.getKey());
+            }
+
             dItem shopItem = getItem(s);
             if (shopItem == null) return;
 
@@ -367,6 +381,10 @@ public class dShop {
      */
     public ShopGui getGui() {
         return gui;
+    }
+
+    public void setAccount(ShopAccount account) {
+        this.account = account;
     }
 
     public void setTimestamp(Timestamp timestamp) {
@@ -445,11 +463,11 @@ public class dShop {
             });
         }
 
-        public int getTotalAmount(Player p) {
+        public int getTotalAmount(Player p, Transactions.Type type) {
             LogEntry entry;
             return (entry = map.get(p.getUniqueId())) == null
                     ? 0
-                    : entry.getTotalAmount();
+                    : entry.getTotalAmount(type);
         }
 
         public int getAmountForItem(Player p, String id, Transactions.Type type) {
@@ -460,14 +478,14 @@ public class dShop {
         }
 
         public Pair<Integer, Integer> getAmountTuple(UUID uuid, dItem item, Transactions.Type type) {
-            int totalAmount = 0;
-            int itemAmount = 0;
+            int totalAmount;
+            int itemAmount;
 
             LogEntry entry;
             if ((entry = map.get(uuid)) == null)
                 return Pair.of(0,0);
 
-            totalAmount = entry.getTotalAmount();
+            totalAmount = entry.getTotalAmount(type);
             itemAmount = entry.getAmount(item.getID(), type);
 
             return Pair.of(totalAmount, itemAmount);
@@ -481,11 +499,15 @@ public class dShop {
 
     private static final class LogEntry {
 
-        private int totalAmount = 0;
-        private final StorageMap itemsMap = new StorageMap();
+        private final TotalAmountEntry amounts = new TotalAmountEntry();
+        private final ItemsMap itemsMap = new ItemsMap();
 
         public void put(String id, int amount, Transactions.Type type) {
-            totalAmount += amount;
+            if (type == Transactions.Type.BUY)
+                amounts.buyTotalAmount += amount;
+            else
+                amounts.sellTotalAmount += amount;
+
             itemsMap.put(id, amount, type);
         }
 
@@ -493,20 +515,28 @@ public class dShop {
             return itemsMap.getAmount(id, type);
         }
 
-        public int getTotalAmount() {
-            return totalAmount;
+        public int getTotalAmount(Transactions.Type type) {
+            if (type == Transactions.Type.BUY)
+                return amounts.buyTotalAmount;
+            else
+                return amounts.sellTotalAmount;
         }
 
     }
 
-    private static final class StorageMap {
+    private static final class TotalAmountEntry {
+        private int buyTotalAmount = 0;
+        private int sellTotalAmount = 0;
+    }
 
-        private final HashMap<String, StorageMapEntry> itemsMapLimit = new HashMap<>();
+    private static final class ItemsMap {
+
+        private final HashMap<String, ItemsMapEntry> itemsMapLimit = new HashMap<>();
 
         public void put(String id, int amount, Transactions.Type type) {
             itemsMapLimit.compute(id, (s, storageMapEntry) -> {
                 if (storageMapEntry == null)
-                    storageMapEntry = new StorageMapEntry();
+                    storageMapEntry = new ItemsMapEntry();
                 storageMapEntry.put(amount, type);
 
                 return storageMapEntry;
@@ -514,7 +544,7 @@ public class dShop {
         }
 
         public int getAmount(String id, Transactions.Type type) {
-            StorageMapEntry entry;
+            ItemsMapEntry entry;
             return (entry = itemsMapLimit.get(id)) == null
                     ? 0
                     : entry.get(type);
@@ -522,7 +552,7 @@ public class dShop {
 
     }
 
-    private static final class StorageMapEntry {
+    private static final class ItemsMapEntry {
 
         private int buyLimit;
         private int sellLimit;

@@ -12,6 +12,7 @@ import io.github.divios.dailyShop.utils.DebugLog;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dTransaction.Transactions;
 import io.github.divios.lib.dLib.registry.RecordBookEntry;
+import io.github.divios.lib.dLib.shop.ShopAccount;
 import io.github.divios.lib.dLib.shop.ShopGui;
 import io.github.divios.lib.dLib.shop.dShop;
 import io.github.divios.lib.managers.WrappedShop;
@@ -66,7 +67,11 @@ public class databaseManager extends DataManagerAbstract {
                                 result.getInt("timer"),
                                 timeStampUtils.deserialize(result.getString("timestamp")));
                     }
-                    //shop.destroy();
+
+                    String account = result.getString("account");
+                    if (account != null)
+                        shop.setAccount(ShopAccount.fromJson(parser.parse(account)));
+
                     shops.add(shop);
                 }
             }
@@ -110,9 +115,11 @@ public class databaseManager extends DataManagerAbstract {
         this.databaseConnector.connect(connection -> {
 
             String createShop = "INSERT OR REPLACE INTO " + this.getTablePrefix() +
-                    "active_shops (name, type, gui, timestamp, timer) VALUES (?, ?, ?, ?, ?)";
+                    "active_shops (name, account, gui, timestamp, timer) VALUES (?, ?, ?, ?, ?)";
             try (PreparedStatement statement = connection.prepareStatement(createShop)) {
                 statement.setString(1, shop.getName());
+                if (shop.getAccount() != null)
+                    statement.setString(2, shop.getAccount().toJson().toString());
                 statement.setString(3, shop.getGui().toJson().toString());
                 statement.setString(4, timeStampUtils.serialize(shop.getTimestamp()));
                 statement.setInt(5, shop.getTimer());
@@ -256,6 +263,22 @@ public class databaseManager extends DataManagerAbstract {
     }
 
     public Future<?> updateGuiAsync(String name, ShopGui gui) {
+        return asyncPool.submit(() -> updateGui(name, gui));
+    }
+
+    public void updateAccount(String name, ShopAccount account) {
+        this.databaseConnector.connect(connection -> {
+            String updateGui = "UPDATE " + this.getTablePrefix() + "active_shops " +
+                        "SET account = ? WHERE name = ? collate nocase";
+            try (PreparedStatement statement = connection.prepareStatement(updateGui)) {
+                statement.setString(1, (account == null) ? null : account.toJson().toString());
+                statement.setString(2, name);
+                statement.executeUpdate();
+            }
+        });
+    }
+
+    public Future<?> updateAccountAsync(String name, ShopGui gui) {
         return asyncPool.submit(() -> updateGui(name, gui));
     }
 

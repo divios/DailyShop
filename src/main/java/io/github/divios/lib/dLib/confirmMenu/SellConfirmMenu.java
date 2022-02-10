@@ -73,8 +73,17 @@ public class SellConfirmMenu extends abstractConfirmMenu {
     protected int setMaxItems() {
         int maxItemsCount = (countSimilarItems() - super.nAddedItems);
         int limitSellLimit = getSellPlayerLimit();
+        int accountLimit = getShopAccountLimit();
 
-        return Math.min(maxItemsCount, limitSellLimit);
+        return getMinimumValue(maxItemsCount, limitSellLimit, accountLimit);
+    }
+
+    private int getMinimumValue(int... values) {
+        int minValue = MAX_INVENTORY_ITEMS;
+        for (int value : values)
+            minValue = Math.min(minValue, value);
+
+        return minValue;
     }
 
     private int getSellPlayerLimit() {
@@ -82,6 +91,13 @@ public class SellConfirmMenu extends abstractConfirmMenu {
         return limit == -1
                 ? MAX_SELL_ITEMS
                 : Math.max(0, limit - nAddedItems);
+    }
+
+    private int getShopAccountLimit() {
+        double itemPrice = item.getPlayerBuyPrice(player, shop) / item.getItem().getAmount();
+
+        int limit = (int) Math.floor(shop.getAccount().getBalance() / itemPrice);
+        return Math.max(0, (limit - nAddedItems));
     }
 
     @Override
