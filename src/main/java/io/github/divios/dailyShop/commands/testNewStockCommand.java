@@ -10,6 +10,7 @@ import io.github.divios.dailyShop.economies.Economy;
 import io.github.divios.dailyShop.files.Settings;
 import io.github.divios.dailyShop.utils.DebugLog;
 import io.github.divios.dailyShop.utils.PrettyPrice;
+import io.github.divios.dailyShop.utils.valuegenerators.RandomIntervalGenerator;
 import io.github.divios.jcommands.JCommand;
 import io.github.divios.lib.dLib.dAction;
 import io.github.divios.lib.dLib.dItem;
@@ -136,7 +137,7 @@ public class testNewStockCommand {
     }
 
     private void testPricesClone() {
-        dPrice price1 = new dPrice(1, 1500);
+        dPrice price1 = new dPrice(new RandomIntervalGenerator(1, 1500));
         dPrice price2 = price1.clone();
 
         price1.generateNewPrice();
@@ -148,7 +149,7 @@ public class testNewStockCommand {
     }
 
     private void testPricesSimilar() {
-        dPrice price1 = new dPrice(1, 1500);
+        dPrice price1 = new dPrice(new RandomIntervalGenerator(1, 1500));
         dPrice price2 = price1.clone();
 
         price1.generateNewPrice();
@@ -160,7 +161,7 @@ public class testNewStockCommand {
     }
 
     private void testPricesEquals1() {
-        dPrice price1 = new dPrice(1, 1500);
+        dPrice price1 = new dPrice(new RandomIntervalGenerator(1, 1500));
         dPrice price2 = price1.clone();
 
         price1.generateNewPrice();
@@ -172,7 +173,7 @@ public class testNewStockCommand {
     }
 
     private void testPricesEquals2() {
-        dPrice price1 = new dPrice(1, 1500);
+        dPrice price1 = new dPrice(new RandomIntervalGenerator(1, 1500));
         dPrice price2 = price1.clone();
 
         if (Objects.equals(price1, price2))
@@ -348,7 +349,7 @@ public class testNewStockCommand {
 
     private void testUnmodifiablePrice() {
         dItem a = dItem.from(XMaterial.DIRT, "dirt")
-                .setBuyPrice(30, 50);
+                .setBuyPrice(new RandomIntervalGenerator(30, 50));
 
         dPrice price = a.getDBuyPrice();
         assert price != null;

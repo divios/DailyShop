@@ -1,4 +1,4 @@
-package io.github.divios.lib.dLib.shop.util.generators;
+package io.github.divios.dailyShop.utils.valuegenerators;
 
 import com.google.gson.JsonElement;
 

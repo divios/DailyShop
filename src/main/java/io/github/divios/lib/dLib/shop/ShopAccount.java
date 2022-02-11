@@ -3,7 +3,8 @@ package io.github.divios.lib.dLib.shop;
 import com.google.common.base.Preconditions;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import io.github.divios.lib.dLib.shop.util.generators.ValueGenerator;
+import io.github.divios.dailyShop.utils.Utils;
+import io.github.divios.dailyShop.utils.valuegenerators.ValueGenerator;
 import org.apache.commons.lang.Validate;
 
 import java.util.Objects;
@@ -56,14 +57,14 @@ public class ShopAccount {
         Validate.isTrue(amount >= 0, "Amount cannot be negative. Got: " + amount);
         if (balance <= 0) return;
 
-        balance = Math.max(0, balance - amount);
+        balance = Math.max(0, Utils.round(balance - amount, 2));
     }
 
     public void deposit(double amount) {
         Validate.isTrue(amount >= 0, "Amount cannot be negative. Got: " + amount);
         if (balance >= maxBalance) return;
 
-        balance = Math.min(maxBalance, balance + amount);
+        balance = Math.min(maxBalance, Utils.round(balance + amount, 2));
     }
 
     public void generateNewBalance() {

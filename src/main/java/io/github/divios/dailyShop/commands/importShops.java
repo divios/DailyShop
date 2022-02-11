@@ -5,6 +5,7 @@ import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.guis.settings.shopsItemsManagerGui;
 import io.github.divios.dailyShop.utils.Utils;
+import io.github.divios.dailyShop.utils.valuegenerators.FixedValueGenerator;
 import io.github.divios.jcommands.JCommand;
 import io.github.divios.jcommands.arguments.Argument;
 import io.github.divios.jcommands.arguments.types.StringArgument;
@@ -49,8 +50,8 @@ public class importShops {
 
                                             dItem newItem = dItem.of(shopItem.getItem());
 
-                                            newItem.setBuyPrice(shopItem.getBuyPrice());
-                                            newItem.setSellPrice(shopItem.getSellPrice());
+                                            newItem.setBuyPrice(new FixedValueGenerator(shopItem.getBuyPrice()));
+                                            newItem.setSellPrice(new FixedValueGenerator(shopItem.getSellPrice()));
                                             shop.addItem(newItem);
                                         });
                                 Utils.sendRawMsg(player, "&7Items imported successfully");
@@ -58,9 +59,8 @@ public class importShops {
                                 shopsItemsManagerGui.open(player, shop);
                             });
                 })
-                .executesConsole((consoleCommandSender, valueMap) -> {
-                    consoleCommandSender.sendMessage("This command can only be executed by players");
-                });
+                .executesConsole((consoleCommandSender, valueMap) ->
+                        consoleCommandSender.sendMessage("This command can only be executed by players"));
     }
 
     private Argument getShopGuiArgument() {
@@ -82,17 +82,19 @@ public class importShops {
                                         .getItems().forEach(bsBuy -> {
                                             dItem newItem = dItem.of(bsBuy.getItem());
 
+                                            double buyPrice = Double.parseDouble(
+                                                    String.valueOf(bsBuy.getPrice(null) == null ?
+                                                            bsBuy.getPrice(ClickType.LEFT) : bsBuy.getPrice(null))
+                                            ) / bsBuy.getItem().getAmount();
+
+                                            double sellPrice = Double.parseDouble(
+                                                    String.valueOf(bsBuy.getPrice(null) == null ?
+                                                            bsBuy.getPrice(ClickType.RIGHT) : bsBuy.getPrice(null))
+                                            ) / bsBuy.getItem().getAmount();
+
                                             try {
-                                                newItem.setBuyPrice(Double.parseDouble(
-                                                                String.valueOf(bsBuy.getPrice(null) == null ?
-                                                                        bsBuy.getPrice(ClickType.LEFT) : bsBuy.getPrice(null))
-                                                        ) / bsBuy.getItem().getAmount()
-                                                );
-                                                newItem.setSellPrice(Double.parseDouble(
-                                                                String.valueOf(bsBuy.getPrice(null) == null ?
-                                                                        bsBuy.getPrice(ClickType.RIGHT) : bsBuy.getPrice(null))
-                                                        ) / bsBuy.getItem().getAmount()
-                                                );
+                                                newItem.setBuyPrice(new FixedValueGenerator(buyPrice));
+                                                newItem.setSellPrice(new FixedValueGenerator(sellPrice));
                                             } catch (Exception e) {
                                                 Log.info("Could not import item of name " + bsBuy.getName());
                                                 return;

@@ -3,10 +3,10 @@ package io.github.divios.lib.dLib;
 import com.google.common.base.Preconditions;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import io.github.divios.core_lib.gson.JsonBuilder;
 import io.github.divios.dailyShop.DailyShop;
-import io.github.divios.dailyShop.utils.PrettyPrice;
-import io.github.divios.dailyShop.utils.Utils;
+import io.github.divios.dailyShop.utils.valuegenerators.FixedValueGenerator;
+import io.github.divios.dailyShop.utils.valuegenerators.RandomIntervalGenerator;
+import io.github.divios.dailyShop.utils.valuegenerators.ValueGenerator;
 import io.github.divios.lib.dLib.priceModifiers.priceModifier;
 import io.github.divios.lib.dLib.shop.dShop;
 import org.bukkit.entity.Player;
@@ -18,64 +18,57 @@ import java.util.Objects;
 @SuppressWarnings("unused")
 public class dPrice implements Serializable, Cloneable {
 
-    private boolean randomFlag = false;
-    private double minPrice = 0;
-    private double maxPrice = 0;
+    private final ValueGenerator generator;
     private double actualPrice;
 
     public static dPrice EMPTY() {
-        return new dPrice();
-    }
-
-    public static dPrice fromString(String str) {
-        String[] prices = str.split(":");
-        if (prices.length == 1)
-            return new dPrice(Double.parseDouble(prices[0]));
-        else
-            return new dPrice(Double.parseDouble(prices[0]), Double.parseDouble(prices[1]));
+        return new dPrice(new FixedValueGenerator(0));
     }
 
     public static dPrice fromJson(JsonElement json) {
+        try {           // First try the legacy fromJson
+            return legacyFromJson(json);
+        } catch (Exception ignored) {}
+
+        JsonObject object = json.getAsJsonObject();
+
+        Preconditions.checkArgument(object.has("currentPrice"), "No actual price");
+        Preconditions.checkArgument(object.has("generator"), "No generator");
+
+        double currentPrice = object.get("currentPrice").getAsDouble();
+        ValueGenerator generator = ValueGenerator.fromJson(object.get("generator"));
+
+        return new dPrice(currentPrice, generator);
+    }
+
+    private static dPrice legacyFromJson(JsonElement json) {
         JsonObject object = json.getAsJsonObject();
 
         Preconditions.checkArgument(object.has("actualPrice"), "No actual price");
 
-        dPrice price = EMPTY();
+        double actualPrice = object.get("actualPrice").getAsDouble();
 
-        price.actualPrice = object.get("actualPrice").getAsDouble();
-        price.minPrice = object.get("minPrice").getAsDouble();
-        price.maxPrice = object.get("maxPrice").getAsDouble();
-        price.randomFlag = object.get("randomFlag").getAsBoolean();
+        if (object.has("max") && object.has("min")) {
+            double min = object.get("min").getAsDouble();
+            double max = object.get("max").getAsDouble();
 
-        return price;
-    }
+            return new dPrice(actualPrice, new RandomIntervalGenerator(min, max));
+        } else
+            return new dPrice(new FixedValueGenerator(actualPrice));
 
-    private dPrice() {
-    }
-
-    public dPrice(double price) {
-        this.actualPrice = price;
-    }
-
-    public dPrice(double minPrice, double maxPrice) {
-        this.minPrice = minPrice;
-        this.maxPrice = maxPrice;
-        randomFlag = true;
-        this.actualPrice = generateRandomPrice();
     }
 
     public static dPrice empty() {
-        return new dPrice();
+        return new dPrice(new FixedValueGenerator(0));
     }
 
-    /**
-     * Returns the price of the item. If it was constructed with two values, returns
-     * a random value between them, if not, returns the same value passed
-     *
-     * @return the price of the item
-     */
-    private double generateRandomPrice() {
-        return Utils.round(minPrice + Math.random() * (maxPrice - minPrice), 2);
+    public dPrice(ValueGenerator generator) {
+        this(generator.generate(), generator);
+    }
+
+    public dPrice(double price, ValueGenerator generator) {
+        this.actualPrice = price;
+        this.generator = generator;
     }
 
     public double getPrice() {
@@ -91,79 +84,53 @@ public class dPrice implements Serializable, Cloneable {
     }
 
     public void generateNewPrice() {
-        if (randomFlag)
-            actualPrice = generateRandomPrice();
-    }
-
-    protected boolean isRandomFlag() {
-        return randomFlag;
-    }
-
-    protected double getMinPrice() {
-        return minPrice;
-    }
-
-    protected double getMaxPrice() {
-        return maxPrice;
+        actualPrice = generator.generate();
     }
 
     protected double getActualPrice() {
         return actualPrice;
     }
 
-    public String toPrettyString() {
-        if (randomFlag)
-            return PrettyPrice.pretty(minPrice) + " : " + PrettyPrice.pretty(maxPrice);
-        else return PrettyPrice.pretty(actualPrice);
+    public ValueGenerator getGenerator() {
+        return generator;
     }
 
     @Override
     public String toString() {
-        if (randomFlag)
-            return minPrice + " : " + maxPrice;
-        else
-            return String.valueOf(actualPrice);
+        return "dPrice{" +
+                "generator=" + generator +
+                ", actualPrice=" + actualPrice +
+                '}';
     }
 
     public boolean isSimilar(@Nullable dPrice price) {
         if (this == price) return true;
-        if (price == null || randomFlag != price.randomFlag) return false;
+        if (price == null) return false;
 
-        //DebugLog.info("minprice: " + minPrice + "-" + price.minPrice);
-        //DebugLog.info("maxprice: " + maxPrice + "-" + price.maxPrice);
-        //DebugLog.info("actualPrice: " + actualPrice + "-" + price.actualPrice);
-
-        if (randomFlag) {
-            return Double.compare(maxPrice, price.maxPrice) == 0
-                    && Double.compare(minPrice, price.minPrice) == 0;
-        } else {
-            return Double.compare(actualPrice, price.actualPrice) == 0;
-        }
+        return generator.isSimilar(price.generator);
     }
 
     public JsonElement toJson() {
-        return JsonBuilder.object()
-                .add("randomFlag", randomFlag)
-                .add("minPrice", minPrice)
-                .add("maxPrice", maxPrice)
-                .add("actualPrice", actualPrice)
-                .build();
+        JsonObject json = new JsonObject();
+        json.add("generator", generator.toJson());
+        json.addProperty("currentPrice", actualPrice);
+
+        return json;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        dPrice dPrice = (dPrice) o;
-        return randomFlag == dPrice.randomFlag
-                && Double.compare(dPrice.minPrice, minPrice) == 0
-                && Double.compare(dPrice.maxPrice, maxPrice) == 0
-                && Double.compare(actualPrice, dPrice.actualPrice) == 0;
+
+        dPrice that = (dPrice) o;
+        return Double.compare(actualPrice, that.actualPrice) == 0
+                && generator.isSimilar(that.generator);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(randomFlag, minPrice, maxPrice, actualPrice);
+        return Objects.hash(actualPrice, generator);
     }
 
     @Override
@@ -177,11 +144,5 @@ public class dPrice implements Serializable, Cloneable {
 
         return T;
     }
-
-    public enum type {
-        BUY,
-        SELL
-    }
-
 
 }

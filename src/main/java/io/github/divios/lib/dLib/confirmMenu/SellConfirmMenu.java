@@ -94,7 +94,7 @@ public class SellConfirmMenu extends abstractConfirmMenu {
     }
 
     private int getShopAccountLimit() {
-        double itemPrice = item.getPlayerBuyPrice(player, shop) / item.getItem().getAmount();
+        double itemPrice = item.getPlayerSellPrice(player, shop) / item.getItem().getAmount();
 
         int limit = (int) Math.floor(shop.getAccount().getBalance() / itemPrice);
         return Math.max(0, (limit - nAddedItems));

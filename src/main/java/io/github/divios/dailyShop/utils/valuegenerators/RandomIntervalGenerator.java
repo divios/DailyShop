@@ -1,8 +1,9 @@
-package io.github.divios.lib.dLib.shop.util.generators;
+package io.github.divios.dailyShop.utils.valuegenerators;
 
 import com.google.common.base.Preconditions;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import io.github.divios.dailyShop.utils.PrettyPrice;
 import io.github.divios.dailyShop.utils.Utils;
 
 public class RandomIntervalGenerator implements ValueGenerator {
@@ -46,10 +47,7 @@ public class RandomIntervalGenerator implements ValueGenerator {
 
     @Override
     public String toString() {
-        return "RandomIntervalGenerator{" +
-                "min=" + min +
-                ", max=" + max +
-                '}';
+        return PrettyPrice.pretty(min) + " : " + PrettyPrice.pretty(max);
     }
 
     @Override

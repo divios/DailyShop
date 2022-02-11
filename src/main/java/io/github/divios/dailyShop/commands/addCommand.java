@@ -6,6 +6,7 @@ import io.github.divios.dailyShop.files.Settings;
 import io.github.divios.dailyShop.guis.settings.addDailyGuiIH;
 import io.github.divios.dailyShop.guis.settings.shopsItemsManagerGui;
 import io.github.divios.dailyShop.guis.settings.shopsManagerGui;
+import io.github.divios.dailyShop.utils.valuegenerators.FixedValueGenerator;
 import io.github.divios.jcommands.JCommand;
 import io.github.divios.jcommands.arguments.Argument;
 import io.github.divios.jcommands.arguments.types.StringArgument;
@@ -30,8 +31,8 @@ public class addCommand {
                         sManager.getShop(values.get("dailyShop").getAsString()).ifPresent(shop ->
                                 addDailyGuiIH.open(player, shop, itemStack -> {
                                     shop.addItem(dItem.of(itemStack)
-                                            .setBuyPrice(Settings.DEFAULT_BUY.getValue().getAsDouble())
-                                            .setSellPrice(Settings.DEFAULT_SELL.getValue().getAsDouble())
+                                            .setBuyPrice(new FixedValueGenerator(Settings.DEFAULT_BUY.getValue().getAsDouble()))
+                                            .setSellPrice(new FixedValueGenerator(Settings.DEFAULT_SELL.getValue().getAsDouble()))
                                     );
                                     serializerApi.saveShopToFileAsync(shop);
                                     shopsItemsManagerGui.open(player, shop);

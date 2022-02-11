@@ -11,13 +11,11 @@ import de.tr7zw.nbtapi.NBTItem;
 import io.github.divios.core_lib.gson.JsonBuilder;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
-import io.github.divios.core_lib.misc.FormatUtils;
-import io.github.divios.core_lib.misc.XSymbols;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.economies.Economies;
 import io.github.divios.dailyShop.economies.Economy;
-import io.github.divios.dailyShop.utils.PrettyPrice;
 import io.github.divios.dailyShop.utils.Utils;
+import io.github.divios.dailyShop.utils.valuegenerators.ValueGenerator;
 import io.github.divios.lib.dLib.priceModifiers.priceModifier;
 import io.github.divios.lib.dLib.shop.dShop;
 import io.github.divios.lib.dLib.stock.dStock;
@@ -252,13 +250,6 @@ public class dItem implements Cloneable {
         return buyPrice == null ? -1 : Utils.round(buyPrice.getPrice(), 2);
     }
 
-    public String getVisualBuyPrice() {
-        return buyPrice == null ? FormatUtils.color("&c" + XSymbols.TIMES_3.parseSymbol()) :
-                buyPrice.isRandomFlag()
-                        ? PrettyPrice.pretty(buyPrice.getMinPrice()) + " - " + PrettyPrice.pretty(buyPrice.getMaxPrice())
-                        : PrettyPrice.pretty(buyPrice.getActualPrice());
-    }
-
     public double getPlayerBuyPrice(@Nullable Player p, @Nullable dShop shop) {
         if (buyPrice == null) return -1;
 
@@ -275,13 +266,6 @@ public class dItem implements Cloneable {
 
     public double getSellPrice() {
         return sellPrice == null ? -1 : Utils.round(sellPrice.getPrice(), 2);
-    }
-
-    public String getVisualSellPrice() {
-        return sellPrice == null ? FormatUtils.color("&c" + XSymbols.TIMES_3.parseSymbol()) :
-                sellPrice.isRandomFlag()
-                        ? PrettyPrice.pretty(sellPrice.getMinPrice()) + " - " + PrettyPrice.pretty(sellPrice.getMaxPrice())
-                        : PrettyPrice.pretty(sellPrice.getActualPrice());
     }
 
     public double getPlayerSellPrice(Player p, dShop shop) {
@@ -373,14 +357,8 @@ public class dItem implements Cloneable {
         return this;
     }
 
-    public dItem setBuyPrice(double price) {
-        buyPrice = (price < 0) ? null : new dPrice(price);
-
-        return this;
-    }
-
-    public dItem setBuyPrice(double minPrice, double maxPrice) {
-        buyPrice = new dPrice(minPrice, maxPrice);
+    public dItem setBuyPrice(@NotNull ValueGenerator generator) {
+        buyPrice = new dPrice(generator);
 
         return this;
     }
@@ -398,14 +376,8 @@ public class dItem implements Cloneable {
         return this;
     }
 
-    public dItem setSellPrice(double price) {
-        sellPrice = (price <= 0) ? null : new dPrice(price);
-
-        return this;
-    }
-
-    public dItem setSellPrice(double minPrice, double maxPrice) {
-        sellPrice = new dPrice(minPrice, maxPrice);
+    public dItem setSellPrice(ValueGenerator generator) {
+        sellPrice = new dPrice(generator);
 
         return this;
     }

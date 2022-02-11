@@ -10,6 +10,7 @@ import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.ChatPrompt;
 import io.github.divios.core_lib.misc.FormatUtils;
+import io.github.divios.core_lib.misc.XSymbols;
 import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.files.Lang;
@@ -276,8 +277,14 @@ public class CustomizerMenu {
                                 .setName(Lang.CUSTOMIZE_PRICE_NAME.getAsString(p))
                                 .addLore(
                                         Lang.CUSTOMIZE_PRICE_LORE.getAsListString(p,
-                                                Template.of("buy_price", item.getVisualBuyPrice()),
-                                                Template.of("sell_price", item.getVisualSellPrice())
+                                                Template.of("buy_price", item.getDBuyPrice() == null
+                                                        ? "&c" + XSymbols.TIMES_3.parseSymbol()
+                                                        : item.getDBuyPrice().getGenerator().toString()
+                                                ),
+                                                Template.of("sell_price", item.getDSellPrice() == null
+                                                        ? "&c" + XSymbols.TIMES_3.parseSymbol()
+                                                        : item.getDSellPrice().getGenerator().toString()
+                                                )
                                         )
                                 )
                         , e ->
@@ -429,7 +436,10 @@ public class CustomizerMenu {
                             ChatPrompt.builder()
                                     .withPlayer(p)
                                     .withResponse(s -> {
-                                        if (!Primitives.isInteger(s)) { Messages.MSG_NOT_INTEGER.send(p); return; }
+                                        if (!Primitives.isInteger(s)) {
+                                            Messages.MSG_NOT_INTEGER.send(p);
+                                            return;
+                                        }
                                         int i = Primitives.getAsInteger(s);
                                         if (i < 1 || i > 64) Utils.sendRawMsg(p, "&7Invalid amount");
                                         ItemStack toChange = item.getItem();
@@ -479,8 +489,8 @@ public class CustomizerMenu {
                                                         item.getDStock() == null
                                                                 ? dStockFactory.INDIVIDUAL(Integer.parseInt(s))
                                                                 : item.getDStock().getName().equals("GLOBAL")
-                                                                    ? dStockFactory.GLOBAL(Primitives.getAsInteger(s))
-                                                                    : dStockFactory.INDIVIDUAL(Primitives.getAsInteger(s))
+                                                                ? dStockFactory.GLOBAL(Primitives.getAsInteger(s))
+                                                                : dStockFactory.INDIVIDUAL(Primitives.getAsInteger(s))
                                                 );
                                             else Messages.MSG_NOT_INTEGER.send(p);
 

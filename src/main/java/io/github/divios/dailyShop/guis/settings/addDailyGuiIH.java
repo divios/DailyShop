@@ -10,6 +10,7 @@ import io.github.divios.dailyShop.files.Lang;
 import io.github.divios.dailyShop.files.Settings;
 import io.github.divios.dailyShop.guis.customizerguis.changeBundleItem;
 import io.github.divios.dailyShop.utils.Utils;
+import io.github.divios.dailyShop.utils.valuegenerators.FixedValueGenerator;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.shop.dShop;
 import io.github.divios.lib.serialize.serializerApi;
@@ -87,8 +88,8 @@ public class addDailyGuiIH {
                                         .withConfirm(uuids -> {
                                             gui.destroy();
                                             dItem newBundle = dItem.of(XMaterial.CHEST_MINECART.parseItem())
-                                                    .setBuyPrice(Settings.DEFAULT_BUY.getValue().getAsDouble())
-                                                    .setSellPrice(Settings.DEFAULT_SELL.getValue().getAsDouble());
+                                                    .setBuyPrice(new FixedValueGenerator(Settings.DEFAULT_BUY.getValue().getAsDouble()))
+                                                    .setSellPrice(new FixedValueGenerator(Settings.DEFAULT_SELL.getValue().getAsDouble()));
                                             newBundle.setBundle(uuids);
                                             shop.addItem(newBundle);
                                             serializerApi.saveShopToFileAsync(shop);

@@ -10,6 +10,8 @@ import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.files.Lang;
 import io.github.divios.dailyShop.utils.Utils;
+import io.github.divios.dailyShop.utils.valuegenerators.FixedValueGenerator;
+import io.github.divios.dailyShop.utils.valuegenerators.RandomIntervalGenerator;
 import io.github.divios.lib.dLib.dPrice;
 import org.bukkit.entity.Player;
 
@@ -67,7 +69,7 @@ public class changePrice {
                                             double price = Double.parseDouble(s);
                                             if (price < 0) price = -1;
 
-                                            accept.accept(price == -1 ? null : new dPrice(price));
+                                            accept.accept(price == -1 ? null : new dPrice(new FixedValueGenerator(price)));
                                         })
                                         .withCancel(cancelReason -> Schedulers.sync().run(back))
                                         .withTitle("&6&lInput new Price")
@@ -108,7 +110,7 @@ public class changePrice {
                                         return;
                                     }
 
-                                    accept.accept(new dPrice(prices[0], prices[1]));
+                                    accept.accept(new dPrice(new RandomIntervalGenerator(prices[0], prices[1])));
                                 })
 
                                 .withCancel(cancelReason -> Schedulers.sync().run(back))

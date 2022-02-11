@@ -2,6 +2,7 @@ package io.github.divios.dailyShop.lorestategy;
 
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.itemutils.ItemUtils;
+import io.github.divios.core_lib.misc.XSymbols;
 import io.github.divios.dailyShop.files.Lang;
 import io.github.divios.jtext.wrappers.Template;
 import io.github.divios.lib.dLib.dItem;
@@ -20,11 +21,17 @@ public class shopItemsManagerLore {
         toReturn = new ItemBuilder(toReturn)                            // Prices lore
                 .addLore("")
                 .addLore(Lang.DAILY_ITEMS_BUY_PRICE.getAsString(
-                                Template.of("buyPrice", item.getVisualBuyPrice())
+                                Template.of("buyPrice", item.getDBuyPrice() == null
+                                        ? "&c" + XSymbols.TIMES_3.parseSymbol()
+                                        : item.getDBuyPrice().getGenerator().toString()
+                                )
                         )
                 )
                 .addLore(Lang.DAILY_ITEMS_SELL_PRICE.getAsString(
-                                Template.of("sellPrice", item.getVisualSellPrice())
+                                Template.of("sellPrice", item.getDSellPrice() == null
+                                        ? "&c" + XSymbols.TIMES_3.parseSymbol()
+                                        : item.getDSellPrice().getGenerator().toString()
+                                )
                         )
                 )
                 .addLore("");

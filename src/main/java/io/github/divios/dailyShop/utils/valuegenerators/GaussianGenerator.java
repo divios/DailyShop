@@ -1,8 +1,9 @@
-package io.github.divios.lib.dLib.shop.util.generators;
+package io.github.divios.dailyShop.utils.valuegenerators;
 
 import com.google.common.base.Preconditions;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import io.github.divios.dailyShop.utils.PrettyPrice;
 import io.github.divios.dailyShop.utils.Utils;
 
 import java.util.Random;
@@ -52,10 +53,7 @@ public class GaussianGenerator implements ValueGenerator {
 
     @Override
     public String toString() {
-        return "GaussianGenerator{" +
-                "mean=" + mean +
-                ", var=" + var +
-                '}';
+        return PrettyPrice.pretty(mean) + " : " + PrettyPrice.pretty(var);
     }
 
     @Override

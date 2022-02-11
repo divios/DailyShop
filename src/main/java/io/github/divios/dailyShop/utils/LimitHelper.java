@@ -18,11 +18,7 @@ public class LimitHelper {
     public static int getShopLimit(Player p, dShop shop, Transactions.Type type) {
         int amount = shop.getShopCache().getTotalAmount(p, type);
 
-        String shopPerm = "dailyRandomShop.limit.shop." +
-                type.name().toLowerCase(Locale.ROOT) + "." +
-                shop.getName() + ".";
-
-        int shopLimit = getMinPermLimitRegistered(p, shopPerm);
+        int shopLimit = getMinPermLimit(p, shop, type);
         if (shopLimit == -1) return -1;
 
         return Math.max(0, (shopLimit - amount));
@@ -34,15 +30,29 @@ public class LimitHelper {
     public static int getItemLimit(Player p, dShop shop, String id, Transactions.Type type) {
         int amount = shop.getShopCache().getAmountForItem(p, id, type);
 
-        String itemPerm = "dailyRandomShop.limit.item." +
+        int shopLimit = getMinPermLimit(p, shop, id, type);
+        if (shopLimit == -1) return -1;
+
+        return Math.max(0, (shopLimit - amount));
+    }
+
+    // String a = "dailyrandomshop.limit.shop.sell.drops.15";
+    public static int getMinPermLimit(Player p, dShop shop, Transactions.Type type) {
+        String perm = "dailyRandomShop.limit.shop." +
+                type.name().toLowerCase(Locale.ROOT) + "." +
+                shop.getName() + ".";
+
+        return getMinPermLimitRegistered(p, perm);
+    }
+
+    // String b = "dailyrandomshop.limit.item.buy.drops.DIRT.3";
+    public static int getMinPermLimit(Player p, dShop shop, String id, Transactions.Type type) {
+        String perm = "dailyRandomShop.limit.item." +
                 type.name().toLowerCase(Locale.ROOT) + "." +
                 shop.getName().toLowerCase(Locale.ROOT) + "." +
                 id + ".";
 
-        int shopLimit = getMinPermLimitRegistered(p, itemPerm);
-        if (shopLimit == -1) return -1;
-
-        return Math.max(0, (shopLimit - amount));
+        return getMinPermLimitRegistered(p, perm);
     }
 
     /**
@@ -56,22 +66,18 @@ public class LimitHelper {
         Pair<Integer, Integer> amounts = shop.getShopCache().getAmountTuple(p.getUniqueId(), item, type);
         timer.stop();
         DebugLog.info("Time elapsed to search limit: " + timer.getTime() + " ms");
-        // String a = "dailyrandomshop.limit.shop.sell.drops.15";
-        // String b = "dailyrandomshop.limit.item.buy.drops.DIRT.3";
 
-        String shopPerm = "dailyRandomShop.limit.shop." +
-                type.name().toLowerCase(Locale.ROOT) + "." +
-                shop.getName() + ".";
-        String itemPerm = "dailyRandomShop.limit.item." +
-                type.name().toLowerCase(Locale.ROOT) + "." +
-                shop.getName().toLowerCase(Locale.ROOT) + "." +
-                item.getID() + ".";
+        int shopLimit = getMinPermLimit(p, shop, type);
+        int itemLimit = getMinPermLimit(p, shop, item.getID(), type);
 
-        int shopLimit = getMinPermLimitRegistered(p, shopPerm);
-        int itemLimit = getMinPermLimitRegistered(p, itemPerm);
+        DebugLog.info("shopLimit: " + shopLimit);
+        DebugLog.info("itemLimit: " + itemLimit);
 
         int finalShopLimit = Math.max(0, (shopLimit - amounts.getLeft()));
         int finalItemLimit = Math.max(0, (itemLimit - amounts.getRight()));
+
+        DebugLog.info("finalShopLimit: " + finalShopLimit);
+        DebugLog.info("finalItemLimit: " + finalItemLimit);
 
         if (shopLimit == -1 && itemLimit == -1)
             return -1;

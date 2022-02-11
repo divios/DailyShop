@@ -1,8 +1,8 @@
 package io.github.divios.shop.generators;
 
-import io.github.divios.lib.dLib.shop.util.generators.ValueGenerator;
-import io.github.divios.lib.dLib.shop.util.generators.FixedValueGenerator;
-import io.github.divios.lib.dLib.shop.util.generators.RandomIntervalGenerator;
+import io.github.divios.dailyShop.utils.valuegenerators.ValueGenerator;
+import io.github.divios.dailyShop.utils.valuegenerators.FixedValueGenerator;
+import io.github.divios.dailyShop.utils.valuegenerators.RandomIntervalGenerator;
 import org.junit.Assert;
 import org.junit.Test;
 

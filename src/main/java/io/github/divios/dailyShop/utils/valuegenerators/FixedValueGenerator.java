@@ -1,8 +1,9 @@
-package io.github.divios.lib.dLib.shop.util.generators;
+package io.github.divios.dailyShop.utils.valuegenerators;
 
 import com.google.common.base.Preconditions;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import io.github.divios.dailyShop.utils.PrettyPrice;
 
 public class FixedValueGenerator implements ValueGenerator {
 
@@ -38,9 +39,7 @@ public class FixedValueGenerator implements ValueGenerator {
 
     @Override
     public String toString() {
-        return "FixedValueGenerator{" +
-                "fixedValue=" + fixedValue +
-                '}';
+        return PrettyPrice.pretty(fixedValue);
     }
 
     @Override

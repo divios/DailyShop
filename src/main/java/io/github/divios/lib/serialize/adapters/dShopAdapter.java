@@ -12,7 +12,6 @@ import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.shop.ShopAccount;
 import io.github.divios.lib.dLib.shop.ShopGui;
 import io.github.divios.lib.dLib.shop.dShop;
-import io.github.divios.lib.dLib.shop.util.generators.ValueGenerator;
 
 import java.lang.reflect.Type;
 import java.sql.Timestamp;

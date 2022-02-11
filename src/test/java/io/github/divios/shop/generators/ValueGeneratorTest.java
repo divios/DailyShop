@@ -1,10 +1,10 @@
 package io.github.divios.shop.generators;
 
 import com.google.gson.JsonObject;
-import io.github.divios.lib.dLib.shop.util.generators.FixedValueGenerator;
-import io.github.divios.lib.dLib.shop.util.generators.GaussianGenerator;
-import io.github.divios.lib.dLib.shop.util.generators.RandomIntervalGenerator;
-import io.github.divios.lib.dLib.shop.util.generators.ValueGenerator;
+import io.github.divios.dailyShop.utils.valuegenerators.FixedValueGenerator;
+import io.github.divios.dailyShop.utils.valuegenerators.GaussianGenerator;
+import io.github.divios.dailyShop.utils.valuegenerators.RandomIntervalGenerator;
+import io.github.divios.dailyShop.utils.valuegenerators.ValueGenerator;
 import org.junit.Assert;
 import org.junit.Test;
 
