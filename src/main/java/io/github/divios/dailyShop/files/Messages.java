@@ -26,7 +26,9 @@ public enum Messages {
     MSG_CURRENCY_ERROR("lang.messages.currency_error"),
     MSG_INVALID_OPERATION("lang.messages.invalid_operation"),
     MSG_NOT_INTEGER("lang.messages.not_integer"),
-    MSG_LIMIT("lang.messages.limit");
+    MSG_BALANCE_MAX_LIMIT("lang.messages.shop_balance_max_error"),
+    MSG_BALANCE_MIN_LIMIT("lang.messages.shop_balance_min_error"),
+    MSG_LIMIT("lang.messages.player_limit");
 
     private final String path;
 

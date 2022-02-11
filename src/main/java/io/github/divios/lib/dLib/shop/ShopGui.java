@@ -354,7 +354,7 @@ public class ShopGui {
 
             if (shop.getAccount() != null
                     && Double.compare(shop.getAccount().getBalance(), shop.getAccount().getMaxBalance()) >= 0) {
-                Messages.MSG_LIMIT.send(p);
+                Messages.MSG_BALANCE_MAX_LIMIT.send(p);
                 return;
             }
 
@@ -375,7 +375,7 @@ public class ShopGui {
 
             if (shop.getAccount() != null
                     && Double.compare(shop.getAccount().getBalance(), 0) <= 0) {
-                Messages.MSG_LIMIT.send(p);
+                Messages.MSG_BALANCE_MIN_LIMIT.send(p);
                 return;
             }
 
@@ -585,7 +585,7 @@ public class ShopGui {
         @NotNull
         @Override
         public Collection<dItem> values() {
-            return null;
+            return dailyItemsMap.values();
         }
 
         @NotNull

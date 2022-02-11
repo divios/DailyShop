@@ -8,7 +8,10 @@ public enum TransactionError {
     noMoney(Messages.MSG_NOT_MONEY),
     noSpace(Messages.MSG_INV_FULL),
     noStock(Messages.MSG_NOT_STOCK),
-    noEnoughItems(Messages.MSG_NOT_ITEMS);
+    noEnoughItems(Messages.MSG_NOT_ITEMS),
+    limitReached(Messages.MSG_LIMIT),
+    shopBalanceMax(Messages.MSG_BALANCE_MAX_LIMIT),
+    shopBalanceMin(Messages.MSG_BALANCE_MIN_LIMIT);
 
     private final Messages msg;
 

@@ -57,6 +57,7 @@ public class sellCommand {
                             .withShop(entry.getShop())
                             .withItem(entry.getItem())
                             .withAmount(itemToSell.getAmount())
+                            .withOnFail((dItem, transactionError) -> {})
                             .execute();
                 });
     }
@@ -79,6 +80,7 @@ public class sellCommand {
                                 .withShop(entry.getShop())
                                 .withItem(entry.getItem())
                                 .withAmount(itemToSell.getAmount())
+                                .withOnFail((dItem, transactionError) -> {})
                                 .execute();
                     }
                     Utils.sendRawMsg(player, "&7+-----------------------------+");

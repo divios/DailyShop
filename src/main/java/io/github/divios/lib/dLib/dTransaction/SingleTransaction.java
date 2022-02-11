@@ -5,6 +5,7 @@ import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.dailyShop.files.Lang;
 import io.github.divios.dailyShop.files.Messages;
 import io.github.divios.dailyShop.utils.DebugLog;
+import io.github.divios.dailyShop.utils.LimitHelper;
 import io.github.divios.dailyShop.utils.PrettyPrice;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.jtext.wrappers.Template;
@@ -158,6 +159,12 @@ public class SingleTransaction {
             double finalPrice = baseCost * amount;
             bill.withItem(item.getID(), finalPrice, amount);
 
+            if (shop.getAccount() != null
+                    && ((shop.getAccount().getBalance() + finalPrice) > shop.getAccount().getMaxBalance())) {
+                onFail.accept(item, TransactionError.shopBalanceMax);
+                return;
+            }
+
             if (!item.getEcon().hasMoney(player, finalPrice)) {
                 onFail.accept(item, TransactionError.noMoney);
                 return;
@@ -170,6 +177,11 @@ public class SingleTransaction {
                     onFail.accept(item, TransactionError.noStock);
                     return;
                 }
+            }
+
+            if (LimitHelper.getPlayerLimit(player, shop, item, Transactions.Type.BUY) == 0) {
+                onFail.accept(item, TransactionError.limitReached);
+                return;
             }
 
             List<String> commands;
@@ -269,6 +281,17 @@ public class SingleTransaction {
 
             if (ItemUtils.count(player.getInventory(), item.getItem()) < amount) {
                 onFail.accept(item, TransactionError.noEnoughItems);
+                return;
+            }
+
+            if (shop.getAccount() != null
+                    && (shop.getAccount().getBalance() - finalPrice) < 0) {
+                onFail.accept(item, TransactionError.shopBalanceMin);
+                return;
+            }
+
+            if (LimitHelper.getPlayerLimit(player, shop, item, Transactions.Type.SELL) == 0) {
+                onFail.accept(item, TransactionError.limitReached);
                 return;
             }
 

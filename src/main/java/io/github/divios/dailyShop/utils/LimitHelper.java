@@ -70,8 +70,8 @@ public class LimitHelper {
         int shopLimit = getMinPermLimitRegistered(p, shopPerm);
         int itemLimit = getMinPermLimitRegistered(p, itemPerm);
 
-        int finalShopLimit = Math.max(-1, (shopLimit - amounts.getLeft()));
-        int finalItemLimit = Math.max(-1, (itemLimit - amounts.getRight()));
+        int finalShopLimit = Math.max(0, (shopLimit - amounts.getLeft()));
+        int finalItemLimit = Math.max(0, (itemLimit - amounts.getRight()));
 
         if (shopLimit == -1 && itemLimit == -1)
             return -1;
