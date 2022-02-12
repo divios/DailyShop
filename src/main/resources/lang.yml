@@ -145,6 +145,6 @@ lang:
     currency_error: "&7That currency is not available anymore"
     invalid_operation: "&7That item is not longer available"
     not_integer: "&7Not integer"
-    shop_balance_max_error: "The shop have reached it's maximum balance!"
+    shop_balance_max_error: "The shop cannot carry more money!"
     shop_balance_min_error: "The shop is out of money!"
     player_limit: "Ey! You have reached your limit!"
