@@ -98,8 +98,11 @@ public class dShopAdapter implements JsonSerializer<dShop>, JsonDeserializer<dSh
 
         if (!shop.get_announce()) builder.add("announce_restock", false);
         if (shop.isDefault()) builder.add("default", true);
-        if (shop.getAccount() != null)
-            builder.add("balance", shop.getAccount().toJson().getAsJsonObject().remove("current_balance"));
+        if (shop.getAccount() != null) {
+            JsonElement json = shop.getAccount().toJson();
+            json.getAsJsonObject().remove("current_balance");
+            builder.add("balance", json);
+        }
 
         return builder.add("timeStamp", (Boolean) null)  // dateFormat.format(shop.getTimestamp()
                 .add("shop", gson.toJsonTree(shop.getGui()))
