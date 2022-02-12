@@ -32,9 +32,25 @@ public class ShopBalanceResolver implements PlaceholderResolver {
         double balance = shop.get().getAccount().getBalance();
         double maxBalance = shop.get().getAccount().getMaxBalance();
 
-        if (balance == 0 || Double.compare(balance, maxBalance) == 0)
-            return "&c" + balance;
-        else
-            return String.valueOf(balance);
+        String placeStr = null;
+        switch (matcher.group(1).toLowerCase()) {
+            case "balance":
+                if (balance == -1)
+                    return "&c" + XSymbols.INFINITY.parseSymbol();
+                if (balance == 0 || Double.compare(balance, maxBalance) == 0)
+                    placeStr = "&c" + balance;
+                else
+                    placeStr = String.valueOf(balance);
+                break;
+            case "maxbalance":
+                if (maxBalance == -1)
+                    return "&c" + XSymbols.INFINITY.parseSymbol();
+                else placeStr = String.valueOf(maxBalance);
+                break;
+        }
+
+        return placeStr;
+
     }
+
 }
