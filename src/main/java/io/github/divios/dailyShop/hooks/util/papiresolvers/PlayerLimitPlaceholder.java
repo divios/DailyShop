@@ -1,5 +1,6 @@
 package io.github.divios.dailyShop.hooks.util.papiresolvers;
 
+import io.github.divios.core_lib.misc.XSymbols;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.utils.LimitHelper;
 import io.github.divios.lib.dLib.dItem;
@@ -45,7 +46,7 @@ public class PlayerLimitPlaceholder implements PlaceholderResolver {
 
     private static final class ShopLimitResolver implements PlaceholderResolver {
 
-        private static final Pattern pattern = Pattern.compile("(limit|maxLimit)_(buy|sell)_(.*)");
+        private static final Pattern pattern = Pattern.compile("(limit|maxlimit)_(buy|sell)_(.*)");
 
         @Override
         public boolean canResolve(String rawPlaceholder) {
@@ -64,10 +65,17 @@ public class PlayerLimitPlaceholder implements PlaceholderResolver {
 
             if (shop == null) return null;
 
-            if (limitStr.equalsIgnoreCase("limit"))
-                return String.valueOf(LimitHelper.getShopLimit(p, shop, type));
-            else if (limitStr.equalsIgnoreCase("maxlimit"))
-                return String.valueOf(LimitHelper.getMinPermLimit(p, shop, type));
+            if (limitStr.equalsIgnoreCase("limit")) {
+                int limit = LimitHelper.getShopLimit(p, shop, type);
+                return limit == -1
+                        ? XSymbols.INFINITY.parseSymbol()
+                        : String.valueOf(limit);
+            } else if (limitStr.equalsIgnoreCase("maxLimit")) {
+                int limit = LimitHelper.getMinPermLimit(p, shop, type);
+                return limit == -1
+                        ? XSymbols.INFINITY.parseSymbol()
+                        : String.valueOf(limit);
+            }
 
             return null;
         }
@@ -98,10 +106,17 @@ public class PlayerLimitPlaceholder implements PlaceholderResolver {
             dItem item = shop.getItem(matcher.group(4));
             if (item == null) return null;
 
-            if (limitStr.equalsIgnoreCase("limit"))
-                return String.valueOf(LimitHelper.getShopLimit(p, shop, type));
-            else if (limitStr.equalsIgnoreCase("maxlimit"))
-                return String.valueOf(LimitHelper.getMinPermLimit(p, shop, item.getID(), type));
+            if (limitStr.equalsIgnoreCase("limit")) {
+                int limit = LimitHelper.getItemLimit(p, shop, item.getID(), type);
+                return limit == -1
+                        ? XSymbols.INFINITY.parseSymbol()
+                        : String.valueOf(limit);
+            } else if (limitStr.equalsIgnoreCase("maxlimit")) {
+                int limit = LimitHelper.getMinPermLimit(p, shop, item.getID(), type);
+                return limit == -1
+                        ? XSymbols.INFINITY.parseSymbol()
+                        : String.valueOf(limit);
+            }
 
             return null;
         }
