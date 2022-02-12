@@ -15,7 +15,13 @@ public class dPriceAdapter implements JsonSerializer<dPrice>, JsonDeserializer<d
 
     @Override
     public JsonElement serialize(dPrice dPrice, Type type, JsonSerializationContext jsonSerializationContext) {
-        return dPrice.getGenerator().toJson();
+        JsonElement json = dPrice.getGenerator().toJson();
+
+        if (json.getAsJsonObject().has("fixed")
+                && json.getAsJsonObject().get("fixed").getAsDouble() <= -1)
+            return null;
+
+        return json;
     }
 
 }

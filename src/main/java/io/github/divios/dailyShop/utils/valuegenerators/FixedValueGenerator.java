@@ -3,6 +3,7 @@ package io.github.divios.dailyShop.utils.valuegenerators;
 import com.google.common.base.Preconditions;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import io.github.divios.core_lib.misc.XSymbols;
 import io.github.divios.dailyShop.utils.PrettyPrice;
 
 public class FixedValueGenerator implements ValueGenerator {
@@ -39,7 +40,9 @@ public class FixedValueGenerator implements ValueGenerator {
 
     @Override
     public String toString() {
-        return PrettyPrice.pretty(fixedValue);
+        return fixedValue <= -1
+                ? "&c" + XSymbols.TIMES_3.parseSymbol()
+                : PrettyPrice.pretty(fixedValue);
     }
 
     @Override

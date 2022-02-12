@@ -5,6 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import io.github.divios.dailyShop.utils.PrettyPrice;
 import io.github.divios.dailyShop.utils.Utils;
+import org.apache.commons.lang.Validate;
 
 import java.util.Random;
 
@@ -19,6 +20,9 @@ public class GaussianGenerator implements ValueGenerator {
 
             double mean = object.get("mean").getAsDouble();
             double var = object.get("var").getAsDouble();
+
+            Validate.isTrue(mean >= 0, "Mean has to be greater than 0");
+            Validate.isTrue(var >= 0, "Var has to be greater than 0");
 
             return new GaussianGenerator(mean, var);
         };
@@ -38,7 +42,7 @@ public class GaussianGenerator implements ValueGenerator {
 
     @Override
     public double generate() {
-        double value = (generator.nextGaussian() * var) + mean;
+        double value = Math.max(0, (generator.nextGaussian() * var) + mean);
         return Utils.round(value, 2);
     }
 

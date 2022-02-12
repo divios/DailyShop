@@ -99,7 +99,7 @@ public class dItemAdapter implements JsonSerializer<dItem>, JsonDeserializer<dIt
     public dItem deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
         JsonObject object = jsonElement.getAsJsonObject();
 
-        Preconditions.checkArgument(object.has("material") || object.has("item"), "An item needs a material");
+        Preconditions.checkArgument(object.has("material") || object.has("item"), "An item needs a material/item field");
 
         dItem ditem;
 

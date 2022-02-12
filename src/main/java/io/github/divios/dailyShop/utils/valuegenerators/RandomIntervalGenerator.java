@@ -5,6 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import io.github.divios.dailyShop.utils.PrettyPrice;
 import io.github.divios.dailyShop.utils.Utils;
+import org.apache.commons.lang.Validate;
 
 public class RandomIntervalGenerator implements ValueGenerator {
 
@@ -17,6 +18,10 @@ public class RandomIntervalGenerator implements ValueGenerator {
 
             double min = object.get("min").getAsDouble();
             double max = object.get("max").getAsDouble();
+
+            Validate.isTrue(min >= 0, "Min value cannot be less than 0");
+            Validate.isTrue(max >= 0, "Max value cannot be less than 0");
+            Validate.isTrue(min < max, "Min value has to be lower than max");
 
             return new RandomIntervalGenerator(min, max);
         };
