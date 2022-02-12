@@ -91,10 +91,10 @@ public class BuyConfirmMenu extends abstractConfirmMenu {
         int stockLimit = getStockLimit();
         int balanceLimit = getBalanceLimit();
         int inventoryLimit = getPlayerInventoryLimit();
-        int limitLimit = getBuyPlayerLimit();
+        int playerLimit = getBuyPlayerLimit();
         int shopAccountLimit = getShopAccountLimit();
 
-        return getMinimumValue(stockLimit, balanceLimit, inventoryLimit, limitLimit, shopAccountLimit);
+        return getMinimumValue(stockLimit, balanceLimit, inventoryLimit, playerLimit, shopAccountLimit);
     }
 
     private int getMinimumValue(int... values) {
