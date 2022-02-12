@@ -353,7 +353,7 @@ public class ShopGui {
             DebugLog.info("limit: " + limit);
 
             if (shop.getAccount() != null
-                    && Double.compare(shop.getAccount().getBalance(), shop.getAccount().getMaxBalance()) >= 0) {
+                    && Double.compare(shop.getAccount().getBalance() + basePrice, shop.getAccount().getMaxBalance()) >= 0) {
                 Messages.MSG_BALANCE_MAX_LIMIT.send(p);
                 return;
             }
@@ -367,6 +367,8 @@ public class ShopGui {
         } else if (clickType.isRightClick()) {
             if (!sellPreconditions(dailyItem, p)) return;
 
+            double basePrice = dailyItem.getPlayerBuyPrice(p, shop) / dailyItem.getItem().getAmount();
+
             int limit;
             if ((limit = LimitHelper.getPlayerLimit(p, shop, dailyItem, Transactions.Type.SELL)) == 0) {
                 Messages.MSG_LIMIT.send(p);
@@ -374,7 +376,7 @@ public class ShopGui {
             }
 
             if (shop.getAccount() != null
-                    && Double.compare(shop.getAccount().getBalance(), 0) <= 0) {
+                    && Double.compare(shop.getAccount().getBalance() - basePrice, 0) <= 0) {
                 Messages.MSG_BALANCE_MIN_LIMIT.send(p);
                 return;
             }
