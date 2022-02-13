@@ -217,6 +217,10 @@ public class dItem implements Cloneable {
         return stock == null ? null : stock.clone();
     }
 
+    public boolean hasStock() {
+        return stock != null;
+    }
+
     public void incrementStock(@NotNull Player p, int amount) {
         if (stock != null)
             stock.increment(p, amount);

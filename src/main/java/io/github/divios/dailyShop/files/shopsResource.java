@@ -82,7 +82,9 @@ public class shopsResource {
             currentShop.updateShopGui(shop.getGui());
             currentShop.setItems(shop.getItems());
 
-            if (shop.getAccount() != null && !shop.getAccount().isSimilar(currentShop.getAccount()))
+            if (shop.getAccount() == null)
+                currentShop.setAccount(null);
+            else if (!shop.getAccount().isSimilar(currentShop.getAccount()))
                 currentShop.setAccount(shop.getAccount());
 
             if (isNew) currentShop.reStock();

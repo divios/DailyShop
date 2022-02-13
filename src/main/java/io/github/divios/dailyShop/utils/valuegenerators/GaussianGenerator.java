@@ -57,7 +57,7 @@ public class GaussianGenerator implements ValueGenerator {
 
     @Override
     public String toString() {
-        return PrettyPrice.pretty(mean) + " " + PrettyPrice.pretty(var);
+        return PrettyPrice.pretty(mean) + "~" + PrettyPrice.pretty(var);
     }
 
     @Override

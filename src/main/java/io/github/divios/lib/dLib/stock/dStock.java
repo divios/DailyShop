@@ -27,17 +27,6 @@ public abstract class dStock implements Cloneable, Serializable {
     private static final TypeToken<Map<UUID, Integer>> mapToken = new TypeToken<Map<UUID, Integer>>() {
     };
 
-    @Deprecated
-    public static dStock legacyFromBase64(String base64) {
-        return legacyFromJson(Base64Coder.decodeString(base64));
-    }
-
-    @Deprecated
-    public static dStock legacyFromJson(String json) {
-        return new GsonBuilder().registerTypeAdapter(dStock.class, new InterfaceAdapter<dStock>()).create()
-                .fromJson(json, dStock.class);
-    }
-
     public static dStock fromJson(JsonElement element) {
         JsonObject object = element.getAsJsonObject();
 
@@ -51,6 +40,7 @@ public abstract class dStock implements Cloneable, Serializable {
         int maxStock = object.has("maxStock") ? object.get("maxStock").getAsInt() : defaultStock;
         boolean replenishOnSell = object.has("incrementOnSell") && object.get("incrementOnSell").getAsBoolean();
         boolean exceedDefault = object.has("exceedDefault") && object.get("exceedDefault").getAsBoolean();
+        boolean allowSellOnMax = object.has("allowSellOnMax") && object.get("allowSellOnMax").getAsBoolean();
         Map<UUID, Integer> stocks = gson.fromJson(object.get("stocks"), mapToken.getType());
 
         switch (type) {
@@ -74,6 +64,7 @@ public abstract class dStock implements Cloneable, Serializable {
     protected final int maxStock;
     protected boolean incrementOnSell;
     protected boolean exceedDefault;
+    protected boolean allowSellOnMax;
     protected ConcurrentHashMap<UUID, Integer> stocks = new ConcurrentHashMap<>();
 
     protected dStock(int defaultStock) {
@@ -114,12 +105,20 @@ public abstract class dStock implements Cloneable, Serializable {
         return exceedDefault;
     }
 
+    public boolean allowSellOnMax() {
+        return allowSellOnMax;
+    }
+
     public void setIncrementOnSell(boolean incrementOnSell) {
         this.incrementOnSell = incrementOnSell;
     }
 
     public void setExceedDefault(boolean exceedDefault) {
         this.exceedDefault = exceedDefault;
+    }
+
+    public void setAllowSellOnMax(boolean allowSellOnMax) {
+        this.allowSellOnMax = allowSellOnMax;
     }
 
     public Integer get(@NotNull Player p) {
@@ -249,18 +248,9 @@ public abstract class dStock implements Cloneable, Serializable {
                 .add("maxStock", maxStock)
                 .add("incrementOnSell", incrementOnSell)
                 .add("exceedDefault", exceedDefault)
+                .add("allowSellOnMax", allowSellOnMax)
                 .add("stocks", gson.toJsonTree(stocks))
                 .build();
-    }
-
-    @Deprecated
-    public String legacyToJson() {
-        return new GsonBuilder().registerTypeAdapter(dStock.class, new InterfaceAdapter<dStock>()).create().toJson(this, dStock.class);
-    }
-
-    @Deprecated
-    public String legacyToBase64() {
-        return Base64Coder.encodeString(legacyToJson());
     }
 
 }

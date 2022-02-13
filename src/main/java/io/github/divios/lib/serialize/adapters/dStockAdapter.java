@@ -26,6 +26,9 @@ public class dStockAdapter implements JsonSerializer<dStock>, JsonDeserializer<d
         if (stock.incrementsOnSell())
             object.addProperty("incrementOnSell", true);
 
+        if (!stock.allowSellOnMax())
+            object.addProperty("allowSellOnMax", false);
+
         return object;
     }
 
@@ -48,12 +51,14 @@ public class dStockAdapter implements JsonSerializer<dStock>, JsonDeserializer<d
         max = object.has("max") ? object.get("max").getAsInt() : amount[0];
         boolean incrementOnSell = object.has("incrementOnSell") && object.get("incrementOnSell").getAsBoolean();
         boolean exceedDefault = object.has("exceedDefault") && object.get("exceedDefault").getAsBoolean();
+        boolean allowSellOnMax = !object.has("allowSellOnMax") || object.get("allowSellOnMax").getAsBoolean();
 
         Validate.isTrue(amount[0] <= max, "max cannot be less than default amount");
 
         dStock stock = typeStr.equals("INDIVIDUAL") ? dStockFactory.INDIVIDUAL(amount[0], max) : dStockFactory.GLOBAL(amount[0], max);
         stock.setIncrementOnSell(incrementOnSell);
         stock.setExceedDefault(exceedDefault);
+        stock.setAllowSellOnMax(allowSellOnMax);
 
         return stock;
     }

@@ -278,8 +278,8 @@ public class databaseManager extends DataManagerAbstract {
         });
     }
 
-    public Future<?> updateAccountAsync(String name, ShopGui gui) {
-        return asyncPool.submit(() -> updateGui(name, gui));
+    public Future<?> updateAccountAsync(String name, ShopAccount account) {
+        return asyncPool.submit(() -> updateAccount(name, account));
     }
 
     public void updateTimeStamp(String name, Timestamp timestamp) {

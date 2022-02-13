@@ -133,6 +133,7 @@ lang:
     inventory_full: "&7Ey, You don't have enough space in your inventory!"
     not_enough_items: "&7You dont have this item or the proper amount to sell it"
     not_stock: "&7There is not enough stock for that amount"
+    stock-full: "&7The stock is full! You cannot sell more items"
     restock: "&7Renovated items of shop {shop}"
     not_perms: "&7Ey, you dont have permission to do this!"
     not_perms_item: "&7Ey, you don't have the perms necessary to buy this item"

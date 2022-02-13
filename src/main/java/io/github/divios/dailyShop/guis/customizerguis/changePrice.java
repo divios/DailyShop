@@ -7,10 +7,12 @@ import io.github.divios.core_lib.inventory.builder.inventoryPopulator;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.core_lib.misc.ChatPrompt;
 import io.github.divios.core_lib.scheduler.Schedulers;
+import io.github.divios.core_lib.utils.Primitives;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.files.Lang;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.dailyShop.utils.valuegenerators.FixedValueGenerator;
+import io.github.divios.dailyShop.utils.valuegenerators.GaussianGenerator;
 import io.github.divios.dailyShop.utils.valuegenerators.RandomIntervalGenerator;
 import io.github.divios.lib.dLib.dPrice;
 import org.bukkit.entity.Player;
@@ -76,6 +78,40 @@ public class changePrice {
                                         .prompt()),
 
                 11);
+
+        gui.addButton(ItemButton.create(ItemBuilder.of(XMaterial.ENDER_PEARL)
+                                .setName("&6&lSet gaussian price").addLore("&7The price will take the form", "&7of a gaussian mean:variance"),
+
+                        e ->
+                                ChatPrompt.builder()
+                                        .withPlayer(p)
+                                        .withResponse(s -> {
+
+                                            String[] pricesS = s.split(":");
+
+                                            if (pricesS.length != 2
+                                                    || (!Primitives.isDouble(pricesS[0]) || !Primitives.isDouble(pricesS[1]))) {
+                                                Utils.sendRawMsg(p, "&7Not double");
+                                                Schedulers.sync().run(back);
+                                                return;
+                                            }
+
+                                            double mean = Double.parseDouble(pricesS[0]);
+                                            double var = Double.parseDouble(pricesS[1]);
+
+                                            if (mean < 0 || var < 0) {
+                                                Utils.sendRawMsg(p, "Mean or var cannot be negative");
+                                                return;
+                                            }
+
+                                            accept.accept(new dPrice(new GaussianGenerator(mean, var)));
+
+                                        })
+                                        .withCancel(cancelReason -> Schedulers.sync().run(back))
+                                        .withTitle("&6&lInput new Price")
+                                        .prompt()),
+
+                13);
 
         gui.addButton(ItemButton.create(ItemBuilder.of(XMaterial.REPEATER)
                         .setName("&c&lSet interval").addLore("&7The price of the item",

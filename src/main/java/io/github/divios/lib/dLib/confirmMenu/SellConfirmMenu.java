@@ -9,6 +9,7 @@ import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dTransaction.Transactions;
 import io.github.divios.lib.dLib.shop.dShop;
 import org.bukkit.entity.Player;
+import sun.security.provider.SHA;
 
 import java.util.function.Consumer;
 
@@ -44,9 +45,7 @@ public class SellConfirmMenu extends abstractConfirmMenu {
 
     @Override
     protected boolean addConditions(int quantity) {
-        DebugLog.info("Similar items: " + (countSimilarItems() - nAddedItems));
-        DebugLog.info("Quantity: " + quantity);
-        return (countSimilarItems() - super.nAddedItems) >= quantity;
+        return getMinLimit() >= quantity;
     }
 
     @Override
@@ -71,19 +70,30 @@ public class SellConfirmMenu extends abstractConfirmMenu {
 
     @Override
     protected int setMaxItems() {
+        return getMinLimit();
+    }
+
+    private int getMinLimit() {
         int maxItemsCount = (countSimilarItems() - super.nAddedItems);
+        int stockLimit = getStockLimit();
         int limitSellLimit = getSellPlayerLimit();
         int accountLimit = getShopAccountLimit();
 
-        return getMinimumValue(maxItemsCount, limitSellLimit, accountLimit);
+        return getMinimumValue(maxItemsCount, stockLimit, limitSellLimit, accountLimit);
     }
-
     private int getMinimumValue(int... values) {
         int minValue = MAX_INVENTORY_ITEMS;
         for (int value : values)
             minValue = Math.min(minValue, value);
 
         return minValue;
+    }
+
+    private int getStockLimit() {
+        if (!item.hasStock() || item.getDStock().allowSellOnMax()) return MAX_SELL_ITEMS;
+
+        int limit = item.getDStock().getMaximum() - item.getPlayerStock(player);
+        return Math.max(limit - nAddedItems, 0);
     }
 
     private int getSellPlayerLimit() {
@@ -94,6 +104,7 @@ public class SellConfirmMenu extends abstractConfirmMenu {
     }
 
     private int getShopAccountLimit() {
+        if (shop.getAccount() == null) return Integer.MAX_VALUE;
         double itemPrice = item.getPlayerSellPrice(player, shop) / item.getItem().getAmount();
 
         int limit = (int) Math.floor(shop.getAccount().getBalance() / itemPrice);

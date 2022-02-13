@@ -331,6 +331,7 @@ public class dShop {
     }
 
     public void updateShopGui(ShopGui newGui, boolean isSilent) {
+        gui.setTitle(newGui.getTitle());
         gui.setSize(newGui.size());
         gui.setButtons(newGui.getButtons());
     }

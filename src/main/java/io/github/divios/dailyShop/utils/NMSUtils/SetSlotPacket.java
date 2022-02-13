@@ -42,7 +42,7 @@ public class SetSlotPacket {
                     ? packetConstructorPost_1_17.newInstance(containerID, 1, slot, craftItem.getObject())
                     : packetConstructorPre_1_17.newInstance(containerID, slot, craftItem.getObject());
 
-            ReflectionUtils.sendPacket(p, packetClass);
+            ReflectionUtils.sendPacketSync(p, packetClass);
 
         } catch (Exception e) {
             e.printStackTrace();

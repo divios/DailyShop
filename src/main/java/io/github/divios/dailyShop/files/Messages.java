@@ -17,6 +17,7 @@ public enum Messages {
     MSG_RESTOCK("lang.messages.restock"),
     MSG_NOT_PERMS("lang.messages.not_perms"),
     MSG_NOT_PERMS_ITEM("lang.messages.not_perms_item"),
+    MSG_FULL_STOCK("lang.messages.stock-full"),
     MSG_OUT_STOCK("lang.messages.out_of_stock"),
     MSG_INVALID_BUY("lang.messages.invalid_buy"),
     MSG_INVALID_SELL("lang.messages.invalid_sell"),

@@ -98,7 +98,6 @@ public class ShopGui {
         this.title = title;
 
         this.viewers = new ConcurrentHashMap<>();
-        this.title = (shop == null) ? "" : shop.getName();
         this.inv = inv;
 
         this.buttons = new ConcurrentHashMap<>();
@@ -129,6 +128,7 @@ public class ShopGui {
 
         viewers.put(p.getUniqueId(), p);
         p.openInventory(inv);
+        updateTask.sendPackets(p);
     }
 
     public void close(Player p) {
@@ -289,6 +289,8 @@ public class ShopGui {
 
             setDailyItem(index, item);
         }
+        if (updateTask != null)
+            updateTask.updateTask();
     }
 
     public void clearButtons() {
@@ -320,7 +322,6 @@ public class ShopGui {
 
     private void clickHandler(InventoryClickEvent e) {
         e.setCancelled(true);
-        Schedulers.sync().run(this.updateTask::updateTask);
 
         if (ItemUtils.isEmpty(e.getCurrentItem())) return;
         if (e.getSlot() != e.getRawSlot()) return;  // is not upper inventory
@@ -329,6 +330,10 @@ public class ShopGui {
         int slot = e.getSlot();
 
         if (buttons.containsKey(slot)) {
+            if (buttons.get(slot).getAction().getAction().name().equalsIgnoreCase("empty")) {
+                Schedulers.sync().run(() -> updateTask.sendPackets(p));
+                return;
+            }
             buttons.get(slot).getAction().execute(p);
         } else if (dailyItemsMap.contains(slot))
             dailyItemAction(p, dailyItemsMap.get(e.getSlot()).clone(), e.getClick());
@@ -378,6 +383,12 @@ public class ShopGui {
             if (shop.getAccount() != null
                     && Double.compare(shop.getAccount().getBalance() - basePrice, 0) <= 0) {
                 Messages.MSG_BALANCE_MIN_LIMIT.send(p);
+                return;
+            }
+
+            if (dailyItem.hasStock() && (!dailyItem.getDStock().allowSellOnMax()
+                    && dailyItem.getPlayerStock(p) >= dailyItem.getDStock().getMaximum())) {
+                Messages.MSG_FULL_STOCK.send(p);
                 return;
             }
 

@@ -486,7 +486,7 @@ public class CustomizerMenu {
                                         .withResponse(s -> {
                                             if (Primitives.isInteger(s))
                                                 item.setStock(
-                                                        item.getDStock() == null
+                                                        !item.hasStock()
                                                                 ? dStockFactory.INDIVIDUAL(Integer.parseInt(s))
                                                                 : item.getDStock().getName().equals("GLOBAL")
                                                                 ? dStockFactory.GLOBAL(Primitives.getAsInteger(s))

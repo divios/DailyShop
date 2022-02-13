@@ -13,6 +13,7 @@ import io.github.divios.lib.dLib.dPrice;
 import io.github.divios.lib.dLib.dRarity;
 import io.github.divios.lib.dLib.stock.dStock;
 import io.github.divios.lib.serialize.wrappers.*;
+import io.github.divios.lib.serialize.wrappers.customitem.CustomItemFactory;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemFlag;
@@ -48,9 +49,9 @@ public class dItemAdapter implements JsonSerializer<dItem>, JsonDeserializer<dIt
 
         ItemStack item = dItem.getItem();
 
-        if (WrappedCustomItem.isCustomItem(item)) {
+        if (CustomItemFactory.isCustomItem(item)) {
             customItemFlag = true;
-            merchant.add("item", WrappedCustomItem.serializeCustomItem(item));
+            merchant.add("item", CustomItemFactory.toJson(item));
         } else {
             if (ItemUtils.getMetadata(item).hasDisplayName())
                 merchant.addProperty("name", Utils.JTEXT_PARSER.unParse(ItemUtils.getName(item)));
@@ -106,7 +107,7 @@ public class dItemAdapter implements JsonSerializer<dItem>, JsonDeserializer<dIt
         if (object.has("material"))    // Normal Item
             ditem = dItem.of(WrappedMaterial.of(object.get("material").getAsString()).parseItem());
         else if (object.has("item"))   // Custom item
-            ditem = dItem.of(WrappedCustomItem.from(object.get("item").getAsJsonObject()).parseItem());
+            ditem = dItem.of(CustomItemFactory.fromJson(object.get("item").getAsJsonObject()));
         else
             throw new RuntimeException("Invalid configuration");
 

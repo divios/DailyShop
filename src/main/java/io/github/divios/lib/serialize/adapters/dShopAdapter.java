@@ -70,7 +70,7 @@ public class dShopAdapter implements JsonSerializer<dShop>, JsonDeserializer<dSh
         DebugLog.info("Reading shop from shop " + id);
         if (object.has("shop")) {
             ShopGui inv = gson.fromJson(object.get("shop"), ShopGui.class);
-            deserializedShop.updateShopGui(inv, true);
+            deserializedShop.updateShopGui(inv);
         }
 
         // Deserialize Items
