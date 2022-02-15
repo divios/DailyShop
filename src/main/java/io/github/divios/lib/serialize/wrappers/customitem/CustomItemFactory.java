@@ -1,6 +1,7 @@
 package io.github.divios.lib.serialize.wrappers.customitem;
 
 import com.google.gson.JsonElement;
+import io.github.divios.lib.serialize.wrappers.customitem.resolvers.ItemsAdderResolver;
 import io.github.divios.lib.serialize.wrappers.customitem.resolvers.MMOItemResolver;
 import io.github.divios.lib.serialize.wrappers.customitem.resolvers.OraxenResolver;
 import org.bukkit.inventory.ItemStack;
@@ -16,6 +17,7 @@ public class CustomItemFactory {
     static {
         resolvers.add(new MMOItemResolver());
         resolvers.add(new OraxenResolver());
+        resolvers.add(new ItemsAdderResolver());
     }
 
     public static ItemStack fromJson(JsonElement json) {
