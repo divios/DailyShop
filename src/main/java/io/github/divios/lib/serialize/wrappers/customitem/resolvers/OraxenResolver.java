@@ -7,6 +7,8 @@ import io.github.divios.dailyShop.utils.OraxenUtils;
 import io.github.divios.lib.serialize.wrappers.customitem.CustomItemResolver;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Objects;
+
 public class OraxenResolver implements CustomItemResolver {
 
     @Override
@@ -29,7 +31,8 @@ public class OraxenResolver implements CustomItemResolver {
         Preconditions.checkArgument(oraxenObject.has("id"), "Oraxen item needs an id");
         Preconditions.checkArgument(OraxenUtils.isValidId(id = oraxenObject.get("id").getAsString()), "That oraxen ID does not exist");
 
-        return OraxenUtils.createItemByID(id);
+        ItemStack oraxenItem = OraxenUtils.createItemByID(id);
+        return Objects.requireNonNull(oraxenItem, "Could not find an oraxen item with the given id");
     }
 
     @Override

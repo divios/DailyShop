@@ -7,6 +7,8 @@ import io.github.divios.dailyShop.utils.MMOUtils;
 import io.github.divios.lib.serialize.wrappers.customitem.CustomItemResolver;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Objects;
+
 public class MMOItemResolver implements CustomItemResolver {
 
     @Override
@@ -29,7 +31,8 @@ public class MMOItemResolver implements CustomItemResolver {
         Preconditions.checkArgument(mmoItemObject.has("type"), "MMOItem needs a type field");
         Preconditions.checkArgument(mmoItemObject.has("id"), "MMOItem needs an id field");
 
-        return MMOUtils.createMMOItem(mmoItemObject.get("type").getAsString(), mmoItemObject.get("id").getAsString());
+        ItemStack mmoItem = MMOUtils.createMMOItem(mmoItemObject.get("type").getAsString(), mmoItemObject.get("id").getAsString());
+        return Objects.requireNonNull(mmoItem, "Could not find the mmoitem with the given type/id");
     }
 
     @Override
