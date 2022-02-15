@@ -43,8 +43,7 @@ public class CustomItemFactory {
     }
 
     public static boolean isCustomItem(ItemStack item) {
-        return resolvers.stream()
-                .anyMatch(resolver -> resolver.matches(item));
+        return resolvers.stream().anyMatch(resolver -> resolver.matches(item));
     }
 
 }
