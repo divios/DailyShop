@@ -2,6 +2,7 @@ package io.github.divios.lib.serialize.wrappers.customitem;
 
 import com.google.gson.JsonElement;
 import io.github.divios.lib.serialize.wrappers.customitem.resolvers.MMOItemResolver;
+import io.github.divios.lib.serialize.wrappers.customitem.resolvers.OraxenResolver;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.HashSet;
@@ -14,6 +15,7 @@ public class CustomItemFactory {
 
     static {
         resolvers.add(new MMOItemResolver());
+        resolvers.add(new OraxenResolver());
     }
 
     public static ItemStack fromJson(JsonElement json) {
@@ -37,7 +39,7 @@ public class CustomItemFactory {
             }
         }
 
-        return Objects.requireNonNull(json, "Couldn't find a strategy to serialize item");
+        return Objects.requireNonNull(json, "Couldn't find a strategy to serialize custom item");
     }
 
     public static boolean isCustomItem(ItemStack item) {
