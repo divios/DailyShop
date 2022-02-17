@@ -1,4 +1,4 @@
-package io.github.divios.lib.dLib.shop.buttons;
+package io.github.divios.lib.dLib.shop.view.buttons;
 
 import io.github.divios.lib.dLib.dItem;
 import org.bukkit.Material;

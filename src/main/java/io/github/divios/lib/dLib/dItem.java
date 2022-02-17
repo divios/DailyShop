@@ -318,9 +318,17 @@ public class dItem implements Cloneable {
         return sellPerms == null ? null : new LinkedList<>(sellPerms);
     }
 
+    public boolean hasCommands() {
+        return commands != null;
+    }
+
     @Nullable
     public LinkedList<String> getCommands() {
         return commands == null ? null : new LinkedList<>(commands);
+    }
+
+    public boolean isBundle() {
+        return bundle != null;
     }
 
     @Nullable

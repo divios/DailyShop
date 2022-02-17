@@ -1,4 +1,4 @@
-package io.github.divios.lib.dLib.shop.util;
+package io.github.divios.lib.dLib.shop.view.util;
 
 import io.github.divios.lib.dLib.dItem;
 import org.jetbrains.annotations.NotNull;

@@ -1,4 +1,4 @@
-package io.github.divios.lib.dLib.shop;
+package io.github.divios.lib.dLib.shop.view;
 
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.scheduler.Schedulers;
@@ -6,10 +6,10 @@ import io.github.divios.core_lib.scheduler.Task;
 import io.github.divios.dailyShop.utils.NMSUtils.SetSlotPacket;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.dItem;
-import io.github.divios.lib.dLib.shop.util.DailyItemsMap;
-import io.github.divios.lib.dLib.shop.util.NMSContainerID;
-import io.github.divios.lib.dLib.shop.factory.DailyItemFactory;
-import io.github.divios.lib.dLib.shop.buttons.PaneButton;
+import io.github.divios.lib.dLib.shop.view.util.DailyItemsMap;
+import io.github.divios.lib.dLib.shop.view.util.NMSContainerID;
+import io.github.divios.lib.dLib.shop.view.buttons.DailyItemFactory;
+import io.github.divios.lib.dLib.shop.view.buttons.PaneButton;
 import org.apache.commons.lang.Validate;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -24,7 +24,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 @SuppressWarnings("unused")
-public class ShopGui_ {
+public class ShopView {
 
     private final DailyItemFactory itemFactory;
 
@@ -37,7 +37,7 @@ public class ShopGui_ {
 
     private ButtonGui gui;
 
-    ShopGui_(String title, Inventory inv, DailyItemFactory itemFactory) {
+    public ShopView(String title, Inventory inv, DailyItemFactory itemFactory) {
         this.itemFactory = itemFactory;
 
         this.viewers = new ConcurrentHashMap<>();

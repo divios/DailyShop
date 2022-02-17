@@ -18,9 +18,10 @@ import io.github.divios.dailyShop.utils.NMSUtils.SetSlotPacket;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dTransaction.Transactions;
-import io.github.divios.lib.dLib.shop.util.DailyItemsMap;
-import io.github.divios.lib.dLib.shop.util.NMSContainerID;
-import io.github.divios.lib.dLib.shop.factory.DailyItemFactory;
+import io.github.divios.lib.dLib.shop.view.buttons.DailyItemFactory;
+import io.github.divios.lib.dLib.shop.view.util.DailyItemsMap;
+import io.github.divios.lib.dLib.shop.view.util.NMSContainerID;
+import io.github.divios.lib.dLib.shop.view.ShopView;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -122,11 +123,11 @@ public class ShopGui {
         );
     }
 
-    private ShopGui_ shopGui;
+    private ShopView shopGui;
 
     public void open(Player p) {
         if (shopGui == null) {
-            shopGui = new ShopGui_(title, inv, new DailyItemFactory(shop));
+            shopGui = new ShopView(title, inv, new DailyItemFactory(shop));
             buttons.forEach(shopGui::setPaneItem);
             shopGui.setDailyItems(new ArrayDeque<>(dailyItemsMap.values()));
         }

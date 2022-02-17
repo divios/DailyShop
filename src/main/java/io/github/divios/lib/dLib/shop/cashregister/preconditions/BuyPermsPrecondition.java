@@ -1,10 +1,9 @@
-package io.github.divios.lib.dLib.shop.factory.preconditions;
+package io.github.divios.lib.dLib.shop.cashregister.preconditions;
 
 import io.github.divios.dailyShop.files.Messages;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.shop.dShop;
-import io.github.divios.lib.dLib.shop.factory.Precondition;
-import io.github.divios.lib.dLib.shop.factory.exceptions.IllegalPrecondition;
+import io.github.divios.lib.dLib.shop.cashregister.exceptions.IllegalPrecondition;
 import org.bukkit.entity.Player;
 
 import java.util.List;

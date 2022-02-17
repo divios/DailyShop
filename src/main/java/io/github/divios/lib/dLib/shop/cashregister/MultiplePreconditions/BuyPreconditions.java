@@ -1,15 +1,15 @@
-package io.github.divios.lib.dLib.shop.factory.MultiplePreconditions;
+package io.github.divios.lib.dLib.shop.cashregister.MultiplePreconditions;
 
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.shop.dShop;
-import io.github.divios.lib.dLib.shop.factory.Precondition;
-import io.github.divios.lib.dLib.shop.factory.preconditions.*;
+import io.github.divios.lib.dLib.shop.cashregister.preconditions.Precondition;
+import io.github.divios.lib.dLib.shop.cashregister.preconditions.*;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class DailyItemBuyPreconditions implements Precondition {
+public class BuyPreconditions implements Precondition {
 
     private static final List<Precondition> preconditions;
 
@@ -22,13 +22,11 @@ public class DailyItemBuyPreconditions implements Precondition {
         preconditions.add(new InventoryFullPrecondition());
         preconditions.add(new BuyPricePrecondition());
         preconditions.add(new BuyLimitPrecondition());
-        preconditions.add(new MerchantMaxBalancePrecondition());
+        preconditions.add(new MaxAccountPrecondition());
     }
 
     @Override
     public void validate(dShop shop, Player p, dItem item, int quantity) {
-        preconditions.forEach(precondition ->
-                precondition.validate(shop, p, item, quantity)
-        );
+        preconditions.forEach(precondition -> precondition.validate(shop, p, item, quantity));
     }
 }

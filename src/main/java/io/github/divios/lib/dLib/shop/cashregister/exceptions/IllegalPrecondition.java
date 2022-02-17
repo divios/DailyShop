@@ -1,4 +1,4 @@
-package io.github.divios.lib.dLib.shop.factory.exceptions;
+package io.github.divios.lib.dLib.shop.cashregister.exceptions;
 
 import io.github.divios.dailyShop.files.Messages;
 import org.bukkit.entity.Player;

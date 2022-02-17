@@ -1,9 +1,9 @@
-package io.github.divios.lib.dLib.shop;
+package io.github.divios.lib.dLib.shop.view;
 
 import io.github.divios.core_lib.events.Events;
 import io.github.divios.core_lib.events.Subscription;
-import io.github.divios.lib.dLib.shop.buttons.Button;
-import io.github.divios.lib.dLib.shop.buttons.EmptyButton;
+import io.github.divios.lib.dLib.shop.view.buttons.Button;
+import io.github.divios.lib.dLib.shop.view.buttons.EmptyButton;
 import org.apache.commons.lang.Validate;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;

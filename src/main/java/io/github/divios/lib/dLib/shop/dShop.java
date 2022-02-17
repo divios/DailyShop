@@ -19,6 +19,7 @@ import io.github.divios.lib.dLib.dTransaction.Transactions;
 import io.github.divios.lib.dLib.registry.RecordBook;
 import io.github.divios.lib.dLib.registry.RecordBookEntry;
 import io.github.divios.lib.dLib.registry.util.Pair;
+import io.github.divios.lib.dLib.shop.cashregister.CashRegister;
 import io.github.divios.lib.dLib.shop.util.RandomItemSelector;
 import io.github.divios.lib.dLib.stock.dStock;
 import org.bukkit.entity.Player;
@@ -40,9 +41,10 @@ public class dShop {
     protected Map<String, dItem> currentItems;
 
     private final LogCache logCache = new LogCache();
-
     protected ShopAccount account;
     protected ShopGui gui;
+    protected CashRegister cashRegister = new CashRegister(this);
+
     protected Timestamp timestamp;
     protected int timer;
     protected boolean announce_restock = true;
@@ -422,6 +424,7 @@ public class dShop {
 
     public void destroy() {
         gui.destroy();
+        cashRegister.destroy();
         for (Iterator<Task> iterator = tasks.iterator(); iterator.hasNext(); ) {
             iterator.next().stop();
             iterator.remove();
@@ -442,7 +445,7 @@ public class dShop {
 
     @Override
     public boolean equals(Object o) {
-        return o instanceof dShop && this.getName().equalsIgnoreCase(((dShop) o).getName());
+        return (o instanceof dShop) && this.getName().equalsIgnoreCase(((dShop) o).getName());
     }
 
     @Override

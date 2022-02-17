@@ -1,4 +1,4 @@
-package io.github.divios.lib.dLib.shop.factory;
+package io.github.divios.lib.dLib.shop.cashregister.preconditions;
 
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.shop.dShop;
