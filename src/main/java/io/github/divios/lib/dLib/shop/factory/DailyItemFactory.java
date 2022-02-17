@@ -5,7 +5,7 @@ import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dTransaction.Transactions;
 import io.github.divios.lib.dLib.shop.buttons.Button;
 import io.github.divios.lib.dLib.shop.dShop;
-import io.github.divios.lib.dLib.shop.factory.MacroPreconditions.DailyItemBuyPreconditions;
+import io.github.divios.lib.dLib.shop.factory.MultiplePreconditions.DailyItemBuyPreconditions;
 import io.github.divios.lib.dLib.shop.factory.exceptions.IllegalPrecondition;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;

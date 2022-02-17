@@ -1,4 +1,4 @@
-package io.github.divios.lib.dLib.shop.factory.MacroPreconditions;
+package io.github.divios.lib.dLib.shop.factory.MultiplePreconditions;
 
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.shop.dShop;
