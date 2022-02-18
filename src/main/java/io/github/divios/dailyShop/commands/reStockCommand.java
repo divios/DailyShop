@@ -14,7 +14,7 @@ import java.util.stream.Stream;
 public class reStockCommand {
 
     public JCommand getCommand() {
-        return JCommand.create("reStock")
+        return JCommand.create("restock")
                 .assertPermission("DailyRandomShop.restock")
                 .assertUsage(FormatUtils.color("&8- &6/rdshop reStock [shop ] &8- &7Generates new items for the specific shop"))
                 .withArguments(getShopsArgument())
