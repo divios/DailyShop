@@ -4,8 +4,6 @@ import io.github.divios.core_lib.events.Events;
 import io.github.divios.dailyShop.events.dailyItemClickEvent;
 import io.github.divios.dailyShop.lorestategy.shopItemsLore;
 import io.github.divios.lib.dLib.dItem;
-import io.github.divios.lib.dLib.dTransaction.Transactions;
-import io.github.divios.lib.dLib.shop.view.buttons.Button;
 import io.github.divios.lib.dLib.shop.dShop;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -20,21 +18,19 @@ public class DailyItemFactory {
     }
 
     public Button createButton(dItem item) {
-        return createButton(item, null);
+        return new DailyItemButton(item);
     }
 
-    public Button createButton(dItem item, Player p) {
-        return new DailyItemButton(item, p);
+    public ItemStack getItem(dItem item, Player p) {
+        return shopItemsLore.applyLore(item, p, shop);
     }
 
     private final class DailyItemButton implements Button {
 
         private final dItem item;
-        private final Player player;
 
-        DailyItemButton(dItem item, Player player) {
+        DailyItemButton(dItem item) {
             this.item = item;
-            this.player = player;
         }
 
         @Override
@@ -45,8 +41,8 @@ public class DailyItemFactory {
         }
 
         @Override
-        public ItemStack getItem() {
-            return shopItemsLore.applyLore(item, player, shop);
+        public ItemStack getItem(Player p) {
+            return shopItemsLore.applyLore(item, p, shop);
         }
     }
 

@@ -1,19 +1,16 @@
 package io.github.divios.lib.dLib.shop.view;
 
-import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.core_lib.scheduler.Task;
-import io.github.divios.dailyShop.utils.NMSUtils.SetSlotPacket;
-import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.dItem;
-import io.github.divios.lib.dLib.shop.view.util.DailyItemsMap;
-import io.github.divios.lib.dLib.shop.view.util.NMSContainerID;
 import io.github.divios.lib.dLib.shop.view.buttons.DailyItemFactory;
 import io.github.divios.lib.dLib.shop.view.buttons.PaneButton;
+import io.github.divios.lib.dLib.shop.view.gui.ButtonGui;
+import io.github.divios.lib.dLib.shop.view.gui.MultiButtonGui;
+import io.github.divios.lib.dLib.shop.view.util.DailyItemsMap;
 import org.apache.commons.lang.Validate;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,8 +25,6 @@ public class ShopView {
 
     private final DailyItemFactory itemFactory;
 
-    private final ConcurrentHashMap<UUID, Player> viewers;
-
     private final ConcurrentHashMap<Integer, dItem> buttons;
     private final DailyItemsMap dailyItemsMap;
 
@@ -40,28 +35,16 @@ public class ShopView {
     public ShopView(String title, Inventory inv, DailyItemFactory itemFactory) {
         this.itemFactory = itemFactory;
 
-        this.viewers = new ConcurrentHashMap<>();
-
         this.buttons = new ConcurrentHashMap<>();
         this.dailyItemsMap = new DailyItemsMap();
 
         gui = new ButtonGui(title, inv);
-        gui.setOnClose(e -> viewers.remove(e.getPlayer().getUniqueId()));
+        gui = new MultiButtonGui(gui);
     }
 
     public void open(Player p) {
-        viewers.put(p.getUniqueId(), p);
         gui.open(p);
-
         if (updateTask == null) updateTask = new UpdateTask();
-        updateTask.run();
-    }
-
-    public void close(Player p) {
-        Player closedPlayer;
-        if ((closedPlayer = viewers.remove(p.getUniqueId())) == null) return;
-
-        closedPlayer.closeInventory();
     }
 
     public void setPaneItem(int slot, dItem item) {
@@ -80,7 +63,6 @@ public class ShopView {
 
             setDailyItem(index, item);
         }
-        if (updateTask != null) updateTask.run();
     }
 
     private void setDailyItem(int slot, dItem item) {
@@ -127,51 +109,17 @@ public class ShopView {
         return gui.toString();
     }
 
-    private static final ExecutorService asyncPool = Executors.newCachedThreadPool();
 
+    private static final ExecutorService asyncPool = Executors.newCachedThreadPool();
     private class UpdateTask {
 
         private final Task task;
 
         public UpdateTask() {
-            task = Schedulers.async().runRepeating(
-                    this::run,
+            task = Schedulers.async().runRepeating(() -> gui.update(),
                     0, TimeUnit.SECONDS,
-                    200, TimeUnit.MILLISECONDS
+                    500, TimeUnit.MILLISECONDS
             );
-        }
-
-        private void run() {
-            if (viewers.isEmpty()) return;
-            viewers.forEach((uuid, player) -> asyncPool.execute(() -> sendPackets(player)));
-        }
-
-        private void sendPackets(Player player) {
-            buttons.forEach((integer, dItem) -> {
-                if (dItem.isAir()) return;
-
-                ItemStack aux = dItem.getItem();
-                ItemStack toSend = aux.clone();
-
-                String newName = Utils.JTEXT_PARSER.parse(ItemUtils.getName(aux), player);
-                List<String> newLore = Utils.JTEXT_PARSER.parse(ItemUtils.getLore(aux), player);
-
-                toSend = ItemUtils.setName(toSend, newName);
-                toSend = ItemUtils.setLore(toSend, newLore);
-
-                try {
-                    SetSlotPacket.send(player, toSend, dItem.getSlot(), NMSContainerID.getPlayerInventoryID(player));
-                } catch (Exception ignored) {
-                }        // WindowId can throw null pointer due to no synchronization
-            });
-
-            dailyItemsMap.forEach(dItem -> {
-                ItemStack toSend = itemFactory.createButton(dItem, player).getItem();
-                try {
-                    SetSlotPacket.send(player, toSend, dItem.getSlot(), NMSContainerID.getPlayerInventoryID(player));
-                } catch (Exception ignored) {
-                }        // WindowId can throw null pointer due to no synchronization
-            });
         }
 
         public void stop() {

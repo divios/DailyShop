@@ -1,4 +1,4 @@
-package io.github.divios.lib.dLib.shop.view;
+package io.github.divios.lib.dLib.shop.view.gui;
 
 import io.github.divios.core_lib.events.Events;
 import io.github.divios.core_lib.events.Subscription;
@@ -20,15 +20,15 @@ import java.util.function.Consumer;
 @SuppressWarnings("unused")
 public class ButtonGui {
 
-    private final String title;
-    private final Inventory inv;
-    private final HashMap<Integer, Button> buttons;
+    protected final String title;
+    protected final Inventory inv;
+    protected final HashMap<Integer, Button> buttons;
 
-    private Consumer<InventoryCloseEvent> onClose = e -> {
+    protected Consumer<InventoryCloseEvent> onClose = e -> {
     };
 
-    private final Subscription clickListener;
-    private final Subscription closeListener;
+    protected final Subscription clickListener;
+    protected final Subscription closeListener;
 
     public ButtonGui(String title, Inventory inv) {
         this.title = title;
@@ -95,6 +95,13 @@ public class ButtonGui {
     public void clear() {
         inv.clear();
         populateButtons();  // Override buttons with empty
+    }
+
+    public void update() {
+        buttons.forEach((integer, button) -> {
+            if ((integer < inv.getSize()) && (integer >= 0))
+                inv.setItem(integer, button.getItem());
+        });
     }
 
     public String getTitle() {

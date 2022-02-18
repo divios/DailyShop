@@ -47,6 +47,7 @@ public class dShop {
 
     protected Timestamp timestamp;
     protected int timer;
+
     protected boolean announce_restock = true;
     protected boolean isDefault = false;
 
