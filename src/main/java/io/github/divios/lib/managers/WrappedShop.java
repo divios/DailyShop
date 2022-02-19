@@ -2,12 +2,10 @@ package io.github.divios.lib.managers;
 
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.lib.dLib.dItem;
-import io.github.divios.lib.dLib.dTransaction.Bill;
 import io.github.divios.lib.dLib.shop.ShopAccount;
 import io.github.divios.lib.dLib.shop.ShopGui;
 import io.github.divios.lib.dLib.shop.dShop;
 import io.github.divios.lib.dLib.shop.view.ShopView;
-import io.github.divios.lib.dLib.shop.view.ShopViewFactory;
 import io.github.divios.lib.dLib.stock.dStock;
 import io.github.divios.lib.storage.databaseManager;
 import org.bukkit.entity.Player;
@@ -227,16 +225,6 @@ public class WrappedShop extends dShop {
     @Override
     public String toString() {
         return shop.toString();
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        return shop.equals(o);
-    }
-
-    @Override
-    public int hashCode() {
-        return shop.hashCode();
     }
 
 }
