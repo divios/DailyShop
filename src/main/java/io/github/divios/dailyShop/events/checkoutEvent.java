@@ -21,18 +21,21 @@ public class checkoutEvent extends Event {
     private final Player player;
     private final dItem item;
     private final int amount;
+    private final double price;
 
     public checkoutEvent(dShop shop,
                          Transactions.Type type,
                          Player player,
                          dItem item,
-                         int amount
+                         int amount,
+                         double price
     ) {
         this.shop = shop;
         this.type = type;
         this.player = player;
         this.item = item;
         this.amount = amount;
+        this.price = price;
     }
 
     public dShop getShop() {
@@ -53,6 +56,10 @@ public class checkoutEvent extends Event {
 
     public int getAmount() {
         return amount;
+    }
+
+    public double getPrice() {
+        return price;
     }
 
     @NotNull

@@ -75,7 +75,7 @@ public class BuyCart extends Cart {
                 Template.of("currency", item.getEcon().getName())
         );
 
-        Events.callEvent(new checkoutEvent(shop, Transactions.Type.BUY, p, item, amount));
+        Events.callEvent(new checkoutEvent(shop, Transactions.Type.BUY, p, item, amount, price));
 
         shop.openShop(p);
     }

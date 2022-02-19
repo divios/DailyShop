@@ -59,7 +59,7 @@ public class customizeGui implements Listener, InventoryHolder {
         this.buttons = new HashMap<>(shop.getGui().getButtons());
 
         this.title = shop.getGui().getTitle();
-        this.size = shop.getGui().size();
+        this.size = shop.getGui().getSize();
 
         Schedulers.sync().runLater(() -> Bukkit.getPluginManager().registerEvents(this, plugin), 1L);
         withdrawPlayerItems();
@@ -272,9 +272,9 @@ public class customizeGui implements Listener, InventoryHolder {
     }
 
     private void applyChangesAction() {
-        shop.getGui().setTitle(title);
-        shop.getGui().setSize(size);
-        shop.getGui().setButtons(buttons);
+        //shop.getGui().setTitle(title);
+        //shop.getGui().setSize(size);
+        //shop.getGui().setButtons(buttons);
 
         unregisterAll();
         depositPlayerItems();

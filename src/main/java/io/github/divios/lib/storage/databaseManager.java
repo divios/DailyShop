@@ -15,6 +15,8 @@ import io.github.divios.lib.dLib.registry.RecordBookEntry;
 import io.github.divios.lib.dLib.shop.ShopAccount;
 import io.github.divios.lib.dLib.shop.ShopGui;
 import io.github.divios.lib.dLib.shop.dShop;
+import io.github.divios.lib.dLib.shop.view.ShopView;
+import io.github.divios.lib.dLib.shop.view.ShopViewFactory;
 import io.github.divios.lib.managers.WrappedShop;
 import io.github.divios.lib.storage.migrations.initialMigration;
 
@@ -126,7 +128,7 @@ public class databaseManager extends DataManagerAbstract {
                 statement.setString(1, shop.getName());
                 if (shop.getAccount() != null)
                     statement.setString(2, shop.getAccount().toJson().toString());
-                statement.setString(3, shop.getGui().toJson().toString());
+                statement.setString(3, ShopViewFactory.toJson(shop.getGui()).toString());
                 statement.setString(4, timeStampUtils.serialize(shop.getTimestamp()));
                 statement.setInt(5, shop.getTimer());
                 statement.executeUpdate();
@@ -256,19 +258,19 @@ public class databaseManager extends DataManagerAbstract {
         return asyncPool.submit(() -> updateItem(name, item));
     }
 
-    public void updateGui(String name, ShopGui gui) {
+    public void updateGui(String name, ShopView gui) {
         this.databaseConnector.connect(connection -> {
             String updateGui = "UPDATE " + this.getTablePrefix() + "active_shops " +
                     "SET gui = ? WHERE name = ? collate nocase";
             try (PreparedStatement statement = connection.prepareStatement(updateGui)) {
-                statement.setString(1, gui.toJson().toString());
+                statement.setString(1, ShopViewFactory.toJson(gui).toString());
                 statement.setString(2, name);
                 statement.executeUpdate();
             }
         });
     }
 
-    public Future<?> updateGuiAsync(String name, ShopGui gui) {
+    public Future<?> updateGuiAsync(String name, ShopView gui) {
         return asyncPool.submit(() -> updateGui(name, gui));
     }
 

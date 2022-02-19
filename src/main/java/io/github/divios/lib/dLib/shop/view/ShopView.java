@@ -25,12 +25,12 @@ public class ShopView {
 
     private DailyItemFactory itemFactory;
 
-    private final ConcurrentHashMap<Integer, dItem> buttons;
-    private final DailyItemsMap dailyItemsMap;
+    final ConcurrentHashMap<Integer, dItem> buttons;
+    final DailyItemsMap dailyItemsMap;
 
-    private UpdateTask updateTask;
+    UpdateTask updateTask;
 
-    private ButtonGui gui;
+    ButtonGui gui;
 
     public ShopView(String title, Inventory inv, DailyItemFactory itemFactory) {
         this.itemFactory = itemFactory;
@@ -79,7 +79,7 @@ public class ShopView {
         }
     }
 
-    private void setDailyItem(int slot, dItem item) {
+    void setDailyItem(int slot, dItem item) {
         Validate.isTrue(!buttons.containsKey(slot), "Cannot set a dailyItem in a button slot");
 
         dItem clone = item.clone();
@@ -97,6 +97,7 @@ public class ShopView {
 
         int slot = oldItem.getSlot();
         setDailyItem(slot, updatedItem);
+        gui.setButton(slot, itemFactory.createButton(updatedItem));
     }
 
     private void removeDailyItem(int slot) {
@@ -118,9 +119,23 @@ public class ShopView {
         }
     }
 
-    private void destroy() {
+    public void destroy() {
         if (updateTask != null) updateTask.stop();
         gui.destroy();
+    }
+
+    private dailyItems values = null;
+    public dailyItems getDailyItems() {
+        if (values == null) values = new dailyItems();
+        return values;
+    }
+
+    public String getTitle() { return gui.getTitle(); }
+
+    public int getSize() { return gui.getSize(); }
+
+    public Map<Integer, dItem> getButtons() {
+        return Collections.unmodifiableMap(buttons);
     }
 
     @Override

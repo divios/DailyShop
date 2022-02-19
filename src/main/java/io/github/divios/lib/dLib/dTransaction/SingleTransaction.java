@@ -97,7 +97,7 @@ public class SingleTransaction {
             if (onComplete == null)
                 onComplete = bill -> {
                 };
-            onComplete = onComplete.andThen(shop::computeBill);
+            //onComplete = onComplete.andThen(shop::computeBill);
 
             if (onFail == null)
                 onFail = (item, err) -> {

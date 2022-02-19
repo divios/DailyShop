@@ -6,6 +6,8 @@ import io.github.divios.lib.dLib.dTransaction.Bill;
 import io.github.divios.lib.dLib.shop.ShopAccount;
 import io.github.divios.lib.dLib.shop.ShopGui;
 import io.github.divios.lib.dLib.shop.dShop;
+import io.github.divios.lib.dLib.shop.view.ShopView;
+import io.github.divios.lib.dLib.shop.view.ShopViewFactory;
 import io.github.divios.lib.dLib.stock.dStock;
 import io.github.divios.lib.storage.databaseManager;
 import org.bukkit.entity.Player;
@@ -35,6 +37,44 @@ public class WrappedShop extends dShop {
         this.shop = shop;
 
         super.destroy();
+    }
+
+    @Override
+    public void rename(String s) {
+        shop.rename(s);
+        dManager.renameShopAsync(shop.getName(), s.toLowerCase());
+    }
+
+    @Override
+    public void reStock() {
+        shop.reStock();
+        dManager.updateTimeStampAsync(shop.getName(), shop.getTimestamp());
+        dManager.updateGuiAsync(shop.getName(), shop.getGui());
+    }
+
+    @Override
+    public void addItem(@NotNull dItem item) {
+        shop.addItem(item);
+        dManager.addItemAsync(shop.getName(), item);
+    }
+
+    @Override
+    public void updateItem(@NotNull dItem newItem) {
+        shop.updateItem(newItem);
+        dManager.updateItemAsync(shop.getName(), newItem);
+    }
+
+    @Override
+    public boolean removeItem(UUID uid) {
+        if (!shop.removeItem(uid)) return false;
+        dManager.deleteItemAsync(shop.getName(), uid);
+        return true;
+    }
+
+    @Override
+    public void setTimer(int timer) {
+        shop.setTimer(timer);
+        dManager.updateTimerAsync(shop.getName(), shop.getTimer());
     }
 
     @Override
@@ -133,14 +173,9 @@ public class WrappedShop extends dShop {
     public void updateShopGui(ShopGui newGui, boolean isSilent) {
         shop.updateShopGui(newGui, isSilent);
     }
-
+    
     @Override
-    public void computeBill(Bill bill) {
-        shop.computeBill(bill);
-    }
-
-    @Override
-    public ShopGui getGui() {
+    public ShopView getGui() {
         return shop.getGui();
     }
 
@@ -202,44 +237,6 @@ public class WrappedShop extends dShop {
     @Override
     public int hashCode() {
         return shop.hashCode();
-    }
-
-    @Override
-    public void rename(String s) {
-        shop.rename(s);
-        dManager.renameShopAsync(shop.getName(), s.toLowerCase());
-    }
-
-    @Override
-    public void reStock() {
-        shop.reStock();
-        dManager.updateTimeStampAsync(shop.getName(), shop.getTimestamp());
-        dManager.updateGuiAsync(shop.getName(), shop.getGui());
-    }
-
-    @Override
-    public void addItem(@NotNull dItem item) {
-        shop.addItem(item);
-        dManager.addItemAsync(shop.getName(), item);
-    }
-
-    @Override
-    public void updateItem(@NotNull dItem newItem) {
-        shop.updateItem(newItem);
-        dManager.updateItemAsync(shop.getName(), newItem);
-    }
-
-    @Override
-    public boolean removeItem(UUID uid) {
-        if (!shop.removeItem(uid)) return false;
-        dManager.deleteItemAsync(shop.getName(), uid);
-        return true;
-    }
-
-    @Override
-    public void setTimer(int timer) {
-        shop.setTimer(timer);
-        dManager.updateTimerAsync(shop.getName(), shop.getTimer());
     }
 
 }

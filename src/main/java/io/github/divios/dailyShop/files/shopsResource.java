@@ -41,7 +41,7 @@ public class shopsResource {
             }
         }
 
-        importYamlShops();
+        //importYamlShops();
     }
 
     private void importYamlShops() {
@@ -79,7 +79,7 @@ public class shopsResource {
             currentShop.setTimer(shop.getTimer());
             currentShop.set_announce(shop.get_announce());
             currentShop.setDefault(shop.isDefault());
-            currentShop.updateShopGui(shop.getGui());
+            //currentShop.updateShopGui(shop.getGui());
             currentShop.setItems(shop.getItems());
 
             if (shop.getAccount() == null)
