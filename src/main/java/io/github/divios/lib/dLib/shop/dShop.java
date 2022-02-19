@@ -351,7 +351,6 @@ public class dShop implements Listener {
 
     @EventHandler
     public void computeBill(checkoutEvent e) {
-        System.out.println("awwawaaa");
         if (!Objects.equals(e.getShop(), this)) return;
 
         DebugLog.info("Received bill on shop " + name);
