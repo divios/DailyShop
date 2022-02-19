@@ -4,18 +4,6 @@ import java.util.Arrays;
 
 public interface Transactions {
 
-    static BuyTransaction BuyTransaction() {
-        return new BuyTransaction();
-    }
-
-    static SellTransaction SellTransaction() {
-        return new SellTransaction();
-    }
-
-    static SingleTransaction.SingleTransactionBuilder Custom() {
-        return SingleTransaction.create();
-    }
-
     enum Type {
         BUY,
         SELL;
