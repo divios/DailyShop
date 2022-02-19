@@ -6,7 +6,7 @@ import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.shop.view.buttons.DailyItemFactory;
 import io.github.divios.lib.dLib.shop.view.buttons.PaneButton;
 import io.github.divios.lib.dLib.shop.view.gui.ButtonGui;
-import io.github.divios.lib.dLib.shop.view.gui.MultiButtonGui;
+import io.github.divios.lib.dLib.shop.view.gui.GuiButtonFactory;
 import io.github.divios.lib.dLib.shop.view.util.DailyItemsMap;
 import org.apache.commons.lang.Validate;
 import org.bukkit.entity.Player;
@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit;
 @SuppressWarnings("unused")
 public class ShopView {
 
-    private final DailyItemFactory itemFactory;
+    private DailyItemFactory itemFactory;
 
     private final ConcurrentHashMap<Integer, dItem> buttons;
     private final DailyItemsMap dailyItemsMap;
@@ -38,8 +38,7 @@ public class ShopView {
         this.buttons = new ConcurrentHashMap<>();
         this.dailyItemsMap = new DailyItemsMap();
 
-        gui = new ButtonGui(title, inv);
-        gui = new MultiButtonGui(gui);
+        gui = GuiButtonFactory.createMultiGui(title, inv.getSize());
     }
 
     public void open(Player p) {
@@ -47,9 +46,24 @@ public class ShopView {
         if (updateTask == null) updateTask = new UpdateTask();
     }
 
+    public void setItemFactory(DailyItemFactory itemFactory) {
+        this.itemFactory = itemFactory;
+    }
+
     public void setPaneItem(int slot, dItem item) {
+        dItem dailyItem;
+        if ((dailyItem = dailyItemsMap.get(slot)) != null)      // Removed dailyItem if crash
+            removeDailyItem(dailyItem.getID());
+
         gui.setButton(slot, new PaneButton(item));
         buttons.put(slot, item);
+    }
+
+    public void clear(int slot) {
+        if (buttons.remove(slot) != null) {
+            gui.removeButton(slot);
+        } else
+            removeDailyItem(slot);
     }
 
     public void setDailyItems(Queue<dItem> dailyItems) {
@@ -83,6 +97,11 @@ public class ShopView {
 
         int slot = oldItem.getSlot();
         setDailyItem(slot, updatedItem);
+    }
+
+    private void removeDailyItem(int slot) {
+        if (dailyItemsMap.remove(slot) != null)
+            gui.removeButton(slot);
     }
 
     private void removeDailyItem(String id) {
