@@ -55,7 +55,7 @@ public class databaseManager extends DataManagerAbstract {
                     dShop shop;
 
                     try {
-                        shop = new WrappedShop(name,
+                        shop = new dShop(name,
                                 parser.parse(result.getString("gui")),
                                 timeStampUtils.deserialize(result.getString("timestamp")),
                                 result.getInt("timer"),
@@ -63,7 +63,7 @@ public class databaseManager extends DataManagerAbstract {
                     } catch (Exception | Error e) {
                         //e.printStackTrace();
                         DebugLog.info(e.getMessage());
-                        shop = new WrappedShop(name,
+                        shop = new dShop(name,
                                 result.getInt("timer"),
                                 timeStampUtils.deserialize(result.getString("timestamp")));
                     }
@@ -76,7 +76,13 @@ public class databaseManager extends DataManagerAbstract {
                 }
             }
         });
-        return shops;
+
+        Set<dShop> wrappedShops = new HashSet<>();
+        for (dShop shop : shops) {
+            wrappedShops.add(WrappedShop.wrap(shop));
+        }
+
+        return wrappedShops;
     }
 
     public CompletableFuture<Set<dShop>> getShopsAsync() {
@@ -269,7 +275,7 @@ public class databaseManager extends DataManagerAbstract {
     public void updateAccount(String name, ShopAccount account) {
         this.databaseConnector.connect(connection -> {
             String updateGui = "UPDATE " + this.getTablePrefix() + "active_shops " +
-                        "SET account = ? WHERE name = ? collate nocase";
+                    "SET account = ? WHERE name = ? collate nocase";
             try (PreparedStatement statement = connection.prepareStatement(updateGui)) {
                 statement.setString(1, (account == null) ? null : account.toJson().toString());
                 statement.setString(2, name);

@@ -67,7 +67,7 @@ public class shopsManager {
      */
 
     public void createShop(String name) {
-        dShop newShop_ = new WrappedShop(name);
+        dShop newShop_ = WrappedShop.wrap(new dShop(name));
 
         shops.put(newShop_.getName().toLowerCase(), newShop_);
         newShop_.reStock();
@@ -76,7 +76,7 @@ public class shopsManager {
     }
 
     public void createShopAsync(String name) {
-        dShop newShop_ = new WrappedShop(name);
+        dShop newShop_ = WrappedShop.wrap(new dShop(name));
 
         shops.put(newShop_.getName().toLowerCase(), newShop_);
         newShop_.reStock();
