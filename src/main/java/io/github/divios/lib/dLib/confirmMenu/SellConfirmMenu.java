@@ -38,9 +38,10 @@ public class SellConfirmMenu extends abstractConfirmMenu {
 
     @Override
     protected int initialQuantity() {
-        return countSimilarItems() >= item.getItem().getAmount()
-                ? item.getItem().getAmount()
-                : 1;
+        int amount;
+        return ((amount = item.getItem().getAmount()) == 1)
+                ? 0
+                : amount;
     }
 
     @Override
