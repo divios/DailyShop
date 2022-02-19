@@ -15,7 +15,6 @@ import io.github.divios.dailyShop.guis.settings.shopsItemsManagerGui;
 import io.github.divios.dailyShop.utils.DebugLog;
 import io.github.divios.jtext.wrappers.Template;
 import io.github.divios.lib.dLib.dItem;
-import io.github.divios.lib.dLib.dTransaction.Bill;
 import io.github.divios.lib.dLib.dTransaction.Transactions;
 import io.github.divios.lib.dLib.registry.RecordBook;
 import io.github.divios.lib.dLib.registry.RecordBookEntry;
@@ -364,6 +363,8 @@ public class dShop implements Listener {
         }
 
         dItem shopItem = currentItems.get(e.getItem().getID());
+        System.out.println(e.getItem().getID());
+
         if (shopItem.getDStock() != null)           // compute stock
             currentItems.computeIfPresent(shopItem.getID(), (s1, dItem) -> {
                 if (e.getType() == Transactions.Type.BUY)
