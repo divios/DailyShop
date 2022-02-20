@@ -57,7 +57,7 @@ public class databaseManager extends DataManagerAbstract {
                     dShop shop;
 
                     try {
-                        shop = new dShop(name,
+                        shop = new WrappedShop(name,
                                 parser.parse(result.getString("gui")),
                                 timeStampUtils.deserialize(result.getString("timestamp")),
                                 result.getInt("timer"),
@@ -79,12 +79,7 @@ public class databaseManager extends DataManagerAbstract {
             }
         });
 
-        Set<dShop> wrappedShops = new HashSet<>();
-        for (dShop shop : shops) {
-            wrappedShops.add(WrappedShop.wrap(shop));
-        }
-
-        return wrappedShops;
+        return shops;
     }
 
     public CompletableFuture<Set<dShop>> getShopsAsync() {

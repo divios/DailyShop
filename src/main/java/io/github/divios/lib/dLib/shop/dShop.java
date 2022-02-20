@@ -60,6 +60,8 @@ public class dShop implements Listener {
 
     protected Set<Task> tasks = new HashSet<>();
 
+    protected dShop() {}
+
     public dShop(String name) {
         this(name, Settings.DEFAULT_TIMER.getValue().getAsInt());
     }
@@ -441,6 +443,22 @@ public class dShop implements Listener {
         }
     }
 
+    public void setState(dShopState state) {
+        if (!name.equalsIgnoreCase(state.getName())) return;
+
+        setTimer(state.getTimer());
+        set_announce(state.isAnnounce());
+        setDefault(state.isDefault());
+        setAccount(state.getAccount());
+
+        gui.setState(state.getView());
+        setItems(state.getItems());
+    }
+
+    public dShopState toState() {
+        return new dShopState(name, timer, announce_restock, isDefault, account, gui.toState(), items.values());
+    }
+
     @Override
     public String toString() {
         return "dShop{" +
@@ -487,7 +505,7 @@ public class dShop implements Listener {
 
             LogEntry entry;
             if ((entry = map.get(uuid)) == null)
-                return Pair.of(0,0);
+                return Pair.of(0, 0);
 
             totalAmount = entry.getTotalAmount(type);
             itemAmount = entry.getAmount(item.getID(), type);

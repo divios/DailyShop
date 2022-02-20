@@ -373,11 +373,11 @@ public class ShopGui {
                 return;
             }
 
-            Transactions.BuyTransaction()
+            /*Transactions.BuyTransaction()
                     .withShop(shop)
                     .withBuyer(p)
                     .withItem(dailyItem)
-                    .execute();
+                    .execute(); */
 
         } else if (clickType.isRightClick()) {
             if (!sellPreconditions(dailyItem, p)) return;
@@ -404,11 +404,11 @@ public class ShopGui {
 
             DebugLog.info("limit: " + limit);
 
-            Transactions.SellTransaction()
+            /*Transactions.SellTransaction()
                     .withShop(shop)
                     .withVendor(p)
                     .withItem(dailyItem)
-                    .execute();
+                    .execute(); */
         }
     }
 

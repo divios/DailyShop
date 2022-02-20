@@ -8,6 +8,7 @@ import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.shop.ShopGui;
+import io.github.divios.lib.dLib.shop.view.ShopViewState;
 import io.github.divios.lib.serialize.wrappers.WrappedDButton;
 import org.bukkit.Bukkit;
 
@@ -16,7 +17,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @SuppressWarnings({"unused", "UnstableApiUsage", "UnusedReturnValue"})
-public class ShopGuiAdapter implements JsonSerializer<ShopGui>, JsonDeserializer<ShopGui> {
+public class ShopGuiAdapter implements JsonSerializer<ShopViewState>, JsonDeserializer<ShopViewState> {
 
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(dItem.class, new dButtonAdapter())
@@ -27,12 +28,12 @@ public class ShopGuiAdapter implements JsonSerializer<ShopGui>, JsonDeserializer
     };
 
     @Override
-    public ShopGui deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
+    public ShopViewState deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
         JsonObject object = jsonElement.getAsJsonObject();
 
         String title = object.has("title") ? object.get("title").getAsString() : "";
         int[] size = {27};
-        Map<String, dItem> buttons = new LinkedHashMap<>();
+        Map<Integer, dItem> buttons = new LinkedHashMap<>();
 
         if (object.has("size"))
             Preconditions.checkArgument(Utils.testRunnable(() -> size[0] = object.get("size").getAsInt()), "Size field needs to be an integer");
@@ -42,7 +43,8 @@ public class ShopGuiAdapter implements JsonSerializer<ShopGui>, JsonDeserializer
         Map<String, JsonElement> items = gson.fromJson(object.get("items").getAsJsonObject(), diItemsToken.getType());
         for (Map.Entry<String, JsonElement> itemEntry : items.entrySet()) {
             try {
-                buttons.put(itemEntry.getKey(), gson.fromJson(itemEntry.getValue(), dItem.class));
+                dItem item = gson.fromJson(itemEntry.getValue(), dItem.class);
+                buttons.put(item.getSlot(), item.setID(itemEntry.getKey()));
             } catch (Exception | Error e) {
                 Log.warn("There was a problem parsing the item with id " + itemEntry.getKey());
                 // e.printStackTrace();
@@ -50,31 +52,27 @@ public class ShopGuiAdapter implements JsonSerializer<ShopGui>, JsonDeserializer
             }
         }
 
-        ShopGui inv = new ShopGui(null, title, Bukkit.createInventory(null, size[0]));
-        buttons.forEach((s, dItem) -> {
-            if (dItem.getSlot() >= size[0]) return;
-            inv.setButton(dItem.getSlot(), dItem.setID(s));
-        });
+        addItemsWithMultipleSlots(object, buttons, size[0]);
+        buttons.values().removeIf(dItem -> dItem.getSlot() >= size[0]);
 
-        addItemsWithMultipleSlots(object, inv);
-
-        return inv;
+        return new ShopViewState(title, size[0], buttons);
     }
 
     @Override
-    public JsonElement serialize(ShopGui dInventory, Type type, JsonSerializationContext jsonSerializationContext) {
-        return JsonBuilder.object()
-                .add("title", dInventory.getTitle())
-                .add("size", dInventory.size())
-                .add("items", gson.toJsonTree(getButtons(dInventory)))
-                .build();
+    public JsonElement serialize(ShopViewState dInventory, Type type, JsonSerializationContext jsonSerializationContext) {
+        JsonObject json = new JsonObject();
+        json.addProperty("title", dInventory.getTitle());
+        json.addProperty("size", dInventory.getSize());
+        json.add("items", gson.toJsonTree(getButtons(dInventory)));
+
+        return json;
     }
 
     /**
      * Utils
      **/
 
-    private Map<String, WrappedDButton> getButtons(ShopGui inv) {
+    private Map<String, WrappedDButton> getButtons(ShopViewState inv) {
         Map<String, dItem> buttons = new LinkedHashMap<>();
         Set<Integer> flaggedSlots = new HashSet<>();
         Map<String, WrappedDButton> finalButtons = new LinkedHashMap<>();
@@ -111,7 +109,7 @@ public class ShopGuiAdapter implements JsonSerializer<ShopGui>, JsonDeserializer
     private static final TypeToken<LinkedHashMap<String, JsonObject>> itemsJsonToken = new TypeToken<LinkedHashMap<String, JsonObject>>() {
     };
 
-    private void addItemsWithMultipleSlots(JsonObject object, ShopGui inv) {
+    private void addItemsWithMultipleSlots(JsonObject object, Map<Integer, dItem> buttons, int size) {
         LinkedHashMap<String, JsonObject> items = gson.fromJson(object.get("items"), itemsJsonToken.getType());
 
         for (JsonObject item : items.values()) {
@@ -121,14 +119,14 @@ public class ShopGuiAdapter implements JsonSerializer<ShopGui>, JsonDeserializer
 
             item.get("slot").getAsJsonArray().forEach(element -> multipleSlots.add(element.getAsInt()));
 
-            dItem baseItem = inv.getButtons().get(multipleSlots.pollFirst());
+            dItem baseItem = buttons.get(multipleSlots.pollFirst());
             if (baseItem == null) return;
 
             multipleSlots.forEach(integer -> {
-                if (integer >= inv.size()) return;
+                if (integer >= size) return;
 
                 String newId = baseItem.getID() + integer;
-                inv.setButton(integer, baseItem.setID(newId));
+                buttons.put(integer, baseItem.setID(newId));
             });
         }
     }

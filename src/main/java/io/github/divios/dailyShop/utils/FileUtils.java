@@ -46,14 +46,12 @@ public class FileUtils {
     }
 
     public static void dumpToYaml(Object o, File data) {
-
         if (!data.exists()) {
             FileUtils.createFile(data);
         }
 
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         String json = gson.toJson(o);
-        //Log.warn(json);
         Map map = new GsonBuilder().registerTypeAdapter(new TypeToken<Map<String, Object>>() {
                 }.getType(), new MapDeserializerDoubleAsIntFix())
                 .create().fromJson(json, new TypeToken<Map<String, Object>>() {

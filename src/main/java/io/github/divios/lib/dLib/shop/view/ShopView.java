@@ -9,6 +9,8 @@ import io.github.divios.lib.dLib.shop.view.gui.ButtonGui;
 import io.github.divios.lib.dLib.shop.view.gui.GuiButtonFactory;
 import io.github.divios.lib.dLib.shop.view.util.DailyItemsMap;
 import org.apache.commons.lang.Validate;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
@@ -46,6 +48,26 @@ public class ShopView {
         if (updateTask == null) updateTask = new UpdateTask();
     }
 
+    public void setTitle(String title) {
+        List<HumanEntity> viewers = gui.getViewers();
+        ButtonGui newGui = GuiButtonFactory.createMultiGui(title, getSize());
+
+        gui.destroy();
+        gui = newGui;
+
+        update();
+        viewers.forEach(player -> newGui.open((Player) player));
+    }
+
+    public void setSize(int size) {
+        int comparator = Integer.compare(getSize(), size);
+
+        if (comparator > 0) {
+            decrementRows((getSize() - size) / 9);
+        } else if (comparator < 0)
+            incrementRows((size - getSize()) / 9);
+    }
+
     public void setItemFactory(DailyItemFactory itemFactory) {
         this.itemFactory = itemFactory;
     }
@@ -55,6 +77,7 @@ public class ShopView {
         if ((dailyItem = dailyItemsMap.get(slot)) != null)      // Removed dailyItem if crash
             removeDailyItem(dailyItem.getID());
 
+        item.setSlot(slot);
         gui.setButton(slot, new PaneButton(item));
         buttons.put(slot, item);
     }
@@ -119,6 +142,62 @@ public class ShopView {
         }
     }
 
+    public void incrementRows(int rows) {
+        Validate.isTrue(rows >= 0, "N times cannot be less than 0. Got " + rows);
+        if (getSize() == 54) return;
+
+        int newSize = Math.min(54, getSize() + (rows * 9));
+
+        List<HumanEntity> viewers = gui.getViewers();
+        ButtonGui newGui = GuiButtonFactory.createMultiGui(getTitle(), newSize);
+
+        gui.destroy();
+        gui = newGui;
+
+        update();
+        viewers.forEach(player -> newGui.open((Player) player));
+    }
+
+    public void decrementRows(int rows) {
+        Validate.isTrue(rows >= 0, "N times cannot be less than 0. Got " + rows);
+        if (getSize() == 9) return;
+
+        int newSize = Math.max(9, getSize() - (rows * 9));
+        List<HumanEntity> viewers = gui.getViewers();
+        ButtonGui newGui = GuiButtonFactory.createMultiGui(getTitle(), newSize);
+
+        gui.destroy();
+        gui = newGui;
+
+        // Removed buttons/dailyItems out of newInv bounds
+        buttons.entrySet().removeIf(entry -> entry.getKey() >= newSize);
+        dailyItemsMap.removeIf(dItem -> dItem.getSlot() >= newSize);
+
+        update();
+        viewers.forEach(player -> newGui.open((Player) player));
+    }
+
+    public void setState(ShopViewState state) {
+        List<HumanEntity> viewers = gui.getViewers();
+        ButtonGui newGui = GuiButtonFactory.createMultiGui(state.getTitle(), state.getSize());
+
+        gui.destroy();
+        gui = newGui;
+
+        dailyItemsMap.removeIf(dItem -> dItem.getSlot() >= getSize());
+        buttons.clear();
+        state.getButtons().forEach(this::setPaneItem);
+
+        update();
+        viewers.forEach(humanEntity -> gui.open((Player) humanEntity));
+    }
+
+    private void update() {
+        gui.clear();
+        buttons.forEach((integer, dItem) -> gui.setButton(integer, new PaneButton(dItem)));
+        dailyItemsMap.forEach(dItem -> gui.setButton(dItem.getSlot(), itemFactory.createButton(dItem)));
+    }
+
     public void destroy() {
         if (updateTask != null) updateTask.stop();
         gui.destroy();
@@ -136,6 +215,10 @@ public class ShopView {
 
     public Map<Integer, dItem> getButtons() {
         return Collections.unmodifiableMap(buttons);
+    }
+
+    public ShopViewState toState() {
+        return new ShopViewState(getTitle(), getSize(), buttons);
     }
 
     @Override
