@@ -10,7 +10,7 @@ public class MinimumAccountPrecondition implements Precondition {
 
     @Override
     public void validate(dShop shop, Player p, dItem item, int quantity) {
-        double price = item.getPlayerFloorSellPrice(p, shop) * item.getItem().getAmount();
+        double price = item.getPlayerFloorSellPrice(p, shop) * quantity;
         if (shop.getAccount() != null
                 && Double.compare(shop.getAccount().getBalance() - price, 0) <= 0) {
             throw new IllegalPrecondition(Messages.MSG_BALANCE_MIN_LIMIT);

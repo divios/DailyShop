@@ -10,7 +10,7 @@ public class OutOfStockPrecondition implements Precondition {
 
     @Override
     public void validate(dShop shop, Player p, dItem item, int quantity) {
-        if (item.getDStock() != null && item.getPlayerStock(p) <= 0)
+        if (item.hasStock() && item.getPlayerStock(p) <= 0)
             throw new IllegalPrecondition(Messages.MSG_OUT_STOCK);
     }
 

@@ -11,7 +11,7 @@ public class CountItemPrecondition implements Precondition {
 
     @Override
     public void validate(dShop shop, Player p, dItem item, int quantity) {
-        if (ItemUtils.count(p.getInventory(), item.getItem()) <= 0)
+        if (ItemUtils.count(p.getInventory(), item.getItem()) < quantity)
             throw new IllegalPrecondition(Messages.MSG_NOT_ITEMS);
     }
 }
