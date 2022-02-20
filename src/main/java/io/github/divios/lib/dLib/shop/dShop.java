@@ -365,7 +365,6 @@ public class dShop implements Listener {
         }
 
         dItem shopItem = currentItems.get(e.getItem().getID());
-        System.out.println(e.getItem().getID());
 
         if (shopItem.getDStock() != null)           // compute stock
             currentItems.computeIfPresent(shopItem.getID(), (s1, dItem) -> {
