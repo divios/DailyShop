@@ -84,7 +84,7 @@ public class ShopView {
 
     public void clear(int slot) {
         if (buttons.remove(slot) != null) {
-            gui.removeButton(slot);
+            gui.clear(slot);
         } else
             removeDailyItem(slot);
     }
@@ -125,14 +125,14 @@ public class ShopView {
 
     private void removeDailyItem(int slot) {
         if (dailyItemsMap.remove(slot) != null)
-            gui.removeButton(slot);
+            gui.clear(slot);
     }
 
     private void removeDailyItem(String id) {
         dItem item;
         if ((item = dailyItemsMap.remove(id)) == null) return;
 
-        gui.removeButton(item.getSlot());
+        gui.clear(item.getSlot());
     }
 
     private void clearDailyItems() {

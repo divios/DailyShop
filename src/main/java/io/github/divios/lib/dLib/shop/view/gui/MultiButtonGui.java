@@ -47,12 +47,6 @@ public class MultiButtonGui extends ButtonGui {
     }
 
     @Override
-    public void removeButton(int slot) {
-        gui.removeButton(slot);
-        guis.values().forEach(gui1 -> gui1.removeButton(slot));
-    }
-
-    @Override
     public void clear(int slot) {
         gui.clear(slot);
         guis.values().forEach(gui1 -> gui1.clear(slot));

@@ -78,13 +78,6 @@ public class ButtonGui {
         inv.setItem(slot, button.getItem());
     }
 
-    public void removeButton(int slot) {
-        validateSlot(slot);
-
-        buttons.remove(slot);
-        inv.clear(slot);
-    }
-
     public void clear(int slot) {
         validateSlot(slot);
 
