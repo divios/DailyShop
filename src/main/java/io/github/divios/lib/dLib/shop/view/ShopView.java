@@ -217,6 +217,10 @@ public class ShopView {
         return Collections.unmodifiableMap(buttons);
     }
 
+    public List<HumanEntity> getViewers() {
+        return gui.getViewers();
+    }
+
     public ShopViewState toState() {
         return new ShopViewState(getTitle(), getSize(), buttons);
     }

@@ -9,6 +9,7 @@ import io.github.divios.dailyShop.utils.Timer;
 import io.github.divios.lib.dLib.shop.dShop;
 import io.github.divios.lib.serialize.serializerApi;
 import io.github.divios.lib.storage.databaseManager;
+import org.bukkit.entity.HumanEntity;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -126,6 +127,7 @@ public class shopsManager {
         deletedShopEvent event = new deletedShopEvent(removed);
         Events.callEvent(event);     // throw new event
 
+        removed.getView().getViewers().forEach(HumanEntity::closeInventory);
         removed.destroy();
         dManager.deleteShop(name);
     }
