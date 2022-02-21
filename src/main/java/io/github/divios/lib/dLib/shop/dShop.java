@@ -18,6 +18,7 @@ import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dTransaction.Transactions;
 import io.github.divios.lib.dLib.registry.RecordBook;
 import io.github.divios.lib.dLib.registry.RecordBookEntry;
+import io.github.divios.lib.dLib.shop.cashregister.CashRegister;
 import io.github.divios.lib.dLib.shop.util.RandomItemSelector;
 import io.github.divios.lib.dLib.shop.view.ShopView;
 import io.github.divios.lib.dLib.shop.view.ShopViewFactory;
