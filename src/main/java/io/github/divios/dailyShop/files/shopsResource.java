@@ -21,8 +21,8 @@ public class shopsResource {
     private static final File shopsFolder = new File(plugin.getDataFolder(), "shops");
     private static final shopsManager sManager = DailyShop.get().getShopsManager();
 
-    private static final Map<String, Long> cacheCheckSums = new HashMap<>();
-    private static final Set<String> flaggedShops = new HashSet<>();
+    //private static final Map<String, Long> cacheCheckSums = new HashMap<>();
+    //private static final Set<String> flaggedShops = new HashSet<>();
 
     public shopsResource() {
 
@@ -56,10 +56,10 @@ public class shopsResource {
 
 
         new HashSet<>(sManager.getShops()).stream()         // Delete removed shops
-                .filter(dShop -> !flaggedShops.contains(dShop.getName()))
+                //.filter(dShop -> !flaggedShops.contains(dShop.getName()))
                 .filter(shop -> !newShops.containsKey(shop.getName()))
                 .forEach(shop -> {
-                    cacheCheckSums.remove(shop.getName());
+                    //cacheCheckSums.remove(shop.getName());
                     sManager.deleteShop(shop.getName());
                     DebugLog.info("removed shop");
                 });
@@ -85,7 +85,7 @@ public class shopsResource {
         timer.stop();
         Log.info("Data imported successfully in " + timer.getTime() + " ms");
 
-        flaggedShops.clear();
+        //flaggedShops.clear();
 
     }
 
@@ -99,7 +99,7 @@ public class shopsResource {
         Map<String, dShopState> shops = new HashMap<>();
         for (File shopFile : Objects.requireNonNull(shopsFolder.listFiles((dir, name) -> name.endsWith(".yml")), "The shop directory does not exits")) {
 
-            Long checkSum;      // Check if same checkSum
+            /*Long checkSum;      // Check if same checkSum
             if ((checkSum = cacheCheckSums.get(getIdFromFile(shopFile))) != null)
                 if (checkSum == FileUtils.getFileCheckSum(shopFile)) {
                     sManager.getShop(getIdFromFile(shopFile)).ifPresent(sameShop -> {
@@ -107,12 +107,12 @@ public class shopsResource {
                         flaggedShops.add(sameShop.getName());
                     });  // get only the id of the shop
                     continue;
-                }
+                } */
 
             try {
                 dShopState newShop = serializerApi.getShopFromFile(shopFile);
                 shops.put(newShop.getName(), newShop);
-                cacheCheckSums.put(newShop.getName(), FileUtils.getFileCheckSum(shopFile));
+                //cacheCheckSums.put(newShop.getName(), FileUtils.getFileCheckSum(shopFile));
             } catch (Exception e) {
                 Log.warn("There was a problem with the shop " + shopFile.getName());
                 // e.printStackTrace();
