@@ -1,5 +1,6 @@
 package io.github.divios.lib.dLib.shop.view.gui;
 
+import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.shop.view.buttons.Button;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -9,7 +10,7 @@ public class PlayerButtonGui extends ButtonGui {
     private final Player player;
 
     public PlayerButtonGui(Player player, ButtonGui gui) {
-        super(gui.getTitle(), Bukkit.createInventory(null, gui.getSize(), gui.getTitle()));
+        super(gui.getTitle(), Bukkit.createInventory(null, gui.getSize(), Utils.JTEXT_PARSER.parse(gui.getTitle())));
         this.player = player;
 
         buttons.putAll(gui.getButtons());
