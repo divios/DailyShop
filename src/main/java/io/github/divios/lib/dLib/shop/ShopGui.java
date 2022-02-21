@@ -16,11 +16,12 @@ import io.github.divios.dailyShop.utils.DebugLog;
 import io.github.divios.dailyShop.utils.LimitHelper;
 import io.github.divios.dailyShop.utils.NMSUtils.SetSlotPacket;
 import io.github.divios.dailyShop.utils.Utils;
-import io.github.divios.jtext.JTextBuilder;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dTransaction.Transactions;
-import io.github.divios.lib.dLib.shop.util.DailyItemsMap;
-import io.github.divios.lib.dLib.shop.util.NMSContainerID;
+import io.github.divios.lib.dLib.shop.view.buttons.DailyItemFactory;
+import io.github.divios.lib.dLib.shop.view.util.DailyItemsMap;
+import io.github.divios.lib.dLib.shop.view.util.NMSContainerID;
+import io.github.divios.lib.dLib.shop.view.ShopView;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -105,7 +106,7 @@ public class ShopGui {
 
         this.listeners = new HashSet<>();
 
-        createListeners();
+        //createListeners();
     }
 
     private void createListeners() {
@@ -122,13 +123,22 @@ public class ShopGui {
         );
     }
 
+    private ShopView shopGui;
+
     public void open(Player p) {
-        if (updateTask == null)
+        if (shopGui == null) {
+            shopGui = new ShopView(title, inv, new DailyItemFactory(shop));
+            buttons.forEach(shopGui::setPaneItem);
+            shopGui.setDailyItems(new ArrayDeque<>(dailyItemsMap.values()));
+        }
+        shopGui.open(p);
+
+       /* if (updateTask == null)
             updateTask = new UpdateTask();
 
         viewers.put(p.getUniqueId(), p);
         p.openInventory(inv);
-        updateTask.sendPackets(p);
+        updateTask.sendPackets(p); */
     }
 
     public void close(Player p) {
@@ -363,11 +373,11 @@ public class ShopGui {
                 return;
             }
 
-            Transactions.BuyTransaction()
+            /*Transactions.BuyTransaction()
                     .withShop(shop)
                     .withBuyer(p)
                     .withItem(dailyItem)
-                    .execute();
+                    .execute(); */
 
         } else if (clickType.isRightClick()) {
             if (!sellPreconditions(dailyItem, p)) return;
@@ -394,11 +404,11 @@ public class ShopGui {
 
             DebugLog.info("limit: " + limit);
 
-            Transactions.SellTransaction()
+            /*Transactions.SellTransaction()
                     .withShop(shop)
                     .withVendor(p)
                     .withItem(dailyItem)
-                    .execute();
+                    .execute(); */
         }
     }
 

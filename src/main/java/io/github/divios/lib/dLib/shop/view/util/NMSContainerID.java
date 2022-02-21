@@ -1,4 +1,4 @@
-package io.github.divios.lib.dLib.shop.util;
+package io.github.divios.lib.dLib.shop.view.util;
 
 import com.cryptomorin.xseries.ReflectionUtils;
 import io.github.divios.dailyShop.utils.NMSUtils.NMSHelper;

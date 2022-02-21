@@ -6,10 +6,12 @@ import com.google.gson.GsonBuilder;
 import io.github.divios.core_lib.cache.Lazy;
 import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
+import io.github.divios.dailyShop.utils.DebugLog;
 import io.github.divios.dailyShop.utils.FileUtils;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.shop.dShop;
-import io.github.divios.lib.serialize.adapters.dShopAdapter;
+import io.github.divios.lib.dLib.shop.dShopState;
+import io.github.divios.lib.serialize.adapters.dShopStateAdapter;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
@@ -27,13 +29,16 @@ public class serializerApi {
     protected static final ExecutorService asyncPool = Executors.newSingleThreadExecutor();
 
     private static final Gson gson = new GsonBuilder()
-            .registerTypeHierarchyAdapter(dShop.class, new dShopAdapter())
+            .registerTypeAdapter(dShopState.class, new dShopStateAdapter())
             .create();
 
     public static void saveShopToFile(dShop shop) {
         try {
             File data = new File(shopsFolder.get(), shop.getName() + ".yml");
-            FileUtils.dumpToYaml(gson.toJsonTree(shop), data);
+            DebugLog.info("waaaa");
+            gson.toJsonTree(shop.toState());
+            FileUtils.dumpToYaml(gson.toJsonTree(shop.toState()), data);
+            DebugLog.info("waaaa1");
         } catch (Exception e) {
             Log.info("There was a problem saving the shop " + shop.getName());
             // e.printStackTrace();
@@ -41,19 +46,18 @@ public class serializerApi {
         //Log.info("Converted all items correctly of shop " + shop.getName());
     }
 
-    public static dShop getShopFromFile(File data) {
+    public static dShopState getShopFromFile(File data) {
         Objects.requireNonNull(data, "data cannot be null");
         Preconditions.checkArgument(data.exists(), "The file does not exist");
-        return gson.fromJson(Utils.getJsonFromFile(data), dShop.class);
+        return gson.fromJson(Utils.getJsonFromFile(data), dShopState.class);
     }
 
     public static void saveShopToFileAsync(dShop shop) {
         asyncPool.submit(() -> saveShopToFile(shop));
     }
 
-    public static Future<dShop> getShopFromFileAsync(File data) {
-        dShop[] shop = {null};
-        return asyncPool.submit(() -> shop[0] = getShopFromFile(data), shop[0]);
+    public static Future<dShopState> getShopFromFileAsync(File data) {
+        return asyncPool.submit(() -> getShopFromFile(data));
     }
 
     public static void deleteShop(String name) {

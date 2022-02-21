@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import dev.lone.itemsadder.api.CustomStack;
+import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.serialize.wrappers.customitem.CustomItemResolver;
 import org.bukkit.inventory.ItemStack;
 
@@ -28,6 +29,7 @@ public class ItemsAdderResolver implements CustomItemResolver {
 
     @Override
     public ItemStack fromJson(JsonElement json) {
+        if (!Utils.isOperative("ItemsAdder")) return null;
         JsonObject itemsAdderItem = json.getAsJsonObject().get("itemsAdder").getAsJsonObject();
 
         Preconditions.checkArgument(itemsAdderItem.has("id"), "ItemsAdder needs an id field");
@@ -44,7 +46,10 @@ public class ItemsAdderResolver implements CustomItemResolver {
 
     @Override
     public boolean matches(ItemStack item) {
-        return CustomStack.byItemStack(item) != null;
+        if (Utils.isOperative("ItemsAdder")) {
+            return CustomStack.byItemStack(item) != null;
+        }
+        return false;
     }
 
     @Override

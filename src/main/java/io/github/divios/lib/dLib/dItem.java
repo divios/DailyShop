@@ -254,6 +254,12 @@ public class dItem implements Cloneable {
         return buyPrice == null ? -1 : Utils.round(buyPrice.getPrice(), 2);
     }
 
+    public double getPlayerFloorBuyPrice(@Nullable Player p, @NotNull dShop shop) {
+        return buyPrice == null
+                ? 0
+                : getPlayerBuyPrice(p, shop) / item.getAmount();
+    }
+
     public double getPlayerBuyPrice(@Nullable Player p, @Nullable dShop shop) {
         if (buyPrice == null) return -1;
 
@@ -270,6 +276,12 @@ public class dItem implements Cloneable {
 
     public double getSellPrice() {
         return sellPrice == null ? -1 : Utils.round(sellPrice.getPrice(), 2);
+    }
+
+    public double getPlayerFloorSellPrice(@Nullable Player p, @NotNull dShop shop) {
+        return sellPrice == null
+                ? 0
+                : getPlayerSellPrice(p, shop) / item.getAmount();
     }
 
     public double getPlayerSellPrice(Player p, dShop shop) {
@@ -306,9 +318,17 @@ public class dItem implements Cloneable {
         return sellPerms == null ? null : new LinkedList<>(sellPerms);
     }
 
+    public boolean hasCommands() {
+        return commands != null;
+    }
+
     @Nullable
     public LinkedList<String> getCommands() {
         return commands == null ? null : new LinkedList<>(commands);
+    }
+
+    public boolean isBundle() {
+        return bundle != null;
     }
 
     @Nullable

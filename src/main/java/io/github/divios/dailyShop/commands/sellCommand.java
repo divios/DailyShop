@@ -8,15 +8,21 @@ import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.economies.Economy;
+import io.github.divios.dailyShop.events.checkoutEvent;
+import io.github.divios.dailyShop.files.Lang;
 import io.github.divios.dailyShop.files.Messages;
 import io.github.divios.dailyShop.utils.DebugLog;
 import io.github.divios.dailyShop.utils.PrettyPrice;
 import io.github.divios.dailyShop.utils.Timer;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.jcommands.JCommand;
+import io.github.divios.jtext.wrappers.Template;
+import io.github.divios.lib.dLib.confirmMenu.SellConfirmMenu;
 import io.github.divios.lib.dLib.dItem;
-import io.github.divios.lib.dLib.dTransaction.SingleTransaction;
 import io.github.divios.lib.dLib.dTransaction.Transactions;
+import io.github.divios.lib.dLib.shop.cashregister.MultiplePreconditions.SellPreconditions;
+import io.github.divios.lib.dLib.shop.cashregister.carts.Cart;
+import io.github.divios.lib.dLib.shop.cashregister.exceptions.IllegalPrecondition;
 import io.github.divios.lib.dLib.shop.dShop;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -51,14 +57,10 @@ public class sellCommand {
                         return;
                     }
 
-                    Transactions.Custom()
-                            .withType(SingleTransaction.Type.SELL)
-                            .withPlayer(player)
-                            .withShop(entry.getShop())
-                            .withItem(entry.getItem())
-                            .withAmount(itemToSell.getAmount())
-                            .withOnFail((dItem, transactionError) -> {})
-                            .execute();
+                    try {
+                        new CustomSellCart(entry.shop, player, entry.getItem(), itemToSell.getAmount());
+                    } catch (IllegalPrecondition ignored) {}
+
                 });
     }
 
@@ -74,14 +76,9 @@ public class sellCommand {
                         if (ItemUtils.isEmpty(itemToSell) || (entry = searchItem(itemToSell)) == null
                                 || entry.getItem().getSellPrice() <= 0) continue;
 
-                        Transactions.Custom()
-                                .withType(SingleTransaction.Type.SELL)
-                                .withPlayer(player)
-                                .withShop(entry.getShop())
-                                .withItem(entry.getItem())
-                                .withAmount(itemToSell.getAmount())
-                                .withOnFail((dItem, transactionError) -> {})
-                                .execute();
+                        try {
+                            new CustomSellCart(entry.shop, player, entry.getItem(), itemToSell.getAmount());
+                        } catch (IllegalPrecondition ignored) {}
                     }
                     Utils.sendRawMsg(player, "&7+-----------------------------+");
 
@@ -137,7 +134,46 @@ public class sellCommand {
         }
     }
 
-    public static class dragAndSellGui {
+    private static class CustomSellCart extends Cart {
+        private static final SellPreconditions conditions = new SellPreconditions();
+
+        public CustomSellCart(dShop shop, Player p, dItem item, int amount) {
+            super(shop, p, item);
+
+            conditions.validate(shop, p, item, amount);
+            checkOut(amount);
+        }
+
+        @Override
+        public void addToCart() {
+        }
+
+        @Override
+        public void confirmOperation() {
+        }
+
+        @Override
+        public void checkOut(int amount) {
+            conditions.validate(shop, p, item, amount);
+
+            double price = item.getPlayerFloorSellPrice(p, shop) * amount;
+            item.getEcon().depositMoney(p, price);
+
+            ItemUtils.remove(p.getInventory(), item.getItem(), amount);
+
+            Messages.MSG_BUY_ITEM.send(p,
+                    Template.of("action", Lang.SELL_ACTION_NAME.getAsString(p)),
+                    Template.of("item", ItemUtils.getName(item.getItem())),
+                    Template.of("amount", amount),
+                    Template.of("price", PrettyPrice.pretty(price)),
+                    Template.of("currency", item.getEcon().getName())
+            );
+
+            Events.callEvent(new checkoutEvent(shop, Transactions.Type.SELL, p, item, amount, price));
+        }
+    }
+
+    private static class dragAndSellGui {
 
         private final Player p;
         private final Inventory gui;
@@ -258,17 +294,13 @@ public class sellCommand {
                 if (ItemUtils.isEmpty(itemToSell)) return;
 
                 ItemEntry entry = searchItem(itemToSell);
-                Transactions.Custom()
-                        .withType(SingleTransaction.Type.SELL)
-                        .withPlayer(p)
-                        .withShop(entry.getShop())
-                        .withItem(entry.getItem())
-                        .withAmount(itemToSell.getAmount())
-                        //.withInventoryAction(false)
-                        .withOnFail((dItem, transactionError) -> {})
-                        .execute();
+                try {
+                    new CustomSellCart(entry.shop, p, entry.getItem(), itemToSell.getAmount());
+                } catch (IllegalPrecondition ignored) {}
             });
             Utils.sendRawMsg(p, "&7+-----------------------------+");
+
+            p.closeInventory();
         }
 
         private void givePlayerItemsBack() {

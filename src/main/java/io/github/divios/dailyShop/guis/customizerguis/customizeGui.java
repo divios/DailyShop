@@ -8,6 +8,7 @@ import io.github.divios.core_lib.misc.confirmIH;
 import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.files.Lang;
+import io.github.divios.dailyShop.guis.customizerguis.util.actions.*;
 import io.github.divios.dailyShop.guis.settings.shopsManagerGui;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.dItem;
@@ -29,15 +30,14 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.IntStream;
 
 public class customizeGui implements Listener, InventoryHolder {
 
     private static final DailyShop plugin = DailyShop.get();
 
+    private final ArrayDeque<Action> actions;
     private final Player p;
     private final dShop shop;
 
@@ -54,12 +54,13 @@ public class customizeGui implements Listener, InventoryHolder {
     private final Map<Integer, ItemStack> pItems = new LinkedHashMap<>();
 
     private customizeGui(Player p, dShop shop) {
+        this.actions = new ArrayDeque<>();
         this.p = p;
         this.shop = shop;
-        this.buttons = new HashMap<>(shop.getGui().getButtons());
+        this.buttons = new HashMap<>(shop.getView().getButtons());
 
-        this.title = shop.getGui().getTitle();
-        this.size = shop.getGui().size();
+        this.title = shop.getView().getTitle();
+        this.size = shop.getView().getSize();
 
         Schedulers.sync().runLater(() -> Bukkit.getPluginManager().registerEvents(this, plugin), 1L);
         withdrawPlayerItems();
@@ -272,14 +273,13 @@ public class customizeGui implements Listener, InventoryHolder {
     }
 
     private void applyChangesAction() {
-        shop.getGui().setTitle(title);
-        shop.getGui().setSize(size);
-        shop.getGui().setButtons(buttons);
+        actions.forEach(action -> action.execute(shop.getView()));
 
         unregisterAll();
         depositPlayerItems();
         shopsManagerGui.open(p);
         serializerApi.saveShopToFileAsync(shop);
+        DailyShop.get().getDatabaseManager().updateGuiAsync(shop.getName(), shop.getView());    // TODO
     }
 
     private void changeNameAction() {
@@ -289,6 +289,7 @@ public class customizeGui implements Listener, InventoryHolder {
                 .withTitle("&5&lInput New Title")
                 .withResponse(s -> {
                     title = Utils.JTEXT_PARSER.parse(s);
+                    actions.addLast(new TitleAction(title));
                     Schedulers.sync().run(this::refresh);
                 })
                 .withCancel(cancel -> Schedulers.sync().run(this::refresh))
@@ -300,6 +301,7 @@ public class customizeGui implements Listener, InventoryHolder {
 
         size = Math.max(9, (size - 9));
         buttons.entrySet().removeIf(entry -> entry.getKey() >= size);
+        actions.addLast(new RemoveRowsAction());
         refresh();
     }
 
@@ -307,6 +309,7 @@ public class customizeGui implements Listener, InventoryHolder {
         if (size == 54) return;
 
         size = Math.min(54, (size + 9));
+        actions.addLast(new AddRowsAction());
         refresh();
     }
 
@@ -324,6 +327,7 @@ public class customizeGui implements Listener, InventoryHolder {
                 && e.getClick().equals(ClickType.MIDDLE)) {     // paste clipboard
             inv.setItem(e.getSlot(), toClone.getItem());
             buttons.put(e.getSlot(), toClone.copy());
+            actions.addLast(new AddButton(e.getSlot(), buttons.get(e.getSlot())));
             refresh();
             return;
         }
@@ -338,6 +342,7 @@ public class customizeGui implements Listener, InventoryHolder {
             dItem air = dItem.AIR();
             inv.setItem(e.getSlot(), air.getItem());
             buttons.put(e.getSlot(), air);
+            actions.addLast(new AddButton(e.getSlot(), dItem.AIR()));
             refresh();
             return;
         }
@@ -350,6 +355,7 @@ public class customizeGui implements Listener, InventoryHolder {
                     .withAction(aBoolean -> {
                         inv.clear(e.getSlot());
                         buttons.remove(e.getSlot());
+                        actions.addLast(new RemoveAction(e.getSlot()));
                         refresh();
                     })
                     .withItem(e.getCurrentItem())
@@ -377,6 +383,7 @@ public class customizeGui implements Listener, InventoryHolder {
                 .withConsumer(itemS -> {
                     buttons.put(e.getSlot(), itemS);
                     inv.setItem(e.getSlot(), itemS.getItem());
+                    actions.addLast(new AddButton(e.getSlot(), itemS));
                     withdrawPlayerItems();
                     refresh();
                 })

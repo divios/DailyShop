@@ -128,7 +128,7 @@ public abstract class abstractConfirmMenu {
     }
 
     private void createMiscButtons() {
-        createConfirmButton();
+        if (nAddedItems > 0) createConfirmButton();
         createFallbackButton();
         createSetMaxButton();
         createItemDisplayButton();

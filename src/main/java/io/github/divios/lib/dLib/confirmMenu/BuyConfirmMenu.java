@@ -36,9 +36,10 @@ public class BuyConfirmMenu extends abstractConfirmMenu {
 
     @Override
     protected int initialQuantity() {
-        return item.getEcon().hasMoney(player, item.getPlayerBuyPrice(player, shop))
-                ? item.getItem().getAmount()
-                : 1;
+        int amount;
+        return ((amount = item.getItem().getAmount()) == 1)
+                ? 0
+                : amount;
     }
 
     @Override
@@ -48,7 +49,7 @@ public class BuyConfirmMenu extends abstractConfirmMenu {
 
     @Override
     protected boolean removeConditions(int quantity) {
-        return nAddedItems - 1 >= quantity;
+        return nAddedItems >= quantity;
     }
 
     @Override

@@ -41,7 +41,7 @@ public class CustomItemFactory {
             }
         }
 
-        return Objects.requireNonNull(json, "Couldn't find a strategy to serialize item");
+        return Objects.requireNonNull(json, "Couldn't find a strategy to serialize custom item");
     }
 
     public static boolean isCustomItem(ItemStack item) {
