@@ -3,7 +3,6 @@ package io.github.divios.lib.serialize.adapters;
 import com.google.common.base.Preconditions;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.*;
-import io.github.divios.core_lib.gson.JsonBuilder;
 import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.files.Settings;
 import io.github.divios.dailyShop.utils.DebugLog;
@@ -20,12 +19,12 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 @SuppressWarnings({"unused", "UnstableApiUsage", "UnusedReturnValue"})
-public class dShopAdapter implements JsonSerializer<dShopState>, JsonDeserializer<dShopState> {
+public class dShopStateAdapter implements JsonSerializer<dShopState>, JsonDeserializer<dShopState> {
 
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss");
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(dItem.class, new dItemAdapter())
-            .registerTypeAdapter(ShopViewState.class, new ShopGuiAdapter())
+            .registerTypeAdapter(ShopViewState.class, new ShopViewStateAdapter())
             .create();
 
     private static final TypeToken<LinkedHashMap<String, JsonElement>> diItemsToken = new TypeToken<LinkedHashMap<String, JsonElement>>() {

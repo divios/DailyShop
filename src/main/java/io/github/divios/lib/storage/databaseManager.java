@@ -13,7 +13,6 @@ import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dTransaction.Transactions;
 import io.github.divios.lib.dLib.registry.RecordBookEntry;
 import io.github.divios.lib.dLib.shop.ShopAccount;
-import io.github.divios.lib.dLib.shop.ShopGui;
 import io.github.divios.lib.dLib.shop.dShop;
 import io.github.divios.lib.dLib.shop.view.ShopView;
 import io.github.divios.lib.dLib.shop.view.ShopViewFactory;
@@ -123,7 +122,7 @@ public class databaseManager extends DataManagerAbstract {
                 statement.setString(1, shop.getName());
                 if (shop.getAccount() != null)
                     statement.setString(2, shop.getAccount().toJson().toString());
-                statement.setString(3, ShopViewFactory.toJson(shop.getGui()).toString());
+                statement.setString(3, ShopViewFactory.toJson(shop.getView()).toString());
                 statement.setString(4, timeStampUtils.serialize(shop.getTimestamp()));
                 statement.setInt(5, shop.getTimer());
                 statement.executeUpdate();

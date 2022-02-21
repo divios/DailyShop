@@ -17,7 +17,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @SuppressWarnings({"unused", "UnstableApiUsage", "UnusedReturnValue"})
-public class ShopGuiAdapter implements JsonSerializer<ShopViewState>, JsonDeserializer<ShopViewState> {
+public class ShopViewStateAdapter implements JsonSerializer<ShopViewState>, JsonDeserializer<ShopViewState> {
 
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(dItem.class, new dButtonAdapter())

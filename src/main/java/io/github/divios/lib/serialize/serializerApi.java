@@ -6,11 +6,12 @@ import com.google.gson.GsonBuilder;
 import io.github.divios.core_lib.cache.Lazy;
 import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
+import io.github.divios.dailyShop.utils.DebugLog;
 import io.github.divios.dailyShop.utils.FileUtils;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.shop.dShop;
 import io.github.divios.lib.dLib.shop.dShopState;
-import io.github.divios.lib.serialize.adapters.dShopAdapter;
+import io.github.divios.lib.serialize.adapters.dShopStateAdapter;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
@@ -28,13 +29,16 @@ public class serializerApi {
     protected static final ExecutorService asyncPool = Executors.newSingleThreadExecutor();
 
     private static final Gson gson = new GsonBuilder()
-            .registerTypeAdapter(dShopState.class, new dShopAdapter())
+            .registerTypeAdapter(dShopState.class, new dShopStateAdapter())
             .create();
 
     public static void saveShopToFile(dShop shop) {
         try {
             File data = new File(shopsFolder.get(), shop.getName() + ".yml");
+            DebugLog.info("waaaa");
+            gson.toJsonTree(shop.toState());
             FileUtils.dumpToYaml(gson.toJsonTree(shop.toState()), data);
+            DebugLog.info("waaaa1");
         } catch (Exception e) {
             Log.info("There was a problem saving the shop " + shop.getName());
             // e.printStackTrace();

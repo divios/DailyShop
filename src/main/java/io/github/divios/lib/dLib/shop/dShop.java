@@ -340,16 +340,6 @@ public class dShop implements Listener {
         return true;
     }
 
-    public void updateShopGui(ShopGui inv) {
-        updateShopGui(inv, false);
-    }
-
-    public void updateShopGui(ShopGui newGui, boolean isSilent) {
-        /*gui.setTitle(newGui.getTitle());
-        gui.setSize(newGui.size());
-        gui.setButtons(newGui.getButtons()); */
-    }
-
     @EventHandler
     public void computeBill(checkoutEvent e) {
         if (!Objects.equals(e.getShop(), this)) return;
@@ -392,7 +382,7 @@ public class dShop implements Listener {
     /**
      * Return the dGui of this shop
      */
-    public ShopView getGui() {
+    public ShopView getView() {
         return gui;
     }
 

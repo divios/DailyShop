@@ -38,14 +38,14 @@ public class shopsManager {
 
     private void updateShops() {
         shops.values().forEach(shop -> {
-            dManager.updateGui(shop.getName(), shop.getGui());
+            dManager.updateGui(shop.getName(), shop.getView());
             dManager.updateAccount(shop.getName(), shop.getAccount());
         });
     }
 
     private void updateShopsAsync() {
         shops.values().forEach(shop -> {
-            dManager.updateGuiAsync(shop.getName(), shop.getGui());
+            dManager.updateGuiAsync(shop.getName(), shop.getView());
             dManager.updateAccountAsync(shop.getName(), shop.getAccount());
         });
     }
@@ -159,7 +159,7 @@ public class shopsManager {
 
     public void saveAllShopsToDatabase() {
         shops.values().forEach(shop -> {
-            dManager.updateGui(shop.getName(), shop.getGui());
+            dManager.updateGui(shop.getName(), shop.getView());
             dManager.updateAccount(shop.getName(), shop.getAccount());
         });
     }
