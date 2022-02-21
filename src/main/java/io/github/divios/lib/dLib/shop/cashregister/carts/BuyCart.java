@@ -14,6 +14,7 @@ import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dTransaction.Transactions;
 import io.github.divios.lib.dLib.shop.cashregister.MultiplePreconditions.BuyPostconditions;
 import io.github.divios.lib.dLib.shop.cashregister.MultiplePreconditions.BuyPreconditions;
+import io.github.divios.lib.dLib.shop.cashregister.exceptions.IllegalPrecondition;
 import io.github.divios.lib.dLib.shop.dShop;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -59,7 +60,9 @@ public class BuyCart extends Cart {
         long start = System.currentTimeMillis();
         this.amount = amount;
 
-        postConditions.validate(shop, p, item, amount);
+        if (!validatePostConditions())
+            return;
+
         price = item.getPlayerFloorBuyPrice(p, shop) * amount;
 
         item.getEcon().witchDrawMoney(p, price);
@@ -78,6 +81,17 @@ public class BuyCart extends Cart {
         Events.callEvent(new checkoutEvent(shop, Transactions.Type.BUY, p, item, amount, price));
 
         shop.openShop(p);
+    }
+
+    private boolean validatePostConditions() {
+        try {
+            postConditions.validate(shop, p, item, amount);
+        } catch (IllegalPrecondition err) {
+            err.sendErrMsg(p);
+            p.closeInventory();
+            return false;
+        }
+        return true;
     }
 
     private void executeAction() {

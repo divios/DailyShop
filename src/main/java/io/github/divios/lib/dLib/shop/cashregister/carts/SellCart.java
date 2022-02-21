@@ -11,11 +11,9 @@ import io.github.divios.lib.dLib.confirmMenu.SellConfirmMenu;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dTransaction.Transactions;
 import io.github.divios.lib.dLib.shop.cashregister.MultiplePreconditions.SellPreconditions;
+import io.github.divios.lib.dLib.shop.cashregister.exceptions.IllegalPrecondition;
 import io.github.divios.lib.dLib.shop.dShop;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
-
-import java.util.Iterator;
 
 public class SellCart extends Cart {
 
@@ -48,7 +46,8 @@ public class SellCart extends Cart {
 
     @Override
     public void checkOut(int amount) {
-        conditions.validate(shop, p, item, amount);
+        if (!validatePostConditions(amount))
+            return;
 
         double price = item.getPlayerFloorSellPrice(p, shop) * amount;
         item.getEcon().depositMoney(p, price);
@@ -66,4 +65,16 @@ public class SellCart extends Cart {
 
         shop.openShop(p);
     }
+
+    private boolean validatePostConditions(int amount) {
+        try {
+            conditions.validate(shop, p, item, amount);
+        } catch (IllegalPrecondition err) {
+            p.closeInventory();
+            err.sendErrMsg(p);
+            return false;
+        }
+        return true;
+    }
+
 }
