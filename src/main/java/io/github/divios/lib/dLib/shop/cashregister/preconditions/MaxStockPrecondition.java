@@ -11,7 +11,7 @@ public class MaxStockPrecondition implements Precondition {
     @Override
     public void validate(dShop shop, Player p, dItem item, int quantity) {
         if (item.hasStock() && (!item.getDStock().allowSellOnMax()
-                && (item.getPlayerStock(p) + quantity) >= item.getDStock().getMaximum())) {
+                && (item.getPlayerStock(p) + quantity) > item.getDStock().getMaximum())) {
             throw new IllegalPrecondition(Messages.MSG_FULL_STOCK);
         }
     }
