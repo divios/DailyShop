@@ -256,7 +256,7 @@ public class dShop implements Listener {
 
         long start = System.currentTimeMillis();
 
-        Queue<dItem> rolledItems = RandomItemSelector.roll(items.values(),
+        Queue<dItem> rolledItems = RandomItemSelector.roll(getItems(),
                 (gui.getSize()) - gui.getButtons().size());
         gui.setDailyItems(rolledItems);
         currentItems = gui.getDailyItems();
