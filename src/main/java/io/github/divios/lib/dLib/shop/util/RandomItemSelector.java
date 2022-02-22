@@ -4,6 +4,7 @@ import io.github.divios.lib.dLib.dItem;
 
 import java.util.*;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class RandomItemSelector {
 
@@ -12,11 +13,12 @@ public class RandomItemSelector {
                     && item.getRarity().getWeight() != 0;
 
     public static Queue<dItem> roll(Collection<dItem> items) {
-        return roll(items, 54);         // 54 is the maximum amount in an inventory
+        return roll(items, 54);         // 54 is the maximum amount for a chest inventory
     }
 
     public static Queue<dItem> roll(Collection<dItem> items, int times) {
         Queue<dItem> itemQueue = new ArrayDeque<>(20);
+        itemQueue.addAll(removeStaticItems(items));
 
         RandomItemSelector selector = new RandomItemSelector(items);
         for (int i = 0; i < times; i++) {
@@ -28,6 +30,20 @@ public class RandomItemSelector {
         }
 
         return itemQueue;
+    }
+
+    private static Collection<dItem> removeStaticItems(Collection<dItem> items) {
+        Map<Integer, dItem> collectedItems = new HashMap<>(items.size() / 2);
+
+        for (Iterator<dItem> iterator = items.iterator(); iterator.hasNext(); ) {
+            dItem item = iterator.next();
+            if (!item.isStaticSlot()) continue;
+
+            collectedItems.put(item.getSlot(), item);
+            iterator.remove();
+        }
+
+        return collectedItems.values();
     }
 
     private double total;

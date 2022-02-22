@@ -92,14 +92,29 @@ public class ShopView {
     public void setDailyItems(Queue<dItem> dailyItems) {
         clearDailyItems();
 
+        removeStaticItems(dailyItems).forEach(dItem -> setDailyItem(dItem.getSlot(), dItem));
+
         for (int index = 0; index < gui.getSize(); index++) {
-            if (buttons.containsKey(index)) continue;
+            if (buttons.containsKey(index) || dailyItemsMap.contains(index)) continue;
 
             dItem item;
             if ((item = dailyItems.poll()) == null) break;     // dailyItems is empty
 
             setDailyItem(index, item);
         }
+    }
+
+    private Collection<dItem> removeStaticItems(Collection<dItem> items) {
+        Set<dItem> staticItems = new HashSet<>();
+        for (Iterator<dItem> iterator = items.iterator(); iterator.hasNext(); ) {
+            dItem item = iterator.next();
+            if (!item.isStaticSlot()) continue;
+
+            iterator.remove();
+            staticItems.add(item);
+        }
+
+        return staticItems;
     }
 
     void setDailyItem(int slot, dItem item) {
@@ -142,14 +157,8 @@ public class ShopView {
         }
     }
 
-    public void incrementRows(int rows) {
-        Validate.isTrue(rows >= 0, "N times cannot be less than 0. Got " + rows);
-        if (getSize() == 54) return;
-
-        int newSize = Math.min(54, getSize() + (rows * 9));
-
+    private void setGui(ButtonGui newGui) {
         List<HumanEntity> viewers = gui.getViewers();
-        ButtonGui newGui = GuiButtonFactory.createMultiGui(getTitle(), newSize);
 
         gui.destroy();
         gui = newGui;
@@ -157,39 +166,38 @@ public class ShopView {
         update();
         viewers.forEach(player -> newGui.open((Player) player));
     }
+
+    public void incrementRows(int rows) {
+        Validate.isTrue(rows >= 0, "N times cannot be less than 0. Got " + rows);
+        if (getSize() == 54) return;
+
+        int newSize = Math.min(54, getSize() + (rows * 9));
+        setGui(GuiButtonFactory.createMultiGui(getTitle(), newSize));
+    }
+
 
     public void decrementRows(int rows) {
         Validate.isTrue(rows >= 0, "N times cannot be less than 0. Got " + rows);
         if (getSize() == 9) return;
 
         int newSize = Math.max(9, getSize() - (rows * 9));
-        List<HumanEntity> viewers = gui.getViewers();
         ButtonGui newGui = GuiButtonFactory.createMultiGui(getTitle(), newSize);
-
-        gui.destroy();
-        gui = newGui;
 
         // Removed buttons/dailyItems out of newInv bounds
         buttons.entrySet().removeIf(entry -> entry.getKey() >= newSize);
         dailyItemsMap.removeIf(dItem -> dItem.getSlot() >= newSize);
 
-        update();
-        viewers.forEach(player -> newGui.open((Player) player));
+        setGui(newGui);
     }
 
     public void setState(ShopViewState state) {
-        List<HumanEntity> viewers = gui.getViewers();
         ButtonGui newGui = GuiButtonFactory.createMultiGui(state.getTitle(), state.getSize());
-
-        gui.destroy();
-        gui = newGui;
 
         dailyItemsMap.removeIf(dItem -> dItem.getSlot() >= getSize());
         buttons.clear();
-        state.getButtons().forEach(this::setPaneItem);
 
-        update();
-        viewers.forEach(humanEntity -> gui.open((Player) humanEntity));
+        setGui(newGui);
+        state.getButtons().forEach(this::setPaneItem);
     }
 
     private void update() {
