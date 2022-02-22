@@ -107,7 +107,7 @@ public class BuyConfirmMenu extends abstractConfirmMenu {
     }
 
     private int getStockLimit() {
-        return ((item.getDStock() != null) ? getItemStock() : MAX_INVENTORY_ITEMS) - nAddedItems;
+        return item.getPlayerStock(player) - nAddedItems;
     }
 
     private int getBalanceLimit() {
@@ -149,10 +149,6 @@ public class BuyConfirmMenu extends abstractConfirmMenu {
         int limit = (int) Math.floor((max - shop.getAccount().getBalance()) / floorPrice);
 
         return Math.max(0, (limit - nAddedItems));
-    }
-
-    private int getItemStock() {
-        return item.getPlayerStock(player);
     }
 
     public static final class buyConfirmMenuBuilder {

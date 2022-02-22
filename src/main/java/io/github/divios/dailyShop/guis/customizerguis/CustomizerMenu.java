@@ -458,7 +458,7 @@ public class CustomizerMenu {
         dStock stock = item.getDStock();
         inv.addButton(                                                  // Stock
                 ItemButton.create(
-                        stock != null ?
+                        item.hasStock() ?
                                 ItemBuilder.of(XMaterial.STONE_BUTTON)  //Change stock
                                         .setName(Lang.CUSTOMIZE_STOCK_NAME.getAsString(p))
                                         .setLore(Lang.CUSTOMIZE_STOCK_LORE_ON.getAsListString(p,
@@ -502,7 +502,7 @@ public class CustomizerMenu {
                                         .prompt();
 
                             } else if (e.isRightClick()) {
-                                item.setStock(null);
+                                item.setStock(dStockFactory.INFINITE());
                                 refresh();
                             }
                         }

@@ -36,7 +36,7 @@ public class shopItemsManagerLore {
                 )
                 .addLore("");
 
-        if (item.getDStock() != null)                                   // Stock lore
+        if (item.hasStock())                                   // Stock lore
             toReturn = ItemUtils
                     .addLore(toReturn,
                             Lang.DAILY_ITEMS_STOCK.getAsString() +

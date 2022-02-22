@@ -59,7 +59,8 @@ public class dShop implements Listener {
 
     protected Set<Task> tasks = new HashSet<>();
 
-    protected dShop() {}
+    protected dShop() {
+    }
 
     public dShop(String name) {
         this(name, Settings.DEFAULT_TIMER.getValue().getAsInt());
@@ -229,7 +230,7 @@ public class dShop implements Listener {
      */
     public dStock getStockForItem(String id) {
         dItem itemToSearch = currentItems.get(id);
-        if (itemToSearch == null || itemToSearch.getDStock() == null) return null;
+        if (itemToSearch == null || !itemToSearch.hasStock()) return null;
 
         return itemToSearch.getDStock();
     }
@@ -355,16 +356,15 @@ public class dShop implements Listener {
 
         dItem shopItem = currentItems.get(e.getItem().getID());
 
-        if (shopItem.getDStock() != null)           // compute stock
-            currentItems.computeIfPresent(shopItem.getID(), (s1, dItem) -> {
-                if (e.getType() == Transactions.Type.BUY)
-                    dItem.decrementStock(e.getPlayer(), e.getAmount());
+        currentItems.computeIfPresent(shopItem.getID(), (s1, dItem) -> {        // compute stock
+            if (e.getType() == Transactions.Type.BUY)
+                dItem.decrementStock(e.getPlayer(), e.getAmount());
 
-                else if (e.getType() == Transactions.Type.SELL && dItem.getDStock().incrementsOnSell())
-                    dItem.incrementStock(e.getPlayer(), e.getAmount());
+            else if (e.getType() == Transactions.Type.SELL && dItem.getDStock().incrementsOnSell())
+                dItem.incrementStock(e.getPlayer(), e.getAmount());
 
-                return dItem;
-            });
+            return dItem;
+        });
 
         RecordBook.registerEntry(                       // Log bill on database
                 RecordBookEntry.createEntry()

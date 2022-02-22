@@ -10,8 +10,6 @@ public class EnoughStockCondition implements Precondition {
 
     @Override
     public void validate(dShop shop, Player p, dItem item, int quantity) {
-        if (item.getDStock() == null) return;
-
         int stock;
         if ((stock = shop.getStockForItem(item.getID()).get(p)) <= 0 || (stock < quantity))
             throw new IllegalPrecondition(Messages.MSG_NOT_STOCK);

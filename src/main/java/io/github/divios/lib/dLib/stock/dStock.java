@@ -31,6 +31,10 @@ public abstract class dStock implements Cloneable, Serializable {
         JsonObject object = element.getAsJsonObject();
 
         Preconditions.checkNotNull(object.get("type"), "There needs to be a type");
+
+        if (Objects.equals(object.get("type").getAsString(), "Infinite"))
+            return dStockFactory.INFINITE();
+
         Preconditions.checkNotNull(object.get("defaultStock"), "No default stock");
         Preconditions.checkNotNull(object.get("stocks"), "No stocks");
 
@@ -189,6 +193,7 @@ public abstract class dStock implements Cloneable, Serializable {
     @Override
     public String toString() {
         return "dStock{" +
+                "type=" + getName() +
                 "defaultStock=" + defaultStock +
                 ", maxStock=" + maxStock +
                 ", incrementOnSell=" + incrementOnSell +

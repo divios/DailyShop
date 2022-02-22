@@ -19,6 +19,7 @@ import io.github.divios.dailyShop.utils.valuegenerators.ValueGenerator;
 import io.github.divios.lib.dLib.priceModifiers.priceModifier;
 import io.github.divios.lib.dLib.shop.dShop;
 import io.github.divios.lib.dLib.stock.dStock;
+import io.github.divios.lib.dLib.stock.factory.dStockFactory;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -59,7 +60,7 @@ public class dItem implements Cloneable {
     private String ID;
     private ItemStack item;
     private int slot = -1;
-    private dStock stock;
+    private dStock stock = dStockFactory.INFINITE();        // Infinite by default
     private dPrice buyPrice;
     private dPrice sellPrice;
     private Economy econ = Economies.vault.getEconomy();
@@ -212,37 +213,32 @@ public class dItem implements Cloneable {
         return slot;
     }
 
-    @Nullable
     public dStock getDStock() {
-        return stock == null ? null : stock.clone();
+        return stock.clone();
     }
 
     public boolean hasStock() {
-        return stock != null;
+        return !stock.getName().equals("Infinite");
     }
 
     public void incrementStock(@NotNull Player p, int amount) {
-        if (stock != null)
-            stock.increment(p, amount);
+        stock.increment(p, amount);
     }
 
     public void incrementStock(@NotNull UUID uuid, int amount) {
-        if (stock != null)
-            stock.increment(uuid, amount);
+        stock.increment(uuid, amount);
     }
 
     public void decrementStock(@NotNull Player p, int amount) {
-        if (stock != null)
-            stock.decrement(p, amount);
+        stock.decrement(p, amount);
     }
 
     public void decrementStock(@NotNull UUID uuid, int amount) {
-        if (stock != null)
-            stock.decrement(uuid, amount);
+        stock.decrement(uuid, amount);
     }
 
     public int getPlayerStock(Player p) {
-        return stock == null ? -1 : stock.get(p);
+        return stock.get(p);
     }
 
     @Nullable
@@ -446,8 +442,8 @@ public class dItem implements Cloneable {
         return this;
     }
 
-    public dItem setStock(@Nullable dStock stock) {
-        this.stock = stock == null ? null : stock.clone();
+    public dItem setStock(@NotNull dStock stock) {
+        this.stock = stock.clone();
 
         return this;
     }

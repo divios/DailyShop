@@ -15,6 +15,8 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+
 public class shopItemsLore {
 
     private shopItemsLore() {
@@ -24,23 +26,31 @@ public class shopItemsLore {
     public static ItemStack applyLore(@NotNull dItem item, @Nullable Player p, @Nullable dShop shop) {
         ItemStack toReturn = item.getItemWithId();
 
-        Lang lore = Lang.SHOPS_ITEMS_LORE;
-
-        dStock stock = null;
-        if (p != null && (stock = item.getDStock()) != null)
-            lore = Lang.SHOPS_ITEMS_STOCK_LORE;
-
         return new ItemBuilder(toReturn)
-                .addLore(lore.getAsListString(p,
-                                Template.of("stock", (stock == null)
-                                        ? XSymbols.TIMES_3.parseSymbol()
-                                        : getStockForPlayer(stock, p)),
-                                Template.of("buyPrice", getItemBuyPrice(item, p, shop)),
-                                Template.of("sellPrice", getItemSellPrice(item, p, shop)),
-                                Template.of("currency", item.getEcon().getName()),
-                                Template.of("rarity", item.getRarity().toString())
-                        )
+                .addLore(
+                        (p != null && item.hasStock())
+                                ? getStockLore(shop, p, item, Lang.SHOPS_ITEMS_STOCK_LORE)
+                                : getNormalLore(shop, p, item, Lang.SHOPS_ITEMS_LORE)
                 );
+    }
+
+    private static List<String> getNormalLore(dShop shop, Player p, dItem item, Lang lore) {
+        return lore.getAsListString(p,
+                Template.of("buyPrice", getItemBuyPrice(item, p, shop)),
+                Template.of("sellPrice", getItemSellPrice(item, p, shop)),
+                Template.of("currency", item.getEcon().getName()),
+                Template.of("rarity", item.getRarity().toString())
+        );
+    }
+
+    private static List<String> getStockLore(dShop shop, Player p, dItem item, Lang lore) {
+        return lore.getAsListString(p,
+                Template.of("stock", getStockForPlayer(item.getDStock(), p)),
+                Template.of("buyPrice", getItemBuyPrice(item, p, shop)),
+                Template.of("sellPrice", getItemSellPrice(item, p, shop)),
+                Template.of("currency", item.getEcon().getName()),
+                Template.of("rarity", item.getRarity().toString())
+        );
     }
 
     private static String getStockForPlayer(dStock stock, Player p) {
