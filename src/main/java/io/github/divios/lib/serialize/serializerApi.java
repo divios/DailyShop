@@ -9,12 +9,16 @@ import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.utils.DebugLog;
 import io.github.divios.dailyShop.utils.FileUtils;
 import io.github.divios.dailyShop.utils.Utils;
+import io.github.divios.dailyShop.utils.cache.Cache;
+import io.github.divios.dailyShop.utils.cache.CacheBuilder;
+import io.github.divios.dailyShop.utils.cache.RemovalCause;
 import io.github.divios.lib.dLib.shop.dShop;
 import io.github.divios.lib.dLib.shop.dShopState;
 import io.github.divios.lib.serialize.adapters.dShopStateAdapter;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -27,6 +31,15 @@ public class serializerApi {
     private static final Lazy<File> shopsFolder = Lazy.suppliedBy(() -> new File(plugin.getDataFolder(), "shops"));
 
     protected static final ExecutorService asyncPool = Executors.newSingleThreadExecutor();
+
+    protected static final Cache<dShop, Runnable> cache = new CacheBuilder<dShop, Runnable>()
+            .expireAfter(2, TimeUnit.SECONDS)
+            .removalListener(event -> {
+                if (event.getCause() == RemovalCause.REPLACED) return;
+                event.getValue().run();
+            })
+            .build();
+
 
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(dShopState.class, new dShopStateAdapter())
@@ -46,15 +59,15 @@ public class serializerApi {
         //Log.info("Converted all items correctly of shop " + shop.getName());
     }
 
+    public static void saveShopToFileAsync(dShop shop) {
+        System.out.println("serialize async");
+        cache.put(shop, () -> asyncPool.submit(() -> saveShopToFile(shop)));
+    }
+
     public static dShopState getShopFromFile(File data) {
         Objects.requireNonNull(data, "data cannot be null");
         Preconditions.checkArgument(data.exists(), "The file does not exist");
         return gson.fromJson(Utils.getJsonFromFile(data), dShopState.class);
-    }
-
-    public static void saveShopToFileAsync(dShop shop) {
-        System.out.println("serialize async");
-        asyncPool.submit(() -> saveShopToFile(shop));
     }
 
     public static Future<dShopState> getShopFromFileAsync(File data) {
@@ -78,6 +91,7 @@ public class serializerApi {
     }
 
     public static void stop() {
+        cache.cleanUp();
         asyncPool.shutdown();
         try {
             asyncPool.awaitTermination(3, TimeUnit.SECONDS);
@@ -85,5 +99,6 @@ public class serializerApi {
             e.printStackTrace();
         }
     }
+
 
 }
