@@ -40,6 +40,22 @@ class dStockInfinite extends dStock {
     }
 
     @Override
+    public void set(@NotNull UUID p, int stock) {
+    }
+
+    @Override
+    public void increment(@NotNull UUID p, int amount) {
+    }
+
+    @Override
+    public void decrement(@NotNull UUID p, int amount) {
+    }
+
+    @Override
+    public void reset(@NotNull UUID p) {
+    }
+
+    @Override
     public boolean isSimilar(@NotNull dStock stock) {
         return Objects.equals(getName(), stock.getName());
     }

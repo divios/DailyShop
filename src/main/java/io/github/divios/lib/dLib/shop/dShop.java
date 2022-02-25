@@ -230,7 +230,7 @@ public class dShop implements Listener {
      */
     public dStock getStockForItem(String id) {
         dItem itemToSearch = currentItems.get(id);
-        if (itemToSearch == null || !itemToSearch.hasStock()) return null;
+        if (itemToSearch == null) return null;
 
         return itemToSearch.getDStock();
     }
