@@ -37,7 +37,7 @@ public class serializerApi {
             File data = new File(shopsFolder.get(), shop.getName() + ".yml");
             DebugLog.info("waaaa");
             gson.toJsonTree(shop.toState());
-            FileUtils.dumpToYaml(gson.toJsonTree(shop.toState()), data);
+            FileUtils.dumpToYaml(gson.toJsonTree(shop.toState(), dShopState.class), data);
             DebugLog.info("waaaa1");
         } catch (Exception e) {
             Log.info("There was a problem saving the shop " + shop.getName());
