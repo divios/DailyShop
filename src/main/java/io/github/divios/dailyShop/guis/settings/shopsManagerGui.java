@@ -1,7 +1,6 @@
 package io.github.divios.dailyShop.guis.settings;
 
 import com.cryptomorin.xseries.XMaterial;
-import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.core_lib.inventory.ItemButton;
 import io.github.divios.core_lib.inventory.builder.inventoryPopulator;
 import io.github.divios.core_lib.inventory.builder.paginatedGui;
@@ -10,6 +9,7 @@ import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.ChatPrompt;
 import io.github.divios.core_lib.misc.Msg;
 import io.github.divios.core_lib.misc.confirmIH;
+import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.lorestategy.loreStrategy;
 import io.github.divios.dailyShop.lorestategy.shopsManagerLore;
@@ -96,21 +96,12 @@ public class shopsManagerGui {
 
                     inventoryGUI.addButton(
 
-                            shopsManager.getInstance().getShops().size() >= 1 ?
-
-                                    ItemButton.create(
-                                            ItemBuilder.of(XMaterial.RED_STAINED_GLASS_PANE)
-                                                    .setName("&cUnavailable")
-                                                    .addLore("&7The free version", "&7is limited to", "&7only one shop")
-                                            , e -> {
-                                            })
-                                    :
-                                    ItemButton.create(
-                                            ItemBuilder.of(XMaterial.PLAYER_HEAD)
-                                                    .setName(plugin.configM.getLangYml().SHOPS_MANAGER_CREATE)
-                                                    .addLore(plugin.configM.getLangYml().SHOPS_MANAGER_CREATE_LORE)
-                                                    .applyTexture("9b425aa3d94618a87dac9c94f377af6ca4984c07579674fad917f602b7bf235")
-                                            , e -> nonContentAction()),
+                            ItemButton.create(
+                                    ItemBuilder.of(XMaterial.PLAYER_HEAD)
+                                            .setName(plugin.configM.getLangYml().SHOPS_MANAGER_CREATE)
+                                            .addLore(plugin.configM.getLangYml().SHOPS_MANAGER_CREATE_LORE)
+                                            .applyTexture("9b425aa3d94618a87dac9c94f377af6ca4984c07579674fad917f602b7bf235")
+                                    , e -> nonContentAction()),
                             53);
                 })
 
@@ -280,6 +271,7 @@ public class shopsManagerGui {
     }
 
     static List<Integer> itemSlots = null;
+
     private void updateTask() {
 
         Schedulers.builder()
