@@ -3,8 +3,6 @@ package io.github.divios.dailyShop.guis.customizerguis.util.actions;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.shop.view.ShopView;
 
-import javax.swing.*;
-
 public class AddButton implements Action {
 
     private final int slot;

@@ -21,7 +21,6 @@ import io.github.divios.dailyShop.utils.valuegenerators.FixedValueGenerator;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.shop.dShop;
 import io.github.divios.lib.managers.shopsManager;
-import io.github.divios.lib.serialize.serializerApi;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
@@ -154,7 +153,6 @@ public class shopsItemsManagerGui {
                                                     .setBuyPrice(new FixedValueGenerator(Settings.DEFAULT_BUY.getValue().getAsDouble()))
                                                     .setSellPrice(new FixedValueGenerator(Settings.DEFAULT_SELL.getValue().getAsDouble()))
                                             );
-                                            serializerApi.saveShopToFileAsync(shop);
                                             refresh();
                                         }, this::refresh)), 53)
                 )
@@ -199,7 +197,6 @@ public class shopsItemsManagerGui {
                     .withAction(aBoolean -> {
                         if (aBoolean) {
                             shop.removeItem(uid);
-                            serializerApi.saveShopToFileAsync(shop);
                         }
                         Schedulers.sync().runLater(() -> inv.destroy(), 3L);
                         open(p, shop);

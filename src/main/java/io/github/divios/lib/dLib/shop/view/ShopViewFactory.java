@@ -60,16 +60,16 @@ public class ShopViewFactory {
         HashMap<UUID, dItem> buttons = new HashMap<>();
         Set<Integer> dailyItemsSlots = new HashSet<>();
 
-        gui.buttons.values().forEach(dItem -> buttons.put(dItem.getUUID(), dItem));
+        gui.getButtons().values().forEach(dItem -> buttons.put(dItem.getUUID(), dItem));
 
-        gui.dailyItemsMap.forEach(dItem -> {
+        gui.getDailyItems().values().forEach(dItem -> {
             dailyItemsSlots.add(dItem.getSlot());
             buttons.put(dItem.getUUID(), dItem);
         });
 
         return JsonBuilder.object()
-                .add("title", gui.gui.getTitle())
-                .add("inventory", inventoryUtils.toJson(gui.gui.getTitle(), Bukkit.createInventory(null, gui.gui.getSize())))
+                .add("title", gui.getTitle())
+                .add("inventory", inventoryUtils.toJson(gui.getTitle(), Bukkit.createInventory(null, gui.getSize())))
                 .add("dailySlots", gson.toJsonTree(dailyItemsSlots, dailySlotsToken.getType()))
                 .add("buttons", gson.toJsonTree(buttons, buttonsToken.getType()))
                 .build();

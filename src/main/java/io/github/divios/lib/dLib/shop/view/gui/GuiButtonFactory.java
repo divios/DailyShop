@@ -1,7 +1,5 @@
 package io.github.divios.lib.dLib.shop.view.gui;
 
-import com.google.gson.JsonElement;
-import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.dailyShop.utils.Utils;
 import org.bukkit.Bukkit;
 

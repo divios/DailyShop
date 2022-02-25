@@ -13,7 +13,6 @@ import io.github.divios.dailyShop.guis.settings.shopsManagerGui;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.shop.dShop;
-import io.github.divios.lib.serialize.serializerApi;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -30,7 +29,10 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.stream.IntStream;
 
 public class customizeGui implements Listener, InventoryHolder {
@@ -278,8 +280,6 @@ public class customizeGui implements Listener, InventoryHolder {
         unregisterAll();
         depositPlayerItems();
         shopsManagerGui.open(p);
-        serializerApi.saveShopToFileAsync(shop);
-        DailyShop.get().getDatabaseManager().updateGuiAsync(shop.getName(), shop.getView());    // TODO
     }
 
     private void changeNameAction() {

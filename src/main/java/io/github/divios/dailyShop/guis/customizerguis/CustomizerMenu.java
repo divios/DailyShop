@@ -24,8 +24,6 @@ import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.shop.dShop;
 import io.github.divios.lib.dLib.stock.dStock;
 import io.github.divios.lib.dLib.stock.factory.dStockFactory;
-import io.github.divios.lib.managers.WrappedShop;
-import io.github.divios.lib.serialize.serializerApi;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemFlag;
@@ -109,7 +107,6 @@ public class CustomizerMenu {
                                 shop.addItem(item);
                             }
                             shopsItemsManagerGui.open(p, shop.getName());
-                            serializerApi.saveShopToFileAsync(shop);
                         }),
                 7
         );

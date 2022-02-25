@@ -29,7 +29,7 @@ public class shopsManager {
     private void initialise() {
         Log.info("Importing database data...");
         Timer timer = Timer.create();
-        dManager.getShops().forEach(shop -> shops.put(shop.getName().toLowerCase(), shop));
+        dManager.getShops().forEach(shop -> shops.put(shop.getName().toLowerCase(), WrappedShop.wrap(shop)));
         timer.stop();
         Log.info("Imported database data in " + timer.getTime() + " ms");
 
@@ -68,20 +68,24 @@ public class shopsManager {
      */
 
     public void createShop(String name) {
-        dShop newShop_ = new WrappedShop(name);
+        dShop newShop_ = WrappedShop.wrap(new dShop(name));
 
         shops.put(newShop_.getName().toLowerCase(), newShop_);
         newShop_.reStock();
         Schedulers.sync().run(() -> Events.callEvent(new createdShopEvent(newShop_)));
+
+        serializerApi.saveShopToFileAsync(newShop_);
         dManager.createShop(newShop_);
     }
 
     public void createShopAsync(String name) {
-        dShop newShop_ = new WrappedShop(name);
+        dShop newShop_ = WrappedShop.wrap(new dShop(name));
 
         shops.put(newShop_.getName().toLowerCase(), newShop_);
         newShop_.reStock();
         Schedulers.sync().run(() -> Events.callEvent(new createdShopEvent(newShop_)));
+
+        serializerApi.saveShopToFileAsync(newShop_);
         dManager.createShopAsync(newShop_);
     }
 

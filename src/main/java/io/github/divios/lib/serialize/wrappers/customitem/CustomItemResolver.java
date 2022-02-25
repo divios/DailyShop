@@ -1,7 +1,6 @@
 package io.github.divios.lib.serialize.wrappers.customitem;
 
 import com.google.gson.JsonElement;
-import io.github.divios.lib.dLib.dItem;
 import org.bukkit.inventory.ItemStack;
 
 public interface CustomItemResolver {

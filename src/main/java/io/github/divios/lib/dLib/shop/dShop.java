@@ -308,7 +308,7 @@ public class dShop implements Listener {
         }
 
         newItems.values().forEach(newDItem -> {
-            this.addItem(newDItem);             // Add newItems
+            addItem(newDItem);             // Add newItems
             DebugLog.info("Added new item with ID: " + newDItem.getID() + " from dShop");
         });
     }

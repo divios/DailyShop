@@ -56,7 +56,7 @@ public class databaseManager extends DataManagerAbstract {
                     dShop shop;
 
                     try {
-                        shop = new WrappedShop(name,
+                        shop = new dShop(name,
                                 parser.parse(result.getString("gui")),
                                 timeStampUtils.deserialize(result.getString("timestamp")),
                                 result.getInt("timer"),

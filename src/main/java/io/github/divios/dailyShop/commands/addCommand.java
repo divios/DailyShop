@@ -13,7 +13,6 @@ import io.github.divios.jcommands.arguments.types.StringArgument;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.shop.dShop;
 import io.github.divios.lib.managers.shopsManager;
-import io.github.divios.lib.serialize.serializerApi;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
@@ -34,7 +33,6 @@ public class addCommand {
                                             .setBuyPrice(new FixedValueGenerator(Settings.DEFAULT_BUY.getValue().getAsDouble()))
                                             .setSellPrice(new FixedValueGenerator(Settings.DEFAULT_SELL.getValue().getAsDouble()))
                                     );
-                                    serializerApi.saveShopToFileAsync(shop);
                                     shopsItemsManagerGui.open(player, shop);
                                 }, () -> shopsManagerGui.open(player))))
                 .executesConsole((consoleCommandSender, valueMap) -> {

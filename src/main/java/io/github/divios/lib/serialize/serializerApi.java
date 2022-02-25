@@ -53,6 +53,7 @@ public class serializerApi {
     }
 
     public static void saveShopToFileAsync(dShop shop) {
+        System.out.println("serialize async");
         asyncPool.submit(() -> saveShopToFile(shop));
     }
 

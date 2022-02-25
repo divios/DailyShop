@@ -9,7 +9,6 @@ import io.github.divios.lib.dLib.shop.view.gui.ButtonGui;
 import io.github.divios.lib.dLib.shop.view.gui.GuiButtonFactory;
 import io.github.divios.lib.dLib.shop.view.util.DailyItemsMap;
 import org.apache.commons.lang.Validate;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -27,8 +26,8 @@ public class ShopView {
 
     private DailyItemFactory itemFactory;
 
-    final ConcurrentHashMap<Integer, dItem> buttons;
-    final DailyItemsMap dailyItemsMap;
+    protected final ConcurrentHashMap<Integer, dItem> buttons;
+    protected final DailyItemsMap dailyItemsMap;
 
     UpdateTask updateTask;
 

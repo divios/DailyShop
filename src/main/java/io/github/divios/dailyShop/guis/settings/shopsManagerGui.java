@@ -159,7 +159,6 @@ public class shopsManagerGui {
                             return;
                         }
                         shop.setTimer(Integer.parseInt(s));
-                        serializerApi.saveShopToFileAsync(shop);
                         Schedulers.sync().run(() -> refresh(p));
 
                     })
@@ -221,7 +220,6 @@ public class shopsManagerGui {
                     }
 
                     DailyShop.get().getShopsManager().createShop(s);
-                    serializerApi.saveShopToFileAsync(DailyShop.get().getShopsManager().getShop(s).orElse(null));
                     Schedulers.sync().run(() -> refresh(p));
                 })
                 .withCancel(cancelReason -> Schedulers.sync().run(() -> refresh(p)))

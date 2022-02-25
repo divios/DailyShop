@@ -4,8 +4,8 @@ import io.github.divios.dailyShop.files.Messages;
 import io.github.divios.dailyShop.utils.LimitHelper;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dTransaction.Transactions;
-import io.github.divios.lib.dLib.shop.dShop;
 import io.github.divios.lib.dLib.shop.cashregister.exceptions.IllegalPrecondition;
+import io.github.divios.lib.dLib.shop.dShop;
 import org.bukkit.entity.Player;
 
 public class BuyLimitPrecondition implements Precondition {

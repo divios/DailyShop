@@ -1,9 +1,8 @@
 package io.github.divios.lib.dLib.shop.cashregister.MultiplePreconditions;
 
 import io.github.divios.lib.dLib.dItem;
-import io.github.divios.lib.dLib.shop.dShop;
-import io.github.divios.lib.dLib.shop.cashregister.preconditions.Precondition;
 import io.github.divios.lib.dLib.shop.cashregister.preconditions.*;
+import io.github.divios.lib.dLib.shop.dShop;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
