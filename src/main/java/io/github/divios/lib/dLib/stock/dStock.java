@@ -18,7 +18,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 @SuppressWarnings({"unused", "UnstableApiUsage", "unchecked"})
-public abstract class dStock implements Cloneable, Serializable {
+public abstract class dStock implements Cloneable {
 
     private static final Gson gson = new Gson();
     private static final TypeToken<Map<UUID, Integer>> mapToken = new TypeToken<Map<UUID, Integer>>() {
