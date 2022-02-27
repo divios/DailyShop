@@ -7,17 +7,18 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
 public class MultiButtonGui extends ButtonGui {
 
     private final ButtonGui gui;
-    private final HashMap<UUID, ButtonGui> guis;
+    private final ConcurrentHashMap<UUID, ButtonGui> guis;
 
     public MultiButtonGui(ButtonGui gui) {
         super(gui.getTitle(), gui.getInv());
 
-        this.guis = new HashMap<>();
+        this.guis = new ConcurrentHashMap<>();
         this.gui = gui;
 
         onClose = e -> removeInventory(e.getPlayer().getUniqueId());
