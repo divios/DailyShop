@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 
-public class ShopViewWrap extends ShopView {
+final class ShopViewWrap extends ShopView {
 
     private static final databaseManager dManager = DailyShop.get().getDatabaseManager();
 

@@ -16,7 +16,6 @@ import io.github.divios.lib.dLib.shop.ShopAccount;
 import io.github.divios.lib.dLib.shop.dShop;
 import io.github.divios.lib.dLib.shop.view.ShopView;
 import io.github.divios.lib.dLib.shop.view.ShopViewFactory;
-import io.github.divios.lib.managers.WrappedShop;
 import io.github.divios.lib.storage.migrations.initialMigration;
 
 import java.sql.PreparedStatement;

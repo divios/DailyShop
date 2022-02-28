@@ -24,7 +24,7 @@ import java.sql.Timestamp;
 import java.util.*;
 
 @SuppressWarnings({"unused"})
-public final class WrappedShop extends dShop implements Listener {
+final class WrappedShop extends dShop implements Listener {
 
     private static final databaseManager dManager = DailyShop.get().getDatabaseManager();
 
