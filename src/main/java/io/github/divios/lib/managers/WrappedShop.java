@@ -1,9 +1,7 @@
 package io.github.divios.lib.managers;
 
-import com.google.gson.JsonElement;
 import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.dailyShop.DailyShop;
-import io.github.divios.dailyShop.events.checkoutEvent;
 import io.github.divios.dailyShop.events.reStockShopEvent;
 import io.github.divios.dailyShop.utils.DebugLog;
 import io.github.divios.lib.dLib.dItem;
@@ -56,7 +54,7 @@ public final class WrappedShop extends dShop implements Listener {
     }
 
     @Override
-    public void openShop(Player p) {
+    public void openShop(@NotNull Player p) {
         super.openShop(p);
     }
 
@@ -251,8 +249,9 @@ public final class WrappedShop extends dShop implements Listener {
 
     @Override
     public void setState(dShopState state) {
-        shop.setState(state);
+        super.setState(state);
 
+        DebugLog.info("Updated setState");
         dManager.updateGuiAsync(getName(), getView());
         serializerApi.saveShopToFileAsync(shop);
     }
