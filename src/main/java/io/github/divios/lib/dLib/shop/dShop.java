@@ -120,7 +120,7 @@ public class dShop implements Listener {
     /**
      * Opens the actual shop for the player
      */
-    public void openShop(Player p) {
+    public void openShop(@NotNull Player p) {
         gui.open(p);
     }
 
@@ -432,7 +432,7 @@ public class dShop implements Listener {
     }
 
     public void setState(dShopState state) {
-        if (!name.equalsIgnoreCase(state.getName())) return;
+        if (!getName().equalsIgnoreCase(state.getName())) return;
 
         setTimer(state.getTimer());
         set_announce(state.isAnnounce());

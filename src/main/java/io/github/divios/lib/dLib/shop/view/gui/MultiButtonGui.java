@@ -5,6 +5,7 @@ import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -25,7 +26,7 @@ public class MultiButtonGui extends ButtonGui {
     }
 
     @Override
-    public void open(Player p) {
+    public void open(@NotNull Player p) {
         guis.put(p.getUniqueId(), new PlayerButtonGui(p, gui));
     }
 

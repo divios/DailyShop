@@ -27,7 +27,6 @@ public class shopsResource {
     //private static final Set<String> flaggedShops = new HashSet<>();
 
     public shopsResource() {
-
         if (!shopsFolder.exists()) {
 
             if (sManager.getShops().isEmpty()) {

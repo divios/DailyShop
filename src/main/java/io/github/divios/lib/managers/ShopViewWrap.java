@@ -11,6 +11,7 @@ import io.github.divios.lib.storage.databaseManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Map;
@@ -37,7 +38,7 @@ public class ShopViewWrap extends ShopView {
     }
 
     @Override
-    public void open(Player p) {
+    public void open(@NotNull Player p) {
         wrap.open(p);
     }
 

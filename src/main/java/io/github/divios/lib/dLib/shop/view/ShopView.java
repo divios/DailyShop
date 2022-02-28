@@ -42,7 +42,7 @@ public class ShopView {
         gui = GuiButtonFactory.createMultiGui(title, inv.getSize());
     }
 
-    public void open(Player p) {
+    public void open(@NotNull Player p) {
         gui.open(p);
         if (updateTask == null) updateTask = new UpdateTask();
     }
