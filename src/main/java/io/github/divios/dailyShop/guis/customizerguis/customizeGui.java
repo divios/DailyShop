@@ -353,9 +353,11 @@ public class customizeGui implements Listener, InventoryHolder {
             confirmIH.builder()
                     .withPlayer(p)
                     .withAction(aBoolean -> {
-                        inv.clear(e.getSlot());
-                        buttons.remove(e.getSlot());
-                        actions.addLast(new RemoveAction(e.getSlot()));
+                        if (aBoolean) {
+                            inv.clear(e.getSlot());
+                            buttons.remove(e.getSlot());
+                            actions.addLast(new RemoveAction(e.getSlot()));
+                        }
                         refresh();
                     })
                     .withItem(e.getCurrentItem())
