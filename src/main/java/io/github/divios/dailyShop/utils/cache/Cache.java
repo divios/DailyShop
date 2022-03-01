@@ -1,7 +1,5 @@
 package io.github.divios.dailyShop.utils.cache;
 
-import com.google.common.collect.ImmutableMap;
-
 import java.util.Map;
 
 public interface Cache<K, T> {

@@ -195,9 +195,9 @@ public class shopsItemsManagerGui {
             confirmIH.builder()
                     .withPlayer(p)
                     .withAction(aBoolean -> {
-                        if (aBoolean) {
+                        if (aBoolean)
                             shop.removeItem(uid);
-                        }
+
                         Schedulers.sync().runLater(() -> inv.destroy(), 3L);
                         open(p, shop);
                     })
