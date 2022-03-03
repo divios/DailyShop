@@ -38,13 +38,7 @@ repositories {
     maven { url = 'https://mvn.lumine.io/repository/maven-public/' }
     maven { url = 'https://libraries.minecraft.net' }
     maven { url 'https://hub.spigotmc.org/nexus/content/repositories/public/' }
-    maven {
-        url "https://maven.pkg.github.com/divios/core_lib"
-        credentials {
-            username = "divios"
-            password = gitToken
-        }
-    }
+    
 }
 
 dependencies {
@@ -63,7 +57,7 @@ dependencies {
     implementation 'com.github.PikaMug:LocaleLib:2.4'
     implementation 'org.bstats:bstats-bukkit:2.2.1'
     implementation 'io.github.divios:core_lib_api:6.4.1'
-    implementation 'io.github.divios:jCommands:1.8.2'
+    implementation 'com.github.divios:JCommands:1.7.3'
     implementation 'com.github.divios:JText:3.8'
 
     compileOnly fileTree(dir: 'libs', include: ['*.jar'])
@@ -88,73 +82,8 @@ shadowJar {
     minimize()
 }
 
-task cloneDependencies {
-    doLast {
-        def dest = file("libsI")
-        if (dest.exists()) return
-        Grgit.clone {
-            dir = dest
-            uri = 'https://github.com/divios/DailyShopDepedencies.git'
-            credentials = new Credentials(gitToken)
-        }
-    }
-}
-
 task updateJars {
-    doLast {
-        // windows
-        if (Os.isFamily(Os.FAMILY_WINDOWS)) {
-            copy {
-                from 'build/libs/DailyShop-' + pluginVersion + "-all.jar"
-                into 'C:/Users/serbe/OneDrive/Desktop/server_pruebas/server-1.17/plugins'
-                rename("DailyShop-" + pluginVersion + "-all.jar"
-                        , "DailyShop-" + pluginVersion + ".jar")
-            }
-            copy {
-                from 'build/libs/DailyShop-' + pluginVersion + "-all.jar"
-                into 'C:/Users/serbe/OneDrive/Desktop/server_pruebas/server-1.18/plugins'
-                rename("DailyShop-" + pluginVersion + "-all.jar"
-                        , "DailyShop-" + pluginVersion + ".jar")
-            }
-            copy {
-                from 'build/libs/DailyShop-' + pluginVersion + "-all.jar"
-                into 'C:/Users/serbe/OneDrive/Desktop/server_pruebas/server-1.16/plugins'
-                rename("DailyShop-" + pluginVersion + "-all.jar"
-                        , "DailyShop-" + pluginVersion + ".jar")
-            }
-        } else if (Os.isFamily(Os.FAMILY_MAC)) {  // MAC
-            copy {
-                from 'build/libs/DailyShop-' + pluginVersion + "-all.jar"
-                into '/Users/sergiobernalparrondo/Desktop/servers/server-1.18/plugins'
-                rename("DailyShop-" + pluginVersion + "-all.jar"
-                        , "DailyShop-" + pluginVersion + ".jar")
-            }
-            copy {
-                from 'build/libs/DailyShop-' + pluginVersion + "-all.jar"
-                into '/Users/sergiobernalparrondo/Desktop/servers/server-1.17/plugins'
-                rename("DailyShop-" + pluginVersion + "-all.jar"
-                        , "DailyShop-" + pluginVersion + ".jar")
-            }
-            copy {
-                from 'build/libs/DailyShop-' + pluginVersion + "-all.jar"
-                into '/Users/sergiobernalparrondo/Desktop/servers/server-1.13/plugins'
-                rename("DailyShop-" + pluginVersion + "-all.jar"
-                        , "DailyShop-" + pluginVersion + ".jar")
-            }
-            copy {
-                from 'build/libs/DailyShop-' + pluginVersion + "-all.jar"
-                into '/Users/sergiobernalparrondo/Desktop/servers/server-1.12/plugins'
-                rename("DailyShop-" + pluginVersion + "-all.jar"
-                        , "DailyShop-" + pluginVersion + ".jar")
-            }
-            copy {
-                from 'build/libs/DailyShop-' + pluginVersion + "-all.jar"
-                into '/Users/sergiobernalparrondo/Desktop/servers/server-1.8/plugins'
-                rename("DailyShop-" + pluginVersion + "-all.jar"
-                        , "DailyShop-" + pluginVersion + ".jar")
-            }
-        }
-    }
+    
 }
 
 processResources {
@@ -167,27 +96,5 @@ task deploy(dependsOn: ["build", "updateJars"]) {
     updateJars.mustRunAfter jar
 }
 
-compileJava.dependsOn clean, cloneDependencies
+compileJava.dependsOn clean
 build.dependsOn shadowJar
-
-publishing {
-    publications {
-        gpr(MavenPublication) {
-            groupId = group
-            artifactId = "dailyshop"
-            version = version
-
-            from components.java
-        }
-    }
-    repositories {
-        maven {
-            name = "GitHubPackages"
-            url = "https://maven.pkg.github.com/divios/DailyShop"
-            credentials {
-                username "divios"
-                password gitToken
-            }
-        }
-    }
-}
