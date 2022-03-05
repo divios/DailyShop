@@ -120,12 +120,10 @@ public class ShopView {
         Validate.isTrue(!buttons.containsKey(slot), "Cannot set a dailyItem in a button slot");
 
         dItem clone = item.clone();
-        clone.generateNewBuyPrice();
-        clone.generateNewSellPrice();
         clone.setSlot(slot);
 
         dailyItemsMap.put(clone);
-        gui.setButton(slot, itemFactory.createButton(item));
+        gui.setButton(slot, itemFactory.createButton(clone));
     }
 
     private void updateDailyItem(dItem updatedItem) {

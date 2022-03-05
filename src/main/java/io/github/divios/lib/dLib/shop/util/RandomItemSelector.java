@@ -24,7 +24,7 @@ public class RandomItemSelector {
             dItem rolled;
             if ((rolled = selector.roll()) == null) break;
 
-            itemQueue.add(rolled);
+            itemQueue.add(rolled.rollNewPrices());
             selector.remove(rolled);
         }
 
