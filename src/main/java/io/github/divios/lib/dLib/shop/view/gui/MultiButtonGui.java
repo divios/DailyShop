@@ -23,6 +23,7 @@ public class MultiButtonGui extends ButtonGui {
         this.gui = gui;
 
         onClose = e -> removeInventory(e.getPlayer().getUniqueId());
+        super.destroy();        // We don't care about listeners
     }
 
     @Override
@@ -68,6 +69,7 @@ public class MultiButtonGui extends ButtonGui {
 
     @Override
     public void destroy() {
+        super.destroy();
         gui.destroy();
         guis.values().forEach(ButtonGui::destroy);
     }
