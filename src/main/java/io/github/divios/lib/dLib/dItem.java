@@ -377,6 +377,13 @@ public class dItem implements Cloneable {
         return this;
     }
 
+    public dItem rollNewPrices() {
+        generateNewBuyPrice();
+        generateNewSellPrice();
+
+        return this;
+    }
+
     public dItem setBuyPrice(@NotNull ValueGenerator generator) {
         buyPrice = new dPrice(generator);
 
