@@ -50,7 +50,10 @@ final class WrappedShop extends dShop implements Listener {
     private void restockListener(reStockShopEvent e) {
         if (!Objects.equals(e.getShop(), shop)) return;
 
-        Schedulers.sync().run(() -> dManager.updateGuiAsync(getName(), shop.getView()));
+        Schedulers.sync().run(() -> {
+            dManager.updateGuiAsync(getName(), shop.getView());
+            dManager.updateTimeStampAsync(getName(), getTimestamp());
+        });
     }
 
     @Override
@@ -199,6 +202,7 @@ final class WrappedShop extends dShop implements Listener {
     @Override
     public void setTimestamp(Timestamp timestamp) {
         shop.setTimestamp(timestamp);
+        dManager.updateTimeStampAsync(getName(), getTimestamp());
     }
 
     @Override
@@ -224,7 +228,6 @@ final class WrappedShop extends dShop implements Listener {
     @Override
     public void setDefault(boolean aDefault) {
         shop.setDefault(aDefault);
-
         serializerApi.saveShopToFileAsync(shop);
     }
 
