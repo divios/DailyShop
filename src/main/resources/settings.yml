@@ -23,6 +23,9 @@
 #   <integer-bal>
 #        - If true, round prices like 20.0 would be displayed as 20, if false: 20.0
 # ============================
+#   <removed-logs-days>
+#        - Time in days when logs on the database should be removed.
+# ============================
 #   <econ-names>
 #        - Option to override the displayed economy names
 # ============================
@@ -35,6 +38,7 @@ settings:
   default-sell-price: 20
   default_timer: 86400
   integer-bal: true
+  removed-logs-days: 20
   econ-names:
     economy_name_to_change: "Custom economy name"
 

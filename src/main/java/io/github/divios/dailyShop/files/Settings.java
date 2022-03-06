@@ -14,6 +14,7 @@ public enum Settings {
     DEFAULT_SELL("settings.default-sell-price"),
     DEFAULT_TIMER("settings.default_timer"),
     INTEGER_VAL("settings.integer-bal"),
+    LOGS_REMOVED("settings.removed-logs-days"),
     ECON_NAMES("settings.econ-names");
 
     private final String path;

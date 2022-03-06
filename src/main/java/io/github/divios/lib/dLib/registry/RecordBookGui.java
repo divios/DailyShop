@@ -8,6 +8,7 @@ import io.github.divios.core_lib.inventory.builder.paginatedGui;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.files.Lang;
+import io.github.divios.dailyShop.utils.Exceptions;
 import io.github.divios.dailyShop.utils.FutureUtils;
 import io.github.divios.dailyShop.utils.PrettyPrice;
 import io.github.divios.dailyShop.utils.Utils;
@@ -39,9 +40,9 @@ public class RecordBookGui {
     private void init() {
 
         CompletableFuture<paginatedGui> gui = paginatedGui.Builder()
-                .withTitle("&8Log")
+                .withTitle((page, max) -> "&8Log " + page + "/" + max)
                 .withItems(() ->
-                        DailyShop.get().getDatabaseManager().getLogEntries().stream()
+                        DailyShop.get().getDatabaseManager().getLogEntries(2700).stream()
                                 .filter(dLogEntry -> {
                                     boolean result = true;
                                     if (options.getfPlayer() != null)
@@ -115,7 +116,7 @@ public class RecordBookGui {
                                                     .setName("&e&lCreate json").setLore("&7Click to create a json file", "&7with the current filtered entries")
                                             , e ->
                                                     RecordUtils.importToYaml(
-                                                            DailyShop.get().getDatabaseManager().getLogEntries().stream()
+                                                            DailyShop.get().getDatabaseManager().getLogEntries(Integer.MAX_VALUE).stream()
                                                                     .filter(dLogEntry -> {
                                                                         boolean result = true;
                                                                         if (options.getfPlayer() != null)
@@ -158,8 +159,7 @@ public class RecordBookGui {
                 )
                 .buildFuture();
 
-        FutureUtils.waitFor(gui).open(p);
-
+        Exceptions.tryTo(() -> gui.get().open(p));
     }
 
     public static LogGuiBuilder builder() {

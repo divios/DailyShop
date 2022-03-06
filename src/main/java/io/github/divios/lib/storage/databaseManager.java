@@ -7,7 +7,9 @@ import io.github.divios.core_lib.database.DataManagerAbstract;
 import io.github.divios.core_lib.database.SQLiteConnector;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.timeStampUtils;
+import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.dailyShop.DailyShop;
+import io.github.divios.dailyShop.files.Settings;
 import io.github.divios.dailyShop.utils.DebugLog;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dTransaction.Transactions;
@@ -37,6 +39,9 @@ public class databaseManager extends DataManagerAbstract {
     public databaseManager() {
         super(new SQLiteConnector(plugin));
         super.databaseConnector.connect(connection -> initialMigration.migrate(connection, super.getTablePrefix()));
+
+        Schedulers.sync().runRepeating(() -> asyncPool.execute(this::dropOldLogEntries),
+                15, TimeUnit.SECONDS, 30, TimeUnit.MINUTES);
     }
 
     public Set<dShop> getShops() {
@@ -339,13 +344,13 @@ public class databaseManager extends DataManagerAbstract {
         return asyncPool.submit(() -> addLogEntry(entry));
     }
 
-    public Collection<RecordBookEntry> getLogEntries() {
+    public Collection<RecordBookEntry> getLogEntries(int limit) {
 
         Deque<RecordBookEntry> entries = new ArrayDeque<>();
         this.databaseConnector.connect(connection -> {
 
             try (Statement statement = connection.createStatement()) {
-                String getLogs = "SELECT * FROM " + this.getTablePrefix() + "log";
+                String getLogs = "SELECT * FROM " + this.getTablePrefix() + "log" + " LIMIT " + limit;
                 ResultSet result = statement.executeQuery(getLogs);
 
                 while (result.next()) {
@@ -377,8 +382,8 @@ public class databaseManager extends DataManagerAbstract {
         return entries;
     }
 
-    public CompletableFuture<Collection<RecordBookEntry>> getLogEntriesAsync() {
-        return CompletableFuture.supplyAsync(this::getLogEntries);
+    public CompletableFuture<Collection<RecordBookEntry>> getLogEntriesAsync(int limit) {
+        return CompletableFuture.supplyAsync(() -> getLogEntries(limit));
     }
 
     public void finishAsyncQueries() {
@@ -388,6 +393,31 @@ public class databaseManager extends DataManagerAbstract {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    private static final SimpleDateFormat FORMAT = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+
+    public void dropOldLogEntries() {
+        int days = Settings.LOGS_REMOVED.getValue().getAsIntOrDefault(20);
+        long time = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(days);
+        Date date = new Date(time);
+
+        getLogEntries(Integer.MAX_VALUE).forEach(entry -> {
+            if (entry.getTimestamp().before(date))
+                deleteEntry(entry);
+        });
+    }
+
+    private void deleteEntry(RecordBookEntry entry) {
+        this.databaseConnector.connect(connection -> {
+            String updateTimeStamp = "DELETE FROM " + this.getTablePrefix() + "log" +
+                    " WHERE timestamp = ?" ;
+            try (PreparedStatement statement = connection.prepareStatement(updateTimeStamp)) {
+                statement.setString(1, FORMAT.format(entry.getTimestamp()));
+
+                statement.executeUpdate();
+            }
+        });
     }
 
 }

@@ -8,8 +8,8 @@ import org.bukkit.OfflinePlayer;
 @SuppressWarnings("unused")
 public class RecordBook {
 
-    public static void iniciate() {
-        DailyShop.get().getDatabaseManager().getLogEntriesAsync()
+    public static void initiate() {
+        DailyShop.get().getDatabaseManager().getLogEntriesAsync(Integer.MAX_VALUE)
                 .thenAcceptAsync(entries -> {
                     entries.stream()
                             .filter(entry -> {
@@ -28,7 +28,7 @@ public class RecordBook {
                                             );
                                         });
                             });
-                });
+                }).complete(null);
     }
 
     public static void registerEntry(RecordBookEntry entry) {
