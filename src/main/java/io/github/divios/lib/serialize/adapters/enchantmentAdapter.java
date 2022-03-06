@@ -21,7 +21,7 @@ public class enchantmentAdapter implements JsonSerializer<WrappedEnchantment>, J
         Preconditions.checkArgument(Utils.testRunnable(() -> XEnchantment.valueOf(enchant[0] = object.get("enchant").getAsString())));
         Preconditions.checkArgument(Utils.testRunnable(() -> level[0] = object.get("level").getAsInt()), "Level field of an enchantment needs to be an integer");
 
-        return WrappedEnchantment.of(XEnchantment.valueOf(enchant[0]).parseEnchantment(), level[0]);
+        return WrappedEnchantment.of(XEnchantment.valueOf(enchant[0]).getEnchant(), level[0]);
     }
 
     @Override

@@ -62,7 +62,7 @@ dependencies {
     implementation 'org.jetbrains:annotations:22.0.0'
     implementation 'com.github.PikaMug:LocaleLib:2.4'
     implementation 'org.bstats:bstats-bukkit:2.2.1'
-    implementation 'io.github.divios:core_lib_api:6.4.1'
+    implementation 'io.github.divios:core_lib_api:6.4.3'
     implementation 'io.github.divios:jCommands:1.8.2'
     implementation 'com.github.divios:JText:3.8'
 
