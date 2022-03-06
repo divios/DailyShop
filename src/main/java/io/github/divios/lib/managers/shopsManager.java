@@ -67,7 +67,7 @@ public class shopsManager {
      * @param name the name of the shop
      */
 
-    public void createShop(String name) {
+    public dShop createShop(String name) {
         dShop newShop_ = WrappedShop.wrap(new dShop(name));
 
         shops.put(newShop_.getName().toLowerCase(), newShop_);
@@ -76,9 +76,11 @@ public class shopsManager {
 
         serializerApi.saveShopToFileAsync(newShop_);
         dManager.createShop(newShop_);
+
+        return newShop_;
     }
 
-    public void createShopAsync(String name) {
+    public dShop createShopAsync(String name) {
         dShop newShop_ = WrappedShop.wrap(new dShop(name));
 
         shops.put(newShop_.getName().toLowerCase(), newShop_);
@@ -86,7 +88,9 @@ public class shopsManager {
         Schedulers.sync().run(() -> Events.callEvent(new createdShopEvent(newShop_)));
 
         serializerApi.saveShopToFileAsync(newShop_);
+
         dManager.createShopAsync(newShop_);
+        return newShop_;
     }
 
     /**
@@ -169,5 +173,6 @@ public class shopsManager {
             dManager.updateAccount(shop.getName(), shop.getAccount());
         });
     }
+
 
 }

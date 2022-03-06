@@ -61,19 +61,20 @@ public class shopsResource {
                 .filter(shop -> !newShops.containsKey(shop.getName()))
                 .forEach(shop -> {
                     //cacheCheckSums.remove(shop.getName());
-                    sManager.deleteShop(shop.getName());
+                    sManager.deleteShopAsync(shop);
                     DebugLog.info("removed shop");
                 });
 
         newShops.values().forEach(shopState -> {                          // Process read Shops
             boolean isNew = false;
+            dShop currentShop;
 
             if (!sManager.getShop(shopState.getName()).isPresent()) {        // Create new shops
                 isNew = true;
-                sManager.createShop(shopState.getName());
-            }
+                currentShop = sManager.createShopAsync(shopState.getName());
+            } else
+                currentShop = sManager.getShop(shopState.getName()).get();         // Update shops
 
-            dShop currentShop = sManager.getShop(shopState.getName()).get();         // Update shops
             currentShop.setState(shopState);
 
             if (isNew) {

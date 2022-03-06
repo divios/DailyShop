@@ -1,6 +1,7 @@
 package io.github.divios.dailyShop;
 
 import io.github.divios.core_lib.Core_lib;
+import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.dailyShop.commands.commandsManager;
 import io.github.divios.dailyShop.files.resourceManager;
 import io.github.divios.dailyShop.hooks.Hooks;
@@ -20,6 +21,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.java.JavaPluginLoader;
 
 import java.io.File;
+import java.util.concurrent.TimeUnit;
 
 public class DailyShop extends JavaPlugin {
 
@@ -64,7 +66,7 @@ public class DailyShop extends JavaPlugin {
         dManager = new databaseManager();
         sManager = new shopsManager(dManager);
 
-        RecordBook.iniciate();
+        Schedulers.sync().runLater(RecordBook::initiate, 5, TimeUnit.SECONDS);      // Wait to not lock database
 
         /* Load commands */
         new commandsManager().loadCommands();
