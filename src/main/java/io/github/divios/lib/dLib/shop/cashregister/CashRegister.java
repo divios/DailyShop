@@ -34,7 +34,7 @@ public class CashRegister implements Listener {
                     : new SellCart(shop, p, item);
         } catch (IllegalPrecondition err) {
             err.sendErrMsg(p);
-            p.closeInventory();
+            // p.closeInventory(); Do not close player inventory on preconditions
         }
     }
 
