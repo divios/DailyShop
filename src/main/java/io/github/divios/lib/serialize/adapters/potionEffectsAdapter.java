@@ -13,6 +13,7 @@ import org.bukkit.potion.PotionType;
 
 import java.lang.reflect.Type;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Optional;
 
 public class potionEffectsAdapter implements JsonSerializer<PotionMeta>, JsonDeserializer<PotionMeta> {
@@ -34,7 +35,7 @@ public class potionEffectsAdapter implements JsonSerializer<PotionMeta>, JsonDes
         meta.setBasePotionData(new PotionData(potionType, extended, upgraded));
         if (object.has("color")) meta.setColor(WrappedColor.parseColor(object.get("color").getAsString()).getColor());
 
-        return meta;
+        return Objects.requireNonNull(meta, "Potion not valid or supported in this version");
     }
 
     @Override

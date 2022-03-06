@@ -48,6 +48,7 @@ public class priceModifiersResource extends resource {
                     );
                 } catch (Exception e) {
                     Log.warn("There was a problem parsing the priceModifier " + s);
+                    // e.printStackTrace();
                     Log.warn(e.getMessage());
                 }
             });

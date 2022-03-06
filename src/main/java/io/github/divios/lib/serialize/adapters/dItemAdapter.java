@@ -1,5 +1,6 @@
 package io.github.divios.lib.serialize.adapters;
 
+import com.cryptomorin.xseries.ReflectionUtils;
 import com.cryptomorin.xseries.XMaterial;
 import com.cryptomorin.xseries.XPotion;
 import com.google.common.base.Preconditions;
@@ -7,6 +8,7 @@ import com.google.common.reflect.TypeToken;
 import com.google.gson.*;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.dailyShop.economies.Economy;
+import io.github.divios.dailyShop.utils.NMSUtils.NMSHelper;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dPrice;
@@ -22,6 +24,7 @@ import org.bukkit.inventory.meta.PotionMeta;
 
 import java.lang.reflect.Type;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -112,7 +115,8 @@ public class dItemAdapter implements JsonSerializer<dItem>, JsonDeserializer<dIt
         else
             throw new RuntimeException("Invalid configuration");
 
-        if (XPotion.canHaveEffects(ItemUtils.getMaterial(ditem.getItem())) && object.has("potion")) {
+        if (ReflectionUtils.VER >= 9 &&
+                XPotion.canHaveEffects(ItemUtils.getMaterial(ditem.getItem())) && object.has("potion")) {
             ItemStack potionItem = ditem.getItem();
             potionItem.setItemMeta(gson.fromJson(object.get("potion"), PotionMeta.class));
             ditem.setItem(potionItem);

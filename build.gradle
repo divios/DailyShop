@@ -64,7 +64,7 @@ dependencies {
     implementation 'org.bstats:bstats-bukkit:2.2.1'
     implementation 'io.github.divios:core_lib_api:6.4.3'
     implementation 'io.github.divios:jCommands:1.8.2'
-    implementation 'com.github.divios:JText:3.8'
+    implementation 'io.github.divios:jText:3.2'
 
     compileOnly fileTree(dir: 'libs', include: ['*.jar'])
     compileOnly fileTree(dir: 'libsI', include: ['*.jar'])

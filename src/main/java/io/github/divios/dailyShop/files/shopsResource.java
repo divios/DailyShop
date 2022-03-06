@@ -1,5 +1,6 @@
 package io.github.divios.dailyShop.files;
 
+import com.cryptomorin.xseries.ReflectionUtils;
 import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.utils.DebugLog;
@@ -29,8 +30,8 @@ public class shopsResource {
     public shopsResource() {
         if (!shopsFolder.exists()) {
 
-            if (sManager.getShops().isEmpty()) {
-                shopsFolder.mkdir();
+            shopsFolder.mkdir();
+            if (sManager.getShops().isEmpty() && ReflectionUtils.VER >= 12) {
                 Stream.of("blocks", "drops", "equipment", "farm", "menu", "ore", "potion", "wood")
                         .forEach(s -> {
                             plugin.saveResource("shops/" + s + ".yml", false);

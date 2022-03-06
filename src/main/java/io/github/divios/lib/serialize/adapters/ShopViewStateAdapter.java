@@ -43,7 +43,7 @@ public class ShopViewStateAdapter implements JsonSerializer<ShopViewState>, Json
                 dItem item = gson.fromJson(itemEntry.getValue(), dItem.class);
                 buttons.put(item.getSlot(), item.setID(itemEntry.getKey()));
             } catch (Exception | Error e) {
-                Log.warn("There was a problem parsing the item with id " + itemEntry.getKey());
+                Log.warn("There was a problem parsing the item on shop view with id " + itemEntry.getKey());
                 // e.printStackTrace();
                 Log.warn(e.getMessage());
             }
