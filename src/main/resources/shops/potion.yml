@@ -1,6 +1,5 @@
 id: potion
 timer: 86400
-announce_restock: true
 shop:
   title: potion
   size: 45
