@@ -4,7 +4,6 @@ import com.cryptomorin.xseries.XMaterial;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import io.github.divios.core_lib.itemutils.ItemBuilder;
-import io.github.divios.core_lib.misc.timeStampUtils;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.files.Messages;
 import io.github.divios.dailyShop.files.Settings;
@@ -26,7 +25,9 @@ import org.yaml.snakeyaml.Yaml;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -248,11 +249,15 @@ public class Utils {
     }
 
     public static String getDiffActualTimer(dShop shop) {
+        int totalTime = (shop.getTimer() * 1000);
+        long timeDifference = System.currentTimeMillis() - shop.getTimestamp().getTime();
+        long result = totalTime - timeDifference;
 
-        int timeInSeconds = (int) (shop.getTimer() - timeStampUtils.diff(shop.getTimestamp(),
-                new Timestamp(System.currentTimeMillis())));
+        return DateTimeFormatter.ofPattern(Settings.TIME_FORMAT.getValue().getAsString())
+                .withZone(ZoneId.of("UTC"))
+                .format(Instant.ofEpochMilli(result));
 
-        int secondsLeft = timeInSeconds % 3600 % 60;
+        /**int secondsLeft = timeInSeconds % 3600 % 60;
         int minutes = (int) Math.floor(timeInSeconds % 3600 / 60F);
         int hours = (int) Math.floor(timeInSeconds / 3600F);
 
@@ -260,7 +265,7 @@ public class Utils {
         String MM = ((minutes < 10) ? "0" : "") + minutes;
         String SS = ((secondsLeft < 10) ? "0" : "") + secondsLeft;
 
-        return HH + ":" + MM + ":" + SS;
+        return HH + ":" + MM + ":" + SS; **/
     }
 
     public static boolean playerIsOnline(Player player) {
