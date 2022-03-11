@@ -108,8 +108,8 @@ public class customizeGui implements Listener, InventoryHolder {
                         "&8- &6Left click empty slot", "   &7Adds a new item",
                         "&8- &6Shift Click empty slot", "   &7Sets slot as AIR,", "   &7where no daily items",
                         "   &7'll appear and is displayed", "   &7as an empty slot",
-                        "&8- &6Middle click item", "   &7Copies the item to the clipboard,",
-                        "   &7middle click again on", "   &7empty slot to paste");
+                        "&8- &6Shift Right Click item", "   &7Copies the item to the clipboard,",
+                        "   &7shift right click again on", "   &7empty slot to paste");
 
         p.getInventory().setItem(3, back);
         p.getInventory().setItem(5, complete);
@@ -323,8 +323,10 @@ public class customizeGui implements Listener, InventoryHolder {
 
     private void upperInventoryAction(InventoryClickEvent e) {
 
+        System.out.println(e.getClick().name());
         if (toClone != null && Utils.isEmpty(e.getCurrentItem())
-                && e.getClick().equals(ClickType.MIDDLE)) {     // paste clipboard
+                && e.getClick().equals(ClickType.SHIFT_RIGHT)) {     // paste clipboard
+            System.out.println("pasted");
             inv.setItem(e.getSlot(), toClone.getItem());
             buttons.put(e.getSlot(), toClone.copy());
             actions.addLast(new AddButton(e.getSlot(), buttons.get(e.getSlot())));
@@ -332,7 +334,8 @@ public class customizeGui implements Listener, InventoryHolder {
             return;
         }
 
-        if (e.getCurrentItem() != null && e.getClick().equals(ClickType.MIDDLE)) {        // copy to clipboard
+        if (e.getCurrentItem() != null && e.getClick().equals(ClickType.SHIFT_RIGHT)) {        // copy to clipboard
+            System.out.println("Cloned");
             toClone = buttons.get(e.getSlot());
             return;
         }
