@@ -28,7 +28,10 @@ public class MultiButtonGui extends ButtonGui {
 
     @Override
     public void open(@NotNull Player p) {
-        guis.put(p.getUniqueId(), new PlayerButtonGui(p, gui));
+        ButtonGui created;
+        guis.put(p.getUniqueId(), created = new PlayerButtonGui(p, gui));
+
+        created.setOnClose(event -> onClose.accept(event));
     }
 
     @Override
@@ -63,7 +66,7 @@ public class MultiButtonGui extends ButtonGui {
 
     @Override
     public void update() {
-        gui.update();
+        // gui.update();
         guis.values().forEach(ButtonGui::update);
     }
 
