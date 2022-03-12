@@ -323,10 +323,8 @@ public class customizeGui implements Listener, InventoryHolder {
 
     private void upperInventoryAction(InventoryClickEvent e) {
 
-        System.out.println(e.getClick().name());
         if (toClone != null && Utils.isEmpty(e.getCurrentItem())
                 && e.getClick().equals(ClickType.SHIFT_RIGHT)) {     // paste clipboard
-            System.out.println("pasted");
             inv.setItem(e.getSlot(), toClone.getItem());
             buttons.put(e.getSlot(), toClone.copy());
             actions.addLast(new AddButton(e.getSlot(), buttons.get(e.getSlot())));
@@ -335,7 +333,6 @@ public class customizeGui implements Listener, InventoryHolder {
         }
 
         if (e.getCurrentItem() != null && e.getClick().equals(ClickType.SHIFT_RIGHT)) {        // copy to clipboard
-            System.out.println("Cloned");
             toClone = buttons.get(e.getSlot());
             return;
         }
