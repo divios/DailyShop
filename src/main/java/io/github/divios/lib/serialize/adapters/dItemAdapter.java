@@ -63,6 +63,7 @@ public class dItemAdapter implements JsonSerializer<dItem>, JsonDeserializer<dIt
             if (!lore.isEmpty()) merchant.add("lore", gson.toJsonTree(Utils.JTEXT_PARSER.unParse(lore)));
 
             merchant.addProperty("material", WrappedMaterial.getMaterial(item));
+
             if (ItemUtils.getMaterial(item) == XMaterial.SPAWNER.parseMaterial())
                 merchant.addProperty("mob", WrapperSpawnerItem.getSpawnerName(item));
         }
@@ -83,7 +84,8 @@ public class dItemAdapter implements JsonSerializer<dItem>, JsonDeserializer<dIt
         merchant.addProperty("confirm_gui", dItem.isConfirmGui());
         if (dItem.getBundle() != null && !customItemFlag) merchant.add("bundle", gson.toJsonTree(dItem.getBundle()));
 
-        if (ItemUtils.getMetadata(item).isUnbreakable() && !customItemFlag) merchant.addProperty("unbreakable", true);
+        if (ReflectionUtils.VER >= 12 && ItemUtils.getMetadata(item).isUnbreakable() && !customItemFlag)
+            merchant.addProperty("unbreakable", true);
 
         if (XPotion.canHaveEffects(item.getType()) && !customItemFlag) {
             merchant.add("potion", gson.toJsonTree(ItemUtils.getPotionMeta(item), PotionMeta.class));

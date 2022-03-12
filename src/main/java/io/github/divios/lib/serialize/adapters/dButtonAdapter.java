@@ -1,5 +1,6 @@
 package io.github.divios.lib.serialize.adapters;
 
+import com.cryptomorin.xseries.ReflectionUtils;
 import com.cryptomorin.xseries.SkullUtils;
 import com.cryptomorin.xseries.XMaterial;
 import com.google.common.base.Preconditions;
@@ -52,7 +53,7 @@ public class dButtonAdapter implements JsonSerializer<WrappedDButton>, JsonDeser
                 && SkullUtils.getSkinValue(ItemUtils.getMetadata(item)) != null)
             merchant.addProperty("material", "base64:" + SkullUtils.getSkinValue(ItemUtils.getMetadata(item)));
         else
-            merchant.addProperty("material", ItemUtils.getMaterial(item).name());
+            merchant.addProperty("material", WrappedMaterial.getMaterial(item));
 
         io.github.divios.lib.dLib.dItem.WrapperAction action = dItem.getDItem().getAction();
         Pair<dAction, String> pair = Pair.of(action.getAction(), action.getData());
@@ -64,7 +65,8 @@ public class dButtonAdapter implements JsonSerializer<WrappedDButton>, JsonDeser
         else
             merchant.addProperty("slot", dItem.getDItem().getSlot());
 
-        if (ItemUtils.getMetadata(item).isUnbreakable()) merchant.addProperty("unbreakable", true);
+        if (ReflectionUtils.VER >= 12 && ItemUtils.getMetadata(item).isUnbreakable())
+            merchant.addProperty("unbreakable", true);
 
         List<String> flags;
         if (!(flags = WrappedItemFlags.of(item).getFlags()).isEmpty())
@@ -79,7 +81,7 @@ public class dButtonAdapter implements JsonSerializer<WrappedDButton>, JsonDeser
     @Override
     public dItem deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
         JsonObject object = jsonElement.getAsJsonObject();
-        dItem ditem = dItem.of(XMaterial.DIRT_PATH.parseItem());
+        dItem ditem = dItem.of(XMaterial.DIRT.parseItem());
 
         Preconditions.checkArgument(object.has("material"), "An item needs a material");
         Preconditions.checkArgument(object.has("slot"), "An item needs a slot");

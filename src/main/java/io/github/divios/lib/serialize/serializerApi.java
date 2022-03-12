@@ -1,5 +1,6 @@
 package io.github.divios.lib.serialize;
 
+import com.cryptomorin.xseries.ReflectionUtils;
 import com.google.common.base.Preconditions;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -18,7 +19,6 @@ import io.github.divios.lib.serialize.adapters.dShopStateAdapter;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
-import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -48,10 +48,10 @@ public class serializerApi {
     public static void saveShopToFile(dShop shop) {
         try {
             File data = new File(shopsFolder.get(), shop.getName() + ".yml");
-            DebugLog.info("waaaa");
+            //DebugLog.info("waaaa");
             gson.toJsonTree(shop.toState());
             FileUtils.dumpToYaml(gson.toJsonTree(shop.toState(), dShopState.class), data);
-            DebugLog.info("waaaa1");
+            //DebugLog.info("waaaa1");
         } catch (Exception e) {
             Log.info("There was a problem saving the shop " + shop.getName());
             // e.printStackTrace();
@@ -61,7 +61,8 @@ public class serializerApi {
 
     public static void saveShopToFileAsync(dShop shop) {
         DebugLog.info("Serialize shop");
-        cache.put(shop, () -> asyncPool.submit(() -> saveShopToFile(shop)));
+        //if (ReflectionUtils.VER >= 12) cache.put(shop, () -> asyncPool.submit(() -> saveShopToFile(shop)));
+        asyncPool.execute(() -> saveShopToFile(shop));
     }
 
     public static dShopState getShopFromFile(File data) {

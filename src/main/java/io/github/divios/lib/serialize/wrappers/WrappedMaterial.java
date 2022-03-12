@@ -24,7 +24,7 @@ public class WrappedMaterial {
                 && SkullUtils.getSkinValue(ItemUtils.getMetadata(item)) != null)
             material = "base64:" + SkullUtils.getSkinValue(ItemUtils.getMetadata(item));
         else
-            material = ItemUtils.getMaterial(item).name();
+            material = XMaterial.matchXMaterial(item).name();
 
         return material;
     }
