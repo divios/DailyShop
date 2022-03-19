@@ -41,7 +41,7 @@ public class ItemsAdderResolver implements CustomItemResolver {
         CustomStack item = CustomStack.getInstance(namespace + ":" + id);
 
         return Objects.requireNonNull(item == null ? null : item.getItemStack()
-                , "Could not find the ItemsAdder item with the given namespace/id");
+                , "Could not find the ItemsAdder item with the given namespace/id: " + id);
     }
 
     @Override
