@@ -51,6 +51,7 @@ public class ButtonGui {
     private Subscription createClickListener() {
         return Events.subscribe(InventoryClickEvent.class)
                 .filter(event -> event.getInventory().equals(inv))
+                .filter(event -> event.getSlot() == event.getRawSlot())
                 .handler(event -> {
                     event.setCancelled(true);
                     buttons.get(event.getSlot()).execute(event);
