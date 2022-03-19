@@ -12,10 +12,7 @@ import io.github.divios.lib.serialize.serializerApi;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Stream;
 
 public class shopsResource {
@@ -99,23 +96,23 @@ public class shopsResource {
     //////////////////////////////////////////////////////////////////////////////////////////////////
 
     private Map<String, dShopState> readYamlShops() {
+
+        Set<String> idCaches = new HashSet<>();
         Map<String, dShopState> shops = new HashMap<>();
         for (File shopFile : Objects.requireNonNull(shopsFolder.listFiles((dir, name) -> name.endsWith(".yml")), "The shop directory does not exits")) {
 
-            /*Long checkSum;      // Check if same checkSum
-            if ((checkSum = cacheCheckSums.get(getIdFromFile(shopFile))) != null)
-                if (checkSum == FileUtils.getFileCheckSum(shopFile)) {
-                    sManager.getShop(getIdFromFile(shopFile)).ifPresent(sameShop -> {
-                        Log.info("No changes in shop " + sameShop.getName() + ", skipping...");
-                        flaggedShops.add(sameShop.getName());
-                    });  // get only the id of the shop
-                    continue;
-                } */
-
             try {
                 dShopState newShop = serializerApi.getShopFromFile(shopFile);
+
+                if (idCaches.contains(newShop.getName())) {
+                    Log.severe("There is already a shop registered with the id " + newShop.getName() +
+                            " Skipping file " + shopFile.getName());
+                    continue;
+                }
+
                 shops.put(newShop.getName(), newShop);
-                //cacheCheckSums.put(newShop.getName(), FileUtils.getFileCheckSum(shopFile));
+                idCaches.add(newShop.getName());
+
             } catch (Exception e) {
                 Log.warn("There was a problem with the shop " + shopFile.getName());
                 // e.printStackTrace();
