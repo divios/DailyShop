@@ -32,7 +32,7 @@ public class MMOItemResolver implements CustomItemResolver {
         Preconditions.checkArgument(mmoItemObject.has("id"), "MMOItem needs an id field");
 
         ItemStack mmoItem = MMOUtils.createMMOItem(mmoItemObject.get("type").getAsString(), mmoItemObject.get("id").getAsString());
-        return Objects.requireNonNull(mmoItem, "Could not find the mmoitem with the given type/id");
+        return Objects.requireNonNull(mmoItem, "Could not find the mmoitem with the given type/id: " + mmoItemObject.get("id").getAsString());
     }
 
     @Override

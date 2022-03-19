@@ -32,7 +32,7 @@ public class OraxenResolver implements CustomItemResolver {
         Preconditions.checkArgument(OraxenUtils.isValidId(id = oraxenObject.get("id").getAsString()), "That oraxen ID does not exist");
 
         ItemStack oraxenItem = OraxenUtils.createItemByID(id);
-        return Objects.requireNonNull(oraxenItem, "Could not find an oraxen item with the given id");
+        return Objects.requireNonNull(oraxenItem, "Could not find an oraxen item with the given id: " + id);
     }
 
     @Override
