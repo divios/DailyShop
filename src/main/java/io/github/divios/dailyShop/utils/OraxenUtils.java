@@ -32,7 +32,7 @@ public class OraxenUtils {
 
     public static ItemStack createItemByID(String id) {
         if (!isOraxenOn()) return null;
-        if (OraxenItems.exists(id)) return null;
+        if (!OraxenItems.exists(id)) return null;
 
         return OraxenItems.getItemById(id).build();
     }
