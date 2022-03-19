@@ -26,6 +26,10 @@
 #   <removed-logs-days>
 #        - Time in days when logs on the database should be removed.
 # ============================
+#   <time_format>
+  #        - The format in which the timer of the shop is displayed. You can check the format used here:
+#             https://www.joda.org/joda-time/apidocs/org/joda/time/format/DateTimeFormat.html
+# ============================
 #   <econ-names>
 #        - Option to override the displayed economy names
 # ============================
