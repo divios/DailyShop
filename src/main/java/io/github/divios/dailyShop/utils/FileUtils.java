@@ -50,9 +50,11 @@ public class FileUtils {
             FileUtils.createFile(data);
         }
 
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        Gson gson = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create();
         String json = gson.toJson(o);
-        Map map = new GsonBuilder().registerTypeAdapter(new TypeToken<Map<String, Object>>() {
+        Map map = new GsonBuilder()
+                .disableHtmlEscaping()
+                .registerTypeAdapter(new TypeToken<Map<String, Object>>() {
                 }.getType(), new MapDeserializerDoubleAsIntFix())
                 .create().fromJson(json, new TypeToken<Map<String, Object>>() {
                 }.getType());

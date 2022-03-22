@@ -42,6 +42,7 @@ public class serializerApi {
 
 
     private static final Gson gson = new GsonBuilder()
+            .disableHtmlEscaping()
             .registerTypeAdapter(dShopState.class, new dShopStateAdapter())
             .create();
 

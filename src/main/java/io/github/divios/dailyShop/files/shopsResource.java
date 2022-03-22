@@ -53,7 +53,6 @@ public class shopsResource {
 
         DebugLog.warn("Applying logic...");
 
-
         new HashSet<>(sManager.getShops()).stream()         // Delete removed shops
                 //.filter(dShop -> !flaggedShops.contains(dShop.getName()))
                 .filter(shop -> !newShops.containsKey(shop.getName()))
