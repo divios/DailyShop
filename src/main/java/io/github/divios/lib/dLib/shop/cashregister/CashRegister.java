@@ -3,6 +3,7 @@ package io.github.divios.lib.dLib.shop.cashregister;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.events.dailyItemClickEvent;
 import io.github.divios.lib.dLib.dItem;
+import io.github.divios.lib.dLib.dTransaction.Transactions;
 import io.github.divios.lib.dLib.shop.cashregister.carts.BuyCart;
 import io.github.divios.lib.dLib.shop.cashregister.carts.Cart;
 import io.github.divios.lib.dLib.shop.cashregister.carts.SellCart;
@@ -29,7 +30,7 @@ public class CashRegister implements Listener {
     public void initialize(Player p, dItem item, ClickType clickType) {
         Cart cart;
         try {
-            cart = (clickType == ClickType.LEFT)
+            cart = (shop.getOptions().matchClickAction(clickType) == Transactions.Type.BUY)
                     ? new BuyCart(shop, p, item)
                     : new SellCart(shop, p, item);
         } catch (IllegalPrecondition err) {

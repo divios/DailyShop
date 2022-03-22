@@ -1,5 +1,8 @@
 id: blocks
 timer: 86400
+clickActions:
+  LEFT: BUY
+  RIGHT: SELL
 shop:
   title: blocks
   size: 45

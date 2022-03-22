@@ -5,10 +5,7 @@ import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.events.reStockShopEvent;
 import io.github.divios.dailyShop.utils.DebugLog;
 import io.github.divios.lib.dLib.dItem;
-import io.github.divios.lib.dLib.shop.LogCache;
-import io.github.divios.lib.dLib.shop.ShopAccount;
-import io.github.divios.lib.dLib.shop.dShop;
-import io.github.divios.lib.dLib.shop.dShopState;
+import io.github.divios.lib.dLib.shop.*;
 import io.github.divios.lib.dLib.shop.view.ShopView;
 import io.github.divios.lib.dLib.stock.dStock;
 import io.github.divios.lib.serialize.serializerApi;
@@ -165,6 +162,7 @@ final class WrappedShop extends dShop implements Listener {
     @Override
     public void setItems(@NotNull Collection<dItem> items) {
         super.setItems(items);
+        serializerApi.saveShopToFileAsync(shop);
     }
 
     @Override
@@ -228,6 +226,12 @@ final class WrappedShop extends dShop implements Listener {
     @Override
     public void setDefault(boolean aDefault) {
         shop.setDefault(aDefault);
+        serializerApi.saveShopToFileAsync(shop);
+    }
+
+    @Override
+    public void setOptions(ShopOptions options) {
+        shop.setOptions(options);
         serializerApi.saveShopToFileAsync(shop);
     }
 

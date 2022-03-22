@@ -6,11 +6,14 @@ import com.google.gson.*;
 import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.files.Settings;
 import io.github.divios.dailyShop.utils.DebugLog;
+import io.github.divios.dailyShop.utils.Exceptions;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.shop.ShopAccount;
+import io.github.divios.lib.dLib.shop.ShopOptions;
 import io.github.divios.lib.dLib.shop.dShopState;
 import io.github.divios.lib.dLib.shop.view.ShopViewState;
+import org.apache.commons.lang.exception.ExceptionUtils;
 
 import java.lang.reflect.Type;
 import java.sql.Timestamp;
@@ -40,6 +43,7 @@ public class dShopStateAdapter implements JsonSerializer<dShopState>, JsonDeseri
         boolean announce = true, Default = false;
         ShopAccount account = null;
         ShopViewState view = null;
+        ShopOptions options = ShopOptions.DEFAULT;
         Collection<dItem> items = new ArrayList<>();
 
         Preconditions.checkArgument(object.has("id"), "A shop needs an ID");
@@ -64,6 +68,8 @@ public class dShopStateAdapter implements JsonSerializer<dShopState>, JsonDeseri
             announce = object.get("announce_restock").getAsBoolean();
         if (object.has("default"))
             Default = object.get("default").getAsBoolean();
+        if (object.has("clickActions"))
+            try { options = ShopOptions.fromJson(object.get("clickActions")); } catch (Exception e) { Log.warn(e.getMessage()); }
         if (object.has("balance"))
             account = ShopAccount.fromJson(object.get("balance"));
 
@@ -87,7 +93,7 @@ public class dShopStateAdapter implements JsonSerializer<dShopState>, JsonDeseri
             }
         }
 
-        return new dShopState(id, timer[0], announce, Default, account, view, items);
+        return new dShopState(id, timer[0], announce, Default, options, account, view, items);
     }
 
     @Override
@@ -96,6 +102,7 @@ public class dShopStateAdapter implements JsonSerializer<dShopState>, JsonDeseri
 
         json.addProperty("id", shop.getName());
         json.addProperty("timer", shop.getTimer());
+        json.add("clickActions", shop.getOptions().toJson());
 
         if (!shop.isAnnounce()) json.addProperty("announce_restock", false);
         if (shop.isDefault()) json.addProperty("default", true);

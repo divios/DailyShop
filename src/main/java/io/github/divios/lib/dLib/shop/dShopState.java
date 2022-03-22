@@ -13,12 +13,14 @@ public class dShopState {
     private final boolean announce;
     private final boolean Default;
     private final ShopAccount account;
+    private final ShopOptions options;
     private final ShopViewState view;
     private final List<dItem> items;
 
-    public dShopState(String id, int timer, boolean announce, boolean Default, ShopAccount account, ShopViewState view, Collection<dItem> items) {
+    public dShopState(String id, int timer, boolean announce, boolean Default, ShopOptions options, ShopAccount account, ShopViewState view, Collection<dItem> items) {
         this.name = id;
         this.timer = timer;
+        this.options = options;
         this.announce = announce;
         this.Default = Default;
         this.account = account;
@@ -40,6 +42,10 @@ public class dShopState {
 
     public boolean isDefault() {
         return Default;
+    }
+
+    public ShopOptions getOptions() {
+        return options;
     }
 
     public ShopAccount getAccount() {

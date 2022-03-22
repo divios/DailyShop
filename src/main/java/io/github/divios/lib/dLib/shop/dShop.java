@@ -50,6 +50,7 @@ public class dShop implements Listener {
 
     protected ShopAccount account;
     protected ShopView gui;
+    protected ShopOptions options = ShopOptions.DEFAULT;
 
     protected Timestamp timestamp;
     protected int timer;
@@ -389,6 +390,14 @@ public class dShop implements Listener {
         this.account = account;
     }
 
+    public ShopOptions getOptions() {
+        return options;
+    }
+
+    public void setOptions(ShopOptions options) {
+        this.options = options;
+    }
+
     public void setTimestamp(Timestamp timestamp) {
         this.timestamp = timestamp;
     }
@@ -438,13 +447,13 @@ public class dShop implements Listener {
         set_announce(state.isAnnounce());
         setDefault(state.isDefault());
         setAccount(state.getAccount());
-
+        setOptions(state.getOptions());
         gui.setState(state.getView());
         setItems(state.getItems());
     }
 
     public dShopState toState() {
-        return new dShopState(name, timer, announce_restock, isDefault, account, gui.toState(), items.values());
+        return new dShopState(name, timer, announce_restock, isDefault, options, account, gui.toState(), items.values());
     }
 
     @Override

@@ -1,5 +1,8 @@
 package io.github.divios.dailyShop.utils;
 
+import java.util.function.Consumer;
+import java.util.function.Supplier;
+
 public class Exceptions {
 
     public static void tryTo(RunnableException runnable) {
@@ -14,6 +17,14 @@ public class Exceptions {
             runnable.run();
             return null;
         }, msg);
+    }
+
+    public static void tryTo(RunnableException runnable, Consumer<Exception> errHandler) {
+        try {
+            runnable.run();
+        } catch (Exception err) {
+            errHandler.accept(err);
+        }
     }
 
     public static <T> T tryTo(SupplierException<T> supplier) {
@@ -32,18 +43,15 @@ public class Exceptions {
         }
     }
 
+
     @FunctionalInterface
     public interface RunnableException {
-
         void run() throws Exception;
-
     }
 
     @FunctionalInterface
     public interface SupplierException<K> {
-
         K get() throws Exception;
-
     }
 
 }
