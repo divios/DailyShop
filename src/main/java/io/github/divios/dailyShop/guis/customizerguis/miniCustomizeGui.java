@@ -1,5 +1,6 @@
 package io.github.divios.dailyShop.guis.customizerguis;
 
+import com.cryptomorin.xseries.SkullUtils;
 import com.cryptomorin.xseries.XMaterial;
 import com.google.common.base.Preconditions;
 import io.github.divios.core_lib.events.Events;
@@ -36,6 +37,7 @@ public class miniCustomizeGui {
     private final Player p;
     private final dItem item;
     private final dShop shop;
+
     private final Consumer<dItem> consumer;
     private InventoryGUI inv;
 
@@ -49,7 +51,7 @@ public class miniCustomizeGui {
                             dItem item,
                             Consumer<dItem> consumer) {
         this.p = p;
-        this.item = item;
+        this.item = item.clone();
         this.shop = shop;
         this.consumer = consumer;
         this.inv = getGui();
@@ -202,10 +204,7 @@ public class miniCustomizeGui {
                     preventCloseB = false;
                     p.closeInventory();
                     ChatPrompt.prompt(plugin, p, (s) -> {
-                                ItemStack toChange = item.getItem();
-                                toChange = ItemUtils.setMaterial(toChange, XMaterial.PLAYER_HEAD);
-                                toChange = ItemUtils.applyTexture(toChange, s);
-                                item.setItem(toChange);
+                                item.setItem(ItemUtils.createSkull(s));
                                 Schedulers.sync().run(this::refresh);
 
                             }, cause -> Schedulers.sync().run(this::refresh),

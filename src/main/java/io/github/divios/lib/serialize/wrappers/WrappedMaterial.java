@@ -35,7 +35,7 @@ public class WrappedMaterial {
 
     public ItemStack parseItem() {
         if (material.startsWith("base64:")) {
-            return ItemUtils.applyTexture(SkullUtils.getSkull(skullUUID), material.substring(7));
+            return ItemUtils.createSkull(material.substring(7));
         } else {
             XMaterial item = XMaterial.matchXMaterial(material)
                     .orElseThrow(() -> new RuntimeException("Material not supported in this version?"));
