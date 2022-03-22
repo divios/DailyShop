@@ -4,9 +4,6 @@ import io.github.divios.core_lib.events.Events;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.dailyShop.events.checkoutEvent;
 import io.github.divios.dailyShop.files.Lang;
-import io.github.divios.dailyShop.files.Messages;
-import io.github.divios.dailyShop.utils.PrettyPrice;
-import io.github.divios.jtext.wrappers.Template;
 import io.github.divios.lib.dLib.confirmMenu.SellConfirmMenu;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dTransaction.Transactions;
@@ -53,16 +50,8 @@ public class SellCart extends Cart {
         item.getEcon().depositMoney(p, price);
         ItemUtils.remove(p.getInventory(), item.getItem(), amount);
 
-        Messages.MSG_BUY_ITEM.send(p,
-                Template.of("action", Lang.SELL_ACTION_NAME.getAsString(p)),
-                Template.of("item", ItemUtils.getName(item.getItem())),
-                Template.of("amount", amount),
-                Template.of("price", PrettyPrice.pretty(price)),
-                Template.of("currency", item.getEcon().getName())
-        );
-
+        sendSuccessMsg(amount, price, Lang.SELL_ACTION_NAME.getAsString(p));
         Events.callEvent(new checkoutEvent(shop, Transactions.Type.SELL, p, item, amount, price));
-
         shop.openShop(p);
     }
 

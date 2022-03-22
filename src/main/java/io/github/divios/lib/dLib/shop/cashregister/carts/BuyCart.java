@@ -4,11 +4,8 @@ import io.github.divios.core_lib.events.Events;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.dailyShop.events.checkoutEvent;
 import io.github.divios.dailyShop.files.Lang;
-import io.github.divios.dailyShop.files.Messages;
 import io.github.divios.dailyShop.utils.DebugLog;
-import io.github.divios.dailyShop.utils.PrettyPrice;
 import io.github.divios.dailyShop.utils.Utils;
-import io.github.divios.jtext.wrappers.Template;
 import io.github.divios.lib.dLib.confirmMenu.BuyConfirmMenu;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dTransaction.Transactions;
@@ -69,17 +66,9 @@ public class BuyCart extends Cart {
         executeAction();
 
         DebugLog.info("Buy transaction finished on : " + (System.currentTimeMillis() - start) + " ms");
-
-        Messages.MSG_BUY_ITEM.send(p,
-                Template.of("action", Lang.BUY_ACTION_NAME.getAsString(p)),
-                Template.of("item", ItemUtils.getName(item.getItem())),
-                Template.of("amount", amount),
-                Template.of("price", PrettyPrice.pretty(price)),
-                Template.of("currency", item.getEcon().getName())
-        );
+        sendSuccessMsg(amount, price, Lang.BUY_ACTION_NAME.getAsString(p));
 
         Events.callEvent(new checkoutEvent(shop, Transactions.Type.BUY, p, item, amount, price));
-
         shop.openShop(p);
     }
 

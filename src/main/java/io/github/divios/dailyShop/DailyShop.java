@@ -13,6 +13,7 @@ import io.github.divios.lib.dLib.shop.dShop;
 import io.github.divios.lib.managers.shopsManager;
 import io.github.divios.lib.serialize.serializerApi;
 import io.github.divios.lib.storage.databaseManager;
+import me.pikamug.localelib.LocaleManager;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginDescriptionFile;
@@ -30,6 +31,8 @@ public class DailyShop extends JavaPlugin {
     private priceModifierManager modifiers;
     private databaseManager dManager;
     private shopsManager sManager;
+
+    private LocaleManager localeLib;  // Material Transalations
 
     public DailyShop() {
         super();
@@ -81,6 +84,8 @@ public class DailyShop extends JavaPlugin {
         } catch (ClassNotFoundException ignored) {
         }
 
+        localeLib = new LocaleManager();
+
     }
 
     @Override
@@ -114,6 +119,10 @@ public class DailyShop extends JavaPlugin {
 
     public priceModifierManager getPriceModifiers() {
         return modifiers;
+    }
+
+    public LocaleManager getLocaleLib() {
+        return localeLib;
     }
 
     private void meetsStartRequirements() {

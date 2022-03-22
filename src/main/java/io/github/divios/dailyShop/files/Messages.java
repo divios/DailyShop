@@ -41,21 +41,25 @@ public enum Messages {
         return path;
     }
 
+   public String getValue() {
+        return DailyShop.get().getResources().getLangYml().getString(path);
+    }
+
     public void send(final CommandSender sender) {
-        sender.sendMessage(Utils.JTEXT_PARSER.parse(prefix() + getStringValue()));
+        sender.sendMessage(Utils.JTEXT_PARSER.parse(prefix() + getValue()));
     }
 
     public void send(final CommandSender sender, Template... template) {
         sender.sendMessage(
                 Utils.JTEXT_PARSER
                         .withTemplate(template)
-                        .parse(prefix() + getStringValue(), sender instanceof Player ? (Player) sender : null)
+                        .parse(prefix() + getValue(), sender instanceof Player ? (Player) sender : null)
         );
     }
 
     public void broadcast() {
         Bukkit.broadcastMessage(Utils.JTEXT_PARSER
-                .parse(prefix() + getStringValue())
+                .parse(prefix() + getValue())
         );
     }
 
@@ -63,12 +67,8 @@ public enum Messages {
         Bukkit.broadcastMessage(
                 Utils.JTEXT_PARSER
                         .withTemplate(templates)
-                        .parse(prefix() + getStringValue())
+                        .parse(prefix() + getValue())
         );
-    }
-
-    private String getStringValue() {
-        return DailyShop.get().getResources().getLangYml().getString(path);
     }
 
     private String prefix() {
