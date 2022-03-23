@@ -10,10 +10,9 @@ import io.github.divios.dailyShop.DailyShop;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.lang.reflect.Type;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +21,12 @@ import java.util.Set;
 public class FileUtils {
 
     private static final DailyShop plugin = DailyShop.get();
+    private static final Gson gson = new GsonBuilder()
+            .disableHtmlEscaping()
+            .setPrettyPrinting()
+            .registerTypeAdapter(new TypeToken<Map<String, Object>>() {
+            }.getType(), new MapDeserializerDoubleAsIntFix())
+            .create(); // don't init gson more than once
 
     public static void createFile(File file) {
         try {
@@ -49,7 +54,7 @@ public class FileUtils {
         if (!data.exists()) {
             FileUtils.createFile(data);
         }
-        
+      
         Map map = gson.fromJson(json, new TypeToken<Map<String, Object>>() {}.getType());
 
         DumperOptions options = new DumperOptions();
