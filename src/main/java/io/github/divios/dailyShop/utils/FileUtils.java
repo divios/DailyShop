@@ -54,12 +54,7 @@ public class FileUtils {
         if (!data.exists()) {
             FileUtils.createFile(data);
         }
-
-        Gson gson = new GsonBuilder()
-                .disableHtmlEscaping()
-                .registerTypeAdapter(new TypeToken<Map<String, Object>>() {
-                }.getType(), new MapDeserializerDoubleAsIntFix())
-                .create();
+      
         Map map = gson.fromJson(json, new TypeToken<Map<String, Object>>() {}.getType());
 
         DumperOptions options = new DumperOptions();
