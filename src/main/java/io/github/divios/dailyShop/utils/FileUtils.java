@@ -50,12 +50,16 @@ public class FileUtils {
             FileUtils.createFile(db);
     }
 
-    public static void dumpToYaml(Object o, File data) {
+    public static void dumpToYaml(JsonElement json, File data) {
         if (!data.exists()) {
             FileUtils.createFile(data);
         }
 
-        String json = gson.toJson(o);
+        Gson gson = new GsonBuilder()
+                .disableHtmlEscaping()
+                .registerTypeAdapter(new TypeToken<Map<String, Object>>() {
+                }.getType(), new MapDeserializerDoubleAsIntFix())
+                .create();
         Map map = gson.fromJson(json, new TypeToken<Map<String, Object>>() {}.getType());
 
         DumperOptions options = new DumperOptions();
