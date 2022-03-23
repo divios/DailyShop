@@ -45,19 +45,12 @@ public class FileUtils {
             FileUtils.createFile(db);
     }
 
-    public static void dumpToYaml(Object o, File data) {
+    public static void dumpToYaml(JsonElement json, File data) {
         if (!data.exists()) {
             FileUtils.createFile(data);
         }
-
-        Gson gson = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create();
-        String json = gson.toJson(o);
-        Map map = new GsonBuilder()
-                .disableHtmlEscaping()
-                .registerTypeAdapter(new TypeToken<Map<String, Object>>() {
-                }.getType(), new MapDeserializerDoubleAsIntFix())
-                .create().fromJson(json, new TypeToken<Map<String, Object>>() {
-                }.getType());
+        
+        Map map = gson.fromJson(json, new TypeToken<Map<String, Object>>() {}.getType());
 
         DumperOptions options = new DumperOptions();
         options.setIndent(2);
@@ -65,7 +58,7 @@ public class FileUtils {
         options.setPrettyFlow(true);
         options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
 
-        try (FileWriter fw = new FileWriter(data)) {
+        try (Writer fw = new OutputStreamWriter(new FileOutputStream(data), StandardCharsets.UTF_8)) {
             new Yaml(options).dump(map, fw);
         } catch (IOException e) {
             e.printStackTrace();
