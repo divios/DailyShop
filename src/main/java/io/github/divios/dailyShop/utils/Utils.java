@@ -22,9 +22,8 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import org.yaml.snakeyaml.Yaml;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -293,11 +292,15 @@ public class Utils {
     private static final Yaml yaml = new Yaml();
 
     public static JsonElement getJsonFromFile(File file) {
-
         Object loadedYaml = null;
-        try {
-            loadedYaml = yaml.load(new FileReader(file));
-        } catch (FileNotFoundException e) {
+        try (FileInputStream fis = new FileInputStream(file)) {
+            try (InputStreamReader isr = new InputStreamReader(fis, StandardCharsets.UTF_8)) {
+                try (BufferedReader br = new BufferedReader(isr)) {
+                    loadedYaml = yaml.load(br);
+                }
+            }
+
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return gson.toJsonTree(loadedYaml, LinkedHashMap.class);

@@ -63,8 +63,12 @@ public class FileUtils {
         options.setPrettyFlow(true);
         options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
 
-        try (Writer fw = new OutputStreamWriter(new FileOutputStream(data), StandardCharsets.UTF_8)) {
-            new Yaml(options).dump(map, fw);
+        try (FileOutputStream fos = new FileOutputStream(data)) {
+            try (OutputStreamWriter osw = new OutputStreamWriter(fos, StandardCharsets.UTF_8)) {
+                try (BufferedWriter bw = new BufferedWriter(osw)) {
+                    new Yaml(options).dump(map, bw );
+                }
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
