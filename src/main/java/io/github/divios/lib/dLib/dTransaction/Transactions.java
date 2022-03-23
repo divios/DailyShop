@@ -7,7 +7,8 @@ public interface Transactions {
 
     enum Type {
         BUY,
-        SELL;
+        SELL,
+        NONE;
 
         public static Type getByKey(String s) {
             return Arrays.stream(values())
