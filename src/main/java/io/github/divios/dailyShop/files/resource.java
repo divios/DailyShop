@@ -6,10 +6,7 @@ import io.github.divios.dailyShop.utils.FileUtils;
 import io.github.divios.dailyShop.utils.Timer;
 import org.bukkit.configuration.file.YamlConfiguration;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 
 public abstract class resource {
@@ -53,11 +50,19 @@ public abstract class resource {
         }
         checkSum = checkSumAux;
 
-        yaml = YamlConfiguration.loadConfiguration(file);
+        try (FileInputStream fos = new FileInputStream(file)) {
+            try (InputStreamReader osw = new InputStreamReader(fos, StandardCharsets.UTF_8)) {
+                try (BufferedReader bw = new BufferedReader(osw)) {
+                    yaml = YamlConfiguration.loadConfiguration(bw);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         if (copyDefaults) copyDefaults();
 
         init();
-
         timer.stop();
         Log.info(getFinishedMessage(timer.getTime()));
     }
