@@ -4,6 +4,7 @@ import com.cryptomorin.xseries.ReflectionUtils;
 import com.google.common.base.Preconditions;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
 import io.github.divios.core_lib.cache.Lazy;
 import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
@@ -49,14 +50,11 @@ public class serializerApi {
     public static void saveShopToFile(dShop shop) {
         try {
             File data = new File(shopsFolder.get(), shop.getName() + ".yml");
-            //DebugLog.info("waaaa");
-            gson.toJsonTree(shop.toState());
-            FileUtils.dumpToYaml(gson.toJsonTree(shop.toState(), dShopState.class), data);
-            //DebugLog.info("waaaa1");
+            JsonElement json = new dShopStateAdapter().serialize(shop.toState(), null, null);
+            FileUtils.dumpToYaml(json, data);
         } catch (Exception e) {
             Log.info("There was a problem saving the shop " + shop.getName());
             // e.printStackTrace();
-        }
         //Log.info("Converted all items correctly of shop " + shop.getName());
     }
 

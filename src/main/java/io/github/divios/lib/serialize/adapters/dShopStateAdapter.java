@@ -109,7 +109,7 @@ public class dShopStateAdapter implements JsonSerializer<dShopState>, JsonDeseri
         if (shop.getAccount() != null) {
             JsonElement accountJson = shop.getAccount().toJson();
             accountJson.getAsJsonObject().remove("current_balance");
-            json.add("balance", json);
+            json.add("balance", accountJson);
         }
 
         json.addProperty("timeStamp", (Boolean) null);
