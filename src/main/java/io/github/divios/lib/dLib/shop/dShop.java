@@ -185,7 +185,7 @@ public class dShop implements Listener {
 
     public @NotNull
     Map<String, dItem> getCurrentItems() {
-        return Collections.unmodifiableMap(gui.getDailyItems());
+        return Collections.unmodifiableMap(currentItems);
     }
 
     /**
@@ -248,7 +248,6 @@ public class dShop implements Listener {
      * Restocks the items of this shop.
      */
     public void reStock() {
-        Events.callEvent(new reStockShopEvent(this));
         timestamp = new Timestamp(System.currentTimeMillis());
 
         logCache.clear();
@@ -262,6 +261,7 @@ public class dShop implements Listener {
         gui.setDailyItems(rolledItems);
         currentItems = gui.getDailyItems();
 
+        Events.callEvent(new reStockShopEvent(this));
         DebugLog.info("Time elapsed to restock shop " + name + ": " + (System.currentTimeMillis() - start));
 
         if (announce_restock)
