@@ -43,6 +43,7 @@ public class DailyItemsMap {
     public Map<String, dItem> getItems() {
         return Collections.unmodifiableMap(itemsIds);
     }
+
     public dItem get(String id) {
         return itemsIds.get(id);
     }
