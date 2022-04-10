@@ -210,8 +210,7 @@ public class ShopView {
 
     private dailyItems values = null;
     public dailyItems getDailyItems() {
-        if (values == null) values = new dailyItems();
-        return values;
+        return (values == null) ? (values = new dailyItems()) : values;
     }
 
     public String getTitle() { return gui.getTitle(); }
@@ -315,7 +314,7 @@ public class ShopView {
         @NotNull
         @Override
         public Set<String> keySet() {
-            return null;
+            return dailyItemsMap.getItems().keySet();
         }
 
         @NotNull
@@ -327,7 +326,7 @@ public class ShopView {
         @NotNull
         @Override
         public Set<Entry<String, dItem>> entrySet() {
-            return null;
+            return dailyItemsMap.getItems().entrySet();
         }
     }
 
