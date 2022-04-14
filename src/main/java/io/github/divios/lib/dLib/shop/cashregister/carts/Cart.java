@@ -3,6 +3,7 @@ package io.github.divios.lib.dLib.shop.cashregister.carts;
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.files.Messages;
+import io.github.divios.dailyShop.files.Settings;
 import io.github.divios.dailyShop.utils.PrettyPrice;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.jtext.wrappers.Template;
@@ -50,7 +51,7 @@ public abstract class Cart {
 
         else        // If no custom name, send translated item type
             DailyShop.get().getLocaleLib()
-                    .sendMessage(p, rawMsg.replace("{item}", "<item>"), // LocaleLib placeholder is <item>
+                    .sendMessage(p, Settings.PREFIX + rawMsg.replace("{item}", "<item>"), // LocaleLib placeholder is <item>
                             item.getItem().getType(), (short) 0, null);
 
     }
