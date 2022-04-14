@@ -2,6 +2,7 @@ package io.github.divios.lib.serialize.adapters;
 
 import com.google.common.base.Preconditions;
 import com.google.gson.*;
+import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.stock.dStock;
 import io.github.divios.lib.dLib.stock.factory.dStockFactory;
@@ -26,8 +27,7 @@ public class dStockAdapter implements JsonSerializer<dStock>, JsonDeserializer<d
         if (stock.incrementsOnSell())
             object.addProperty("incrementOnSell", true);
 
-        if (!stock.allowSellOnMax())
-            object.addProperty("allowSellOnMax", false);
+        object.addProperty("allowSellOnMax", stock.allowSellOnMax());
 
         return object;
     }

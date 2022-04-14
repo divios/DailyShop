@@ -195,6 +195,7 @@ public abstract class dStock implements Cloneable {
                 ", maxStock=" + maxStock +
                 ", incrementOnSell=" + incrementOnSell +
                 ", exceedDefault=" + exceedDefault +
+                "; allowSellOnMax=" + allowSellOnMax +
                 ", stocks=" + stocks +
                 '}';
     }
@@ -221,6 +222,7 @@ public abstract class dStock implements Cloneable {
                 && maxStock == stock.maxStock
                 && incrementOnSell == stock.incrementOnSell
                 && exceedDefault == stock.exceedDefault
+                && allowSellOnMax == stock.allowSellOnMax
         );
     }
 
@@ -235,6 +237,7 @@ public abstract class dStock implements Cloneable {
                 && maxStock == dStock.maxStock
                 && incrementOnSell == dStock.incrementOnSell
                 && exceedDefault == dStock.exceedDefault
+                && allowSellOnMax == dStock.allowSellOnMax
                 && Objects.equals(stocks, dStock.stocks);
     }
 
