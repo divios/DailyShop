@@ -49,4 +49,8 @@ public enum Settings {
         return name == null ? defaultStr : name;
     }
 
+    @Override
+    public String toString() {
+        return getValue().getAsString();
+    }
 }

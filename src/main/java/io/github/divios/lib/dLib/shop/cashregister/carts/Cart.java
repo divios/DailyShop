@@ -49,10 +49,11 @@ public abstract class Cart {
                             .parse(rawMsg)
             );
 
-        else        // If no custom name, send translated item type
-            DailyShop.get().getLocaleLib()
-                    .sendMessage(p, Settings.PREFIX + rawMsg.replace("{item}", "<item>"), // LocaleLib placeholder is <item>
-                            item.getItem().getType(), (short) 0, null);
+        else {       // If no custom name, send translated item type
+            String msg = Utils.JTEXT_PARSER
+                    .parse(Settings.PREFIX + rawMsg.replace("{item}", "<item>")); // LocaleLib placeholder is <item>
+            DailyShop.get().getLocaleLib().sendMessage(p, msg, item.getItem().getType(), (short) 0, null);
+        }
 
     }
 
