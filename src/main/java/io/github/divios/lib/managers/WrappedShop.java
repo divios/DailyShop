@@ -2,6 +2,7 @@ package io.github.divios.lib.managers;
 
 import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.dailyShop.DailyShop;
+import io.github.divios.dailyShop.events.checkoutEvent;
 import io.github.divios.dailyShop.events.reStockShopEvent;
 import io.github.divios.dailyShop.utils.DebugLog;
 import io.github.divios.lib.dLib.dItem;
@@ -51,6 +52,18 @@ final class WrappedShop extends dShop implements Listener {
             dManager.updateGuiAsync(getName(), shop.getView());
             dManager.updateTimeStampAsync(getName(), getTimestamp());
         });
+    }
+
+    @Override
+    public void computeBill(checkoutEvent e) {
+        if (e.getShop().equals(this))
+            shop.computeBill(new checkoutEvent(shop,
+                    e.getType(),
+                    e.getPlayer(),
+                    e.getItem(),
+                    e.getAmount(),
+                    e.getPrice())
+            );
     }
 
     @Override
@@ -252,6 +265,7 @@ final class WrappedShop extends dShop implements Listener {
     public void destroy() {
         shop.destroy();
         reStockShopEvent.getHandlerList().unregister(this);
+        checkoutEvent.getHandlerList().unregister(this);
     }
 
     @Override
