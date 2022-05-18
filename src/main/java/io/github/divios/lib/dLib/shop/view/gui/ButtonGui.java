@@ -44,17 +44,18 @@ public class ButtonGui {
     private void populateButtons() {
         for (int i = 0; i < inv.getSize(); i++)
             buttons.put(i, new EmptyButton());
-
-        buttons.put(-999, new EmptyButton());       // Out of gui
     }
 
     private Subscription createClickListener() {
         return Events.subscribe(InventoryClickEvent.class)
                 .filter(event -> event.getInventory().equals(inv))
-                .filter(event -> event.getSlot() == event.getRawSlot())
                 .handler(event -> {
                     event.setCancelled(true);
-                    buttons.get(event.getSlot()).execute(event);
+
+                    Button btn;
+                    if (event.getSlot() == event.getRawSlot()
+                            && (btn = buttons.get(event.getSlot())) != null)
+                        btn.execute(event);
                 });
     }
 
