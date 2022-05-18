@@ -63,9 +63,9 @@ dependencies {
     implementation 'org.jetbrains:annotations:23.0.0'
     implementation 'com.github.PikaMug:LocaleLib:2.4'
     implementation 'org.bstats:bstats-bukkit:3.0.0'
-    implementation 'io.github.divios:core_lib_api:6.4.7'
+    implementation 'io.github.divios:core_lib_api:6.4.8'
     implementation 'io.github.divios:jCommands:1.8.2'
-    implementation 'io.github.divios:jText:3.2.2'
+    implementation 'io.github.divios:jText:3.2.3'
 
     compileOnly fileTree(dir: 'libs', include: ['*.jar'])
     compileOnly fileTree(dir: 'libsI', include: ['*.jar'])
