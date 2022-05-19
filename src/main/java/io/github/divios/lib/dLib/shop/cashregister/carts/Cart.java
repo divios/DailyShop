@@ -11,6 +11,8 @@ import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.shop.dShop;
 import org.bukkit.entity.Player;
 
+import java.util.Set;
+
 public abstract class Cart {
 
     protected final dShop shop;
@@ -43,15 +45,15 @@ public abstract class Cart {
                 .parse(Messages.MSG_BUY_ITEM.getValue());
 
         if (ItemUtils.getMetadata(item.getItem()).hasDisplayName())
-            p.sendMessage(
+            p.sendMessage(Settings.PREFIX +
                     Utils.JTEXT_PARSER
-                            .withTemplate(Template.of("item", ItemUtils.getName(item.getItem())))
+                            .withTemplate(Template.of("item", ItemUtils.getName(item.getItem()) + "&7"))
                             .parse(rawMsg)
             );
 
         else {       // If no custom name, send translated item type
             String msg = Utils.JTEXT_PARSER
-                    .parse(Settings.PREFIX + rawMsg.replace("{item}", "<item>")); // LocaleLib placeholder is <item>
+                    .parse(Settings.PREFIX + rawMsg.replace("{item}", "<item>&7")); // LocaleLib placeholder is <item>
             DailyShop.get().getLocaleLib().sendMessage(p, msg, item.getItem().getType(), (short) 0, null);
         }
 
