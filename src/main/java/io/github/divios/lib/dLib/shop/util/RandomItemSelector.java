@@ -38,6 +38,7 @@ public class RandomItemSelector {
             dItem item = iterator.next();
             if (!item.isStaticSlot()) continue;
 
+            item.rollNewPrices();
             collectedItems.put(item.getSlot(), item);
             iterator.remove();
         }
