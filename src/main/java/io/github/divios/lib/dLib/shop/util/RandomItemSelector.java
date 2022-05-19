@@ -17,7 +17,7 @@ public class RandomItemSelector {
 
     public static Queue<dItem> roll(Collection<dItem> items, int times) {
         Queue<dItem> itemQueue = new ArrayDeque<>(20);
-        itemQueue.addAll(removeStaticItems(items));
+        itemQueue.addAll(getStaticItems(items));
 
         RandomItemSelector selector = new RandomItemSelector(items);
         for (int i = 0; i < times; i++) {
@@ -31,7 +31,7 @@ public class RandomItemSelector {
         return itemQueue;
     }
 
-    private static Collection<dItem> removeStaticItems(Collection<dItem> items) {
+    private static Collection<dItem> getStaticItems(Collection<dItem> items) {
         Map<Integer, dItem> collectedItems = new HashMap<>(items.size() / 2);
 
         for (Iterator<dItem> iterator = items.iterator(); iterator.hasNext(); ) {
