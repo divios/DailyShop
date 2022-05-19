@@ -1,6 +1,7 @@
 package io.github.divios.dailyShop.files;
 
 import io.github.divios.dailyShop.DailyShop;
+import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.jcommands.util.Value;
 import org.bukkit.configuration.ConfigurationSection;
 
@@ -15,6 +16,8 @@ public enum Settings {
     DEFAULT_TIMER("settings.default_timer"),
     INTEGER_VAL("settings.integer-bal"),
     TIME_FORMAT("settings.time_format"),
+    PRICE_FORMAT("settings.price_format"),
+    PRICE_LOCALE("settings.price_locale"),
     LOGS_REMOVED("settings.removed-logs-days"),
     ECON_NAMES("settings.econ-names");
 
@@ -51,6 +54,6 @@ public enum Settings {
 
     @Override
     public String toString() {
-        return getValue().getAsString();
+        return Utils.JTEXT_PARSER.parse(getValue().getAsString());
     }
 }

@@ -30,13 +30,23 @@
   #        - The format in which the timer of the shop is displayed. You can check the format used here:
 #             https://www.joda.org/joda-time/apidocs/org/joda/time/format/DateTimeFormat.html
 # ============================
+#   <price_format>
+#        - The format to use to customize how prices are displayed. If and invalid format is used, then
+#            the default "###,###.##" is used. In most case you should not touch this.
+#            If you want more information, the formatter used is DecimalFormat.
+# ============================
+#   <price_locale>
+#        - This is an interesting option that allows you to configure how the decimals are displayed. By default
+#            the locale used is "en", meaning that decimals are displayed with a dot (Ex: 500,300.24). If you want to
+#            to display decimals, for example, with a comma, then use "de" (Ex: 500.300,24)
+# ============================
 #   <econ-names>
 #        - Option to override the displayed economy names
 # ============================
 # You must restart for changes to take effect when editing this file!
 # =========================================================
 settings:
-  prefix: "<gradient:#FFC300:#FF5733>DailyShop</gradient> &7> "
+  prefix: "&6DailyShop &7> "
   debug: false
   default-buy-price: 500.0
   default-sell-price: 20
@@ -44,6 +54,8 @@ settings:
   integer-bal: true
   removed-logs-days: 20
   time_format: "HH:mm:ss"
+  price_format: "###,###.##"
+  price_locale: "en"
   econ-names:
     economy_name_to_change: "Custom economy name"
 
