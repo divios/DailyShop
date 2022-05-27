@@ -35,5 +35,16 @@ dependencies {
 
 Replace `Tag` with a valid DailyShop version. Example `6.0.1`.
 
-# Notes:
-Although the plugin is open source, it uses a private lib repository internally, so you won't be able to compile the plugin by normal means. The purpose of this open source is to collaborate or verify and learn from the code, which is something that has served me more than once and has allowed me to develop better programming skills. Making this repository public is an act of gratitude to that cause.
+# Build:
+
+To use build the project locally you need to add the dependency [core_lib](https://github.com/divios/core_lib), follow the steps there to know how to. The libraries [jCommands](https://github.com/divios/jCommands) and [jText](https://github.com/divios/jText) are also used but are shipped automatically via jitpack.
+
+```
+git clone https://github.com/divios/DailyShop
+cd jCommands
+./gradlew jar
+```
+
+If you encounter any problems feel free to contact me
+
+
