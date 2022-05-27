@@ -41,7 +41,7 @@ To use build the project locally you need to add the dependency [core_lib](https
 
 ```
 git clone https://github.com/divios/DailyShop
-cd jCommands
+cd DailyShop
 ./gradlew jar
 ```
 
