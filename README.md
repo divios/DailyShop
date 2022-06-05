@@ -1,4 +1,4 @@
-# DailyShop [![Test Build](https://github.com/divios/DailyShop/actions/workflows/gradle-build.yml/badge.svg)](https://github.com/divios/DailyShop/actions/workflows/gradle-build.yml) ![Spigot Donwloads](https://badges.spiget.org/resources/downloads/Downloads-yellow-86907.svg)
+# DailyShop ![Spigot Donwloads](https://badges.spiget.org/resources/downloads/Downloads-yellow-86907.svg)
 DailyShop is an advanced shop plugin that aims to transform the economy of every server.
 
 There are currently two forms of Minecraft economies that exists on modern servers. The first is vanilla which does not use plugins to assist in functionality within the economy. The second is a server-shop, vanilla blend, this method uses player-to-player trades and a server-wide shop that includes set prices for items to be bought and sold. The second method is often preferred on SMP/vanilla as it provides higher liquidity and engagement in the market than vanilla. However, on anarchy/semi-anarchy servers the vanilla-economy is provided as vanilla mechanics are often preferred.
@@ -35,5 +35,16 @@ dependencies {
 
 Replace `Tag` with a valid DailyShop version. Example `6.0.1`.
 
-# Notes:
-Although the plugin is open source, it uses a private lib repository internally, so you won't be able to compile the plugin by normal means. The purpose of this open source is to collaborate or verify and learn from the code, which is something that has served me more than once and has allowed me to develop better programming skills. Making this repository public is an act of gratitude to that cause.
+# Build:
+
+To use build the project locally you need to add the dependency [core_lib](https://github.com/divios/core_lib), follow the steps there to know how to. The libraries [jCommands](https://github.com/divios/jCommands) and [jText](https://github.com/divios/jText) are also used but are shipped automatically via jitpack.
+
+```
+git clone https://github.com/divios/DailyShop
+cd DailyShop
+./gradlew jar
+```
+
+If you encounter any problems feel free to contact me
+
+
