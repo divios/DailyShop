@@ -6,6 +6,7 @@ import io.github.divios.dailyShop.lorestategy.shopItemsLore;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.shop.dShop;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -35,7 +36,7 @@ public class DailyItemFactory {
 
         @Override
         public void execute(InventoryClickEvent e) {
-            if (!(e.isRightClick() || e.isLeftClick())) return;
+            if (!((e.getClick() == ClickType.LEFT) || (e.getClick() == ClickType.RIGHT))) return;
 
             Events.callEvent(new dailyItemClickEvent(shop, (Player) e.getWhoClicked(), item, e.getClick()));
         }
