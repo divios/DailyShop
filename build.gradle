@@ -26,6 +26,7 @@ compileJava.options.encoding = 'UTF-8'
 repositories {
     mavenCentral()
     mavenLocal()
+
     maven { url "https://repo.dmulloy2.net/repository/public/" }
     maven { url 'https://hub.spigotmc.org/nexus/content/repositories/public/' }
     maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
@@ -38,13 +39,9 @@ repositories {
     maven { url = 'https://mvn.lumine.io/repository/maven-public/' }
     maven { url = 'https://libraries.minecraft.net' }
     maven { url 'https://hub.spigotmc.org/nexus/content/repositories/public/' }
-    maven {
-        url "https://maven.pkg.github.com/divios/core_lib"
-        credentials {
-            username = "divios"
-            password = gitToken
-        }
-    }
+
+    maven { url 'https://repo.repsy.io/mvn/divios/core_lib' }
+
 }
 
 dependencies {
@@ -63,9 +60,9 @@ dependencies {
     implementation 'org.jetbrains:annotations:23.0.0'
     implementation 'com.github.PikaMug:LocaleLib:2.4'
     implementation 'org.bstats:bstats-bukkit:3.0.0'
-    implementation 'io.github.divios:core_lib_api:6.4.8'
-    implementation 'io.github.divios:jCommands:1.8.2'
-    implementation 'io.github.divios:jText:3.2.3'
+    implementation 'io.github.divios:core_lib:6.4.8'
+    implementation 'com.github.divios:jCommands:1.7.5'
+    implementation 'com.github.divios:JText:3.9.1'
 
     compileOnly fileTree(dir: 'libs', include: ['*.jar'])
     compileOnly fileTree(dir: 'libsI', include: ['*.jar'])
