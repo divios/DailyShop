@@ -1,6 +1,9 @@
 package io.github.divios.dailyShop;
 
+import dev.lone.itemsadder.api.Events.ItemsAdderFirstLoadEvent;
+import dev.lone.itemsadder.api.Events.ItemsAdderLoadDataEvent;
 import io.github.divios.core_lib.Core_lib;
+import io.github.divios.core_lib.events.Events;
 import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.dailyShop.commands.commandsManager;
 import io.github.divios.dailyShop.files.resourceManager;
@@ -32,7 +35,7 @@ public class DailyShop extends JavaPlugin {
     private databaseManager dManager;
     private shopsManager sManager;
 
-    private LocaleManager localeLib;  // Material Transalations
+    private final LocaleManager localeLib = new LocaleManager();  // Material Transalations
 
     public DailyShop() {
         super();
@@ -44,7 +47,6 @@ public class DailyShop extends JavaPlugin {
 
     @Override
     public void onEnable() {
-
         try {
             meetsStartRequirements();           // Check hard dependencies
         } catch (Exception | Error e) {
@@ -56,11 +58,29 @@ public class DailyShop extends JavaPlugin {
         INSTANCE = this;
         Core_lib.setPlugin(this);       /* Set plugin for aux libraries */
         JCommands.register(this);
-        Utils.JTEXT_PARSER.getTemplates();     /* Init JText
+        Utils.JTEXT_PARSER.getTemplates();     /* Init JText */
 
         /* Init hooks  */
         Hooks.B_STATS.getApi();
 
+        /* Load commands */
+        new commandsManager().loadCommands();
+
+        if (Utils.isOperative("ItemsAdder"))            // Wait for ItemsAdder to load data (it does it async)
+            waitForItemsAdderLoad();
+        else
+            run();
+    }
+
+    private void waitForItemsAdderLoad() {
+        Events.subscribe(ItemsAdderLoadDataEvent.class)
+                .biHandler((s, e) -> {
+                    s.unregister();
+                    run();
+                });
+    }
+
+    private void run() {
         /* Init conf & msgs & modifiers*/
         modifiers = new priceModifierManager();
         resourcesManager = resourceManager.generate();
@@ -71,9 +91,6 @@ public class DailyShop extends JavaPlugin {
 
         Schedulers.sync().runLater(RecordBook::initiate, 5, TimeUnit.SECONDS);      // Wait to not lock database
 
-        /* Load commands */
-        new commandsManager().loadCommands();
-
         try {
             Class.forName("io.github.divios.core_lib.inventory.materialsPrompt");  // loads all materials
         } catch (ClassNotFoundException ignored) {
@@ -83,8 +100,6 @@ public class DailyShop extends JavaPlugin {
             Class.forName("io.github.divios.lib.dLib.confirmMenu.BuyConfirmMenu");  // loads Events
         } catch (ClassNotFoundException ignored) {
         }
-
-        localeLib = new LocaleManager();
 
     }
 
