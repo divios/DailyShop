@@ -360,22 +360,22 @@ public class databaseManager extends DataManagerAbstract {
                     try {
                         timestamp = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss")
                                 .parse(result.getString("timestamp"));
-                    } catch (ParseException e) {
-                        e.printStackTrace();
+
+                        RecordBookEntry entry = RecordBookEntry.createEntry()
+                                .withPlayer(result.getString("player"))
+                                .withShopID(result.getString("shopID"))
+                                .withItemID(result.getString("itemUUID"))
+                                .withRawItem(ItemUtils.deserialize(result.getString("rawItem")))
+                                .withType(Transactions.Type.valueOf(result.getString("type").toUpperCase()))
+                                .withPrice(result.getDouble("price"))
+                                .withQuantity(result.getInt("quantity"))
+                                .withTimestamp(timestamp == null ? new Timestamp(System.currentTimeMillis()) : timestamp)
+                                .create();
+
+                        entries.push(entry);
+
+                    } catch (Exception ignored) {
                     }
-
-                    RecordBookEntry entry = RecordBookEntry.createEntry()
-                            .withPlayer(result.getString("player"))
-                            .withShopID(result.getString("shopID"))
-                            .withItemID(result.getString("itemUUID"))
-                            .withRawItem(ItemUtils.deserialize(result.getString("rawItem")))
-                            .withType(Transactions.Type.valueOf(result.getString("type").toUpperCase()))
-                            .withPrice(result.getDouble("price"))
-                            .withQuantity(result.getInt("quantity"))
-                            .withTimestamp(timestamp == null ? new Timestamp(System.currentTimeMillis()) : timestamp)
-                            .create();
-
-                    entries.push(entry);
                 }
             }
         });
