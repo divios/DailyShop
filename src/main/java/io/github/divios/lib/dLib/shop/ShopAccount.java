@@ -53,6 +53,10 @@ public class ShopAccount {
         return balance;
     }
 
+    public ValueGenerator getGenerator() {
+        return generator;
+    }
+
     public void withdraw(double amount) {
         Validate.isTrue(amount >= 0, "Amount cannot be negative. Got: " + amount);
         if (balance <= 0) return;

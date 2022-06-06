@@ -387,7 +387,8 @@ public class dShop implements Listener {
     }
 
     public void setAccount(ShopAccount account) {
-        this.account = account;
+        if (this.account == null || !this.account.isSimilar(account))
+            this.account = account;
     }
 
     public ShopOptions getOptions() {
