@@ -5,6 +5,7 @@ import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.core_lib.misc.XSymbols;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.files.Lang;
+import io.github.divios.dailyShop.utils.PrettyPrice;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.jtext.wrappers.Template;
 import io.github.divios.lib.dLib.shop.dShop;
@@ -22,13 +23,26 @@ public class shopsManagerLore {
         String name = FormatUtils.stripColor(item.getItemMeta().getDisplayName().substring(4));
         dShop shop = DailyShop.get().getShopsManager().getShop(name).orElse(null);
 
-        return new ItemBuilder(item)
-                .addLore(Lang.SHOPS_MANAGER_LORE.getAsListString(
+        ItemBuilder builder = new ItemBuilder(item)
+                .addLore(Lang.SHOPS_MANAGER_LORE_1.getAsListString(
                                 Template.of("timer", shop.getTimer()),
                                 Template.of("amount", shop.size()),
                                 Template.of("c_timer", getShopTimerFormatted(shop))
                         )
                 );
+
+        if (shop.getAccount() != null) {
+
+            builder = builder
+                    .addLore(Lang.SHOPS_MANAGER_LORE_2.getAsListString(
+                            Template.of("c_balance", PrettyPrice.pretty(shop.getAccount().getBalance())),
+                            Template.of("max_balance", getMaxBalanceFormatted(shop.getAccount().getMaxBalance())),
+                            Template.of("type_balance", shop.getAccount().getGenerator().toString())
+                    ));
+
+        }
+
+        return builder.addLore(Lang.SHOPS_MANAGER_LORE_3.getAsListString());
     }
 
     private static String getShopTimerFormatted(dShop shop) {
@@ -36,6 +50,13 @@ public class shopsManagerLore {
             return XSymbols.TIMES_3.parseSymbol();
         else
             return Utils.getDiffActualTimer(shop);
+    }
+
+    private static String getMaxBalanceFormatted(double mBalance) {
+        if (mBalance == Double.MAX_VALUE)
+            return XSymbols.INFINITY.parseSymbol();
+        else
+            return PrettyPrice.pretty(mBalance);
     }
 
 }
