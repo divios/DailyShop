@@ -1,5 +1,7 @@
 package io.github.divios.dailyShop.economies;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Function;
 
 public enum Economies {
@@ -17,17 +19,30 @@ public enum Economies {
     gettoni(s -> new gettoniE());
 
     private final Function<String, Economy> function;
+    private final Map<String, Economy> cached = new HashMap<>();
 
     Economies(Function<String, Economy> function) {
         this.function = function;
     }
 
     public Economy getEconomy() {
-        return function.apply("");
+        Economy aux;
+        if ((aux = cached.get(null)) != null)
+            return aux;
+
+        aux = function.apply("");
+        cached.put(null, aux);
+        return aux;
     }
 
     public Economy getEconomy(String currency) {
-        return function.apply(currency);
+        Economy aux;
+        if ((aux = cached.get(currency)) != null)
+            return aux;
+
+        aux = function.apply(currency);
+        cached.put(currency, aux);
+        return aux;
     }
 
 }
