@@ -350,9 +350,9 @@ public class dShop implements Listener {
 
         if (account != null) {
             if (e.getType() == Transactions.Type.BUY)
-                account.deposit(e.getAmount());
+                account.deposit(e.getPrice());
             else
-                account.withdraw(e.getAmount());
+                account.withdraw(e.getPrice());
         }
 
         dItem shopItem = currentItems.get(e.getItem().getID());
