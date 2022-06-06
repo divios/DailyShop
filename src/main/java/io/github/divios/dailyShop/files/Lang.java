@@ -34,7 +34,9 @@ public enum Lang {
     SHOPS_MANAGER_CREATE_LORE("lang.shops_manager.create_lore"),
     SHOPS_MANAGER_RETURN("lang.shops_manager.return"),
     SHOPS_MANAGER_RETURN_LORE("lang.shops_manager.return_lore"),
-    SHOPS_MANAGER_LORE("lang.shops_manager.lore"),
+    SHOPS_MANAGER_LORE_1("lang.shops_manager.lore_1"),
+    SHOPS_MANAGER_LORE_2("lang.shops_manager.lore_2"),
+    SHOPS_MANAGER_LORE_3("lang.shops_manager.lore_3"),
 
     ADD_ITEMS_TITLE("lang.add_item_gui.title"),
     ADD_ITEMS_FROM_ZERO("lang.add_item_gui.from_zero"),
