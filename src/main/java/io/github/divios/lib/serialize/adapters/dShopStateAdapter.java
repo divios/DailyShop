@@ -112,7 +112,7 @@ public class dShopStateAdapter implements JsonSerializer<dShopState>, JsonDeseri
             json.add("balance", accountJson);
         }
 
-        json.addProperty("timeStamp", (Boolean) null);
+        //json.addProperty("timeStamp", (Boolean) null);
         json.add("shop", gson.toJsonTree(shop.getView(), ShopViewState.class));
         json.add("items", gson.toJsonTree(parseUUIDs(shop.getItems())));
 
