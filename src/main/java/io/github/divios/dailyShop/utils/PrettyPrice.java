@@ -12,8 +12,7 @@ public class PrettyPrice {
 
     private static final DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.US);
     private static final DecimalFormat df = new DecimalFormat("###,###.##", symbols); // or pattern "###,###.##$"
-
-
+    
     /**
      * Formats double in a pretty default way (US locale).
      */

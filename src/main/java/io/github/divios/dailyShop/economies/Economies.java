@@ -47,7 +47,7 @@ public enum Economies {
 
     public static void reload() {
         for (Economies value : values()) {
-            value.getEconomy().reload();
+            value.cached.values().forEach(Economy::reload);
         }
     }
 
