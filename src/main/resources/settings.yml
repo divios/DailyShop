@@ -43,6 +43,17 @@
 #   <econ-names>
 #        - Option to override the displayed economy names
 # ============================
+#   <econ_formatter>
+#        - Option to override how the prices of each economy are displayed.
+
+#              - Format: The format to use to customize how prices are displayed. If and invalid format is used, then
+#                   it applies the default "###,###.##". In most cases you should not touch this.
+#                   If you want more information, the formatter used is DecimalFormat.
+
+#              - Locale: By default the locale used is "en", meaning that decimals are displayed
+#                   with a dot (Ex: 500,300.24). If you want
+#                   to display decimals, for example, with a comma, then use "de" (Ex: 500.300,24)
+# ============================
 # You must restart for changes to take effect when editing this file!
 # =========================================================
 settings:
@@ -58,4 +69,8 @@ settings:
   price_locale: "en"
   econ-names:
     economy_name_to_change: "Custom economy name"
+  econ_formatter:
+    vault:
+      format: "###,###.##"
+      locale: "en"
 
