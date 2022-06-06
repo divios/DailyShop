@@ -66,7 +66,7 @@ public class BuyCart extends Cart {
         executeAction();
 
         DebugLog.info("Buy transaction finished on : " + (System.currentTimeMillis() - start) + " ms");
-        sendSuccessMsg(amount, price, Lang.BUY_ACTION_NAME.getAsString(p));
+        sendSuccessMsg(amount, item.getEcon().formatPrice(price), Lang.BUY_ACTION_NAME.getAsString(p));
 
         Events.callEvent(new checkoutEvent(shop, Transactions.Type.BUY, p, item, amount, price));
         shop.openShop(p);

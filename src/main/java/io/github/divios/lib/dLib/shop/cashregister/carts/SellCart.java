@@ -50,7 +50,7 @@ public class SellCart extends Cart {
         item.getEcon().depositMoney(p, price);
         ItemUtils.remove(p.getInventory(), item.getItem(), amount);
 
-        sendSuccessMsg(amount, price, Lang.SELL_ACTION_NAME.getAsString(p));
+        sendSuccessMsg(amount, item.getEcon().formatPrice(price), Lang.SELL_ACTION_NAME.getAsString(p));
         Events.callEvent(new checkoutEvent(shop, Transactions.Type.SELL, p, item, amount, price));
         shop.openShop(p);
     }

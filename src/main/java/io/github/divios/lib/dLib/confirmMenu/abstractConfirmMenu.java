@@ -13,7 +13,6 @@ import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.files.Lang;
 import io.github.divios.dailyShop.utils.DebugLog;
 import io.github.divios.dailyShop.utils.NMSUtils.SetSlotPacket;
-import io.github.divios.dailyShop.utils.PrettyPrice;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.jtext.wrappers.Template;
 import io.github.divios.lib.dLib.dItem;
@@ -256,14 +255,10 @@ public abstract class abstractConfirmMenu {
     private List<String> setItemPricePlaceholder(List<String> str) {
         return Utils.JTEXT_PARSER
                 .withTemplate(
-                        Template.of("price", getFormattedPrice(getItemPrice() * nAddedItems) + " " + item.getEcon().getName()),
+                        Template.of("price", item.getEcon().formatPrice(getItemPrice() * nAddedItems) + " " + item.getEcon().getName()),
                         Template.of("quantity", nAddedItems)
                 )
                 .parse(str, player);
-    }
-
-    private String getFormattedPrice(double value) {
-        return PrettyPrice.pretty(value);
     }
 
     protected abstract double getItemPrice();

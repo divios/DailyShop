@@ -45,4 +45,10 @@ public enum Economies {
         return aux;
     }
 
+    public static void reload() {
+        for (Economies value : values()) {
+            value.getEconomy().reload();
+        }
+    }
+
 }

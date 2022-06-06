@@ -1,5 +1,6 @@
 package io.github.divios.dailyShop.economies;
 
+import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.hooks.Hooks;
 import org.bukkit.entity.Player;
 

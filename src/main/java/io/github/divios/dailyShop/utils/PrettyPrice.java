@@ -13,34 +13,17 @@ public class PrettyPrice {
     private static final DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.US);
     private static final DecimalFormat df = new DecimalFormat("###,###.##", symbols); // or pattern "###,###.##$"
 
-    private static Locale getLocaleOrDefault(String tag) {
-        try {
-            return Objects.requireNonNull(LocaleUtils.toLocale(tag), "locale is null");
-        } catch (Exception e) {
-            e.printStackTrace();
-            return Locale.US;
-        }
-    }
 
+    /**
+     * Formats double in a pretty default way (US locale).
+     */
     public static String pretty(double d) {
-        String priceStr = formatOrDefault(Settings.PRICE_FORMAT.toString(), d);
+        String priceStr = df.format(d);
 
         if (Settings.INTEGER_VAL.getValue().getAsBoolean())
             priceStr = roundPrice(priceStr);
 
         return priceStr;
-    }
-
-
-    private static String formatOrDefault(String format, double price) {
-        try {
-            DecimalFormatSymbols symbols = new DecimalFormatSymbols(getLocaleOrDefault(Settings.PRICE_LOCALE.toString()));
-            DecimalFormat clientFormat = new DecimalFormat(format, symbols);
-            return clientFormat.format(price);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return df.format(price);
-        }
     }
 
     private static String roundPrice(String price) {

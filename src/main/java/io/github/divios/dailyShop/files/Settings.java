@@ -4,8 +4,10 @@ import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.jcommands.util.Value;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.MemorySection;
 
 import java.util.Map;
+import java.util.Objects;
 
 public enum Settings {
 
@@ -16,10 +18,9 @@ public enum Settings {
     DEFAULT_TIMER("settings.default_timer"),
     INTEGER_VAL("settings.integer-bal"),
     TIME_FORMAT("settings.time_format"),
-    PRICE_FORMAT("settings.price_format"),
-    PRICE_LOCALE("settings.price_locale"),
     LOGS_REMOVED("settings.removed-logs-days"),
-    ECON_NAMES("settings.econ-names");
+    ECON_NAMES("settings.econ-names"),
+    ECON_FORMATTER("settings.econ_formatter");
 
     private final String path;
 
@@ -39,21 +40,59 @@ public enum Settings {
         return DailyShop.get().getResources().getSettingsYml().getConfigurationSection(path);
     }
 
-    public String getEconNameOrDefault(String key, String defaultStr) {
+    public static String getEconNameOrDefault(String key, String defaultStr) {
         String name = null;
         for (Map.Entry<String, Object> entry : DailyShop.get().getResources().getSettingsYml()
                 .getConfigurationSection(ECON_NAMES.path)
                 .getValues(false).entrySet()) {
+
             if (entry.getKey().equalsIgnoreCase(key)) {
                 name = String.valueOf(entry.getValue());
                 break;
             }
+
         }
-        return name == null ? defaultStr : name;
+        return (name == null) ? defaultStr : name;
+    }
+
+    public static FormatterData getEconFormatter(String key) {
+        FormatterData data = null;
+
+        for (Map.Entry<String, Object> entry : DailyShop.get().getResources().getSettingsYml()
+                .getConfigurationSection(ECON_FORMATTER.path)
+                .getValues(false).entrySet()) {
+
+            if (entry.getKey().equalsIgnoreCase(key)) {
+
+                try {
+                    MemorySection section = (MemorySection) entry.getValue();
+                    data = new FormatterData(
+                            Objects.requireNonNull(section.getString("format")),
+                            Objects.requireNonNull(section.getString("locale"))
+                    );
+                } catch (Exception ignored) {}
+
+                break;
+            }
+        }
+
+        return data;
     }
 
     @Override
     public String toString() {
         return Utils.JTEXT_PARSER.parse(getValue().getAsString());
     }
+
+
+    public static final class FormatterData {
+        public final String format;
+        public final String locale;
+
+        public FormatterData(String format, String locale) {
+            this.format = format;
+            this.locale = locale;
+        }
+    }
+
 }

@@ -1,6 +1,7 @@
 package io.github.divios.dailyShop.economies;
 
 import io.github.divios.dailyShop.DailyShop;
+import io.github.divios.dailyShop.economies.util.Formatter;
 import io.github.divios.dailyShop.files.Settings;
 import me.realized.tokenmanager.util.Log;
 import org.bukkit.entity.Player;
@@ -27,6 +28,7 @@ public abstract class Economy implements Serializable {
     protected final String currency;
     private final Supplier<String> name;
     private final Economies key;
+    private Formatter formatter;
 
     protected Economy(String currency, Supplier<String> name, Economies key) {
         this.currency = currency;
@@ -53,7 +55,7 @@ public abstract class Economy implements Serializable {
     public abstract double getBalance(Player p);
 
     public String getName() {
-        return Settings.ECON_NAMES.getEconNameOrDefault(name.get(), name.get());
+        return Settings.getEconNameOrDefault(name.get(), name.get());
     }
 
     public String getCurrency() {
@@ -74,6 +76,17 @@ public abstract class Economy implements Serializable {
         } catch (IOException e) {
             throw new IllegalStateException("Unable to serialize economy.", e);
         }
+    }
+
+    public String formatPrice(Double d) {
+        if (formatter == null)
+            formatter = Formatter.create(Settings.getEconFormatter(name.get()));
+
+        return formatter.format(d);
+    }
+
+    public void reload() {
+        formatter = null;
     }
 
     @Override
@@ -105,7 +118,7 @@ public abstract class Economy implements Serializable {
                 return getFromKey(key, currency);
             }
         } catch (Error | Exception ignored) {
-            return new vault();
+            return Economies.vault.getEconomy();
         }
     }
 
@@ -118,6 +131,6 @@ public abstract class Economy implements Serializable {
         } catch (Error | Exception ignored) {
             Log.info("Cannot get economy " + currency + ", check if the corresponding plugin is enabled. Setting it to vault");
         }
-        return new vault();
+        return Economies.vault.getEconomy();
     }
 }

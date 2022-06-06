@@ -6,6 +6,7 @@ import io.github.divios.core_lib.Core_lib;
 import io.github.divios.core_lib.events.Events;
 import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.dailyShop.commands.commandsManager;
+import io.github.divios.dailyShop.economies.Economies;
 import io.github.divios.dailyShop.files.resourceManager;
 import io.github.divios.dailyShop.hooks.Hooks;
 import io.github.divios.dailyShop.utils.Utils;
@@ -114,6 +115,7 @@ public class DailyShop extends JavaPlugin {
 
     public void reload() {
         resourcesManager.reload();
+        Economies.reload();
     }
 
     public shopsManager getShopsManager() {

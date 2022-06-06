@@ -12,7 +12,6 @@ import io.github.divios.dailyShop.events.checkoutEvent;
 import io.github.divios.dailyShop.files.Lang;
 import io.github.divios.dailyShop.files.Messages;
 import io.github.divios.dailyShop.utils.DebugLog;
-import io.github.divios.dailyShop.utils.PrettyPrice;
 import io.github.divios.dailyShop.utils.Timer;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.jcommands.JCommand;
@@ -164,7 +163,7 @@ public class sellCommand {
                     Template.of("action", Lang.SELL_ACTION_NAME.getAsString(p)),
                     Template.of("item", ItemUtils.getName(item.getItem())),
                     Template.of("amount", amount),
-                    Template.of("price", PrettyPrice.pretty(price)),
+                    Template.of("price", item.getEcon().formatPrice(price)),
                     Template.of("currency", item.getEcon().getName())
             );
 
@@ -201,7 +200,7 @@ public class sellCommand {
 
             List<String> lore = new ArrayList<>();
             getItemPrices().forEach((economy, aDouble) ->
-                    lore.add("&7" + PrettyPrice.pretty(aDouble) + " " + economy.getName()));
+                    lore.add("&7" + economy.formatPrice(aDouble) + " " + economy.getName()));
 
             doneButton = ItemUtils.setLore(doneButton, lore);
             gui.setItem(31, doneButton);
