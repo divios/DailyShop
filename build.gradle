@@ -15,7 +15,7 @@ plugins {
 apply plugin: 'maven-publish'
 
 group = 'io.github.divios'
-def pluginVersion = "3.9"
+def pluginVersion = "3.9.1"
 version = pluginVersion
 
 sourceCompatibility = '1.8'
@@ -56,11 +56,10 @@ dependencies {
     compileOnly 'com.github.LoneDev6:API-ItemsAdder:2.5.5'
     compileOnly 'com.willfp:EcoEnchants:8.21.0'
 
-
     implementation 'org.jetbrains:annotations:23.0.0'
     implementation 'com.github.PikaMug:LocaleLib:2.4'
     implementation 'org.bstats:bstats-bukkit:3.0.0'
-    implementation 'io.github.divios:core_lib:6.4.8'
+    implementation 'io.github.divios:core_lib:6.5.0'
     implementation 'com.github.divios:jCommands:1.7.5'
     implementation 'com.github.divios:JText:3.9.1'
 
@@ -102,55 +101,30 @@ task updateJars {
     doLast {
         // windows
         if (Os.isFamily(Os.FAMILY_WINDOWS)) {
-            copy {
-                from 'build/libs/DailyShop-' + pluginVersion + "-all.jar"
-                into 'C:/Users/serbe/OneDrive/Desktop/server_pruebas/server-1.17/plugins'
-                rename("DailyShop-" + pluginVersion + "-all.jar"
-                        , "DailyShop-" + pluginVersion + ".jar")
-            }
-            copy {
-                from 'build/libs/DailyShop-' + pluginVersion + "-all.jar"
-                into 'C:/Users/serbe/OneDrive/Desktop/server_pruebas/server-1.18/plugins'
-                rename("DailyShop-" + pluginVersion + "-all.jar"
-                        , "DailyShop-" + pluginVersion + ".jar")
-            }
-            copy {
-                from 'build/libs/DailyShop-' + pluginVersion + "-all.jar"
-                into 'C:/Users/serbe/OneDrive/Desktop/server_pruebas/server-1.16/plugins'
-                rename("DailyShop-" + pluginVersion + "-all.jar"
-                        , "DailyShop-" + pluginVersion + ".jar")
-            }
+
+            [1.18, 1.17, 1.16].forEach(value -> {
+
+                copy {
+                    from "build/libs/DailyShop-${pluginVersion}-all.jar"
+                    into "C:/Users/serbe/OneDrive/Desktop/server_pruebas/server-${value}/plugins"
+                    rename("DailyShop-${pluginVersion}-all.jar"
+                            , "DailyShop-${pluginVersion}.jar")
+                }
+
+            })
+
         } else if (Os.isFamily(Os.FAMILY_MAC)) {  // MAC
-            copy {
-                from 'build/libs/DailyShop-' + pluginVersion + "-all.jar"
-                into '/Users/sergiobernalparrondo/Desktop/servers/server-1.18/plugins'
-                rename("DailyShop-" + pluginVersion + "-all.jar"
-                        , "DailyShop-" + pluginVersion + ".jar")
-            }
-            copy {
-                from 'build/libs/DailyShop-' + pluginVersion + "-all.jar"
-                into '/Users/sergiobernalparrondo/Desktop/servers/server-1.17/plugins'
-                rename("DailyShop-" + pluginVersion + "-all.jar"
-                        , "DailyShop-" + pluginVersion + ".jar")
-            }
-            copy {
-                from 'build/libs/DailyShop-' + pluginVersion + "-all.jar"
-                into '/Users/sergiobernalparrondo/Desktop/servers/server-1.13/plugins'
-                rename("DailyShop-" + pluginVersion + "-all.jar"
-                        , "DailyShop-" + pluginVersion + ".jar")
-            }
-            copy {
-                from 'build/libs/DailyShop-' + pluginVersion + "-all.jar"
-                into '/Users/sergiobernalparrondo/Desktop/servers/server-1.12/plugins'
-                rename("DailyShop-" + pluginVersion + "-all.jar"
-                        , "DailyShop-" + pluginVersion + ".jar")
-            }
-            copy {
-                from 'build/libs/DailyShop-' + pluginVersion + "-all.jar"
-                into '/Users/sergiobernalparrondo/Desktop/servers/server-1.8/plugins'
-                rename("DailyShop-" + pluginVersion + "-all.jar"
-                        , "DailyShop-" + pluginVersion + ".jar")
-            }
+
+            [1.19, 1.18, 1.16, 1.13, 1.12, 1.8].forEach(value -> {
+
+                copy {
+                    from "build/libs/DailyShop-${pluginVersion}-all.jar"
+                    into "/Users/sergiobernalparrondo/Desktop/servers/server-${value}/plugins"
+                    rename("DailyShop-${pluginVersion}-all.jar"
+                            , "DailyShop-${pluginVersion}.jar")
+                }
+
+            })
         }
     }
 }
