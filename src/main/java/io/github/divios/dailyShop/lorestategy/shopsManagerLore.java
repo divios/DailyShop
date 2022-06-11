@@ -1,6 +1,7 @@
 package io.github.divios.dailyShop.lorestategy;
 
 import io.github.divios.core_lib.itemutils.ItemBuilder;
+import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.core_lib.misc.XSymbols;
 import io.github.divios.dailyShop.DailyShop;
@@ -14,13 +15,15 @@ import org.bukkit.inventory.ItemStack;
 @SuppressWarnings({"ConstantConditions"})
 public class shopsManagerLore {
 
+    private static final String SHOP_META = "dShopD";
+
     private shopsManagerLore() {
         throw new RuntimeException("This class cannot be instantiated");
     }
 
     public static ItemStack applyLore(ItemStack item) {
 
-        String name = FormatUtils.stripColor(item.getItemMeta().getDisplayName().substring(4));
+        String name = ItemUtils.getMetadata(item, SHOP_META, String.class);
         dShop shop = DailyShop.get().getShopsManager().getShop(name).orElse(null);
 
         ItemBuilder builder = new ItemBuilder(item)

@@ -261,7 +261,10 @@ public class shopsManagerGui {
                                 ItemStack itemToUpdate = inventoryGUI.getInventory().getItem(slot);
                                 if (ItemUtils.isEmpty(itemToUpdate)) return;
 
-                                ItemStack newItem = shopsManagerLore.applyLore(ItemBuilder.of(itemToUpdate.clone()).setLore(Collections.emptyList()));
+                                ItemStack newItem = shopsManagerLore.applyLore(
+                                        ItemBuilder.of(itemToUpdate.clone())
+                                                .setLore(Collections.emptyList())
+                                );
 
                                 inventoryGUI.getInventory().setItem(slot, newItem);
 
