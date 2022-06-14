@@ -12,6 +12,7 @@ import io.github.divios.jcommands.arguments.types.StringArgument;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.shop.dShop;
 import net.brcdev.shopgui.ShopGuiPlusApi;
+import net.brcdev.shopgui.shop.Shop;
 import net.brcdev.shopgui.shop.ShopManager;
 import org.black_ixx.bossshop.BossShop;
 import org.black_ixx.bossshop.core.BSShop;
@@ -42,7 +43,14 @@ public class importShops {
                 .executesPlayer((player, args) -> {
                     DailyShop.get().getShopsManager().getShop(args.get("dailyShop").getAsString())
                             .ifPresent(shop -> {
-                                ShopGuiPlusApi.getShop(args.get("bossShop").getAsString()).getShopItems()
+
+                                Shop shopGuiShop;
+                                if ((shopGuiShop = ShopGuiPlusApi.getShop(args.get("shopGui").getAsString())) == null) {
+                                    Utils.sendRawMsg(player, "&7That shopGuiShop does not exists");
+                                    return;
+                                }
+
+                                shopGuiShop.getShopItems()
                                         .forEach(shopItem -> {
 
                                             if (shopItem.getType().equals(ShopManager.ItemType.DUMMY)) return;
@@ -62,7 +70,7 @@ public class importShops {
     }
 
     private Argument getShopGuiArgument() {
-        return new StringArgument("bossShop")
+        return new StringArgument("shopGui")
                 .overrideSuggestions(() -> new ArrayList<>(ShopGuiPlusApi.getPlugin().getShopManager().shops.keySet()));
     }
 
@@ -76,29 +84,35 @@ public class importShops {
                 .executesPlayer((player, args) -> {
                     DailyShop.get().getShopsManager().getShop(args.get("dailyShop").getAsString())
                             .ifPresent(shop -> {
-                                plugin.getAPI().getShop(args.get("bossShop").getAsString())
-                                        .getItems().forEach(bsBuy -> {
-                                            dItem newItem = dItem.of(bsBuy.getItem());
 
-                                            double buyPrice = Double.parseDouble(
-                                                    String.valueOf(bsBuy.getPrice(null) == null ?
-                                                            bsBuy.getPrice(ClickType.LEFT) : bsBuy.getPrice(null))
-                                            ) / bsBuy.getItem().getAmount();
+                                BSShop bossShopShop;
+                                if ((bossShopShop = plugin.getAPI().getShop(args.get("bossShop").getAsString())) == null) {
+                                    Utils.sendRawMsg(player, "&7That BossShop does not exists");
+                                    return;
+                                }
 
-                                            double sellPrice = Double.parseDouble(
-                                                    String.valueOf(bsBuy.getPrice(null) == null ?
-                                                            bsBuy.getPrice(ClickType.RIGHT) : bsBuy.getPrice(null))
-                                            ) / bsBuy.getItem().getAmount();
+                                bossShopShop.getItems().forEach(bsBuy -> {
+                                    dItem newItem = dItem.of(bsBuy.getItem());
 
-                                            try {
-                                                newItem.setBuyPrice(new FixedValueGenerator(buyPrice));
-                                                newItem.setSellPrice(new FixedValueGenerator(sellPrice));
-                                            } catch (Exception e) {
-                                                Log.info("Could not import item of name " + bsBuy.getName());
-                                                return;
-                                            }
-                                            shop.addItem(newItem);
-                                        });
+                                    double buyPrice = Double.parseDouble(
+                                            String.valueOf(bsBuy.getPrice(null) == null ?
+                                                    bsBuy.getPrice(ClickType.LEFT) : bsBuy.getPrice(null))
+                                    ) / bsBuy.getItem().getAmount();
+
+                                    double sellPrice = Double.parseDouble(
+                                            String.valueOf(bsBuy.getPrice(null) == null ?
+                                                    bsBuy.getPrice(ClickType.RIGHT) : bsBuy.getPrice(null))
+                                    ) / bsBuy.getItem().getAmount();
+
+                                    try {
+                                        newItem.setBuyPrice(new FixedValueGenerator(buyPrice));
+                                        newItem.setSellPrice(new FixedValueGenerator(sellPrice));
+                                    } catch (Exception e) {
+                                        Log.info("Could not import item of name " + bsBuy.getName());
+                                        return;
+                                    }
+                                    shop.addItem(newItem);
+                                });
                                 Utils.sendRawMsg(player, "&7Items imported successfully");
                                 shopsItemsManagerGui.open(player, shop);
                             });
