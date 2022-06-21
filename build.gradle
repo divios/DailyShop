@@ -60,7 +60,7 @@ dependencies {
     implementation 'com.github.PikaMug:LocaleLib:2.4'
     implementation 'org.bstats:bstats-bukkit:3.0.0'
     implementation 'io.github.divios:core_lib:6.5.0'
-    implementation 'com.github.divios:jCommands:1.7.5'
+    implementation 'io.github.divios:jCommands:1.8.3A'
     implementation 'com.github.divios:JText:3.9.1'
 
     compileOnly fileTree(dir: 'libs', include: ['*.jar'])
@@ -115,7 +115,7 @@ task updateJars {
 
         } else if (Os.isFamily(Os.FAMILY_MAC)) {  // MAC
 
-            [1.19, 1.18, 1.16, 1.13, 1.12, 1.8].forEach(value -> {
+            [1.19, 1.18, 1.17, 1.16, 1.13, 1.12, 1.8].forEach(value -> {
 
                 copy {
                     from "build/libs/DailyShop-${pluginVersion}-all.jar"
