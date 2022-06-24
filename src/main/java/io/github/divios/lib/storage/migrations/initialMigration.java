@@ -6,35 +6,45 @@ import java.sql.Statement;
 
 public class initialMigration {
 
-    public static void migrate(Connection connection, String tablePrefix) throws SQLException {
+    public static void migrate(Connection connection) throws SQLException {
 
         try (Statement statement = connection.createStatement()) {
-            statement.execute("CREATE TABLE IF NOT EXISTS " + tablePrefix + "active_shops (" +
-                    "name varchar [255] collate nocase PRIMARY KEY, " +
-                    "account varchar [255], " +
-                    "timestamp varchar [255], " +
-                    "timer INTEGER, " +
-                    "gui varchar [255]" +
-                    ")");
+
+            statement.addBatch("CREATE TABLE IF NOT EXISTS Shops(" +
+                    "shop_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY," +
+                    "name VARCHAR(30) NOT NULL," +
+                    "timer INT NOT NULL," +
+                    "timestamp TIMESTAMP NOT NULL" +
+                    ");"
+            );
+
+            statement.addBatch("CREATE TABLE IF NOT EXISTS Guis(" +
+                    "gui_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY," +
+                    "content VARCHAR NOT NULL," +
+                    "shop_id INT UNSIGNED," +
+                    "FOREIGN KEY(shop_id) REFERENCES shops(shop_id)" +
+                    ");"
+            );
+
+            statement.addBatch("CREATE TABLE IF NOT EXISTS Items(" +
+                    "item_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY," +
+                    "itemSerial VARCHAR NOT NULL," +
+                    "uuid VARCHAR NOT NULL," +
+                    "shop_id INT UNSIGNED," +
+                    "FOREIGN KEY(shop_id) REFERENCES shops(shop_id)" +
+                    ");"
+            );
+
+            statement.addBatch("CREATE TABLE IF NOT EXISTS Accounts(" +
+                    "account_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY," +
+                    "accountSerial VARCHAR NOT NULL," +
+                    "shop_id INT UNSIGNED," +
+                    "FOREIGN KEY(shop_id) REFERENCES shops(shop_id)" +
+                    ");"
+            );
+
+            statement.executeBatch();
         }
-
-        try (Statement statement = connection.createStatement()) {
-            statement.execute("CREATE TABLE IF NOT EXISTS " + tablePrefix + "log (" +
-                    "player varchar [255], " +        // PlayerName
-                    "shopID varchar [255], " +        // shopID
-                    "itemUUID varchar [255], " +        // Item-UUID
-                    "rawItem varchar [255], " +        // ItemName
-                    "type varchar [255], " +              // Item Type
-                    "price DOUBLE, " +                    // Item Price
-                    "quantity INTEGER, " +                 // item quantity
-                    "timestamp data" +
-                    ")");
-        }
-
-        try (Statement statement = connection.createStatement()) {
-            statement.execute("ALTER TABLE " + tablePrefix + "active_shops " +
-                    "RENAME COLUMN type TO account");
-        } catch (Exception ignored) {}          // Ignored if already renamed
 
     }
 
