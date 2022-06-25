@@ -196,8 +196,8 @@ public class databaseManager extends DataManagerAbstract {
                     "VALUES (?, ?, ?)";
             try (PreparedStatement statement = connection.prepareStatement(createShop)) {
 
-                statement.setString(1, item.toJson().toString());
-                statement.setString(2, item.getUUID().toString());
+                statement.setString(1, item.getID());
+                statement.setString(2, item.toJson().toString());
                 statement.setString(3, shop_name);
 
                 statement.executeUpdate();

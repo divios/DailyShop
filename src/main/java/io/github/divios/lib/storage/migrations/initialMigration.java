@@ -29,6 +29,7 @@ public class initialMigration {
                     "item_uuid VARCHAR NOT NULL," +
                     "item_serial VARCHAR NOT NULL," +
                     "shop_id INT UNSIGNED NOT NULL," +
+                    "UNIQUE(item_uuid, shop_id), " +
                     "FOREIGN KEY(shop_id) REFERENCES shops(shop_id) " +
                     "ON DELETE CASCADE" +
                     ");"

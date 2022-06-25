@@ -320,11 +320,10 @@ public class dShop implements Listener {
      * @param item item to be added
      */
     public void addItem(@NotNull dItem item) {
-        if (items.containsKey(item.getUUID())) {
+        if (items.containsKey(item.getUUID()))
             updateItem(item);
-            return;
-        }
-        items.put(item.getUUID(), item);
+        else
+            items.put(item.getUUID(), item);
     }
 
     /**

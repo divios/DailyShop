@@ -5,6 +5,7 @@ import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.utils.DebugLog;
 import io.github.divios.dailyShop.utils.Timer;
+import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.shop.dShop;
 import io.github.divios.lib.dLib.shop.dShopState;
 import io.github.divios.lib.managers.shopsManager;
@@ -13,6 +14,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class shopsResource {
@@ -62,7 +64,8 @@ public class shopsResource {
                     DebugLog.info("removed shop");
                 });
 
-        newShops.values().forEach(shopState -> {                          // Process read Shops
+        for (dShopState shopState : newShops.values()) {
+
             boolean isNew = false;
             dShop currentShop;
 
@@ -77,9 +80,9 @@ public class shopsResource {
             if (isNew) {
                 currentShop.reStock();
                 Log.info("Registered shop of name " + shopState.getName() + " with " + shopState.getItems().size() + " items");
-            }
-            else Log.info("Updated shop of name " + shopState.getName() + " with " + shopState.getItems().size() + " items");
-        });
+            } else
+                Log.info("Updated shop of name " + shopState.getName() + " with " + shopState.getItems().size() + " items");
+        }
 
         timer.stop();
         Log.info("Data imported successfully in " + timer.getTime() + " ms");

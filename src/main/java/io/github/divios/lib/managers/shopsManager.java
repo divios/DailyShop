@@ -169,6 +169,7 @@ public class shopsManager {
 
     public void saveAllShopsToDatabase() {
         shops.values().forEach(shop -> {
+            dManager.addItems(shop.getName(), shop.getItems());
             dManager.updateGui(shop.getName(), shop.getView());
             dManager.updateAccount(shop.getName(), shop.getAccount());
         });
