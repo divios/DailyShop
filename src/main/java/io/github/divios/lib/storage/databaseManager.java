@@ -36,7 +36,7 @@ public class databaseManager extends DataManagerAbstract {
     private DatabaseConnector.ConnectionCallback connectionCallback;
 
     public databaseManager() {
-        super(new SQLiteConnector(plugin));
+        super(new SQLiteConnector(plugin, "data"));
         super.databaseConnector.connect(initialMigration::migrate);
 
         Schedulers.sync().runRepeating(() -> asyncPool.execute(this::dropOldLogEntries),
