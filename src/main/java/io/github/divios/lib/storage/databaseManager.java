@@ -388,7 +388,7 @@ public class databaseManager extends DataManagerAbstract {
                 statement.setString(4, entry.getType().name());
                 statement.setDouble(5, entry.getPrice());
                 statement.setInt(6, entry.getQuantity());
-                statement.setTimestamp(7, entry.getTimestamp());
+                statement.setString(7, entry.getTimestamp().toString());
                 statement.setString(8, entry.getShopID());
 
                 statement.executeUpdate();
@@ -421,7 +421,7 @@ public class databaseManager extends DataManagerAbstract {
                                 .withType(Transactions.Type.valueOf(result.getString("type").toUpperCase()))
                                 .withPrice(result.getDouble("price"))
                                 .withQuantity(result.getInt("quantity"))
-                                .withTimestamp(result.getTimestamp("timestamp"))
+                                .withTimestamp(result.getString("timestamp"))
                                 .create();
 
                         entries.push(entry);
@@ -450,11 +450,10 @@ public class databaseManager extends DataManagerAbstract {
     public void dropOldLogEntries() {
         int days = Settings.LOGS_REMOVED.getValue().getAsIntOrDefault(20);
         this.databaseConnector.connect(connection -> {
-            String updateTimeStamp = "DELETE FROM Logs WHERE (? - timestamp) > ?";
+            String updateTimeStamp = "DELETE FROM Logs WHERE (julianday() - julianday(timestamp)) > ?";
 
             try (PreparedStatement statement = connection.prepareStatement(updateTimeStamp)) {
-                statement.setTimestamp(1, new Timestamp(System.currentTimeMillis()));
-                statement.setInt(2, days);
+                statement.setInt(1, days);
 
                 statement.executeUpdate();
             }
