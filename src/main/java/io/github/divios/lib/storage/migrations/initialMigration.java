@@ -11,35 +11,34 @@ public class initialMigration {
         try (Statement statement = connection.createStatement()) {
 
             statement.addBatch("CREATE TABLE IF NOT EXISTS Shops(" +
-                    "shop_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY," +
-                    "name VARCHAR(30) NOT NULL," +
-                    "timer INT NOT NULL," +
-                    "timestamp TIMESTAMP NOT NULL" +
+                    "shop_id VARCHAR PRIMARY KEY," +
+                    "shop_timer INT NOT NULL," +
+                    "shop_timestamp TIMESTAMP NOT NULL" +
                     ");"
             );
 
             statement.addBatch("CREATE TABLE IF NOT EXISTS Guis(" +
-                    "gui_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY," +
-                    "content VARCHAR NOT NULL," +
-                    "shop_id INT UNSIGNED," +
-                    "FOREIGN KEY(shop_id) REFERENCES shops(shop_id)" +
+                    "gui_serial VARCHAR NOT NULL," +
+                    "shop_id INT UNSIGNED UNIQUE," +
+                    "FOREIGN KEY(shop_id) REFERENCES shops(shop_id) " +
+                    "ON DELETE CASCADE" +
                     ");"
             );
 
             statement.addBatch("CREATE TABLE IF NOT EXISTS Items(" +
-                    "item_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY," +
-                    "itemSerial VARCHAR NOT NULL," +
-                    "uuid VARCHAR NOT NULL," +
-                    "shop_id INT UNSIGNED," +
-                    "FOREIGN KEY(shop_id) REFERENCES shops(shop_id)" +
+                    "item_uuid VARCHAR NOT NULL," +
+                    "item_serial VARCHAR NOT NULL," +
+                    "shop_id INT UNSIGNED NOT NULL," +
+                    "FOREIGN KEY(shop_id) REFERENCES shops(shop_id) " +
+                    "ON DELETE CASCADE" +
                     ");"
             );
 
             statement.addBatch("CREATE TABLE IF NOT EXISTS Accounts(" +
-                    "account_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY," +
-                    "accountSerial VARCHAR NOT NULL," +
-                    "shop_id INT UNSIGNED," +
-                    "FOREIGN KEY(shop_id) REFERENCES shops(shop_id)" +
+                    "account_serial VARCHAR NOT NULL," +
+                    "shop_id INT UNSIGNED UNIQUE," +
+                    "FOREIGN KEY(shop_id) REFERENCES shops(shop_id) " +
+                    "ON DELETE CASCADE" +
                     ");"
             );
 

@@ -206,7 +206,9 @@ final class WrappedShop extends dShop implements Listener {
     public void setAccount(ShopAccount account) {
         shop.setAccount(account);
 
-        dManager.updateAccountAsync(getName(), account);
+        if (account != null) dManager.updateAccountAsync(getName(), account);
+        else dManager.removeAccountAsync(getName());
+
         serializerApi.saveShopToFileAsync(shop);
     }
 
