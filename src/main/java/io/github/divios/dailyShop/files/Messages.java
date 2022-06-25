@@ -1,11 +1,14 @@
 package io.github.divios.dailyShop.files;
 
+import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.jtext.wrappers.Template;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.Arrays;
 
 public enum Messages {
 
@@ -58,17 +61,16 @@ public enum Messages {
     }
 
     public void broadcast() {
-        Bukkit.broadcastMessage(Utils.JTEXT_PARSER
-                .parse(prefix() + getValue())
-        );
+        broadcast(new Template[0]);
     }
 
     public void broadcast(Template... templates) {
-        Bukkit.broadcastMessage(
-                Utils.JTEXT_PARSER
-                        .withTemplate(templates)
-                        .parse(prefix() + getValue())
-        );
+        String msg = Utils.JTEXT_PARSER
+                .withTemplate(templates)
+                .parse(prefix() + getValue());
+
+        Bukkit.getOnlinePlayers().forEach(player -> player.sendMessage(msg));
+        Log.info(msg);
     }
 
     private String prefix() {

@@ -24,13 +24,16 @@ import org.yaml.snakeyaml.Yaml;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.time.Instant;
-import java.time.ZoneId;
+import java.sql.Timestamp;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
@@ -248,23 +251,21 @@ public class Utils {
     }
 
     public static String getDiffActualTimer(dShop shop) {
-        int totalTime = (shop.getTimer() * 1000);
-        long timeDifference = System.currentTimeMillis() - shop.getTimestamp().getTime();
-        long result = totalTime - timeDifference;
+        LocalDateTime timestamp = shop.getTimestamp();
+        Duration toCompare = Duration.ofSeconds(shop.getTimer());
 
-        return DateTimeFormatter.ofPattern(Settings.TIME_FORMAT.getValue().getAsString())
-                .withZone(ZoneId.of("UTC"))
-                .format(Instant.ofEpochMilli(result));
+        if (toCompare.getSeconds() > 86400) {
+            Period period = Period.between(timestamp.toLocalDate(), LocalDateTime.now().toLocalDate());
 
-        /**int secondsLeft = timeInSeconds % 3600 % 60;
-        int minutes = (int) Math.floor(timeInSeconds % 3600 / 60F);
-        int hours = (int) Math.floor(timeInSeconds / 3600F);
+            return String.format("Days: %d", toCompare.minusDays(period.getDays()).toDays());
 
-        String HH = ((hours < 10) ? "0" : "") + hours;
-        String MM = ((minutes < 10) ? "0" : "") + minutes;
-        String SS = ((secondsLeft < 10) ? "0" : "") + secondsLeft;
+        } else {
+            Duration duration = Duration.between(timestamp, LocalDateTime.now());
+            duration = toCompare.minus(duration);
 
-        return HH + ":" + MM + ":" + SS; **/
+            return String.format("%02d:%02d:%02d", duration.toHours(), duration.toMinutes() % 60, duration.getSeconds() % 60);
+        }
+
     }
 
     public static boolean playerIsOnline(Player player) {

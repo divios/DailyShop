@@ -1,6 +1,7 @@
 package io.github.divios.lib.managers;
 
 import io.github.divios.core_lib.scheduler.Schedulers;
+import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.events.checkoutEvent;
 import io.github.divios.dailyShop.events.reStockShopEvent;
@@ -19,7 +20,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.Timestamp;
-import java.util.*;
+import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 @SuppressWarnings({"unused"})
 final class WrappedShop extends dShop implements Listener {
@@ -41,6 +46,7 @@ final class WrappedShop extends dShop implements Listener {
 
         this.items = shop.getMapItems();
 
+        super.destroy(); /* We don't care about listeners */
         Bukkit.getPluginManager().registerEvents(this, DailyShop.get());
     }
 
@@ -52,18 +58,6 @@ final class WrappedShop extends dShop implements Listener {
             dManager.updateGuiAsync(getName(), shop.getView());
             dManager.updateTimeStampAsync(getName(), getTimestamp());
         });
-    }
-
-    @Override
-    public void computeBill(checkoutEvent e) {
-        if (e.getShop().equals(this))
-            shop.computeBill(new checkoutEvent(shop,
-                    e.getType(),
-                    e.getPlayer(),
-                    e.getItem(),
-                    e.getAmount(),
-                    e.getPrice())
-            );
     }
 
     @Override
@@ -108,7 +102,7 @@ final class WrappedShop extends dShop implements Listener {
 
     @NotNull
     @Override
-    public Map<UUID, dItem> getMapItems() {
+    public Map<String, dItem> getMapItems() {
         return shop.getMapItems();
     }
 
@@ -120,24 +114,13 @@ final class WrappedShop extends dShop implements Listener {
 
     @Nullable
     @Override
-    public dItem getItem(@NotNull String ID) {
-        return shop.getItem(ID);
-    }
-
-    @Nullable
-    @Override
-    public dItem getItem(@NotNull UUID uid) {
-        return shop.getItem(uid);
+    public dItem getItem(@NotNull String id) {
+        return shop.getItem(id);
     }
 
     @Override
     public boolean hasItem(@NotNull String id) {
         return shop.hasItem(id);
-    }
-
-    @Override
-    public boolean hasItem(UUID uid) {
-        return shop.hasItem(uid);
     }
 
     @Override
@@ -167,7 +150,7 @@ final class WrappedShop extends dShop implements Listener {
         DebugLog.warn("updateItem");
         shop.updateItem(newItem);
 
-        dManager.updateItemAsync(getName(), newItem);
+        dManager.addItemAsync(getName(), newItem);
         dManager.updateGuiAsync(getName(), shop.getView());
         serializerApi.saveShopToFileAsync(shop);
     }
@@ -187,11 +170,11 @@ final class WrappedShop extends dShop implements Listener {
     }
 
     @Override
-    public boolean removeItem(UUID uid) {
+    public boolean removeItem(String id) {
         DebugLog.severe("removeditem");
-        if (!shop.removeItem(uid)) return false;
+        if (!shop.removeItem(id)) return false;
 
-        dManager.deleteItemAsync(getName(), uid);
+        dManager.deleteItemAsync(getName(), id);
         dManager.updateGuiAsync(getName(), shop.getView());
         serializerApi.saveShopToFileAsync(shop);
         return true;
@@ -213,13 +196,13 @@ final class WrappedShop extends dShop implements Listener {
     }
 
     @Override
-    public void setTimestamp(Timestamp timestamp) {
+    public void setTimestamp(LocalDateTime timestamp) {
         shop.setTimestamp(timestamp);
         dManager.updateTimeStampAsync(getName(), getTimestamp());
     }
 
     @Override
-    public Timestamp getTimestamp() {
+    public LocalDateTime getTimestamp() {
         return shop.getTimestamp();
     }
 
@@ -267,7 +250,6 @@ final class WrappedShop extends dShop implements Listener {
     public void destroy() {
         shop.destroy();
         reStockShopEvent.getHandlerList().unregister(this);
-        checkoutEvent.getHandlerList().unregister(this);
     }
 
     @Override

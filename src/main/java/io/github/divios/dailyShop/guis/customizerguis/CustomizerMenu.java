@@ -99,7 +99,7 @@ public class CustomizerMenu {
                         , e -> {
 
                             // Check to update or add item
-                            if (shop.hasItem(item.getUUID())) {
+                            if (shop.hasItem(item.getID())) {
                                 DebugLog.info("Update item from customizer menu of ID: " + item.getID());
                                 shop.updateItem(item);
                             } else {

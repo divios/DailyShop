@@ -33,11 +33,11 @@ public class serializerApi {
 
     protected static final ExecutorService asyncPool = Executors.newSingleThreadExecutor();
 
-    protected static final Cache<dShop, Runnable> cache = new CacheBuilder<dShop, Runnable>()
+    protected static final Cache<String, Runnable> cache = new CacheBuilder<String, Runnable>()
             .expireAfter(2, TimeUnit.SECONDS)
             .removalListener(event -> {
-                if (event.getCause() == RemovalCause.REPLACED) return;
-                event.getValue().run();
+                if (event.getCause() != RemovalCause.REPLACED)
+                    event.getValue().run();
             })
             .build();
 
@@ -60,9 +60,15 @@ public class serializerApi {
     }
 
     public static void saveShopToFileAsync(dShop shop) {
-        DebugLog.info("Serialize shop");
-        //if (ReflectionUtils.VER >= 12) cache.put(shop, () -> asyncPool.submit(() -> saveShopToFile(shop)));
-        asyncPool.execute(() -> saveShopToFile(shop));
+        Runnable runnable = () -> {
+            DebugLog.info("Serialize shop");
+            serializerApi.saveShopToFile(shop);
+        };
+
+        if (ReflectionUtils.VER >= 12)
+            cache.put(shop.getName(), runnable);
+        else
+            asyncPool.execute(runnable);
     }
 
     public static dShopState getShopFromFile(File data) {
@@ -78,10 +84,10 @@ public class serializerApi {
     public static void deleteShop(String name) {
         File[] files = shopsFolder.get().listFiles((dir, name1) -> name1.endsWith(".yml"));
         if (files == null) throw new RuntimeException("shops directory does not exits");
-        for (int i = 0; i < files.length; i++) {
-            YamlConfiguration yaml = YamlConfiguration.loadConfiguration(files[i]);
-            if (yaml.get("id").equals(name)) {
-                files[i].delete();
+        for (File file : files) {
+            YamlConfiguration yaml = YamlConfiguration.loadConfiguration(file);
+            if (Objects.equals(yaml.get("id"), name)) {
+                file.delete();
                 break;
             }
         }

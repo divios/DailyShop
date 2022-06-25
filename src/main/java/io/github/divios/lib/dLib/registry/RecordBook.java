@@ -11,23 +11,20 @@ public class RecordBook {
     public static void initiate() {
         DailyShop.get().getDatabaseManager().getLogEntriesAsync(Integer.MAX_VALUE)
                 .thenAcceptAsync(entries -> {
-                    entries.stream()
-                            .filter(entry -> {
-                                dShop shop = DailyShop.get().getShopsManager().getShop(entry.getShopID()).orElse(null);
-                                return shop != null && entry.getTimestamp().compareTo(shop.getTimestamp()) > 0;
-                            })
-                            .forEach(entry -> {
-                                DailyShop.get().getShopsManager().getShop(entry.getShopID())
-                                        .ifPresent(dShop -> {
-                                            OfflinePlayer p = Bukkit.getOfflinePlayer(entry.getPlayer());
-                                            dShop.getShopCache().register(
-                                                    p.getUniqueId(),
-                                                    entry.getItemID(),
-                                                    entry.getQuantity(),
-                                                    entry.getType()
-                                            );
-                                        });
-                            });
+
+                    for (RecordBookEntry entry : entries) {
+                        dShop shop = DailyShop.get().getShopsManager().getShop(entry.getShopID()).orElse(null);
+                        if (shop == null) continue; // TODO
+
+                        OfflinePlayer p = Bukkit.getOfflinePlayer(entry.getPlayer());
+                        shop.getShopCache().register(
+                                p.getUniqueId(),
+                                entry.getItemID(),
+                                entry.getQuantity(),
+                                entry.getType()
+                        );
+                    }
+
                 }).complete(null);
     }
 

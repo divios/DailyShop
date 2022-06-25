@@ -5,7 +5,6 @@ import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.utils.DebugLog;
 import io.github.divios.dailyShop.utils.Timer;
-import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.shop.dShop;
 import io.github.divios.lib.dLib.shop.dShopState;
 import io.github.divios.lib.managers.shopsManager;
@@ -52,7 +51,6 @@ public class shopsResource {
         DebugLog.warn("First reading yaml from shops directory");
         Map<String, dShopState> newShops = readYamlShops();
 
-
         DebugLog.warn("Applying logic...");
 
         new HashSet<>(sManager.getShops()).stream()         // Delete removed shops
@@ -61,6 +59,7 @@ public class shopsResource {
                 .forEach(shop -> {
                     //cacheCheckSums.remove(shop.getName());
                     sManager.deleteShopAsync(shop);
+                    Log.severe("oh wow");
                     DebugLog.info("removed shop");
                 });
 
@@ -79,13 +78,13 @@ public class shopsResource {
 
             if (isNew) {
                 currentShop.reStock();
-                Log.info("Registered shop of name " + shopState.getName() + " with " + shopState.getItems().size() + " items");
+                Log.info("Registered shop of name %s with %d", shopState.getName(), shopState.getItems().size());
             } else
-                Log.info("Updated shop of name " + shopState.getName() + " with " + shopState.getItems().size() + " items");
+                Log.info("Updated shop of name %s with %d", shopState.getName(), shopState.getItems().size());
         }
 
         timer.stop();
-        Log.info("Data imported successfully in " + timer.getTime() + " ms");
+        Log.info("Data imported successfully in %d ms", timer.getTime());
 
         //flaggedShops.clear();
 
@@ -103,12 +102,13 @@ public class shopsResource {
         Map<String, dShopState> shops = new HashMap<>();
         for (File shopFile : Objects.requireNonNull(shopsFolder.listFiles((dir, name) -> name.endsWith(".yml")), "The shop directory does not exits")) {
 
+            DebugLog.info("Reading folder %s", shopFile.getName());
             try {
                 dShopState newShop = serializerApi.getShopFromFile(shopFile);
 
                 if (idCaches.contains(newShop.getName())) {
-                    Log.severe("There is already a shop registered with the id " + newShop.getName() +
-                            " Skipping file " + shopFile.getName());
+                    Log.severe("There is already a shop registered with the id %s. Skipping file %s...",
+                            newShop.getName(), shopFile.getName());
                     continue;
                 }
 
