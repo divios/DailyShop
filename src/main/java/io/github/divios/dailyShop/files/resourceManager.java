@@ -24,7 +24,6 @@ public class resourceManager {
         FileUtils.createParentDirectory();
         langYml = new langYml();
         settingsYml = new settingsYml();
-        Schedulers.sync().run(() -> shopsResource = new shopsResource());
         FileUtils.createDatabaseFile();
         modifiersResource = new priceModifiersResource();
     }
@@ -37,10 +36,15 @@ public class resourceManager {
         return settingsYml.getYaml();
     }
 
+    public synchronized void readYamlFiles() {
+        if (shopsResource == null)
+            shopsResource = new shopsResource();
+    }
+
     public synchronized void reload() {
         langYml.reload();
         settingsYml.reload();
-        shopsResource.reload();
+        if (shopsResource != null) shopsResource.reload();
         modifiersResource.reload();
     }
 

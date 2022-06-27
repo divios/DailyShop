@@ -6,35 +6,61 @@ import java.sql.Statement;
 
 public class initialMigration {
 
-    public static void migrate(Connection connection, String tablePrefix) throws SQLException {
+    public static void migrate(Connection connection) throws SQLException {
 
         try (Statement statement = connection.createStatement()) {
-            statement.execute("CREATE TABLE IF NOT EXISTS " + tablePrefix + "active_shops (" +
-                    "name varchar [255] collate nocase PRIMARY KEY, " +
-                    "account varchar [255], " +
-                    "timestamp varchar [255], " +
-                    "timer INTEGER, " +
-                    "gui varchar [255]" +
-                    ")");
+
+            statement.addBatch("CREATE TABLE IF NOT EXISTS Shops(" +
+                    "shop_id VARCHAR PRIMARY KEY," +
+                    "shop_timer INT NOT NULL," +
+                    "shop_timestamp TIMESTAMP NOT NULL" +
+                    ");"
+            );
+
+            statement.addBatch("CREATE TABLE IF NOT EXISTS Guis(" +
+                    "gui_serial VARCHAR NOT NULL," +
+                    "shop_id VARCHAR UNIQUE," +
+                    "FOREIGN KEY(shop_id) REFERENCES Shops(shop_id) " +
+                    "ON DELETE CASCADE" +
+                    ");"
+            );
+
+            statement.addBatch("CREATE TABLE IF NOT EXISTS Items(" +
+                    "item_uuid VARCHAR NOT NULL," +
+                    "item_serial VARCHAR NOT NULL," +
+                    "shop_id VARCHAR NOT NULL," +
+                    "UNIQUE(item_uuid, shop_id), " +
+                    "FOREIGN KEY(shop_id) REFERENCES Shops(shop_id) " +
+                    "ON DELETE CASCADE" +
+                    ");"
+            );
+
+            statement.addBatch("CREATE TABLE IF NOT EXISTS Accounts(" +
+                    "account_serial VARCHAR NOT NULL," +
+                    "shop_id VARCHAR NOT NULL UNIQUE," +
+                    "FOREIGN KEY(shop_id) REFERENCES Shops(shop_id) " +
+                    "ON DELETE CASCADE" +
+                    ");"
+            );
+
+            statement.addBatch("CREATE TABLE IF NOT EXISTS Logs(" +
+                    "player VARCHAR NOT NULL," +
+                    "item_uuid VARCHAR NOT NULL," +
+                    "item_serial VARCHAR NOT NULL," +
+                    "type VARCHAR NOT NULL," +
+                    "price DOUBLE NOT NULL," +
+                    "quantity INTEGER NOT NULL," +
+                    "timestamp VARCHAR NOT NULL," +
+                    "shop_id VARCHAR NOT NULL," +
+                    "FOREIGN KEY(shop_id) REFERENCES Shops(shop_id) " +
+                    "ON DELETE CASCADE" +
+                    ");"
+            );
+
+            statement.addBatch("PRAGMA foreign_keys = ON;");
+
+            statement.executeBatch();
         }
-
-        try (Statement statement = connection.createStatement()) {
-            statement.execute("CREATE TABLE IF NOT EXISTS " + tablePrefix + "log (" +
-                    "player varchar [255], " +        // PlayerName
-                    "shopID varchar [255], " +        // shopID
-                    "itemUUID varchar [255], " +        // Item-UUID
-                    "rawItem varchar [255], " +        // ItemName
-                    "type varchar [255], " +              // Item Type
-                    "price DOUBLE, " +                    // Item Price
-                    "quantity INTEGER, " +                 // item quantity
-                    "timestamp data" +
-                    ")");
-        }
-
-        try (Statement statement = connection.createStatement()) {
-            statement.execute("ALTER TABLE " + tablePrefix + "active_shops " +
-                    "RENAME COLUMN type TO account");
-        } catch (Exception ignored) {}          // Ignored if already renamed
 
     }
 

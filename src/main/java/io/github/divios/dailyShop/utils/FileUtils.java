@@ -45,7 +45,7 @@ public class FileUtils {
     }
 
     public static void createDatabaseFile() {
-        File db = new File(plugin.getDataFolder(), "dailyshop.db");
+        File db = new File(plugin.getDataFolder(), "data.db");
         if (!db.exists())
             FileUtils.createFile(db);
     }

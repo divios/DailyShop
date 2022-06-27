@@ -13,14 +13,26 @@ public class DebugLog {
         return Settings.DEBUG.getValue().getAsBoolean();
     }
 
+    public static void info(@NotNull String format, Object... objects) {
+        info(String.format(format, objects));
+    }
+
     public static void info(@NotNull String s) {
         if (isDebugEnabled())
             Log.info(Utils.JTEXT_PARSER.parse(PREFIX + s));
     }
 
+    public static void warn(@NotNull String format, Object... objects) {
+        warn(String.format(format, objects));
+    }
+
     public static void warn(@NotNull String s) {
         if (isDebugEnabled())
             Log.warn(Utils.JTEXT_PARSER.parse(PREFIX + s));
+    }
+
+    public static void severe(@NotNull String format, Object... objects) {
+        severe(String.format(format, objects));
     }
 
     public static void severe(@NotNull String s) {

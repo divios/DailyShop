@@ -169,13 +169,13 @@ public class shopsItemsManagerGui {
 
         Player p = (Player) e.getWhoClicked();
 
-        UUID uid = dItem.getUUIDKey(e.getCurrentItem());
-        if (uid == null) {
+        String id = dItem.getIdKey(e.getCurrentItem());
+        if (id == null) {
             refresh();
             return;
         }
 
-        dItem item = shop.getItem(uid);
+        dItem item = shop.getItem(id);
         if (item == null) {
             refresh();
             return;
@@ -196,7 +196,7 @@ public class shopsItemsManagerGui {
                     .withPlayer(p)
                     .withAction(aBoolean -> {
                         if (aBoolean)
-                            shop.removeItem(uid);
+                            shop.removeItem(id);
 
                         Schedulers.sync().runLater(() -> inv.destroy(), 3L);
                         open(p, shop);

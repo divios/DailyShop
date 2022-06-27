@@ -4,13 +4,12 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 import io.github.divios.core_lib.database.DataManagerAbstract;
+import io.github.divios.core_lib.database.DatabaseConnector;
 import io.github.divios.core_lib.database.SQLiteConnector;
 import io.github.divios.core_lib.itemutils.ItemUtils;
-import io.github.divios.core_lib.misc.timeStampUtils;
 import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.files.Settings;
-import io.github.divios.dailyShop.utils.DebugLog;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dTransaction.Transactions;
 import io.github.divios.lib.dLib.registry.RecordBookEntry;
@@ -24,8 +23,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.Timestamp;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -35,80 +33,95 @@ public class databaseManager extends DataManagerAbstract {
     private static final DailyShop plugin = DailyShop.get();
 
     protected final ExecutorService asyncPool = Executors.newSingleThreadExecutor();
+    private DatabaseConnector.ConnectionCallback connectionCallback;
 
     public databaseManager() {
-        super(new SQLiteConnector(plugin));
-        super.databaseConnector.connect(connection -> initialMigration.migrate(connection, super.getTablePrefix()));
+        super(new SQLiteConnector(plugin, "data"));
+        super.databaseConnector.connect(initialMigration::migrate);
 
         Schedulers.sync().runRepeating(() -> asyncPool.execute(this::dropOldLogEntries),
-                15, TimeUnit.SECONDS, 30, TimeUnit.MINUTES);
+                15, TimeUnit.SECONDS, 10, TimeUnit.HOURS);
     }
 
-    public Set<dShop> getShops() {
+    private static final JsonParser parser = new JsonParser();
 
-        Set<dShop> shops = new LinkedHashSet<>();
+    public Collection<dShop> getShops() {
+
+        Map<String, dShop> shops = new HashMap<>();
 
         this.databaseConnector.connect(connection -> {
             try (Statement statement = connection.createStatement()) {
 
-                String selectFarms = "SELECT * FROM " + this.getTablePrefix() + "active_shops";
-                ResultSet result = statement.executeQuery(selectFarms);
+                String query = "SELECT sh.shop_id, gui_serial, shop_timer, shop_timestamp, " +
+                        "account_serial, item_serial " +
+                        "FROM Shops sh " +
+                        "NATURAL JOIN Guis " +
+                        "NATURAL JOIN Items " +
+                        "LEFT JOIN Accounts ac " +
+                        "ON sh.shop_id = ac.shop_id";
 
-                JsonParser parser = new JsonParser();
-                while (result.next()) {
-                    String name = result.getString("name");
-                    dShop shop;
+                ResultSet rs = statement.executeQuery(query);
 
-                    try {
-                        shop = new dShop(name,
-                                parser.parse(result.getString("gui")),
-                                timeStampUtils.deserialize(result.getString("timestamp")),
-                                result.getInt("timer"),
-                                getShopItems(name));
-                    } catch (Exception | Error e) {
-                        //e.printStackTrace();
-                        DebugLog.info(e.getMessage());
-                        shop = new dShop(name,
-                                result.getInt("timer"),
-                                timeStampUtils.deserialize(result.getString("timestamp")));
+                while (rs.next()) {
+                    String shop_name = rs.getString(1);
+
+                    if (!shops.containsKey(shop_name)) {
+                        JsonElement gui_serial = parser.parse(rs.getString(2));
+                        int timer = rs.getInt(3);
+                        LocalDateTime timestamp = LocalDateTime.parse(rs.getString(4));
+                        String account = rs.getString(5);
+
+                        dShop newShop = new dShop(shop_name, gui_serial, timestamp, timer);
+                        if (account != null)
+                            newShop.setAccount(ShopAccount.fromJson(parser.parse(account)));
+
+                        shops.put(shop_name, newShop);
+
+                    } else {
+
+                        try {
+                            JsonElement json = parser.parse(rs.getString(6));
+                            shops.get(shop_name).addItem(dItem.fromJson(json));
+
+                        } catch (IllegalStateException | JsonSyntaxException ignored) {
+                        }
                     }
 
-                    String account = result.getString("account");
-                    if (account != null)
-                        shop.setAccount(ShopAccount.fromJson(parser.parse(account)));
-
-                    shops.add(shop);
                 }
+
             }
         });
 
-        return shops;
+        return shops.values();
     }
 
-    public CompletableFuture<Set<dShop>> getShopsAsync() {
+    public CompletableFuture<Collection<dShop>> getShopsAsync() {
         return CompletableFuture.supplyAsync(this::getShops);
     }
 
 
-    public Set<dItem> getShopItems(String name) {
+    public Set<dItem> getShopItems(String shop_name) {
         Set<dItem> items = new LinkedHashSet<>();
 
         this.databaseConnector.connect(connection -> {
-            try (Statement statement = connection.createStatement()) {
+            String selectFarms = "SELECT item_serial " +
+                    "FROM Items " +
+                    "WHERE shop_name = ?";
 
-                String selectFarms = "SELECT * FROM " + this.getTablePrefix() + "shop_" + name;
-                ResultSet result = statement.executeQuery(selectFarms);
+            try (PreparedStatement statement = connection.prepareStatement(selectFarms)) {
+                statement.setString(1, shop_name);
 
-                JsonParser parser = new JsonParser();
+                ResultSet result = statement.executeQuery();
                 while (result.next()) {
                     try {
-                        JsonElement json = parser.parse(result.getString("itemSerial"));
+                        JsonElement json = parser.parse(result.getString(1));
                         items.add(dItem.fromJson(json));
                     } catch (IllegalStateException | JsonSyntaxException ignored) {
                     }
                 }
             }
         });
+
         return items;
     }
 
@@ -120,26 +133,21 @@ public class databaseManager extends DataManagerAbstract {
     public void createShop(dShop shop) {
         this.databaseConnector.connect(connection -> {
 
-            String createShop = "INSERT OR REPLACE INTO " + this.getTablePrefix() +
-                    "active_shops (name, account, gui, timestamp, timer) VALUES (?, ?, ?, ?, ?)";
+            String createShop = "INSERT OR REPLACE INTO Shops (shop_id, shop_timer, shop_timestamp) " +
+                    "VALUES (?, ?, ?)";
+
             try (PreparedStatement statement = connection.prepareStatement(createShop)) {
                 statement.setString(1, shop.getName());
-                if (shop.getAccount() != null)
-                    statement.setString(2, shop.getAccount().toJson().toString());
-                statement.setString(3, ShopViewFactory.toJson(shop.getView()).toString());
-                statement.setString(4, timeStampUtils.serialize(shop.getTimestamp()));
-                statement.setInt(5, shop.getTimer());
+                statement.setInt(2, shop.getTimer());
+                statement.setString(3, shop.getTimestamp().toString());
+
                 statement.executeUpdate();
             }
 
-            try (Statement statement = connection.createStatement()) {
-                statement.execute("CREATE TABLE IF NOT EXISTS " + this.getTablePrefix() + "shop_"
-                        + shop.getName() + "(" +
-                        "itemSerial varchar [255], " +
-                        "uuid varchar [255] PRIMARY KEY" +
-                        ")");
-            }
-            shop.getItems().forEach(dItem -> addItem(shop.getName(), dItem));
+            insertItems(shop.getName(), shop.getItems());
+            updateGui(shop.getName(), shop.getView());
+            if (shop.getAccount() != null) updateAccount(shop.getName(), shop.getAccount());
+
         });
     }
 
@@ -149,8 +157,8 @@ public class databaseManager extends DataManagerAbstract {
 
     public void renameShop(String oldName, String newName) {
         this.databaseConnector.connect(connection -> {
-            String renameShop = "UPDATE " + this.getTablePrefix() + "active_shops" +
-                    " SET name = ? WHERE name = ? collate nocase";
+            String renameShop = "UPDATE Shops " +
+                    "SET name = ? WHERE name = ? collate nocase";
             try (PreparedStatement statement = connection.prepareStatement(renameShop)) {
                 statement.setString(1, newName);
                 statement.setString(2, oldName);
@@ -160,7 +168,7 @@ public class databaseManager extends DataManagerAbstract {
             String renameTable = "ALTER TABLE " + this.getTablePrefix() + "shop_" + oldName +
                     " RENAME TO " + this.getTablePrefix() + "shop_" + newName;
             try (Statement statement = connection.createStatement()) {
-                statement.execute(renameTable);
+                statement.executeUpdate(renameTable);
             }
         });
     }
@@ -169,17 +177,39 @@ public class databaseManager extends DataManagerAbstract {
         return asyncPool.submit(() -> renameShop(oldName, newName));
     }
 
-    public void deleteShop(String name) {
+    public void deleteShop(String shop_name) {
         this.databaseConnector.connect(connection -> {
-            String deleteShop = "DELETE FROM " + this.getTablePrefix() + "active_shops WHERE name = ? collate nocase";
+            String deleteShop = "DELETE FROM Shops WHERE shop_id = ?";
+
             try (PreparedStatement statement = connection.prepareStatement(deleteShop)) {
-                statement.setString(1, name);
+                statement.setString(1, shop_name);
+
                 statement.executeUpdate();
             }
 
-            try (Statement statement = connection.createStatement()) {
-                statement.execute("DROP TABLE " + this.getTablePrefix() + "shop_" + name);
+            String deleteItems = "DELETE FROM Items WHERE shop_id = ?";
+            try (PreparedStatement statement = connection.prepareStatement(deleteItems)) {
+                statement.setString(1, shop_name);
+
+                statement.executeUpdate();
             }
+
+            String deleteGui = "DELETE FROM Guis WHERE shop_id = ?";
+            try (PreparedStatement statement = connection.prepareStatement(deleteGui)) {
+                statement.setString(1, shop_name);
+
+                statement.executeUpdate();
+            }
+
+            removeAccount(shop_name);
+
+            String deleteLogs = "DELETE FROM Logs WHERE shop_id = ?";
+            try (PreparedStatement statement = connection.prepareStatement(deleteLogs)) {
+                statement.setString(1, shop_name);
+
+                statement.executeUpdate();
+            }
+
         });
     }
 
@@ -187,154 +217,180 @@ public class databaseManager extends DataManagerAbstract {
         return asyncPool.submit(() -> deleteShop(name));
     }
 
-    public void addItem(String name, dItem item) {
+    public void insertItem(String shop_name, dItem item) {
+        insertItems(shop_name, Collections.singletonList(item));
+    }
+
+    public void insertItems(String shop_name, Collection<dItem> items) {
         this.databaseConnector.connect(connection -> {
 
-            String createShop = "INSERT OR REPLACE INTO " + this.getTablePrefix() +
-                    "shop_" + name + " (itemSerial, uuid) VALUES (?, ?)";
-            try (PreparedStatement statement = connection.prepareStatement(createShop)) {
+            String addItem = "REPLACE INTO Items (item_uuid, item_serial, shop_id) " +
+                    "VALUES (?, ?, ?)";
 
-                statement.setString(1, item.toJson().toString());
-                statement.setString(2, item.getUUID().toString());
-                statement.executeUpdate();
+            try (PreparedStatement statement = connection.prepareStatement(addItem)) {
+                for (dItem item : items) {
+                    statement.clearParameters();
+
+                    statement.setString(1, item.getID());
+                    statement.setString(2, item.toJson().toString());
+                    statement.setString(3, shop_name);
+
+                    statement.addBatch();
+                }
+
+                statement.executeBatch();
             }
+
         });
     }
 
-    public Future<?> addItemAsync(String name, dItem item) {
-        return asyncPool.submit(() -> addItem(name, item));
+    public Future<?> addItemAsync(String shop_name, dItem item) {
+        return asyncPool.submit(() -> insertItem(shop_name, item));
     }
 
-    public void deleteItem(String shopName, UUID uid) {
+    public Future<?> addItemsAsync(String shop_name, Collection<dItem> items) {
+        return asyncPool.submit(() -> insertItems(shop_name, items));
+    }
+
+    public void deleteItem(String shop_name, String id) {
         this.databaseConnector.connect(connection -> {
-            String deleteItem = "DELETE FROM " + this.getTablePrefix() + "shop_" + shopName + " WHERE uuid = ?";
+            String deleteItem = "DELETE FROM Items WHERE item_uuid = ?" +
+                    " AND shop_id = ?";
+
             try (PreparedStatement statement = connection.prepareStatement(deleteItem)) {
-                statement.setString(1, uid.toString());
+                statement.setString(1, id);
+                statement.setString(2, shop_name);
+
                 statement.executeUpdate();
             }
         });
     }
 
-    public Future<?> deleteItemAsync(String shopName, UUID uid) {
-        return asyncPool.submit(() -> deleteItem(shopName, uid));
+    public Future<?> deleteItemAsync(String shop_name, String id) {
+        return asyncPool.submit(() -> deleteItem(shop_name, id));
     }
 
-    public void deleteAllItems(String shopName) {
+    public void deleteAllItems(String shop_name) {
         this.databaseConnector.connect(connection -> {
+            String query = "DELETE FROM Items WHERE shop_id = ?";
 
-            try (Statement statement = connection.createStatement()) {
-                statement.execute("DROP TABLE " + this.getTablePrefix() + "shop_" + shopName);
-            }
-
-            try (Statement statement = connection.createStatement()) {
-                statement.execute("CREATE TABLE IF NOT EXISTS " + this.getTablePrefix() + "shop_"
-                        + shopName + "(" +
-                        "itemSerial varchar [255] , " +
-                        "uuid varchar [255] PRIMARY KEY" +
-                        ")");
-            }
-        });
-    }
-
-    public Future<?> deleteAllItemsAsync(String shopName) {
-        return asyncPool.submit(() -> deleteAllItems(shopName));
-    }
-
-    public void updateItem(String name, dItem item) {
-        this.databaseConnector.connect(connection -> {
-            String updateItem = "UPDATE " + this.getTablePrefix() + "shop_" + name +
-                    " SET itemSerial = ? WHERE uuid = ?";
-            try (PreparedStatement statement = connection.prepareStatement(updateItem)) {
-                statement.setString(1, item.toJson().toString());
-                statement.setString(2, item.getUUID().toString());
+            try (PreparedStatement statement = connection.prepareStatement(query)) {
+                statement.setString(1, shop_name);
                 statement.executeUpdate();
             }
         });
     }
 
-    public Future<?> updateItemAsync(String name, dItem item) {
-        return asyncPool.submit(() -> updateItem(name, item));
+    public Future<?> deleteAllItemsAsync(String shop_name) {
+        return asyncPool.submit(() -> deleteAllItems(shop_name));
     }
 
-    public void updateGui(String name, ShopView gui) {
+    public void updateGui(String shop_name, ShopView gui) {
         this.databaseConnector.connect(connection -> {
-            String updateGui = "UPDATE " + this.getTablePrefix() + "active_shops " +
-                    "SET gui = ? WHERE name = ? collate nocase";
+            String updateGui = "REPLACE INTO Guis (gui_serial, shop_id)" +
+                    "VALUES(?, ?)";
+
             try (PreparedStatement statement = connection.prepareStatement(updateGui)) {
                 statement.setString(1, ShopViewFactory.toJson(gui).toString());
-                statement.setString(2, name);
+                statement.setString(2, shop_name);
+
                 statement.executeUpdate();
             }
         });
     }
 
-    public Future<?> updateGuiAsync(String name, ShopView gui) {
-        return asyncPool.submit(() -> updateGui(name, gui));
+    public Future<?> updateGuiAsync(String shop_name, ShopView gui) {
+        return asyncPool.submit(() -> updateGui(shop_name, gui));
     }
 
-    public void updateAccount(String name, ShopAccount account) {
+    public void updateAccount(String shop_name, ShopAccount account) {
+        if (account == null) return;
+
         this.databaseConnector.connect(connection -> {
-            String updateGui = "UPDATE " + this.getTablePrefix() + "active_shops " +
-                    "SET account = ? WHERE name = ? collate nocase";
+            String updateGui = "REPLACE INTO Accounts (account_serial, shop_id) " +
+                    "VALUES(?, ?)";
+
             try (PreparedStatement statement = connection.prepareStatement(updateGui)) {
-                statement.setString(1, (account == null) ? null : account.toJson().toString());
-                statement.setString(2, name);
+                statement.setString(1, account.toJson().toString());
+                statement.setString(2, shop_name);
                 statement.executeUpdate();
             }
         });
     }
 
-    public Future<?> updateAccountAsync(String name, ShopAccount account) {
-        return asyncPool.submit(() -> updateAccount(name, account));
+    public Future<?> updateAccountAsync(String shop_name, ShopAccount account) {
+        return asyncPool.submit(() -> updateAccount(shop_name, account));
     }
 
-    public void updateTimeStamp(String name, Timestamp timestamp) {
+    public void removeAccount(String shop_name) {
         this.databaseConnector.connect(connection -> {
-            String updateTimeStamp = "UPDATE " + this.getTablePrefix() + "active_shops " +
-                    "SET timestamp = ? WHERE name = ? collate nocase";
+            String updateGui = "DELETE FROM Accounts WHERE shop_id = ?";
+
+            try (PreparedStatement statement = connection.prepareStatement(updateGui)) {
+                statement.setString(1, shop_name);
+                statement.executeUpdate();
+            }
+
+        });
+    }
+
+    public Future<?> removeAccountAsync(String shop_name) {
+        return asyncPool.submit(() -> removeAccount(shop_name));
+    }
+
+    public void updateTimeStamp(String shop_name, LocalDateTime timestamp) {
+        this.databaseConnector.connect(connection -> {
+            String updateTimeStamp = "UPDATE Shops " +
+                    "SET shop_timestamp = ? WHERE shop_id = ? collate nocase";
+
             try (PreparedStatement statement = connection.prepareStatement(updateTimeStamp)) {
-                statement.setString(1, timeStampUtils.serialize(timestamp));
-                statement.setString(2, name);
+                statement.setString(1, timestamp.toString());
+                statement.setString(2, shop_name);
+
                 statement.executeUpdate();
             }
         });
     }
 
-    public Future<?> updateTimeStampAsync(String name, Timestamp timestamp) {
-        return asyncPool.submit(() -> updateTimeStamp(name, timestamp));
+    public Future<?> updateTimeStampAsync(String shop_name, LocalDateTime timestamp) {
+        return asyncPool.submit(() -> updateTimeStamp(shop_name, timestamp));
     }
 
-    public void updateTimer(String name, int timer) {
+    public void updateTimer(String shop_name, int timer) {
         this.databaseConnector.connect(connection -> {
-            String updateTimeStamp = "UPDATE " + this.getTablePrefix() + "active_shops " +
-                    "SET timer = ? WHERE name = ? collate nocase";
+            String updateTimeStamp = "UPDATE Shops " +
+                    "SET shop_timer = ? WHERE shop_id = ? collate nocase";
+
             try (PreparedStatement statement = connection.prepareStatement(updateTimeStamp)) {
                 statement.setInt(1, timer);
-                statement.setString(2, name);
+                statement.setString(2, shop_name);
+
                 statement.executeUpdate();
             }
         });
     }
 
-    public Future<?> updateTimerAsync(String name, int timer) {
-        return asyncPool.submit(() -> updateTimer(name, timer));
+    public Future<?> updateTimerAsync(String shop_name, int timer) {
+        return asyncPool.submit(() -> updateTimer(shop_name, timer));
     }
 
     public void addLogEntry(RecordBookEntry entry) {
         this.databaseConnector.connect(connection -> {
 
-            String createShop = "INSERT INTO " + this.getTablePrefix() +
-                    "log" + " (player, shopID, itemUUID, rawItem, type, price, quantity, timestamp) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-            try (PreparedStatement statement = connection.prepareStatement(createShop)) {
+            String createShop = "INSERT INTO Logs" +
+                    " (player, item_uuid, item_serial, type, price, quantity, timestamp, shop_id) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
+            try (PreparedStatement statement = connection.prepareStatement(createShop)) {
                 statement.setString(1, entry.getPlayer());
-                statement.setString(2, entry.getShopID());
-                statement.setString(3, entry.getItemID());
-                statement.setString(4, ItemUtils.serialize(entry.getRawItem()));
-                statement.setString(5, entry.getType().name());
-                statement.setDouble(6, entry.getPrice());
-                statement.setInt(7, entry.getQuantity());
-                statement.setString(8, new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(entry.getTimestamp()));
+                statement.setString(2, entry.getItemID());
+                statement.setString(3, ItemUtils.serialize(entry.getRawItem()));
+                statement.setString(4, entry.getType().name());
+                statement.setDouble(5, entry.getPrice());
+                statement.setInt(6, entry.getQuantity());
+                statement.setString(7, entry.getTimestamp().toString());
+                statement.setString(8, entry.getShopID());
+
                 statement.executeUpdate();
             }
         });
@@ -350,26 +406,22 @@ public class databaseManager extends DataManagerAbstract {
         this.databaseConnector.connect(connection -> {
 
             try (Statement statement = connection.createStatement()) {
-                String getLogs = "SELECT * FROM " + this.getTablePrefix() + "log" + " LIMIT " + limit;
+                String getLogs = "SELECT * FROM Logs LIMIT " + limit;
                 ResultSet result = statement.executeQuery(getLogs);
 
                 while (result.next()) {
 
-                    Date timestamp = null;
-
                     try {
-                        timestamp = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss")
-                                .parse(result.getString("timestamp"));
 
                         RecordBookEntry entry = RecordBookEntry.createEntry()
                                 .withPlayer(result.getString("player"))
-                                .withShopID(result.getString("shopID"))
-                                .withItemID(result.getString("itemUUID"))
-                                .withRawItem(ItemUtils.deserialize(result.getString("rawItem")))
+                                .withShopID(result.getString("shop_id"))
+                                .withItemID(result.getString("item_uuid"))
+                                .withRawItem(ItemUtils.deserialize(result.getString("item_serial")))
                                 .withType(Transactions.Type.valueOf(result.getString("type").toUpperCase()))
                                 .withPrice(result.getDouble("price"))
                                 .withQuantity(result.getInt("quantity"))
-                                .withTimestamp(timestamp == null ? new Timestamp(System.currentTimeMillis()) : timestamp)
+                                .withTimestamp(result.getString("timestamp"))
                                 .create();
 
                         entries.push(entry);
@@ -395,25 +447,13 @@ public class databaseManager extends DataManagerAbstract {
         }
     }
 
-    private static final SimpleDateFormat FORMAT = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
-
     public void dropOldLogEntries() {
         int days = Settings.LOGS_REMOVED.getValue().getAsIntOrDefault(20);
-        long time = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(days);
-        Date date = new Date(time);
-
-        getLogEntries(Integer.MAX_VALUE).forEach(entry -> {
-            if (entry.getTimestamp().before(date))
-                deleteEntry(entry);
-        });
-    }
-
-    private void deleteEntry(RecordBookEntry entry) {
         this.databaseConnector.connect(connection -> {
-            String updateTimeStamp = "DELETE FROM " + this.getTablePrefix() + "log" +
-                    " WHERE timestamp = ?" ;
+            String updateTimeStamp = "DELETE FROM Logs WHERE (julianday() - julianday(timestamp)) > ?";
+
             try (PreparedStatement statement = connection.prepareStatement(updateTimeStamp)) {
-                statement.setString(1, FORMAT.format(entry.getTimestamp()));
+                statement.setInt(1, days);
 
                 statement.executeUpdate();
             }

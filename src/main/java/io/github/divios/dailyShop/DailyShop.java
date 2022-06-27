@@ -90,6 +90,8 @@ public class DailyShop extends JavaPlugin {
         dManager = new databaseManager();
         sManager = new shopsManager(dManager);
 
+        resourcesManager.readYamlFiles();       // Read yaml files
+
         Schedulers.sync().runLater(RecordBook::initiate, 5, TimeUnit.SECONDS);      // Wait to not lock database
 
         try {

@@ -29,13 +29,13 @@ public class shopsManager {
     private void initialise() {
         Log.info("Importing database data...");
         Timer timer = Timer.create();
-        dManager.getShops().forEach(shop -> shops.put(shop.getName().toLowerCase(), WrappedShop.wrap(shop)));
+        dManager.getShops().forEach(shop ->
+                shops.put(shop.getName().toLowerCase(), WrappedShop.wrap(shop)));
         timer.stop();
-        Log.info("Imported database data in " + timer.getTime() + " ms");
+        Log.info("Imported database data in %d ms", timer.getTime());
 
         Schedulers.sync().runRepeating(this::updateShopsAsync, 15, TimeUnit.MINUTES, 15, TimeUnit.MINUTES);
     }
-
 
     private void updateShops() {
         shops.values().forEach(shop -> {
@@ -84,12 +84,11 @@ public class shopsManager {
         dShop newShop_ = WrappedShop.wrap(new dShop(name));
 
         shops.put(newShop_.getName().toLowerCase(), newShop_);
-        newShop_.reStock();
         Schedulers.sync().run(() -> Events.callEvent(new createdShopEvent(newShop_)));
 
         serializerApi.saveShopToFileAsync(newShop_);
-
         dManager.createShopAsync(newShop_);
+
         return newShop_;
     }
 
@@ -169,6 +168,7 @@ public class shopsManager {
 
     public void saveAllShopsToDatabase() {
         shops.values().forEach(shop -> {
+            dManager.insertItems(shop.getName(), shop.getItems());
             dManager.updateGui(shop.getName(), shop.getView());
             dManager.updateAccount(shop.getName(), shop.getAccount());
         });

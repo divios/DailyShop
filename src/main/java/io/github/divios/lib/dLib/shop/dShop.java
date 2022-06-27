@@ -2,7 +2,6 @@ package io.github.divios.lib.dLib.shop;
 
 import com.google.gson.JsonElement;
 import io.github.divios.core_lib.events.Events;
-import io.github.divios.core_lib.misc.timeStampUtils;
 import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.core_lib.scheduler.Task;
 import io.github.divios.dailyShop.DailyShop;
@@ -31,7 +30,8 @@ import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -42,7 +42,7 @@ public class dShop implements Listener {
     protected static final DailyShop plugin = DailyShop.get();
 
     protected String name;
-    protected Map<UUID, dItem> items = Collections.synchronizedMap(new LinkedHashMap<>());
+    protected Map<String, dItem> items = Collections.synchronizedMap(new LinkedHashMap<>());
     protected Map<String, dItem> currentItems;
 
     protected final LogCache logCache = new LogCache();
@@ -52,7 +52,7 @@ public class dShop implements Listener {
     protected ShopView gui;
     protected ShopOptions options = ShopOptions.DEFAULT;
 
-    protected Timestamp timestamp;
+    protected LocalDateTime timestamp;
     protected int timer;
 
     protected boolean announce_restock = true;
@@ -68,19 +68,19 @@ public class dShop implements Listener {
     }
 
     public dShop(String name, int timer) {
-        this(name, timer, new Timestamp(System.currentTimeMillis()), new ArrayList<>());
+        this(name, timer, LocalDateTime.now(), new ArrayList<>());
     }
 
-    public dShop(String name, int timer, Timestamp timestamp) {
+    public dShop(String name, int timer, LocalDateTime timestamp) {
         this(name, timer, timestamp, new ArrayList<>());
     }
 
-    public dShop(String name, int timer, Timestamp timestamp, Collection<dItem> items) {
+    public dShop(String name, int timer, LocalDateTime timestamp, Collection<dItem> items) {
         this.name = name.toLowerCase();
         this.timer = timer;
         this.timestamp = timestamp;
 
-        items.forEach(dItem -> this.items.put(dItem.getUUID(), dItem));
+        items.forEach(dItem -> this.items.put(dItem.getID(), dItem));
 
         this.gui = ShopViewFactory.createGui(this);
         this.currentItems = gui.getDailyItems();
@@ -89,15 +89,15 @@ public class dShop implements Listener {
         startTimerTask();
     }
 
-    public dShop(String name, JsonElement gui, Timestamp timestamp, int timer) {
+    public dShop(String name, JsonElement gui, LocalDateTime timestamp, int timer) {
         this(name, gui, timestamp, timer, new HashSet<>());
     }
 
-    public dShop(String name, JsonElement gui, Timestamp timestamp, int timer, Set<dItem> items) {
+    public dShop(String name, JsonElement gui, LocalDateTime timestamp, int timer, Set<dItem> items) {
         this.name = name.toLowerCase();
         this.timestamp = timestamp;
         this.timer = timer;
-        items.forEach(dItem -> this.items.put(dItem.getUUID(), dItem));
+        items.forEach(dItem -> this.items.put(dItem.getID(), dItem));
 
         this.gui = ShopViewFactory.fromJson(gui, new DailyItemFactory(this));
         this.currentItems = this.gui.getDailyItems();
@@ -108,13 +108,15 @@ public class dShop implements Listener {
 
     protected void startTimerTask() {
         tasks.add(
-                Schedulers.async().runRepeating(() -> {
+                Schedulers.sync().runRepeating(() -> {
 
                     if (timer == -1) return;
-                    if (timeStampUtils.diff(timestamp, new Timestamp(System.currentTimeMillis())) >= timer)
-                        Schedulers.sync().run(this::reStock);
+                    if (ChronoUnit.SECONDS.between(timestamp, LocalDateTime.now()) >= (timer - 1)) {
+                        DebugLog.info("Restocked by timer");
+                        reStock();
+                    }
 
-                }, 1, TimeUnit.SECONDS, 1, TimeUnit.SECONDS)
+                }, 1, TimeUnit.SECONDS, 500, TimeUnit.MILLISECONDS)
         );
     }
 
@@ -179,7 +181,7 @@ public class dShop implements Listener {
      * Returns an unmodifiable view of the items map
      */
     public @NotNull
-    Map<UUID, dItem> getMapItems() {
+    Map<String, dItem> getMapItems() {
         return Collections.unmodifiableMap(items);
     }
 
@@ -196,33 +198,12 @@ public class dShop implements Listener {
      */
     public @Nullable
     dItem getItem(@NotNull String ID) {
-        return getItem(UUID.nameUUIDFromBytes(ID.getBytes()));
-    }
-
-    /**
-     * Gets the item by uuid
-     *
-     * @param uid the UUID to search
-     * @return null if it does not exist
-     */
-    public @Nullable
-    dItem getItem(@NotNull UUID uid) {
         dItem item;
-        return (item = items.get(uid)) == null ? null : item.clone();
+        return ((item = items.get(ID)) == null) ? null : item.clone();
     }
 
     public boolean hasItem(@NotNull String id) {
-        return hasItem(UUID.nameUUIDFromBytes(id.getBytes()));
-    }
-
-    /**
-     * Checks if the shop has a particular item
-     *
-     * @param uid the UUID to check
-     * @return true if exits, false if not
-     */
-    public boolean hasItem(UUID uid) {
-        return items.containsKey(uid);
+        return items.containsKey(id);
     }
 
     /**
@@ -248,7 +229,7 @@ public class dShop implements Listener {
      * Restocks the items of this shop.
      */
     public void reStock() {
-        timestamp = new Timestamp(System.currentTimeMillis());
+        timestamp = LocalDateTime.now();
 
         logCache.clear();
         if (account != null)
@@ -262,27 +243,23 @@ public class dShop implements Listener {
         currentItems = gui.getDailyItems();
 
         Events.callEvent(new reStockShopEvent(this));
-        DebugLog.info("Time elapsed to restock shop " + name + ": " + (System.currentTimeMillis() - start));
+        DebugLog.info("Time elapsed to restock shop %s : %d", name, System.currentTimeMillis() - start);
 
         if (announce_restock)
-            Messages.MSG_RESTOCK.broadcast(
-                    Template.of("shop", name)
-            );
+            Messages.MSG_RESTOCK.broadcast(Template.of("shop", name));
     }
 
     /**
      * Updates the item of the shop
      */
     public void updateItem(@NotNull dItem newItem) {
-        UUID uid = newItem.getUUID();
-
-        if (!items.containsKey(uid)) {
+        if (!items.containsKey(newItem.getID())) {
             addItem(newItem);
-            return;
+        } else {
+            items.put(newItem.getID(), newItem);
+            if (currentItems.containsKey(newItem.getID()))
+                currentItems.put(newItem.getID(), newItem);
         }
-
-        items.put(uid, newItem);
-        currentItems.put(newItem.getID(), newItem);
     }
 
 
@@ -291,26 +268,26 @@ public class dShop implements Listener {
      */
     public void setItems(@NotNull Collection<dItem> items) {
         DebugLog.info("Setting items");
-        Map<UUID, dItem> newItems = new HashMap<>();
-        items.forEach(dItem -> newItems.put(dItem.getUUID(), dItem));            // Cache values for a O(1) search
+        Map<String, dItem> newItems = new HashMap<>();
+        items.forEach(dItem -> newItems.put(dItem.getID(), dItem));            // Cache values for a O(1) search
 
-        for (Map.Entry<UUID, dItem> entry : new HashMap<>(this.items).entrySet()) {          // Remove or update
+        for (Map.Entry<String, dItem> entry : new HashMap<>(this.items).entrySet()) {          // Remove or update
             if (newItems.containsKey(entry.getKey())) {     // Update items if changed
                 dItem toUpdateItem = newItems.remove(entry.getKey());
 
                 if (toUpdateItem != null && !toUpdateItem.isSimilar(entry.getValue())) {
-                    DebugLog.info("Updating item with ID: " + toUpdateItem.getID() + " from dShop");
+                    DebugLog.info("Updating item with ID: %s from dShop", toUpdateItem.getID());
                     updateItem(toUpdateItem);
                 }
             } else {
-                DebugLog.info("Removing item with ID: " + entry.getValue().getID() + " from dShop");
+                DebugLog.info("Removing item with ID: %s from dShop", entry.getValue().getID());
                 removeItem(entry.getKey());
             }
         }
 
         newItems.values().forEach(newDItem -> {
             addItem(newDItem);             // Add newItems
-            DebugLog.info("Added new item with ID: " + newDItem.getID() + " from dShop");
+            DebugLog.info("Added new item with ID: %s", newDItem.getID());
         });
     }
 
@@ -320,21 +297,20 @@ public class dShop implements Listener {
      * @param item item to be added
      */
     public void addItem(@NotNull dItem item) {
-        if (items.containsKey(item.getUUID())) {
+        if (items.containsKey(item.getID()))
             updateItem(item);
-            return;
-        }
-        items.put(item.getUUID(), item);
+        else
+            items.put(item.getID(), item);
     }
 
     /**
      * Removes an item from the shop
      *
-     * @param uid UUID of the item to be removed
+     * @param id of the item to be removed
      * @return true if the item was removed. False if not
      */
-    public boolean removeItem(UUID uid) {
-        dItem removed = items.remove(uid);
+    public boolean removeItem(String id) {
+        dItem removed = items.remove(id);
         if (removed == null) return false;
 
         currentItems.remove(removed.getID());
@@ -342,7 +318,7 @@ public class dShop implements Listener {
     }
 
     @EventHandler
-    public void computeBill(checkoutEvent e) {
+    private void computeBill(checkoutEvent e) {
         if (!Objects.equals(e.getShop(), this)) return;
 
         DebugLog.info("Received bill on shop " + name);
@@ -399,11 +375,11 @@ public class dShop implements Listener {
         this.options = options;
     }
 
-    public void setTimestamp(Timestamp timestamp) {
+    public void setTimestamp(LocalDateTime timestamp) {
         this.timestamp = timestamp;
     }
 
-    public Timestamp getTimestamp() {
+    public LocalDateTime getTimestamp() {
         return this.timestamp;
     }
 
@@ -431,14 +407,18 @@ public class dShop implements Listener {
         this.timer = timer;
     }
 
-    public void destroy() {
-        gui.destroy();
-        cashRegister.destroy();
-        checkoutEvent.getHandlerList().unregister(this);
+    private void destroyTask() {
         for (Iterator<Task> iterator = tasks.iterator(); iterator.hasNext(); ) {
             iterator.next().stop();
             iterator.remove();
         }
+    }
+
+    public void destroy() {
+        gui.destroy();
+        cashRegister.destroy();
+        checkoutEvent.getHandlerList().unregister(this);
+        destroyTask();
     }
 
     public void setState(dShopState state) {

@@ -7,9 +7,9 @@ import io.github.divios.lib.dLib.dTransaction.Transactions;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @SuppressWarnings("unused")
@@ -24,7 +24,7 @@ public class RecordBookEntry {
     private final Transactions.Type type;
     private final double price;
     private final int quantity;
-    private final Timestamp timestamp;
+    private final LocalDateTime timestamp;
 
     private RecordBookEntry(String p,
                             String shopID,
@@ -33,7 +33,7 @@ public class RecordBookEntry {
                             Transactions.Type type,
                             double price,
                             int quantity,
-                            Timestamp timestamp
+                            LocalDateTime timestamp
     ) {
         this.p = p;
         this.shopID = shopID;
@@ -73,7 +73,7 @@ public class RecordBookEntry {
         return quantity;
     }
 
-    public Timestamp getTimestamp() {
+    public LocalDateTime getTimestamp() {
         return timestamp;
     }
 
@@ -102,7 +102,7 @@ public class RecordBookEntry {
         private Transactions.Type type;
         private Double price;
         private Integer quantity;
-        private Timestamp timestamp;
+        private LocalDateTime timestamp;
 
         private dLogEntryBuilder() {
         }
@@ -146,13 +146,12 @@ public class RecordBookEntry {
             return this;
         }
 
-        public dLogEntryBuilder withTimestamp(Timestamp timestamp) {
-            this.timestamp = timestamp;
-            return this;
+        public dLogEntryBuilder withTimestamp(String timestamp) {
+            return withTimestamp(LocalDateTime.parse(timestamp));
         }
 
-        public dLogEntryBuilder withTimestamp(Date timestamp) {
-            this.timestamp = new Timestamp(timestamp.getTime());
+        public dLogEntryBuilder withTimestamp(LocalDateTime timestamp) {
+            this.timestamp = timestamp;
             return this;
         }
 
@@ -166,7 +165,7 @@ public class RecordBookEntry {
             Preconditions.checkNotNull(price, "price");
 
             if (quantity == null) quantity = 1;
-            if (timestamp == null) timestamp = new Timestamp(System.currentTimeMillis());
+            if (timestamp == null) timestamp = LocalDateTime.now();
 
             return new RecordBookEntry(p, shopID, ID, rawItem, type, price, quantity, timestamp);
         }
@@ -235,14 +234,6 @@ public class RecordBookEntry {
         }
 
         public RecordBookEntry build() {
-
-            Date date = null;
-            try {
-                date = FORMAT.parse(timestamp);
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-
             return new RecordBookEntry(p,
                     shopID,
                     ID,
@@ -250,7 +241,7 @@ public class RecordBookEntry {
                     Transactions.Type.valueOf(type.toUpperCase()),
                     price,
                     quantity,
-                    new Timestamp(date.getTime())
+                    LocalDateTime.parse(timestamp)
             );
         }
 
