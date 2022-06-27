@@ -54,7 +54,7 @@ public class serializerApi {
             FileUtils.dumpToYaml(json, data);
         } catch (Exception e) {
             Log.info("There was a problem saving the shop " + shop.getName());
-            // e.printStackTrace();
+            e.printStackTrace();
         }
         //Log.info("Converted all items correctly of shop " + shop.getName());
     }
