@@ -24,11 +24,8 @@ import org.yaml.snakeyaml.Yaml;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.sql.Timestamp;
-import java.time.*;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalUnit;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -251,10 +248,10 @@ public class Utils {
     }
 
     public static String getDiffActualTimer(dShop shop) {
-        Duration toCompare = Duration.ofSeconds(timer);
+        Duration toCompare = Duration.ofSeconds(shop.getTimer());
         LocalDateTime now = LocalDateTime.now();
 
-        Duration diff = Duration.between(timestamp, now);
+        Duration diff = Duration.between(shop.getTimestamp(), now);
         Duration totalDiff = toCompare.minus(diff);
 
         if (totalDiff.getSeconds() > 86400) {
