@@ -251,21 +251,18 @@ public class Utils {
     }
 
     public static String getDiffActualTimer(dShop shop) {
-        LocalDateTime timestamp = shop.getTimestamp();
-        Duration toCompare = Duration.ofSeconds(shop.getTimer());
+        Duration toCompare = Duration.ofSeconds(timer);
+        LocalDateTime now = LocalDateTime.now();
 
-        if (toCompare.getSeconds() > 86400) {
-            Period period = Period.between(timestamp.toLocalDate(), LocalDateTime.now().toLocalDate());
+        Duration diff = Duration.between(timestamp, now);
+        Duration totalDiff = toCompare.minus(diff);
 
-            return String.format("Days: %d", toCompare.minusDays(period.getDays()).toDays());
+        if (totalDiff.getSeconds() > 86400) {
+            return String.format("%d Days", TimeUnit.SECONDS.toDays(totalDiff.getSeconds()));
 
         } else {
-            Duration duration = Duration.between(timestamp, LocalDateTime.now());
-            duration = toCompare.minus(duration);
-
-            return String.format("%02d:%02d:%02d", duration.toHours(), duration.toMinutes() % 60, duration.getSeconds() % 60);
+            return String.format("%02d:%02d:%02d", totalDiff.toHours(), totalDiff.toMinutes() % 60, totalDiff.getSeconds() % 60);
         }
-
     }
 
     public static boolean playerIsOnline(Player player) {
