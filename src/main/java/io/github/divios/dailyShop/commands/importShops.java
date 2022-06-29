@@ -55,7 +55,7 @@ public class importShops {
 
                                             if (shopItem.getType().equals(ShopManager.ItemType.DUMMY)) return;
 
-                                            dItem newItem = dItem.of(shopItem.getItem());
+                                            dItem newItem = dItem.of(shopItem.getItem(), shop);
 
                                             newItem.setBuyPrice(new FixedValueGenerator(shopItem.getBuyPrice()));
                                             newItem.setSellPrice(new FixedValueGenerator(shopItem.getSellPrice()));
@@ -92,7 +92,7 @@ public class importShops {
                                 }
 
                                 bossShopShop.getItems().forEach(bsBuy -> {
-                                    dItem newItem = dItem.of(bsBuy.getItem());
+                                    dItem newItem = dItem.of(bsBuy.getItem(), shop);
 
                                     double buyPrice = Double.parseDouble(
                                             String.valueOf(bsBuy.getPrice(null) == null ?

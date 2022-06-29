@@ -22,6 +22,7 @@ import io.github.divios.lib.dLib.stock.dStock;
 import io.github.divios.lib.dLib.stock.factory.dStockFactory;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -136,24 +137,51 @@ public class dItem implements Cloneable {
         return item;
     }
 
+    public static dItem of(Material material, dShop shop) {
+        return of(new ItemStack(material), shop);
+    }
+
+    public static dItem of(XMaterial material, dShop shop) {
+        return of(Objects.requireNonNull(material.parseItem()), shop);
+    }
+
+    /**
+     * Convenient method to create an item with a descriptive ID
+     * that also does not collide with current items of shop
+     */
+    public static dItem of(ItemStack item, dShop shop) {
+        String id;
+
+        int i = 1;
+        do {
+            id = String.format("%s_%d", item.getType(), i++);
+        } while (shop.hasItem(id));
+
+        return dItem.from(item, id);
+    }
+
     public static dItem of(Material material) {
-        return new dItem(new ItemStack(material));
+        return of(new ItemStack(material));
     }
 
     public static dItem of(XMaterial material) {
-        return new dItem(material.parseItem());
+        return of(material.parseItem());
     }
 
     public static dItem of(ItemStack item) {
-        return new dItem(item, UUID.randomUUID().toString());
+        return from(item, UUID.randomUUID().toString());
     }
 
     public static dItem from(Material material, String id) {
-        return new dItem(new ItemStack(material), id);
+        return from(new ItemStack(material), id);
     }
 
     public static dItem from(XMaterial material, String id) {
-        return new dItem(material.parseItem(), id);
+        return from(material.parseItem(), id);
+    }
+
+    public static dItem from(ItemStack item, String id) {
+        return new dItem(item, id);
     }
 
     public dItem(Material material) {

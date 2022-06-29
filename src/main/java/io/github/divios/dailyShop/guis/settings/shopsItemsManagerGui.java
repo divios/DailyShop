@@ -155,7 +155,7 @@ public class shopsItemsManagerGui {
                                                 .applyTexture("9b425aa3d94618a87dac9c94f377af6ca4984c07579674fad917f602b7bf235"),
 
                                         e -> addDailyGuiIH.open(p, shop, itemStack -> {
-                                            shop.addItem(dItem.of(itemStack)
+                                            shop.addItem(dItem.of(itemStack, shop)
                                                     .setBuyPrice(ValueGenerator.fromJsonOptional(Settings.DEFAULT_BUY.getAsJson())
                                                             .orElse(DEFAULT_BUY_GENERATOR)
                                                     )

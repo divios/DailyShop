@@ -30,7 +30,7 @@ public class addCommand {
                 .executesPlayer((player, values) ->
                         DailyShop.get().getShopsManager().getShop(values.get("dailyShop").getAsString()).ifPresent(shop ->
                                 addDailyGuiIH.open(player, shop, itemStack -> {
-                                    shop.addItem(dItem.of(itemStack)
+                                    shop.addItem(dItem.of(itemStack, shop)
                                             .setBuyPrice(ValueGenerator.fromJsonOptional(Settings.DEFAULT_BUY.getAsJson())
                                                     .orElse(DEFAULT_BUY_GENERATOR)
                                             )
