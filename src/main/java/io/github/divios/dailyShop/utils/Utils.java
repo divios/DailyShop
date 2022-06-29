@@ -253,15 +253,20 @@ public class Utils {
 
         Duration diff = Duration.between(shop.getTimestamp(), now);
         Duration totalDiff = toCompare.minus(diff);
-        
+
         StringBuilder formattedStr = new StringBuilder();
-
         if (totalDiff.getSeconds() > 86400) {
-            formattedStr.append(String.format("%d Days", TimeUnit.SECONDS.toDays(totalDiff.getSeconds())));
+            formattedStr.append(String.format("%d Days, ", TimeUnit.SECONDS.toDays(totalDiff.getSeconds())));
+            totalDiff = totalDiff.minusDays(totalDiff.toDays());
+        }
 
-        formattedStr.append(String.format("%02d:%02d:%02d", totalDiff.toHours(), totalDiff.toMinutes() % 60, totalDiff.getSeconds() % 60));
-        
-        return formattedStr.toString(); 
+        formattedStr.append(String.format("%02d:%02d:%02d",
+                totalDiff.toHours(),
+                totalDiff.toMinutes() % 60,
+                totalDiff.getSeconds() % 60)
+        );
+
+        return formattedStr.toString();
     }
 
     public static boolean playerIsOnline(Player player) {
