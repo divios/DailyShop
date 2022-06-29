@@ -12,6 +12,9 @@ public class FixedValueGenerator implements ValueGenerator {
         return element -> {
             JsonObject object = element.getAsJsonObject();
 
+            if (object.isJsonPrimitive())
+                return new FixedValueGenerator(object.getAsInt());
+
             Preconditions.checkArgument(object.has("fixed"), "No fixed value");
 
             double fixed = object.get("fixed").getAsDouble();

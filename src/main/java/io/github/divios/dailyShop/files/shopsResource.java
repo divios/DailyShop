@@ -59,7 +59,6 @@ public class shopsResource {
                 .forEach(shop -> {
                     //cacheCheckSums.remove(shop.getName());
                     sManager.deleteShopAsync(shop);
-                    Log.severe("oh wow");
                     DebugLog.info("removed shop");
                 });
 
@@ -70,7 +69,7 @@ public class shopsResource {
 
             if (!sManager.getShop(shopState.getName()).isPresent()) {        // Create new shops
                 isNew = true;
-                currentShop = sManager.createShopAsync(shopState.getName());
+                currentShop = sManager.createShop(shopState.getName());
             } else
                 currentShop = sManager.getShop(shopState.getName()).get();         // Update shops
 
@@ -117,7 +116,7 @@ public class shopsResource {
 
             } catch (Exception e) {
                 Log.warn("There was a problem with the shop " + shopFile.getName());
-                // e.printStackTrace();
+                e.printStackTrace();
                 Log.warn(e.getMessage());
             }
         }

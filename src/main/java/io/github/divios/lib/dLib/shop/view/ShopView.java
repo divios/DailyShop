@@ -1,7 +1,9 @@
 package io.github.divios.lib.dLib.shop.view;
 
+import io.github.divios.core_lib.events.Events;
 import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.core_lib.scheduler.Task;
+import io.github.divios.dailyShop.events.shopViewUpdateEvent;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.shop.view.buttons.DailyItemFactory;
 import io.github.divios.lib.dLib.shop.view.buttons.PaneButton;
@@ -30,7 +32,6 @@ public class ShopView {
     protected final DailyItemsMap dailyItemsMap;
 
     UpdateTask updateTask;
-
     ButtonGui gui;
 
     public ShopView(String title, Inventory inv, DailyItemFactory itemFactory) {
@@ -40,6 +41,10 @@ public class ShopView {
         this.dailyItemsMap = new DailyItemsMap();
 
         gui = GuiButtonFactory.createMultiGui(title, inv.getSize());
+    }
+
+    private void throwEvent() {
+        Events.callEvent(new shopViewUpdateEvent(this));
     }
 
     public void open(@NotNull Player p) {
@@ -56,6 +61,7 @@ public class ShopView {
 
         update();
         viewers.forEach(player -> newGui.open((Player) player));
+        throwEvent();
     }
 
     public void setSize(int size) {
@@ -65,10 +71,13 @@ public class ShopView {
             decrementRows((getSize() - size) / 9);
         } else if (comparator < 0)
             incrementRows((size - getSize()) / 9);
+
+        throwEvent();
     }
 
     public void setItemFactory(DailyItemFactory itemFactory) {
         this.itemFactory = itemFactory;
+        throwEvent();
     }
 
     public void setPaneItem(int slot, dItem item) {
@@ -79,6 +88,8 @@ public class ShopView {
         item.setSlot(slot);
         gui.setButton(slot, new PaneButton(item));
         buttons.put(slot, item);
+
+        throwEvent();
     }
 
     public void clear(int slot) {
@@ -86,6 +97,8 @@ public class ShopView {
             gui.clear(slot);
         } else
             removeDailyItem(slot);
+
+        throwEvent();
     }
 
     public void setDailyItems(Queue<dItem> dailyItems) {
@@ -101,6 +114,8 @@ public class ShopView {
 
             setDailyItem(index, item);
         }
+
+        throwEvent();
     }
 
     private Collection<dItem> removeStaticItems(Collection<dItem> items) {
@@ -170,6 +185,8 @@ public class ShopView {
 
         int newSize = Math.min(54, getSize() + (rows * 9));
         setGui(GuiButtonFactory.createMultiGui(getTitle(), newSize));
+
+        throwEvent();
     }
 
 
@@ -185,6 +202,8 @@ public class ShopView {
         dailyItemsMap.removeIf(dItem -> dItem.getSlot() >= newSize);
 
         setGui(newGui);
+
+        throwEvent();
     }
 
     public void setState(ShopViewState state) {
@@ -195,6 +214,8 @@ public class ShopView {
 
         setGui(newGui);
         state.getButtons().forEach(this::setPaneItem);
+
+        throwEvent();
     }
 
     private void update() {

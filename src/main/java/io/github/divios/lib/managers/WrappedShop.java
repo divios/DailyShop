@@ -2,7 +2,9 @@ package io.github.divios.lib.managers;
 
 import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.dailyShop.DailyShop;
+import io.github.divios.dailyShop.events.checkoutEvent;
 import io.github.divios.dailyShop.events.reStockShopEvent;
+import io.github.divios.dailyShop.events.shopViewUpdateEvent;
 import io.github.divios.dailyShop.utils.DebugLog;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.shop.*;
@@ -24,7 +26,7 @@ import java.util.Objects;
 import java.util.Set;
 
 @SuppressWarnings({"unused"})
-final class WrappedShop extends dShop implements Listener {
+final class WrappedShop implements Listener, dShop {
 
     private static final databaseManager dManager = DailyShop.get().getDatabaseManager();
 
@@ -35,15 +37,9 @@ final class WrappedShop extends dShop implements Listener {
 
     private final dShop shop;
 
-    public WrappedShop(dShop shop) {
-        super();
-
+    private WrappedShop(dShop shop) {
         this.shop = shop;
-        super.gui = ShopViewWrap.wrap(shop, shop.getView());
-
-        this.items = shop.getMapItems();
-
-        super.destroy(); /* We don't care about listeners */
+        //uper.gui = ShopViewWrap.wrap(shop, shop.getView()); TODO
         Bukkit.getPluginManager().registerEvents(this, DailyShop.get());
     }
 
@@ -57,19 +53,27 @@ final class WrappedShop extends dShop implements Listener {
         });
     }
 
+    @EventHandler
+    private void shopViewListener(shopViewUpdateEvent e) {
+        if (!Objects.equals(getGui(), e.gui)) return;
+
+        serializerApi.saveShopToFileAsync(shop);
+        dManager.updateGuiAsync(getName(), getGui());
+    }
+
     @Override
     public void openShop(@NotNull Player p) {
-        super.openShop(p);
+        shop.openShop(p);
     }
 
     @Override
     public void manageItems(Player p) {
-        super.manageItems(p);
+        shop.manageItems(p);
     }
 
     @Override
     public void openCustomizeGui(Player p) {
-        super.openCustomizeGui(p);
+        shop.openCustomizeGui(p);
     }
 
     @Override
@@ -154,7 +158,7 @@ final class WrappedShop extends dShop implements Listener {
 
     @Override
     public void setItems(@NotNull Collection<dItem> items) {
-        super.setItems(items);
+        dShop.super.setItems(items);
         serializerApi.saveShopToFileAsync(shop);
     }
 
@@ -178,8 +182,14 @@ final class WrappedShop extends dShop implements Listener {
     }
 
     @Override
+    public void computeBill(checkoutEvent e) {
+        if (Objects.equals(shop, e.getShop()))
+            shop.computeBill(e);
+    }
+
+    @Override
     public ShopView getView() {
-        return super.getView();
+        return shop.getView();
     }
 
     @Override
@@ -190,6 +200,16 @@ final class WrappedShop extends dShop implements Listener {
         else dManager.removeAccountAsync(getName());
 
         serializerApi.saveShopToFileAsync(shop);
+    }
+
+    @Override
+    public ShopOptions getOptions() {
+        return shop.getOptions();
+    }
+
+    @Override
+    public ShopView getGui() {
+        return shop.getView();
     }
 
     @Override
@@ -246,12 +266,14 @@ final class WrappedShop extends dShop implements Listener {
     @Override
     public void destroy() {
         shop.destroy();
+
         reStockShopEvent.getHandlerList().unregister(this);
+        shopViewUpdateEvent.getHandlerList().unregister(this);
     }
 
     @Override
     public void setState(dShopState state) {
-        super.setState(state);
+        dShop.super.setState(state);
 
         DebugLog.info("Updated setState");
         dManager.updateGuiAsync(getName(), getView());
