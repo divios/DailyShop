@@ -2,6 +2,7 @@ package io.github.divios.dailyShop.files;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.jcommands.util.Value;
@@ -46,7 +47,14 @@ public enum Settings {
 
     Gson gson = new Gson();
     public JsonElement getAsJson() {
-        return gson.toJsonTree((getSection().getValues(true)), LinkedHashMap.class);
+        ConfigurationSection section;
+        if ((section = getSection()) == null) {
+            JsonObject object = new JsonObject();
+            object.addProperty("value", getValue().getAsString());
+            return object;
+        }
+
+        return gson.toJsonTree(section.getValues(true), LinkedHashMap.class);
     }
 
     public static String getEconNameOrDefault(String key, String defaultStr) {

@@ -18,6 +18,7 @@ import io.github.divios.dailyShop.files.Settings;
 import io.github.divios.dailyShop.guis.customizerguis.CustomizerMenu;
 import io.github.divios.dailyShop.lorestategy.shopItemsManagerLore;
 import io.github.divios.dailyShop.utils.valuegenerators.FixedValueGenerator;
+import io.github.divios.dailyShop.utils.valuegenerators.ValueGenerator;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.shop.dShop;
 import io.github.divios.lib.managers.shopsManager;
@@ -30,6 +31,9 @@ import java.util.*;
 public class shopsItemsManagerGui {
 
     private static final shopsManager sManager = DailyShop.get().getShopsManager();
+
+    private static final ValueGenerator DEFAULT_BUY_GENERATOR = new FixedValueGenerator(500);
+    private static final ValueGenerator DEFAULT_SELL_GENERATOR = new FixedValueGenerator(20);
 
     private static final BiMap<UUID, Integer> cache = HashBiMap.create();
 
@@ -150,8 +154,12 @@ public class shopsItemsManagerGui {
 
                                         e -> addDailyGuiIH.open(p, shop, itemStack -> {
                                             shop.addItem(dItem.of(itemStack)
-                                                    .setBuyPrice(new FixedValueGenerator(Settings.DEFAULT_BUY.getValue().getAsDouble()))
-                                                    .setSellPrice(new FixedValueGenerator(Settings.DEFAULT_SELL.getValue().getAsDouble()))
+                                                    .setBuyPrice(ValueGenerator.fromJsonOptional(Settings.DEFAULT_BUY.getAsJson())
+                                                            .orElse(DEFAULT_BUY_GENERATOR)
+                                                    )
+                                                    .setSellPrice(ValueGenerator.fromJsonOptional(Settings.DEFAULT_SELL.getAsJson())
+                                                            .orElse(DEFAULT_SELL_GENERATOR)
+                                                    )
                                             );
                                             refresh();
                                         }, this::refresh)), 53)
