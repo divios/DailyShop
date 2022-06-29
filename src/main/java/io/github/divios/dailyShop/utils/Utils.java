@@ -256,7 +256,8 @@ public class Utils {
 
         StringBuilder formattedStr = new StringBuilder();
         if (totalDiff.getSeconds() > 86400) {
-            formattedStr.append(String.format("%d Days, ", TimeUnit.SECONDS.toDays(totalDiff.getSeconds())));
+            long days = TimeUnit.SECONDS.toDays(totalDiff.getSeconds());
+            formattedStr.append(String.format((days == 1) ? "%d Day, " : "%d Days, ", days));
             totalDiff = totalDiff.minusDays(totalDiff.toDays());
         }
 
