@@ -9,8 +9,6 @@ import io.github.divios.dailyShop.events.checkoutEvent;
 import io.github.divios.dailyShop.events.reStockShopEvent;
 import io.github.divios.dailyShop.files.Messages;
 import io.github.divios.dailyShop.files.Settings;
-import io.github.divios.dailyShop.guis.customizerguis.customizeGui;
-import io.github.divios.dailyShop.guis.settings.shopsItemsManagerGui;
 import io.github.divios.dailyShop.utils.DebugLog;
 import io.github.divios.jtext.wrappers.Template;
 import io.github.divios.lib.dLib.dItem;
@@ -125,20 +123,6 @@ public class dShopImp implements Listener, dShop {
      */
     public void openShop(@NotNull Player p) {
         gui.open(p);
-    }
-
-    /**
-     * Opens the gui to manage the items of this shop
-     */
-    public void manageItems(Player p) {
-        shopsItemsManagerGui.open(p, this);
-    }
-
-    /**
-     * Opens the gui to customize the display of this shop
-     */
-    public void openCustomizeGui(Player p) {
-        customizeGui.open(p, this);
     }
 
     /**

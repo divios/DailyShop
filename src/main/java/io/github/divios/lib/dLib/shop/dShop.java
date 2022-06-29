@@ -2,6 +2,8 @@ package io.github.divios.lib.dLib.shop;
 
 import com.google.gson.JsonElement;
 import io.github.divios.dailyShop.events.checkoutEvent;
+import io.github.divios.dailyShop.guis.customizerguis.customizeGui;
+import io.github.divios.dailyShop.guis.settings.shopsItemsManagerGui;
 import io.github.divios.dailyShop.utils.DebugLog;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.shop.view.ShopView;
@@ -44,12 +46,16 @@ public interface dShop {
     /**
      * Opens the gui to manage the items of this shop
      */
-    void manageItems(Player p);
+    default void manageItems(Player p) {
+        shopsItemsManagerGui.open(p, this);
+    }
 
     /**
      * Opens the gui to customize the display of this shop
      */
-    void openCustomizeGui(Player p);
+    default void openCustomizeGui(Player p) {
+        customizeGui.open(p, this);
+    }
 
     /**
      * Gets the name of the shop

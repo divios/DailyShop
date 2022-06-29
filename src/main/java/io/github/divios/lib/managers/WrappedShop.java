@@ -26,7 +26,7 @@ import java.util.Objects;
 import java.util.Set;
 
 @SuppressWarnings({"unused"})
-final class WrappedShop implements Listener, dShop {
+public final class WrappedShop implements Listener, dShop {
 
     private static final databaseManager dManager = DailyShop.get().getDatabaseManager();
 
@@ -64,16 +64,6 @@ final class WrappedShop implements Listener, dShop {
     @Override
     public void openShop(@NotNull Player p) {
         shop.openShop(p);
-    }
-
-    @Override
-    public void manageItems(Player p) {
-        shop.manageItems(p);
-    }
-
-    @Override
-    public void openCustomizeGui(Player p) {
-        shop.openCustomizeGui(p);
     }
 
     @Override
@@ -165,6 +155,7 @@ final class WrappedShop implements Listener, dShop {
     @Override
     public void addItem(@NotNull dItem item) {
         shop.addItem(item);
+        DebugLog.info("Added item %s", item.getID());
 
         dManager.addItemAsync(getName(), item);
         serializerApi.saveShopToFileAsync(shop);
