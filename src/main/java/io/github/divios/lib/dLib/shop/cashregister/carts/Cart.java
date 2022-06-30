@@ -1,9 +1,10 @@
 package io.github.divios.lib.dLib.shop.cashregister.carts;
 
+import com.cryptomorin.xseries.ReflectionUtils;
 import io.github.divios.core_lib.itemutils.ItemUtils;
-import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.files.Messages;
 import io.github.divios.dailyShop.files.Settings;
+import io.github.divios.dailyShop.utils.TranslationApi;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.jtext.wrappers.Template;
 import io.github.divios.lib.dLib.dItem;
@@ -41,18 +42,18 @@ public abstract class Cart {
                 )
                 .parse(Messages.MSG_BUY_ITEM.getValue());
 
-        if (ItemUtils.getMetadata(item.getItem()).hasDisplayName())
-            p.sendMessage(Settings.PREFIX +
-                    Utils.JTEXT_PARSER
-                            .withTemplate(Template.of("item", ItemUtils.getName(item.getItem()) + "&7"))
-                            .parse(rawMsg)
-            );
+        String msg;
+        if (!ItemUtils.getMetadata(item.getItem()).hasDisplayName() && ReflectionUtils.VER >= 12
+                && TranslationApi.isOperative())
+            msg = TranslationApi.translate(item.getItem().getType(), p.getLocale());
+        else
+            msg = ItemUtils.getName(item.getItem());
 
-        else {       // If no custom name, send translated item type
-            String msg = Utils.JTEXT_PARSER
-                    .parse(Settings.PREFIX + rawMsg.replace("{item}", "<item>&7")); // LocaleLib placeholder is <item>
-            DailyShop.get().getLocaleLib().sendMessage(p, msg, item.getItem().getType(), (short) 0, null);
-        }
+        p.sendMessage(Settings.PREFIX +
+                Utils.JTEXT_PARSER
+                        .withTemplate(Template.of("item", msg + "&7"))
+                        .parse(rawMsg)
+        );
 
     }
 

@@ -39,7 +39,6 @@ public final class WrappedShop implements Listener, dShop {
 
     private WrappedShop(dShop shop) {
         this.shop = shop;
-        //uper.gui = ShopViewWrap.wrap(shop, shop.getView()); TODO
         Bukkit.getPluginManager().registerEvents(this, DailyShop.get());
     }
 
