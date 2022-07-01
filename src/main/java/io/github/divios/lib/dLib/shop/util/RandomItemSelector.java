@@ -56,8 +56,8 @@ public class RandomItemSelector {
 
     private void initialize(Collection<dItem> items) {
         total = 0;
-        totals = new ArrayList<>(20);
-        this.items = new ArrayList<>(20);
+        totals = new ArrayList<>(items.size());
+        this.items = new ArrayList<>(items.size());
         items.forEach(item -> {
             if (!filterItems.test(item)) return;
             total += item.getRarity().getWeight();
