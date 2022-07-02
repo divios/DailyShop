@@ -1,9 +1,12 @@
 package io.github.divios.lib.dLib.confirmMenu;
 
 import io.github.divios.core_lib.itemutils.ItemUtils;
+import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.files.Lang;
 import io.github.divios.dailyShop.utils.CompareItemUtils;
 import io.github.divios.dailyShop.utils.LimitHelper;
+import io.github.divios.lib.dLib.confirmMenu.comparators.ComparatorMatcher;
+import io.github.divios.lib.dLib.confirmMenu.comparators.ItemComparator;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dTransaction.Transactions;
 import io.github.divios.lib.dLib.shop.dShop;
@@ -19,6 +22,8 @@ public class SellConfirmMenu extends abstractConfirmMenu {
     public static sellConfirmMenuBuilder builder() {
         return new sellConfirmMenuBuilder();
     }
+
+    private ItemComparator comparator;
 
     private SellConfirmMenu(dShop shop,
                             Player player,
@@ -116,7 +121,10 @@ public class SellConfirmMenu extends abstractConfirmMenu {
     }
 
     private int countSimilarItems() {
-        return ItemUtils.count(player.getInventory(), item.getItem(), CompareItemUtils::compareItems);
+        if (comparator == null)
+            comparator = ComparatorMatcher.match(item.getItem());
+
+        return ItemUtils.count(player.getInventory(), item.getItem(), comparator::compare);
     }
 
     public static final class sellConfirmMenuBuilder {
