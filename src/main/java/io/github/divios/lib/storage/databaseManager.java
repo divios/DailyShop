@@ -55,7 +55,8 @@ public class databaseManager extends DataManagerAbstract {
                         "account_serial, item_serial " +
                         "FROM Shops sh " +
                         "NATURAL JOIN Guis " +
-                        "NATURAL JOIN Items " +
+                        "LEFT JOIN Items it " +
+                        "ON sh.shop_id = it.shop_id " +
                         "LEFT JOIN Accounts ac " +
                         "ON sh.shop_id = ac.shop_id";
 
