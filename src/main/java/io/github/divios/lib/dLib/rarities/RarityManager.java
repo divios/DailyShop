@@ -68,17 +68,6 @@ public class RarityManager {
         return next;
     }
 
-    public void performItemsCheck() {
-        for (dShop shop : DailyShop.get().getShopsManager().getShops()) {
-            for (dItem item : shop.getMapItems().values()) {
-                /*if (rarities.containsKey(item.getRarity())) {         // TODO
-                    item.setRarity(Rarity.UNAVAILABLE)
-                    shop.updateItem(item);
-                } */
-            }
-        }
-    }
-
     @Override
     public String toString() {
         return "RarityManager{" +
