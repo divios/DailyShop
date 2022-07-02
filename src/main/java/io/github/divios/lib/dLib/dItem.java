@@ -17,6 +17,8 @@ import io.github.divios.dailyShop.economies.Economy;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.dailyShop.utils.valuegenerators.ValueGenerator;
 import io.github.divios.lib.dLib.priceModifiers.priceModifier;
+import io.github.divios.lib.dLib.rarities.Rarity;
+import io.github.divios.lib.dLib.rarities.RarityManager;
 import io.github.divios.lib.dLib.shop.dShop;
 import io.github.divios.lib.dLib.stock.dStock;
 import io.github.divios.lib.dLib.stock.factory.dStockFactory;
@@ -39,6 +41,8 @@ import java.util.*;
 public class dItem implements Cloneable {
 
     private static final String ID_KEY = "rds_id";
+
+    private static final RarityManager rManager = DailyShop.get().getRarityManager();
 
     public static @Nullable
     String getIdKey(@NotNull ItemStack item) {
@@ -65,7 +69,7 @@ public class dItem implements Cloneable {
     private dPrice buyPrice;
     private dPrice sellPrice;
     private Economy econ = Economies.vault.getEconomy();
-    private dRarity rarity = new dRarity();
+    private Rarity rarity = Rarity.UNAVAILABLE;
     private WrapperAction action = WrapperAction.of(dAction.EMPTY, "");
     private List<String> buyPerms;
     private List<String> sellPerms;
@@ -116,7 +120,7 @@ public class dItem implements Cloneable {
             item.sellPrice = dPrice.fromJson(object.get("sellPrice"));
 
         item.econ = Economy.fromString(object.get("econ").getAsString());
-        item.rarity = dRarity.fromKey(object.get("rarity").getAsString());
+        item.rarity = rManager.get(object.get("rarity").getAsString()).orElse(Rarity.UNAVAILABLE);
         item.action = WrapperAction.fromJson(object.get("action"));
 
         if (object.has("buyPerms") && !object.get("buyPerms").isJsonNull())
@@ -323,8 +327,8 @@ public class dItem implements Cloneable {
     }
 
     @NotNull
-    public dRarity getRarity() {
-        return rarity.clone();
+    public Rarity getRarity() {
+        return rarity;
     }
 
     @NotNull
@@ -458,23 +462,18 @@ public class dItem implements Cloneable {
     }
 
     public dItem setRarity(@NotNull String key) {
-        Preconditions.checkNotNull(key, "key is null");
-        rarity = dRarity.fromKey(key);
-
-        return this;
+        return setRarity(rManager.get(key).orElse(Rarity.UNAVAILABLE));
     }
 
-    public dItem setRarity(@NotNull dRarity rarity) {
+    public dItem setRarity(@NotNull Rarity rarity) {
         Preconditions.checkNotNull(rarity, "rarity is null");
-        this.rarity = rarity.clone();
+        this.rarity = rarity;
 
         return this;
     }
 
     public dItem nextRarity() {
-        rarity.next();
-
-        return this;
+        return setRarity(rManager.getNext(rarity));
     }
 
     public dItem setStock(@NotNull dStock stock) {
@@ -552,7 +551,7 @@ public class dItem implements Cloneable {
                 .add("buyPrice", buyPrice == null ? null : buyPrice.toJson())
                 .add("sellPrice", sellPrice == null ? null : sellPrice.toJson())
                 .add("econ", econ.toString())
-                .add("rarity", rarity.getKey())
+                .add("rarity", rarity.getId())
                 .add("action", action.toJson())
                 .add("commands", gson.toJsonTree(commands))
                 .add("buyPerms", gson.toJsonTree(buyPerms))
@@ -572,7 +571,7 @@ public class dItem implements Cloneable {
             if (stock != null) T.stock = stock.clone();
             if (buyPrice != null) T.buyPrice = buyPrice.clone();
             if (sellPrice != null) T.sellPrice = sellPrice.clone();
-            T.rarity = rarity.clone();
+            T.rarity = rarity;
             if (commands != null) T.commands = new ArrayList<>(commands);
             if (buyPerms != null) T.buyPerms = new ArrayList<>(buyPerms);
             if (sellPerms != null) T.sellPerms = new ArrayList<>(sellPerms);

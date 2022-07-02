@@ -12,6 +12,7 @@ import io.github.divios.dailyShop.utils.TranslationApi;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.jcommands.JCommands;
 import io.github.divios.lib.dLib.priceModifiers.priceModifierManager;
+import io.github.divios.lib.dLib.rarities.RarityManager;
 import io.github.divios.lib.dLib.registry.RecordBook;
 import io.github.divios.lib.dLib.shop.dShop;
 import io.github.divios.lib.managers.shopsManager;
@@ -34,6 +35,7 @@ public class DailyShop extends JavaPlugin {
     private priceModifierManager modifiers;
     private databaseManager dManager;
     private shopsManager sManager;
+    private RarityManager rManager;
 
     public DailyShop() {
         super();
@@ -80,15 +82,16 @@ public class DailyShop extends JavaPlugin {
     }
 
     private void run() {
-        /* Init conf & msgs & modifiers*/
+        /* Init conf & msgs & rarities & modifiers*/
         modifiers = new priceModifierManager();
+        rManager = new RarityManager();
         resourcesManager = resourceManager.generate();
 
         /* Initiate database + getAllItems + timer */
         dManager = new databaseManager();
         sManager = new shopsManager(dManager);
 
-        resourcesManager.readYamlFiles();       // Read yaml files
+        resourcesManager.readShopFiles();       // Read yaml files
 
         Schedulers.sync().runLater(RecordBook::initiate, 5, TimeUnit.SECONDS);      // Wait to not lock database
 
@@ -124,6 +127,10 @@ public class DailyShop extends JavaPlugin {
 
     public databaseManager getDatabaseManager() {
         return dManager;
+    }
+
+    public RarityManager getRarityManager() {
+        return rManager;
     }
 
     public static DailyShop get() {

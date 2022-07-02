@@ -38,7 +38,7 @@ public class shopItemsLore {
                 Template.of("buyPrice", getItemBuyPrice(item, p, shop)),
                 Template.of("sellPrice", getItemSellPrice(item, p, shop)),
                 Template.of("currency", item.getEcon().getName()),
-                Template.of("rarity", item.getRarity().toString())
+                Template.of("rarity", item.getRarity().getName())
         );
     }
 
@@ -48,7 +48,7 @@ public class shopItemsLore {
                 Template.of("buyPrice", getItemBuyPrice(item, p, shop)),
                 Template.of("sellPrice", getItemSellPrice(item, p, shop)),
                 Template.of("currency", item.getEcon().getName()),
-                Template.of("rarity", item.getRarity().toString())
+                Template.of("rarity", item.getRarity().getName())
         );
     }
 

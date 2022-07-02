@@ -13,7 +13,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class shopsResource {
@@ -31,9 +30,7 @@ public class shopsResource {
             shopsFolder.mkdir();
             if (sManager.getShops().isEmpty() && ReflectionUtils.VER >= 12) {
                 Stream.of("blocks", "drops", "equipment", "farm", "menu", "ore", "potion", "wood")
-                        .forEach(s -> {
-                            plugin.saveResource("shops/" + s + ".yml", false);
-                        });
+                        .forEach(s -> plugin.saveResource("shops/" + s + ".yml", false));
             } else {
                 Log.warn("Initialization migration to yaml...");
                 shopsFolder.mkdir();
@@ -77,9 +74,9 @@ public class shopsResource {
 
             if (isNew) {
                 currentShop.reStock();
-                Log.info("Registered shop of name %s with %d", shopState.getName(), shopState.getItems().size());
+                Log.info("Registered shop of name %s with %d items", shopState.getName(), shopState.getItems().size());
             } else
-                Log.info("Updated shop of name %s with %d", shopState.getName(), shopState.getItems().size());
+                Log.info("Updated shop of name %s", shopState.getName());
         }
 
         timer.stop();

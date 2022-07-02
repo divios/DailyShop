@@ -15,7 +15,6 @@ import io.github.divios.jcommands.JCommand;
 import io.github.divios.lib.dLib.dAction;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dPrice;
-import io.github.divios.lib.dLib.dRarity;
 import io.github.divios.lib.dLib.shop.dShop;
 import io.github.divios.lib.dLib.stock.dStock;
 import io.github.divios.lib.dLib.stock.factory.dStockFactory;
@@ -203,7 +202,7 @@ public class testNewStockCommand {
     }
 
     private void testRarityClone() {
-        dRarity rarity1 = new dRarity();
+        /*dRarity rarity1 = new dRarity();
         dRarity rarity2 = rarity1.clone();
 
         rarity1.next();
@@ -211,7 +210,7 @@ public class testNewStockCommand {
         if (!Objects.equals(rarity1, rarity2))
             Log.info("Test successfully");
         else
-            Log.severe("Test unsuccessfully");
+            Log.severe("Test unsuccessfully"); */
     }
 
     private void testArrayClone() {

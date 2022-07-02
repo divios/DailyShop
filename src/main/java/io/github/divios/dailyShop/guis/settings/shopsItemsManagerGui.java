@@ -17,18 +17,17 @@ import io.github.divios.dailyShop.files.Lang;
 import io.github.divios.dailyShop.files.Settings;
 import io.github.divios.dailyShop.guis.customizerguis.CustomizerMenu;
 import io.github.divios.dailyShop.lorestategy.shopItemsManagerLore;
-import io.github.divios.dailyShop.utils.DebugLog;
 import io.github.divios.dailyShop.utils.valuegenerators.FixedValueGenerator;
 import io.github.divios.dailyShop.utils.valuegenerators.ValueGenerator;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.shop.dShop;
-import io.github.divios.lib.managers.WrappedShop;
 import io.github.divios.lib.managers.shopsManager;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 
-import java.util.*;
+import java.util.Optional;
+import java.util.UUID;
 
 public class shopsItemsManagerGui {
 
@@ -86,9 +85,6 @@ public class shopsItemsManagerGui {
 
     private void createGuis() {
 
-        Deque<dItem> entries = new ArrayDeque<>();
-        shop.getItems().forEach(entries::addFirst);
-
         inv = paginatedGui.Builder()
 
                 .withPopulator(
@@ -110,9 +106,8 @@ public class shopsItemsManagerGui {
                 )
 
                 .withItems(
-                        entries.stream()
+                        shop.getMapItems().values().stream()
                                 .parallel()
-                                .sorted(Comparator.comparing(dItem::getID))
                                 .map(dItem ->
                                         ItemButton.create(shopItemsManagerLore.applyLore(dItem)
                                                 , this::contentAction))
@@ -167,7 +162,7 @@ public class shopsItemsManagerGui {
                                         }, this::refresh)), 53)
                 )
 
-                .withTitle("&8" + shop.getName())
+                .withTitle((page, total) -> String.format("&8%s (%d/%d)", shop.getName(), page, total))
 
                 .build();
 

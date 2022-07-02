@@ -20,7 +20,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -146,7 +145,7 @@ public final class WrappedShop implements Listener, dShop {
     }
 
     @Override
-    public void setItems(@NotNull Collection<dItem> items) {
+    public void setItems(@NotNull Map<String, dItem> items) {
         dShop.super.setItems(items);
         serializerApi.saveShopToFileAsync(shop);
     }

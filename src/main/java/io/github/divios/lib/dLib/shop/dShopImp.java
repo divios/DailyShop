@@ -31,6 +31,7 @@ import org.jetbrains.annotations.Nullable;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -40,7 +41,7 @@ public class dShopImp implements Listener, dShop {
     protected static final DailyShop plugin = DailyShop.get();
 
     protected String name;
-    protected Map<String, dItem> items = Collections.synchronizedMap(new LinkedHashMap<>());
+    protected ConcurrentSkipListMap<String, dItem> items = new ConcurrentSkipListMap<>();
     protected Map<String, dItem> currentItems;
 
     protected final LogCache logCache = new LogCache();
@@ -56,7 +57,7 @@ public class dShopImp implements Listener, dShop {
     protected boolean announce_restock = true;
     protected boolean isDefault = false;
 
-    protected Set<Task> tasks = new HashSet<>();
+    protected Set<Task> tasks = new HashSet<>(5);
 
     protected dShopImp() {
     }
@@ -382,7 +383,7 @@ public class dShopImp implements Listener, dShop {
     }
 
     public dShopState toState() {
-        return new dShopState(name, timer, announce_restock, isDefault, options, account, gui.toState(), items.values());
+        return new dShopState(name, timer, announce_restock, isDefault, options, account, gui.toState(), items);
     }
 
     @Override

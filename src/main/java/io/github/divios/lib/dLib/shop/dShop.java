@@ -125,14 +125,12 @@ public interface dShop {
     /**
      * Sets the items of this shop
      */
-    default void setItems(@NotNull Collection<dItem> items) {
-        DebugLog.info("Setting items");
-        Map<String, dItem> newItems = new HashMap<>();
-        items.forEach(dItem -> newItems.put(dItem.getID(), dItem));            // Cache values for a O(1) search
+    default void setItems(@NotNull Map<String, dItem> items) {
+        DebugLog.info("Setting items");         // Cache values for a O(1) search
 
         for (Map.Entry<String, dItem> entry : new HashMap<>(getMapItems()).entrySet()) {          // Remove or update
-            if (newItems.containsKey(entry.getKey())) {     // Update items if changed
-                dItem toUpdateItem = newItems.remove(entry.getKey());
+            if (items.containsKey(entry.getKey())) {     // Update items if changed
+                dItem toUpdateItem = items.remove(entry.getKey());
 
                 if (toUpdateItem != null && !toUpdateItem.isSimilar(entry.getValue())) {
                     DebugLog.info("Updating item with ID: %s from dShop", toUpdateItem.getID());
@@ -144,7 +142,7 @@ public interface dShop {
             }
         }
 
-        newItems.values().forEach(newDItem -> {
+        items.values().forEach(newDItem -> {
             addItem(newDItem);             // Add newItems
             DebugLog.info("Added new item with ID: %s", newDItem.getID());
         });

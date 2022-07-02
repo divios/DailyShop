@@ -1,0 +1,29 @@
+rarities:
+  Common:
+    name: "&7Common"
+    item: GRAY_DYE
+    weight: 100
+  UnCommon:
+    name: "&dUncommon"
+    item: PINK_DYE
+    weight: 80
+  Rare:
+    name: "&5Rare"
+    item: MAGENTA_DYE
+    weight: 60
+  Epic:
+    name: "&5Epic"
+    item: PURPLE_DYE
+    weight: 40
+  Ancient:
+    name: "&9Ancient"
+    item: CYAN_DYE
+    weight: 20
+  Legendary:
+    name: "&eLegendary"
+    item: ORANGE_DYE
+    weight: 10
+  Mythic:
+    name: "&eMythic"
+    item: YELLOW_DYE
+    weight: 5

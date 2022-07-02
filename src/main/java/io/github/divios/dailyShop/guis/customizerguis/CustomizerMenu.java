@@ -300,8 +300,8 @@ public class CustomizerMenu {
 
         inv.addButton(                                                  // Rarity
                 ItemButton.create(
-                        ItemBuilder.of(item.getRarity().getAsItem())
-                                .setName(item.getRarity().toString())
+                        ItemBuilder.of(item.getRarity().getItem())
+                                .setName(item.getRarity().getName())
                                 .addLore(Lang.CUSTOMIZE_RARITY_NAME.getAsListString(p))
 
                         , e -> {
