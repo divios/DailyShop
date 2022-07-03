@@ -13,6 +13,13 @@ public class ItemsAdderUtils {
         return isOn() ? CustomStack.byItemStack(item) : null;
     }
 
+    public static ItemStack getItemsAdderFromItem(ItemStack item) {
+        CustomStack stackItem;
+        return (stackItem = getAsCustomStack(item)) == null
+                ? null
+                : stackItem.getItemStack();
+    }
+
     public static CustomStack getFromNameSpace(String nameSpace) {
         return CustomStack.getInstance(nameSpace);
     }

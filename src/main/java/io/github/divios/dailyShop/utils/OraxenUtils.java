@@ -1,5 +1,6 @@
 package io.github.divios.dailyShop.utils;
 
+import io.th0rgal.oraxen.items.ItemBuilder;
 import io.th0rgal.oraxen.items.OraxenItems;
 import org.bukkit.inventory.ItemStack;
 
@@ -12,10 +13,7 @@ public class OraxenUtils {
     }
 
     public static boolean isOraxenItem(ItemStack item) {
-        if (!isOraxenOn()) return false;
-
-        String id = OraxenItems.getIdByItem(item);
-        return id != null && OraxenItems.exists(id);
+        return getId(item) != null;
     }
 
     public static boolean isValidId(String id) {
@@ -24,17 +22,22 @@ public class OraxenUtils {
     }
 
     public static String getId(ItemStack item) {
-        if (!isOraxenOn()) return null;
+        if (!isOraxenOn() || !isOraxenItem(item)) return null;
 
-        if (!isOraxenItem(item)) return null;
         return OraxenItems.getIdByItem(item);
     }
 
     public static ItemStack createItemByID(String id) {
-        if (!isOraxenOn()) return null;
-        if (!OraxenItems.exists(id)) return null;
+        if (!isOraxenOn() || id == null) return null;
+        ItemBuilder builder;
 
-        return OraxenItems.getItemById(id).build();
+        return (builder = OraxenItems.getItemById(id)) == null
+                ? null
+                : builder.build();
+    }
+
+    public static ItemStack createItemFromItem(ItemStack item) {
+        return createItemByID(getId(item));
     }
 
     public static boolean compareItems(ItemStack item1, ItemStack item2) {
