@@ -1,6 +1,5 @@
 package io.github.divios.dailyShop;
 
-import dev.lone.itemsadder.api.Events.ItemsAdderFirstLoadEvent;
 import dev.lone.itemsadder.api.Events.ItemsAdderLoadDataEvent;
 import io.github.divios.core_lib.Core_lib;
 import io.github.divios.core_lib.events.Events;
@@ -9,15 +8,16 @@ import io.github.divios.dailyShop.commands.commandsManager;
 import io.github.divios.dailyShop.economies.Economies;
 import io.github.divios.dailyShop.files.resourceManager;
 import io.github.divios.dailyShop.hooks.Hooks;
+import io.github.divios.dailyShop.utils.TranslationApi;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.jcommands.JCommands;
 import io.github.divios.lib.dLib.priceModifiers.priceModifierManager;
+import io.github.divios.lib.dLib.rarities.RarityManager;
 import io.github.divios.lib.dLib.registry.RecordBook;
 import io.github.divios.lib.dLib.shop.dShop;
 import io.github.divios.lib.managers.shopsManager;
 import io.github.divios.lib.serialize.serializerApi;
 import io.github.divios.lib.storage.databaseManager;
-import me.pikamug.localelib.LocaleManager;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginDescriptionFile;
@@ -35,8 +35,7 @@ public class DailyShop extends JavaPlugin {
     private priceModifierManager modifiers;
     private databaseManager dManager;
     private shopsManager sManager;
-
-    private final LocaleManager localeLib = new LocaleManager();  // Material Transalations
+    private RarityManager rManager;
 
     public DailyShop() {
         super();
@@ -60,6 +59,7 @@ public class DailyShop extends JavaPlugin {
         Core_lib.setPlugin(this);       /* Set plugin for aux libraries */
         JCommands.register(this);
         Utils.JTEXT_PARSER.getTemplates();     /* Init JText */
+        TranslationApi.isOperative();       /* Init langs */
 
         /* Init hooks  */
         Hooks.B_STATS.getApi();
@@ -82,15 +82,16 @@ public class DailyShop extends JavaPlugin {
     }
 
     private void run() {
-        /* Init conf & msgs & modifiers*/
+        /* Init conf & msgs & rarities & modifiers*/
         modifiers = new priceModifierManager();
+        rManager = new RarityManager();
         resourcesManager = resourceManager.generate();
 
         /* Initiate database + getAllItems + timer */
         dManager = new databaseManager();
         sManager = new shopsManager(dManager);
 
-        resourcesManager.readYamlFiles();       // Read yaml files
+        resourcesManager.readShopFiles();       // Read yaml files
 
         Schedulers.sync().runLater(RecordBook::initiate, 5, TimeUnit.SECONDS);      // Wait to not lock database
 
@@ -128,6 +129,10 @@ public class DailyShop extends JavaPlugin {
         return dManager;
     }
 
+    public RarityManager getRarityManager() {
+        return rManager;
+    }
+
     public static DailyShop get() {
         return INSTANCE;
     }
@@ -140,10 +145,6 @@ public class DailyShop extends JavaPlugin {
         return modifiers;
     }
 
-    public LocaleManager getLocaleLib() {
-        return localeLib;
-    }
-
     private void meetsStartRequirements() {
         if (!Utils.isOperative("Vault"))
             throw new RuntimeException("Vault is not installed");
@@ -153,5 +154,4 @@ public class DailyShop extends JavaPlugin {
             throw new RuntimeException("No economy provider found");
         }
     }
-
 }

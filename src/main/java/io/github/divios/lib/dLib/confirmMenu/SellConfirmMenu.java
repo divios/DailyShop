@@ -2,8 +2,8 @@ package io.github.divios.lib.dLib.confirmMenu;
 
 import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.dailyShop.files.Lang;
-import io.github.divios.dailyShop.utils.CompareItemUtils;
 import io.github.divios.dailyShop.utils.LimitHelper;
+import io.github.divios.lib.dLib.confirmMenu.comparators.ComparatorFactory;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dTransaction.Transactions;
 import io.github.divios.lib.dLib.shop.dShop;
@@ -26,7 +26,7 @@ public class SellConfirmMenu extends abstractConfirmMenu {
                             Consumer<Integer> onCompleteAction,
                             Runnable fallback
     ) {
-        super(shop, player, item, onCompleteAction, fallback);
+        super(shop, player, item, ComparatorFactory.match(item.getItem()), onCompleteAction, fallback);
     }
 
     @Override
@@ -54,7 +54,7 @@ public class SellConfirmMenu extends abstractConfirmMenu {
 
     @Override
     protected void updateMockInventory() {
-        ItemUtils.remove(super.clonedPlayerInventory, item.getItem(), super.nAddedItems);
+        ItemUtils.remove(super.clonedPlayerInventory, item.getItem(), super.nAddedItems, comparator::compare);
     }
 
     @Override
@@ -116,7 +116,7 @@ public class SellConfirmMenu extends abstractConfirmMenu {
     }
 
     private int countSimilarItems() {
-        return ItemUtils.count(player.getInventory(), item.getItem(), CompareItemUtils::compareItems);
+        return ItemUtils.count(player.getInventory(), item.getItem(), comparator::compare);
     }
 
     public static final class sellConfirmMenuBuilder {

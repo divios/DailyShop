@@ -1,6 +1,5 @@
 package io.github.divios.dailyShop.files;
 
-import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.dailyShop.utils.FileUtils;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -11,6 +10,7 @@ public class resourceManager {
     private final settingsYml settingsYml;
     private shopsResource shopsResource;
     private final priceModifiersResource modifiersResource;
+    private final raritiesResource rarityResource;
 
     public static resourceManager generate() {
         if (!init) {
@@ -26,6 +26,7 @@ public class resourceManager {
         settingsYml = new settingsYml();
         FileUtils.createDatabaseFile();
         modifiersResource = new priceModifiersResource();
+        rarityResource = new raritiesResource();
     }
 
     public synchronized YamlConfiguration getLangYml() {
@@ -36,7 +37,7 @@ public class resourceManager {
         return settingsYml.getYaml();
     }
 
-    public synchronized void readYamlFiles() {
+    public synchronized void readShopFiles() {
         if (shopsResource == null)
             shopsResource = new shopsResource();
     }
@@ -46,6 +47,7 @@ public class resourceManager {
         settingsYml.reload();
         if (shopsResource != null) shopsResource.reload();
         modifiersResource.reload();
+        rarityResource.reload();
     }
 
     private static final class langYml extends resource {

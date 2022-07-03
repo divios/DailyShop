@@ -26,31 +26,33 @@ public class MMOUtils {
         return mmoitem.getType().equals(mmoitem2.getType()) && mmoitem.getId().equals(mmoitem2.getId());
     }
 
-    public static ItemStack createNewMMOItemFromExisting(ItemStack item) {
-        if (!isMMOItemsOn()) return null;
+    public static ItemStack createMMOItemFromItem(ItemStack item) {
+        return createMMOItem(getData(item));
+    }
 
-        if (!isMMOItem(item)) return item;
-
-        io.lumine.mythic.lib.api.item.NBTItem mmoitem = io.lumine.mythic.lib.api.item.NBTItem.get(item);
-        String type = mmoitem.getType();
-        String id = mmoitem.getString("MMOITEMS_ITEM_ID");
-
-        return createMMOItem(type, id);
-
+    public static MMOItemData getData(ItemStack item) {
+        if (!isMMOItemsOn() || !isMMOItem(item)) return null;
+        return MMOItemData.create(item);
     }
 
     public static String getId(ItemStack item) {
-        if (!isMMOItemsOn()) return null;
-        if (!isMMOItem(item)) return null;
-        return MMOItemData.create(item).getId();
+        MMOItemData data;
+        return (data = getData(item)) == null
+                ? null
+                : data.getId();
     }
 
     public static String getType(ItemStack item) {
-        if (!isMMOItemsOn()) return null;
-        if (!isMMOItem(item)) return null;
-        return MMOItemData.create(item).getType();
+        MMOItemData data;
+        return (data = getData(item)) == null
+                ? null
+                : data.getType();
     }
 
+    public static ItemStack createMMOItem(MMOItemData data) {
+        if (data == null) return null;
+        return createMMOItem(data.type, data.id);
+    }
 
     public static ItemStack createMMOItem(String type, String id) {
         if (!isMMOItemsOn()) return null;

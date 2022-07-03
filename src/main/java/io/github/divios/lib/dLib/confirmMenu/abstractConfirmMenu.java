@@ -15,6 +15,8 @@ import io.github.divios.dailyShop.utils.DebugLog;
 import io.github.divios.dailyShop.utils.NMSUtils.SetSlotPacket;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.jtext.wrappers.Template;
+import io.github.divios.lib.dLib.confirmMenu.comparators.ComparatorFactory;
+import io.github.divios.lib.dLib.confirmMenu.comparators.ItemComparator;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.shop.dShop;
 import org.bukkit.Bukkit;
@@ -38,6 +40,7 @@ public abstract class abstractConfirmMenu {
     protected final dShop shop;
     protected final Player player;
     protected final dItem item;
+    protected final ItemComparator comparator;
     protected final Consumer<Integer> onCompleteAction;
     protected final Runnable fallback;
     protected boolean confirmButton = false;
@@ -50,13 +53,25 @@ public abstract class abstractConfirmMenu {
     private final Task giveItemsLoop;
 
     protected abstractConfirmMenu(dShop shop,
-                               Player player,
-                               dItem item,
-                               Consumer<Integer> onCompleteAction, Runnable fallback
+                                  Player player,
+                                  dItem item,
+                                  Consumer<Integer> onCompleteAction,
+                                  Runnable fallback
+    ) {
+        this(shop, player, item, ComparatorFactory.DEFAULT, onCompleteAction, fallback);
+    }
+
+    protected abstractConfirmMenu(dShop shop,
+                                  Player player,
+                                  dItem item,
+                                  ItemComparator comparator,
+                                  Consumer<Integer> onCompleteAction,
+                                  Runnable fallback
     ) {
         this.shop = shop;
         this.player = player;
         this.item = item.clone();
+        this.comparator = comparator;
         this.onCompleteAction = onCompleteAction;
         this.fallback = fallback;
 

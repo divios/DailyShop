@@ -6,14 +6,12 @@ import com.google.gson.*;
 import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.files.Settings;
 import io.github.divios.dailyShop.utils.DebugLog;
-import io.github.divios.dailyShop.utils.Exceptions;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.shop.ShopAccount;
 import io.github.divios.lib.dLib.shop.ShopOptions;
 import io.github.divios.lib.dLib.shop.dShopState;
 import io.github.divios.lib.dLib.shop.view.ShopViewState;
-import org.apache.commons.lang.exception.ExceptionUtils;
 
 import java.lang.reflect.Type;
 import java.sql.Timestamp;
@@ -44,7 +42,7 @@ public class dShopStateAdapter implements JsonSerializer<dShopState>, JsonDeseri
         ShopAccount account = null;
         ShopViewState view = null;
         ShopOptions options = ShopOptions.DEFAULT;
-        Collection<dItem> items = new ArrayList<>();
+        Map<String, dItem> items = new HashMap<>();
 
         Preconditions.checkArgument(object.has("id"), "A shop needs an ID");
         Preconditions.checkArgument(object.has("items"), "A shop needs items");
@@ -85,7 +83,7 @@ public class dShopStateAdapter implements JsonSerializer<dShopState>, JsonDeseri
         for (Map.Entry<String, JsonElement> itemEntry : itemsMap.entrySet()) {
             try {
                 dItem dItem = gson.fromJson(itemEntry.getValue(), io.github.divios.lib.dLib.dItem.class);
-                items.add(dItem.setID(itemEntry.getKey()));
+                items.put(itemEntry.getKey(), dItem.setID(itemEntry.getKey()));
             } catch (Exception | Error e) {
                 Log.warn("There was a problem parsing the item with id " + itemEntry.getKey());
                 // e.printStackTrace();
@@ -114,7 +112,7 @@ public class dShopStateAdapter implements JsonSerializer<dShopState>, JsonDeseri
 
         //json.addProperty("timeStamp", (Boolean) null);
         json.add("shop", gson.toJsonTree(shop.getView(), ShopViewState.class));
-        json.add("items", gson.toJsonTree(parseUUIDs(shop.getItems())));
+        json.add("items", gson.toJsonTree(shop.getItems()));
 
         return json;
     }
@@ -122,13 +120,6 @@ public class dShopStateAdapter implements JsonSerializer<dShopState>, JsonDeseri
     /**
      * Utils
      **/
-
-    private Map<String, dItem> parseUUIDs(Collection<dItem> items) {
-        Map<String, dItem> newMap = new HashMap<>();
-        items.forEach(dItem -> newMap.put(dItem.getID(), dItem));
-
-        return newMap;
-    }
 
     private Date wrappedParse(String s) {
         try {

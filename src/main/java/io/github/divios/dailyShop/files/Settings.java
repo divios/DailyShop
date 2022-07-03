@@ -1,11 +1,16 @@
 package io.github.divios.dailyShop.files;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.jcommands.util.Value;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.MemorySection;
+import org.yaml.snakeyaml.Yaml;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -38,6 +43,18 @@ public enum Settings {
 
     public ConfigurationSection getSection() {
         return DailyShop.get().getResources().getSettingsYml().getConfigurationSection(path);
+    }
+
+    Gson gson = new Gson();
+    public JsonElement getAsJson() {
+        ConfigurationSection section;
+        if ((section = getSection()) == null) {
+            JsonObject object = new JsonObject();
+            object.addProperty("value", getValue().getAsString());
+            return object;
+        }
+
+        return gson.toJsonTree(section.getValues(true), LinkedHashMap.class);
     }
 
     public static String getEconNameOrDefault(String key, String defaultStr) {

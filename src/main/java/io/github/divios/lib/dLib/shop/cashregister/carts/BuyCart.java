@@ -9,15 +9,19 @@ import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.confirmMenu.BuyConfirmMenu;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dTransaction.Transactions;
+import io.github.divios.lib.dLib.shop.cashregister.ItemGenerators.GeneratorFactory;
+import io.github.divios.lib.dLib.shop.cashregister.ItemGenerators.ItemGenerator;
 import io.github.divios.lib.dLib.shop.cashregister.MultiplePreconditions.BuyPostconditions;
 import io.github.divios.lib.dLib.shop.cashregister.MultiplePreconditions.BuyPreconditions;
 import io.github.divios.lib.dLib.shop.cashregister.exceptions.IllegalPrecondition;
 import io.github.divios.lib.dLib.shop.dShop;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Supplier;
 
 public class BuyCart extends Cart {
 
@@ -111,8 +115,21 @@ public class BuyCart extends Cart {
                     .filter(Objects::nonNull)
                     .forEach(newDItem -> ItemUtils.give(p, newDItem.getItem()));
         } else
-            ItemUtils.give(p, item.getItem(), amount);
+            give(amount, GeneratorFactory.getGenerator(item.getItem()));
 
+    }
+
+    private void give(int amount, Supplier<ItemStack> generator) {
+        ItemStack clone;
+        for(int stackSize = item.getItem().getType().getMaxStackSize(); amount > stackSize; amount -= stackSize) {
+            clone = generator.get();
+            clone.setAmount(stackSize);
+            ItemUtils.give(p, clone);
+        }
+
+        clone = generator.get();
+        clone.setAmount(amount);
+        ItemUtils.give(p, clone);
     }
 
 }

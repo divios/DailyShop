@@ -16,7 +16,7 @@ public class RandomItemSelector {
     }
 
     public static Queue<dItem> roll(Collection<dItem> items, int times) {
-        Queue<dItem> itemQueue = new ArrayDeque<>(20);
+        Queue<dItem> itemQueue = new ArrayDeque<>(items.size());
         itemQueue.addAll(getStaticItems(items));
 
         RandomItemSelector selector = new RandomItemSelector(items);
@@ -58,12 +58,14 @@ public class RandomItemSelector {
         total = 0;
         totals = new ArrayList<>(items.size());
         this.items = new ArrayList<>(items.size());
-        items.forEach(item -> {
+
+        for (dItem item : items) {
             if (!filterItems.test(item)) return;
+
             total += item.getRarity().getWeight();
             totals.add(total);
             this.items.add(item);
-        });
+        }
     }
 
     public dItem roll() {
@@ -93,7 +95,7 @@ public class RandomItemSelector {
         }
 
         if (itemRemoved == null) return;
-        int value = itemRemoved.getRarity().getWeight();
+        double value = itemRemoved.getRarity().getWeight();
 
         totals.remove(index);
         total -= value;

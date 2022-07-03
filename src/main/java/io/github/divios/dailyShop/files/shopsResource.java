@@ -13,7 +13,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class shopsResource {
@@ -31,9 +30,7 @@ public class shopsResource {
             shopsFolder.mkdir();
             if (sManager.getShops().isEmpty() && ReflectionUtils.VER >= 12) {
                 Stream.of("blocks", "drops", "equipment", "farm", "menu", "ore", "potion", "wood")
-                        .forEach(s -> {
-                            plugin.saveResource("shops/" + s + ".yml", false);
-                        });
+                        .forEach(s -> plugin.saveResource("shops/" + s + ".yml", false));
             } else {
                 Log.warn("Initialization migration to yaml...");
                 shopsFolder.mkdir();
@@ -59,7 +56,6 @@ public class shopsResource {
                 .forEach(shop -> {
                     //cacheCheckSums.remove(shop.getName());
                     sManager.deleteShopAsync(shop);
-                    Log.severe("oh wow");
                     DebugLog.info("removed shop");
                 });
 
@@ -70,7 +66,7 @@ public class shopsResource {
 
             if (!sManager.getShop(shopState.getName()).isPresent()) {        // Create new shops
                 isNew = true;
-                currentShop = sManager.createShopAsync(shopState.getName());
+                currentShop = sManager.createShop(shopState.getName());
             } else
                 currentShop = sManager.getShop(shopState.getName()).get();         // Update shops
 
@@ -78,9 +74,9 @@ public class shopsResource {
 
             if (isNew) {
                 currentShop.reStock();
-                Log.info("Registered shop of name %s with %d", shopState.getName(), shopState.getItems().size());
+                Log.info("Registered shop of name %s with %d items", shopState.getName(), shopState.getItems().size());
             } else
-                Log.info("Updated shop of name %s with %d", shopState.getName(), shopState.getItems().size());
+                Log.info("Updated shop of name %s", shopState.getName());
         }
 
         timer.stop();
@@ -117,7 +113,7 @@ public class shopsResource {
 
             } catch (Exception e) {
                 Log.warn("There was a problem with the shop " + shopFile.getName());
-                // e.printStackTrace();
+                e.printStackTrace();
                 Log.warn(e.getMessage());
             }
         }

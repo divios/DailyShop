@@ -73,7 +73,6 @@ public enum Lang {
     CUSTOMIZE_ECON_NAME("lang.customize_menu.econ.name"),
     CUSTOMIZE_ECON_LORE("lang.customize_menu.econ.lore"),
     CUSTOMIZE_RARITY_NAME("lang.customize_menu.rarity.name"),
-    CUSTOMIZE_RARITY_TYPES("lang.customize_menu.rarity.types"),
     CUSTOMIZE_SEARCH_NAME("lang.customize_menu.search.name"),
     CUSTOMIZE_SEARCH_LORE("lang.customize_menu.search.lore"),
     CUSTOMIZE_SEARCH_CANCEL("lang.customize_menu.search.cancel"),

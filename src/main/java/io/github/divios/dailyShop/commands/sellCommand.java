@@ -16,6 +16,8 @@ import io.github.divios.dailyShop.utils.Timer;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.jcommands.JCommand;
 import io.github.divios.jtext.wrappers.Template;
+import io.github.divios.lib.dLib.confirmMenu.comparators.ComparatorFactory;
+import io.github.divios.lib.dLib.confirmMenu.comparators.ItemComparator;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dTransaction.Transactions;
 import io.github.divios.lib.dLib.shop.cashregister.MultiplePreconditions.SellPreconditions;
@@ -93,11 +95,12 @@ public class sellCommand {
     private static ItemEntry searchItem(ItemStack itemToSearch) {
         ItemEntry entry = null;
         Timer timer = Timer.create();
+        ItemComparator comparator = ComparatorFactory.match(itemToSearch);
 
         shopLoop:
         for (dShop shop : DailyShop.get().getShopsManager().getShops()) {
             for (dItem shopItem : shop.getCurrentItems().values()) {
-                if (shopItem.getItem().isSimilar(itemToSearch)) {
+                if (comparator.compare(itemToSearch, shopItem.getItem())) {
                     entry = ItemEntry.from(shop, shopItem);
                     break shopLoop;
                 }
@@ -155,9 +158,10 @@ public class sellCommand {
             conditions.validate(shop, p, item, amount);
 
             double price = item.getPlayerFloorSellPrice(p, shop) * amount;
+            ItemComparator comparator = ComparatorFactory.match(item.getItem());
             item.getEcon().depositMoney(p, price);
 
-            ItemUtils.remove(p.getInventory(), item.getItem(), amount);
+            ItemUtils.remove(p.getInventory(), item.getItem(), amount, comparator::compare);
 
             Messages.MSG_BUY_ITEM.send(p,
                     Template.of("action", Lang.SELL_ACTION_NAME.getAsString(p)),

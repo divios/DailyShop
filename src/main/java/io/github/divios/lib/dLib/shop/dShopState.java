@@ -3,9 +3,8 @@ package io.github.divios.lib.dLib.shop;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.shop.view.ShopViewState;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 public class dShopState {
     private final String name;
@@ -15,9 +14,16 @@ public class dShopState {
     private final ShopAccount account;
     private final ShopOptions options;
     private final ShopViewState view;
-    private final List<dItem> items;
+    private final Map<String, dItem> items;
 
-    public dShopState(String id, int timer, boolean announce, boolean Default, ShopOptions options, ShopAccount account, ShopViewState view, Collection<dItem> items) {
+    public dShopState(String id,
+                      int timer,
+                      boolean announce,
+                      boolean Default,
+                      ShopOptions options,
+                      ShopAccount account,
+                      ShopViewState view,
+                      Map<String, dItem> items) {
         this.name = id;
         this.timer = timer;
         this.options = options;
@@ -25,7 +31,7 @@ public class dShopState {
         this.Default = Default;
         this.account = account;
         this.view = view;
-        this.items = new ArrayList<>(items);
+        this.items = new TreeMap<>(items);
     }
 
     public String getName() {
@@ -56,7 +62,7 @@ public class dShopState {
         return view;
     }
 
-    public List<dItem> getItems() {
+    public Map<String, dItem> getItems() {
         return items;
     }
 }

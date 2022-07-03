@@ -22,7 +22,6 @@ import io.github.divios.lib.storage.migrations.initialMigration;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.*;
@@ -56,7 +55,8 @@ public class databaseManager extends DataManagerAbstract {
                         "account_serial, item_serial " +
                         "FROM Shops sh " +
                         "NATURAL JOIN Guis " +
-                        "NATURAL JOIN Items " +
+                        "LEFT JOIN Items it " +
+                        "ON sh.shop_id = it.shop_id " +
                         "LEFT JOIN Accounts ac " +
                         "ON sh.shop_id = ac.shop_id";
 
@@ -71,7 +71,7 @@ public class databaseManager extends DataManagerAbstract {
                         LocalDateTime timestamp = LocalDateTime.parse(rs.getString(4));
                         String account = rs.getString(5);
 
-                        dShop newShop = new dShop(shop_name, gui_serial, timestamp, timer);
+                        dShop newShop = dShop.create(shop_name, gui_serial, timestamp, timer);
                         if (account != null)
                             newShop.setAccount(ShopAccount.fromJson(parser.parse(account)));
 

@@ -15,6 +15,7 @@ import net.brcdev.shopgui.ShopGuiPlusApi;
 import net.brcdev.shopgui.shop.Shop;
 import net.brcdev.shopgui.shop.ShopManager;
 import org.black_ixx.bossshop.BossShop;
+import org.black_ixx.bossshop.core.BSBuy;
 import org.black_ixx.bossshop.core.BSShop;
 import org.bukkit.Bukkit;
 import org.bukkit.event.inventory.ClickType;
@@ -55,7 +56,7 @@ public class importShops {
 
                                             if (shopItem.getType().equals(ShopManager.ItemType.DUMMY)) return;
 
-                                            dItem newItem = dItem.of(shopItem.getItem());
+                                            dItem newItem = dItem.of(shopItem.getItem(), shop);
 
                                             newItem.setBuyPrice(new FixedValueGenerator(shopItem.getBuyPrice()));
                                             newItem.setSellPrice(new FixedValueGenerator(shopItem.getSellPrice()));
@@ -91,8 +92,9 @@ public class importShops {
                                     return;
                                 }
 
-                                bossShopShop.getItems().forEach(bsBuy -> {
-                                    dItem newItem = dItem.of(bsBuy.getItem());
+                                for (BSBuy bsBuy : bossShopShop.getItems()) {
+                                    try {
+                                    dItem newItem = dItem.of(bsBuy.getItem(), shop);
 
                                     double buyPrice = Double.parseDouble(
                                             String.valueOf(bsBuy.getPrice(null) == null ?
@@ -104,15 +106,15 @@ public class importShops {
                                                     bsBuy.getPrice(ClickType.RIGHT) : bsBuy.getPrice(null))
                                     ) / bsBuy.getItem().getAmount();
 
-                                    try {
+
                                         newItem.setBuyPrice(new FixedValueGenerator(buyPrice));
                                         newItem.setSellPrice(new FixedValueGenerator(sellPrice));
+
+                                        shop.addItem(newItem);
                                     } catch (Exception e) {
                                         Log.info("Could not import item of name " + bsBuy.getName());
-                                        return;
                                     }
-                                    shop.addItem(newItem);
-                                });
+                                }
                                 Utils.sendRawMsg(player, "&7Items imported successfully");
                                 shopsItemsManagerGui.open(player, shop);
                             });

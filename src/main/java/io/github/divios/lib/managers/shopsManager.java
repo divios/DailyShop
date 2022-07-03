@@ -13,6 +13,7 @@ import org.bukkit.entity.HumanEntity;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.TimeUnit;
 
 @SuppressWarnings("unused")
@@ -68,28 +69,20 @@ public class shopsManager {
      */
 
     public dShop createShop(String name) {
-        dShop newShop_ = WrappedShop.wrap(new dShop(name));
-
-        shops.put(newShop_.getName().toLowerCase(), newShop_);
-        newShop_.reStock();
-        Schedulers.sync().run(() -> Events.callEvent(new createdShopEvent(newShop_)));
-
-        serializerApi.saveShopToFileAsync(newShop_);
-        dManager.createShop(newShop_);
-
-        return newShop_;
+        return createShop(dShop.create(name));
     }
 
-    public dShop createShopAsync(String name) {
-        dShop newShop_ = WrappedShop.wrap(new dShop(name));
+    public dShop createShop(dShop shop) {
+        dShop newShop_ = WrappedShop.wrap(shop);
 
         shops.put(newShop_.getName().toLowerCase(), newShop_);
+        //newShop_.reStock();
         Schedulers.sync().run(() -> Events.callEvent(new createdShopEvent(newShop_)));
 
         serializerApi.saveShopToFileAsync(newShop_);
         dManager.createShopAsync(newShop_);
 
-        return newShop_;
+        return WrappedShop.wrap(newShop_);
     }
 
     /**

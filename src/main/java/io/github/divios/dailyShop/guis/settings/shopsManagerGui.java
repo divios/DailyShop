@@ -74,8 +74,6 @@ public class shopsManagerGui {
 
                 .withItems(
                         DailyShop.get().getShopsManager().getShops().stream()
-                                .parallel()
-                                .sorted(Comparator.comparing(dShop::getName))
                                 .map(dShop -> ItemButton.create(
                                         shopsManagerLore.applyLore(ItemBuilder.of(XMaterial.PLAYER_HEAD)
                                                 .setName("&8> &6" + dShop.getName())
@@ -111,7 +109,9 @@ public class shopsManagerGui {
                         , 8
                 )
 
-                .withTitle(Lang.SHOPS_MANAGER_TITLE.getAsString(p))
+                .withTitle((page, total) -> String.format("%s (%d/%d)",
+                        Lang.SHOPS_MANAGER_TITLE.getAsString(p), page, total)
+                )
 
                 .build();
 

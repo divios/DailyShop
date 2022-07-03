@@ -49,7 +49,7 @@ public class shopItemsManagerLore {
                         )
                 )
                 .addLore(Lang.DAILY_ITEMS_RARITY.getAsString(
-                                Template.of("rarity", item.getRarity().toString())
+                                Template.of("rarity", item.getRarity().getName())
                         )
                 )
                 .addLore("")

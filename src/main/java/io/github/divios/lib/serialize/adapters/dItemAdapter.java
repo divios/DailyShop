@@ -7,12 +7,12 @@ import com.google.common.base.Preconditions;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.*;
 import io.github.divios.core_lib.itemutils.ItemUtils;
+import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.economies.Economy;
-import io.github.divios.dailyShop.utils.NMSUtils.NMSHelper;
 import io.github.divios.dailyShop.utils.Utils;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dPrice;
-import io.github.divios.lib.dLib.dRarity;
+import io.github.divios.lib.dLib.rarities.Rarity;
 import io.github.divios.lib.dLib.stock.dStock;
 import io.github.divios.lib.serialize.wrappers.*;
 import io.github.divios.lib.serialize.wrappers.customitem.CustomItemFactory;
@@ -24,7 +24,6 @@ import org.bukkit.inventory.meta.PotionMeta;
 
 import java.lang.reflect.Type;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -78,7 +77,7 @@ public class dItemAdapter implements JsonSerializer<dItem>, JsonDeserializer<dIt
         if (dItem.getCommands() != null) merchant.add("commands", gson.toJsonTree(dItem.getCommands()));
         if (dItem.getBuyPerms() != null) merchant.add("buyPerms", gson.toJsonTree(dItem.getBuyPerms()));
         if (dItem.getSellPerms() != null) merchant.add("sellPerms", gson.toJsonTree(dItem.getSellPerms()));
-        merchant.addProperty("rarity", dItem.getRarity().getKey());
+        merchant.addProperty("rarity", dItem.getRarity().getId());
         merchant.add("econ", gson.toJsonTree(dItem.getEcon()));
         if (dItem.isStaticSlot()) merchant.addProperty("static", dItem.getSlot());
         merchant.addProperty("confirm_gui", dItem.isConfirmGui());
@@ -134,7 +133,7 @@ public class dItemAdapter implements JsonSerializer<dItem>, JsonDeserializer<dIt
             ditem.setItem(ItemUtils.setName(ditem.getItem(), Utils.JTEXT_PARSER.parse(object.get("name").getAsString())));
         if (object.has("lore"))
             ditem.setItem(ItemUtils.setLore(ditem.getItem(), Utils.JTEXT_PARSER.parse((List<String>) gson.fromJson(object.get("lore"), stringListToken.getType()))));
-        if (object.has("rarity")) ditem.setRarity(dRarity.fromKey(object.get("rarity").getAsString()));
+        if (object.has("rarity")) ditem.setRarity(DailyShop.get().getRarityManager().get(object.get("rarity").getAsString()).orElse(Rarity.UNAVAILABLE));
         if (object.has("econ")) ditem.setEcon(gson.fromJson(object.get("econ").getAsJsonObject(), Economy.class));
         if (object.has("buyPrice")) ditem.setBuyPrice(gson.fromJson(object.get("buyPrice"), dPrice.class));
         if (object.has("sellPrice")) ditem.setSellPrice(gson.fromJson(object.get("sellPrice"), dPrice.class));

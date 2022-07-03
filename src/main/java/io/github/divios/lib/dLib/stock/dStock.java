@@ -10,14 +10,13 @@ import io.github.divios.lib.dLib.stock.factory.dStockFactory;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.Serializable;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-@SuppressWarnings({"unused", "UnstableApiUsage", "unchecked"})
+@SuppressWarnings({"unused", "UnstableApiUsage"})
 public abstract class dStock implements Cloneable {
 
     private static final Gson gson = new Gson();

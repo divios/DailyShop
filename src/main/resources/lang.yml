@@ -69,7 +69,6 @@ lang:
       lore: "|&7Buy price: &e{buy_price}|&7Sell price: &e{sell_price}||&8- &9LEFT CLICK|  &7Change buy price||&8- &9RIGHT CLICK|  &7Change sell price"
     rarity:
       name: "&7Click to change|&7item's rarity"
-      types: "&7Common|&dUncommon|&5Rare|&5Epic|&9Ancient|&eLegendary|&eMythic|&cUnavailable"
     search:
       name: "&b&lSearch"
       lore: "&7Click to search item"
