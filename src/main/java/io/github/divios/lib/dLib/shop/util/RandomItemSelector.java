@@ -58,6 +58,7 @@ public class RandomItemSelector {
         total = 0;
         totals = new ArrayList<>(items.size());
         this.items = new ArrayList<>(items.size());
+
         for (dItem item : items) {
             if (!filterItems.test(item)) return;
 
