@@ -5,7 +5,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ComparatorMatcher {
+public class ComparatorFactory {
 
     private static final List<MatcherComparator> comparators;
     public static final ItemComparator DEFAULT = new ItemStackComparator().getComparator();
@@ -19,17 +19,15 @@ public class ComparatorMatcher {
     }
 
     public static ItemComparator match(ItemStack item) {
-        ItemComparator comparator = null;
-        for (MatcherComparator matcherComparator : comparators) {
-            if (matcherComparator.matches(item)) {
-                comparator = matcherComparator.getComparator();
-                break;
-            }
-        }
+        return comparators.stream()
+                .filter(matcherComparator -> matcherComparator.matches(item))
+                .findFirst()
+                .map(MatcherComparator::getComparator)
+                .orElse(DEFAULT);
+    }
 
-        return comparator == null
-                ? DEFAULT
-                : comparator;
+    public static void register(MatcherComparator comparator) {
+        comparators.add(comparator);
     }
 
 }

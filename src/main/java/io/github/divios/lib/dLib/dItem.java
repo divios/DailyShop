@@ -69,7 +69,7 @@ public class dItem implements Cloneable {
     private dPrice buyPrice;
     private dPrice sellPrice;
     private Economy econ = Economies.vault.getEconomy();
-    private Rarity rarity = Rarity.UNAVAILABLE;
+    private Rarity rarity = rManager.getFirst();
     private WrapperAction action = WrapperAction.of(dAction.EMPTY, "");
     private List<String> buyPerms;
     private List<String> sellPerms;

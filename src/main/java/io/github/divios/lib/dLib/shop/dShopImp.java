@@ -4,6 +4,7 @@ import com.google.gson.JsonElement;
 import io.github.divios.core_lib.events.Events;
 import io.github.divios.core_lib.scheduler.Schedulers;
 import io.github.divios.core_lib.scheduler.Task;
+import io.github.divios.core_lib.utils.Log;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.events.checkoutEvent;
 import io.github.divios.dailyShop.events.reStockShopEvent;
@@ -224,6 +225,7 @@ public class dShopImp implements Listener, dShop {
 
         Queue<dItem> rolledItems = RandomItemSelector.roll(getItems(),
                 (gui.getSize()) - gui.getButtons().size());
+
         gui.setDailyItems(rolledItems);
         currentItems = gui.getDailyItems();
 

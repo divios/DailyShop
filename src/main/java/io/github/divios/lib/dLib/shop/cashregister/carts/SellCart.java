@@ -5,6 +5,7 @@ import io.github.divios.core_lib.itemutils.ItemUtils;
 import io.github.divios.dailyShop.events.checkoutEvent;
 import io.github.divios.dailyShop.files.Lang;
 import io.github.divios.lib.dLib.confirmMenu.SellConfirmMenu;
+import io.github.divios.lib.dLib.confirmMenu.comparators.ComparatorFactory;
 import io.github.divios.lib.dLib.dItem;
 import io.github.divios.lib.dLib.dTransaction.Transactions;
 import io.github.divios.lib.dLib.shop.cashregister.MultiplePreconditions.SellPreconditions;
@@ -48,7 +49,7 @@ public class SellCart extends Cart {
 
         double price = item.getPlayerFloorSellPrice(p, shop) * amount;
         item.getEcon().depositMoney(p, price);
-        ItemUtils.remove(p.getInventory(), item.getItem(), amount);
+        ItemUtils.remove(p.getInventory(), item.getItem(), amount, ComparatorFactory.match(item.getItem())::compare);
 
         sendSuccessMsg(amount, item.getEcon().formatPrice(price), Lang.SELL_ACTION_NAME.getAsString(p));
         Events.callEvent(new checkoutEvent(shop, Transactions.Type.SELL, p, item, amount, price));
