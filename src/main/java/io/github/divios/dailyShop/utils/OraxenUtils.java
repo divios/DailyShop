@@ -17,12 +17,13 @@ public class OraxenUtils {
     }
 
     public static boolean isValidId(String id) {
-        if (!isOraxenOn()) return false;
+        if (!isOraxenOn() || id == null) return false;
+
         return OraxenItems.exists(id);
     }
 
     public static String getId(ItemStack item) {
-        if (!isOraxenOn() || !isOraxenItem(item)) return null;
+        if (!isOraxenOn() || item == null) return null;
 
         return OraxenItems.getIdByItem(item);
     }
