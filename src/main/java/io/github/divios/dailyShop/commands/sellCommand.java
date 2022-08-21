@@ -200,7 +200,7 @@ public class sellCommand {
 
         private void updateDoneButton() {
             ItemStack doneButton = ItemUtils.setName(XMaterial.GREEN_STAINED_GLASS_PANE.parseItem(),
-                    "Total Price: ");
+                    Lang.SELL_GUI_CONFIRM.getAsString());
 
             List<String> lore = new ArrayList<>();
             getItemPrices().forEach((economy, aDouble) ->

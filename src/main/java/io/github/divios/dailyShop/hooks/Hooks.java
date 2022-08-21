@@ -16,6 +16,7 @@ public class Hooks {
     public final static tokenManagerHook TOKEN_MANAGER;
     public final static UltraEconomyHook ULTRA_ECONOMY;
     public final static GettoniHook GETTONI_HOOK;
+    public final static TokenGCHook TOKEN_GC_HOOK;
 
     static {
         B_STATS = new bstatsHook();
@@ -30,6 +31,7 @@ public class Hooks {
         TOKEN_MANAGER = new tokenManagerHook();
         ULTRA_ECONOMY = new UltraEconomyHook();
         GETTONI_HOOK = new GettoniHook();
+        TOKEN_GC_HOOK = new TokenGCHook();
     }
 
     private Hooks() {

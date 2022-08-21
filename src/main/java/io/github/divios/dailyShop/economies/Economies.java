@@ -16,7 +16,8 @@ public enum Economies {
     item(itemEconomy::new),
     exp(expEconomy::new),
     elementalGems(ElementalGemsEcon::new),
-    gettoni(s -> new gettoniE());
+    gettoni(s -> new gettoniE()),
+    tokenGC(s -> new TokenGCE());
 
     private final Function<String, Economy> function;
     private final Map<String, Economy> cached = new HashMap<>();

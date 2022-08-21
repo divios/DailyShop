@@ -6,7 +6,7 @@ prefix: DailyShop
 depend: [ Vault ]
 softdepend: [ PlaceholderAPI, GemsEconomy, MMOItems, MMOLib, Oraxen, ItemsAdder,
               TokenEnchant, TokenManager, MPoints, PlayerPoints,
-              ShopGUIPlus, BossShopPro, ElementalGems, Gettoni, ItemsLangApi ]
+              ShopGUIPlus, BossShopPro, ElementalGems, Gettoni, ItemsLangApi, Tokens ]
 authors: [ Divios ]
 description: Daily random items to buy on a shop
 permissions:

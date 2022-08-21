@@ -1,6 +1,7 @@
 package io.github.divios.dailyShop.guis.customizerguis;
 
 import com.cryptomorin.xseries.XMaterial;
+import com.solodevelopment.tokens.Tokens;
 import com.vk2gpz.tokenenchant.api.TokenEnchantAPI;
 import io.github.divios.core_lib.inventory.InventoryGUI;
 import io.github.divios.core_lib.inventory.ItemButton;
@@ -11,6 +12,7 @@ import io.github.divios.core_lib.misc.FormatUtils;
 import io.github.divios.dailyShop.DailyShop;
 import io.github.divios.dailyShop.economies.Economies;
 import io.github.divios.dailyShop.economies.Economy;
+import io.github.divios.dailyShop.economies.TokenGCE;
 import io.github.divios.dailyShop.files.Lang;
 import io.github.divios.dailyShop.hooks.Hooks;
 import me.TechsCode.UltraEconomy.UltraEconomyAPI;
@@ -69,6 +71,7 @@ public class changeEcon {
         if (uEconApi != null) createUltraEconomyButtons(menu);
         if (Hooks.ELEMENTAL_GEMS.isOn()) createElementalGemsButton(menu);
         if (Hooks.GETTONI_HOOK.isOn()) createGettoniButton(menu);
+        if (Hooks.TOKEN_GC_HOOK.isOn()) createTokensButton(menu);
         return menu;
     }
 
@@ -150,6 +153,10 @@ public class changeEcon {
 
     private void createGettoniButton(InventoryGUI menu) {
         addButton(menu, createEconomyButton(XMaterial.DIRT, "&d&lGettoni", Economies.gettoni.getEconomy()));
+    }
+
+    private void createTokensButton(InventoryGUI menu) {
+        addButton(menu, createEconomyButton(XMaterial.EMERALD, "&a&lTokenGC", Economies.tokenGC.getEconomy()));
     }
 
     private void createVaultButton(InventoryGUI menu) {

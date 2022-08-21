@@ -126,6 +126,9 @@ lang:
       effects:
         name: "&f&lMake potion effects visible/invisible"
         lore: "|&8- &9LEFT CLICK|  &7Toggle status||&7Status &e{status}"
+
+  sell_gui:
+    confirm: "Total Price"
   messages:
     buy_action: "bought"
     sell_action: "sold"

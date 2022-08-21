@@ -115,6 +115,8 @@ public enum Lang {
     CUSTOMIZE_TOGGLE_EFFECTS_NAME("lang.customize_menu.toggle.effects.name"),
     CUSTOMIZE_TOGGLE_EFFECTS_LORE("lang.customize_menu.toggle.effects.lore"),
 
+    SELL_GUI_CONFIRM("lang.sell_gui.confirm"),
+
     BUY_ACTION_NAME("lang.messages.buy_action"),
     SELL_ACTION_NAME("lang.messages.sell_action");
 
